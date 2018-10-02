@@ -2,7 +2,7 @@ unit AppIntf;
 
 interface
 
-uses RunnableIntf, EnvironmentIntf;
+uses RunnableIntf, EnvironmentIntf, RouteHandlerIntf;
 
 type
     {------------------------------------------------
@@ -31,10 +31,16 @@ type
         ) : IWebApplication;
 
         //HTTP DELETE Verb handler
-        function delete(const routeName: string; const routeHandler : IRouteHandler) : IWebApplication;
+        function delete(
+            const routeName: string;
+            const routeHandler : IRouteHandler
+        ) : IWebApplication;
 
         //HTTP HEAD Verb handler
-        function head(const routeName: string; const routeHandler : IRouteHandler) : IWebApplication;
+        function head(
+            const routeName: string;
+            const routeHandler : IRouteHandler
+        ) : IWebApplication;
     end;
 
 implementation
