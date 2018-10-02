@@ -1,8 +1,6 @@
 unit ConfigIntf;
 
 interface
-{$MODE OBJFPC}
-{$INTERFACES CORBA}
 
 type
     {------------------------------------------------

@@ -1,15 +1,14 @@
-unit HeaderIntf;
+unit RunnableIntf;
 
 interface
 
 type
     {------------------------------------------------
-     interface for any class having capability to
-     write HTTP header
+     interface for any class that can be run
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
-    IHeaderInterface = interface
-        function writeHeader() : IHeaderInterface;
+    IRunnable = interface
+        function run() : IRunnable;
     end;
 
 implementation

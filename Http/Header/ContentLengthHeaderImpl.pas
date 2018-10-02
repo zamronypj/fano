@@ -4,8 +4,6 @@ uses HeaderIntf, SetHeaderIntf, HeaderSetterWriterImpl;
 
 interface
 
-{$MODE OBJFPC}
-{$INTERFACES CORBA}
 type
 
     TContentLengthHeader = class(THeaderSetterWriter)

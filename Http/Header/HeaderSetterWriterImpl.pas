@@ -4,8 +4,6 @@ interface
 
 uses HeaderIntf, SetHeaderIntf;
 
-{$MODE OBJFPC}
-{$INTERFACES CORBA}
 type
 
     THeaderSetterWriter = class(TInterfacedObject, IHeaderInterface, ISetHeaderInterface)
