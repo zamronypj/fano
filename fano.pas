@@ -2,28 +2,45 @@ unit fano;
 
 interface
 
-uses AppIntf, ConfigIntf, DispatcherIntf;
+uses
+   RunnableIntf,
+   AppIntf,
+   ConfigIntf,
+   DispatcherIntf,
+   EnvironmentIntf;
 
 type
 
-    TFanoApplication = class(TInterfacedObject, IWebApplication)
+    TFanoWebApplication = class(TInterfacedObject, IWebApplication, IRunnable)
     private
         config : IWebConfiguration;
         dispatcher : IDispatcher;
+        environment : IWebEnvironment;
     public
         constructor create(
-            const config : IWebConfiguration,
-            const dispatcher : IDispatcher
+            const cfg : IWebConfiguration;
+            const dispatcherInst : IDispatcher;
+            const env : IWebEnvironment
         ); virtual;
         destructor destroy(); override;
-        function run() : IWebApplication;
+        function run() : IRunnable;
+        function getEnvironment() : IWebEnvironment;
     end;
 
 implementation
-    constructor TFanoWebApplication.create(const config : IWebConfiguration, const dispatcher : IDispatcher);
+
+uses
+   ResponseIntf;
+
+    constructor TFanoWebApplication.create(
+        const cfg : IWebConfiguration;
+        const dispatcherInst : IDispatcher;
+        const env : IWebEnvironment
+    );
     begin
-       self.config := config;
-       self.dispatcher := dispatcher;
+       self.config := cfg;
+       self.dispatcher := dispatcherInst;
+       self.environment := env;
     end;
 
     destructor TFanoWebApplication.destroy();
@@ -32,11 +49,16 @@ implementation
        self.dispatcher := nil;
     end;
 
-    function TFanoApplication.run() : IWebApplication;
+    function TFanoWebApplication.run() : IRunnable;
     var response : IResponse;
     begin
-       response := dispatcher.handleRequest(self.getEnvironment(self.config));
+       response := dispatcher.handleRequest(self.getEnvironment());
        response.write();
        result := self;
+    end;
+
+    function TFanoWebApplication.getEnvironment() : IWebEnvironment;
+    begin
+       result := self.environment;
     end;
 end.

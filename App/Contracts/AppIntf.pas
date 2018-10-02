@@ -10,7 +10,7 @@ type
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
     IWebApplication = interface(IRunnable)
-       function getEnvironment(const config: IWebConfiguration) : IWebEnvironment;
+        function getEnvironment() : IWebEnvironment;
     end;
 
 implementation
