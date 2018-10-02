@@ -2,14 +2,14 @@ unit AppIntf;
 
 interface
 
-uses RunnableIntf, EnvironmentIntf, RouteHandlerIntf, HttpVerbIntf;
+uses RunnableIntf, EnvironmentIntf, RouterCollectionIntf;
 
 type
     {------------------------------------------------
      interface for any application
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
-    IWebApplication = interface(IRunnable, IHttpVerb)
+    IWebApplication = interface(IRunnable, IRouterCollection)
         function getEnvironment() : IWebEnvironment;
         function addMiddleware(const middleware : IMiddleware) : IWebApplication;
     end;

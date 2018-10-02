@@ -1,4 +1,4 @@
-unit HttpVerbIntf;
+unit RouteCollectionIntf;
 
 interface
 
@@ -9,38 +9,49 @@ type
      interface for any class that can set http verb
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
-    IHttpVerb = interface
+    IRouteCollection = interface
 
         //HTTP GET Verb handler
         function get(
             const routeName: string;
             const routeHandler : IRouteHandler
-        ) : IHttpVerb;
+        ) : IRouteCollection;
 
         //HTTP POST Verb handler
         function post(
             const routeName: string;
             const routeHandler : IRouteHandler
-        ) : IHttpVerb;
+        ) : IRouteCollection;
 
         //HTTP PUT Verb handler
         function put(
             const routeName: string;
             const routeHandler : IRouteHandler
-        ) : IHttpVerb;
+        ) : IRouteCollection;
+
+        //HTTP PATCH Verb handler
+        function patch(
+            const routeName: string;
+            const routeHandler : IRouteHandler
+        ) : IRouteCollection;
 
         //HTTP DELETE Verb handler
         function delete(
             const routeName: string;
             const routeHandler : IRouteHandler
-        ) : IHttpVerb;
+        ) : IRouteCollection;
 
         //HTTP HEAD Verb handler
         function head(
             const routeName: string;
             const routeHandler : IRouteHandler
-        ) : IHttpVerb;
+        ) : IRouteCollection;
 
+        //HTTP OPTIONS Verb handler
+        function options(
+            const routeName: string;
+            const routeHandler : IRouteHandler
+        ) : IRouteCollection;
     end;
 
 implementation
