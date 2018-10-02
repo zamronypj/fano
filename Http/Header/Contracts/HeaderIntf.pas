@@ -8,7 +8,7 @@ type
     {------------------------------------------------
      interface for any class having capability to
      write HTTP header
-     @author Zamrony P. Juhara <zamrony@yahoo.com>
+     @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
     IHeaderInterface = interface
         function writeHeader() : IHeaderInterface;
