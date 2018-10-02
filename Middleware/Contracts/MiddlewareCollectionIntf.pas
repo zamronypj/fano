@@ -1,18 +1,18 @@
-unit RouteHandlerIntf;
+unit MiddlewareCollectionIntf;
 
 interface
 
 uses
-   RequestHandlerIntf;
+   MiddlewareIntf;
 
 type
     {------------------------------------------------
      interface for any class having capability to
-     handler route
+     manage one or more middlewares
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
-    IRouteHandler = interface(IRequestHandler)
-        function addMiddleware(const middleware : IMiddleware) : IRouteHandler;
+    IMiddlewareCollection = interface
+        function add(const middleware : IMiddleware) : IMiddlewareCollection;
     end;
 
 implementation
