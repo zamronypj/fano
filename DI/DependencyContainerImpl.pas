@@ -3,6 +3,7 @@ unit DependencyContainerImpl;
 interface
 
 uses
+    contnrs,
     DependencyAwareIntf,
     DependencyFactoryIntf,
     DependencyContainerIntf;

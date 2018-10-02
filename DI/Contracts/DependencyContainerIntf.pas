@@ -2,7 +2,9 @@ unit DependencyContainerIntf;
 
 interface
 
-uses DependencyFactoryIntf;
+uses
+    DependencyAwareIntf,
+    DependencyFactoryIntf;
 
 type
     {------------------------------------------------
@@ -13,6 +15,7 @@ type
     -----------------------------------------------}
     IDependencyContainer = interface
         function add(const serviceName :string; const service : IDependencyFactory) : IDependencyContainer;
+        function factory(const serviceName :string; const service : IDependencyFactory) : IDependencyContainer;
         function get(const serviceName : string) : IDependencyAware;
     end;
 

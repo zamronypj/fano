@@ -8,23 +8,24 @@ uses
    ConfigIntf,
    DispatcherIntf,
    EnvironmentIntf,
-   RouterCollectionIntf,
+   RouteCollectionIntf,
+   RouteHandlerIntf,
    MiddlewareIntf;
 
 type
 
-    TFanoWebApplication = class(TInterfacedObject, IWebApplication, IRunnable, IRouterCollection)
+    TFanoWebApplication = class(TInterfacedObject, IWebApplication, IRunnable, IRouteCollection)
     private
         config : IWebConfiguration;
         dispatcher : IDispatcher;
         environment : IWebEnvironment;
-        routeCollection :IRouterCollection;
+        routeCollection :IRouteCollection;
     public
         constructor create(
             const cfg : IWebConfiguration;
             const dispatcherInst : IDispatcher;
             const env : IWebEnvironment;
-            const routesInst : IRouterCollection;
+            const routesInst : IRouteCollection
         ); virtual;
         destructor destroy(); override;
         function run() : IRunnable;
@@ -84,13 +85,13 @@ uses
         const cfg : IWebConfiguration;
         const dispatcherInst : IDispatcher;
         const env : IWebEnvironment;
-        const verbInst : IHttpVerb
+        const routesInst : IRouteCollection
     );
     begin
        self.config := cfg;
        self.dispatcher := dispatcherInst;
        self.environment := env;
-       self.verb := verbInst;
+       self.routeCollection := routesInst;
     end;
 
     destructor TFanoWebApplication.destroy();
@@ -98,7 +99,7 @@ uses
        self.config := nil;
        self.dispatcher := nil;
        self.environment := nil;
-       self.verb := nil;
+       self.routeCollection := nil;
     end;
 
     function TFanoWebApplication.run() : IRunnable;
@@ -120,7 +121,7 @@ uses
         const routeHandler : IRouteHandler
     ) : IRouteCollection;
     begin
-       self.routeCollection.get(routeName, routeHandler);
+       routeCollection.get(routeName, routeHandler);
        result := self;
     end;
 
@@ -130,7 +131,7 @@ uses
         const routeHandler : IRouteHandler
     ) : IRouteCollection;
     begin
-       self.routeCollection.post(routeName, routeHandler);
+       routeCollection.post(routeName, routeHandler);
        result := self;
     end;
 
@@ -140,7 +141,7 @@ uses
         const routeHandler : IRouteHandler
     ) : IRouteCollection;
     begin
-       self.routeCollection.put(routeName, routeHandler);
+       routeCollection.put(routeName, routeHandler);
        result := self;
     end;
 
@@ -150,7 +151,7 @@ uses
         const routeHandler : IRouteHandler
     ) : IRouteCollection;
     begin
-       self.routeCollection.patch(routeName, routeHandler);
+       routeCollection.patch(routeName, routeHandler);
        result := self;
     end;
 
@@ -160,7 +161,7 @@ uses
         const routeHandler : IRouteHandler
     ) : IRouteCollection;
     begin
-       self.routeCollection.delete(routeName, routeHandler);
+       routeCollection.delete(routeName, routeHandler);
        result := self;
     end;
 
@@ -170,7 +171,7 @@ uses
         const routeHandler : IRouteHandler
     ) : IRouteCollection;
     begin
-       self.routeCollection.head(routeName, routeHandler);
+       routeCollection.head(routeName, routeHandler);
        result := self;
     end;
 
@@ -180,12 +181,13 @@ uses
         const routeHandler : IRouteHandler
     ) : IRouteCollection;
     begin
-       self.routeCollection.options(routeName, routeHandler);
+       routeCollection.options(routeName, routeHandler);
        result := self;
     end;
 
-    function addMiddleware(const middleware : IMiddleware) : IWebApplication;
+    function TFanoWebApplication.addMiddleware(const middleware : IMiddleware) : IWebApplication;
     begin
-
+        //TODO:add middleware
+        result := self;
     end;
 end.

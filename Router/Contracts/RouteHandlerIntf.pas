@@ -3,7 +3,8 @@ unit RouteHandlerIntf;
 interface
 
 uses
-   RequestHandlerIntf;
+    MiddlewareIntf,
+    RequestHandlerIntf;
 
 type
     {------------------------------------------------
