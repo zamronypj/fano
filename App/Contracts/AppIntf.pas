@@ -2,7 +2,7 @@ unit AppIntf;
 
 interface
 
-uses RunnableIntf, ConfigIntf, EnvironmentIntf;
+uses RunnableIntf, EnvironmentIntf;
 
 type
     {------------------------------------------------
@@ -11,6 +11,30 @@ type
     -----------------------------------------------}
     IWebApplication = interface(IRunnable)
         function getEnvironment() : IWebEnvironment;
+
+        //HTTP GET Verb handler
+        function get(
+            const routeName: string;
+            const routeHandler : IRouteHandler
+        ) : IWebApplication;
+
+        //HTTP POST Verb handler
+        function post(
+            const routeName: string;
+            const routeHandler : IRouteHandler
+        ) : IWebApplication;
+
+        //HTTP PUT Verb handler
+        function put(
+            const routeName: string;
+            const routeHandler : IRouteHandler
+        ) : IWebApplication;
+
+        //HTTP DELETE Verb handler
+        function delete(const routeName: string; const routeHandler : IRouteHandler) : IWebApplication;
+
+        //HTTP HEAD Verb handler
+        function head(const routeName: string; const routeHandler : IRouteHandler) : IWebApplication;
     end;
 
 implementation
