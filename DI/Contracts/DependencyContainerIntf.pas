@@ -1,8 +1,8 @@
-unit DependencyInjectionIntf;
+unit DependencyContainerIntf;
 
 interface
 
-uses DependencyAwareIntf;
+uses DependencyFactoryIntf;
 
 type
     {------------------------------------------------
@@ -12,7 +12,7 @@ type
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
     IDependencyContainer = interface
-        function add(const serviceName :string; const service : IDependencyAware) : IDependencyContainer;
+        function add(const serviceName :string; const service : IDependencyFactory) : IDependencyContainer;
         function get(const serviceName : string) : IDependencyAware;
     end;
 
