@@ -1,8 +1,14 @@
-unit RouterCollectionImpl;
+unit RouteCollectionImpl;
 
 interface
 
-uses contnrs, RouteHandlerIntf;
+uses
+    contnrs,
+    RouteHandlerIntf,
+    RouteCollectionIntf,
+    RouteFinderIntf,
+    RouteListIntf,
+    DependencyAwareIntf;
 
 type
     //Route data for HTTP GET, PUT, POST, DELETE, PATCH, HEAD, OPTIONS
@@ -18,21 +24,21 @@ type
 
     PRouteRec = ^TRouteRec;
 
-    TRouteList = TFPHashList<PRouteRec>;
-
     {------------------------------------------------
      interface for any class that can set http verb
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
-    TRouteCollection = class(TInterfacedObject, IRouteCollection, IRouteFinder)
+    TRouteCollection = class(TInterfacedObject, IDependencyAware, IRouteCollection, IRouteFinder)
     private
-        routeList : TRouteList;
+        routeList : IRouteList;
 
+        function findRouteData(const routeName: string) : PRouteRec;
+        function createEmptyRouteData(const routeName: string) : PRouteRec;
         function resetRouteData(const routeData : PRouteRec) : PRouteRec;
         procedure destroyRouteData(var routeData : PRouteRec);
         function getRouteHandler(const requestMethod : string; const routeData :PRouteRec) : IRouteHandler;
     public
-        constructor create(const routes : TRouteList);
+        constructor create(const routes : IRouteList);
         destructor destroy(); override;
 
         //HTTP GET Verb handler
@@ -49,6 +55,12 @@ type
 
         //HTTP PUT Verb handler
         function put(
+            const routeName: string;
+            const routeHandler : IRouteHandler
+        ) : IRouteCollection;
+
+        //HTTP PATCH Verb handler
+        function patch(
             const routeName: string;
             const routeHandler : IRouteHandler
         ) : IRouteCollection;
@@ -71,14 +83,14 @@ type
             const routeHandler : IRouteHandler
         ) : IRouteCollection;
 
-        function find(const routeName: string) : IRouteHandler;
+        function find(const requestMethod : string; const routeName: string) : IRouteHandler;
     end;
 
 implementation
 
-    constructor TRouteCollection.create(const routes : TRouteList);
+    constructor TRouteCollection.create(const routes : IRouteList);
     begin
-       self.routeList := routes;
+        routeList := routes;
     end;
 
     function TRouteCollection.resetRouteData(const routeData : PRouteRec) : PRouteRec;
@@ -103,13 +115,14 @@ implementation
     var i, len:integer;
        routeData :PRouteRec;
     begin
-       len := self.routeList.count();
-       for len-1 downto 0 do
+       len := routeList.count();
+       for i := len-1 downto 0 do
        begin
-          routeData := self.routeList.items[i];
+          routeData := routeList.get(i);
           destroyRouteData(routeData);
-          self.routeList.delete(i);
+          routeList.delete(i);
        end;
+       routeList := nil;
     end;
 
     function TRouteCollection.createEmptyRouteData(const routeName: string) : PRouteRec;
@@ -221,7 +234,7 @@ implementation
     end;
 
     function TRouteCollection.getRouteHandler(const requestMethod : string; const routeData :PRouteRec) : IRouteHandler;
-    var routeHandler ; IRouteHandler;
+    var routeHandler : IRouteHandler;
     begin
        routeHandler := nil;
        case requestMethod of

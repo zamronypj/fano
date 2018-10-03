@@ -1,4 +1,4 @@
-unit RouteCollectionImpl;
+unit RouteCollectionFactoryImpl;
 
 interface
 
@@ -9,7 +9,6 @@ uses
 type
 
     TRouteCollectionFactory = class(TInterfacedObject, IDependencyFactory)
-    private
     public
         function build() : IDependencyAware;
     end;
@@ -17,11 +16,12 @@ type
 implementation
 
 uses
-    RouteCollectionImpl;
+    RouteCollectionImpl,
+    RouteListImpl;
 
     function TRouteCollectionFactory.build() : IDependencyAware;
     begin
-        return TRouteCollection.create();
+        result := TRouteCollection.create(TRouteList.create());
     end;
 
 end.
