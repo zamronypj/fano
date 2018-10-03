@@ -1,8 +1,10 @@
-unit DispatcherIntf;
+unit DispatcherImpl;
 
 interface
 
 uses
+    DispatcherIntf,
+    DependencyAwareIntf,
     EnvironmentIntf,
     ResponseIntf,
     ResponseFactoryIntf,
@@ -17,7 +19,7 @@ type
      request and return response
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
-    TDispatcher = class(TInterfacedObject, IDispatcher)
+    TDispatcher = class(TInterfacedObject, IDispatcher, IDependencyAware)
     private
         routeCollection : IRouteFinder;
         responseFactory : IResponseFactory;
@@ -45,7 +47,7 @@ implementation
         requestFactory := reqFactory;
     end;
 
-    destructor TDispatcher.destroy(); override;
+    destructor TDispatcher.destroy();
     begin
         routeCollection := nil;
         responseFactory := nil;

@@ -21,6 +21,12 @@ type
     TDependencyContainer = class(TInterfacedObject, IDependencyContainer)
     private
         dependencyList : TDependencyList;
+        function addDependency(
+            const serviceName :string;
+            const service : IDependencyFactory;
+            const singleInstance :boolean
+        ) : IDependencyContainer;
+
     public
         constructor create(const dependencies :TDependencyList);
         destructor destroy(); override;
@@ -53,7 +59,8 @@ type
     var i, len:integer;
         dep : PDependencyRec;
     begin
-        for len-1 downto 0 do
+        len := dependencyList.count;
+        for i := len-1 downto 0 do
         begin
             dep := dependencyList.items[i];
             dep^.factory := nil;
