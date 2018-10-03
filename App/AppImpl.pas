@@ -1,9 +1,10 @@
-unit fano;
+unit AppImpl;
 
 interface
 
 uses
    RunnableIntf,
+   DependencyContainerIntf,
    AppIntf,
    ConfigIntf,
    DispatcherIntf,
@@ -20,15 +21,18 @@ type
         dispatcher : IDispatcher;
         environment : IWebEnvironment;
         routeCollection :IRouteCollection;
+        dependencyContainer : IDependencyContainer;
     public
         constructor create(
             const cfg : IWebConfiguration;
             const dispatcherInst : IDispatcher;
             const env : IWebEnvironment;
-            const routesInst : IRouteCollection
+            const routesInst : IRouteCollection;
+            const dc : IDependencyContainer
         ); virtual;
         destructor destroy(); override;
         function run() : IRunnable;
+        function getDependencyContainer() : IDependencyContainer;
         function getEnvironment() : IWebEnvironment;
 
         //HTTP GET Verb handler
@@ -85,34 +89,42 @@ uses
         const cfg : IWebConfiguration;
         const dispatcherInst : IDispatcher;
         const env : IWebEnvironment;
-        const routesInst : IRouteCollection
+        const routesInst : IRouteCollection;
+        const dc : IDependencyContainer
     );
     begin
-       self.config := cfg;
-       self.dispatcher := dispatcherInst;
-       self.environment := env;
-       self.routeCollection := routesInst;
+       config := cfg;
+       dispatcher := dispatcherInst;
+       environment := env;
+       routeCollection := routesInst;
+       dependencyContainer := dc;
     end;
 
     destructor TFanoWebApplication.destroy();
     begin
-       self.config := nil;
-       self.dispatcher := nil;
-       self.environment := nil;
-       self.routeCollection := nil;
+       config := nil;
+       dispatcher := nil;
+       environment := nil;
+       routeCollection := nil;
+       dependencyContainer := nil;
     end;
 
     function TFanoWebApplication.run() : IRunnable;
     var response : IResponse;
     begin
-       response := dispatcher.dispatchRequest(self.getEnvironment());
+       response := dispatcher.dispatchRequest(getEnvironment());
        response.write();
        result := self;
     end;
 
     function TFanoWebApplication.getEnvironment() : IWebEnvironment;
     begin
-       result := self.environment;
+       result := environment;
+    end;
+
+    function TFanoWebApplication.getDependencyContainer() : IDependencyContainer;
+    begin
+       result := dependencyContainer;
     end;
 
     //HTTP GET Verb handler
