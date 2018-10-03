@@ -27,7 +27,7 @@ type
 implementation
 
 uses
-    RouteFinderIntf,
+    RouteMatcherIntf,
     DispatcherImpl,
     RequestFactoryImpl,
     ResponseFactoryImpl;
@@ -46,7 +46,7 @@ uses
     function TDispatcherFactory.build() : IDependencyAware;
     begin
         result := TDispatcher.create(
-            dependencyContainer.get('router') as IRouteFinder,
+            dependencyContainer.get('router') as IRouteMatcher,
             TResponseFactory.create(dependencyContainer),
             TRequestFactory.create(dependencyContainer)
         );

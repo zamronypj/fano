@@ -6,7 +6,7 @@ uses
     contnrs,
     RouteHandlerIntf,
     RouteCollectionIntf,
-    RouteFinderIntf,
+    RouteMatcherIntf,
     RouteListIntf,
     DependencyAwareIntf;
 
@@ -28,7 +28,7 @@ type
      interface for any class that can set http verb
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
-    TRouteCollection = class(TInterfacedObject, IDependencyAware, IRouteCollection, IRouteFinder)
+    TRouteCollection = class(TInterfacedObject, IDependencyAware, IRouteCollection, IRouteMatcher)
     private
         routeList : IRouteList;
 

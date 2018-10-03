@@ -11,7 +11,7 @@ uses
     RequestIntf,
     RequestFactoryIntf,
     RouteHandlerIntf,
-    RouteFinderIntf;
+    RouteMatcherIntf;
 
 type
     {------------------------------------------------
@@ -21,12 +21,12 @@ type
     -----------------------------------------------}
     TDispatcher = class(TInterfacedObject, IDispatcher, IDependencyAware)
     private
-        routeCollection : IRouteFinder;
+        routeCollection : IRouteMatcher;
         responseFactory : IResponseFactory;
         requestFactory : IRequestFactory;
     public
         constructor create(
-            const routes : IRouteFinder;
+            const routes : IRouteMatcher;
             const respFactory : IResponseFactory;
             const reqFactory : IRequestFactory
         );
@@ -40,7 +40,7 @@ uses
     ERouteHandlerNotFoundImpl;
 
     constructor TDispatcher.create(
-        const routes : IRouteFinder;
+        const routes : IRouteMatcher;
         const respFactory : IResponseFactory;
         const reqFactory : IRequestFactory
     );
