@@ -9,7 +9,7 @@ type
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
     IWebConfiguration = interface
-        ['{35BE40ED-4D09-4BF7-8303-8ABB606D9707}']
+        ['{054EE7FE-20CF-4E46-A9B2-37921D890E33}']
         function getString(const configName : string) : string;
         function getInt(const configName : string) : integer;
     end;

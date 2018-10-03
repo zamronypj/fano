@@ -8,7 +8,7 @@ type
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
     IDependencyAware = interface
-        ['{5F764367-734C-4D4C-934C-58CE7055F0C6}']
+        ['{44A9B67E-2E1B-4CFF-A949-089310982C48}']
     end;
 
 implementation

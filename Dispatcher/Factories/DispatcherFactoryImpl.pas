@@ -5,7 +5,8 @@ interface
 uses
     DispatcherFactoryIntf,
     DependencyAwareIntf,
-    DependencyContainerIntf;
+    DependencyContainerIntf,
+    DependencyFactoryIntf;
 
 type
     {------------------------------------------------
@@ -14,7 +15,7 @@ type
 
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
-    TDispatcherFactory = class(TInterfacedObject, IDispatcherFactory)
+    TDispatcherFactory = class(TInterfacedObject, IDispatcherFactory, IDependencyFactory)
     private
         dependencyContainer : IDependencyContainer;
     public

@@ -1,18 +1,19 @@
-unit RouteListImpl;
+unit ConfigFactoryIntf;
 
 interface
 
 uses
-    RouteListIntf,
-    HashListImpl;
+    DependencyAwareIntf,
+    DependencyFactoryIntf;
 
 type
     {------------------------------------------------
      interface for any class having capability to
-     handler route
+     get config
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
-    TRouteList = class(THashList, IRouteList)
+    IWebConfigurationFactory = interface(IDependencyFactory)
+        ['{52972D1B-CB7A-447B-9437-56D2C9063B5D}']
     end;
 
 implementation

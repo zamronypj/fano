@@ -4,7 +4,9 @@ interface
 
 uses
     EnvironmentFactoryIntf,
-    DependencyAwareIntf;
+    DependencyAwareIntf,
+    DependencyContainerIntf,
+    DependencyFactoryIntf;
 
 type
     {------------------------------------------------
@@ -13,9 +15,12 @@ type
 
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
-    TWebEnvironmentFactory = class(TInterfacedObject, IWebEnvironmentFactory)
+    TWebEnvironmentFactory = class(TInterfacedObject, IWebEnvironmentFactory, IDependencyFactory)
     private
+        dependencyContainer : IDependencyContainer;
     public
+        constructor create(const dc : IDependencyContainer);
+        destructor destroy(); override;
         function build() : IDependencyAware;
     end;
 
@@ -23,6 +28,16 @@ implementation
 
 uses
     EnvironmentImpl;
+
+    constructor TWebEnvironmentFactory.create(const dc : IDependencyContainer);
+    begin
+        dependencyContainer := dc;
+    end;
+
+    destructor TWebEnvironmentFactory.destroy();
+    begin
+        dependencyContainer := nil;
+    end;
 
     function TWebEnvironmentFactory.build() : IDependencyAware;
     begin

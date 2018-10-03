@@ -1,18 +1,18 @@
-unit RouteListImpl;
+unit DependencyListImpl;
 
 interface
 
 uses
-    RouteListIntf,
+    DependencyListIntf,
     HashListImpl;
 
 type
     {------------------------------------------------
      interface for any class having capability to
-     handler route
+     store depdendency
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
-    TRouteList = class(THashList, IRouteList)
+    TDependencyList = class(THashList, IDependencyList)
     end;
 
 implementation

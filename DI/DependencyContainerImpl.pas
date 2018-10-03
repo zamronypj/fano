@@ -6,11 +6,10 @@ uses
     contnrs,
     DependencyAwareIntf,
     DependencyFactoryIntf,
-    DependencyContainerIntf;
+    DependencyContainerIntf,
+    DependencyListIntf;
 
 type
-
-    TDependencyList = TFPHashList;
 
     {------------------------------------------------
      interface for any class having capability to manage
@@ -20,7 +19,7 @@ type
     -----------------------------------------------}
     TDependencyContainer = class(TInterfacedObject, IDependencyContainer)
     private
-        dependencyList : TDependencyList;
+        dependencyList : IDependencyList;
         function addDependency(
             const serviceName :string;
             const service : IDependencyFactory;
@@ -28,7 +27,7 @@ type
         ) : IDependencyContainer;
 
     public
-        constructor create(const dependencies :TDependencyList);
+        constructor create(const dependencies :IDependencyList);
         destructor destroy(); override;
 
         function add(const serviceName :string; const service : IDependencyFactory) : IDependencyContainer;
@@ -50,7 +49,7 @@ type
     end;
     PDependencyRec = ^TDependencyRec;
 
-    constructor TDependencyContainer.create(const dependencies : TDependencyList);
+    constructor TDependencyContainer.create(const dependencies : IDependencyList);
     begin
         dependencyList := dependencies;
     end;
@@ -59,15 +58,16 @@ type
     var i, len:integer;
         dep : PDependencyRec;
     begin
-        len := dependencyList.count;
+        len := dependencyList.count();
         for i := len-1 downto 0 do
         begin
-            dep := dependencyList.items[i];
+            dep := dependencyList.get(i);
             dep^.factory := nil;
             dep^.instance := nil;
             dispose(dep);
             dependencyList.delete(i);
         end;
+        dependencyList := nil;
     end;
 
     function TDependencyContainer.addDependency(

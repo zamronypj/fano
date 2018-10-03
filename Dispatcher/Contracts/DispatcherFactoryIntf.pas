@@ -3,7 +3,8 @@ unit DispatcherFactoryIntf;
 interface
 
 uses
-    DependencyAwareIntf;
+    DependencyAwareIntf,
+    DependencyFactoryIntf;
 
 type
     {------------------------------------------------
@@ -11,9 +12,8 @@ type
      to build dispatcher instance
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
-    IDispatcherFactory = interface
+    IDispatcherFactory = interface(IDependencyFactory)
         ['{13BA047B-BE9D-442C-A4BC-957A06BD291D}']
-        function build() : IDependencyAware;
     end;
 
 implementation

@@ -3,18 +3,31 @@ unit ConfigImpl;
 interface
 
 uses
-   ConfigIntf;
+    DependencyAwareIntf,
+    ConfigIntf;
 
 type
 
-    TFanoConfig = class(TInterfacedObject, IWebConfiguration)
+    TFanoConfig = class(TInterfacedObject, IWebConfiguration, IDependencyAware)
     private
     public
+        constructor create(const configFile : string);
+        destructor destroy(); override;
         function getString(const configName : string) : string;
         function getInt(const configName : string) : integer;
     end;
 
 implementation
+
+uses fpjson;
+
+    constructor TFanoConfig.create(const configFile : string);
+    begin
+    end;
+
+    destructor TFanoConfig.destroy();
+    begin
+    end;
 
     function TFanoConfig.getString(const configName : string) : string;
     begin
