@@ -22,6 +22,8 @@ type
         environment : IWebEnvironment;
         routeCollection :IRouteCollection;
         dependencyContainer : IDependencyContainer;
+
+        function execute() : IRunnable;
     public
         constructor create(
             const cfg : IWebConfiguration;
@@ -83,7 +85,8 @@ type
 implementation
 
 uses
-   ResponseIntf;
+   ResponseIntf,
+   ERouteHandlerNotFoundImpl;
 
     constructor TFanoWebApplication.create(
         const cfg : IWebConfiguration;
@@ -93,38 +96,58 @@ uses
         const dc : IDependencyContainer
     );
     begin
-       config := cfg;
-       dispatcher := dispatcherInst;
-       environment := env;
-       routeCollection := routesInst;
-       dependencyContainer := dc;
+        config := cfg;
+        dispatcher := dispatcherInst;
+        environment := env;
+        routeCollection := routesInst;
+        dependencyContainer := dc;
     end;
 
     destructor TFanoWebApplication.destroy();
     begin
-       config := nil;
-       dispatcher := nil;
-       environment := nil;
-       routeCollection := nil;
-       dependencyContainer := nil;
+        config := nil;
+        dispatcher := nil;
+        environment := nil;
+        routeCollection := nil;
+        dependencyContainer := nil;
+    end;
+
+    function TFanoWebApplication.execute() : IRunnable;
+    var response : IResponse;
+        ev : IWebEnvironment;
+    begin
+        try
+            ev := getEnvironment();
+            response := dispatcher.dispatchRequest(ev);
+            response.write();
+            result := self;
+        finally
+            response := nil;
+            ev := nil;
+        end;
     end;
 
     function TFanoWebApplication.run() : IRunnable;
-    var response : IResponse;
     begin
-       response := dispatcher.dispatchRequest(getEnvironment());
-       response.write();
-       result := self;
+        try
+            result := execute();
+        except
+            on e : ERouteHandlerNotFound do
+            begin
+              //TODO: exception handling
+              writeln(e.message);
+            end;
+        end;
     end;
 
     function TFanoWebApplication.getEnvironment() : IWebEnvironment;
     begin
-       result := environment;
+        result := environment;
     end;
 
     function TFanoWebApplication.getDependencyContainer() : IDependencyContainer;
     begin
-       result := dependencyContainer;
+        result := dependencyContainer;
     end;
 
     //HTTP GET Verb handler

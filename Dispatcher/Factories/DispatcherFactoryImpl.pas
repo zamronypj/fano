@@ -39,6 +39,7 @@ uses
 
     destructor TDispatcherFactory.destroy();
     begin
+        inherited destroy();
         dependencyContainer := nil;
     end;
 

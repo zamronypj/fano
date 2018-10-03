@@ -36,6 +36,9 @@ type
 
 implementation
 
+uses
+    ERouteHandlerNotFoundImpl;
+
     constructor TDispatcher.create(
         const routes : IRouteFinder;
         const respFactory : IResponseFactory;
@@ -49,6 +52,7 @@ implementation
 
     destructor TDispatcher.destroy();
     begin
+        inherited destroy();
         routeCollection := nil;
         responseFactory := nil;
         requestFactory := nil;
@@ -58,10 +62,25 @@ implementation
     var routeHandler : IRouteHandler;
         response : IResponse;
         request : IRequest;
+        method, uri : string;
     begin
-        response := responseFactory.build(env);
-        request := requestFactory.build(env);
-        routeHandler := routeCollection.find(env.requestMethod(), env.requestUri());
-        result := routeHandler.handleRequest(request, response);
+        try
+            response := responseFactory.build(env);
+            request := requestFactory.build(env);
+
+            method := env.requestMethod();
+            uri := env.requestUri();
+            routeHandler := routeCollection.find(method, uri);
+            if (routeHandler = nil) then
+            begin
+                raise ERouteHandlerNotFound.create('Route not found. Method:' + method + ' Uri:'+uri);
+            end;
+
+            result := routeHandler.handleRequest(request, response);
+        finally
+            response := nil;
+            request := nil;
+            routeHandler := nil;
+        end;
     end;
 end.
