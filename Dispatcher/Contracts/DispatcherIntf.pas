@@ -11,7 +11,7 @@ type
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
     IDispatcher = interface
-        function handleRequest(const env: IWebEnvironment) : IResponse;
+        function dispatchRequest(const env: IWebEnvironment) : IResponse;
     end;
 
 implementation

@@ -105,7 +105,7 @@ uses
     function TFanoWebApplication.run() : IRunnable;
     var response : IResponse;
     begin
-       response := dispatcher.handleRequest(self.getEnvironment());
+       response := dispatcher.dispatchRequest(self.getEnvironment());
        response.write();
        result := self;
     end;

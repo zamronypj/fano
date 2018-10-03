@@ -10,6 +10,7 @@ type
     -----------------------------------------------}
     IRequest = interface
         function getQueryParam(const key: string) : string;
+        function getCookieParam(const key: string) : string;
     end;
 
 implementation
