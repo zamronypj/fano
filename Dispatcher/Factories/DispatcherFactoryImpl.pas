@@ -4,8 +4,8 @@ interface
 
 uses
     DispatcherFactoryIntf,
-
-    DependencyAwareIntf;
+    DependencyAwareIntf,
+    DependencyContainerIntf;
 
 type
     {------------------------------------------------
@@ -19,17 +19,35 @@ type
         dependencyContainer : IDependencyContainer;
     public
         constructor create(const dc : IDependencyContainer);
+        destructor destroy(); override;
         function build() : IDependencyAware;
     end;
 
 implementation
 
 uses
-    DispatcherImpl;
+    RouteFinderIntf,
+    DispatcherImpl,
+    RequestFactoryImpl,
+    ResponseFactoryImpl;
+
+    constructor TDispatcherFactory.create(const dc : IDependencyContainer);
+    begin
+        dependencyContainer := dc;
+    end;
+
+    destructor TDispatcherFactory.destroy();
+    begin
+        dependencyContainer := nil;
+    end;
 
     function TDispatcherFactory.build() : IDependencyAware;
     begin
-        result := TDispatcher.create();
+        result := TDispatcher.create(
+            dependencyContainer.get('router') as IRouteFinder,
+            TResponseFactory.create(dependencyContainer),
+            TRequestFactory.create(dependencyContainer)
+        );
     end;
 
 end.
