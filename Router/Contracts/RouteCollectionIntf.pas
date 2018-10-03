@@ -10,6 +10,7 @@ type
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
     IRouteCollection = interface
+        ['{382B4D2E-0061-4727-8C79-291FCD39F798}']
 
         //HTTP GET Verb handler
         function get(

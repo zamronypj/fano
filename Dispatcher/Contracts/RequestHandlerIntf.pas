@@ -11,6 +11,7 @@ type
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
     IRequestHandler = interface
+        ['{483E0FAB-E1E6-4B8C-B193-F8615E039369}']
         function handleRequest(const request : IRequest; const response : IResponse) : IResponse;
     end;
 

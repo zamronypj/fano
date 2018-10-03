@@ -13,6 +13,7 @@ type
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
     IRequestFactory = interface
+        ['{C4015735-B800-4F0B-BF35-C7900D5135E7}']
         function build(const env : IWebEnvironment) : IRequest;
     end;
 

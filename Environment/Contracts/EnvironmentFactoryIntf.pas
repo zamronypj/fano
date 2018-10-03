@@ -12,6 +12,7 @@ type
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
     IWebEnvironmentFactory = interface
+        ['{7A704545-F34F-4854-9CEB-1E0797CC5757}']
         function build() : IDependencyAware;
     end;
 
