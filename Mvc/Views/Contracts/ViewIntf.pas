@@ -14,7 +14,6 @@ type
     IView = interface(IResponse)
         ['{04F99A16-DDBC-403B-A099-8BB44BE3CCC5}']
         function render(
-            const templateName : string;
             const viewParams : IViewParameters;
             const response : IResponse
         ) : IResponse;

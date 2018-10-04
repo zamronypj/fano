@@ -6,32 +6,39 @@ uses
     ResponseIntf,
     RequestIntf,
     RouteHandlerIntf,
-    ViewIntf;
+    RouteHandlerImpl,
+    ViewIntf,
+    ViewParamsIntf;
 
 type
 
-    TController = class(TInterfacedObject, IRouteHandler)
+    TController = class(TRouteHandler)
     protected
         gView : IView;
+        viewParams : IViewParameters;
     public
-        constructor create(const viewInst : IView);
+        constructor create(
+            const viewInst : IView;
+            const viewParamsInst : IViewParameters
+        );
         destructor destroy(); override;
-        function handleRequest(
-              const request : IRequest;
-              const response : IResponse
-        ) : IResponse; virtual; abstract;
     end;
 
 implementation
 
-    constructor TController.create(const viewInst : IView);
+    constructor TController.create(
+        const viewInst : IView;
+        const viewParamsInst : IViewParameters
+    );
     begin
         gView := viewInst;
+        viewParams := viewParamsInst;
     end;
 
     destructor TController.destroy();
     begin
         gView := nil;
+        viewParams := nil;
     end;
 
 end.
