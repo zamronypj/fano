@@ -7,7 +7,8 @@ uses
     ViewParamsIntf,
     ViewIntf,
     OutputBufferIntf,
-    TemplateViewImpl;
+    TemplateViewImpl,
+    TemplateParserIntf;
 
 type
     {------------------------------------------------
@@ -20,6 +21,7 @@ type
     public
         constructor create(
             const outputBufferInst : IOutputBuffer;
+            const templateParserInst : ITemplateParser;
             const templatePath : string
         ); override;
     end;
@@ -31,10 +33,15 @@ uses
 
     constructor TTemplateFileView.create(
         const outputBufferInst : IOutputBuffer;
+        const templateParserInst : ITemplateParser;
         const templatePath : string
     );
     begin
-        inherited create(outputBufferInst, readStream(templatePath));
+        inherited create(
+            outputBufferInst,
+            templateParserInst,
+            readStream(templatePath)
+        );
     end;
 
     function TTemplateFileView.readStream(const filename: string): string;
