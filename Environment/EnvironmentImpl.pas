@@ -16,6 +16,10 @@ type
     TWebEnvironment = class(TInterfacedObject, IWebEnvironment, IDependencyAware)
     private
     public
+        {-----------------------------------------
+         Retrieve GATEWAY_INTERFACE environment variable
+        ------------------------------------------}
+        function gatewayInterface() : string;
 
         {-----------------------------------------
          Retrieve REMOTE_ADDR environment variable
@@ -28,6 +32,16 @@ type
         function remotePort() : string;
 
         {-----------------------------------------
+         Retrieve SERVER_ADDR environment variable
+        ------------------------------------------}
+        function serverAddr() : string;
+
+        {-----------------------------------------
+         Retrieve SERVER_PORT environment variable
+        ------------------------------------------}
+        function serverPort() : string;
+
+        {-----------------------------------------
          Retrieve DOCUMENT_ROOT environment variable
         ------------------------------------------}
         function documentRoot() : string;
@@ -36,6 +50,11 @@ type
          Retrieve REQUEST_METHOD environment variable
         ------------------------------------------}
         function requestMethod() : string;
+
+        {-----------------------------------------
+         Retrieve REQUEST_SCHEME environment variable
+        ------------------------------------------}
+        function requestScheme() : string;
 
         {-----------------------------------------
          Retrieve REQUEST_URI environment variable
@@ -56,12 +75,40 @@ type
          Retrieve CONTENT_TYPE environment variable
         ------------------------------------------}
         function contentType() : string;
+
+        {-----------------------------------------
+         Retrieve HTTP_HOST environment variable
+        ------------------------------------------}
+        function httpHost() : string;
+
+        {-----------------------------------------
+         Retrieve HTTP_USER_AGENT environment variable
+        ------------------------------------------}
+        function httpUserAgent() : string;
+
+        {-----------------------------------------
+         Retrieve HTTP_ACCEPT environment variable
+        ------------------------------------------}
+        function httpAccept() : string;
+
+        {-----------------------------------------
+         Retrieve HTTP_ACCEPT_LANGUAGE environment variable
+        ------------------------------------------}
+        function httpAcceptLanguage() : string;
     end;
 
 implementation
 
 uses
     dos;
+
+    {-----------------------------------------
+     Retrieve GATEWAY_INTERFACE environment variable
+    ------------------------------------------}
+    function TWebEnvironment.gatewayInterface() : string;
+    begin
+        result := getenv('GATEWAY_INTERFACE');
+    end;
 
     {-----------------------------------------
      Retrieve REMOTE_ADDR environment variable
@@ -80,6 +127,22 @@ uses
     end;
 
     {-----------------------------------------
+     Retrieve SERVER_ADDR environment variable
+    ------------------------------------------}
+    function TWebEnvironment.serverAddr() : string;
+    begin
+        result := getenv('SERVER_ADDR');
+    end;
+
+    {-----------------------------------------
+     Retrieve SERVER_PORT environment variable
+    ------------------------------------------}
+    function TWebEnvironment.serverPort() : string;
+    begin
+        result := getenv('SERVER_PORT');
+    end;
+
+    {-----------------------------------------
      Retrieve DOCUMENT_ROOT environment variable
     ------------------------------------------}
     function TWebEnvironment.documentRoot() : string;
@@ -93,6 +156,14 @@ uses
     function TWebEnvironment.requestMethod() : string;
     begin
         result := getenv('REQUEST_METHOD');
+    end;
+
+    {-----------------------------------------
+     Retrieve REQUEST_SCHEME environment variable
+    ------------------------------------------}
+    function TWebEnvironment.requestScheme() : string;
+    begin
+        result := getenv('REQUEST_SCHEME');
     end;
 
     {-----------------------------------------
@@ -127,4 +198,35 @@ uses
         result := getenv('CONTENT_TYPE');
     end;
 
+    {-----------------------------------------
+     Retrieve HTTP_HOST environment variable
+    ------------------------------------------}
+    function TWebEnvironment.httpHost() : string;
+    begin
+        result := getenv('HTTP_HOST');
+    end;
+
+    {-----------------------------------------
+     Retrieve HTTP_USER_AGENT environment variable
+    ------------------------------------------}
+    function TWebEnvironment.httpUserAgent() : string;
+    begin
+        result := getenv('HTTP_USER_AGENT');
+    end;
+
+    {-----------------------------------------
+     Retrieve HTTP_ACCEPT environment variable
+    ------------------------------------------}
+    function TWebEnvironment.httpAccept() : string;
+    begin
+        result := getenv('HTTP_ACCEPT');
+    end;
+
+    {-----------------------------------------
+     Retrieve HTTP_ACCEPT_LANGUAGE environment variable
+    ------------------------------------------}
+    function TWebEnvironment.httpAcceptLanguage() : string;
+    begin
+        result := getenv('HTTP_ACCEPT_LANGUAGE');
+    end;
 end.

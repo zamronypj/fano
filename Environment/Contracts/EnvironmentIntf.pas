@@ -13,6 +13,11 @@ type
         ['{48E2E809-1176-4863-B940-D1E05CF1355C}']
 
         {-----------------------------------------
+         Retrieve GATEWAY_INTERFACE environment variable
+        ------------------------------------------}
+        function gatewayInterface() : string;
+
+        {-----------------------------------------
          Retrieve REMOTE_ADDR environment variable
         ------------------------------------------}
         function remoteAddr() : string;
@@ -23,6 +28,16 @@ type
         function remotePort() : string;
 
         {-----------------------------------------
+         Retrieve SERVER_ADDR environment variable
+        ------------------------------------------}
+        function serverAddr() : string;
+
+        {-----------------------------------------
+         Retrieve SERVER_PORT environment variable
+        ------------------------------------------}
+        function serverPort() : string;
+
+        {-----------------------------------------
          Retrieve DOCUMENT_ROOT environment variable
         ------------------------------------------}
         function documentRoot() : string;
@@ -31,6 +46,11 @@ type
          Retrieve REQUEST_METHOD environment variable
         ------------------------------------------}
         function requestMethod() : string;
+
+        {-----------------------------------------
+         Retrieve REQUEST_SCHEME environment variable
+        ------------------------------------------}
+        function requestScheme() : string;
 
         {-----------------------------------------
          Retrieve REQUEST_URI environment variable
@@ -51,6 +71,26 @@ type
          Retrieve CONTENT_TYPE environment variable
         ------------------------------------------}
         function contentType() : string;
+
+        {-----------------------------------------
+         Retrieve HTTP_HOST environment variable
+        ------------------------------------------}
+        function httpHost() : string;
+
+        {-----------------------------------------
+         Retrieve HTTP_USER_AGENT environment variable
+        ------------------------------------------}
+        function httpUserAgent() : string;
+
+        {-----------------------------------------
+         Retrieve HTTP_ACCEPT environment variable
+        ------------------------------------------}
+        function httpAccept() : string;
+
+        {-----------------------------------------
+         Retrieve HTTP_ACCEPT_LANGUAGE environment variable
+        ------------------------------------------}
+        function httpAcceptLanguage() : string;
     end;
 
 implementation
