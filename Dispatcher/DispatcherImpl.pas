@@ -75,7 +75,8 @@ uses
             begin
                 raise ERouteHandlerNotFound.create('Route not found. Method:' + method + ' Uri:'+uri);
             end;
-
+            //TODO middlewares := buildMiddlewareList(routeHandler);
+            //TODO result := middlewares.handleRequest(request, response);
             result := routeHandler.handleRequest(request, response);
         finally
             response := nil;

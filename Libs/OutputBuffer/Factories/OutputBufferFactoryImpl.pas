@@ -1,9 +1,8 @@
-unit EnvironmentFactoryImpl;
+unit OutputBufferFactoryImpl;
 
 interface
 
 uses
-    EnvironmentFactoryIntf,
     DependencyAwareIntf,
     DependencyContainerIntf,
     DependencyFactoryIntf,
@@ -11,12 +10,11 @@ uses
 
 type
     {------------------------------------------------
-     factory class to create class having capability
-     to retrieve CGI environment variable
+     factory class for TOutputBuffer
 
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
-    TWebEnvironmentFactory = class(TFactory, IWebEnvironmentFactory, IDependencyFactory)
+    TOutputBufferFactory = class(TFactory, IDependencyFactory)
     public
         function build() : IDependencyAware; override;
     end;
@@ -24,11 +22,11 @@ type
 implementation
 
 uses
-    EnvironmentImpl;
+    OutputBufferImpl;
 
-    function TWebEnvironmentFactory.build() : IDependencyAware;
+    function TOutputBufferFactory.build() : IDependencyAware;
     begin
-        result := TWebEnvironment.create();
+        result := TOutputBuffer.create();
     end;
 
 end.

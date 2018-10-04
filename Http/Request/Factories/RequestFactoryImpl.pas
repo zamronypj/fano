@@ -6,7 +6,8 @@ uses
     EnvironmentIntf,
     RequestIntf,
     RequestFactoryIntf,
-    DependencyContainerIntf;
+    DependencyContainerIntf,
+    DependencyFactoryIntf;
 
 type
     {------------------------------------------------

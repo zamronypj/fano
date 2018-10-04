@@ -6,6 +6,7 @@ uses
     ResponseIntf,
     ViewParamsIntf,
     ViewIntf,
+    OutputBufferIntf,
     TemplateViewImpl;
 
 type
@@ -17,7 +18,10 @@ type
     private
         function readStream(const filename: string): string;
     public
-        constructor create(const templatePath : string); override;
+        constructor create(
+            const outputBufferInst : IOutputBuffer;
+            const templatePath : string
+        ); override;
     end;
 
 implementation
@@ -25,9 +29,12 @@ implementation
 uses
     classes;
 
-    constructor TTemplateFileView.create(const templatePath : string);
+    constructor TTemplateFileView.create(
+        const outputBufferInst : IOutputBuffer;
+        const templatePath : string
+    );
     begin
-        inherited create(readStream(templatePath));
+        inherited create(outputBufferInst, readStream(templatePath));
     end;
 
     function TTemplateFileView.readStream(const filename: string): string;

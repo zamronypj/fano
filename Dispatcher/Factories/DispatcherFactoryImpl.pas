@@ -6,7 +6,8 @@ uses
     DispatcherFactoryIntf,
     DependencyAwareIntf,
     DependencyContainerIntf,
-    DependencyFactoryIntf;
+    DependencyFactoryIntf,
+    FactoryImpl;
 
 type
     {------------------------------------------------
@@ -15,13 +16,9 @@ type
 
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
-    TDispatcherFactory = class(TInterfacedObject, IDispatcherFactory, IDependencyFactory)
-    private
-        dependencyContainer : IDependencyContainer;
+    TDispatcherFactory = class(TFactory, IDispatcherFactory, IDependencyFactory)
     public
-        constructor create(const dc : IDependencyContainer);
-        destructor destroy(); override;
-        function build() : IDependencyAware;
+        function build() : IDependencyAware; override;
     end;
 
 implementation
@@ -31,17 +28,6 @@ uses
     DispatcherImpl,
     RequestFactoryImpl,
     ResponseFactoryImpl;
-
-    constructor TDispatcherFactory.create(const dc : IDependencyContainer);
-    begin
-        dependencyContainer := dc;
-    end;
-
-    destructor TDispatcherFactory.destroy();
-    begin
-        inherited destroy();
-        dependencyContainer := nil;
-    end;
 
     function TDispatcherFactory.build() : IDependencyAware;
     begin
