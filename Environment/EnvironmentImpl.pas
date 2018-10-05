@@ -1,6 +1,7 @@
 unit EnvironmentImpl;
 
 interface
+{$H+}
 
 uses
     DependencyAwareIntf,

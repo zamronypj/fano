@@ -1,8 +1,12 @@
 unit ContentTypeHeaderImpl;
 
-uses HeaderIntf, SetHeaderIntf;
 
 interface
+{$H+}
+
+uses
+    HeaderIntf,
+    SetHeaderIntf;
 
 type
 

@@ -1,8 +1,11 @@
 unit HeaderSetterWriterImpl;
 
 interface
+{$H+}
 
-uses HeaderIntf, SetHeaderIntf;
+uses
+    HeaderIntf,
+    SetHeaderIntf;
 
 type
 

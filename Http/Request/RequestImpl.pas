@@ -1,6 +1,7 @@
 unit RequestImpl;
 
 interface
+{$H+}
 
 uses
     EnvironmentIntf,

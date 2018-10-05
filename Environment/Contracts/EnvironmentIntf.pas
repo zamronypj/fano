@@ -1,6 +1,7 @@
 unit EnvironmentIntf;
 
 interface
+{$H+}
 
 type
     {------------------------------------------------

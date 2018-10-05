@@ -1,8 +1,12 @@
 unit ContentLengthHeaderImpl;
 
-uses HeaderIntf, SetHeaderIntf, HeaderSetterWriterImpl;
-
 interface
+{$H+}
+
+uses
+  HeaderIntf,
+  SetHeaderIntf,
+  HeaderSetterWriterImpl;
 
 type
 

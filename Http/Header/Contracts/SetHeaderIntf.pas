@@ -1,6 +1,7 @@
 unit SetHeaderIntf;
 
 interface
+{$H+}
 
 type
     {------------------------------------------------
