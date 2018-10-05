@@ -12,7 +12,7 @@ type
      get config
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
-    IWebConfigurationFactory = interface(IDependencyFactory)
+    IAppConfigurationFactory = interface(IDependencyFactory)
         ['{52972D1B-CB7A-447B-9437-56D2C9063B5D}']
     end;
 

@@ -21,7 +21,7 @@ type
     public
         constructor create(const dc : IDependencyContainer);
         destructor destroy(); override;
-        function build(const env : IWebEnvironment) : IRequest;
+        function build(const env : ICGIEnvironment) : IRequest;
     end;
 
 implementation
@@ -39,7 +39,7 @@ uses
         dependencyContainer := nil;
     end;
 
-    function TRequestFactory.build(const env : IWebEnvironment) : IRequest;
+    function TRequestFactory.build(const env : ICGIEnvironment) : IRequest;
     begin
         result := TRequest.create(env);
     end;

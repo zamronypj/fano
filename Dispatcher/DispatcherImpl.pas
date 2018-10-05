@@ -31,7 +31,7 @@ type
             const reqFactory : IRequestFactory
         );
         destructor destroy; override;
-        function dispatchRequest(const env: IWebEnvironment) : IResponse;
+        function dispatchRequest(const env: ICGIEnvironment) : IResponse;
     end;
 
 implementation
@@ -58,7 +58,7 @@ uses
         requestFactory := nil;
     end;
 
-    function TDispatcher.dispatchRequest(const env: IWebEnvironment) : IResponse;
+    function TDispatcher.dispatchRequest(const env: ICGIEnvironment) : IResponse;
     var routeHandler : IRouteHandler;
         response : IResponse;
         request : IRequest;

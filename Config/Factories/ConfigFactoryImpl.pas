@@ -14,7 +14,7 @@ type
      factory class for TFanoConfig
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
-    TFanoConfigFactory = class (TFactory, IWebConfigurationFactory, IDependencyFactory)
+    TFanoConfigFactory = class (TFactory, IAppConfigurationFactory, IDependencyFactory)
     private
         configFilename : string;
     public

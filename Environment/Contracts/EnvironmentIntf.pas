@@ -10,7 +10,7 @@ type
 
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
-    IWebEnvironment = interface
+    ICGIEnvironment = interface
         ['{48E2E809-1176-4863-B940-D1E05CF1355C}']
 
         {-----------------------------------------

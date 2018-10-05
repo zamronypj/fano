@@ -15,16 +15,16 @@ type
     -----------------------------------------------}
     TRequest = class(TInterfacedObject, IRequest)
     private
-        webEnvironment : IWebEnvironment;
+        webEnvironment : ICGIEnvironment;
     public
-        constructor create(const env : IWebEnvironment);
+        constructor create(const env : ICGIEnvironment);
         destructor destroy(); override;
         function getQueryParam(const key: string) : string;
         function getCookieParam(const key: string) : string;
     end;
 
 implementation
-    constructor TRequest.create(const env : IWebEnvironment);
+    constructor TRequest.create(const env : ICGIEnvironment);
     begin
         webEnvironment := env;
     end;

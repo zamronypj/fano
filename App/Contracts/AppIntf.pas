@@ -17,7 +17,7 @@ type
     IWebApplication = interface(IRunnable)
         ['{DE7521ED-D26F-4E97-9618-D745D38F0814}']
         function getDependencyContainer() : IDependencyContainer;
-        function getEnvironment() : IWebEnvironment;
+        function getEnvironment() : ICGIEnvironment;
         function addMiddleware(const middleware : IMiddleware) : IWebApplication;
     end;
 
