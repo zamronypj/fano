@@ -45,7 +45,8 @@ type
 implementation
 
 uses
-    classes;
+    classes,
+    sysutils;
 
     constructor TTemplateView.create(
         const outputBufferInst : IOutputBuffer;
@@ -108,7 +109,14 @@ uses
     ) : string;
     var content :string;
     begin
-        content := readFileToString(templatePath);
-        result := templateParser.parse(content, viewParams);
+        try
+            content := readFileToString(templatePath);
+            result := templateParser.parse(content, viewParams);
+        except
+            on e : Exception do
+            begin
+                writeln('Read ' + e.message);
+            end;
+        end;
     end;
 end.

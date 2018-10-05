@@ -37,6 +37,7 @@ implementation
 
     destructor TController.destroy();
     begin
+        inherited destroy();
         gView := nil;
         viewParams := nil;
     end;
