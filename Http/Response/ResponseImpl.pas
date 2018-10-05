@@ -14,16 +14,16 @@ type
     -----------------------------------------------}
     TResponse = class(TInterfacedObject, IResponse)
     private
-        webEnvironment : IWebEnvironment;
+        webEnvironment : ICGIEnvironment;
     public
-        constructor create(const env : IWebEnvironment);
+        constructor create(const env : ICGIEnvironment);
         destructor destroy(); override;
         function write() : IResponse;
     end;
 
 implementation
 
-    constructor TResponse.create(const env : IWebEnvironment);
+    constructor TResponse.create(const env : ICGIEnvironment);
     begin
         webEnvironment := env;
     end;

@@ -1,7 +1,6 @@
-unit RegexImpl;
+unit NullRegexImpl;
 
 interface
-
 {$H+}
 
 uses
@@ -9,11 +8,10 @@ uses
 
 type
     {------------------------------------------------
-     basic class having capability to replace string
-     using regex
+     regex class that does nothing
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
-    TRegex = class(TInterfacedObject, IRegex)
+    TNullRegex = class(TInterfacedObject, IRegex)
     private
     public
         function replace(
@@ -30,21 +28,16 @@ implementation
 uses
     regexpr;
 
-    function TRegex.replace(
+    function TNullRegex.replace(
         const regexPattern : string;
         const source : string;
         const replacement : string
     ) : string;
     begin
-        result := ReplaceRegExpr(
-            regexPattern,
-            source,
-            replacement,
-            true
-        );
+        result := source;
     end;
 
-    function TRegex.quote(const regexPattern : string) : string;
+    function TNullRegex.quote(const regexPattern : string) : string;
     begin
         result := QuoteRegExprMetaChars(regexPattern);
     end;

@@ -17,25 +17,25 @@ type
 
     TFanoWebApplication = class(TInterfacedObject, IWebApplication, IRunnable, IRouteCollection)
     private
-        config : IWebConfiguration;
+        config : IAppConfiguration;
         dispatcher : IDispatcher;
-        environment : IWebEnvironment;
+        environment : ICGIEnvironment;
         routeCollection :IRouteCollection;
         dependencyContainer : IDependencyContainer;
 
         function execute() : IRunnable;
     public
         constructor create(
-            const cfg : IWebConfiguration;
+            const cfg : IAppConfiguration;
             const dispatcherInst : IDispatcher;
-            const env : IWebEnvironment;
+            const env : ICGIEnvironment;
             const routesInst : IRouteCollection;
             const dc : IDependencyContainer
         ); virtual;
         destructor destroy(); override;
         function run() : IRunnable;
         function getDependencyContainer() : IDependencyContainer;
-        function getEnvironment() : IWebEnvironment;
+        function getEnvironment() : ICGIEnvironment;
 
         //HTTP GET Verb handler
         function get(
@@ -89,9 +89,9 @@ uses
    ERouteHandlerNotFoundImpl;
 
     constructor TFanoWebApplication.create(
-        const cfg : IWebConfiguration;
+        const cfg : IAppConfiguration;
         const dispatcherInst : IDispatcher;
-        const env : IWebEnvironment;
+        const env : ICGIEnvironment;
         const routesInst : IRouteCollection;
         const dc : IDependencyContainer
     );
@@ -114,7 +114,7 @@ uses
 
     function TFanoWebApplication.execute() : IRunnable;
     var response : IResponse;
-        ev : IWebEnvironment;
+        ev : ICGIEnvironment;
     begin
         try
             ev := getEnvironment();
@@ -140,7 +140,7 @@ uses
         end;
     end;
 
-    function TFanoWebApplication.getEnvironment() : IWebEnvironment;
+    function TFanoWebApplication.getEnvironment() : ICGIEnvironment;
     begin
         result := environment;
     end;

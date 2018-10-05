@@ -16,7 +16,7 @@ type
 
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
-    TWebEnvironmentFactory = class(TFactory, IWebEnvironmentFactory, IDependencyFactory)
+    TCGIEnvironmentFactory = class(TFactory, ICGIEnvironmentFactory, IDependencyFactory)
     public
         function build() : IDependencyAware; override;
     end;
@@ -26,9 +26,9 @@ implementation
 uses
     EnvironmentImpl;
 
-    function TWebEnvironmentFactory.build() : IDependencyAware;
+    function TCGIEnvironmentFactory.build() : IDependencyAware;
     begin
-        result := TWebEnvironment.create();
+        result := TCGIEnvironment.create();
     end;
 
 end.

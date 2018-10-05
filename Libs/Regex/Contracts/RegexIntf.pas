@@ -2,6 +2,8 @@ unit RegexIntf;
 
 interface
 
+{$H+}
+
 type
     {------------------------------------------------
      interface for any class having capability to replace string

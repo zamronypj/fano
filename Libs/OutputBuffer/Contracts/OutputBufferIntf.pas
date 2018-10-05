@@ -1,6 +1,7 @@
 unit OutputBufferIntf;
 
 interface
+{$H+}
 
 type
     {------------------------------------------------

@@ -1,6 +1,7 @@
 unit TemplateFileViewImpl;
 
 interface
+{$H+}
 
 uses
     ResponseIntf,

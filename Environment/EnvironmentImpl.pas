@@ -1,6 +1,7 @@
 unit EnvironmentImpl;
 
 interface
+{$H+}
 
 uses
     DependencyAwareIntf,
@@ -13,7 +14,7 @@ type
 
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
-    TWebEnvironment = class(TInterfacedObject, IWebEnvironment, IDependencyAware)
+    TCGIEnvironment = class(TInterfacedObject, ICGIEnvironment, IDependencyAware)
     private
     public
         {-----------------------------------------
@@ -105,7 +106,7 @@ uses
     {-----------------------------------------
      Retrieve GATEWAY_INTERFACE environment variable
     ------------------------------------------}
-    function TWebEnvironment.gatewayInterface() : string;
+    function TCGIEnvironment.gatewayInterface() : string;
     begin
         result := getenv('GATEWAY_INTERFACE');
     end;
@@ -113,7 +114,7 @@ uses
     {-----------------------------------------
      Retrieve REMOTE_ADDR environment variable
     ------------------------------------------}
-    function TWebEnvironment.remoteAddr() : string;
+    function TCGIEnvironment.remoteAddr() : string;
     begin
         result := getenv('REMOTE_ADDR');
     end;
@@ -121,7 +122,7 @@ uses
     {-----------------------------------------
      Retrieve REMOTE_PORT environment variable
     ------------------------------------------}
-    function TWebEnvironment.remotePort() : string;
+    function TCGIEnvironment.remotePort() : string;
     begin
         result := getenv('REMOTE_PORT');
     end;
@@ -129,7 +130,7 @@ uses
     {-----------------------------------------
      Retrieve SERVER_ADDR environment variable
     ------------------------------------------}
-    function TWebEnvironment.serverAddr() : string;
+    function TCGIEnvironment.serverAddr() : string;
     begin
         result := getenv('SERVER_ADDR');
     end;
@@ -137,7 +138,7 @@ uses
     {-----------------------------------------
      Retrieve SERVER_PORT environment variable
     ------------------------------------------}
-    function TWebEnvironment.serverPort() : string;
+    function TCGIEnvironment.serverPort() : string;
     begin
         result := getenv('SERVER_PORT');
     end;
@@ -145,7 +146,7 @@ uses
     {-----------------------------------------
      Retrieve DOCUMENT_ROOT environment variable
     ------------------------------------------}
-    function TWebEnvironment.documentRoot() : string;
+    function TCGIEnvironment.documentRoot() : string;
     begin
         result := getenv('DOCUMENT_ROOT');
     end;
@@ -153,7 +154,7 @@ uses
     {-----------------------------------------
      Retrieve REQUEST_METHOD environment variable
     ------------------------------------------}
-    function TWebEnvironment.requestMethod() : string;
+    function TCGIEnvironment.requestMethod() : string;
     begin
         result := getenv('REQUEST_METHOD');
     end;
@@ -161,7 +162,7 @@ uses
     {-----------------------------------------
      Retrieve REQUEST_SCHEME environment variable
     ------------------------------------------}
-    function TWebEnvironment.requestScheme() : string;
+    function TCGIEnvironment.requestScheme() : string;
     begin
         result := getenv('REQUEST_SCHEME');
     end;
@@ -169,7 +170,7 @@ uses
     {-----------------------------------------
      Retrieve REQUEST_URI environment variable
     ------------------------------------------}
-    function TWebEnvironment.requestUri() : string;
+    function TCGIEnvironment.requestUri() : string;
     begin
         result := getenv('REQUEST_URI');
     end;
@@ -177,7 +178,7 @@ uses
     {-----------------------------------------
      Retrieve QUERY_STRING environment variable
     ------------------------------------------}
-    function TWebEnvironment.queryString() : string;
+    function TCGIEnvironment.queryString() : string;
     begin
         result := getenv('QUERY_STRING');
     end;
@@ -185,7 +186,7 @@ uses
     {-----------------------------------------
      Retrieve SERVER_NAME environment variable
     ------------------------------------------}
-    function TWebEnvironment.serverName() : string;
+    function TCGIEnvironment.serverName() : string;
     begin
         result := getenv('SERVER_NAME');
     end;
@@ -193,7 +194,7 @@ uses
     {-----------------------------------------
      Retrieve CONTENT_TYPE environment variable
     ------------------------------------------}
-    function TWebEnvironment.contentType() : string;
+    function TCGIEnvironment.contentType() : string;
     begin
         result := getenv('CONTENT_TYPE');
     end;
@@ -201,7 +202,7 @@ uses
     {-----------------------------------------
      Retrieve HTTP_HOST environment variable
     ------------------------------------------}
-    function TWebEnvironment.httpHost() : string;
+    function TCGIEnvironment.httpHost() : string;
     begin
         result := getenv('HTTP_HOST');
     end;
@@ -209,7 +210,7 @@ uses
     {-----------------------------------------
      Retrieve HTTP_USER_AGENT environment variable
     ------------------------------------------}
-    function TWebEnvironment.httpUserAgent() : string;
+    function TCGIEnvironment.httpUserAgent() : string;
     begin
         result := getenv('HTTP_USER_AGENT');
     end;
@@ -217,7 +218,7 @@ uses
     {-----------------------------------------
      Retrieve HTTP_ACCEPT environment variable
     ------------------------------------------}
-    function TWebEnvironment.httpAccept() : string;
+    function TCGIEnvironment.httpAccept() : string;
     begin
         result := getenv('HTTP_ACCEPT');
     end;
@@ -225,7 +226,7 @@ uses
     {-----------------------------------------
      Retrieve HTTP_ACCEPT_LANGUAGE environment variable
     ------------------------------------------}
-    function TWebEnvironment.httpAcceptLanguage() : string;
+    function TCGIEnvironment.httpAcceptLanguage() : string;
     begin
         result := getenv('HTTP_ACCEPT_LANGUAGE');
     end;

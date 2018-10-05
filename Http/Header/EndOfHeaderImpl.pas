@@ -1,8 +1,10 @@
 unit EndOfHeaderImpl;
 
 interface
+{$H+}
 
-uses HeaderIntf;
+uses
+    HeaderIntf;
 
 type
 

@@ -1,6 +1,7 @@
 unit TemplateParserIntf;
 
 interface
+{$H+}
 
 uses
     ViewParamsIntf;

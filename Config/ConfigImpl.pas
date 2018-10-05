@@ -8,7 +8,7 @@ uses
 
 type
 
-    TFanoConfig = class(TInterfacedObject, IWebConfiguration, IDependencyAware)
+    TFanoConfig = class(TInterfacedObject, IAppConfiguration, IDependencyAware)
     private
     public
         constructor create(const configFile : string);

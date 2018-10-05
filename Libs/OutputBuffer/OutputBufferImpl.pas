@@ -1,7 +1,7 @@
 unit OutputBufferImpl;
 
 interface
-
+{$H+}
 uses
     classes,
     DependencyAwareIntf,

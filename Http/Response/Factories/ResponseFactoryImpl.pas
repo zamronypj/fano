@@ -20,7 +20,7 @@ type
     public
         constructor create(const dc : IDependencyContainer);
         destructor destroy(); override;
-        function build(const env : IWebEnvironment) : IResponse;
+        function build(const env : ICGIEnvironment) : IResponse;
     end;
 
 implementation
@@ -37,7 +37,7 @@ uses
         dependencyContainer := nil;
     end;
 
-    function TResponseFactory.build(const env : IWebEnvironment) : IResponse;
+    function TResponseFactory.build(const env : ICGIEnvironment) : IResponse;
     begin
         result := TResponse.create(env);
     end;

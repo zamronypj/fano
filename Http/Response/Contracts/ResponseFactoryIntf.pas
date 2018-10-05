@@ -14,7 +14,7 @@ type
     -----------------------------------------------}
     IResponseFactory = interface
         ['{05A648AA-8AC1-4068-87F4-269D9A8D6C58}']
-        function build(const env : IWebEnvironment) : IResponse;
+        function build(const env : ICGIEnvironment) : IResponse;
     end;
 
 implementation
