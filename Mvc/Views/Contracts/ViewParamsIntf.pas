@@ -3,7 +3,7 @@ unit ViewParamsIntf;
 interface
 
 uses
-    BasicTypes;
+    classes;
 
 type
 
@@ -14,9 +14,9 @@ type
     -----------------------------------------------}
     IViewParameters = interface
         ['{F93CA7D6-4454-4A04-A585-78BFF12F49E3}']
-        function vars() : TArrayOfStrings;
+        function vars() : TStrings;
         function getVar(const varName : string) : string;
-        function setVar(const varName : string; const value :string) : IViewParameters;
+        function setVar(const varName : string; const valueData :string) : IViewParameters;
     end;
 
 implementation

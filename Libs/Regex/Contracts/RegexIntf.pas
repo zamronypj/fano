@@ -11,10 +11,12 @@ type
     IRegex = interface
         ['{E08AD12B-C606-48FF-A9FA-728EAB14AB35}']
         function replace(
-            const regex : string;
+            const regexPattern : string;
             const source : string;
             const replacement : string
         ) : string;
+
+        function quote(const regexPattern : string) : string;
     end;
 
 implementation

@@ -3,8 +3,8 @@ unit ViewParamsImpl;
 interface
 
 uses
-    StrHashMap,
-    BasicTypes,
+    classes,
+    contnrs,
     ViewParamsIntf;
 
 type
@@ -15,31 +15,55 @@ type
     -----------------------------------------------}
     TViewParameters = class(TInterfacedObject, IViewParameters)
     private
-        keyValueMap : TStringHashMap;
-        keys : TArrayOfStrings;
+        keyValueMap : TFPStringHashTable;
+        keys : TStringList;
     public
-        function vars() : TArrayOfStrings;
+        constructor create();
+        destructor destroy(); override;
+        function vars() : TStrings;
         function getVar(const varName : string) : string;
-        function setVar(const varName : string; const value :string) : IViewParameters;
+        function setVar(const varName : string; const valueData :string) : IViewParameters;
     end;
 
 implementation
 
-    function TViewParameters.vars() : TArrayOfStrings;
+    constructor TViewParameters.create();
+    begin
+        keyValueMap := TFPStringHashTable.create();
+        keys := TStringList.create();
+    end;
+
+    destructor TViewParameters.destroy();
+    begin
+        inherited destroy();
+        keyValueMap.free();
+        keys.free();
+    end;
+
+    function TViewParameters.vars() : TStrings;
     begin
         result := keys;
     end;
 
     function TViewParameters.getVar(const varName : string) : string;
     begin
-       result := keyValueMap.find(varName);
+       result := keyValueMap[varName];
     end;
 
     function TViewParameters.setVar(
         const varName : string;
-        const value :string
+        const valueData :string
     ) : IViewParameters;
     begin
-       result := self;
+        if (keyValueMap[varName] = '') then
+        begin
+            //not exists
+            keyValueMap.add(varName, valueData);
+            keys.add(varName);
+        end else
+        begin
+            keyValueMap[varName] := valueData;
+        end;;
+        result := self;
     end;
 end.
