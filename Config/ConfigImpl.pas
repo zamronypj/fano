@@ -3,12 +3,12 @@ unit ConfigImpl;
 interface
 
 uses
-    DependencyAwareIntf,
+    DependencyIntf,
     ConfigIntf;
 
 type
 
-    TFanoConfig = class(TInterfacedObject, IAppConfiguration, IDependencyAware)
+    TFanoConfig = class(TInterfacedObject, IAppConfiguration, IDependency)
     private
     public
         constructor create(const configFile : string);

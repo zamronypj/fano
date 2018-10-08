@@ -3,7 +3,7 @@ unit RouteCollectionFactoryImpl;
 interface
 
 uses
-    DependencyAwareIntf,
+    DependencyIntf,
     DependencyFactoryIntf,
     DependencyContainerIntf,
     FactoryImpl;
@@ -12,7 +12,7 @@ type
 
     TRouteCollectionFactory = class(TFactory, IDependencyFactory)
     public
-        function build() : IDependencyAware; override;
+        function build() : IDependency; override;
     end;
 
 implementation
@@ -21,7 +21,7 @@ uses
     RouteCollectionImpl,
     RouteListImpl;
 
-    function TRouteCollectionFactory.build() : IDependencyAware;
+    function TRouteCollectionFactory.build() : IDependency;
     begin
         result := TRouteCollection.create(TRouteList.create());
     end;

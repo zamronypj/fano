@@ -3,7 +3,7 @@ unit BaseFactoryImpl;
 interface
 
 uses
-    DependencyAwareIntf,
+    DependencyIntf,
     DependencyFactoryIntf
     DependencyContainerIntf;
 
@@ -19,7 +19,7 @@ type
     public
         constructor create(const dc : IDependencyContainer);
         destructor destroy(); override;
-        function build() : IDependencyAware; virtual; abstract;
+        function build() : IDependency; virtual; abstract;
     end;
 
 implementation

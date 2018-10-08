@@ -4,7 +4,7 @@ interface
 
 uses
     contnrs,
-    DependencyAwareIntf,
+    DependencyIntf,
     DependencyFactoryIntf,
     DependencyContainerIntf,
     DependencyListIntf;
@@ -32,7 +32,7 @@ type
 
         function add(const serviceName :string; const service : IDependencyFactory) : IDependencyContainer;
         function factory(const serviceName :string; const service : IDependencyFactory) : IDependencyContainer;
-        function get(const serviceName : string) : IDependencyAware;
+        function get(const serviceName : string) : IDependency;
     end;
 
 implementation
@@ -44,7 +44,7 @@ type
 
     TDependencyRec = record
         factory : IDependencyFactory;
-        instance : IDependencyAware;
+        instance : IDependency;
         singleInstance : boolean;
     end;
     PDependencyRec = ^TDependencyRec;
@@ -99,7 +99,7 @@ type
         result := addDependency(serviceName, service, false);
     end;
 
-    function TDependencyContainer.get(const serviceName : string) : IDependencyAware;
+    function TDependencyContainer.get(const serviceName : string) : IDependency;
     var depRec : PDependencyRec;
     begin
         depRec := dependencyList.find(serviceName);

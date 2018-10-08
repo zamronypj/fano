@@ -1,10 +1,17 @@
+{*!
+ * Fano Web Framework (https://fano.juhara.id)
+ *
+ * @link      https://github.com/zamronypj/fano
+ * @copyright Copyright (c) 2018 Zamrony P. Juhara
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (Apache License 2.0)
+ *}
 unit DispatcherImpl;
 
 interface
 
 uses
     DispatcherIntf,
-    DependencyAwareIntf,
+    DependencyIntf,
     EnvironmentIntf,
     ResponseIntf,
     ResponseFactoryIntf,
@@ -19,7 +26,7 @@ type
      request and return response
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
-    TDispatcher = class(TInterfacedObject, IDispatcher, IDependencyAware)
+    TDispatcher = class(TInterfacedObject, IDispatcher, IDependency)
     private
         routeCollection : IRouteMatcher;
         responseFactory : IResponseFactory;
