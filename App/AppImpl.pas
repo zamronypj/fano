@@ -11,7 +11,8 @@ uses
    EnvironmentIntf,
    RouteCollectionIntf,
    RouteHandlerIntf,
-   MiddlewareIntf;
+   MiddlewareIntf,
+   MiddlewareCollectionIntf;
 
 type
 
@@ -21,7 +22,7 @@ type
         dispatcher : IDispatcher;
         environment : ICGIEnvironment;
         routeCollection :IRouteCollection;
-        dependencyContainer : IDependencyContainer;
+        middlewareList : IMiddlewareCollection;
 
         function execute() : IRunnable;
     public
@@ -30,11 +31,10 @@ type
             const dispatcherInst : IDispatcher;
             const env : ICGIEnvironment;
             const routesInst : IRouteCollection;
-            const dc : IDependencyContainer
+            const middlewares : IMiddlewareCollection
         ); virtual;
         destructor destroy(); override;
         function run() : IRunnable;
-        function getDependencyContainer() : IDependencyContainer;
         function getEnvironment() : ICGIEnvironment;
 
         //HTTP GET Verb handler
@@ -93,23 +93,24 @@ uses
         const dispatcherInst : IDispatcher;
         const env : ICGIEnvironment;
         const routesInst : IRouteCollection;
-        const dc : IDependencyContainer
+        const middlewares : IMiddlewareCollection
     );
     begin
         config := cfg;
         dispatcher := dispatcherInst;
         environment := env;
         routeCollection := routesInst;
-        dependencyContainer := dc;
+        middlewareList := middlewares;
     end;
 
     destructor TFanoWebApplication.destroy();
     begin
+        inherited destroy();
         config := nil;
         dispatcher := nil;
         environment := nil;
         routeCollection := nil;
-        dependencyContainer := nil;
+        middlewareList := nil;
     end;
 
     function TFanoWebApplication.execute() : IRunnable;
@@ -143,11 +144,6 @@ uses
     function TFanoWebApplication.getEnvironment() : ICGIEnvironment;
     begin
         result := environment;
-    end;
-
-    function TFanoWebApplication.getDependencyContainer() : IDependencyContainer;
-    begin
-        result := dependencyContainer;
     end;
 
     //HTTP GET Verb handler
@@ -222,7 +218,7 @@ uses
 
     function TFanoWebApplication.addMiddleware(const middleware : IMiddleware) : IWebApplication;
     begin
-        //TODO:add middleware
+        middlewareList.add(middleware);
         result := self;
     end;
 end.

@@ -3,7 +3,8 @@ unit MiddlewareCollectionImpl;
 interface
 
 uses
-    contnrs,
+    classes,
+    DependencyIntf,
     MiddlewareIntf,
     MiddlewareCollectionIntf;
 
@@ -13,9 +14,9 @@ type
      manage one or more middlewares
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
-    TMiddlewareCollection = class(TInterfacedObject, IMiddlewareCollection)
+    TMiddlewareCollection = class(TInterfacedObject, IMiddlewareCollection, IDependency)
     private
-        middlewareList : TFPList;
+        middlewareList : TInterfaceList;
     public
         constructor create();
         destructor destroy(); override;
@@ -29,17 +30,15 @@ implementation
 
     constructor TMiddlewareCollection.create();
     begin
-        middlewareList := TFPList.Create();
+        middlewareList := TInterfaceList.Create();
     end;
 
     destructor TMiddlewareCollection.destroy();
-    var middleware : IMiddleware;
-        i:integer;
+    var i:integer;
     begin
+        inherited destroy();
         for i := middlewareList.count - 1 downto 0 do
         begin
-            middleware := middlewareList.items[i];
-            middleware := nil;
             middlewareList.delete(i);
         end;
         middlewareList.free();
@@ -57,10 +56,8 @@ implementation
     end;
 
     function TMiddlewareCollection.get(const indx : integer) : IMiddleware;
-      var middleware : IMiddleware;
     begin
-        middleware := middlewareList.items[i];
-        result := middleware;
+        result := middlewareList.items[indx] as IMiddleware;
     end;
 
     function TMiddlewareCollection.merge(const middlewares : IMiddlewareCollection) : IMiddlewareCollection;

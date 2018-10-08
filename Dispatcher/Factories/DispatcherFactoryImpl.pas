@@ -34,7 +34,7 @@ uses
     function TDispatcherFactory.build() : IDependency;
     begin
         result := TDispatcher.create(
-            dependencyContainer.get('globalMiddlewares') as IMiddlewareCollection,
+            dependencyContainer.get('middlewares') as IMiddlewareCollection,
             TMiddlewareChainFactory.create(),
             dependencyContainer.get('router') as IRouteMatcher,
             TResponseFactory.create(dependencyContainer),
