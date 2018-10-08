@@ -4,7 +4,8 @@ interface
 
 uses
     EnvironmentIntf,
-    ResponseIntf;
+    ResponseIntf,
+    CloneableIntf;
 
 type
     {------------------------------------------------
@@ -12,13 +13,14 @@ type
      HTTP response
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
-    TResponse = class(TInterfacedObject, IResponse)
+    TResponse = class(TInterfacedObject, IResponse, ICloneable)
     private
         webEnvironment : ICGIEnvironment;
     public
         constructor create(const env : ICGIEnvironment);
         destructor destroy(); override;
         function write() : IResponse;
+        function clone() : ICloneable;
     end;
 
 implementation
@@ -37,5 +39,12 @@ implementation
     begin
         //TODO:
         result := self;
+    end;
+
+    function TResponse.clone() : ICloneable;
+    var clonedObj : TResponse;
+    begin
+        clonedObj := TResponse.create(webEnvironment);
+        result := clonedObj;
     end;
 end.
