@@ -5,19 +5,20 @@
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
  * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (Apache License 2.0)
  *}
-unit DependencyIntf;
+unit CloneableIntf;
 
 interface
 
 type
     {*!
-     interface for any class that can be injected in
-     depdendency container
+     interface for any class that can clone itself
+     as new instance
 
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     *}
-    IDependency = interface
-        ['{44A9B67E-2E1B-4CFF-A949-089310982C48}']
+    ICloneable = interface
+        ['{ED9890E5-F8CA-4544-ADC7-495E6BB2650E}']
+        function clone() : ICloneable;
     end;
 
 implementation
