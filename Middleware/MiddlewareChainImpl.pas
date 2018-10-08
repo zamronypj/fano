@@ -49,17 +49,21 @@ implementation
     function TMiddlewareChain.handleChainedRequest(
         const request : IRequest;
         const response : IResponse;
-        const middleware : IRequestHandler
+        const middleware : IRequestHandler;
+        var continue : boolean;
     ) : IResponse;
     var newResponse : IResponse;
     begin
-        if (middleware <> nil) then
+        if (middleware = nil) then
         begin
-            newResponse := middleware.handleRequest(request, response);
-            result := handleChainedRequest(request, newResponse, next());
+            newResponse := middleware.handleChainedRequest(request, response, continue);
+            if (continue) then
+            begin
+                result := handleChainedRequest(request, newResponse, next());
+            end;
         end else
         begin
-            result := response;
+            continue := false;
         end;
     end;
 

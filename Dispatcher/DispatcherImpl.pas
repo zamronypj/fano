@@ -3,7 +3,7 @@
  *
  * @link      https://github.com/zamronypj/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (Apache License 2.0)
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
  *}
 unit DispatcherImpl;
 
@@ -39,11 +39,8 @@ type
         appMiddlewareList : IMiddlewareCollection;
         middlewareChainFactory : IMiddlewareChainFactory;
 
-
-        function buildMiddlewareChain(
-              const routeHandler : IRequestHandler;
-              const objWithCollection : IMiddlewareCollectionAware
-        ) : IMiddlewareChain;
+        function executeBeforeMiddlewares(const request : IRequest; const response : IResponse; var continue : boolean) : IResponse;
+        function executeAfterMiddlewares(const request : IRequest; const response : IResponse; var continue : boolean) : IResponse;
     public
         constructor create(
             const appMiddlewares : IMiddlewareCollection;
@@ -101,12 +98,21 @@ uses
         result := middlewareChainFactory.build(collection);
     end;
 
+    function TDispatcher.executeBeforeMiddlewares(const request : IRequest; const response : IResponse; var continue : boolean) : IResponse;
+    begin;
+    end;
+
+    function TDispatcher.executeAfterMiddlewares(const request : IRequest; const response : IResponse; var continue : boolean) : IResponse;
+    begin;
+    end;
+
     function TDispatcher.dispatchRequest(const env: ICGIEnvironment) : IResponse;
     var routeHandler : IRouteHandler;
         response : IResponse;
         request : IRequest;
         method, uri : string;
         middlewares : IMiddlewareChain;
+        i, len : integer;
     begin
         try
             method := env.requestMethod();
@@ -118,11 +124,33 @@ uses
             end;
             response := responseFactory.build(env);
             request := requestFactory.build(env);
-            middlewares := buildMiddlewareChain(
-                routeHandler,
-                routeHandler as IMiddlewareCollectionAware
-            );
-            result := middlewares.handleChainedRequest(request, response, middlewares.next());
+
+            len := beforeMiddlewares.count;
+            for i:=0 to len-1 do
+            begin
+                middleware := beforeMiddlewares[i];
+                response := middleware.handleRequest(request, response, continue);
+                if (not continue) then
+                begin
+                    result := response;
+                    exit();
+                end;
+            end;
+
+            response := routeHandler.handleRequest(request, response);
+
+            len := afterMiddlewares.count;
+            for i:=0 to len-1 do
+            begin
+                middleware := afterMiddlewares[i];
+                response := middleware.handleRequest(request, response, continue);
+                if (not continue) then
+                begin
+                    result := response;
+                    exit();
+                end;
+            end;
+
         finally
             response := nil;
             request := nil;
