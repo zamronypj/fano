@@ -1,11 +1,18 @@
+{*!
+ * Fano Web Framework (https://fano.juhara.id)
+ *
+ * @link      https://github.com/zamronypj/fano
+ * @copyright Copyright (c) 2018 Zamrony P. Juhara
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
+ *}
 unit MiddlewareChainIntf;
 
 interface
 
 uses
-   RequestHandlerIntf,
    RequestIntf,
-   ResponseIntf;
+   ResponseIntf,
+   RequestHandlerIntf;
 
 type
     {------------------------------------------------
@@ -15,12 +22,11 @@ type
     -----------------------------------------------}
     IMiddlewareChain = interface
         ['{47B9A178-4A0A-4599-AD67-C73B8E42B82A}']
-        function handleChainedRequest(
+        function execute(
             const request : IRequest;
             const response : IResponse;
-            const nextMiddleware : IRequestHandler
+            const requestHandler : IRequestHandler
         ) : IResponse;
-        function next() : IRequestHandler;
     end;
 
 implementation

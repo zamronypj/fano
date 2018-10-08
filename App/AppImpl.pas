@@ -11,8 +11,7 @@ uses
    EnvironmentIntf,
    RouteCollectionIntf,
    RouteHandlerIntf,
-   MiddlewareIntf,
-   MiddlewareCollectionIntf;
+   MiddlewareCollectionAwareIntf;
 
 type
 
@@ -22,7 +21,7 @@ type
         dispatcher : IDispatcher;
         environment : ICGIEnvironment;
         routeCollection :IRouteCollection;
-        middlewareList : IMiddlewareCollection;
+        middlewareList : IMiddlewareCollectionAware;
 
         function execute() : IRunnable;
     public
@@ -31,7 +30,7 @@ type
             const dispatcherInst : IDispatcher;
             const env : ICGIEnvironment;
             const routesInst : IRouteCollection;
-            const middlewares : IMiddlewareCollection
+            const middlewares : IMiddlewareCollectionAware
         ); virtual;
         destructor destroy(); override;
         function run() : IRunnable;
@@ -79,7 +78,7 @@ type
             const routeHandler : IRouteHandler
         ) : IRouteCollection;
 
-        function addMiddleware(const middleware : IMiddleware) : IWebApplication;
+        function getMiddlewares() : IMiddlewareCollectionAware;
     end;
 
 implementation
@@ -93,7 +92,7 @@ uses
         const dispatcherInst : IDispatcher;
         const env : ICGIEnvironment;
         const routesInst : IRouteCollection;
-        const middlewares : IMiddlewareCollection
+        const middlewares : IMiddlewareCollectionAware
     );
     begin
         config := cfg;
@@ -216,9 +215,8 @@ uses
        result := self;
     end;
 
-    function TFanoWebApplication.addMiddleware(const middleware : IMiddleware) : IWebApplication;
+    function TFanoWebApplication.getMiddlewares() : IMiddlewareCollectionAware;
     begin
-        middlewareList.add(middleware);
-        result := self;
+        result := middlewareList;
     end;
 end.

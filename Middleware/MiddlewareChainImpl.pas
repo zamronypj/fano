@@ -1,3 +1,10 @@
+{*!
+ * Fano Web Framework (https://fano.juhara.id)
+ *
+ * @link      https://github.com/zamronypj/fano
+ * @copyright Copyright (c) 2018 Zamrony P. Juhara
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
+ *}
 unit MiddlewareChainImpl;
 
 interface
@@ -12,71 +19,145 @@ uses
 
 type
     {------------------------------------------------
-     interface for any class having capability to
-     manage one or more middlewares
+     class that chain one or more middlewares and have
+     capability to execute middlewares
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
     TMiddlewareChain = class(TInterfacedObject, IMiddlewareChain)
     private
-        middlewareList : IMiddlewareCollection;
-        currentIndex : integer;
-    public
-        constructor create(const middlewares : IMiddlewareCollection);
-        destructor destroy(); override;
+        ///application global middleware list executed before route handler
+        appBeforeMiddlewareList : IMiddlewareCollection;
 
-        function handleChainedRequest(
+        ///application global middleware list executed after route handler
+        appAfterMiddlewareList : IMiddlewareCollection;
+
+        ///route middleware list executed before route handler
+        routeBeforeMiddlewareList : IMiddlewareCollection;
+
+        ///route middleware list executed after route handler
+        routeAfterMiddlewareList : IMiddlewareCollection;
+
+        function executeMiddlewares(
+            const middlewares : IMiddlewareCollection;
             const request : IRequest;
             const response : IResponse;
-            const middleware : IRequestHandler
+            var canContinue : boolean
         ) : IResponse;
-        function next() : IRequestHandler;
+
+        function executeBeforeMiddlewares(
+            const request : IRequest;
+            const response : IResponse;
+            var canContinue : boolean
+        ) : IResponse;
+
+        function executeAfterMiddlewares(
+            const request : IRequest;
+            const response : IResponse;
+            var canContinue : boolean
+        ) : IResponse;
+    public
+        constructor create(
+            const appBeforeMiddlewares : IMiddlewareCollection;
+            const appAfterMiddlewares : IMiddlewareCollection;
+            const routeBeforeMiddlewares : IMiddlewareCollection;
+            const routeAfterMiddlewares : IMiddlewareCollection
+        );
+
+        destructor destroy(); override;
+
+        function execute(
+            const request : IRequest;
+            const response : IResponse;
+            const requestHandler : IRequestHandler
+        ) : IResponse;
     end;
 
 implementation
 
-    constructor TMiddlewareChain.create(const middlewares : IMiddlewareCollection);
+    constructor TMiddlewareChain.create(
+        const appBeforeMiddlewares : IMiddlewareCollection;
+        const appAfterMiddlewares : IMiddlewareCollection;
+        const routeBeforeMiddlewares : IMiddlewareCollection;
+        const routeAfterMiddlewares : IMiddlewareCollection
+    );
     begin
-        middlewareList := middlewares;
-        currentIndex := 0;
+        appBeforeMiddlewareList := appBeforeMiddlewares;
+        appAfterMiddlewareList := appAfterMiddlewares;
+        routeBeforeMiddlewareList := routeBeforeMiddlewares;
+        routeAfterMiddlewareList := routeAfterMiddlewares;
     end;
 
     destructor TMiddlewareChain.destroy();
     begin
         inherited destroy();
-        middlewareList := nil;
+        appBeforeMiddlewareList := nil;
+        appAfterMiddlewareList := nil;
+        routeBeforeMiddlewareList := nil;
+        routeAfterMiddlewareList := nil;
     end;
 
-    function TMiddlewareChain.handleChainedRequest(
+    function TMiddlewareChain.executeMiddlewares(
+        const middlewares : IMiddlewareCollection;
         const request : IRequest;
         const response : IResponse;
-        const middleware : IRequestHandler;
-        var continue : boolean;
+        var canContinue : boolean
     ) : IResponse;
-    var newResponse : IResponse;
+    var i, len : integer;
+        newResponse : IResponse;
+        middleware : IMiddleware;
     begin
-        if (middleware = nil) then
+        newResponse := response;
+        len := middlewares.count();
+        for i := 0 to len-1 do
         begin
-            newResponse := middleware.handleChainedRequest(request, response, continue);
-            if (continue) then
+            middleware := middlewares.get(i);
+            newResponse := middleware.handleRequest(request, newResponse, canContinue);
+            if (not canContinue) then
             begin
-                result := handleChainedRequest(request, newResponse, next());
+                result := response;
+                exit();
             end;
-        end else
-        begin
-            continue := false;
         end;
+        result := newResponse;
     end;
 
-    function TMiddlewareChain.next() : IRequestHandler;
+    function TMiddlewareChain.executeBeforeMiddlewares(
+        const request : IRequest;
+        const response : IResponse;
+        var canContinue : boolean
+    ) : IResponse;
+    var beforeMiddlewares : IMiddlewareCollection;
     begin
-        if (currentIndex < middlewareList.count() - 1) then
-        begin
-            inc(currentIndex);
-            result := middlewareList.get(currentIndex);
-        end else
-        begin
-            result := nil;
-        end;
+        beforeMiddlewares := appBeforeMiddlewareList.merge(routeBeforeMiddlewareList);
+        result := executeMiddlewares(beforeMiddlewares, request, response, canContinue);
     end;
 
+    function TMiddlewareChain.executeAfterMiddlewares(
+        const request : IRequest;
+        const response : IResponse;
+        var canContinue : boolean
+    ) : IResponse;
+    var afterMiddlewares : IMiddlewareCollection;
+    begin
+        afterMiddlewares := appAfterMiddlewareList.merge(routeAfterMiddlewareList);
+        result := executeMiddlewares(afterMiddlewares, request, response, canContinue);
+    end;
+
+    function TMiddlewareChain.execute(
+        const request : IRequest;
+        const response : IResponse;
+        const requestHandler : IRequestHandler
+    ) : IResponse;
+    var canContinue : boolean;
+        newResponse : IResponse;
+    begin
+        canContinue := true;
+        newResponse := executeBeforeMiddlewares(request, response, canContinue);
+        if (canContinue) then
+        begin
+            newResponse := requestHandler.handleRequest(request, newResponse);
+            newResponse := executeAfterMiddlewares(request, newResponse, canContinue);
+        end;
+        result := newResponse;
+    end;
 end.

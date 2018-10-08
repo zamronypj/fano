@@ -1,21 +1,19 @@
-unit RouteHandlerImpl;
+unit MiddlewareCollectionAwareImpl;
 
 interface
 
 uses
-    RequestIntf,
-    ResponseIntf,
+    DependencyIntf,
     MiddlewareIntf,
     MiddlewareCollectionIntf,
-    MiddlewareCollectionAwareIntf,
-    RouteHandlerIntf;
+    MiddlewareCollectionAwareIntf;
 
 type
     {------------------------------------------------
-     base class for route handler
+     class that can maintain before and after middlewares
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
-    TRouteHandler = class(TInterfacedObject, IRouteHandler, IMiddlewareCollectionAware)
+    TMiddlewareCollectionAware = class(TInterfacedObject, IDependency, IMiddlewareCollectionAware)
     private
         beforeMiddlewareList : IMiddlewareCollection;
         afterMiddlewareList : IMiddlewareCollection;
@@ -27,18 +25,13 @@ type
         destructor destroy(); override;
         function addBeforeMiddleware(const middleware : IMiddleware) : IMiddlewareCollectionAware;
         function addAfterMiddleware(const middleware : IMiddleware) : IMiddlewareCollectionAware;
-        function getMiddlewares() : IMiddlewareCollectionAware;
         function getBeforeMiddlewares() : IMiddlewareCollection;
         function getAfterMiddlewares() : IMiddlewareCollection;
-        function handleRequest(
-            const request : IRequest;
-            const response : IResponse
-        ) : IResponse; virtual; abstract;
     end;
 
 implementation
 
-    constructor TRouteHandler.create(
+    constructor TMiddlewareCollectionAware.create(
         const beforeMiddlewares : IMiddlewareCollection;
         const afterMiddlewares : IMiddlewareCollection
     );
@@ -47,38 +40,33 @@ implementation
         afterMiddlewareList := afterMiddlewares;
     end;
 
-    destructor TRouteHandler.destroy();
+    destructor TMiddlewareCollectionAware.destroy();
     begin
         inherited destroy();
         beforeMiddlewareList := nil;
         afterMiddlewareList := nil;
     end;
 
-    function TRouteHandler.addBeforeMiddleware(const middleware : IMiddleware) : IMiddlewareCollectionAware;
+    function TMiddlewareCollectionAware.addBeforeMiddleware(const middleware : IMiddleware) : IMiddlewareCollectionAware;
     begin
         beforeMiddlewareList.add(middleware);
         result := self;
     end;
 
-    function TRouteHandler.addAfterMiddleware(const middleware : IMiddleware) : IMiddlewareCollectionAware;
+    function TMiddlewareCollectionAware.addAfterMiddleware(const middleware : IMiddleware) : IMiddlewareCollectionAware;
     begin
         afterMiddlewareList.add(middleware);
         result := self;
     end;
 
-    function TRouteHandler.getBeforeMiddlewares() : IMiddlewareCollection;
+    function TMiddlewareCollectionAware.getBeforeMiddlewares() : IMiddlewareCollection;
     begin
         result := beforeMiddlewareList;
     end;
 
-    function TRouteHandler.getAfterMiddlewares() : IMiddlewareCollection;
+    function TMiddlewareCollectionAware.getAfterMiddlewares() : IMiddlewareCollection;
     begin
         result := afterMiddlewareList;
-    end;
-
-    function TRouteHandler.getMiddlewares() : IMiddlewareCollectionAware;
-    begin
-        result := self;
     end;
 
 end.

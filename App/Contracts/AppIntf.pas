@@ -5,7 +5,7 @@ interface
 uses
     RunnableIntf,
     EnvironmentIntf,
-    MiddlewareIntf;
+    MiddlewareCollectionAwareIntf;
 
 type
 
@@ -16,7 +16,7 @@ type
     IWebApplication = interface(IRunnable)
         ['{DE7521ED-D26F-4E97-9618-D745D38F0814}']
         function getEnvironment() : ICGIEnvironment;
-        function addMiddleware(const middleware : IMiddleware) : IWebApplication;
+        function getMiddlewares() : IMiddlewareCollectionAware;
     end;
 
 implementation

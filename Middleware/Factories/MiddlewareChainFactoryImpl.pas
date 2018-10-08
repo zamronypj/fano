@@ -16,7 +16,12 @@ type
     *}
     TMiddlewareChainFactory = class(TInterfacedObject, IMiddlewareChainFactory)
     public
-        function build(const collection : IMiddlewareCollection) : IMiddlewareChain;
+        function build(
+            const appBeforeMiddlewares : IMiddlewareCollection;
+            const appAfterMiddlewares : IMiddlewareCollection;
+            const routeBeforeMiddlewares : IMiddlewareCollection;
+            const routeAfterMiddlewares : IMiddlewareCollection
+        ) : IMiddlewareChain;
     end;
 
 implementation
@@ -24,8 +29,18 @@ implementation
 uses
     MiddlewareChainImpl;
 
-    function TMiddlewareChainFactory.build(const collection : IMiddlewareCollection) : IMiddlewareChain;
+    function TMiddlewareChainFactory.build(
+        const appBeforeMiddlewares : IMiddlewareCollection;
+        const appAfterMiddlewares : IMiddlewareCollection;
+        const routeBeforeMiddlewares : IMiddlewareCollection;
+        const routeAfterMiddlewares : IMiddlewareCollection
+    ) : IMiddlewareChain;
     begin
-        result := TMiddlewareChain.create(collection);
+        result := TMiddlewareChain.create(
+            appBeforeMiddlewares,
+            appAfterMiddlewares,
+            routeBeforeMiddlewares,
+            routeAfterMiddlewares
+        );
     end;
 end.

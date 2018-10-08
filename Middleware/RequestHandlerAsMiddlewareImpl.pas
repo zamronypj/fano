@@ -20,7 +20,11 @@ type
     public
         constructor create(requestHandlerInst : IRequestHandler);
         destructor destroy(); override;
-        function handleRequest(const request : IRequest; const response : IResponse) : IResponse;
+        function handleRequest(
+            const request : IRequest;
+            const response : IResponse;
+            var canContinue : boolean
+        ) : IResponse;
     end;
 
 implementation
@@ -36,8 +40,13 @@ implementation
         requestHandler := nil;
     end;
 
-    function TRequestHandlerAsMiddleware.handleRequest(const request : IRequest; const response : IResponse) : IResponse;
+    function TRequestHandlerAsMiddleware.handleRequest(
+        const request : IRequest;
+        const response : IResponse;
+        var canContinue : boolean
+    ) : IResponse;
     begin
+        canContinue := true;
         result := requestHandler.handleRequest(request, response);
     end;
 end.

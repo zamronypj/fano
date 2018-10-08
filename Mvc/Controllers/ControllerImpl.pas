@@ -19,7 +19,8 @@ type
         viewParams : IViewParameters;
     public
         constructor create(
-            const middlewares : IMiddlewareCollection;
+            const beforeMiddlewares : IMiddlewareCollection;
+            const afterMiddlewares : IMiddlewareCollection;
             const viewInst : IView;
             const viewParamsInst : IViewParameters
         );
@@ -29,12 +30,13 @@ type
 implementation
 
     constructor TController.create(
-        const middlewares : IMiddlewareCollection;
+        const beforeMiddlewares : IMiddlewareCollection;
+        const afterMiddlewares : IMiddlewareCollection;
         const viewInst : IView;
         const viewParamsInst : IViewParameters
     );
     begin
-        inherited create(middlewares);
+        inherited create(beforeMiddlewares, afterMiddlewares);
         gView := viewInst;
         viewParams := viewParamsInst;
     end;

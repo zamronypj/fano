@@ -3,7 +3,8 @@ unit MiddlewareCollectionAwareIntf;
 interface
 
 uses
-   MiddlewareCollectionIntf;
+    MiddlewareIntf,
+    MiddlewareCollectionIntf;
 
 type
     {------------------------------------------------
@@ -13,7 +14,10 @@ type
     -----------------------------------------------}
     IMiddlewareCollectionAware = interface
         ['{4C62B73D-C6D8-47BB-B8C0-EBF4EC3DDCB7}']
-        function getMiddlewareCollection() : IMiddlewareCollection;
+        function addBeforeMiddleware(const middleware : IMiddleware) : IMiddlewareCollectionAware;
+        function addAfterMiddleware(const middleware : IMiddleware) : IMiddlewareCollectionAware;
+        function getBeforeMiddlewares() : IMiddlewareCollection;
+        function getAfterMiddlewares() : IMiddlewareCollection;
     end;
 
 implementation

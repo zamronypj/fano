@@ -36,14 +36,13 @@ type
         routeCollection : IRouteMatcher;
         responseFactory : IResponseFactory;
         requestFactory : IRequestFactory;
-        appMiddlewareList : IMiddlewareCollection;
+        appBeforeMiddlewareList : IMiddlewareCollection;
+        appAfterMiddlewareList : IMiddlewareCollection;
         middlewareChainFactory : IMiddlewareChainFactory;
-
-        function executeBeforeMiddlewares(const request : IRequest; const response : IResponse; var continue : boolean) : IResponse;
-        function executeAfterMiddlewares(const request : IRequest; const response : IResponse; var continue : boolean) : IResponse;
     public
         constructor create(
-            const appMiddlewares : IMiddlewareCollection;
+            const appBeforeMiddlewares : IMiddlewareCollection;
+            const appAfterMiddlewares : IMiddlewareCollection;
             const chainFactory : IMiddlewareChainFactory;
             const routes : IRouteMatcher;
             const respFactory : IResponseFactory;
@@ -61,14 +60,16 @@ uses
     RequestHandlerAsMiddlewareImpl;
 
     constructor TDispatcher.create(
-        const appMiddlewares : IMiddlewareCollection;
+        const appBeforeMiddlewares : IMiddlewareCollection;
+        const appAfterMiddlewares : IMiddlewareCollection;
         const chainFactory : IMiddlewareChainFactory;
         const routes : IRouteMatcher;
         const respFactory : IResponseFactory;
         const reqFactory : IRequestFactory
     );
     begin
-        appMiddlewareList := appMiddlewares;
+        appBeforeMiddlewareList := appBeforeMiddlewares;
+        appAfterMiddlewareList := appAfterMiddlewares;
         middlewareChainFactory := chainFactory;
         routeCollection := routes;
         responseFactory := respFactory;
@@ -78,41 +79,19 @@ uses
     destructor TDispatcher.destroy();
     begin
         inherited destroy();
-        appMiddlewareList := nil;
+        appBeforeMiddlewareList := nil;
+        appAfterMiddlewareList := nil;
         middlewareChainFactory := nil;
         routeCollection := nil;
         responseFactory := nil;
         requestFactory := nil;
     end;
 
-    function TDispatcher.buildMiddlewareChain(
-          const routeHandler : IRequestHandler;
-          const objWithCollection : IMiddlewareCollectionAware
-    ) : IMiddlewareChain;
-    var collection : IMiddlewareCollection;
-      reqAsMiddleware : IMiddleware;
-    begin
-        collection := appMiddlewareList.merge(objWithCollection.getMiddlewareCollection());
-        reqAsMiddleware := TRequestHandlerAsMiddleware.create(routeHandler);
-        collection.add(reqAsMiddleware);
-        result := middlewareChainFactory.build(collection);
-    end;
-
-    function TDispatcher.executeBeforeMiddlewares(const request : IRequest; const response : IResponse; var continue : boolean) : IResponse;
-    begin;
-    end;
-
-    function TDispatcher.executeAfterMiddlewares(const request : IRequest; const response : IResponse; var continue : boolean) : IResponse;
-    begin;
-    end;
-
     function TDispatcher.dispatchRequest(const env: ICGIEnvironment) : IResponse;
     var routeHandler : IRouteHandler;
-        response : IResponse;
-        request : IRequest;
         method, uri : string;
-        middlewares : IMiddlewareChain;
-        i, len : integer;
+        middlewareChain : IMiddlewareChain;
+        routeMiddlewares : IMiddlewareCollectionAware;
     begin
         try
             method := env.requestMethod();
@@ -122,40 +101,21 @@ uses
             begin
                 raise ERouteHandlerNotFound.create('Route not found. Method:' + method + ' Uri:'+uri);
             end;
-            response := responseFactory.build(env);
-            request := requestFactory.build(env);
-
-            len := beforeMiddlewares.count;
-            for i:=0 to len-1 do
-            begin
-                middleware := beforeMiddlewares[i];
-                response := middleware.handleRequest(request, response, continue);
-                if (not continue) then
-                begin
-                    result := response;
-                    exit();
-                end;
-            end;
-
-            response := routeHandler.handleRequest(request, response);
-
-            len := afterMiddlewares.count;
-            for i:=0 to len-1 do
-            begin
-                middleware := afterMiddlewares[i];
-                response := middleware.handleRequest(request, response, continue);
-                if (not continue) then
-                begin
-                    result := response;
-                    exit();
-                end;
-            end;
-
+            routeMiddlewares := routeHandler.getMiddlewares();
+            middlewareChain := middlewareChainFactory.build(
+                appBeforeMiddlewareList,
+                appAfterMiddlewareList,
+                routeMiddlewares.getBeforeMiddlewares(),
+                routeMiddlewares.getAfterMiddlewares()
+            );
+            result := middlewareChain.execute(
+                requestFactory.build(env),
+                responseFactory.build(env),
+                routeHandler
+            );
         finally
-            response := nil;
-            request := nil;
             routeHandler := nil;
-            middlewares := nil;
+            middlewareChain := nil;
         end;
     end;
 end.
