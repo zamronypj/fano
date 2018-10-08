@@ -84,6 +84,7 @@ uses
 
     function TDispatcher.buildMiddlewareChain(const routeHandler : IMiddlewareCollectionAware) : IMiddlewareChain;
     var collection : IMiddlewareCollection;
+
     begin
         collection := appMiddlewareList.merge(routeHandler.getMiddlewareCollection());
         result := middlewareChainFactory.build(collection);

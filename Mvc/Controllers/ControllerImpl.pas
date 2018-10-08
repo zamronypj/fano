@@ -7,6 +7,7 @@ uses
     RequestIntf,
     RouteHandlerIntf,
     RouteHandlerImpl,
+    MiddlewareCollectionIntf,
     ViewIntf,
     ViewParamsIntf;
 
@@ -18,6 +19,7 @@ type
         viewParams : IViewParameters;
     public
         constructor create(
+            const middlewares : IMiddlewareCollection;
             const viewInst : IView;
             const viewParamsInst : IViewParameters
         );
@@ -27,10 +29,12 @@ type
 implementation
 
     constructor TController.create(
+        const middlewares : IMiddlewareCollection;
         const viewInst : IView;
         const viewParamsInst : IViewParameters
     );
     begin
+        inherited create(middlewares);
         gView := viewInst;
         viewParams := viewParamsInst;
     end;

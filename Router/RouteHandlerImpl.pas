@@ -38,6 +38,7 @@ implementation
 
     destructor TRouteHandler.destroy();
     begin
+        inherited destroy();
         middlewareList := nil;
     end;
 
