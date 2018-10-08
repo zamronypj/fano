@@ -39,7 +39,10 @@ type
         middlewareChainFactory : IMiddlewareChainFactory;
 
 
-        function buildMiddlewareChain(const routeHandler : IMiddlewareCollectionAware) : IMiddlewareChain;
+        function buildMiddlewareChain(
+              const routeHandler : IRequestHandler;
+              const objWithCollection : IMiddlewareCollectionAware
+        ) : IMiddlewareChain;
     public
         constructor create(
             const appMiddlewares : IMiddlewareCollection;
@@ -82,11 +85,14 @@ uses
         requestFactory := nil;
     end;
 
-    function TDispatcher.buildMiddlewareChain(const routeHandler : IMiddlewareCollectionAware) : IMiddlewareChain;
+    function TDispatcher.buildMiddlewareChain(
+          const routeHandler : IRequestHandler;
+          const objWithCollection : IMiddlewareCollectionAware
+    ) : IMiddlewareChain;
     var collection : IMiddlewareCollection;
-
     begin
-        collection := appMiddlewareList.merge(routeHandler.getMiddlewareCollection());
+        collection := appMiddlewareList.merge(objWithCollection.getMiddlewareCollection());
+        collection.add(routeHandler);
         result := middlewareChainFactory.build(collection);
     end;
 
@@ -107,7 +113,10 @@ uses
             end;
             response := responseFactory.build(env);
             request := requestFactory.build(env);
-            middlewares := buildMiddlewareChain(routeHandler as IMiddlewareCollectionAware);
+            middlewares := buildMiddlewareChain(
+                routeHandler,
+                routeHandler as IMiddlewareCollectionAware
+            );
             result := middlewares.handleChainedRequest(request, response, middlewares.next());
         finally
             response := nil;
