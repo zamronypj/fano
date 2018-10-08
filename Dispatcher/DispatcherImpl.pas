@@ -18,7 +18,8 @@ uses
     RequestIntf,
     RequestFactoryIntf,
     RouteHandlerIntf,
-    RouteMatcherIntf;
+    RouteMatcherIntf,
+    MiddlewareChainIntf;
 
 type
     {------------------------------------------------
@@ -31,6 +32,8 @@ type
         routeCollection : IRouteMatcher;
         responseFactory : IResponseFactory;
         requestFactory : IRequestFactory;
+
+        function buildMiddlewareChain(const routeHandler : IRouteHandler) : IMiddlewareChain;
     public
         constructor create(
             const routes : IRouteMatcher;
@@ -65,16 +68,19 @@ uses
         requestFactory := nil;
     end;
 
+    function TDispatcher.buildMiddlewareChain(const routeHandler : IRouteHandler) : IMiddlewareChain;
+    begin
+
+    end;
+
     function TDispatcher.dispatchRequest(const env: ICGIEnvironment) : IResponse;
     var routeHandler : IRouteHandler;
         response : IResponse;
         request : IRequest;
         method, uri : string;
+        middlewares : IMiddlewareChain;
     begin
         try
-            response := responseFactory.build(env);
-            request := requestFactory.build(env);
-
             method := env.requestMethod();
             uri := env.requestUri();
             routeHandler := routeCollection.find(method, uri);
@@ -82,13 +88,15 @@ uses
             begin
                 raise ERouteHandlerNotFound.create('Route not found. Method:' + method + ' Uri:'+uri);
             end;
-            //TODO middlewares := buildMiddlewareList(routeHandler);
-            //TODO result := middlewares.handleRequest(request, response);
-            result := routeHandler.handleRequest(request, response);
+            response := responseFactory.build(env);
+            request := requestFactory.build(env);
+            middlewares := buildMiddlewareChain(routeHandler);
+            result := middlewares.handleChainedRequest(request, response, middlewares.next());
         finally
             response := nil;
             request := nil;
             routeHandler := nil;
+            middlewares := nil;
         end;
     end;
 end.
