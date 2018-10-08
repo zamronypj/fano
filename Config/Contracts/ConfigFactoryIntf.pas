@@ -3,7 +3,7 @@ unit ConfigFactoryIntf;
 interface
 
 uses
-    DependencyAwareIntf,
+    DependencyIntf,
     DependencyFactoryIntf;
 
 type

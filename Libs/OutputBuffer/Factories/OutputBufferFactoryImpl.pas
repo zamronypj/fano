@@ -3,7 +3,7 @@ unit OutputBufferFactoryImpl;
 interface
 
 uses
-    DependencyAwareIntf,
+    DependencyIntf,
     DependencyContainerIntf,
     DependencyFactoryIntf,
     FactoryImpl;
@@ -16,7 +16,7 @@ type
     -----------------------------------------------}
     TOutputBufferFactory = class(TFactory, IDependencyFactory)
     public
-        function build() : IDependencyAware; override;
+        function build() : IDependency; override;
     end;
 
 implementation
@@ -24,7 +24,7 @@ implementation
 uses
     OutputBufferImpl;
 
-    function TOutputBufferFactory.build() : IDependencyAware;
+    function TOutputBufferFactory.build() : IDependency;
     begin
         result := TOutputBuffer.create();
     end;

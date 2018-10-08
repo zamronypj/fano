@@ -4,7 +4,7 @@ interface
 {$H+}
 
 uses
-    DependencyAwareIntf,
+    DependencyIntf,
     EnvironmentIntf;
 
 type
@@ -14,7 +14,7 @@ type
 
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
-    TCGIEnvironment = class(TInterfacedObject, ICGIEnvironment, IDependencyAware)
+    TCGIEnvironment = class(TInterfacedObject, ICGIEnvironment, IDependency)
     private
     public
         {-----------------------------------------

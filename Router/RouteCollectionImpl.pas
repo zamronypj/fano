@@ -8,7 +8,7 @@ uses
     RouteCollectionIntf,
     RouteMatcherIntf,
     RouteListIntf,
-    DependencyAwareIntf;
+    DependencyIntf;
 
 type
     //Route data for HTTP GET, PUT, POST, DELETE, PATCH, HEAD, OPTIONS
@@ -28,7 +28,7 @@ type
      interface for any class that can set http verb
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
-    TRouteCollection = class(TInterfacedObject, IDependencyAware, IRouteCollection, IRouteMatcher)
+    TRouteCollection = class(TInterfacedObject, IDependency, IRouteCollection, IRouteMatcher)
     private
         routeList : IRouteList;
 

@@ -4,7 +4,7 @@ interface
 
 uses
     DispatcherIntf,
-    DependencyAwareIntf,
+    DependencyIntf,
     EnvironmentIntf,
     ResponseIntf,
     ResponseFactoryIntf,
@@ -19,7 +19,7 @@ type
      request and return response
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
-    TDispatcher = class(TInterfacedObject, IDispatcher, IDependencyAware)
+    TDispatcher = class(TInterfacedObject, IDispatcher, IDependency)
     private
         routeCollection : IRouteMatcher;
         responseFactory : IResponseFactory;

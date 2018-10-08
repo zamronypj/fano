@@ -4,7 +4,7 @@ interface
 {$H+}
 uses
     classes,
-    DependencyAwareIntf,
+    DependencyIntf,
     OutputBufferIntf;
 
 type
@@ -13,7 +13,7 @@ type
      standard output to a storage
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
-    TOutputBuffer = class(TInterfacedObject, IOutputBuffer, IDependencyAware)
+    TOutputBuffer = class(TInterfacedObject, IOutputBuffer, IDependency)
     private
         originalStdOutput, streamStdOutput: TextFile;
         stream : TStringStream;

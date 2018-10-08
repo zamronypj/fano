@@ -4,7 +4,7 @@ interface
 
 uses
     DispatcherFactoryIntf,
-    DependencyAwareIntf,
+    DependencyIntf,
     DependencyContainerIntf,
     DependencyFactoryIntf,
     FactoryImpl;
@@ -18,7 +18,7 @@ type
     -----------------------------------------------}
     TDispatcherFactory = class(TFactory, IDispatcherFactory, IDependencyFactory)
     public
-        function build() : IDependencyAware; override;
+        function build() : IDependency; override;
     end;
 
 implementation
@@ -29,7 +29,7 @@ uses
     RequestFactoryImpl,
     ResponseFactoryImpl;
 
-    function TDispatcherFactory.build() : IDependencyAware;
+    function TDispatcherFactory.build() : IDependency;
     begin
         result := TDispatcher.create(
             dependencyContainer.get('router') as IRouteMatcher,

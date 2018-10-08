@@ -3,7 +3,7 @@ unit DependencyContainerIntf;
 interface
 
 uses
-    DependencyAwareIntf,
+    DependencyIntf,
     DependencyFactoryIntf;
 
 type
@@ -17,7 +17,7 @@ type
         ['{7B76FB8C-47E0-4EE2-9020-341867711D9A}']
         function add(const serviceName :string; const service : IDependencyFactory) : IDependencyContainer;
         function factory(const serviceName :string; const service : IDependencyFactory) : IDependencyContainer;
-        function get(const serviceName : string) : IDependencyAware;
+        function get(const serviceName : string) : IDependency;
     end;
 
 implementation
