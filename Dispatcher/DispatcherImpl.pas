@@ -17,6 +17,7 @@ uses
     ResponseFactoryIntf,
     RequestIntf,
     RequestFactoryIntf,
+    RequestHandlerIntf,
     RouteHandlerIntf,
     RouteMatcherIntf,
     MiddlewareChainIntf,
@@ -58,7 +59,9 @@ type
 implementation
 
 uses
-    ERouteHandlerNotFoundImpl;
+    MiddlewareIntf,
+    ERouteHandlerNotFoundImpl,
+    RequestHandlerAsMiddlewareImpl;
 
     constructor TDispatcher.create(
         const appMiddlewares : IMiddlewareCollection;
@@ -90,9 +93,11 @@ uses
           const objWithCollection : IMiddlewareCollectionAware
     ) : IMiddlewareChain;
     var collection : IMiddlewareCollection;
+      reqAsMiddleware : IMiddleware;
     begin
         collection := appMiddlewareList.merge(objWithCollection.getMiddlewareCollection());
-        collection.add(routeHandler);
+        reqAsMiddleware := TRequestHandlerAsMiddleware.create(routeHandler);
+        collection.add(reqAsMiddleware);
         result := middlewareChainFactory.build(collection);
     end;
 
