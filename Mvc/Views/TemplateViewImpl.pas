@@ -9,14 +9,15 @@ uses
     ViewIntf,
     TemplateFetcherIntf,
     TemplateParserIntf,
-    OutputBufferIntf;
+    OutputBufferIntf,
+    CloneableIntf;
 
 type
     {------------------------------------------------
      View that can render from a HTML template string
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
-    TTemplateView = class(TInterfacedObject, IView, IResponse, ITemplateFetcher)
+    TTemplateView = class(TInterfacedObject, ICloneable, IView, IResponse, ITemplateFetcher)
     private
         templateContent : string;
         outputBuffer : IOutputBuffer;
@@ -41,6 +42,8 @@ type
             const templatePath : string;
             const viewParams : IViewParameters
         ) : string;
+
+        function clone() : ICloneable;
     end;
 
 implementation
@@ -119,5 +122,17 @@ uses
                 writeln('Read ' + e.message);
             end;
         end;
+    end;
+
+    function TTemplateView.clone() : ICloneable;
+    var clonedObj : TTemplateView;
+    begin
+        clonedObj := TTemplateView.create(
+            outputBuffer,
+            templateParser,
+            templateContent
+        );
+        //TODO : copy any property
+        result := clonedObj;
     end;
 end.

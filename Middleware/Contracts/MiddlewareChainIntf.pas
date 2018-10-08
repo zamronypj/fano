@@ -3,7 +3,9 @@ unit MiddlewareChainIntf;
 interface
 
 uses
-   RequestHandlerIntf;
+   RequestHandlerIntf,
+   RequestIntf,
+   ResponseIntf;
 
 type
     {------------------------------------------------

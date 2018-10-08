@@ -32,6 +32,7 @@ implementation
 
     destructor TResponse.destroy();
     begin
+        inherited destroy();
         webEnvironment := nil;
     end;
 
@@ -45,6 +46,7 @@ implementation
     var clonedObj : TResponse;
     begin
         clonedObj := TResponse.create(webEnvironment);
+        //TODO : copy any property
         result := clonedObj;
     end;
 end.

@@ -16,6 +16,7 @@ type
         function add(const middleware : IMiddleware) : IMiddlewareCollection;
         function count() : integer;
         function get(const indx : integer) : IMiddleware;
+        function merge(const middlewares : IMiddlewareCollection) : IMiddlewareCollection;
     end;
 
 implementation

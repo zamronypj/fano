@@ -1,4 +1,4 @@
-unit MiddlewareCollectionImpl;
+unit MiddlewareChainImpl;
 
 interface
 
@@ -7,7 +7,8 @@ uses
     MiddlewareChainIntf,
     RequestHandlerIntf,
     RequestIntf,
-    ResponseIntf;
+    ResponseIntf,
+    MiddlewareCollectionIntf;
 
 type
     {------------------------------------------------
@@ -28,7 +29,7 @@ type
             const response : IResponse;
             const nextMiddleware : IRequestHandler
         ) : IResponse;
-        function next() : IMiddleware;
+        function next() : IRequestHandler;
     end;
 
 implementation
@@ -50,8 +51,7 @@ implementation
         const response : IResponse;
         const nextMiddleware : IRequestHandler
     ) : IResponse;
-    var nextMw : IRequestHandler;
-        newResponse : IResponse;
+    var newResponse : IResponse;
     begin
         if (nextMiddleware <> nil) then
         begin
@@ -63,7 +63,7 @@ implementation
         end;
     end;
 
-    function TMiddlewareChain.next() : IMiddleware;
+    function TMiddlewareChain.next() : IRequestHandler;
     begin
         if (currentIndex < middlewareList.count() - 1) then
         begin

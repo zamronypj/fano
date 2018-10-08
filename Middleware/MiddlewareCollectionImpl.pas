@@ -22,6 +22,7 @@ type
         function add(const middleware : IMiddleware) : IMiddlewareCollection;
         function count() : integer;
         function get(const indx : integer) : IMiddleware;
+        function merge(const middlewares : IMiddlewareCollection) : IMiddlewareCollection;
     end;
 
 implementation
@@ -60,6 +61,24 @@ implementation
     begin
         middleware := middlewareList.items[i];
         result := middleware;
+    end;
+
+    function TMiddlewareCollection.merge(const middlewares : IMiddlewareCollection) : IMiddlewareCollection;
+    var newCollection : TMiddlewareCollection;
+        i, len : integer;
+    begin
+        newCollection := TMiddlewareCollection.create();
+        len := count();
+        for i:= 0 to len-1 do
+        begin
+            newCollection.add(get(i));
+        end;
+        len := middlewares.count();
+        for i:= 0 to len-1 do
+        begin
+            newCollection.add(middlewares.get(i));
+        end;
+        result := newCollection;
     end;
 
 end.
