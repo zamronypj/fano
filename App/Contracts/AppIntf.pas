@@ -3,9 +3,7 @@ unit AppIntf;
 interface
 
 uses
-    RunnableIntf,
-    EnvironmentIntf,
-    MiddlewareCollectionAwareIntf;
+    RunnableIntf;
 
 type
 
