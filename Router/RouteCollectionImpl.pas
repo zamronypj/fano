@@ -255,7 +255,7 @@ uses
     function TRouteCollection.find(const requestMethod : string; const routeName: string) : IRouteHandler;
     var routeData : PRouteRec;
     begin
-        routeData := self.routeList.find(routeName);
+        routeData := routeList.find(routeName);
         if (routeData = nil) then
         begin
             raise ERouteHandlerNotFound.create(

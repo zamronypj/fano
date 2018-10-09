@@ -3,7 +3,6 @@ unit ConfigFactoryImpl;
 interface
 
 uses
-    ConfigFactoryIntf,
     DependencyIntf,
     DependencyContainerIntf,
     DependencyFactoryIntf,
@@ -14,11 +13,11 @@ type
      factory class for TFanoConfig
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
-    TFanoConfigFactory = class (TFactory, IAppConfigurationFactory, IDependencyFactory)
+    TFanoConfigFactory = class (TFactory, IDependencyFactory)
     private
         configFilename : string;
     public
-        constructor create(const dc : IDependencyContainer; const configFile :string);
+        constructor create(const configFile :string);
         function build() : IDependency; override;
     end;
 
@@ -27,15 +26,15 @@ implementation
 uses
     ConfigImpl;
 
-    constructor TFanoConfigFactory.create(const dc : IDependencyContainer; const configFile : string);
+    constructor TFanoConfigFactory.create(const configFile : string);
     begin
-        inherited create(dc);
         configFilename := configFile;
     end;
 
     function TFanoConfigFactory.build() : IDependency;
     begin
-        result := TFanoConfig.create(configFilename);
+        //result := TFanoConfig.create(configFilename);
+        result := nil;
     end;
 
 end.

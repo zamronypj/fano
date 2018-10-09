@@ -5,7 +5,6 @@ interface
 uses
     DependencyIntf,
     DependencyFactoryIntf,
-    DependencyContainerIntf,
     FactoryImpl;
 
 type

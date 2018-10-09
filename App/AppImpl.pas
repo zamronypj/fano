@@ -11,35 +11,24 @@ interface
 
 uses
    RunnableIntf,
-   DependencyContainerIntf,
    AppIntf,
-   ConfigIntf,
    DispatcherIntf,
    EnvironmentIntf,
-   RouteCollectionIntf,
-   RouteHandlerIntf,
-   MiddlewareCollectionAwareIntf,
    ErrorHandlerIntf;
 
 type
 
     TFanoWebApplication = class(TInterfacedObject, IWebApplication, IRunnable)
     private
-        config : IAppConfiguration;
         dispatcher : IDispatcher;
         environment : ICGIEnvironment;
-        routeCollection :IRouteCollection;
-        middlewareList : IMiddlewareCollectionAware;
         errorHandler : IErrorHandler;
 
         function execute() : IRunnable;
     public
         constructor create(
-            const cfg : IAppConfiguration;
             const dispatcherInst : IDispatcher;
             const env : ICGIEnvironment;
-            const routesInst : IRouteCollection;
-            const middlewares : IMiddlewareCollectionAware;
             const errorHandlerInst : IErrorHandler
         ); virtual;
         destructor destroy(); override;
@@ -55,38 +44,29 @@ uses
     EDependencyNotFoundImpl;
 
     constructor TFanoWebApplication.create(
-        const cfg : IAppConfiguration;
         const dispatcherInst : IDispatcher;
         const env : ICGIEnvironment;
-        const routesInst : IRouteCollection;
-        const middlewares : IMiddlewareCollectionAware;
         const errorHandlerInst : IErrorHandler
     );
     begin
-        config := cfg;
         dispatcher := dispatcherInst;
         environment := env;
-        routeCollection := routesInst;
-        middlewareList := middlewares;
         errorHandler := errorHandlerInst;
     end;
 
     destructor TFanoWebApplication.destroy();
     begin
         inherited destroy();
-        config := nil;
         dispatcher := nil;
         environment := nil;
-        routeCollection := nil;
-        middlewareList := nil;
         errorHandler := nil;
     end;
 
     function TFanoWebApplication.execute() : IRunnable;
     var response : IResponse;
     begin
+        response := dispatcher.dispatchRequest(environment);
         try
-            response := dispatcher.dispatchRequest(environment);
             response.write();
             result := self;
         finally

@@ -5,7 +5,6 @@ interface
 
 uses
     DependencyIntf,
-    DependencyContainerIntf,
     DependencyFactoryIntf,
     FactoryImpl;
 
@@ -20,7 +19,6 @@ type
         closeTag : string;
     public
         constructor create(
-            const dc : IDependencyContainer;
             const openTagStr : string = '{{';
             const closeTagStr : string = '}}'
         );
@@ -34,12 +32,10 @@ uses
     RegexImpl;
 
     constructor TTemplateParserFactory.create(
-        const dc : IDependencyContainer;
         const openTagStr : string = '{{';
         const closeTagStr : string = '}}'
     );
     begin
-        inherited create(dc);
         openTag := openTagStr;
         closeTag := closeTagStr;
     end;

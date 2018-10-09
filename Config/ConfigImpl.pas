@@ -27,6 +27,7 @@ uses fpjson;
 
     destructor TFanoConfig.destroy();
     begin
+        inherited destroy();
     end;
 
     function TFanoConfig.getString(const configName : string) : string;

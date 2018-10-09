@@ -3,9 +3,7 @@ unit EnvironmentFactoryImpl;
 interface
 
 uses
-    EnvironmentFactoryIntf,
     DependencyIntf,
-    DependencyContainerIntf,
     DependencyFactoryIntf,
     FactoryImpl;
 
@@ -16,7 +14,7 @@ type
 
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
-    TCGIEnvironmentFactory = class(TFactory, ICGIEnvironmentFactory, IDependencyFactory)
+    TCGIEnvironmentFactory = class(TFactory, IDependencyFactory)
     public
         function build() : IDependency; override;
     end;

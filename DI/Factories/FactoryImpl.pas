@@ -11,7 +11,6 @@ interface
 
 uses
     DependencyIntf,
-    DependencyContainerIntf,
     DependencyFactoryIntf;
 
 type
@@ -22,26 +21,10 @@ type
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
     TFactory = class(TInterfacedObject, IDependencyFactory)
-    protected
-        dependencyContainer : IDependencyContainer;
     public
-        constructor create(const dc : IDependencyContainer);
-        destructor destroy(); override;
         function build() : IDependency; virtual; abstract;
     end;
 
 implementation
-
-
-    constructor TFactory.create(const dc : IDependencyContainer);
-    begin
-        dependencyContainer := dc;
-    end;
-
-    destructor TFactory.destroy();
-    begin
-        inherited destroy();
-        dependencyContainer := nil;
-    end;
 
 end.

@@ -45,6 +45,7 @@ type
 implementation
 
 uses
+    sysutils,
     EDependencyNotFoundImpl;
 
 type
@@ -65,6 +66,7 @@ type
     var i, len:integer;
         dep : PDependencyRec;
     begin
+        inherited destroy();
         len := dependencyList.count();
         for i := len-1 downto 0 do
         begin
@@ -78,9 +80,9 @@ type
     end;
 
     function TDependencyContainer.addDependency(
-        const serviceName :string;
+        const serviceName : string;
         const service : IDependencyFactory;
-        const singleInstance :boolean
+        const singleInstance : boolean
     ) : IDependencyContainer;
     var depRec : PDependencyRec;
     begin
@@ -90,6 +92,7 @@ type
            new(depRec);
            dependencyList.add(serviceName, depRec);
         end;
+
         depRec^.factory := service;
         depRec^.instance := nil;
         depRec^.singleInstance := true;
@@ -98,7 +101,8 @@ type
 
     function TDependencyContainer.add(const serviceName :string; const service : IDependencyFactory) : IDependencyContainer;
     begin
-        result := addDependency(serviceName, service, true);
+        addDependency(serviceName, service, true);
+        result := nil;
     end;
 
     function TDependencyContainer.factory(const serviceName :string; const service : IDependencyFactory) : IDependencyContainer;
