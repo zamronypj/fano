@@ -4,6 +4,7 @@ interface
 {$H+}
 
 uses
+    DependencyIntf,
     ViewParamsIntf,
     TemplateParserIntf,
     RegexIntf;
@@ -14,7 +15,7 @@ type
      variable placeholder with value
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
-    TTemplateParser = class(TInterfacedObject, ITemplateParser)
+    TTemplateParser = class(TInterfacedObject, ITemplateParser, IDependency)
     private
         regex : IRegex;
         openTag: string;

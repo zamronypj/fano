@@ -135,6 +135,8 @@ uses
             on e : ERouteHandlerNotFound do
             begin
               //TODO: exception handling
+              writeln('Content-Type:text/html');
+              writeln();
               writeln(e.message);
             end;
         end;
