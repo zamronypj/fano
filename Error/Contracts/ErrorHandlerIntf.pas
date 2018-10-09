@@ -1,11 +1,9 @@
-unit AppIntf;
+unit ErrorHandlerIntf;
 
 interface
-
+{$H+}
 uses
-    RunnableIntf,
-    EnvironmentIntf,
-    MiddlewareCollectionAwareIntf;
+    sysutils;
 
 type
 
@@ -13,8 +11,9 @@ type
      interface for any application
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
-    IWebApplication = interface(IRunnable)
-        ['{DE7521ED-D26F-4E97-9618-D745D38F0814}']
+    IErrorHandler = interface
+        ['{2D6BF281-BBF9-41A0-BE5D-33E84E39B1C6}']
+        function handleError(const exc : Exception) : IErrorHandler;
     end;
 
 implementation
