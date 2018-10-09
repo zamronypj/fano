@@ -50,7 +50,8 @@ implementation
 
     procedure TDebugErrorHandler.printStackTrace(const e : Exception);
     begin
-        writeln('Content-Type:text/html');
+        writeln('Content-Type: text/html');
+        writeln('Status: 500 Internal Server Error');
         writeln();
         writeln(getStackTrace(e));
     end;

@@ -22,13 +22,15 @@ implementation
 
     function TErrorHandler.handleError(const exc : Exception) : IErrorHandler;
     begin
-        writeln('Content-Type:text/html');
+        writeln('Content-Type: text/html');
+        writeln('Status: 500 Internal Server Error');
         writeln();
         writeln(
             '<!DOCTYPE html><html><head><title>Program exception</title></head><body>' +
               '<div>Exception class: ' + exc.className + '</div>' +
               '<div>Message: ' + exc.message + '</div>'+
-            '</body></html>');
+            '</body></html>'
+        );
         result := self;
     end;
 end.

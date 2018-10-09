@@ -33,8 +33,7 @@ uses
 
     function TFanoConfigFactory.build() : IDependency;
     begin
-        //result := TFanoConfig.create(configFilename);
-        result := nil;
+        result := TFanoConfig.create(configFilename);
     end;
 
 end.
