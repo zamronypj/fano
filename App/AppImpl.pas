@@ -11,26 +11,30 @@ interface
 
 uses
    RunnableIntf,
+   DependencyContainerIntf,
    AppIntf,
    DispatcherIntf,
    EnvironmentIntf,
-   ErrorHandlerIntf;
+   ErrorHandlerIntf,
+   RouteCollectionIntf;
 
 type
 
     TFanoWebApplication = class(TInterfacedObject, IWebApplication, IRunnable)
     private
+        dependencyContainer : IDependencyContainer;
         dispatcher : IDispatcher;
         environment : ICGIEnvironment;
         errorHandler : IErrorHandler;
 
+        function initialize(const container : IDependencyContainer) : IRunnable;
         function execute() : IRunnable;
+    protected
+        function buildDependencies(const container : IDependencyContainer) : IRunnable; virtual; abstract;
+        function buildRoutes(const container : IDependencyContainer) : IRunnable; virtual; abstract;
+        // function initDispatcher(const container : IDependencyContainer) : IDispatcher;
     public
-        constructor create(
-            const dispatcherInst : IDispatcher;
-            const env : ICGIEnvironment;
-            const errorHandlerInst : IErrorHandler
-        ); virtual;
+        constructor create(const container : IDependencyContainer);
         destructor destroy(); override;
         function run() : IRunnable;
     end;
@@ -43,15 +47,12 @@ uses
     ERouteHandlerNotFoundImpl,
     EDependencyNotFoundImpl;
 
-    constructor TFanoWebApplication.create(
-        const dispatcherInst : IDispatcher;
-        const env : ICGIEnvironment;
-        const errorHandlerInst : IErrorHandler
-    );
+    constructor TFanoWebApplication.create(const container : IDependencyContainer);
     begin
-        dispatcher := dispatcherInst;
-        environment := env;
-        errorHandler := errorHandlerInst;
+        dependencyContainer := container;
+        dispatcher := nil;
+        environment := nil;
+        errorHandler := nil;
     end;
 
     destructor TFanoWebApplication.destroy();
@@ -60,6 +61,13 @@ uses
         dispatcher := nil;
         environment := nil;
         errorHandler := nil;
+    end;
+
+    function TFanoWebApplication.initialize(const container : IDependencyContainer) : IRunnable;
+    begin
+        // buildDependencies(container);
+        // result := buildRoutes(container);
+        result := self;
     end;
 
     function TFanoWebApplication.execute() : IRunnable;
@@ -77,6 +85,7 @@ uses
     function TFanoWebApplication.run() : IRunnable;
     begin
         try
+            initialize(dependencyContainer);
             result := execute();
         except
             on e : ERouteHandlerNotFound do
