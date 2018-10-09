@@ -56,7 +56,6 @@ implementation
 
 uses
     MiddlewareIntf,
-    ERouteHandlerNotFoundImpl,
     RequestHandlerAsMiddlewareImpl;
 
     constructor TDispatcher.create(
@@ -97,10 +96,6 @@ uses
             method := env.requestMethod();
             uri := env.requestUri();
             routeHandler := routeCollection.find(method, uri);
-            if (routeHandler = nil) then
-            begin
-                raise ERouteHandlerNotFound.create('Route not found. Method:' + method + ' Uri:'+uri);
-            end;
             routeMiddlewares := routeHandler.getMiddlewares();
             middlewareChain := middlewareChainFactory.build(
                 appBeforeMiddlewareList,
@@ -116,6 +111,7 @@ uses
         finally
             routeHandler := nil;
             middlewareChain := nil;
+            routeMiddlewares := nil;
         end;
     end;
 end.

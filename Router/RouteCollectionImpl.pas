@@ -88,6 +88,9 @@ type
 
 implementation
 
+uses
+    ERouteHandlerNotFoundImpl;
+
     constructor TRouteCollection.create(const routes : IRouteList);
     begin
         routeList := routes;
@@ -95,44 +98,44 @@ implementation
 
     function TRouteCollection.resetRouteData(const routeData : PRouteRec) : PRouteRec;
     begin
-       routeData^.getRoute := nil;
-       routeData^.postRoute := nil;
-       routeData^.putRoute := nil;
-       routeData^.patchRoute := nil;
-       routeData^.deleteRoute := nil;
-       routeData^.optionsRoute := nil;
-       routeData^.headRoute := nil;
-       result := routeData;
+        routeData^.getRoute := nil;
+        routeData^.postRoute := nil;
+        routeData^.putRoute := nil;
+        routeData^.patchRoute := nil;
+        routeData^.deleteRoute := nil;
+        routeData^.optionsRoute := nil;
+        routeData^.headRoute := nil;
+        result := routeData;
     end;
 
     procedure TRouteCollection.destroyRouteData(var routeData : PRouteRec);
     begin
-       routeData := resetRouteData(routeData);
-       dispose(routeData);
+        routeData := resetRouteData(routeData);
+        dispose(routeData);
     end;
 
     destructor TRouteCollection.destroy();
     var i, len:integer;
        routeData :PRouteRec;
     begin
-       len := routeList.count();
-       for i := len-1 downto 0 do
-       begin
-          routeData := routeList.get(i);
-          destroyRouteData(routeData);
-          routeList.delete(i);
-       end;
-       routeList := nil;
+        len := routeList.count();
+        for i := len-1 downto 0 do
+        begin
+            routeData := routeList.get(i);
+            destroyRouteData(routeData);
+            routeList.delete(i);
+        end;
+        routeList := nil;
     end;
 
     function TRouteCollection.createEmptyRouteData(const routeName: string) : PRouteRec;
     var routeData : PRouteRec;
     begin
-       //route not yet found, create new data
-       new(routeData);
-       routeData := resetRouteData(routeData);
-       self.routeList.add(routeName, routeData);
-       result := routeData;
+        //route not yet found, create new data
+        new(routeData);
+        routeData := resetRouteData(routeData);
+        self.routeList.add(routeName, routeData);
+        result := routeData;
     end;
 
     function TRouteCollection.findRouteData(const routeName: string) : PRouteRec;
@@ -168,9 +171,9 @@ implementation
     ) : IRouteCollection;
     var routeData : PRouteRec;
     begin
-       routeData := findRouteData(routeName);
-       routeData^.postRoute := routeHandler;
-       result := self;
+        routeData := findRouteData(routeName);
+        routeData^.postRoute := routeHandler;
+        result := self;
     end;
 
     //HTTP PUT Verb handler
@@ -180,9 +183,9 @@ implementation
     ) : IRouteCollection;
     var routeData : PRouteRec;
     begin
-       routeData := findRouteData(routeName);
-       routeData^.putRoute := routeHandler;
-       result := self;
+        routeData := findRouteData(routeName);
+        routeData^.putRoute := routeHandler;
+        result := self;
     end;
 
     //HTTP PATCH Verb handler
@@ -192,9 +195,9 @@ implementation
     ) : IRouteCollection;
     var routeData : PRouteRec;
     begin
-       routeData := findRouteData(routeName);
-       routeData^.patchRoute := routeHandler;
-       result := self;
+        routeData := findRouteData(routeName);
+        routeData^.patchRoute := routeHandler;
+        result := self;
     end;
 
     //HTTP DELETE Verb handler
@@ -204,9 +207,9 @@ implementation
     ) : IRouteCollection;
     var routeData : PRouteRec;
     begin
-       routeData := findRouteData(routeName);
-       routeData^.deleteRoute := routeHandler;
-       result := self;
+        routeData := findRouteData(routeName);
+        routeData^.deleteRoute := routeHandler;
+        result := self;
     end;
 
     //HTTP HEAD Verb handler
@@ -216,9 +219,9 @@ implementation
     ) : IRouteCollection;
     var routeData : PRouteRec;
     begin
-       routeData := findRouteData(routeName);
-       routeData^.headRoute := routeHandler;
-       result := self;
+        routeData := findRouteData(routeName);
+        routeData^.headRoute := routeHandler;
+        result := self;
     end;
 
     //HTTP HEAD Verb handler
@@ -228,16 +231,16 @@ implementation
     ) : IRouteCollection;
     var routeData : PRouteRec;
     begin
-       routeData := findRouteData(routeName);
-       routeData^.optionsRoute := routeHandler;
-       result := self;
+        routeData := findRouteData(routeName);
+        routeData^.optionsRoute := routeHandler;
+        result := self;
     end;
 
     function TRouteCollection.getRouteHandler(const requestMethod : string; const routeData :PRouteRec) : IRouteHandler;
     var routeHandler : IRouteHandler;
     begin
-       routeHandler := nil;
-       case requestMethod of
+        routeHandler := nil;
+        case requestMethod of
             'GET' : routeHandler := routeData^.getRoute;
             'POST' : routeHandler := routeData^.postRoute;
             'PUT' : routeHandler := routeData^.putRoute;
@@ -245,21 +248,21 @@ implementation
             'PATCH' : routeHandler := routeData^.patchRoute;
             'OPTIONS' : routeHandler := routeData^.optionsRoute;
             'HEAD' : routeHandler := routeData^.headRoute;
-       end;
-       result := routeHandler
+        end;
+        result := routeHandler
     end;
 
     function TRouteCollection.find(const requestMethod : string; const routeName: string) : IRouteHandler;
     var routeData : PRouteRec;
     begin
-       routeData := self.routeList.find(routeName);
-       if (routeData = nil) then
-       begin
-          result := nil;
-       end else
-       begin
-          result := getRouteHandler(requestMethod, routeData);
-       end;
+        routeData := self.routeList.find(routeName);
+        if (routeData = nil) then
+        begin
+            raise ERouteHandlerNotFound.create(
+                'Route not found. Method:' + requestMethod + ' Uri:' + routeName
+            );
+        end;
+        result := getRouteHandler(requestMethod, routeData);
     end;
 
 end.
