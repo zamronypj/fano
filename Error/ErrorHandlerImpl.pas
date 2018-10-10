@@ -10,10 +10,12 @@ uses
 type
 
     {------------------------------------------------
-     default error handler
+     default error handler for debugging
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
     TErrorHandler = class(TInterfacedObject, IErrorHandler, IDependency)
+    private
+        function getStackTrace(const e: Exception) : string;
     public
         function handleError(
             const exc : Exception;
@@ -24,6 +26,31 @@ type
 
 implementation
 
+    function TErrorHandler.getStackTrace(const e : Exception) : string;
+    var
+        i: integer;
+        frames: PPointer;
+    begin
+        result := '<!DOCTYPE html><html><head><title>Program exception</title></head><body>' +
+                  '<h2>Program exception</h2>';
+        if (e <> nil) then
+        begin
+            result := result +
+                '<div>Exception class : <strong>' + e.className + '</strong></div>' + LineEnding  +
+                '<div>Message : <strong>' + e.message + '</strong></div>'+ LineEnding;
+        end;
+
+        result := result + '<div>Stacktrace:</div>' + LineEnding +
+            '<pre>' + LineEnding + BackTraceStrFunc(ExceptAddr) + LineEnding;
+
+        frames := ExceptFrames;
+        for i := 0 to ExceptFrameCount - 1 do
+        begin
+            result := result + BackTraceStrFunc(frames[I]) + LineEnding;
+        end;
+        result := result + '</pre></body></html>';
+    end;
+
     function TErrorHandler.handleError(
         const exc : Exception;
         const status : integer = 500;
@@ -31,15 +58,9 @@ implementation
     ) : IErrorHandler;
     begin
         writeln('Content-Type: text/html');
-        writeln('Status: '+ intToStr(status) + ' ' + msg);
+        writeln('Status: ', intToStr(status), ' ', msg);
         writeln();
-        writeln(
-            '<!DOCTYPE html><html><head><title>Program exception</title></head><body>' +
-              '<h1>Program exception</h1>' +
-              '<div>Exception class: ' + exc.className + '</div>' +
-              '<div>Message: ' + exc.message + '</div>'+
-            '</body></html>'
-        );
+        writeln(getStackTrace(exc));
         result := self;
     end;
 end.
