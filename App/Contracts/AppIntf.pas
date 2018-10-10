@@ -10,6 +10,7 @@ unit AppIntf;
 interface
 
 uses
+    DependencyContainerIntf,
     RunnableIntf;
 
 type
@@ -20,6 +21,7 @@ type
     -----------------------------------------------}
     IWebApplication = interface(IRunnable)
         ['{DE7521ED-D26F-4E97-9618-D745D38F0814}']
+        function initialize(const container : IDependencyContainer) : IRunnable;
     end;
 
 implementation

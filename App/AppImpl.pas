@@ -10,13 +10,13 @@ unit AppImpl;
 interface
 
 uses
-   RunnableIntf,
-   DependencyContainerIntf,
-   AppIntf,
-   DispatcherIntf,
-   EnvironmentIntf,
-   ErrorHandlerIntf,
-   RouteCollectionIntf;
+    RunnableIntf,
+    DependencyContainerIntf,
+    AppIntf,
+    DispatcherIntf,
+    EnvironmentIntf,
+    ErrorHandlerIntf,
+    RouteCollectionIntf;
 
 type
 
@@ -26,7 +26,6 @@ type
         environment : ICGIEnvironment;
         errorHandler : IErrorHandler;
 
-        function initialize(const container : IDependencyContainer) : IRunnable;
         function execute() : IRunnable;
     protected
         procedure buildDependencies(const container : IDependencyContainer); virtual; abstract;
@@ -37,6 +36,7 @@ type
     public
         constructor create(const container : IDependencyContainer);
         destructor destroy(); override;
+        function initialize(const container : IDependencyContainer) : IRunnable;
         function run() : IRunnable;
     end;
 
@@ -66,11 +66,18 @@ uses
 
     function TFanoWebApplication.initialize(const container : IDependencyContainer) : IRunnable;
     begin
-        buildDependencies(container);
-        buildRoutes(container);
-        dispatcher := initDispatcher(container);
-        environment := initEnvironment(container);
-        errorHandler := initErrorHandler(container);
+        try
+            buildDependencies(container);
+            buildRoutes(container);
+            dispatcher := initDispatcher(container);
+            environment := initEnvironment(container);
+            errorHandler := initErrorHandler(container);
+        except
+            dispatcher := nil;
+            environment := nil;
+            errorHandler := nil;
+            raise;
+        end;
         result := self;
     end;
 
@@ -97,6 +104,11 @@ uses
             end;
 
             on e : EDependencyNotFound do
+            begin
+                errorHandler.handleError(e);
+            end;
+
+            on e : EAccessViolation do
             begin
                 errorHandler.handleError(e);
             end;
