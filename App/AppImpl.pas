@@ -108,7 +108,7 @@ uses
         except
             on e : ERouteHandlerNotFound do
             begin
-                errorHandler.handleError(e);
+                errorHandler.handleError(e, 404, 'Not Found');
                 reset();
             end;
 

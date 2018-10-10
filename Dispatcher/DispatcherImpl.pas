@@ -27,8 +27,9 @@ uses
 
 type
     {------------------------------------------------
-     interface for any class having capability dispatch
-     request and return response
+     Request dispatcher class having capability dispatch
+     request and return response and with middleware support
+
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
     TDispatcher = class(TInterfacedObject, IDispatcher, IDependency)
@@ -55,8 +56,7 @@ type
 implementation
 
 uses
-    MiddlewareIntf,
-    RequestHandlerAsMiddlewareImpl;
+    MiddlewareIntf;
 
     constructor TDispatcher.create(
         const appBeforeMiddlewares : IMiddlewareCollection;
