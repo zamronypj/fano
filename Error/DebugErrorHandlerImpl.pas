@@ -60,7 +60,7 @@ implementation
         writeln('Content-Type: text/html');
         writeln('Status: '+ intToStr(status) + ' ' + msg);
         writeln();
-        writeln(getStackTrace(e));
+        writeln(getStackTrace(exc));
         result := self;
     end;
 end.

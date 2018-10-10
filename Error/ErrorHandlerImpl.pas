@@ -31,7 +31,7 @@ implementation
     ) : IErrorHandler;
     begin
         writeln('Content-Type: text/html');
-        writeln('Status: '+ intostr(status) + ' ' + msg);
+        writeln('Status: '+ intToStr(status) + ' ' + msg);
         writeln();
         writeln(
             '<!DOCTYPE html><html><head><title>Program exception</title></head><body>' +
