@@ -1,3 +1,10 @@
+{*!
+ * Fano Web Framework (https://fano.juhara.id)
+ *
+ * @link      https://github.com/zamronypj/fano
+ * @copyright Copyright (c) 2018 Zamrony P. Juhara
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
+ *}
 unit OutputBufferImpl;
 
 interface
@@ -9,7 +16,7 @@ uses
 
 type
     {------------------------------------------------
-     any class having capability to buffer
+     class having capability to buffer
      standard output to a storage
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
