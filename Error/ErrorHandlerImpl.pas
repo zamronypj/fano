@@ -15,15 +15,23 @@ type
     -----------------------------------------------}
     TErrorHandler = class(TInterfacedObject, IErrorHandler, IDependency)
     public
-        function handleError(const exc : Exception) : IErrorHandler;
+        function handleError(
+            const exc : Exception;
+            const status : integer = 500;
+            const msg : string  = 'Internal Server Error'
+        ) : IErrorHandler;
     end;
 
 implementation
 
-    function TErrorHandler.handleError(const exc : Exception) : IErrorHandler;
+    function TErrorHandler.handleError(
+        const exc : Exception;
+        const status : integer = 500;
+        const msg : string  = 'Internal Server Error'
+    ) : IErrorHandler;
     begin
         writeln('Content-Type: text/html');
-        writeln('Status: 500 Internal Server Error');
+        writeln('Status: '+ intostr(status) + ' ' + msg);
         writeln();
         writeln(
             '<!DOCTYPE html><html><head><title>Program exception</title></head><body>' +
