@@ -49,7 +49,10 @@ implementation
 uses
     sysutils,
     ResponseIntf,
+
+    ///exception-related units
     ERouteHandlerNotFoundImpl,
+    EMethodNotAllowedImpl,
     EDependencyNotFoundImpl;
 
     procedure TFanoWebApplication.reset();
@@ -109,6 +112,12 @@ uses
             on e : ERouteHandlerNotFound do
             begin
                 errorHandler.handleError(e, 404, 'Not Found');
+                reset();
+            end;
+
+            on e : EMethodNotAllowed do
+            begin
+                errorHandler.handleError(e, 405, 'Method Not Allowed');
                 reset();
             end;
 
