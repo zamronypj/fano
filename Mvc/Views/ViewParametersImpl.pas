@@ -1,4 +1,4 @@
-unit ViewParamsImpl;
+unit ViewParametersImpl;
 
 interface
 
