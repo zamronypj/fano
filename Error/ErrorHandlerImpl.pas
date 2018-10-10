@@ -27,6 +27,7 @@ implementation
         writeln();
         writeln(
             '<!DOCTYPE html><html><head><title>Program exception</title></head><body>' +
+              '<h1>Program exception</h1>' +
               '<div>Exception class: ' + exc.className + '</div>' +
               '<div>Message: ' + exc.message + '</div>'+
             '</body></html>'

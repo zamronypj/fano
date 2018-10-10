@@ -22,21 +22,25 @@ type
 
     TFanoWebApplication = class(TInterfacedObject, IWebApplication, IRunnable)
     private
+        dependencyContainer : IDependencyContainer;
         dispatcher : IDispatcher;
         environment : ICGIEnvironment;
         errorHandler : IErrorHandler;
 
         function execute() : IRunnable;
+        procedure reset();
+        function initialize(const container : IDependencyContainer) : boolean;
     protected
         procedure buildDependencies(const container : IDependencyContainer); virtual; abstract;
         procedure buildRoutes(const container : IDependencyContainer); virtual; abstract;
         function initDispatcher(const container : IDependencyContainer) : IDispatcher; virtual; abstract;
-        function initEnvironment(const container : IDependencyContainer) : ICGIEnvironment;virtual; abstract;
-        function initErrorHandler(const container : IDependencyContainer) : IErrorHandler; virtual; abstract;
     public
-        constructor create(const container : IDependencyContainer);
+        constructor create(
+            const container : IDependencyContainer;
+            const env : ICGIEnvironment;
+            const errHandler : IErrorHandler
+        );
         destructor destroy(); override;
-        function initialize(const container : IDependencyContainer) : IRunnable;
         function run() : IRunnable;
     end;
 
@@ -48,37 +52,38 @@ uses
     ERouteHandlerNotFoundImpl,
     EDependencyNotFoundImpl;
 
-    constructor TFanoWebApplication.create(const container : IDependencyContainer);
+    procedure TFanoWebApplication.reset();
     begin
         dispatcher := nil;
         environment := nil;
         errorHandler := nil;
-        initialize(container);
+        dependencyContainer := nil;
+    end;
+
+    constructor TFanoWebApplication.create(
+        const container : IDependencyContainer;
+        const env : ICGIEnvironment;
+        const errHandler : IErrorHandler
+    );
+    begin
+        reset();
+        environment := env;
+        errorHandler := errHandler;
+        dependencyContainer := container;
     end;
 
     destructor TFanoWebApplication.destroy();
     begin
         inherited destroy();
-        dispatcher := nil;
-        environment := nil;
-        errorHandler := nil;
+        reset();
     end;
 
-    function TFanoWebApplication.initialize(const container : IDependencyContainer) : IRunnable;
+    function TFanoWebApplication.initialize(const container : IDependencyContainer) : boolean;
     begin
-        try
-            buildDependencies(container);
-            buildRoutes(container);
-            dispatcher := initDispatcher(container);
-            environment := initEnvironment(container);
-            errorHandler := initErrorHandler(container);
-        except
-            dispatcher := nil;
-            environment := nil;
-            errorHandler := nil;
-            raise;
-        end;
-        result := self;
+        buildDependencies(container);
+        buildRoutes(container);
+        dispatcher := initDispatcher(container);
+        result := true;
     end;
 
     function TFanoWebApplication.execute() : IRunnable;
@@ -96,26 +101,33 @@ uses
     function TFanoWebApplication.run() : IRunnable;
     begin
         try
-            result := execute();
+            if (initialize(dependencyContainer)) then
+            begin
+                result := execute();
+            end;
         except
             on e : ERouteHandlerNotFound do
             begin
                 errorHandler.handleError(e);
+                reset();
             end;
 
             on e : EDependencyNotFound do
             begin
                 errorHandler.handleError(e);
+                reset();
             end;
 
             on e : EAccessViolation do
             begin
                 errorHandler.handleError(e);
+                reset();
             end;
 
             on e : Exception do
             begin
                 errorHandler.handleError(e);
+                reset();
             end;
         end;
     end;

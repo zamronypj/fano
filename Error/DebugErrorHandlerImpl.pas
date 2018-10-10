@@ -30,20 +30,22 @@ implementation
         report: string;
     begin
         report := '<!DOCTYPE html><html><head><title>Program exception</title></head><body>';
-        report := report + '<h2>Program exception!</h2>' + LineEnding +
-            '<div>Stacktrace:</div>' + LineEnding + LineEnding;
+        report := report + '<h2>Program exception</h2>';
         if (e <> nil) then
         begin
             report := report +
                 '<div>Exception class: ' + e.className + '</div>' + LineEnding  +
                 '<div>Message: ' + e.message + '</div>'+ LineEnding;
         end;
-        report := report + BackTraceStrFunc(ExceptAddr);
+        report := report + '<div>Stacktrace:</div>' + LineEnding;
+        report := report + '<pre>' + LineEnding +
+                  BackTraceStrFunc(ExceptAddr) + LineEnding;
         frames := ExceptFrames;
         for i := 0 to ExceptFrameCount - 1 do
         begin
-            report := report + LineEnding + '<div>' +BackTraceStrFunc(frames[I]) + '</div>';
+            report := report + BackTraceStrFunc(frames[I]) + LineEnding;
         end;
+        report := report + '</pre>';
         report := report + '</body></html>';
         result := report;
     end;

@@ -1,6 +1,7 @@
 unit ConfigImpl;
 
 interface
+{$H+}
 
 uses
     fpjson,
@@ -16,9 +17,8 @@ type
     public
         constructor create(const configFile : string);
         destructor destroy(); override;
-        function getString(const configName : string) : string;
-        function getInt(const configName : string) : integer;
-        function isNull(const configName : string) : boolean;
+        function getString(const configName : string; const defaultValue : string = '') : string;
+        function getInt(const configName : string; const defaultValue : integer = 0) : integer;
     end;
 
 implementation
@@ -44,18 +44,30 @@ uses
         json.free();
     end;
 
-    function TFanoConfig.getString(const configName : string) : string;
+    function TFanoConfig.getString(const configName : string; const defaultValue : string = '') : string;
+    var jsonData : TJSONData;
     begin
-       result := json.findPath(configName).asString;
+        jsonData := json.findPath(configName);
+        if (jsonData = nil) then
+        begin
+            result := defaultValue;
+        end else
+        begin
+            result := jsonData.asString;
+        end;
     end;
 
-    function TFanoConfig.getInt(const configName : string) : integer;
+    function TFanoConfig.getInt(const configName : string; const defaultValue : integer = 0) : integer;
+    var jsonData : TJSONData;
     begin
-       result := json.findPath(configName).asInteger;
+        jsonData := json.findPath(configName);
+        if (jsonData = nil) then
+        begin
+            result := defaultValue;
+        end else
+        begin
+            result := jsonData.asInteger;
+        end;
     end;
 
-    function TFanoConfig.isNull(const configName : string) : boolean;
-    begin
-       result := json.findPath(configName).isNull;
-    end;
 end.
