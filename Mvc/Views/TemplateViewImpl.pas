@@ -5,7 +5,7 @@ interface
 
 uses
     ResponseIntf,
-    ViewParamsIntf,
+    ViewParametersIntf,
     ViewIntf,
     TemplateFetcherIntf,
     TemplateParserIntf,

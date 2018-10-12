@@ -5,7 +5,7 @@ interface
 uses
     classes,
     contnrs,
-    ViewParamsIntf;
+    ViewParametersIntf;
 
 type
     {------------------------------------------------

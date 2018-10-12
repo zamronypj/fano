@@ -4,7 +4,7 @@ interface
 {$H+}
 
 uses
-    ViewParamsIntf;
+    ViewParametersIntf;
 
 type
     {------------------------------------------------

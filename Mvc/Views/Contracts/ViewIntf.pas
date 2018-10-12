@@ -4,7 +4,7 @@ interface
 
 uses
     ResponseIntf,
-    ViewParamsIntf;
+    ViewParametersIntf;
 
 type
     {------------------------------------------------
