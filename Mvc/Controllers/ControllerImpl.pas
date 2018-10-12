@@ -9,7 +9,7 @@ uses
     RouteHandlerImpl,
     MiddlewareCollectionIntf,
     ViewIntf,
-    ViewParamsIntf;
+    ViewParametersIntf;
 
 type
 

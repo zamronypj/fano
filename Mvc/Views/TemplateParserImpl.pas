@@ -5,7 +5,7 @@ interface
 
 uses
     DependencyIntf,
-    ViewParamsIntf,
+    ViewParametersIntf,
     TemplateParserIntf,
     RegexIntf;
 
