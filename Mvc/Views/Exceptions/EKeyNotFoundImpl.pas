@@ -5,8 +5,7 @@
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
  * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
  *}
-
-unit EDependencyNotFoundImpl;
+unit EKeyNotFoundImpl;
 
 interface
 
@@ -15,7 +14,7 @@ uses
 
 type
 
-    EDependencyNotFound = class(Exception)
+    EKeyNotFound = class(Exception)
     end;
 
 implementation

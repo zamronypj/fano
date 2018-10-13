@@ -89,8 +89,14 @@ type
 implementation
 
 uses
+
     ERouteHandlerNotFoundImpl,
     EMethodNotAllowedImpl;
+
+resourcestring
+
+    sRouteNotFound = 'Route not found. Method: %s Uri: %s';
+    sMethodNotAllowed = 'Method not allowed. Method: %s Uri: %s';
 
     constructor TRouteCollection.create(const routes : IRouteList);
     begin
@@ -259,15 +265,17 @@ uses
         routeData := routeList.find(routeName);
         if (routeData = nil) then
         begin
-            raise ERouteHandlerNotFound.create(
-                'Route not found. Method:' + requestMethod + ' Uri:' + routeName
+            raise ERouteHandlerNotFound.createFmt(
+                sRouteNotFound,
+                [requestMethod, routeName]
             );
         end;
         result := getRouteHandler(requestMethod, routeData);
         if (result = nil) then
         begin
-            raise EMethodNotAllowed.create(
-                'Method not allowed. Method:' + requestMethod + ' Uri:' + routeName
+            raise EMethodNotAllowed.createFmt(
+                sMethodNotAllowed,
+                [requestMethod, routeName]
             );
         end;
     end;

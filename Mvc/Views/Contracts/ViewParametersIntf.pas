@@ -1,6 +1,16 @@
+{*!
+ * Fano Web Framework (https://fano.juhara.id)
+ *
+ * @link      https://github.com/zamronypj/fano
+ * @copyright Copyright (c) 2018 Zamrony P. Juhara
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
+ *}
+
 unit ViewParametersIntf;
 
 interface
+
+{$H+}
 
 uses
     classes;
@@ -15,8 +25,8 @@ type
     IViewParameters = interface
         ['{F93CA7D6-4454-4A04-A585-78BFF12F49E3}']
         function vars() : TStrings;
-        function getVar(const varName : string) : string;
-        function setVar(const varName : string; const valueData :string) : IViewParameters;
+        function getVar(const varName : shortstring) : string;
+        function setVar(const varName : shortstring; const valueData :string) : IViewParameters;
     end;
 
 implementation

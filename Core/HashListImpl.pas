@@ -1,3 +1,10 @@
+{*!
+ * Fano Web Framework (https://fano.juhara.id)
+ *
+ * @link      https://github.com/zamronypj/fano
+ * @copyright Copyright (c) 2018 Zamrony P. Juhara
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
+ *}
 unit HashListImpl;
 
 interface
@@ -22,8 +29,8 @@ type
         function count() : integer;
         function get(const indx : integer) : pointer;
         procedure delete(const indx : integer);
-        function add(const routeName : string; const routeData : pointer) : integer;
-        function find(const routeName : string) : pointer;
+        function add(const key : string; const data : pointer) : integer;
+        function find(const key : string) : pointer;
     end;
 
 implementation
@@ -53,13 +60,13 @@ implementation
         hashes.delete(indx);
     end;
 
-    function THashList.add(const routeName : string; const routeData : pointer) : integer;
+    function THashList.add(const key : string; const data : pointer) : integer;
     begin
-        result := hashes.add(routeName, routeData);
+        result := hashes.add(key, data);
     end;
 
-    function THashList.find(const routeName : string) : pointer;
+    function THashList.find(const key : string) : pointer;
     begin
-        result := hashes.find(routeName);
+        result := hashes.find(key);
     end;
 end.

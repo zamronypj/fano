@@ -48,6 +48,10 @@ uses
     sysutils,
     EDependencyNotFoundImpl;
 
+resourcestring
+
+    sDependencyNotFound = 'Dependency %s not found';
+
 type
 
     TDependencyRec = record
@@ -116,7 +120,7 @@ type
         depRec := dependencyList.find(serviceName);
         if (depRec = nil) then
         begin
-            raise EDependencyNotFound.Create('Dependency not found: ' + serviceName);
+            raise EDependencyNotFound.createFmt(sDependencyNotFound, [serviceName]);
         end;
 
         if (depRec^.singleInstance) then
