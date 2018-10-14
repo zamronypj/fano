@@ -11,9 +11,9 @@ uses
 
 type
     TPlaceholder = record
-        varName : string;
-        varValue : string;
-        optionalRegex : string;
+        phName : string;
+        phValue : string;
+        phFormatRegex : string;
     end;
     TArrayOfPlaceholders = array of TRoutePlaceholder;
 
@@ -80,14 +80,14 @@ type
       into array of placeholder
       [
         {
-          varName : 'name'
-          varValue : 'juhara'
-          optionalRegex : '[a-zA-Z0-9\-\*\:]+',
+          phName : 'name'
+          phValue : 'juhara'
+          phFormatRegex : '[a-zA-Z0-9\-\*\:]+',
         }
         {
-          varName : 'unitId'
-          varValue : 'nice'
-          optionalRegex : ''
+          phName : 'unitId'
+          phValue : 'nice'
+          phFormatRegex : ''
         }
       ]
       /name/[^/]+/[^/]+/edback
@@ -156,12 +156,12 @@ type
      *     into array of placeholder
      *     [
      *         {
-     *             varName : 'name'
-     *             optionalRegex : '[a-zA-Z0-9\-\*\:]+',
+     *             phName : 'name'
+     *             phFormaRegex : '[a-zA-Z0-9\-\*\:]+',
      *         },
      *         {
-     *             varName : 'unitId'
-     *             optionalRegex : ''
+     *             phName : 'unitId'
+     *             phFormatRegex : ''
      *         }
      *     ]
      * (2) replace route name into new regex string (transformed route name) as
@@ -181,11 +181,21 @@ type
     function TRegexRouteList.combineRegexRoutes() : string;
     var i, len : integer;
     begin
+        //if we get here, it is assumed that count will be > 0
+        result := '(?:';
         len := count();
         for i:=0 to len-1 do
         begin
-
+            routeRegex := keyOfIndex(i);
+            if (i < len-1) then
+            begin
+                result := result + routeRegex +'|';
+            end else
+            begin
+                result := result + routeRegex;
+            end;
         end;
+        result := result + ')';
     end;
 
     (*------------------------------------------------
@@ -214,13 +224,55 @@ type
      *
      * (ii) Based on matched group (the second non empty group),
      * we can get index to the list of routes list.
-     * (iii)
+     * (iii) parse capture group based on its placeholder to get value
+     * (iv) return route data with its placeholder data
      *---------------------------------------------------*)
     function TRegexRouteList.find(const requestUri : string) : pointer;
     var combinedRegex : string;
+        matches : TRegexMatchResult;
+        placeholderRegex : TRegexMatchResult;
+    var data :PRouteDataRec;
     begin
+        if (emptyRoutes()) then
+        begin
+            result := nil;
+            exit;
+        end;
+
         combinedRegex := combineRegexRoutes();
-        result := hashes.find(routeName);
+        matches := regex.match(combinedRegex, requestUri);
+        if (matches.matched) then
+        begin
+            data := inherited find(matches.matches[0]);
+            if (data <> nil) then
+            begin
+                if (length(data.phFormatRegex) > 0) then
+                begin
+                    //if we get here, placeholder expect value to be in format
+                    //as specified by phFormatRegex, test further
+                    placeholherRegex := regex.match(data.formatRegex, matches.matches[0]);
+                    if (placeholderRegex.matched) then
+                    begin
+                        data.phValue := matches.matches[0];
+                    end else
+                    begin
+                        //assume not found or some other value
+                        result := nil;
+                    end;
+                end else
+                begin
+                    data.phValue := matches.matches[0];
+                end;
+                //TODO:return also placeholder!!
+                result := data.routeData;
+            end else
+            begin
+                result := nil;
+            end;
+        end else
+        begin
+            result := nil;
+        end;
     end;
 
 end.

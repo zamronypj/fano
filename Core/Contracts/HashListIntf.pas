@@ -20,8 +20,8 @@ type
         function count() : integer;
         function get(const indx : integer) : pointer;
         procedure delete(const indx : integer);
-        function add(const routeName : string; const routeData : pointer) : integer;
-        function find(const routeName : string) : pointer;
+        function add(const key : string; const routeData : pointer) : integer;
+        function find(const key : string) : pointer;
     end;
 
 implementation
