@@ -48,6 +48,7 @@ type
             const originalRouteWithRegex : string
         ) : string;
         procedure clearRoutes();
+        function findRoute(const routeName : string) : pointer;
     public
         constructor create(const regexInst : IRegex);
         destructor destroy(); override;
@@ -291,18 +292,12 @@ type
      * (iii) parse capture group based on its placeholder to get value
      * (iv) return route data with its placeholder data
      *---------------------------------------------------*)
-    function TRegexRouteList.find(const requestUri : string) : pointer;
+    function TRegexRouteList.findRoute(const requestUri : string) : pointer;
     var combinedRegex : string;
         matches : TRegexMatchResult;
         placeholderRegex : TRegexMatchResult;
         data :PRouteDataRec;
     begin
-        if (emptyRoutes()) then
-        begin
-            result := nil;
-            exit;
-        end;
-
         combinedRegex := combineRegexRoutes();
         matches := regex.match(combinedRegex, requestUri);
         if (matches.matched) then
@@ -339,4 +334,18 @@ type
         end;
     end;
 
+    (*------------------------------------------------
+     * match request uri with route list and return
+     * its associated data
+     *---------------------------------------------------*)
+    function TRegexRouteList.find(const requestUri : string) : pointer;
+    begin
+        if (count() <> 0) then
+        begin
+            result := findRoute(requestUri);
+        end else
+        begin
+          result :=nil;
+        end;
+    end;
 end.
