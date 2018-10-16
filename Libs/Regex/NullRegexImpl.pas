@@ -1,6 +1,15 @@
+{*!
+ * Fano Web Framework (https://fano.juhara.id)
+ *
+ * @link      https://github.com/zamronypj/fano
+ * @copyright Copyright (c) 2018 Zamrony P. Juhara
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
+ *}
+
 unit NullRegexImpl;
 
 interface
+
 {$H+}
 
 uses
@@ -21,6 +30,16 @@ type
         ) : string;
 
         function quote(const regexPattern : string) : string;
+
+        function match(
+            const regexPattern : string;
+            const source : string
+        ) : TRegexMatchResult;
+
+        function greedyMatch(
+            const regexPattern : string;
+            const source : string
+        ) : TRegexMatchResult;
     end;
 
 implementation
@@ -40,5 +59,23 @@ uses
     function TNullRegex.quote(const regexPattern : string) : string;
     begin
         result := QuoteRegExprMetaChars(regexPattern);
+    end;
+
+    function TNullRegex.match(
+        const regexPattern : string;
+        const source : string
+    ) : TRegexMatchResult;
+    begin
+        result.matched := false;
+        setLength(result.matches, 0);
+    end;
+
+    function TNullRegex.greedyMatch(
+        const regexPattern : string;
+        const source : string
+    ) : TRegexMatchResult;
+    begin
+        result.matched := false;
+        setLength(result.matches, 0);
     end;
 end.
