@@ -38,9 +38,16 @@ type
             const originalRouteWithRegex : string
         ) : TArrayOfPlaceholders;
 
-        function replacePlaceholderRegexWithDispatherRegex(
+        function getPlaceholderValuesFromUri(
+            const originalRouteWithRegex : string;
+            const uri : string;
+            const placeHolders : TArrayOfPlaceholders
+        ) : TArrayOfPlaceholders;
+
+        function replacePlaceholderRegexWithDispatcherRegex(
             const originalRouteWithRegex : string
         ) : string;
+        procedure clearRoutes();
     public
         constructor create(const regexInst : IRegex);
         destructor destroy(); override;
@@ -79,65 +86,81 @@ type
     PRouteDataRec = ^TRouteDataRec;
 
     (*------------------------------------------------
-      get placeholder variable original
-      for example for route pattern :
-        /name/{name:[a-zA-Z0-9\-\*\:]+}/{unitId}/edback
-      and actual Request Uri
-        /name/juhara/nice/edback
-
-      into array of placeholder
-      [
-        {
-          phName : 'name'
-          phValue : 'juhara'
-          phFormatRegex : '[a-zA-Z0-9\-\*\:]+',
-        }
-        {
-          phName : 'unitId'
-          phValue : 'nice'
-          phFormatRegex : ''
-        }
-      ]
-      /name/[^/]+/[^/]+/edback
-
-      See ROUTE_DISPATCH_REGEX constant
-    ---------------------------------------------------*)
+     * get placeholder variable original
+     *------------------------------------------------
+     * for example for route pattern :
+     *  /name/{name:[a-zA-Z0-9\-\*\:]+}/{unitId}/edback
+     *
+     *  It will returns array of placeholder like below
+     *
+     * [
+     *  {
+     *    phName : 'name',
+     *    phValue : '',
+     *    phFormatRegex : '[a-zA-Z0-9\-\*\:]+',
+     *  }
+     *  {
+     *    phName : 'unitId',
+     *    phValue : '',
+     *    phFormatRegex : ''
+     *  }
+     * ]
+     *
+     * This method will be called when a route pattern is
+     * added to route collection. At this time,
+     * placeholder value is not yet known ,so phValue field
+     * will always be empty
+     *
+     *---------------------------------------------------*)
     function TRegexRouteList.getPlaceholderFromOriginalRoute(
         const originalRouteWithRegex : string
     ) : TArrayOfPlaceholders;
+    var matches : TRegexMatchResult;
     begin
-
+        matches := regex.greedyMatch(
+            ROUTE_PLACEHOLDER_REGEX,
+            originalRouteWithRegex
+        );
     end;
 
     (*------------------------------------------------
-     * replace original route pattern :
-     *   /name/{name:[a-zA-Z0-9\-\*\:]+}/{unitId}/edback
+     * get placeholder value from uri
+     *------------------------------------------------
+     * after a route is matched, then this method will be
+     * called with matched route, original uri and placeholder
+     * for example for route pattern :
+     *  /name/{name:[a-zA-Z0-9\-\*\:]+}/{unitId}/edback
+     * and actual Request Uri
+     * /name/juhara/nice/edback
      *
-     * into route pattern ready for dispatch
-     * /name/[^/]+/[^/]+/edback
+     *  It will returns array of placeholder like below
      *
-     * See ROUTE_DISPATCH_REGEX constant
+     * [
+     *  {
+     *    phName : 'name'
+     *    phValue : 'juhara'
+     *    phFormatRegex : '[a-zA-Z0-9\-\*\:]+',
+     *  }
+     *  {
+     *    phName : 'unitId'
+     *    phValue : 'nice'
+     *    phFormatRegex : ''
+     *  }
+     * ]
+     *
      *---------------------------------------------------*)
-    function TRegexRouteList.replacePlaceholderRegexWithDispatherRegex(
-        const originalRouteWithRegex : string;
-        const placeholders : TArrayOfPlaceholders
-    ) : string;
-    var i: integer;
+     function TRegexRouteList.getPlaceholderValuesFromUri(
+         const uri : string;
+         const placeHolders : TArrayOfPlaceholders
+     ) : TArrayOfPlaceholders;
+    var matches : TRegexMatchResult;
     begin
-        matched := regex.match(
-            originalRouteWithRegex,
-            ROUTE_PLACEHOLDER_REGEX,
-            matchGroup
+
+        matches := regex.greedyMatch(
+            ROUTE_DISPATCH_REGEX,
+            originalRouteWithRegex
         );
-        if (matched) then
-        begin
-            for i := 0 to leng(matched)-1 do
-            begin
-
-            end;
-        end;
     end;
-
     constructor TRegexRouteList.create(const regexInst : IRegex);
     begin
         regex := regexInst;
@@ -146,7 +169,23 @@ type
     destructor TRegexRouteList.destroy();
     begin
         inherited destroy();
+        clearRoutes();
         regex := nil;
+    end;
+
+    procedure TRegexRouteList.clearRoutes();
+    var i, len : integer;
+        routeRec : PRouteDataRec;
+    begin
+        len := count();
+        for i := len -1 downto 0 do
+        begin
+            routeRec := get(i);
+            setLength(routeRec^.placeholders, 0);
+            routeRec^.routeData := nil;
+            dispose(routeRec);
+            delete(i);
+        end;
     end;
 
     (*!------------------------------------------------
@@ -177,13 +216,30 @@ type
      * (3) store transformed route name into list
      *---------------------------------------------------*)
     function TRegexRouteList.add(const routeName : string; const routeData : pointer) : integer;
-    var replacedRoutePattern : string;
+    var transformedRouteName : string;
         placeholders : TArrayOfPlaceholders;
+        routeRec : PRouteDataRec;
     begin
-        placeholders := getPlaceholderFromOriginalRoute(routeName);
-        replacedRoutePattern := regex.replace();
+        new(routeRec);
+        routeRec^.placeholders := getPlaceholderFromOriginalRoute(routeName);
+        routeRec^.routeData := routeData;
 
-        result := inherited add(routeName, routeData);
+        (*------------------------------------------------
+         * replace original route pattern :
+         *   /name/{name:[a-zA-Z0-9\-\*\:]+}/{unitId}/edback
+         *
+         * into route pattern ready for dispatch
+         * /name/[^/]+/[^/]+/edback
+         *
+         * See ROUTE_DISPATCH_REGEX constant
+         *---------------------------------------------------*)
+        transformedRouteName := regex.replace(
+            ROUTE_PLACEHOLDER_REGEX,
+            routeName,
+            ROUTE_DISPATCH_REGEX
+        );
+
+        result := inherited add(transformedRouteName, routeRec);
     end;
 
     function TRegexRouteList.combineRegexRoutes() : string;
@@ -239,7 +295,7 @@ type
     var combinedRegex : string;
         matches : TRegexMatchResult;
         placeholderRegex : TRegexMatchResult;
-    var data :PRouteDataRec;
+        data :PRouteDataRec;
     begin
         if (emptyRoutes()) then
         begin

@@ -84,33 +84,42 @@ uses
         const regexPattern : string;
         const source : string
     ) : TRegexMatchResult;
+    const MAX_ELEMENT = 1000;
     var re : TRegExpr;
-        matches : TStringList;
-        i, len : integer;
+        actualElement : integer;
     begin
         re := TRegExpr.create(regexPattern);
-        matches := TStringList.create();
         try
+            //assume no match
             setLength(result.matches, 0);
             result.matched := re.exec(source);
             if (result.matched) then
             begin
-                matches.add(re.match[1]);
+                //pre-allocated element, to avoid frequent
+                //memory allocation/deallocation
+                setLength(result.matches, MAX_ELEMENT);
+                actualElement := 1;
+                result.matches[0] := re.match[1];
                 while (re.execNext()) do
                 begin
-                    matches.add(re.match[1]);
+                    if (actualElement < MAX_ELEMENT) then
+                    begin
+                        result.matches[actualElement] := re.match[1];
+                    end else
+                    begin
+                        //grow array
+                        setLength(
+                            result.matches,
+                            length(result.matches) + MAX_ELEMENT
+                        );
+                    end;
+                    inc(actualElement);
                 end;
-
-                len := matches.count;
-                setlength(result.matches, len);
-                for i := 0 to len-1 do
-                begin
-                    result.matches[i] := matches[i];
-                end;
+                //truncate array to number of actual element
+                setLength(result.matches, actualElement);
             end;
         finally
             re.free();
-            matches.free();
         end;
     end;
 end.
