@@ -23,8 +23,14 @@ type
     TFactory = class(TInterfacedObject, IDependencyFactory)
     public
         function build() : IDependency; virtual; abstract;
+        procedure cleanUp(); virtual;
     end;
 
 implementation
+
+    procedure TFactory.cleanUp();
+    begin
+        //intentionally do nothing
+    end;
 
 end.

@@ -20,6 +20,7 @@ type
     IDependencyFactory = interface
         ['{BB858A2C-65DD-47C6-9A04-7C4CCA2816DD}']
         function build() : IDependency;
+        procedure cleanUp();
     end;
 
 implementation
