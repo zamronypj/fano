@@ -67,7 +67,7 @@ type
     end;
 
     destructor TDependencyContainer.destroy();
-    var i, len:integer;
+    var i, len : integer;
         dep : PDependencyRec;
     begin
         inherited destroy();
@@ -75,6 +75,11 @@ type
         for i := len-1 downto 0 do
         begin
             dep := dependencyList.get(i);
+
+            //if factory class holds instance to container,
+            //then this is their right time to remove reference
+            dep^.factory.cleanUp();
+
             dep^.factory := nil;
             dep^.instance := nil;
             dispose(dep);
@@ -99,7 +104,7 @@ type
 
         depRec^.factory := service;
         depRec^.instance := nil;
-        depRec^.singleInstance := true;
+        depRec^.singleInstance := singleInstance;
         result := self;
     end;
 
