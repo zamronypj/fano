@@ -81,7 +81,16 @@ uses
             if (result.matched) then
             begin
                 setlength(result.matches, 1);
-                result.matches[0] := re.match[1];
+                setlength(result.matches[0], 1);
+                result.matches[0][0] := re.match[0];
+                if (re.SubExprMatchCount > 0) then
+                begin
+                  setLength(result.matches[0], re.SubExprMatchCount);
+                  for i:= 1 to re.SubExprMatchCount do
+                  begin
+                      result.matches[0][i] := re.match[i];
+                  end;
+                end;
             end;
         finally
             re.free();
@@ -93,8 +102,9 @@ uses
         const source : string
     ) : TRegexMatchResult;
     const MAX_ELEMENT = 1000;
+          MAX_SUB_ELEMENT = 10;
     var re : TRegExpr;
-        actualElement : integer;
+        actualElement, actualSubElement : integer;
     begin
         re := TRegExpr.create(regexPattern);
         try
@@ -106,7 +116,7 @@ uses
             begin
                 //pre-allocated element, to avoid frequent
                 //memory allocation/deallocation
-                setLength(result.matches, MAX_ELEMENT);
+                setLength(result.matches, MAX_ELEMENT, MAX_SUB_ELEMENT);
                 actualElement := 1;
                 result.matches[0] := re.match[1];
                 while (re.execNext()) do
@@ -119,7 +129,7 @@ uses
                         //grow array
                         setLength(
                             result.matches,
-                            length(result.matches) + MAX_ELEMENT
+                            length(result.matches) + MAX_ELEMENT, MAX_SUB_ELEMENT
                         );
                     end;
                     inc(actualElement);
