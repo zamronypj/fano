@@ -5,7 +5,6 @@ interface
 uses
     DependencyIntf,
     DependencyContainerIntf,
-    DependencyFactoryIntf,
     FactoryImpl,
     RouteMatcherIntf;
 
@@ -24,7 +23,7 @@ type
             const routeMatcherInst : IRouteMatcher
         );
         destructor destroy(); override;
-        function build() : IDependency; override;
+        function build(const container : IDependencyContainer) : IDependency; override;
     end;
 
 implementation
@@ -47,7 +46,7 @@ uses
         routeMatcher := nil;
     end;
 
-    function TSimpleDispatcherFactory.build() : IDependency;
+    function TSimpleDispatcherFactory.build(const container : IDependencyContainer) : IDependency;
     begin
         result := TSimpleDispatcher.create(
             routeMatcher,

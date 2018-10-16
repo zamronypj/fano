@@ -11,7 +11,7 @@ interface
 
 uses
     DependencyIntf,
-    DependencyFactoryIntf;
+    DependencyContainerIntf;
 
 type
     {------------------------------------------------
@@ -22,15 +22,9 @@ type
     -----------------------------------------------}
     TFactory = class(TInterfacedObject, IDependencyFactory)
     public
-        function build() : IDependency; virtual; abstract;
-        procedure cleanUp(); virtual;
+        function build(const container : IDependencyContainer) : IDependency; virtual; abstract;
     end;
 
 implementation
-
-    procedure TFactory.cleanUp();
-    begin
-        //intentionally do nothing
-    end;
 
 end.

@@ -4,7 +4,7 @@ interface
 
 uses
     DependencyIntf,
-    DependencyFactoryIntf,
+    DependencyContainerIntf,
     FactoryImpl;
 
 type
@@ -16,7 +16,7 @@ type
     -----------------------------------------------}
     TCGIEnvironmentFactory = class(TFactory, IDependencyFactory)
     public
-        function build() : IDependency; override;
+        function build(const container : IDependencyContainer) : IDependency; override;
     end;
 
 implementation
@@ -24,7 +24,7 @@ implementation
 uses
     EnvironmentImpl;
 
-    function TCGIEnvironmentFactory.build() : IDependency;
+    function TCGIEnvironmentFactory.build(const container : IDependencyContainer) : IDependency;
     begin
         result := TCGIEnvironment.create();
     end;

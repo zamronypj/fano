@@ -4,6 +4,7 @@ interface
 
 uses
     DependencyIntf,
+    DependencyContainerIntf,
     DependencyFactoryIntf,
     MiddlewareCollectionIntf,
     MiddlewareCollectionFactoryIntf,
@@ -18,7 +19,7 @@ type
     *}
     TMiddlewareCollectionFactory = class(TFactory, IMiddlewareCollectionFactory, IDependencyFactory)
     public
-        function build() : IDependency; override;
+        function build(const container : IDependencyContainer) : IDependency; override;
     end;
 
 implementation

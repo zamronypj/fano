@@ -12,7 +12,6 @@ interface
 uses
     DependencyIntf,
     DependencyContainerIntf,
-    DependencyFactoryIntf,
     FactoryImpl;
 
 type
@@ -23,7 +22,7 @@ type
     -----------------------------------------------}
     TOutputBufferFactory = class(TFactory, IDependencyFactory)
     public
-        function build() : IDependency; override;
+        function build(const container : IDependencyContainer) : IDependency; override;
     end;
 
 implementation
@@ -31,7 +30,7 @@ implementation
 uses
     OutputBufferImpl;
 
-    function TOutputBufferFactory.build() : IDependency;
+    function TOutputBufferFactory.build(const container : IDependencyContainer) : IDependency;
     begin
         result := TOutputBuffer.create();
     end;

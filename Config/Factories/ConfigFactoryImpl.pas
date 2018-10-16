@@ -5,7 +5,6 @@ interface
 uses
     DependencyIntf,
     DependencyContainerIntf,
-    DependencyFactoryIntf,
     FactoryImpl;
 
 type
@@ -18,7 +17,7 @@ type
         configFilename : string;
     public
         constructor create(const configFile :string);
-        function build() : IDependency; override;
+        function build(const container : IDependencyContainer) : IDependency; override;
     end;
 
 implementation
@@ -31,7 +30,7 @@ uses
         configFilename := configFile;
     end;
 
-    function TFanoConfigFactory.build() : IDependency;
+    function TFanoConfigFactory.build(const container : IDependencyContainer) : IDependency;
     begin
         result := TFanoConfig.create(configFilename);
     end;
