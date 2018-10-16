@@ -38,6 +38,7 @@ type
 implementation
 
 uses
+    classes,
     regexpr;
 
     function TRegex.replace(
@@ -72,7 +73,7 @@ uses
             if (result.matched) then
             begin
                 setlength(result.matches, 1);
-                result.matches[0] = re.match[1];
+                result.matches[0] := re.match[1];
             end;
         finally
             re.free();
@@ -83,13 +84,12 @@ uses
         const regexPattern : string;
         const source : string
     ) : TRegexMatchResult;
-    const INITIAL_CAPACITY = 20;
     var re : TRegExpr;
         matches : TStringList;
         i, len : integer;
     begin
         re := TRegExpr.create(regexPattern);
-        matches := TStringList.create(INITIAL_CAPACITY);
+        matches := TStringList.create();
         try
             setLength(result.matches, 0);
             result.matched := re.exec(source);
@@ -113,4 +113,4 @@ uses
             matches.free();
         end;
     end;
-end;
+end.
