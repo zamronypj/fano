@@ -19,7 +19,22 @@ type
     -----------------------------------------------}
     IDependencyFactory = interface
         ['{BB858A2C-65DD-47C6-9A04-7C4CCA2816DD}']
+
+        {*!----------------------------------------
+         * build instance
+         *------------------------------------------*}
         function build() : IDependency;
+
+        {*!----------------------------------------
+         * clean up factory data
+         * ----------------------------------------
+         * if factory hold reference to IDependencyContainer
+         * instance, it will cause circular reference that
+         * may cause memory leak because of reference-counted interface.
+         * this method is provided so factory has opportunity
+         * to release their hold to container instance to
+         * avoid memory leak
+         *------------------------------------------*}
         procedure cleanUp();
     end;
 
