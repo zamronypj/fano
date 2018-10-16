@@ -13,7 +13,7 @@ interface
 {$H+}
 
 type
-    TRegexMatches = array of string;
+    TRegexMatches = array of array of string;
     TRegexMatchResult = record
         matched : boolean;
         matches : TRegexMatches;

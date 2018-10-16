@@ -6,7 +6,7 @@
  * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
  *}
 
-unit RegexRouteListImpl;
+unit SimpleRegexRouteListImpl;
 
 interface
 
@@ -18,19 +18,18 @@ uses
     RegexIntf;
 
 type
-    TPlaceholder = record
+    TSimplePlaceholder = record
         phName : string;
         phValue : string;
-        phFormatRegex : string;
     end;
-    TArrayOfPlaceholders = array of TPlaceholder;
+    TArrayOfSimplePlaceholders = array of TSimplePlaceholder;
 
     {------------------------------------------------
      interface for any class having capability to
      handler route
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
-    TRegexRouteList = class(THashList, IRouteList)
+    TSimpleRegexRouteList = class(THashList, IRouteList)
     private
         regex : IRegex;
 
@@ -44,9 +43,6 @@ type
             const placeHolders : TArrayOfPlaceholders
         ) : TArrayOfPlaceholders;
 
-        function replacePlaceholderRegexWithDispatcherRegex(
-            const originalRouteWithRegex : string
-        ) : string;
         procedure clearRoutes();
         function findRoute(const routeName : string) : pointer;
     public
@@ -63,13 +59,16 @@ const
     (*-------------------------------------------------
       regex pattern that will match following string format
       and extract placeholder variable name inside {}
-      and optional regex (if any)
 
       /store/{ storeId }/feedback
-      /name/{name:[a-zA-Z0-9\-\*\:]+}/{unitId}/edback
-      /name/{tr : [a-zA-Z0-9]*? }/{unitId}/edback
+      /name/{name-id}/{unitId}/edback
+      /name/{name}/{unitId}/edback
+      /name/{ tr }/{unitId}/edback
+
+      This class DOES NOT support syntax such as
+      /store/{storeId:[a-zA-Z0-9]+}/feedback
     -------------------------------------------------*)
-    ROUTE_PLACEHOLDER_REGEX = '\{\s*([a-zA-Z_][a-zA-Z0-9_\-]*)\s*(?:\:\s*([^{}]*(?:\{\}[^{}]*)*))?\}';
+    ROUTE_PLACEHOLDER_REGEX = '\{\s*([a-zA-Z_][a-zA-Z0-9_\-]*)\s*\}';
 
     (*-------------------------------------------------
       regex pattern that will be used to replace original
@@ -81,7 +80,7 @@ const
 type
 
     TRouteDataRec = record
-        placeholders: TArrayOfPlaceholders;
+        placeholders: TArrayOfSimplePlaceholders;
         routeData : pointer;
     end;
     PRouteDataRec = ^TRouteDataRec;
@@ -90,7 +89,7 @@ type
      * get placeholder variable original
      *------------------------------------------------
      * for example for route pattern :
-     *  /name/{name:[a-zA-Z0-9\-\*\:]+}/{unitId}/edback
+     *  /name/{name}/{unitId}/edback
      *
      *  It will returns array of placeholder like below
      *
@@ -98,12 +97,10 @@ type
      *  {
      *    phName : 'name',
      *    phValue : '',
-     *    phFormatRegex : '[a-zA-Z0-9\-\*\:]+',
      *  }
      *  {
      *    phName : 'unitId',
      *    phValue : '',
-     *    phFormatRegex : ''
      *  }
      * ]
      *
@@ -113,7 +110,7 @@ type
      * will always be empty
      *
      *---------------------------------------------------*)
-    function TRegexRouteList.getPlaceholderFromOriginalRoute(
+    function TSimpleRegexRouteList.getPlaceholderFromOriginalRoute(
         const originalRouteWithRegex : string
     ) : TArrayOfPlaceholders;
     var matches : TRegexMatchResult;
@@ -130,7 +127,7 @@ type
      * after a route is matched, then this method will be
      * called with matched route, original uri and placeholder
      * for example for route pattern :
-     *  /name/{name:[a-zA-Z0-9\-\*\:]+}/{unitId}/edback
+     *  /name/{name}/{unitId}/edback
      * and actual Request Uri
      * /name/juhara/nice/edback
      *
@@ -140,17 +137,15 @@ type
      *  {
      *    phName : 'name'
      *    phValue : 'juhara'
-     *    phFormatRegex : '[a-zA-Z0-9\-\*\:]+',
      *  }
      *  {
      *    phName : 'unitId'
      *    phValue : 'nice'
-     *    phFormatRegex : ''
      *  }
      * ]
      *
      *---------------------------------------------------*)
-     function TRegexRouteList.getPlaceholderValuesFromUri(
+     function TSimpleRegexRouteList.getPlaceholderValuesFromUri(
          const uri : string;
          const placeHolders : TArrayOfPlaceholders
      ) : TArrayOfPlaceholders;
@@ -161,19 +156,19 @@ type
             originalRouteWithRegex
         );
     end;
-    constructor TRegexRouteList.create(const regexInst : IRegex);
+    constructor TSimpleRegexRouteList.create(const regexInst : IRegex);
     begin
         regex := regexInst;
     end;
 
-    destructor TRegexRouteList.destroy();
+    destructor TSimpleRegexRouteList.destroy();
     begin
         inherited destroy();
         clearRoutes();
         regex := nil;
     end;
 
-    procedure TRegexRouteList.clearRoutes();
+    procedure TSimpleRegexRouteList.clearRoutes();
     var i, len : integer;
         routeRec : PRouteDataRec;
     begin
@@ -192,30 +187,30 @@ type
      * add route pattern to list
      *-------------------------------------------------
      * @param routeName original route as defined by app
-     *   /name/{name:[a-zA-Z0-9\-\*\:]+}/{unitId}/edback
+     *   /name/{name}/{unitId}/edback
      * @param routeData, pointer to route data (such handler, etc)
      * @return integer index of added item in list
      *-------------------------------------------------
      *
      * If we have following input route name
-     *   /name/{name:[a-zA-Z0-9\-\*\:]+}/{unitId}/edback
+     *   /name/{name}/{unitId}/edback
      * (1) we will extract placeholder data
      *     into array of placeholder
      *     [
      *         {
-     *             phName : 'name'
-     *             phFormaRegex : '[a-zA-Z0-9\-\*\:]+',
+     *             phName : 'name',
+     *             phValue : ''
      *         },
      *         {
      *             phName : 'unitId'
-     *             phFormatRegex : ''
+     *             phValue : ''
      *         }
      *     ]
      * (2) replace route name into new regex string (transformed route name) as
-     *   /name/[^/]+/[^/]+/edback
+     *   /name/([^/]+)/([^/]+)/edback
      * (3) store transformed route name into list
      *---------------------------------------------------*)
-    function TRegexRouteList.add(const routeName : string; const routeData : pointer) : integer;
+    function TSimpleRegexRouteList.add(const routeName : string; const routeData : pointer) : integer;
     var transformedRouteName : string;
         placeholders : TArrayOfPlaceholders;
         routeRec : PRouteDataRec;
@@ -242,7 +237,7 @@ type
         result := inherited add(transformedRouteName, routeRec);
     end;
 
-    function TRegexRouteList.combineRegexRoutes() : string;
+    function TSimpleRegexRouteList.combineRegexRoutes() : string;
     var i, len : integer;
     begin
         //if we get here, it is assumed that count will be > 0
@@ -291,7 +286,7 @@ type
      * (iii) parse capture group based on its placeholder to get value
      * (iv) return route data with its placeholder data
      *---------------------------------------------------*)
-    function TRegexRouteList.findRoute(const requestUri : string) : pointer;
+    function TSimpleRegexRouteList.findRoute(const requestUri : string) : pointer;
     var combinedRegex : string;
         matches : TRegexMatchResult;
         placeholderRegex : TRegexMatchResult;
@@ -337,7 +332,7 @@ type
      * match request uri with route list and return
      * its associated data
      *---------------------------------------------------*)
-    function TRegexRouteList.find(const requestUri : string) : pointer;
+    function TSimpleRegexRouteList.find(const requestUri : string) : pointer;
     begin
         if (count() <> 0) then
         begin

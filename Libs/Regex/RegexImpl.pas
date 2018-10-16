@@ -98,6 +98,7 @@ uses
     begin
         re := TRegExpr.create(regexPattern);
         try
+            re.modifierG := true;
             //assume no match
             setLength(result.matches, 0);
             result.matched := re.exec(source);
