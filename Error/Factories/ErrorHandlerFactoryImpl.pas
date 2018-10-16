@@ -4,7 +4,6 @@ interface
 
 uses
     DependencyIntf,
-    DependencyFactoryIntf,
     DependencyContainerIntf,
     FactoryImpl;
 
@@ -12,7 +11,7 @@ type
 
     TErrorHandlerFactory = class(TFactory, IDependencyFactory)
     public
-        function build() : IDependency; override;
+        function build(const container : IDependencyContainer) : IDependency; override;
     end;
 
 implementation
@@ -20,7 +19,7 @@ implementation
 uses
     ErrorHandlerImpl;
 
-    function TErrorHandlerFactory.build() : IDependency;
+    function TErrorHandlerFactory.build(const container : IDependencyContainer) : IDependency;
     begin
         result := TErrorHandler.create();
     end;

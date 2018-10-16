@@ -5,7 +5,7 @@ interface
 
 uses
     DependencyIntf,
-    DependencyFactoryIntf,
+    DependencyContainerIntf,
     FactoryImpl;
 
 type
@@ -22,7 +22,7 @@ type
             const openTagStr : string = '{{';
             const closeTagStr : string = '}}'
         );
-        function build() : IDependency; override;
+        function build(const container : IDependencyContainer) : IDependency; override;
     end;
 
 implementation
@@ -40,7 +40,7 @@ uses
         closeTag := closeTagStr;
     end;
 
-    function TTemplateParserFactory.build() : IDependency;
+    function TTemplateParserFactory.build(const container : IDependencyContainer) : IDependency;
     begin
         //replace any variable {{ variableName }} with value
         result := TTemplateParser.create(

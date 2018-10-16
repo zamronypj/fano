@@ -4,7 +4,7 @@ interface
 
 uses
     DependencyIntf,
-    DependencyFactoryIntf,
+    DependencyContainerIntf,
     FactoryImpl;
 
 type
@@ -16,7 +16,7 @@ type
     *}
     TMiddlewareCollectionAwareFactory = class(TFactory, IDependencyFactory)
     public
-        function build() : IDependency; override;
+        function build(const container : IDependencyContainer) : IDependency; override;
     end;
 
 implementation
@@ -25,7 +25,7 @@ uses
     MiddlewareCollectionAwareImpl,
     MiddlewareCollectionImpl;
 
-    function TMiddlewareCollectionAwareFactory.build() : IDependency;
+    function TMiddlewareCollectionAwareFactory.build(const container : IDependencyContainer) : IDependency;
     begin
         result := TMiddlewareCollectionAware.create(
             TMiddlewareCollection.create(),

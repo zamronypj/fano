@@ -4,7 +4,6 @@ interface
 
 uses
     DependencyIntf,
-    DependencyFactoryIntf,
     DependencyContainerIntf,
     FactoryImpl;
 
@@ -12,7 +11,7 @@ type
 
     TNullErrorHandlerFactory = class(TFactory, IDependencyFactory)
     public
-        function build() : IDependency; override;
+        function build(const container : IDependencyContainer) : IDependency; override;
     end;
 
 implementation
@@ -20,7 +19,7 @@ implementation
 uses
     NullErrorHandlerImpl;
 
-    function TNullErrorHandlerFactory.build() : IDependency;
+    function TNullErrorHandlerFactory.build(const container : IDependencyContainer) : IDependency;
     begin
         result := TNullErrorHandler.create();
     end;

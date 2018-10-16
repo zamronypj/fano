@@ -12,7 +12,6 @@ interface
 uses
     contnrs,
     DependencyIntf,
-    DependencyFactoryIntf,
     DependencyContainerIntf,
     DependencyListIntf;
 
@@ -75,11 +74,6 @@ type
         for i := len-1 downto 0 do
         begin
             dep := dependencyList.get(i);
-
-            //if factory class holds instance to container,
-            //then this is their right time to remove reference
-            dep^.factory.cleanUp();
-
             dep^.factory := nil;
             dep^.instance := nil;
             dispose(dep);
@@ -132,12 +126,12 @@ type
         begin
             if (depRec^.instance = nil) then
             begin
-               depRec^.instance := depRec^.factory.build();
+               depRec^.instance := depRec^.factory.build(self);
             end;
             result := depRec^.instance;
         end else
         begin
-            result := depRec^.factory.build();
+            result := depRec^.factory.build(self);
         end;
     end;
 
