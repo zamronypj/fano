@@ -24,7 +24,7 @@ type
     -----------------------------------------------}
     TRegex = class(TInterfacedObject, IRegex)
     private
-        function TRegex.getMatchesResult(
+        function getMatchesResult(
             const indx : integer;
             const res : TRegexMatchResult;
             const re :TRegExpr
@@ -123,8 +123,7 @@ uses
     ) : TRegexMatchResult;
     const MAX_ELEMENT = 100;
     var re : TRegExpr;
-        actualElement, actualSubElement,
-        i, subExprCount : integer;
+        actualElement : integer;
     begin
         re := TRegExpr.create(regexPattern);
         try
