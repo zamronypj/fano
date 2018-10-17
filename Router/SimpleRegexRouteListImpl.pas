@@ -108,6 +108,34 @@ type
     end;
     PRouteDataRec = ^TRouteDataRec;
 
+    constructor TSimpleRegexRouteList.create(const regexInst : IRegex);
+    begin
+        inherited create();
+        regex := regexInst;
+    end;
+
+    destructor TSimpleRegexRouteList.destroy();
+    begin
+        inherited destroy();
+        clearRoutes();
+        regex := nil;
+    end;
+
+    procedure TSimpleRegexRouteList.clearRoutes();
+    var i, len : integer;
+        routeRec : PRouteDataRec;
+    begin
+        len := count();
+        for i := len -1 downto 0 do
+        begin
+            routeRec := get(i);
+            setLength(routeRec^.placeholders, 0);
+            routeRec^.routeData := nil;
+            dispose(routeRec);
+            delete(i);
+        end;
+    end;
+
     (*------------------------------------------------
      * get placeholder variable original
      *------------------------------------------------
@@ -262,33 +290,6 @@ type
             placeholders[i].phValue := matches.matches[i+1][0];
         end;
         result := placeHolders;
-    end;
-
-    constructor TSimpleRegexRouteList.create(const regexInst : IRegex);
-    begin
-        regex := regexInst;
-    end;
-
-    destructor TSimpleRegexRouteList.destroy();
-    begin
-        inherited destroy();
-        clearRoutes();
-        regex := nil;
-    end;
-
-    procedure TSimpleRegexRouteList.clearRoutes();
-    var i, len : integer;
-        routeRec : PRouteDataRec;
-    begin
-        len := count();
-        for i := len -1 downto 0 do
-        begin
-            routeRec := get(i);
-            setLength(routeRec^.placeholders, 0);
-            routeRec^.routeData := nil;
-            dispose(routeRec);
-            delete(i);
-        end;
     end;
 
     (*!------------------------------------------------
