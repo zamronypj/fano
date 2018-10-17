@@ -24,7 +24,9 @@ uses
 type
     {------------------------------------------------
      simple dispatcher implementation without
-     middleware support
+     middleware support. It is faster than
+     TDispatcher because it does not process middlewares
+     stack during dispatchin request
 
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}

@@ -22,6 +22,7 @@ type
         procedure delete(const indx : integer);
         function add(const key : string; const routeData : pointer) : integer;
         function find(const key : string) : pointer;
+        function keyOfIndex(const indx : integer) : string;
     end;
 
 implementation

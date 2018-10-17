@@ -31,6 +31,7 @@ type
         procedure delete(const indx : integer);
         function add(const key : string; const data : pointer) : integer;
         function find(const key : string) : pointer;
+        function keyOfIndex(const indx : integer) : string;
     end;
 
 implementation
@@ -68,5 +69,10 @@ implementation
     function THashList.find(const key : string) : pointer;
     begin
         result := hashes.find(key);
+    end;
+
+    function THashList.keyOfIndex(const indx : integer) : string;
+    begin
+        result := hashes.nameOfIndex(indx);
     end;
 end.

@@ -81,6 +81,15 @@ uses
         result := QuoteRegExprMetaChars(regexPattern);
     end;
 
+    {*!--------------------------------
+     * Build regex matches result as
+     * multi dimensional array
+     * --------------------------------
+     * @param indx current index
+     * @param res match results
+     * @param re regex expression class
+     * @return modified match results
+     *----------------------------------*}
     function TRegex.getMatchesResult(
         const indx : integer;
         const res : TRegexMatchResult;

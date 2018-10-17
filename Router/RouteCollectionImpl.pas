@@ -156,7 +156,7 @@ resourcestring
     function TRouteCollection.findRouteData(const routeName: string) : PRouteRec;
     var routeData : PRouteRec;
     begin
-        routeData := self.routeList.find(routeName);
+        routeData := routeList.find(routeName);
         if (routeData = nil) then
         begin
            //route not yet found, create new data

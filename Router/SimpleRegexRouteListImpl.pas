@@ -36,25 +36,39 @@ type
 
         function getPlaceholderFromOriginalRoute(
             const originalRouteWithRegex : string
-        ) : TArrayOfPlaceholders;
+        ) : TArrayOfSimplePlaceholders;
 
         function getPlaceholderValuesFromUri(
-            const originalRouteWithRegex : string;
             const uri : string;
-            const placeHolders : TArrayOfPlaceholders
-        ) : TArrayOfPlaceholders;
+            const placeHolders : TArrayOfSimplePlaceholders
+        ) : TArrayOfSimplePlaceholders;
 
         procedure clearRoutes();
-        function findRoute(const routeName : string) : pointer;
+        function findRoute(const requestUri : string) : pointer;
+        function combineRegexRoutes() : string;
+        function findMatchedRoute(const matchResult : TRegexMatchResult) : string;
     public
         constructor create(const regexInst : IRegex);
         destructor destroy(); override;
 
         function add(const routeName : string; const routeData : pointer) : integer;
-        function find(const routeName : string) : pointer;
+
+        (*------------------------------------------------
+         * match request uri with route list and return
+         * its associated data
+         *---------------------------------------------------*)
+        function find(const requestUri : string) : pointer;
     end;
 
 implementation
+
+uses
+
+    ERouteMatcherImpl;
+
+resourcestring
+
+    sTotalPlaceHolderAndValueNotEqual = 'Number of variable placeholders (%d) and values (%d) not equal.';
 
 const
     (*-------------------------------------------------
@@ -113,13 +127,50 @@ type
      *---------------------------------------------------*)
     function TSimpleRegexRouteList.getPlaceholderFromOriginalRoute(
         const originalRouteWithRegex : string
-    ) : TArrayOfPlaceholders;
+    ) : TArrayOfSimplePlaceholders;
     var matches : TRegexMatchResult;
+        i, totalMatches : integer;
     begin
         matches := regex.greedyMatch(
             ROUTE_PLACEHOLDER_REGEX,
             originalRouteWithRegex
         );
+
+        if (not matches.matched) then
+        begin
+            setlength(result, 0);
+            exit;
+        end;
+
+        totalMatches := length(matches.matches);
+        (*----------------------------
+          if route is registered as:
+          /name/{name}/{unitId}/edback
+
+          matches will contain following data:
+
+          length(matches.matches) == 3
+          matches.matched = true
+          matches.matches[0][0] = '/name/{name}/{unitId}/edback'
+
+          matches.matches[1][0] = '{name}'
+          matches.matches[1][1] = 'name'
+
+          matches.matches[2][0] = '{unidId}'
+          matches.matches[2][1] = 'unitId'
+
+          So to extract variable names, we
+          only need to extract from
+
+          matches.matches[n][1]
+          where n=1..length(matches.matches)-1
+         ----------------------------*)
+        setLength(result, totalMatches-1);
+        for i:=0 to totalMatches-2 do
+        begin
+            result[i].phName := matches.matches[i+1][1];
+            result[i].phValue := '';
+        end;
     end;
 
     (*------------------------------------------------
@@ -148,15 +199,63 @@ type
      *---------------------------------------------------*)
      function TSimpleRegexRouteList.getPlaceholderValuesFromUri(
          const uri : string;
-         const placeHolders : TArrayOfPlaceholders
-     ) : TArrayOfPlaceholders;
+         const placeHolders : TArrayOfSimplePlaceholders
+     ) : TArrayOfSimplePlaceholders;
     var matches : TRegexMatchResult;
+        i, totalMatches, totalPlaceHolders : longint;
     begin
-        matches := regex.greedyMatch(
-            ROUTE_DISPATCH_REGEX,
-            originalRouteWithRegex
-        );
+        matches := regex.greedyMatch(ROUTE_DISPATCH_REGEX, uri);
+
+        if (not matches.matched) then
+        begin
+            result := placeholders;
+            exit;
+        end;
+
+        totalPlaceHolders := length(placeholders);
+        totalMatches := length(matches.matches);
+
+        if (totalPlaceHolders <> totalMatches) then
+        begin
+            //Something is wrong as both must be equal!
+            raise ERouteMatcher.createFmt(
+                sTotalPlaceHolderAndValueNotEqual,
+                [totalPlaceHolders, totalMatches]
+            )
+        end;
+
+        (*----------------------------
+          if we get here then placeholders will contain
+          data that is same as output getPlaceholderFromOriginalRoute
+          So we do not need to call setLength() anymore
+
+          if request uri is
+          /name/juhara/nice/edback
+
+          matches will contain following data:
+
+          length(matches.matches) == 3
+          matches.matched = true
+          matches.matches[0][0] = '/name/juhara/nice/edback'
+
+          matches.matches[1][0] = 'juhara'
+
+          matches.matches[2][0] = 'nice'
+
+          So to extract value names, we
+          only need to extract from
+
+          matches.matches[n][0]
+          where n=1..length(matches.matches)-1
+         ----------------------------*)
+        for i:=0 to totalMatches-2 do
+        begin
+            //placeholders[i].phName already contain variable name
+            placeholders[i].phValue := matches.matches[i+1][0];
+        end;
+        result := placeHolders;
     end;
+
     constructor TSimpleRegexRouteList.create(const regexInst : IRegex);
     begin
         regex := regexInst;
@@ -213,7 +312,6 @@ type
      *---------------------------------------------------*)
     function TSimpleRegexRouteList.add(const routeName : string; const routeData : pointer) : integer;
     var transformedRouteName : string;
-        placeholders : TArrayOfPlaceholders;
         routeRec : PRouteDataRec;
     begin
         new(routeRec);
@@ -238,24 +336,65 @@ type
         result := inherited add(transformedRouteName, routeRec);
     end;
 
+    (*------------------------------------------------
+     * combine route regex pattern inside list as one
+     * long regex string
+     *------------------------------------------------
+     * @return combined route regex string
+     *-------------------------------------------------
+     * For example, if we have following registered route patterns
+     *  (1) /name/([^/]+)/([^/]+)/edback
+     *  (2) /article/([^/]+)/([^/]+)
+     *  (3) /articles/([^/]+)/([^/]+)
+     *
+     * We will combine all registered route patterns in list into one
+     * string regex, in following format
+     *
+     *  (?:
+     *  (/name/([^/]+)/([^/]+)/edback)|
+     *  (/article/([^/]+)/([^/]+)|
+     *  (/articles/([^/]+)/([^/]+)
+     *  )
+     *
+     * This is done so we can match all routes using only one
+     * regex matching call.
+     *  (?:) is non capturing group so only inside parenthesis
+     * that will be captured
+     *---------------------------------------------------*)
     function TSimpleRegexRouteList.combineRegexRoutes() : string;
     var i, len : integer;
+        routeRegex : string;
     begin
         //if we get here, it is assumed that count will be > 0
         result := '(?:';
         len := count();
-        for i:=0 to len-1 do
+        for i := 0 to len-1 do
         begin
             routeRegex := keyOfIndex(i);
             if (i < len-1) then
             begin
-                result := result + routeRegex +'|';
+                result := result + '(' + routeRegex + ')|';
             end else
             begin
-                result := result + routeRegex;
+                result := result + '(' + routeRegex + ')';
             end;
         end;
         result := result + ')';
+    end;
+
+    function TSimpleRegexRouteList.findMatchedRoute(const matchResult : TRegexMatchResult) : string;
+    var i, len : integer;
+    begin
+        len := length(matchResult.matches);
+        for i := 1 to len-1 do
+        begin
+            if (length(matchResult.matches[i][0]) > 0) then
+            begin
+                result := matchResult.matches[i][0];
+                exit;
+            end;
+        end;
+        result := '';
     end;
 
     (*------------------------------------------------
@@ -290,35 +429,23 @@ type
     function TSimpleRegexRouteList.findRoute(const requestUri : string) : pointer;
     var combinedRegex : string;
         matches : TRegexMatchResult;
-        placeholderRegex : TRegexMatchResult;
+        matchedRouteRegex : string;
         data :PRouteDataRec;
     begin
         combinedRegex := combineRegexRoutes();
         matches := regex.match(combinedRegex, requestUri);
         if (matches.matched) then
         begin
-            data := inherited find(matches.matches[0]);
+            matchedRouteRegex := findMatchedRoute(matches);
+            if (length(matchedRouteRegex) = 0) then
+            begin
+                result := nil;
+                exit;
+            end;
+            data := inherited find(matchedRouteRegex);
             if (data <> nil) then
             begin
-                if (length(data.phFormatRegex) > 0) then
-                begin
-                    //if we get here, placeholder expect value to be in format
-                    //as specified by phFormatRegex, test further
-                    placeholherRegex := regex.match(data.formatRegex, matches.matches[0]);
-                    if (placeholderRegex.matched) then
-                    begin
-                        data.phValue := matches.matches[0];
-                    end else
-                    begin
-                        //assume not found or some other value
-                        result := nil;
-                    end;
-                end else
-                begin
-                    data.phValue := matches.matches[0];
-                end;
-                //TODO:return also placeholder!!
-                result := data.routeData;
+                result := data^.routeData;
             end else
             begin
                 result := nil;
@@ -340,7 +467,7 @@ type
             result := findRoute(requestUri);
         end else
         begin
-          result :=nil;
+          result := nil;
         end;
     end;
 end.
