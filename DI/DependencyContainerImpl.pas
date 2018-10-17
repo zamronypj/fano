@@ -18,8 +18,8 @@ uses
 type
 
     {------------------------------------------------
-     interface for any class having capability to manage
-     dependency
+     basis IDependencyContainer implementation class
+     having capability to manage dependency
 
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
@@ -31,13 +31,40 @@ type
             const service : IDependencyFactory;
             const singleInstance :boolean
         ) : IDependencyContainer;
-
+        procedure cleanUpDependencies();
     public
         constructor create(const dependencies :IDependencyList);
         destructor destroy(); override;
 
+        (*!--------------------------------------------------------
+         * Add factory instance to service registration as
+         * single instance
+         *---------------------------------------------------------
+         * @param serviceName name of service
+         * @return current dependency container instance
+         *---------------------------------------------------------*)
         function add(const serviceName :string; const service : IDependencyFactory) : IDependencyContainer;
+
+        (*!--------------------------------------------------------
+         * Add factory instance to service registration as
+         * multiple instance
+         *---------------------------------------------------------
+         * @param serviceName name of service
+         * @return current dependency container instance
+         *---------------------------------------------------------*)
         function factory(const serviceName :string; const service : IDependencyFactory) : IDependencyContainer;
+
+        (*!--------------------------------------------------------
+         * get instance from service registration using its name.
+         *---------------------------------------------------------
+         * @param serviceName name of service
+         * @return dependency instance
+         *---------------------------------------------------------
+         * if serviceName is registered with add(), then this method
+         * will always return same instance. If serviceName is
+         * registered using factory(), this method will return
+         * different instance everytim get() is called.s
+         *---------------------------------------------------------*)
         function get(const serviceName : string) : IDependency;
     end;
 
@@ -66,10 +93,16 @@ type
     end;
 
     destructor TDependencyContainer.destroy();
+    begin
+        inherited destroy();
+        cleanUpDependencies();
+        dependencyList := nil;
+    end;
+
+    procedure TDependencyContainer.cleanUpDependencies();
     var i, len : integer;
         dep : PDependencyRec;
     begin
-        inherited destroy();
         len := dependencyList.count();
         for i := len-1 downto 0 do
         begin
@@ -79,9 +112,17 @@ type
             dispose(dep);
             dependencyList.delete(i);
         end;
-        dependencyList := nil;
     end;
 
+    (*!--------------------------------------------------------
+     * Add factory instance to service registration as
+     * single instance or multiple instance
+     *---------------------------------------------------------
+     * @param serviceName name of service
+     * @param service factory instance
+     * @param singleInstance true if single instance otherwise false
+     * @return current dependency container instance
+     *---------------------------------------------------------*)
     function TDependencyContainer.addDependency(
         const serviceName : string;
         const service : IDependencyFactory;
@@ -102,17 +143,43 @@ type
         result := self;
     end;
 
+    (*!--------------------------------------------------------
+     * Add factory instance to service registration as
+     * single instance
+     *---------------------------------------------------------
+     * @param serviceName name of service
+     * @param service factory instance
+     * @return current dependency container instance
+     *---------------------------------------------------------*)
     function TDependencyContainer.add(const serviceName :string; const service : IDependencyFactory) : IDependencyContainer;
     begin
-        addDependency(serviceName, service, true);
-        result := nil;
+        result := addDependency(serviceName, service, true);
     end;
 
+    (*!--------------------------------------------------------
+     * Add factory instance to service registration as
+     * multiple instance
+     *---------------------------------------------------------
+     * @param serviceName name of service
+     * @param service factory instance
+     * @return current dependency container instance
+     *---------------------------------------------------------*)
     function TDependencyContainer.factory(const serviceName :string; const service : IDependencyFactory) : IDependencyContainer;
     begin
         result := addDependency(serviceName, service, false);
     end;
 
+    (*!--------------------------------------------------------
+     * get instance from service registration using its name.
+     *---------------------------------------------------------
+     * @param serviceName name of service
+     * @return dependency instance
+     *---------------------------------------------------------
+     * if serviceName is registered with add(), then this method
+     * will always return same instance. If serviceName is
+     * registered using factory(), this method will return
+     * different instance everytim get() is called.s
+     *---------------------------------------------------------*)
     function TDependencyContainer.get(const serviceName : string) : IDependency;
     var depRec : PDependencyRec;
     begin

@@ -46,6 +46,11 @@ type
 
 implementation
 
+resourcestring
+
+    sHttp404Message = 'Not Found';
+    sHttp405Message = 'Method Not Allowed';
+
 uses
     sysutils,
     ResponseIntf,
@@ -111,13 +116,13 @@ uses
         except
             on e : ERouteHandlerNotFound do
             begin
-                errorHandler.handleError(e, 404, 'Not Found');
+                errorHandler.handleError(e, 404, sHttp404Message);
                 reset();
             end;
 
             on e : EMethodNotAllowed do
             begin
-                errorHandler.handleError(e, 405, 'Method Not Allowed');
+                errorHandler.handleError(e, 405, sHttp405Message);
                 reset();
             end;
 

@@ -29,8 +29,38 @@ type
     -----------------------------------------------}
     IDependencyContainer = interface
         ['{7B76FB8C-47E0-4EE2-9020-341867711D9A}']
+
+        (*!--------------------------------------------------------
+         * Add factory instance to service registration as
+         * single instance
+         *---------------------------------------------------------
+         * @param serviceName name of service
+         * @param service factory instance
+         * @return current dependency container instance
+         *---------------------------------------------------------*)
         function add(const serviceName :string; const service : IDependencyFactory) : IDependencyContainer;
+
+        (*!--------------------------------------------------------
+         * Add factory instance to service registration as
+         * multiple instance
+         *---------------------------------------------------------
+         * @param serviceName name of service
+         * @param service factory instance
+         * @return current dependency container instance
+         *---------------------------------------------------------*)
         function factory(const serviceName :string; const service : IDependencyFactory) : IDependencyContainer;
+
+        (*!--------------------------------------------------------
+         * get instance from service registration using its name.
+         *---------------------------------------------------------
+         * @param serviceName name of service
+         * @return dependency instance
+         *---------------------------------------------------------
+         * if serviceName is registered with add(), then this method
+         * will always return same instance. If serviceName is
+         * registered using factory(), this method will return
+         * different instance everytim get() is called.s
+         *---------------------------------------------------------*)
         function get(const serviceName : string) : IDependency;
     end;
 
@@ -45,6 +75,9 @@ type
 
         {*!----------------------------------------
          * build instance
+         *-----------------------------------------
+         * @param container dependency container instance
+         * @return instance of IDependency interface
          *------------------------------------------*}
         function build(const container : IDependencyContainer) : IDependency;
     end;
