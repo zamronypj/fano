@@ -46,11 +46,6 @@ type
 
 implementation
 
-resourcestring
-
-    sHttp404Message = 'Not Found';
-    sHttp405Message = 'Method Not Allowed';
-
 uses
     sysutils,
     ResponseIntf,
@@ -59,6 +54,11 @@ uses
     ERouteHandlerNotFoundImpl,
     EMethodNotAllowedImpl,
     EDependencyNotFoundImpl;
+
+resourcestring
+
+    sHttp404Message = 'Not Found';
+    sHttp405Message = 'Method Not Allowed';
 
     procedure TFanoWebApplication.reset();
     begin
