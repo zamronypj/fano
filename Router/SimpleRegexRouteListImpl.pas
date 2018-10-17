@@ -51,6 +51,14 @@ type
         constructor create(const regexInst : IRegex);
         destructor destroy(); override;
 
+        (*!------------------------------------------------
+         * add route pattern to list
+         *-------------------------------------------------
+         * @param routeName original route as defined by app
+         *   /name/{name}/{unitId}/edback
+         * @param routeData, pointer to route data (such handler, etc)
+         * @return integer index of added item in list
+         *---------------------------------------------------*)
         function add(const routeName : string; const routeData : pointer) : integer;
 
         (*------------------------------------------------
