@@ -21,6 +21,11 @@ uses
 
 type
 
+  (*!------------------------------------------------
+   * basic controller implementation class
+   *
+   * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+   *-----------------------------------------------*)
     TController = class(TRouteHandler)
     protected
         gView : IView;
