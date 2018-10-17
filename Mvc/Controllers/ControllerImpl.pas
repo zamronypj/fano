@@ -33,6 +33,11 @@ type
             const viewParamsInst : IViewParameters
         );
         destructor destroy(); override;
+
+        function handleRequest(
+              const request : IRequest;
+              const response : IResponse
+        ) : IResponse; override;
     end;
 
 implementation
@@ -54,6 +59,14 @@ implementation
         inherited destroy();
         gView := nil;
         viewParams := nil;
+    end;
+
+    function TController.handleRequest(
+          const request : IRequest;
+          const response : IResponse
+    ) : IResponse;
+    begin
+        result := gView.render(viewParams, response);
     end;
 
 end.
