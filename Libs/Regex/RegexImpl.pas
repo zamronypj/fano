@@ -13,7 +13,8 @@ interface
 {$H+}
 
 uses
-    RegexIntf;
+    RegexIntf,
+    regexpr;
 
 type
     {------------------------------------------------
@@ -23,6 +24,7 @@ type
     -----------------------------------------------}
     TRegex = class(TInterfacedObject, IRegex)
     private
+        function getMatchesResult(const matches : TRegexMatchResult; const re :TRegExpr) : TRegexMatchResult;
     public
         function replace(
             const regexPattern : string;
@@ -46,8 +48,7 @@ type
 implementation
 
 uses
-    classes,
-    regexpr;
+    classes;
 
     function TRegex.replace(
         const regexPattern : string;
@@ -68,6 +69,29 @@ uses
         result := QuoteRegExprMetaChars(regexPattern);
     end;
 
+    function TRegex.getMatchesResult(
+        const indx : integer;
+        const res : TRegexMatchResult;
+        const re :TRegExpr) : TRegexMatchResult;
+    var i, subExprCount : integer;
+    begin
+        subExprCount := re.SubExprMatchCount;
+        if (subExprCount > 0) then
+        begin
+            setLength(res.matches[indx], 1 + subExprCount);
+            res.matches[indx][0] := re.match[0];
+            for i:= 1 to subExprCount do
+            begin
+              res.matches[indx][i] := re.match[i];
+            end;
+        end else
+        begin
+            setLength(res.matches[indx], 1);
+            res.matches[indx][0] := re.match[0];
+        end;
+        result := res;
+    end;
+
     function TRegex.match(
         const regexPattern : string;
         const source : string
@@ -81,16 +105,7 @@ uses
             if (result.matched) then
             begin
                 setlength(result.matches, 1);
-                setlength(result.matches[0], 1);
-                result.matches[0][0] := re.match[0];
-                if (re.SubExprMatchCount > 0) then
-                begin
-                  setLength(result.matches[0], re.SubExprMatchCount);
-                  for i:= 1 to re.SubExprMatchCount do
-                  begin
-                      result.matches[0][i] := re.match[i];
-                  end;
-                end;
+                result := getMatchesResult(0, result, re);
             end;
         finally
             re.free();
@@ -101,10 +116,10 @@ uses
         const regexPattern : string;
         const source : string
     ) : TRegexMatchResult;
-    const MAX_ELEMENT = 1000;
-          MAX_SUB_ELEMENT = 10;
+    const MAX_ELEMENT = 100;
     var re : TRegExpr;
-        actualElement, actualSubElement : integer;
+        actualElement, actualSubElement,
+        i, subExprCount : integer;
     begin
         re := TRegExpr.create(regexPattern);
         try
@@ -116,21 +131,22 @@ uses
             begin
                 //pre-allocated element, to avoid frequent
                 //memory allocation/deallocation
-                setLength(result.matches, MAX_ELEMENT, MAX_SUB_ELEMENT);
+                setLength(result.matches, MAX_ELEMENT);
                 actualElement := 1;
-                result.matches[0] := re.match[1];
+                result := getMatchesResult(0, result, re);
                 while (re.execNext()) do
                 begin
                     if (actualElement < MAX_ELEMENT) then
                     begin
-                        result.matches[actualElement] := re.match[1];
+                        result := getMatchesResult(actualElement, result, re);
                     end else
                     begin
                         //grow array
                         setLength(
                             result.matches,
-                            length(result.matches) + MAX_ELEMENT, MAX_SUB_ELEMENT
+                            length(result.matches) + MAX_ELEMENT
                         );
+                        result := getMatchesResult(actualElement, result, re);
                     end;
                     inc(actualElement);
                 end;
