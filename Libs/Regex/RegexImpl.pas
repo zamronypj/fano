@@ -24,7 +24,11 @@ type
     -----------------------------------------------}
     TRegex = class(TInterfacedObject, IRegex)
     private
-        function getMatchesResult(const matches : TRegexMatchResult; const re :TRegExpr) : TRegexMatchResult;
+        function TRegex.getMatchesResult(
+            const indx : integer;
+            const res : TRegexMatchResult;
+            const re :TRegExpr
+        ) : TRegexMatchResult;
     public
         function replace(
             const regexPattern : string;
@@ -72,7 +76,8 @@ uses
     function TRegex.getMatchesResult(
         const indx : integer;
         const res : TRegexMatchResult;
-        const re :TRegExpr) : TRegexMatchResult;
+        const re :TRegExpr
+    ) : TRegexMatchResult;
     var i, subExprCount : integer;
     begin
         subExprCount := re.SubExprMatchCount;
