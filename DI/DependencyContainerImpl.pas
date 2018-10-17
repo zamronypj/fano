@@ -17,12 +17,12 @@ uses
 
 type
 
-    {------------------------------------------------
-     basis IDependencyContainer implementation class
-     having capability to manage dependency
-
-     @author Zamrony P. Juhara <zamronypj@yahoo.com>
-    -----------------------------------------------}
+    (*!------------------------------------------------
+     * basic IDependencyContainer implementation class
+     * having capability to manage dependency
+     *
+     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+     *-----------------------------------------------*)
     TDependencyContainer = class(TInterfacedObject, IDependencyContainer)
     private
         dependencyList : IDependencyList;
