@@ -54,6 +54,14 @@ implementation
 uses
     classes;
 
+    {*!--------------------------------
+     * Replace string regex pattern
+     * --------------------------------
+     * @param regexPattern regex pattern
+     * @param source original string
+     * @param replacement string to be used to replace
+     * @return replaced string
+     *----------------------------------*}
     function TRegex.replace(
         const regexPattern : string;
         const source : string;
