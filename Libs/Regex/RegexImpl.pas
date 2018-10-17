@@ -82,7 +82,7 @@ uses
             res.matches[indx][0] := re.match[0];
             for i:= 1 to subExprCount do
             begin
-              res.matches[indx][i] := re.match[i];
+                res.matches[indx][i] := re.match[i];
             end;
         end else
         begin
