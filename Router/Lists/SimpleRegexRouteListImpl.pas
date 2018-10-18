@@ -24,12 +24,13 @@ type
     end;
     TArrayOfSimplePlaceholders = array of TSimplePlaceholder;
 
-    {------------------------------------------------
-     class that store list of routes patterns and its associated data
-     and match uri to retrieve matched patterns and its data
-
-     @author Zamrony P. Juhara <zamronypj@yahoo.com>
-    -----------------------------------------------}
+    (*!------------------------------------------------
+     * class that store list of routes patterns and its
+     * associated data and match uri to retrieve matched
+     * patterns and its data
+     *
+     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+     * -----------------------------------------------*)
     TSimpleRegexRouteList = class(THashList, IRouteList)
     private
         regex : IRegex;
