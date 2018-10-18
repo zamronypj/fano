@@ -322,7 +322,7 @@ resourcestring
     begin
         routeData := findRouteData(routeName);
         routeData^.headRoute := routeHandler;
-        result := self;
+        result := routeHandler;
     end;
 
     (*!------------------------------------------
