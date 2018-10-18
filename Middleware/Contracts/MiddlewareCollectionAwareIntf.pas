@@ -14,10 +14,10 @@ type
     -----------------------------------------------}
     IMiddlewareCollectionAware = interface
         ['{4C62B73D-C6D8-47BB-B8C0-EBF4EC3DDCB7}']
-        function addBeforeMiddleware(const middleware : IMiddleware) : IMiddlewareCollectionAware;
-        function addAfterMiddleware(const middleware : IMiddleware) : IMiddlewareCollectionAware;
-        function getBeforeMiddlewares() : IMiddlewareCollection;
-        function getAfterMiddlewares() : IMiddlewareCollection;
+        function addBefore(const middleware : IMiddleware) : IMiddlewareCollectionAware;
+        function addAfter(const middleware : IMiddleware) : IMiddlewareCollectionAware;
+        function getBefore() : IMiddlewareCollection;
+        function getAfter() : IMiddlewareCollection;
     end;
 
 implementation

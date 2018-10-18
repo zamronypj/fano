@@ -56,8 +56,8 @@ uses
     function TDispatcherFactory.build(const container : IDependencyContainer) : IDependency;
     begin
         result := TDispatcher.create(
-            appMiddlewares.getBeforeMiddlewares(),
-            appMiddlewares.getAfterMiddlewares(),
+            appMiddlewares.getBefore(),
+            appMiddlewares.getAfter(),
             TMiddlewareChainFactory.create(),
             routeMatcher,
             TResponseFactory.create(),

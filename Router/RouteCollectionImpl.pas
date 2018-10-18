@@ -91,7 +91,7 @@ type
             const routeHandler : IRouteHandler
         ) : IRouteCollection;
 
-        function find(const requestMethod : string; const routeName: string) : IRouteHandler;
+        function find(const requestMethod : string; const requestUri: string) : IRouteHandler;
     end;
 
 implementation
@@ -267,15 +267,15 @@ resourcestring
         result := routeHandler
     end;
 
-    function TRouteCollection.find(const requestMethod : string; const routeName: string) : IRouteHandler;
+    function TRouteCollection.find(const requestMethod : string; const requestUri : string) : IRouteHandler;
     var routeData : PRouteRec;
     begin
-        routeData := routeList.find(routeName);
+        routeData := routeList.find(requestUri);
         if (routeData = nil) then
         begin
             raise ERouteHandlerNotFound.createFmt(
                 sRouteNotFound,
-                [requestMethod, routeName]
+                [requestMethod, requestUri]
             );
         end;
         result := getRouteHandler(requestMethod, routeData);
@@ -283,7 +283,7 @@ resourcestring
         begin
             raise EMethodNotAllowed.createFmt(
                 sMethodNotAllowed,
-                [requestMethod, routeName]
+                [requestMethod, requestUri]
             );
         end;
     end;

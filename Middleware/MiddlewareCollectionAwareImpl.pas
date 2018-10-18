@@ -23,10 +23,10 @@ type
             const afterMiddlewares : IMiddlewareCollection
         );
         destructor destroy(); override;
-        function addBeforeMiddleware(const middleware : IMiddleware) : IMiddlewareCollectionAware;
-        function addAfterMiddleware(const middleware : IMiddleware) : IMiddlewareCollectionAware;
-        function getBeforeMiddlewares() : IMiddlewareCollection;
-        function getAfterMiddlewares() : IMiddlewareCollection;
+        function addBefore(const middleware : IMiddleware) : IMiddlewareCollectionAware;
+        function addAfter(const middleware : IMiddleware) : IMiddlewareCollectionAware;
+        function getBefore() : IMiddlewareCollection;
+        function getAfter() : IMiddlewareCollection;
     end;
 
 implementation
@@ -47,24 +47,24 @@ implementation
         afterMiddlewareList := nil;
     end;
 
-    function TMiddlewareCollectionAware.addBeforeMiddleware(const middleware : IMiddleware) : IMiddlewareCollectionAware;
+    function TMiddlewareCollectionAware.addBefore(const middleware : IMiddleware) : IMiddlewareCollectionAware;
     begin
         beforeMiddlewareList.add(middleware);
         result := self;
     end;
 
-    function TMiddlewareCollectionAware.addAfterMiddleware(const middleware : IMiddleware) : IMiddlewareCollectionAware;
+    function TMiddlewareCollectionAware.addAfter(const middleware : IMiddleware) : IMiddlewareCollectionAware;
     begin
         afterMiddlewareList.add(middleware);
         result := self;
     end;
 
-    function TMiddlewareCollectionAware.getBeforeMiddlewares() : IMiddlewareCollection;
+    function TMiddlewareCollectionAware.getBefore() : IMiddlewareCollection;
     begin
         result := beforeMiddlewareList;
     end;
 
-    function TMiddlewareCollectionAware.getAfterMiddlewares() : IMiddlewareCollection;
+    function TMiddlewareCollectionAware.getAfter() : IMiddlewareCollection;
     begin
         result := afterMiddlewareList;
     end;

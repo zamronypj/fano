@@ -19,7 +19,7 @@ type
     -----------------------------------------------}
     IRouteMatcher = interface
         ['{CA7D9639-1B26-4B44-8C4B-794A4562CD75}']
-        function find(const requestMethod : string; const routeName: string) : IRouteHandler;
+        function find(const requestMethod : string; const requestUri : string) : IRouteHandler;
     end;
 
 implementation

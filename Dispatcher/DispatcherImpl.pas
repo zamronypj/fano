@@ -101,8 +101,8 @@ uses
             middlewareChain := middlewareChainFactory.build(
                 appBeforeMiddlewareList,
                 appAfterMiddlewareList,
-                routeMiddlewares.getBeforeMiddlewares(),
-                routeMiddlewares.getAfterMiddlewares()
+                routeMiddlewares.getBefore(),
+                routeMiddlewares.getAfter()
             );
             result := middlewareChain.execute(
                 requestFactory.build(env),
