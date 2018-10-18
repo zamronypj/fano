@@ -27,11 +27,17 @@ implementation
 uses
     RouteCollectionImpl,
     SimpleRegexRouteListImpl,
-    RegexImpl;
+    RegexImpl,
+    HashListImpl;
 
     function TSimpleRouteCollectionFactory.build(const container : IDependencyContainer) : IDependency;
     begin
-        result := TRouteCollection.create(TSimpleRegexRouteList.create(TRegex.create()));
+        result := TRouteCollection.create(
+            TSimpleRegexRouteList.create(
+                TRegex.create(),
+                THashList.create()
+            )
+        );
     end;
 
 end.

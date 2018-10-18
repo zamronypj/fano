@@ -101,8 +101,7 @@ uses
         if (subExprCount > 0) then
         begin
             setLength(res.matches[indx], 1 + subExprCount);
-            res.matches[indx][0] := re.match[0];
-            for i:= 1 to subExprCount do
+            for i:= 0 to subExprCount do
             begin
                 res.matches[indx][i] := re.match[i];
             end;

@@ -13,6 +13,7 @@ interface
 {$H+}
 
 uses
+    HashListIntf,
     RouteListIntf,
     HashListImpl,
     RegexIntf;
@@ -31,9 +32,10 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      * -----------------------------------------------*)
-    TSimpleRegexRouteList = class(THashList, IRouteList)
+    TSimpleRegexRouteList = class(TInterfacedObject, IHashList, IRouteList)
     private
         regex : IRegex;
+        hashesList : IHashList;
 
         function getPlaceholderFromOriginalRoute(
             const originalRouteWithRegex : string
@@ -49,7 +51,7 @@ type
         function combineRegexRoutes() : string;
         function findMatchedRoute(const matchResult : TRegexMatchResult) : string;
     public
-        constructor create(const regexInst : IRegex);
+        constructor create(const regexInst : IRegex; const hashes : IHashList);
         destructor destroy(); override;
 
         (*!------------------------------------------------
@@ -60,19 +62,25 @@ type
          * @param routeData, pointer to route data (such handler, etc)
          * @return integer index of added item in list
          *---------------------------------------------------*)
-        function add(const routeName : string; const routeData : pointer) : integer;
+        function add(const routeName : shortstring; const routeData : pointer) : integer;
 
         (*------------------------------------------------
          * match request uri with route list and return
          * its associated data
          *---------------------------------------------------*)
-        function find(const requestUri : string) : pointer;
+        function find(const requestUri : shortstring) : pointer;
+
+        function count() : integer;
+        function get(const indx : integer) : pointer;
+        procedure delete(const indx : integer);
+        function keyOfIndex(const indx : integer) : shortstring;
     end;
 
 implementation
 
 uses
 
+    sysutils,
     ERouteMatcherImpl;
 
 resourcestring
@@ -109,9 +117,9 @@ type
     end;
     PRouteDataRec = ^TRouteDataRec;
 
-    constructor TSimpleRegexRouteList.create(const regexInst : IRegex);
+    constructor TSimpleRegexRouteList.create(const regexInst : IRegex; const hashes : IHashList);
     begin
-        inherited create();
+        hashesList := hashes;
         regex := regexInst;
     end;
 
@@ -120,6 +128,7 @@ type
         inherited destroy();
         clearRoutes();
         regex := nil;
+        hashesList := nil;
     end;
 
     procedure TSimpleRegexRouteList.clearRoutes();
@@ -320,7 +329,7 @@ type
      *   /name/([^/]+)/([^/]+)/edback
      * (3) store transformed route name into list
      *---------------------------------------------------*)
-    function TSimpleRegexRouteList.add(const routeName : string; const routeData : pointer) : integer;
+    function TSimpleRegexRouteList.add(const routeName : shortstring; const routeData : pointer) : integer;
     var transformedRouteName : string;
         routeRec : PRouteDataRec;
     begin
@@ -343,7 +352,7 @@ type
             ROUTE_DISPATCH_REGEX
         );
 
-        result := inherited add(transformedRouteName, routeRec);
+        result := hashesList.add(transformedRouteName, routeRec);
     end;
 
     (*------------------------------------------------
@@ -355,53 +364,50 @@ type
      * For example, if we have following registered route patterns
      *  (1) /name/([^/]+)/([^/]+)/edback
      *  (2) /article/([^/]+)/([^/]+)
-     *  (3) /articles/([^/]+)/([^/]+)
+     *  (3) /nice-articles/([^/]+)/([^/]+)
      *
      * We will combine all registered route patterns in list into one
      * string regex, in following format
      *
-     *  (?:
      *  (/name/([^/]+)/([^/]+)/edback)|
-     *  (/article/([^/]+)/([^/]+)|
-     *  (/articles/([^/]+)/([^/]+)
-     *  )
+     *  (/article/([^/]+)/([^/]+))|
+     *  (/nice-articles/([^/]+)/([^/]+))
      *
      * This is done so we can match all routes using only one
      * regex matching call.
-     *  (?:) is non capturing group so only inside parenthesis
-     * that will be captured
      *---------------------------------------------------*)
     function TSimpleRegexRouteList.combineRegexRoutes() : string;
     var i, len : integer;
-        routeRegex : string;
     begin
-        //if we get here, it is assumed that count will be > 0
-        result := '(?:';
+        result := '';
         len := count();
         for i := 0 to len-1 do
         begin
-            routeRegex := keyOfIndex(i);
             if (i < len-1) then
             begin
-                result := result + '(' + routeRegex + ')|';
+                result := result + '(' + keyOfIndex(i) + ')|';
             end else
             begin
-                result := result + '(' + routeRegex + ')';
+                result := result + '(' + keyOfIndex(i) + ')';
             end;
         end;
-        result := result + ')';
     end;
 
     function TSimpleRegexRouteList.findMatchedRoute(const matchResult : TRegexMatchResult) : string;
-    var i, len : integer;
+    var i, j, len, len2 : integer;
     begin
         len := length(matchResult.matches);
-        for i := 1 to len-1 do
+        for i:=0 to len-1 do
         begin
-            if (length(matchResult.matches[i][0]) > 0) then
+            len2 := length(matchResult.matches[i]);
+            for j:=0 to len2-1 do
             begin
-                result := matchResult.matches[i][0];
-                exit;
+                writeln('czz:', matchResult.matches[i][j]);
+                if ((j>0) and (length(matchResult.matches[i][j]) > 0)) then
+                begin
+                    //result := keyOfIndex(j-1);
+                    //exit;
+                end
             end;
         end;
         result := '';
@@ -418,18 +424,15 @@ type
      * and following registered route patterns
      *  (1) /name/([^/]+)/([^/]+)/edback
      *  (2) /article/([^/]+)/([^/]+)
-     *  (3) /articles/([^/]+)/([^/]+)
+     *  (3) /nice-articles/([^/]+)/([^/]+)
      *
      * (i) We will combine all registered route patterns in list into one
      * string regex in form, so we can match all routes using only one
-     * regex matching call. (?:) is non capturing group so only inside parenthesis
-     * that will be captured
+     * regex matching call.
      *
-     *  (?:
      *  (/name/([^/]+)/([^/]+)/edback)|
      *  (/article/([^/]+)/([^/]+)|
-     *  (/articles/([^/]+)/([^/]+)
-     *  )
+     *  (/nice-articles/([^/]+)/([^/]+)
      *
      * (ii) Based on matched group (the second non empty group),
      * we can get index to the list of routes list.
@@ -452,7 +455,7 @@ type
                 result := nil;
                 exit;
             end;
-            data := inherited find(matchedRouteRegex);
+            data := hashesList.find(matchedRouteRegex);
             if (data <> nil) then
             begin
                 result := data^.routeData;
@@ -470,7 +473,7 @@ type
      * match request uri with route list and return
      * its associated data
      *---------------------------------------------------*)
-    function TSimpleRegexRouteList.find(const requestUri : string) : pointer;
+    function TSimpleRegexRouteList.find(const requestUri : shortstring) : pointer;
     begin
         if (count() <> 0) then
         begin
@@ -479,5 +482,25 @@ type
         begin
             result := nil;
         end;
+    end;
+
+    function TSimpleRegexRouteList.count() : integer;
+    begin
+        result := hashesList.count();
+    end;
+
+    function TSimpleRegexRouteList.get(const indx : integer) : pointer;
+    begin
+        result := hashesList.get(indx);
+    end;
+
+    procedure TSimpleRegexRouteList.delete(const indx : integer);
+    begin
+        hashesList.delete(indx);
+    end;
+
+    function TSimpleRegexRouteList.keyOfIndex(const indx : integer) : shortstring;
+    begin
+        result := hashesList.keyOfIndex(indx);
     end;
 end.
