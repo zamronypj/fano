@@ -96,7 +96,7 @@ uses
         try
             method := env.requestMethod();
             uri := env.requestUri();
-            routeHandler := routeCollection.find(method, uri);
+            routeHandler := routeCollection.match(method, uri);
             routeMiddlewares := routeHandler.getMiddlewares();
             middlewareChain := middlewareChainFactory.build(
                 appBeforeMiddlewareList,

@@ -21,6 +21,11 @@ type
     -----------------------------------------------}
     IRouteList = interface(IHashList)
         ['{0BE04022-B3E7-4AE9-83F8-829D07F7EB83}']
+
+        (*!-----------------------------------------
+         * match item using its transformed key
+         *------------------------------------------*)
+        function match(const transformedKey : string) : pointer;
     end;
 
 implementation

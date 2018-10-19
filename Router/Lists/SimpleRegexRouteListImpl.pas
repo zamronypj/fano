@@ -25,6 +25,12 @@ type
     end;
     TArrayOfSimplePlaceholders = array of TSimplePlaceholder;
 
+    TRouteDataRec = record
+        placeholders: TArrayOfSimplePlaceholders;
+        routeData : pointer;
+    end;
+    PRouteDataRec = ^TRouteDataRec;
+
     (*!------------------------------------------------
      * class that store list of routes patterns and its
      * associated data and match uri to retrieve matched
@@ -48,8 +54,12 @@ type
 
         procedure clearRoutes();
         function findRoute(const requestUri : string) : pointer;
+
+        function findRouteByMatchIndex(const matchIndex : integer) : PRouteDataRec;
+
         function combineRegexRoutes() : string;
-        function findMatchedRoute(const matchResult : TRegexMatchResult) : string;
+        function findMatchedRoute(const matchResult : TRegexMatchResult) : PRouteDataRec;
+        function translateRouteName(const originalRouteWithRegex : string) : string;
     public
         constructor create(const regexInst : IRegex; const hashes : IHashList);
         destructor destroy(); override;
@@ -68,7 +78,13 @@ type
          * match request uri with route list and return
          * its associated data
          *---------------------------------------------------*)
-        function find(const requestUri : shortstring) : pointer;
+        function match(const requestUri : shortstring) : pointer;
+
+        (*------------------------------------------------
+         * match request uri with route list and return
+         * its associated data
+         *---------------------------------------------------*)
+        function find(const key : shortstring) : pointer;
 
         function count() : integer;
         function get(const indx : integer) : pointer;
@@ -108,14 +124,6 @@ const
       will be stored inside list
     -------------------------------------------------*)
     ROUTE_DISPATCH_REGEX = '([^/]+)';
-
-type
-
-    TRouteDataRec = record
-        placeholders: TArrayOfSimplePlaceholders;
-        routeData : pointer;
-    end;
-    PRouteDataRec = ^TRouteDataRec;
 
     constructor TSimpleRegexRouteList.create(const regexInst : IRegex; const hashes : IHashList);
     begin
@@ -175,7 +183,7 @@ type
         const originalRouteWithRegex : string
     ) : TArrayOfSimplePlaceholders;
     var matches : TRegexMatchResult;
-        i, totalMatches : integer;
+        i, totalPlaceholder : integer;
     begin
         matches := regex.greedyMatch(
             ROUTE_PLACEHOLDER_REGEX,
@@ -188,33 +196,31 @@ type
             exit;
         end;
 
-        totalMatches := length(matches.matches);
+        totalPlaceholder := length(matches.matches);
+
         (*----------------------------
           if route is registered as:
           /name/{name}/{unitId}/edback
 
           matches will contain following data:
 
-          length(matches.matches) == 3
+          length(matches.matches) == 2
           matches.matched = true
-          matches.matches[0][0] = '/name/{name}/{unitId}/edback'
-
-          matches.matches[1][0] = '{name}'
-          matches.matches[1][1] = 'name'
-
-          matches.matches[2][0] = '{unidId}'
-          matches.matches[2][1] = 'unitId'
+          matches.matches[0][0] = '{name}'
+          matches.matches[0][1] = 'name'
+          matches.matches[1][0] = '{unidId}'
+          matches.matches[1][1] = 'unitId'
 
           So to extract variable names, we
           only need to extract from
 
           matches.matches[n][1]
-          where n=1..length(matches.matches)-1
+          where n=0..length(matches.matches)-1
          ----------------------------*)
-        setLength(result, totalMatches-1);
-        for i:=0 to totalMatches-2 do
+        setLength(result, totalPlaceholder);
+        for i:=0 to totalPlaceholder-1 do
         begin
-            result[i].phName := matches.matches[i+1][1];
+            result[i].phName := matches.matches[i][1];
             result[i].phValue := '';
         end;
     end;
@@ -297,9 +303,34 @@ type
         for i:=0 to totalMatches-2 do
         begin
             //placeholders[i].phName already contain variable name
+            //so our concern only to fill its value
             placeholders[i].phValue := matches.matches[i+1][0];
         end;
         result := placeHolders;
+    end;
+
+    (*------------------------------------------------
+     * replace original route pattern with regex pattern
+     * ready for dispatch
+     * ----------------------------------------------
+     * @param originalRouteWithRegex original route pattern
+     * @return transformedRouteName
+     * -----------------------------------------------
+     * replace original route pattern :
+     *   /name/{name}/{unitId}/edback
+     *
+     * into route pattern ready for dispatch
+     * /name/([)^/]+)/([^/]+)/edback
+     *
+     * See ROUTE_DISPATCH_REGEX constant
+     *---------------------------------------------------*)
+    function TSimpleRegexRouteList.translateRouteName(const originalRouteWithRegex : string) : string;
+    begin
+        result := regex.replace(
+            ROUTE_PLACEHOLDER_REGEX,
+            originalRouteWithRegex,
+            ROUTE_DISPATCH_REGEX
+        );
     end;
 
     (*!------------------------------------------------
@@ -330,29 +361,12 @@ type
      * (3) store transformed route name into list
      *---------------------------------------------------*)
     function TSimpleRegexRouteList.add(const routeName : shortstring; const routeData : pointer) : integer;
-    var transformedRouteName : string;
-        routeRec : PRouteDataRec;
+    var routeRec : PRouteDataRec;
     begin
         new(routeRec);
         routeRec^.placeholders := getPlaceholderFromOriginalRoute(routeName);
         routeRec^.routeData := routeData;
-
-        (*------------------------------------------------
-         * replace original route pattern :
-         *   /name/{name:[a-zA-Z0-9\-\*\:]+}/{unitId}/edback
-         *
-         * into route pattern ready for dispatch
-         * /name/[^/]+/[^/]+/edback
-         *
-         * See ROUTE_DISPATCH_REGEX constant
-         *---------------------------------------------------*)
-        transformedRouteName := regex.replace(
-            ROUTE_PLACEHOLDER_REGEX,
-            routeName,
-            ROUTE_DISPATCH_REGEX
-        );
-
-        result := hashesList.add(transformedRouteName, routeRec);
+        result := hashesList.add(translateRouteName(routeName), routeRec);
     end;
 
     (*------------------------------------------------
@@ -393,24 +407,105 @@ type
         end;
     end;
 
-    function TSimpleRegexRouteList.findMatchedRoute(const matchResult : TRegexMatchResult) : string;
+    (*------------------------------------------------
+     * count number of route patterns and its sub group
+     *------------------------------------------------
+     * @param startIndx start index to look
+     * @param startIndx start index to look
+     * @return number ot route patterns ant its subgroup
+     *-------------------------------------------------
+     * For example, if we have following registered route patterns
+     *  (0) /name/([^/]+)/([^/]+)/edback/([^/]+)
+     *  (1) /article/([^/]+)/([^/]+)
+     *  (2) /nice-articles/([^/]+)/([^/]+)
+     *
+     *  and input of startIndex = 0 and endIndex=1
+     *
+     *  at iteration, i=0
+     *  result = 4 (1 for first route pattern + 4 for ([^/]+) groups)
+     *  at iteration, i=1
+     *  result = 7 (4 + 1 for second route pattern + 2 for ([^/]+) groups)
+     *---------------------------------------------------*)
+    function TSimpleRegexRouteList.findRouteByMatchIndex(
+        const matchIndex : integer
+    ) : PRouteDataRec;
+    var routeRec :PRouteDataRec;
+        i, totalPattern, totalRoutes : integer;
+    begin
+        result := nil;
+        totalPattern := 0;
+        totalRoutes := count();
+        for i := 0 to totalRoutes-1 do
+        begin
+            routeRec := hashesList.get(i);
+            totalPattern := totalPattern + 1 + length(routeRec^.placeHolders);
+            if (matchIndex = totalPattern - 1) then
+            begin
+                result := routeRec;
+                exit;
+            end;
+        end;
+    end;
+
+    (*------------------------------------------------
+     * find matched route based on regex match result
+     *------------------------------------------------
+     * @param matchResult
+     * @return instance of PRouteDataRec if found or nil
+     *         otherwise
+     *-------------------------------------------------
+     * For example, if we have following uri
+     *   /name/juhara/nice/edback
+     * and following registered route patterns
+     *  (0) /article/([^/]+)/([^/]+)
+     *  (1) /nice-articles/([^/]+)/([^/]+)
+     *  (2) /name/([^/]+)/([^/]+)/edback
+     *
+     * with combined regex pattern, a match will cause
+     * matchResult contain following values:
+     *
+     * matchResult.matched=true
+     * matchResult.matches[0][0]='/name/juhara/nice/edback'
+     *
+     * ===== route pattern /article/([^/]+)/([^/]+), no match=====
+     * matchResult.matches[0][1]=''
+     * ==== first group of route pattern /article/([^/]+)/([^/]+), no match ===
+     * matchResult.matches[0][2]=''
+     * ====second group of route pattern /article/([^/]+)/([^/]+), no match====
+     * matchResult.matches[0][3]=''
+     * ====route pattern /nice-articles/([^/]+)/([^/]+), no match===
+     * matchResult.matches[0][4]=''
+     * ===first group of route pattern /nice-articles/([^/]+)/([^/]+), no match==
+     * matchResult.matches[0][5]=''
+     * ===second group of route pattern /nice-articles/([^/]+)/([^/]+), no match==
+     * matchResult.matches[0][6]=''
+     * ===== route pattern /name/([^/]+)/([^/]+)/edback, match=====
+     * matchResult.matches[0][7]='/name/juhara/nice/edback'
+     * ===== first group of route pattern /name/([^/]+)/([^/]+)/edback, match=====
+     * matchResult.matches[0][8]='juhara'
+     * ===== second group of route pattern /name/([^/]+)/([^/]+)/edback, match=====
+     * matchResult.matches[0][9]='nice'
+     *
+     * this method job is to find the first non empty matches
+     * for matchResult.matches[0][n] where n>0
+     *---------------------------------------------------*)
+    function TSimpleRegexRouteList.findMatchedRoute(const matchResult : TRegexMatchResult) : PRouteDataRec;
     var i, j, len, len2 : integer;
     begin
+        result := nil;
         len := length(matchResult.matches);
         for i:=0 to len-1 do
         begin
             len2 := length(matchResult.matches[i]);
             for j:=0 to len2-1 do
             begin
-                writeln('czz:', matchResult.matches[i][j]);
                 if ((j>0) and (length(matchResult.matches[i][j]) > 0)) then
                 begin
-                    //result := keyOfIndex(j-1);
-                    //exit;
+                    result := findRouteByMatchIndex(j);
+                    exit;
                 end
             end;
         end;
-        result := '';
     end;
 
     (*------------------------------------------------
@@ -442,20 +537,13 @@ type
     function TSimpleRegexRouteList.findRoute(const requestUri : string) : pointer;
     var combinedRegex : string;
         matches : TRegexMatchResult;
-        matchedRouteRegex : string;
         data :PRouteDataRec;
     begin
         combinedRegex := combineRegexRoutes();
         matches := regex.match(combinedRegex, requestUri);
         if (matches.matched) then
         begin
-            matchedRouteRegex := findMatchedRoute(matches);
-            if (length(matchedRouteRegex) = 0) then
-            begin
-                result := nil;
-                exit;
-            end;
-            data := hashesList.find(matchedRouteRegex);
+            data := findMatchedRoute(matches);
             if (data <> nil) then
             begin
                 result := data^.routeData;
@@ -469,15 +557,31 @@ type
         end;
     end;
 
-    (*------------------------------------------------
+    (*!-----------------------------------------
      * match request uri with route list and return
      * its associated data
-     *---------------------------------------------------*)
-    function TSimpleRegexRouteList.find(const requestUri : shortstring) : pointer;
+     *------------------------------------------*)
+    function TSimpleRegexRouteList.match(const requestUri : shortstring) : pointer;
     begin
         if (count() <> 0) then
         begin
             result := findRoute(requestUri);
+        end else
+        begin
+            result := nil;
+        end;
+    end;
+
+    (*------------------------------------------------
+     * find data using its key
+     *---------------------------------------------------*)
+    function TSimpleRegexRouteList.find(const key : shortstring) : pointer;
+    var routeRec : PRouteDataRec;
+    begin
+        routeRec := hashesList.find(translateRouteName(key));
+        if (routeRec <> nil) then
+        begin
+            result := routeRec^.routeData;
         end else
         begin
             result := nil;
@@ -490,8 +594,10 @@ type
     end;
 
     function TSimpleRegexRouteList.get(const indx : integer) : pointer;
+    var routeRec : PRouteDataRec;
     begin
-        result := hashesList.get(indx);
+        routeRec := hashesList.get(indx);
+        result := routeRec^.routeData;
     end;
 
     procedure TSimpleRegexRouteList.delete(const indx : integer);

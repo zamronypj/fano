@@ -21,7 +21,14 @@ type
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
     TRouteList = class(THashList, IRouteList)
+    public
+        function match(const requestUri : shortstring) : pointer;
     end;
 
 implementation
+
+    function TRouteList.match(const requestUri : string) : pointer;
+    begin
+        result := find(requestUri);
+    end;
 end.

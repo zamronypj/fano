@@ -73,7 +73,7 @@ implementation
         try
             method := env.requestMethod();
             uri := env.requestUri();
-            routeHandler := routeCollection.find(method, uri);
+            routeHandler := routeCollection.match(method, uri);
             result := routeHandler.handleRequest(
                 requestFactory.build(env),
                 responseFactory.build(env)

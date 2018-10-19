@@ -43,7 +43,6 @@ type
         function findRouteData(const routeName: string) : PRouteRec;
         function createEmptyRouteData(const routeName: string) : PRouteRec;
         function resetRouteData(const routeData : PRouteRec) : PRouteRec;
-        procedure destroyRouteData(var routeData : PRouteRec);
         function getRouteHandler(const requestMethod : string; const routeData :PRouteRec) : IRouteHandler;
     public
         constructor create(const routes : IRouteList);
@@ -140,7 +139,7 @@ type
          * @param requestUri requested Uri
          * @return route handler instance
          *-----------------------------------------------*)
-        function find(const requestMethod : string; const requestUri: string) : IRouteHandler;
+        function match(const requestMethod : string; const requestUri: string) : IRouteHandler;
     end;
 
 implementation
@@ -172,12 +171,6 @@ resourcestring
         result := routeData;
     end;
 
-    procedure TRouteCollection.destroyRouteData(var routeData : PRouteRec);
-    begin
-        routeData := resetRouteData(routeData);
-        dispose(routeData);
-    end;
-
     destructor TRouteCollection.destroy();
     var i, len:integer;
        routeData :PRouteRec;
@@ -187,7 +180,8 @@ resourcestring
         for i := len-1 downto 0 do
         begin
             routeData := routeList.get(i);
-            destroyRouteData(routeData);
+            resetRouteData(routeData);
+            dispose(routeData);
             routeList.delete(i);
         end;
         routeList := nil;
@@ -199,7 +193,7 @@ resourcestring
         //route not yet found, create new data
         new(routeData);
         routeData := resetRouteData(routeData);
-        self.routeList.add(routeName, routeData);
+        routeList.add(routeName, routeData);
         result := routeData;
     end;
 
@@ -209,11 +203,11 @@ resourcestring
         routeData := routeList.find(routeName);
         if (routeData = nil) then
         begin
-           //route not yet found, create new data
-           result := createEmptyRouteData(routeName);
+            //route not yet found, create new data
+            result := createEmptyRouteData(routeName);
         end else
         begin
-           result := routeData;
+            result := routeData;
         end;
     end;
 
@@ -373,10 +367,10 @@ resourcestring
      * @param requestUri requested Uri
      * @return route handler instance
      *-----------------------------------------------*)
-    function TRouteCollection.find(const requestMethod : string; const requestUri : string) : IRouteHandler;
+    function TRouteCollection.match(const requestMethod : string; const requestUri : string) : IRouteHandler;
     var routeData : PRouteRec;
     begin
-        routeData := routeList.find(requestUri);
+        routeData := routeList.match(requestUri);
         if (routeData = nil) then
         begin
             raise ERouteHandlerNotFound.createFmt(

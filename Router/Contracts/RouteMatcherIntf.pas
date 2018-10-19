@@ -27,7 +27,7 @@ type
          * @param requestUri requested Uri
          * @return route handler instance
          *-----------------------------------------------*)
-        function find(const requestMethod : string; const requestUri : string) : IRouteHandler;
+        function match(const requestMethod : string; const requestUri : string) : IRouteHandler;
     end;
 
 implementation
