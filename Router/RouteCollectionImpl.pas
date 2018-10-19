@@ -177,7 +177,7 @@ resourcestring
     begin
         inherited destroy();
         len := routeList.count();
-        for i := 0 downto len-1 do
+        for i := len-1 downto 0 do
         begin
             routeData := routeList.get(i);
             resetRouteData(routeData);
