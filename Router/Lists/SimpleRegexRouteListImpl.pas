@@ -425,12 +425,12 @@ const
     begin
         result := nil;
         totalPattern := 0;
-        totalRoutes := count();
+        totalRoutes := hashesList.count();
         for i := 0 to totalRoutes-1 do
         begin
             routeRec := hashesList.get(i);
             totalPattern := totalPattern + 1 + length(routeRec^.placeHolders);
-            if (matchIndex = totalPattern - 1) then
+            if (matchIndex = totalPattern-1) then
             begin
                 result := routeRec;
                 exit;
@@ -530,14 +530,12 @@ const
     var combinedRegex : string;
         matches : TRegexMatchResult;
     begin
+        result := nil;
         combinedRegex := combineRegexRoutes();
         matches := regex.match(combinedRegex, requestUri);
         if (matches.matched) then
         begin
             result := findMatchedRoute(matches);
-        end else
-        begin
-            result := nil;
         end;
     end;
 
