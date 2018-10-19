@@ -48,8 +48,8 @@ type
         ) : TArrayOfSimplePlaceholders;
 
         function getPlaceholderValuesFromUri(
-            const uri : string;
-            const placeHolders : TArrayOfSimplePlaceholders
+             const matches : TRegexMatchResult;
+             const placeHolders : TArrayOfSimplePlaceholders
         ) : TArrayOfSimplePlaceholders;
 
         procedure clearRoutes();
@@ -146,11 +146,11 @@ const
         len := count();
         for i := len -1 downto 0 do
         begin
-            routeRec := get(i);
+            routeRec := hashesList.get(i);
             routeRec^.placeholders := nil;
             routeRec^.routeData := nil;
             dispose(routeRec);
-            delete(i);
+            hashesList.delete(i);
         end;
     end;
 
@@ -192,7 +192,7 @@ const
 
         if (not matches.matched) then
         begin
-            setlength(result, 0);
+            result := nil;
             exit;
         end;
 
@@ -253,7 +253,7 @@ const
          const matches : TRegexMatchResult;
          const placeHolders : TArrayOfSimplePlaceholders
     ) : TArrayOfSimplePlaceholders;
-        i, totalMatches, totalPlaceHolders : longint;
+    var i, totalMatches, totalPlaceHolders : longint;
     begin
         totalPlaceHolders := length(placeholders);
         totalMatches := length(matches.matches);
@@ -546,10 +546,12 @@ const
      * its associated data
      *------------------------------------------*)
     function TSimpleRegexRouteList.match(const requestUri : shortstring) : pointer;
+    var routeRec : PRouteDataRec;
     begin
         if (count() <> 0) then
         begin
-            result := findRoute(requestUri);
+            routeRec := findRoute(requestUri);
+            result := routeRec^.routeData;
         end else
         begin
             result := nil;

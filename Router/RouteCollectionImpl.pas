@@ -173,16 +173,15 @@ resourcestring
 
     destructor TRouteCollection.destroy();
     var i, len:integer;
-       routeData :PRouteRec;
+       routeData : PRouteRec;
     begin
         inherited destroy();
         len := routeList.count();
-        for i := len-1 downto 0 do
+        for i := 0 downto len-1 do
         begin
             routeData := routeList.get(i);
             resetRouteData(routeData);
             dispose(routeData);
-            routeList.delete(i);
         end;
         routeList := nil;
     end;
