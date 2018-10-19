@@ -53,7 +53,7 @@ type
         ) : TArrayOfSimplePlaceholders;
 
         procedure clearRoutes();
-        function findRoute(const requestUri : string) : pointer;
+        function findRoute(const requestUri : string) : PRouteDataRec;
 
         function findRouteByMatchIndex(const matchIndex : integer) : PRouteDataRec;
 
@@ -147,7 +147,7 @@ const
         for i := len -1 downto 0 do
         begin
             routeRec := get(i);
-            setLength(routeRec^.placeholders, 0);
+            routeRec^.placeholders := nil;
             routeRec^.routeData := nil;
             dispose(routeRec);
             delete(i);
@@ -249,21 +249,12 @@ const
      * ]
      *
      *---------------------------------------------------*)
-     function TSimpleRegexRouteList.getPlaceholderValuesFromUri(
-         const uri : string;
+    function TSimpleRegexRouteList.getPlaceholderValuesFromUri(
+         const matches : TRegexMatchResult;
          const placeHolders : TArrayOfSimplePlaceholders
-     ) : TArrayOfSimplePlaceholders;
-    var matches : TRegexMatchResult;
+    ) : TArrayOfSimplePlaceholders;
         i, totalMatches, totalPlaceHolders : longint;
     begin
-        matches := regex.greedyMatch(ROUTE_DISPATCH_REGEX, uri);
-
-        if (not matches.matched) then
-        begin
-            result := placeholders;
-            exit;
-        end;
-
         totalPlaceHolders := length(placeholders);
         totalMatches := length(matches.matches);
 
@@ -300,11 +291,11 @@ const
           matches.matches[n][0]
           where n=1..length(matches.matches)-1
          ----------------------------*)
-        for i:=0 to totalMatches-2 do
+        for i:=0 to totalMatches-1 do
         begin
             //placeholders[i].phName already contain variable name
             //so our concern only to fill its value
-            placeholders[i].phValue := matches.matches[i+1][0];
+            placeholders[i].phValue := matches.matches[i][0];
         end;
         result := placeHolders;
     end;
@@ -502,6 +493,7 @@ const
                 if ((j>0) and (length(matchResult.matches[i][j]) > 0)) then
                 begin
                     result := findRouteByMatchIndex(j);
+                    //TODO: get placeholder values
                     exit;
                 end
             end;
@@ -534,23 +526,15 @@ const
      * (iii) parse capture group based on its placeholder to get value
      * (iv) return route data with its placeholder data
      *---------------------------------------------------*)
-    function TSimpleRegexRouteList.findRoute(const requestUri : string) : pointer;
+    function TSimpleRegexRouteList.findRoute(const requestUri : string) : PRouteDataRec;
     var combinedRegex : string;
         matches : TRegexMatchResult;
-        data :PRouteDataRec;
     begin
         combinedRegex := combineRegexRoutes();
         matches := regex.match(combinedRegex, requestUri);
         if (matches.matched) then
         begin
-            data := findMatchedRoute(matches);
-            if (data <> nil) then
-            begin
-                result := data^.routeData;
-            end else
-            begin
-                result := nil;
-            end;
+            result := findMatchedRoute(matches);
         end else
         begin
             result := nil;
