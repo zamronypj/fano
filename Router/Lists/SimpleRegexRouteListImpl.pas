@@ -548,13 +548,14 @@ const
     function TSimpleRegexRouteList.match(const requestUri : shortstring) : pointer;
     var routeRec : PRouteDataRec;
     begin
+        result := nil;
         if (count() <> 0) then
         begin
             routeRec := findRoute(requestUri);
-            result := routeRec^.routeData;
-        end else
-        begin
-            result := nil;
+            if (routeRec <> nil) then
+            begin
+                result := routeRec^.routeData;
+            end;
         end;
     end;
 
@@ -564,13 +565,11 @@ const
     function TSimpleRegexRouteList.find(const key : shortstring) : pointer;
     var routeRec : PRouteDataRec;
     begin
+        result := nil;
         routeRec := hashesList.find(translateRouteName(key));
         if (routeRec <> nil) then
         begin
             result := routeRec^.routeData;
-        end else
-        begin
-            result := nil;
         end;
     end;
 
