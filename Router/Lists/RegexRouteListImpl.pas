@@ -55,6 +55,11 @@ type
 
         function add(const routeName : string; const routeData : pointer) : integer;
         function find(const routeName : string) : pointer;
+        (*------------------------------------------------
+         * match request uri with route list and return
+         * its associated data
+         *---------------------------------------------------*)
+        function match(const requestUri : shortstring) : pointer;
     end;
 
 implementation

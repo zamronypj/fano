@@ -15,16 +15,17 @@ interface
 uses
     classes,
     contnrs,
+    DependencyIntf,
     ViewParametersIntf;
 
 type
 
-    {------------------------------------------------
-     class having capability to store view parameters
-
-     @author Zamrony P. Juhara <zamronypj@yahoo.com>
-    -----------------------------------------------}
-    TViewParameters = class(TInterfacedObject, IViewParameters)
+    (*!------------------------------------------------
+     * class having capability to store view parameters
+     *
+     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+     *-------------------------------------------------*)
+    TViewParameters = class(TInterfacedObject, IViewParameters, IDependency)
     private
         keyValueMap : TFPHashList;
         keys : TStringList;
@@ -45,7 +46,7 @@ uses
 
 resourcestring
 
-    sKeyNotFound = 'View paramater %s not found.';
+    sKeyNotFound = 'View parameter %s not found.';
 
 type
 
