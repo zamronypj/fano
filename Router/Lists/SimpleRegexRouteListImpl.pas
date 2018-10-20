@@ -429,11 +429,20 @@ const
         for i := 0 to totalRoutes-1 do
         begin
             routeRec := hashesList.get(i);
-            totalPattern := totalPattern + 1 + length(routeRec^.placeHolders);
-            if (matchIndex = totalPattern-1) then
+            if ((matchIndex-1 = 0) and (i=0)) then
             begin
+                //match first route,
+                //no need to do number of placeholder calculation
                 result := routeRec;
                 exit;
+            end else
+            begin
+                totalPattern := totalPattern + 1 + length(routeRec^.placeHolders);
+                if (matchIndex = totalPattern-1) then
+                begin
+                    result := routeRec;
+                    exit;
+                end;
             end;
         end;
     end;
