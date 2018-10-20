@@ -374,9 +374,9 @@ const
      * We will combine all registered route patterns in list into one
      * string regex, in following format
      *
-     *  ^(/name/([^/]+)/([^/]+)/edback)|
-     *  (/article/([^/]+)/([^/]+))|
-     *  (/nice-articles/([^/]+)/([^/]+))$
+     *  ^(/name/([^/]+)/([^/]+)/edback)$|
+     *  ^(/article/([^/]+)/([^/]+))$|
+     *  ^(/nice-articles/([^/]+)/([^/]+))$
      *
      * This is done so we can match all routes using only one
      * regex matching call.
@@ -386,20 +386,15 @@ const
     begin
         result := '';
         len := count();
-        if (len > 0) then
+        for i := 0 to len-1 do
         begin
-            result := result + '^' ;
-            for i := 0 to len-1 do
+            if (i < len-1) then
             begin
-                if (i < len-1) then
-                begin
-                    result := result + '(' + keyOfIndex(i) + ')|';
-                end else
-                begin
-                    result := result + '(' + keyOfIndex(i) + ')';
-                end;
+                result := result + '^(' + keyOfIndex(i) + ')$|';
+            end else
+            begin
+                result := result + '^(' + keyOfIndex(i) + ')$';
             end;
-            result := result + '$';
         end;
     end;
 
@@ -435,7 +430,7 @@ const
         begin
             routeRec := hashesList.get(i);
             totalPattern := totalPattern + 1 + length(routeRec^.placeHolders);
-            if (matchIndex = totalPattern) then
+            if (matchIndex = totalPattern-1) then
             begin
                 result := routeRec;
                 exit;
@@ -522,9 +517,9 @@ const
      * string regex in form, so we can match all routes using only one
      * regex matching call.
      *
-     *  (/name/([^/]+)/([^/]+)/edback)|
-     *  (/article/([^/]+)/([^/]+)|
-     *  (/nice-articles/([^/]+)/([^/]+)
+     *  ^(/name/([^/]+)/([^/]+)/edback)$|
+     *  ^(/article/([^/]+)/([^/]+)$|
+     *  ^(/nice-articles/([^/]+)/([^/]+)$
      *
      * (ii) Based on matched group (the second non empty group),
      * we can get index to the list of routes list.
