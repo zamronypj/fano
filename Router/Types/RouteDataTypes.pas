@@ -2,20 +2,26 @@ unit RouteDataTypes;
 
 interface
 
-{$H+}
+uses
+    PlaceholderTypes,
+    RouteHandlerIntf;
 
 type
-    TSimplePlaceholder = record
-        phName : string;
-        phValue : string;
-    end;
-    TArrayOfSimplePlaceholders = array of TSimplePlaceholder;
 
-    TRouteDataRec = record
-        placeholders: TArrayOfSimplePlaceholders;
-        routeData : pointer;
+
+    //Route data for HTTP GET, PUT, POST, DELETE, PATCH, HEAD, OPTIONS
+    TRouteRec = record
+        getRoute : IRouteHandler;
+        postRoute : IRouteHandler;
+        putRoute : IRouteHandler;
+        patchRoute : IRouteHandler;
+        deleteRoute : IRouteHandler;
+        optionsRoute : IRouteHandler;
+        headRoute : IRouteHandler;
+
+        placeholders : TArrayOfPlaceholders;
     end;
-    PRouteDataRec = ^TRouteDataRec;
+    PRouteRec = ^TRouteRec;
 
 implementation
 

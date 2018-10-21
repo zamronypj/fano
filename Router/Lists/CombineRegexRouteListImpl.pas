@@ -17,6 +17,7 @@ uses
     RouteListIntf,
     HashListImpl,
     RegexIntf,
+    PlaceholderTypes,
     RouteDataTypes;
 
 type
@@ -35,20 +36,20 @@ type
 
         function getPlaceholderFromOriginalRoute(
             const originalRouteWithRegex : string
-        ) : TArrayOfSimplePlaceholders;
+        ) : TArrayOfPlaceholders;
 
         function getPlaceholderValuesFromUri(
              const matches : TRegexMatchResult;
-             const placeHolders : TArrayOfSimplePlaceholders
-        ) : TArrayOfSimplePlaceholders;
+             const placeHolders : TArrayOfPlaceholders
+        ) : TArrayOfPlaceholders;
 
         procedure clearRoutes();
-        function findRoute(const requestUri : string) : PRouteDataRec;
+        function findRoute(const requestUri : string) : PRouteRec;
 
-        function findRouteByMatchIndex(const matchIndex : integer) : PRouteDataRec;
+        function findRouteByMatchIndex(const matchIndex : integer) : PRouteRec;
 
         function combineRegexRoutes() : string;
-        function findMatchedRoute(const matchResult : TRegexMatchResult) : PRouteDataRec;
+        function findMatchedRoute(const matchResult : TRegexMatchResult) : PRouteRec;
         function translateRouteName(const originalRouteWithRegex : string) : string;
     public
         constructor create(const regexInst : IRegex; const hashes : IHashList);
@@ -131,15 +132,10 @@ const
 
     procedure TCombineRegexRouteList.clearRoutes();
     var i, len : integer;
-        routeRec : PRouteDataRec;
     begin
         len := count();
         for i := len -1 downto 0 do
         begin
-            routeRec := hashesList.get(i);
-            routeRec^.placeholders := nil;
-            routeRec^.routeData := nil;
-            dispose(routeRec);
             hashesList.delete(i);
         end;
     end;
@@ -171,7 +167,7 @@ const
      *---------------------------------------------------*)
     function TCombineRegexRouteList.getPlaceholderFromOriginalRoute(
         const originalRouteWithRegex : string
-    ) : TArrayOfSimplePlaceholders;
+    ) : TArrayOfPlaceholders;
     var matches : TRegexMatchResult;
         i, totalPlaceholder : integer;
     begin
@@ -241,19 +237,21 @@ const
      *---------------------------------------------------*)
     function TCombineRegexRouteList.getPlaceholderValuesFromUri(
          const matches : TRegexMatchResult;
-         const placeHolders : TArrayOfSimplePlaceholders
-    ) : TArrayOfSimplePlaceholders;
-    var i, totalMatches, totalPlaceHolders : longint;
+         const placeHolders : TArrayOfPlaceholders
+    ) : TArrayOfPlaceholders;
+    var i, totalValue, totalPlaceHolders : longint;
     begin
         totalPlaceHolders := length(placeholders);
-        totalMatches := length(matches.matches);
+        //matches.matches will always contain 1 element
+        //totalValue will contain number of placeholder+1 (full match)
+        totalValue := length(matches.matches[0])-1;
 
-        if (totalPlaceHolders <> totalMatches) then
+        if (totalPlaceHolders <> totalValue) then
         begin
             //Something is wrong as both must be equal!
             raise ERouteMatcher.createFmt(
                 sTotalPlaceHolderAndValueNotEqual,
-                [totalPlaceHolders, totalMatches]
+                [totalPlaceHolders, totalValue]
             )
         end;
 
@@ -271,21 +269,21 @@ const
           matches.matched = true
           matches.matches[0][0] = '/name/juhara/nice/edback'
 
-          matches.matches[1][0] = 'juhara'
+          matches.matches[0][1] = 'juhara'
 
-          matches.matches[2][0] = 'nice'
+          matches.matches[0][2] = 'nice'
 
           So to extract value names, we
           only need to extract from
 
-          matches.matches[n][0]
+          matches.matches[0][n]
           where n=1..length(matches.matches)-1
          ----------------------------*)
-        for i:=0 to totalMatches-1 do
+        for i:=0 to totalPlaceholders-1 do
         begin
             //placeholders[i].phName already contain variable name
             //so our concern only to fill its value
-            placeholders[i].phValue := matches.matches[i][0];
+            placeholders[i].phValue := matches.matches[0][i+1];
         end;
         result := placeHolders;
     end;
@@ -342,11 +340,10 @@ const
      * (3) store transformed route name into list
      *---------------------------------------------------*)
     function TCombineRegexRouteList.add(const routeName : shortstring; const routeData : pointer) : integer;
-    var routeRec : PRouteDataRec;
+    var routeRec : PRouteRec;
     begin
-        new(routeRec);
+        routeRec := routeData;
         routeRec^.placeholders := getPlaceholderFromOriginalRoute(routeName);
-        routeRec^.routeData := routeData;
         result := hashesList.add(translateRouteName(routeName), routeRec);
     end;
 
@@ -374,6 +371,8 @@ const
     function TCombineRegexRouteList.combineRegexRoutes() : string;
     var i, len : integer;
     begin
+        //TODO: combined regex pattern need only to be built one time
+        //TODO: once all routes is defined. We can save few loops
         result := '';
         len := count();
         for i := 0 to len-1 do
@@ -409,8 +408,8 @@ const
      *---------------------------------------------------*)
     function TCombineRegexRouteList.findRouteByMatchIndex(
         const matchIndex : integer
-    ) : PRouteDataRec;
-    var routeRec :PRouteDataRec;
+    ) : PRouteRec;
+    var routeRec :PRouteRec;
         i, totalPattern, totalRoutes : integer;
     begin
         result := nil;
@@ -479,7 +478,7 @@ const
      * this method job is to find the first non empty matches
      * for matchResult.matches[0][n] where n>0
      *---------------------------------------------------*)
-    function TCombineRegexRouteList.findMatchedRoute(const matchResult : TRegexMatchResult) : PRouteDataRec;
+    function TCombineRegexRouteList.findMatchedRoute(const matchResult : TRegexMatchResult) : PRouteRec;
     var i, j, len, len2 : integer;
     begin
         result := nil;
@@ -492,7 +491,10 @@ const
                 if ((j>0) and (length(matchResult.matches[i][j]) > 0)) then
                 begin
                     result := findRouteByMatchIndex(j);
-                    //TODO: get placeholder values
+                    result^.placeholders := getPlaceholderValuesFromUri(
+                        matchResult,
+                        result^.placeHolders
+                    );
                     exit;
                 end
             end;
@@ -525,7 +527,7 @@ const
      * (iii) parse capture group based on its placeholder to get value
      * (iv) return route data with its placeholder data
      *---------------------------------------------------*)
-    function TCombineRegexRouteList.findRoute(const requestUri : string) : PRouteDataRec;
+    function TCombineRegexRouteList.findRoute(const requestUri : string) : PRouteRec;
     var combinedRegex : string;
         matches : TRegexMatchResult;
     begin
@@ -543,16 +545,11 @@ const
      * its associated data
      *------------------------------------------*)
     function TCombineRegexRouteList.match(const requestUri : shortstring) : pointer;
-    var routeRec : PRouteDataRec;
     begin
         result := nil;
         if (count() <> 0) then
         begin
-            routeRec := findRoute(requestUri);
-            if (routeRec <> nil) then
-            begin
-                result := routeRec^.routeData;
-            end;
+            result := findRoute(requestUri);
         end;
     end;
 
@@ -560,14 +557,8 @@ const
      * find data using its key
      *---------------------------------------------------*)
     function TCombineRegexRouteList.find(const key : shortstring) : pointer;
-    var routeRec : PRouteDataRec;
     begin
-        result := nil;
-        routeRec := hashesList.find(translateRouteName(key));
-        if (routeRec <> nil) then
-        begin
-            result := routeRec^.routeData;
-        end;
+        result := hashesList.find(translateRouteName(key));
     end;
 
     function TCombineRegexRouteList.count() : integer;
@@ -576,10 +567,8 @@ const
     end;
 
     function TCombineRegexRouteList.get(const indx : integer) : pointer;
-    var routeRec : PRouteDataRec;
     begin
-        routeRec := hashesList.get(indx);
-        result := routeRec^.routeData;
+        result := hashesList.get(indx);
     end;
 
     procedure TCombineRegexRouteList.delete(const indx : integer);

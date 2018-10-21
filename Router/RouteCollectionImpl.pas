@@ -16,21 +16,10 @@ uses
     RouteCollectionIntf,
     RouteMatcherIntf,
     RouteListIntf,
-    DependencyIntf;
+    DependencyIntf,
+    RouteDataTypes;
 
 type
-    //Route data for HTTP GET, PUT, POST, DELETE, PATCH, HEAD, OPTIONS
-    TRouteRec = record
-        getRoute : IRouteHandler;
-        postRoute : IRouteHandler;
-        putRoute : IRouteHandler;
-        patchRoute : IRouteHandler;
-        deleteRoute : IRouteHandler;
-        optionsRoute : IRouteHandler;
-        headRoute : IRouteHandler;
-    end;
-
-    PRouteRec = ^TRouteRec;
 
     {------------------------------------------------
      interface for any class that can set http verb
@@ -168,6 +157,7 @@ resourcestring
         routeData^.deleteRoute := nil;
         routeData^.optionsRoute := nil;
         routeData^.headRoute := nil;
+        routeData^.placeholders := nil;
         result := routeData;
     end;
 
@@ -370,6 +360,7 @@ resourcestring
     var routeData : PRouteRec;
     begin
         routeData := routeList.match(requestUri);
+
         if (routeData = nil) then
         begin
             raise ERouteHandlerNotFound.createFmt(
@@ -377,7 +368,9 @@ resourcestring
                 [requestMethod, requestUri]
             );
         end;
+
         result := getRouteHandler(requestMethod, routeData);
+
         if (result = nil) then
         begin
             raise EMethodNotAllowed.createFmt(
@@ -385,6 +378,8 @@ resourcestring
                 [requestMethod, requestUri]
             );
         end;
+
+        result.setArgs(routeData^.placeholders);
     end;
 
 end.

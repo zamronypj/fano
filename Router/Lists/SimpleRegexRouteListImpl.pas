@@ -17,6 +17,7 @@ uses
     RouteListIntf,
     HashListImpl,
     RegexIntf,
+    PlaceholderTypes,
     RouteDataTypes;
 
 type
@@ -35,12 +36,12 @@ type
 
         function getPlaceholderFromOriginalRoute(
             const originalRouteWithRegex : string
-        ) : TArrayOfSimplePlaceholders;
+        ) : TArrayOfPlaceholders;
 
         function getPlaceholderValuesFromUri(
              const matches : TRegexMatchResult;
-             const placeHolders : TArrayOfSimplePlaceholders
-        ) : TArrayOfSimplePlaceholders;
+             const placeHolders : TArrayOfPlaceholders
+        ) : TArrayOfPlaceholders;
 
         procedure clearRoutes();
         function translateRouteName(const originalRouteWithRegex : string) : string;
@@ -125,15 +126,10 @@ const
 
     procedure TSimpleRegexRouteList.clearRoutes();
     var i, len : integer;
-        routeRec : PRouteDataRec;
     begin
         len := count();
         for i := len -1 downto 0 do
         begin
-            routeRec := hashesList.get(i);
-            routeRec^.placeholders := nil;
-            routeRec^.routeData := nil;
-            dispose(routeRec);
             hashesList.delete(i);
         end;
     end;
@@ -165,7 +161,7 @@ const
      *---------------------------------------------------*)
     function TSimpleRegexRouteList.getPlaceholderFromOriginalRoute(
         const originalRouteWithRegex : string
-    ) : TArrayOfSimplePlaceholders;
+    ) : TArrayOfPlaceholders;
     var matches : TRegexMatchResult;
         i, totalPlaceholder : integer;
     begin
@@ -235,19 +231,22 @@ const
      *---------------------------------------------------*)
     function TSimpleRegexRouteList.getPlaceholderValuesFromUri(
          const matches : TRegexMatchResult;
-         const placeHolders : TArrayOfSimplePlaceholders
-    ) : TArrayOfSimplePlaceholders;
-    var i, totalMatches, totalPlaceHolders : longint;
+         const placeHolders : TArrayOfPlaceholders
+    ) : TArrayOfPlaceholders;
+    var i, totalValue, totalPlaceHolders : longint;
     begin
         totalPlaceHolders := length(placeholders);
-        totalMatches := length(matches.matches);
 
-        if (totalPlaceHolders <> totalMatches) then
+        //matches.matches will always contain 1 element
+        //totalValue will contain number of placeholder+1 (full match)
+        totalValue := length(matches.matches[0])-1;
+
+        if (totalPlaceHolders <> totalValue) then
         begin
             //Something is wrong as both must be equal!
             raise ERouteMatcher.createFmt(
                 sTotalPlaceHolderAndValueNotEqual,
-                [totalPlaceHolders, totalMatches]
+                [totalPlaceHolders, totalValue]
             )
         end;
 
@@ -265,21 +264,21 @@ const
           matches.matched = true
           matches.matches[0][0] = '/name/juhara/nice/edback'
 
-          matches.matches[1][0] = 'juhara'
+          matches.matches[0][1] = 'juhara'
 
-          matches.matches[2][0] = 'nice'
+          matches.matches[0][2] = 'nice'
 
           So to extract value names, we
           only need to extract from
 
-          matches.matches[n][0]
+          matches.matches[0][n]
           where n=1..length(matches.matches)-1
          ----------------------------*)
-        for i:=0 to totalMatches-1 do
+        for i:=0 to totalPlaceholders-1 do
         begin
             //placeholders[i].phName already contain variable name
             //so our concern only to fill its value
-            placeholders[i].phValue := matches.matches[i][0];
+            placeholders[i].phValue := matches.matches[0][i+1];
         end;
         result := placeHolders;
     end;
@@ -336,11 +335,10 @@ const
      * (3) store transformed route name into list
      *---------------------------------------------------*)
     function TSimpleRegexRouteList.add(const routeName : shortstring; const routeData : pointer) : integer;
-    var routeRec : PRouteDataRec;
+    var routeRec : PRouteRec;
     begin
-        new(routeRec);
+        routeRec := routeData;
         routeRec^.placeholders := getPlaceholderFromOriginalRoute(routeName);
-        routeRec^.routeData := routeData;
         result := hashesList.add(translateRouteName(routeName), routeRec);
     end;
 
@@ -352,6 +350,7 @@ const
     var i, len : integer;
         regexPattern : string;
         matches : TRegexMatchResult;
+        routeRec : PRouteRec;
     begin
         result := nil;
         len := count();
@@ -361,8 +360,12 @@ const
             matches := regex.match(regexPattern, requestUri);
             if (matches.matched) then
             begin
-                result := get(i);
-                //TODO: return placeholder too
+                routeRec := get(i);
+                routeRec^.placeholders := getPlaceholderValuesFromUri(
+                    matches,
+                    routeRec^.placeholders
+                );
+                result := routeRec;
                 exit;
             end;
         end;
@@ -372,14 +375,8 @@ const
      * find data using its key
      *---------------------------------------------------*)
     function TSimpleRegexRouteList.find(const key : shortstring) : pointer;
-    var routeRec : PRouteDataRec;
     begin
-        result := nil;
-        routeRec := hashesList.find(translateRouteName(key));
-        if (routeRec <> nil) then
-        begin
-            result := routeRec^.routeData;
-        end;
+        result := hashesList.find(translateRouteName(key));
     end;
 
     function TSimpleRegexRouteList.count() : integer;
@@ -388,10 +385,8 @@ const
     end;
 
     function TSimpleRegexRouteList.get(const indx : integer) : pointer;
-    var routeRec : PRouteDataRec;
     begin
-        routeRec := hashesList.get(indx);
-        result := routeRec^.routeData;
+        result := hashesList.get(indx);
     end;
 
     procedure TSimpleRegexRouteList.delete(const indx : integer);

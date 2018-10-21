@@ -16,7 +16,8 @@ uses
     MiddlewareIntf,
     MiddlewareCollectionIntf,
     MiddlewareCollectionAwareIntf,
-    RouteHandlerIntf;
+    RouteHandlerIntf,
+    PlaceholderTypes;
 
 type
     {------------------------------------------------
@@ -27,6 +28,7 @@ type
     private
         beforeMiddlewareList : IMiddlewareCollection;
         afterMiddlewareList : IMiddlewareCollection;
+        varPlaceholders : TArrayOfPlaceholders;
     public
         constructor create(
             const beforeMiddlewares : IMiddlewareCollection;
@@ -38,10 +40,21 @@ type
         function getMiddlewares() : IMiddlewareCollectionAware;
         function getBefore() : IMiddlewareCollection;
         function getAfter() : IMiddlewareCollection;
+
         function handleRequest(
             const request : IRequest;
             const response : IResponse
         ) : IResponse; virtual; abstract;
+
+        (*!-------------------------------------------
+         * Set route argument data
+         *--------------------------------------------*)
+        function setArgs(const placeHolders : TArrayOfPlaceholders) : IRouteHandler;
+
+        (*!-------------------------------------------
+         * get route argument data
+         *--------------------------------------------*)
+        function getArgs() : TArrayOfPlaceholders;
     end;
 
 implementation
@@ -53,6 +66,7 @@ implementation
     begin
         beforeMiddlewareList := beforeMiddlewares;
         afterMiddlewareList := afterMiddlewares;
+        varPlaceholders := nil;
     end;
 
     destructor TRouteHandler.destroy();
@@ -60,6 +74,7 @@ implementation
         inherited destroy();
         beforeMiddlewareList := nil;
         afterMiddlewareList := nil;
+        varPlaceholders := nil;
     end;
 
     function TRouteHandler.addBefore(const middleware : IMiddleware) : IMiddlewareCollectionAware;
@@ -89,4 +104,20 @@ implementation
         result := self;
     end;
 
+    (*!-------------------------------------------
+        * Set route argument data
+        *--------------------------------------------*)
+    function TRouteHandler.setArgs(const placeHolders : TArrayOfPlaceholders) : IRouteHandler;
+    begin
+        varPlaceholders := placeHolders;
+        result := self;
+    end;
+
+    (*!-------------------------------------------
+        * get route argument data
+        *--------------------------------------------*)
+    function TRouteHandler.getArgs() : TArrayOfPlaceholders;
+    begin
+        result := varPlaceHolders;
+    end;
 end.
