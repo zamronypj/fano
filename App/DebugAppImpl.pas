@@ -21,6 +21,11 @@ uses
 
 type
 
+    (*!-----------------------------------------------
+     * Decorator class that implements IWebApplication
+     * and wrap other IWebApplication to calculate
+     * and display execution timing
+     *-----------------------------------------------*)
     TDebugWebApplication = class(TInterfacedObject, IWebApplication, IRunnable)
     private
         startTick : longint;
