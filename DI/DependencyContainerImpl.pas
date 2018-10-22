@@ -193,12 +193,22 @@ type
         begin
             if (depRec^.instance = nil) then
             begin
-               depRec^.instance := depRec^.factory.build(self);
+                try
+                    depRec^.instance := depRec^.factory.build(self);
+                except
+                    depRec^.instance := nil;
+                    raise;
+                end;
             end;
             result := depRec^.instance;
         end else
         begin
-            result := depRec^.factory.build(self);
+            try
+                result := depRec^.factory.build(self);
+            except
+                result := nil;
+                raise;
+            end;
         end;
     end;
 
