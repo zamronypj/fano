@@ -111,9 +111,9 @@ const
      *---------------------------------------*)
     procedure TFileLogger.open();
     begin
-        assignFile(outputFile, filename);
+        assignFile(outputFile, logFile);
 
-        if (fileExists(filename)) then
+        if (fileExists(logFile)) then
         begin
             append(outputFile);
         end else
