@@ -22,6 +22,14 @@ type
     -----------------------------------------------}
     ITemplateParser = interface
         ['{06146BC7-5543-4FD1-956C-9FC47122EC70}']
+
+        (*!---------------------------------------------------
+         * replace template content with view parameters
+         * ----------------------------------------------------
+         * @param templateStr string contain content of template
+         * @param viewParams view parameters instance
+         * @return replaced content
+         *-----------------------------------------------------*)
         function parse(
             const templateStr : string;
             const viewParams : IViewParameters

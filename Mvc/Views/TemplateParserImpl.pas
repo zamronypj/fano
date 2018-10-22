@@ -36,6 +36,14 @@ type
             const closeTagStr : string
         );
         destructor destroy(); override;
+
+        (*!---------------------------------------------------
+         * replace template content with view parameters
+         * ----------------------------------------------------
+         * @param templateStr string contain content of template
+         * @param viewParams view parameters instance
+         * @return replaced content
+         *-----------------------------------------------------*)
         function parse(
             const templateStr : string;
             const viewParams : IViewParameters
@@ -64,15 +72,27 @@ uses
         regex := nil;
     end;
 
+    (*!---------------------------------------------------
+     * replace template content with view parameters
+     * ----------------------------------------------------
+     * @param templateStr string contain content of template
+     * @param viewParams view parameters instance
+     * @return replaced content
+     * ----------------------------------------------------
+     * if opentag='{{' and close tag='}}'' and view parameters
+     * contain key='name' with value='joko'
+     * then for template content 'hello {{ name }}'
+     * output will be  'hello joko'
+     *-----------------------------------------------------*)
     function TTemplateParser.parse(
         const templateStr : string;
         const viewParams : IViewParameters
     ) : string;
     var keys : TStrings;
         i:integer;
-        pattern, valueData, replacedStr : string;
+        pattern, valueData : string;
     begin
-        replacedStr := templateStr;
+        result := templateStr;
         keys := viewParams.vars();
         //TODO: improve by collecting keys and replace all keys in one go
         for i := 0 to keys.count-1 do
@@ -81,8 +101,7 @@ uses
             //build pattern such as \{\{\s*variableName\s*\}\}
             pattern := openTag + '\s*' + keys[i] + '\s*' + closeTag;
             valueData := viewParams.getVar(keys[i]);
-            replacedStr := regex.replace(pattern, replacedStr, valueData);
+            result := regex.replace(pattern, result, valueData);
         end;
-        result:= replacedStr;
     end;
 end.
