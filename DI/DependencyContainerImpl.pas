@@ -72,11 +72,13 @@ implementation
 
 uses
     sysutils,
-    EDependencyNotFoundImpl;
+    EDependencyNotFoundImpl,
+    EInvalidFactoryImpl;
 
 resourcestring
 
     sDependencyNotFound = 'Dependency %s not found';
+    sInvalidFactory = 'Factory %s is invalid';
 
 type
 
@@ -184,21 +186,44 @@ type
     var depRec : PDependencyRec;
     begin
         depRec := dependencyList.find(serviceName);
+
         if (depRec = nil) then
         begin
             raise EDependencyNotFound.createFmt(sDependencyNotFound, [serviceName]);
+        end;
+
+        if (depRec^.factory = nil) then
+        begin
+            raise EInvalidFactory.createFmt(sInvalidFactory, [serviceName]);
         end;
 
         if (depRec^.singleInstance) then
         begin
             if (depRec^.instance = nil) then
             begin
-                depRec^.instance := depRec^.factory.build(self);
+                try
+                    depRec^.instance := depRec^.factory.build(self);
+                except
+                    //somehow factory fail,
+                    //free its memory and re-raise exception
+                    depRec^.instance := nil;
+                    depRec^.factory := nil;
+                    raise;
+                end;
             end;
             result := depRec^.instance;
         end else
         begin
-            result := depRec^.factory.build(self);
+            try
+                result := depRec^.factory.build(self);
+            except
+                result := nil;
+                //somehow factory fail,
+                //free its memory and re-raise exception
+                depRec^.instance := nil;
+                depRec^.factory := nil;
+                raise;
+            end;
         end;
     end;
 

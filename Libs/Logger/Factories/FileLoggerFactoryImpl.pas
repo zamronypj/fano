@@ -39,17 +39,8 @@ uses
     end;
 
     function TFileLoggerFactory.build(const container : IDependencyContainer) : IDependency;
-    var logger : TFileLogger;
     begin
-        logger := TFileLogger.create(logFile);
-        try
-            logger.open();
-        except
-            logger.free();
-            logger := nil;
-            raise;
-        end;
-        result := logger;
+        result := TFileLogger.create(logFile);
     end;
 
 end.
