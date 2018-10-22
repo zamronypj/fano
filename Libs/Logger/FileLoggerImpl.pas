@@ -31,6 +31,7 @@ type
     TFileLogger = class(TAbstractLogger, IDependency, ILogger)
     private
         outputFile : TextFile;
+        logFile : string;
         flushCounter : integer;
     public
         (*!--------------------------------------
@@ -46,6 +47,8 @@ type
          * @param filename file to store logs
          *---------------------------------------*)
         destructor destroy(); override;
+
+        procedure open();
 
         (*!--------------------------------------
          * log message
@@ -83,16 +86,7 @@ const
      *---------------------------------------*)
     constructor TFileLogger.create(const filename : string);
     begin
-        assignFile(outputFile, filename);
-
-        if (fileExists(filename)) then
-        begin
-            append(outputFile);
-        end else
-        begin
-            rewrite(outputFile);
-        end;
-
+        logFile := filename;
         flushCounter := 0;
     end;
 
@@ -104,6 +98,28 @@ const
     destructor TFileLogger.destroy();
     begin
         closeFile(outputFile);
+    end;
+
+    (*!--------------------------------------
+     * open log file
+     * --------------------------------------
+     * @param filename file to store logs
+     * --------------------------------------
+     * if file exists, we open file for append
+     * if not then we create new. User who run
+     * must have proper file permissions
+     *---------------------------------------*)
+    procedure TFileLogger.open();
+    begin
+        assignFile(outputFile, filename);
+
+        if (fileExists(filename)) then
+        begin
+            append(outputFile);
+        end else
+        begin
+            rewrite(outputFile);
+        end;
     end;
 
     (*!--------------------------------------

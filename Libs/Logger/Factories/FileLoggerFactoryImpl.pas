@@ -41,14 +41,15 @@ uses
     function TFileLoggerFactory.build(const container : IDependencyContainer) : IDependency;
     var logger : TFileLogger;
     begin
+        logger := TFileLogger.create(logFile);
         try
-            logger := TFileLogger.create(logFile);
-            result := logger;
+            logger.open();
         except
             logger.free();
-            result := nil;
+            logger := nil;
             raise;
         end;
+        result := logger;
     end;
 
 end.
