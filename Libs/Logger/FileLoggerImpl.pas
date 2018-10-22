@@ -85,17 +85,12 @@ const
     begin
         assignFile(outputFile, filename);
 
-        try
-            if (fileExists(filename)) then
-            begin
-                append(outputFile);
-            end else
-            begin
-                rewrite(outputFile);
-            end;
-        except
-            closeFile(outputFile);
-            raise;
+        if (fileExists(filename)) then
+        begin
+            append(outputFile);
+        end else
+        begin
+            rewrite(outputFile);
         end;
 
         flushCounter := 0;
