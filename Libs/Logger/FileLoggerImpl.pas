@@ -57,7 +57,7 @@ type
          * @return current instance
          *---------------------------------------*)
         function log(
-            const level : TLogLevel;
+            const level : string;
             const msg : string;
             const context : ISerializeable = nil
         ) : ILogger; override;
