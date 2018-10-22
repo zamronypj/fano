@@ -14,6 +14,7 @@ interface
 
 uses
 
+    DependencyIntf,
     SerializableIntf,
     LoggerIntf;
 
@@ -25,7 +26,7 @@ type
    *
    * @author Zamrony P. Juhara <zamronypj@yahoo.com>
    *-----------------------------------------------*)
-    TAbstractLogger = class(TInterfacedObject, ILogger)
+    TAbstractLogger = class(TInterfacedObject, IDependency, ILogger)
     public
         function log(
             const level : TLogLevel;
