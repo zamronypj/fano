@@ -14,7 +14,7 @@ interface
 
 uses
 
-    SerializableIntf;
+    SerializeableIntf;
 
 type
     TLogLevel = (lvlCritical, lvlWarning, lvlInfo, lvlDebug);

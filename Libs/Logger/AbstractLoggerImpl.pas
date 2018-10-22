@@ -15,7 +15,7 @@ interface
 uses
 
     DependencyIntf,
-    SerializableIntf,
+    SerializeableIntf,
     LoggerIntf;
 
 type
