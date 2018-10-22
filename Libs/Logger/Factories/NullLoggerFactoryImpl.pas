@@ -30,7 +30,7 @@ implementation
 uses
     NullLoggerImpl;
 
-    function TFileLoggerFactory.build(const container : IDependencyContainer) : IDependency;
+    function TNullLoggerFactory.build(const container : IDependencyContainer) : IDependency;
     begin
         result := TNullLogger.create();
     end;
