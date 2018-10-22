@@ -40,7 +40,12 @@ uses
 
     function TFileLoggerFactory.build(const container : IDependencyContainer) : IDependency;
     begin
-        result := TFileLogger.create(logFile);
+        try
+            result := TFileLogger.create(logFile);
+        except
+            result := nil;
+            raise;
+        end;
     end;
 
 end.
