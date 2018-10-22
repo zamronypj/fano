@@ -84,13 +84,20 @@ const
     constructor TFileLogger.create(const filename : string);
     begin
         assignFile(outputFile, filename);
-        if (fileExists(filename)) then
-        begin
-            append(outputFile);
-        end else
-        begin
-            rewrite(outputFile);
+
+        try
+            if (fileExists(filename)) then
+            begin
+                append(outputFile);
+            end else
+            begin
+                rewrite(outputFile);
+            end;
+        except
+            closeFile(outputFile);
+            raise;
         end;
+
         flushCounter := 0;
     end;
 
