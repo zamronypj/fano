@@ -28,8 +28,17 @@ type
    *-----------------------------------------------*)
     TNullLogger = class(TAbstractLogger, IDependency, ILogger)
     public
+        (*!--------------------------------------
+         * log message
+         * --------------------------------------
+         * @param level type of log
+         * @param msg log message
+         * @param context data related to log message
+         *               (if any)
+         * @return current instance
+         *---------------------------------------*)
         function log(
-            const level : TLogLevel;
+            const level : string;
             const msg : string;
             const context : ISerializeable = nil
         ) : ILogger; override;
@@ -37,12 +46,22 @@ type
 
 implementation
 
+    (*!--------------------------------------
+     * log message
+     * --------------------------------------
+     * @param level type of log
+     * @param msg log message
+     * @param context data related to log message
+     *               (if any)
+     * @return current instance
+     *---------------------------------------*)
     function TNullLogger.log(
-        const level : TLogLevel;
+        const level : string;
         const msg : string;
         const context : ISerializeable = nil
     ) : ILogger;
     begin
+        //intentionally do nothing
         result := self;
     end;
 

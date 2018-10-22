@@ -17,7 +17,6 @@ uses
     SerializeableIntf;
 
 type
-    TLogLevel = (lvlCritical, lvlWarning, lvlInfo, lvlDebug);
 
     (*!------------------------------------------------
      * interface for any class having capability to log
@@ -29,7 +28,7 @@ type
         ['{A2334E59-76CC-4FCC-83BC-B694963D4B1A}']
 
         function log(
-            const level : TLogLevel;
+            const level : string;
             const msg : string;
             const context : ISerializeable = nil
         ) : ILogger;
