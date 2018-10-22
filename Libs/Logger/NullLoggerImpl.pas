@@ -22,7 +22,7 @@ uses
 type
 
   (*!------------------------------------------------
-   * logger class that does not anything
+   * logger class that does nothing
    *
    * @author Zamrony P. Juhara <zamronypj@yahoo.com>
    *-----------------------------------------------*)
