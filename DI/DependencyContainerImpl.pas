@@ -197,6 +197,7 @@ type
                     depRec^.instance := depRec^.factory.build(self);
                 except
                     depRec^.instance := nil;
+                    result := nil;
                     raise;
                 end;
             end;
