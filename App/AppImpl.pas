@@ -53,7 +53,8 @@ uses
     ///exception-related units
     ERouteHandlerNotFoundImpl,
     EMethodNotAllowedImpl,
-    EDependencyNotFoundImpl;
+    EDependencyNotFoundImpl,
+    EInvalidFactoryImpl;
 
 resourcestring
 
@@ -132,7 +133,19 @@ resourcestring
                 reset();
             end;
 
+            on e : EInvalidFactory do
+            begin
+                errorHandler.handleError(e);
+                reset();
+            end;
+
             on e : EAccessViolation do
+            begin
+                errorHandler.handleError(e);
+                reset();
+            end;
+
+            on e : EInOutError do
             begin
                 errorHandler.handleError(e);
                 reset();
