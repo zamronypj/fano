@@ -107,41 +107,41 @@ uses
         result := self;
     end;
 
-    function TTemplateView.readFileToString(const templatePath : string) : string;
-    var fstream : TFileStream;
-        str : TStringStream;
-    begin
-        //open for read and share but deny write
-        //so if multiple processes of our application access same file
-        //at the same time they stil can open and read it
-        fstream := TFileStream.create(templatePath, fmOpenRead or fmShareDenyWrite);
-        str := TStringStream.create('');
-        try
-            str.copyFrom(fstream, 0);
-            result := str.dataString;
-        finally
-            fstream.free();
-            str.free();
-        end;
-    end;
-
     // function TTemplateView.readFileToString(const templatePath : string) : string;
     // var fstream : TFileStream;
-    //     len : longint;
+    //     str : TStringStream;
     // begin
     //     //open for read and share but deny write
     //     //so if multiple processes of our application access same file
     //     //at the same time they stil can open and read it
     //     fstream := TFileStream.create(templatePath, fmOpenRead or fmShareDenyWrite);
+    //     str := TStringStream.create('');
     //     try
-    //         len := fstream.size;
-    //         setLength(result, len);
-    //         //pascal string start from index 1
-    //         fstream.read(result[1], len);
+    //         str.copyFrom(fstream, 0);
+    //         result := str.dataString;
     //     finally
     //         fstream.free();
+    //         str.free();
     //     end;
     // end;
+
+    function TTemplateView.readFileToString(const templatePath : string) : string;
+    var fstream : TFileStream;
+        len : longint;
+    begin
+        //open for read and share but deny write
+        //so if multiple processes of our application access same file
+        //at the same time they stil can open and read it
+        fstream := TFileStream.create(templatePath, fmOpenRead or fmShareDenyWrite);
+        try
+            len := fstream.size;
+            setLength(result, len);
+            //pascal string start from index 1
+            fstream.read(result[1], len);
+        finally
+            fstream.free();
+        end;
+    end;
 
     function TTemplateView.fetch(
         const templatePath : string;
