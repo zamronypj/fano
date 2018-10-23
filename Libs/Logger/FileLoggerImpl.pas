@@ -107,7 +107,7 @@ const
             on e : EInOutError do
             begin
                 e.message := e.message + ' ' + filename;
-                raise e;
+                raise;
             end;
         end;
         //append() or rewrite() will throw EInOutError when
