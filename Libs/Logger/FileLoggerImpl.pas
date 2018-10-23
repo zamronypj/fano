@@ -32,6 +32,7 @@ type
     private
         outputFile : TextFile;
         flushCounter : integer;
+        isOpen : boolean;
     public
         (*!--------------------------------------
          * constructor
@@ -86,6 +87,7 @@ const
      *---------------------------------------*)
     constructor TFileLogger.create(const filename : string);
     begin
+        isOpen := false;
         writeln('filelogger create');
         assignFile(outputFile, filename);
 
@@ -97,6 +99,7 @@ const
             rewrite(outputFile);
         end;
         flushCounter := 0;
+        isOpen := true;
     end;
 
     (*!--------------------------------------
@@ -108,7 +111,10 @@ const
     begin
         inherited destroy();
         writeln('filelogger destroy');
-        closeFile(outputFile);
+        if (isOpen) then
+        begin
+            closeFile(outputFile);
+        end;
     end;
 
     (*!--------------------------------------
