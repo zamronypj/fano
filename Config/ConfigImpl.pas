@@ -1,3 +1,11 @@
+{*!
+ * Fano Web Framework (https://fano.juhara.id)
+ *
+ * @link      https://github.com/zamronypj/fano
+ * @copyright Copyright (c) 2018 Zamrony P. Juhara
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
+ *}
+
 unit ConfigImpl;
 
 interface
@@ -11,11 +19,12 @@ uses
 
 type
 
-    TFanoConfig = class(TInterfacedObject, IAppConfiguration, IDependency)
-    private
+    TConfig = class(TInterfacedObject, IAppConfiguration, IDependency)
+    protected
         json :TJSONData;
+        function buildJsonData() : TJSONData; virtual; abstract;
     public
-        constructor create(const configFile : string);
+        constructor create();
         destructor destroy(); override;
         function getString(const configName : string; const defaultValue : string = '') : string;
         function getInt(const configName : string; const defaultValue : integer = 0) : integer;
@@ -27,27 +36,18 @@ uses
     sysutils,
     classes;
 
-    constructor TFanoConfig.create(const configFile : string);
-    var fstream : TFileStream;
+    constructor TConfig.create();
     begin
-        //open for read and share but deny write
-        //so if multiple processes of our application access same file
-        //at the same time they stil can open and read it
-        fstream := TFileStream.create(configFile, fmOpenRead or fmShareDenyWrite);
-        try
-            json := getJSON(fstream);
-        finally
-            fstream.free();
-        end;
+        json := buildJsonData();
     end;
 
-    destructor TFanoConfig.destroy();
+    destructor TConfig.destroy();
     begin
         inherited destroy();
         json.free();
     end;
 
-    function TFanoConfig.getString(const configName : string; const defaultValue : string = '') : string;
+    function TConfig.getString(const configName : string; const defaultValue : string = '') : string;
     var jsonData : TJSONData;
     begin
         jsonData := json.findPath(configName);
@@ -60,7 +60,7 @@ uses
         end;
     end;
 
-    function TFanoConfig.getInt(const configName : string; const defaultValue : integer = 0) : integer;
+    function TConfig.getInt(const configName : string; const defaultValue : integer = 0) : integer;
     var jsonData : TJSONData;
     begin
         jsonData := json.findPath(configName);
