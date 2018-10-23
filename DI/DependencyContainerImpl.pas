@@ -176,11 +176,13 @@ type
      *---------------------------------------------------------
      * @param serviceName name of service
      * @return dependency instance
+     * @throws EDependencyNotFound
+     * @throws EInvalidFactory
      *---------------------------------------------------------
      * if serviceName is registered with add(), then this method
      * will always return same instance. If serviceName is
      * registered using factory(), this method will return
-     * different instance everytim get() is called.s
+     * different instance everytime it is called.
      *---------------------------------------------------------*)
     function TDependencyContainer.get(const serviceName : string) : IDependency;
     var depRec : PDependencyRec;
