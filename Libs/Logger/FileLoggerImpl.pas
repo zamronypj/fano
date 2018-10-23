@@ -112,7 +112,7 @@ const
     (*!--------------------------------------
      * destructor
      * --------------------------------------
-     * close file
+     * close file if open
      *---------------------------------------*)
     destructor TFileLogger.destroy();
     begin
