@@ -95,13 +95,15 @@ uses
     end;
 
     function TTemplateView.write() : IResponse;
-    var outputStr : string;
+    //var outputStr : string;
     begin
-        outputStr := outputBuffer.flush();
+        //TODO: move HTTP header to separate class
+        //outputStr := outputBuffer.flush();
         writeln('Content-Type: text/html');
-        writeln('Content-Length: ' + intToStr(length(outputStr)));
+        //writeln('Content-Length: ' + intToStr(length(outputStr)));
         writeln();
-        writeln(outputStr);
+        //writeln(outputStr);
+        writeln(outputBuffer.flush());
         result := self;
     end;
 
