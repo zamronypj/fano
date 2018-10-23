@@ -30,7 +30,7 @@ uses
     constructor TFanoConfig.create(const configFile : string);
     var fstream : TFileStream;
     begin
-        fstream := TFileStream.create(configFile, fmOpenRead);
+        fstream := TFileStream.create(configFile, fmOpenRead or fmShareDenyNone);
         try
             json := getJSON(fstream);
         finally
