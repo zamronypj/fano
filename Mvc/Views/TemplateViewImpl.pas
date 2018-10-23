@@ -104,18 +104,32 @@ uses
         result := self;
     end;
 
+    // function TTemplateView.readFileToString(const templatePath : string) : string;
+    // var fstream : TFileStream;
+    //     str : TStringStream;
+    // begin
+    //     fstream := TFileStream.create(templatePath, fmOpenRead or fmShareDenyNone);
+    //     str := TStringStream.create('');
+    //     try
+    //         str.copyFrom(fstream, 0);
+    //         result := str.dataString;
+    //     finally
+    //         fstream.free();
+    //         str.free();
+    //     end;
+    // end;
+
     function TTemplateView.readFileToString(const templatePath : string) : string;
     var fstream : TFileStream;
-        str : TStringStream;
+        len : longint;
     begin
-        fstream := TFileStream.create(templatePath, fmOpenRead);
-        str := TStringStream.create('');
+        fstream := TFileStream.create(templatePath, fmOpenRead or fmShareDenyNone);
         try
-            str.copyFrom(fstream, 0);
-            result := str.dataString;
+            len := fstream.size;
+            setLength(result, len);
+            fstream.read(result[1], len);
         finally
             fstream.free();
-            str.free();
         end;
     end;
 
