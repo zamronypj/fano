@@ -6,7 +6,7 @@
  * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
  *}
 
-unit TemplateFileViewImpl;
+unit TemplateStrViewImpl;
 
 interface
 
@@ -22,10 +22,14 @@ uses
 
 type
     {------------------------------------------------
-     View that can render from a HTML template file
+     View that can render from a HTML template in
+     pascal variable/const/resource string
+
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
-    TTemplateFileView = class(TTemplateView)
+    TTemplateStrFileView = class(TTemplateView)
+    protected
+        function buildTemplateStr(): string; virtual; abstract;
     public
         constructor create(
             const outputBufferInst : IOutputBuffer;
@@ -36,7 +40,7 @@ type
 
 implementation
 
-    constructor TTemplateFileView.create(
+    constructor TTemplateStrFileView.create(
         const outputBufferInst : IOutputBuffer;
         const templateParserInst : ITemplateParser;
         const templatePath : string
@@ -45,7 +49,7 @@ implementation
         inherited create(
             outputBufferInst,
             templateParserInst,
-            readFileToString(templatePath)
+            buildTemplateStr()
         );
     end;
 

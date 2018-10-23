@@ -31,6 +31,7 @@ type
         templateContent : string;
         outputBuffer : IOutputBuffer;
         templateParser : ITemplateParser;
+    protected
         function readFileToString(const templatePath : string) : string;
     public
         constructor create(
@@ -127,6 +128,7 @@ uses
         try
             len := fstream.size;
             setLength(result, len);
+            //pascal string start from index 1
             fstream.read(result[1], len);
         finally
             fstream.free();
