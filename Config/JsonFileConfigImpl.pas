@@ -1,4 +1,12 @@
-unit ConfigFileImpl;
+{*!
+ * Fano Web Framework (https://fano.juhara.id)
+ *
+ * @link      https://github.com/zamronypj/fano
+ * @copyright Copyright (c) 2018 Zamrony P. Juhara
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
+ *}
+
+unit JsonFileConfigImpl;
 
 interface
 {$H+}
@@ -12,6 +20,11 @@ uses
 
 type
 
+    (*!------------------------------------------------------------
+     * Application configuration class that load data from JSON file
+
+     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+     *-------------------------------------------------------------*)
     TJsonFileConfig = class(TConfig, IAppConfiguration, IDependency)
     private
         jsonConfigFile : string;

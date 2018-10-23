@@ -1,4 +1,4 @@
-unit ConfigFactoryImpl;
+unit JsonFileConfigFactoryImpl;
 
 interface
 
@@ -12,7 +12,7 @@ type
      factory class for TFanoConfig
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
-    TFanoConfigFactory = class (TFactory, IDependencyFactory)
+    TJsonFileConfigFactory = class (TFactory, IDependencyFactory)
     private
         configFilename : string;
     public
@@ -23,16 +23,16 @@ type
 implementation
 
 uses
-    ConfigImpl;
+    JsonFileConfigImpl;
 
-    constructor TFanoConfigFactory.create(const configFile : string);
+    constructor TJsonFileConfigFactory.create(const configFile : string);
     begin
         configFilename := configFile;
     end;
 
-    function TFanoConfigFactory.build(const container : IDependencyContainer) : IDependency;
+    function TJsonFileConfigFactory.build(const container : IDependencyContainer) : IDependency;
     begin
-        result := TFanoConfig.create(configFilename);
+        result := TJsonFileConfig.create(configFilename);
     end;
 
 end.

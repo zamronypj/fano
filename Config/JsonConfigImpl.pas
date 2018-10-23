@@ -6,7 +6,7 @@
  * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
  *}
 
-unit ConfigImpl;
+unit JsonConfigImpl;
 
 interface
 {$H+}
@@ -19,7 +19,12 @@ uses
 
 type
 
-    TConfig = class(TInterfacedObject, IAppConfiguration, IDependency)
+    (*!------------------------------------------------------------
+     * Application configuration base class that load data from JSON
+
+     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+     *-------------------------------------------------------------*)
+    TJsonConfig = class(TInterfacedObject, IAppConfiguration, IDependency)
     protected
         json :TJSONData;
         function buildJsonData() : TJSONData; virtual; abstract;
@@ -36,18 +41,18 @@ uses
     sysutils,
     classes;
 
-    constructor TConfig.create();
+    constructor TJsonConfig.create();
     begin
         json := buildJsonData();
     end;
 
-    destructor TConfig.destroy();
+    destructor TJsonConfig.destroy();
     begin
         inherited destroy();
         json.free();
     end;
 
-    function TConfig.getString(const configName : string; const defaultValue : string = '') : string;
+    function TJsonConfig.getString(const configName : string; const defaultValue : string = '') : string;
     var jsonData : TJSONData;
     begin
         jsonData := json.findPath(configName);
@@ -60,7 +65,7 @@ uses
         end;
     end;
 
-    function TConfig.getInt(const configName : string; const defaultValue : integer = 0) : integer;
+    function TJsonConfig.getInt(const configName : string; const defaultValue : integer = 0) : integer;
     var jsonData : TJSONData;
     begin
         jsonData := json.findPath(configName);
