@@ -106,8 +106,8 @@ const
      *---------------------------------------*)
     destructor TFileLogger.destroy();
     begin
-        writeln('filelogger destroy');
         inherited destroy();
+        writeln('filelogger destroy');
         closeFile(outputFile);
     end;
 
