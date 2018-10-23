@@ -95,14 +95,21 @@ const
         isOpen := false;
         assignFile(outputFile, filename);
 
-        if (fileExists(filename)) then
-        begin
-            append(outputFile);
-        end else
-        begin
-            rewrite(outputFile);
+        try
+            if (fileExists(filename)) then
+            begin
+                append(outputFile);
+            end else
+            begin
+                rewrite(outputFile);
+            end;
+        except
+            on e : EInOutError do
+            begin
+                e.message := e.message + ' ' + filename;
+                raise e;
+            end;
         end;
-
         //append() or rewrite() will throw EInOutError when
         //failed. If we get here then, I/O operation is successful
         flushCounter := 0;
