@@ -12,6 +12,11 @@ interface
 
 {$H+}
 
+(*!------------------------------------------------
+ * turn on I/O checking so EInOutError will be raised
+ * if file I/O operation is failed
+ *-----------------------------------------------*)
+{$I+}
 
 uses
 
@@ -88,7 +93,6 @@ const
     constructor TFileLogger.create(const filename : string);
     begin
         isOpen := false;
-        writeln('filelogger create');
         assignFile(outputFile, filename);
 
         if (fileExists(filename)) then
@@ -98,6 +102,9 @@ const
         begin
             rewrite(outputFile);
         end;
+
+        //append() or rewrite() will throw EInOutError when
+        //failed. If we get here then, I/O operation is successful
         flushCounter := 0;
         isOpen := true;
     end;
@@ -110,9 +117,9 @@ const
     destructor TFileLogger.destroy();
     begin
         inherited destroy();
-        writeln('filelogger destroy');
         if (isOpen) then
         begin
+            //file is open succesfully, so close it properly
             closeFile(outputFile);
         end;
     end;
