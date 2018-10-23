@@ -16,7 +16,7 @@ uses
     jsonparser,
     DependencyIntf,
     ConfigIntf,
-    ConfigImpl;
+    JsonConfigImpl;
 
 type
 
@@ -25,7 +25,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------------------*)
-    TJsonStringConfig = class(TConfig, IAppConfiguration, IDependency)
+    TJsonStringConfig = class(TJsonConfig, IAppConfiguration, IDependency)
     private
         jsonConfigStr : string;
     protected
