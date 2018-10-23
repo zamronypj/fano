@@ -38,11 +38,21 @@ type
         outputFile : TextFile;
         flushCounter : integer;
         isOpen : boolean;
+
+        (*!--------------------------------------
+         * try opening file
+         * --------------------------------------
+         * @param filename file to open
+         * @throws EInOutError
+         *---------------------------------------*)
+        procedure tryOpenFileOrExcept(const filename : string);
+
     public
         (*!--------------------------------------
          * constructor
          * --------------------------------------
          * @param filename file to store logs
+         * @throws EInOutError
          *---------------------------------------*)
         constructor create(const filename : string);
 
@@ -79,6 +89,33 @@ const
     FLUSH_AFTER = 500;
 
     (*!--------------------------------------
+     * try opening file
+     * --------------------------------------
+     * @param filename file to open
+     * @throws EInOutError
+     *---------------------------------------*)
+    procedure TFileLogger.tryOpenFileOrExcept(const filename : string);
+    begin
+        try
+            if (fileExists(filename)) then
+            begin
+                append(outputFile);
+            end else
+            begin
+                rewrite(outputFile);
+            end;
+        except
+            on e : EInOutError do
+            begin
+                //original error message is not very clear
+                //as it does not include file information,
+                //here handle it and re raise exception with more clear message
+                raise EInOutError.create(e.message + ' ' + filename);
+            end;
+        end;
+    end;
+
+    (*!--------------------------------------
      * constructor
      * --------------------------------------
      * @param filename file to store logs
@@ -95,21 +132,9 @@ const
         isOpen := false;
         assignFile(outputFile, filename);
 
-        try
-            if (fileExists(filename)) then
-            begin
-                append(outputFile);
-            end else
-            begin
-                rewrite(outputFile);
-            end;
-        except
-            on e : EInOutError do
-            begin
-                raise EInOutError.create(e.message + ' ' + filename);
-            end;
-        end;
-        //append() or rewrite() will throw EInOutError when
+        tryOpenFileOrExcept(filename);
+
+        //tryOpenFileOrExcept() will throw EInOutError when
         //failed. If we get here then, I/O operation is successful
         flushCounter := 0;
         isOpen := true;
