@@ -86,8 +86,6 @@ uses
     begin
         outputBuffer.beginBuffering();
         try
-            writeln('Content-Type: text/html');
-            writeln();
             writeln(templateParser.parse(templateContent, viewParams));
         finally
             outputBuffer.endBuffering();
@@ -96,8 +94,13 @@ uses
     end;
 
     function TTemplateView.write() : IResponse;
+    var outputStr : string;
     begin
-        writeln(outputBuffer.flush());
+        outputStr := outputBuffer.flush();
+        writeln('Content-Type: text/html');
+        writeln('Content-Length: ' + intToStr(length(outputStr)));
+        writeln();
+        writeln(outputStr);
         result := self;
     end;
 
