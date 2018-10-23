@@ -76,13 +76,17 @@ const
      * constructor
      * --------------------------------------
      * @param filename file to store logs
+     * @throws EInOutError
      * --------------------------------------
      * if file exists, we open file for append
      * if not then we create new. User who run
      * must have proper file permissions
+     * If file can not be open, EInOutError exception
+     * is raised
      *---------------------------------------*)
     constructor TFileLogger.create(const filename : string);
     begin
+        writeln('filelogger create');
         assignFile(outputFile, filename);
 
         if (fileExists(filename)) then
@@ -102,7 +106,9 @@ const
      *---------------------------------------*)
     destructor TFileLogger.destroy();
     begin
+        inherited destroy();
         closeFile(outputFile);
+        writeln('filelogger destroy');
     end;
 
     (*!--------------------------------------
