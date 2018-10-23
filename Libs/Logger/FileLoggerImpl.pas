@@ -142,7 +142,13 @@ const
         const context : ISerializeable = nil
     ) : ILogger;
     begin
-        writeln(outputFile, '[', level,'] ', DateTimeToStr(Now), ' ', msg);
+        writeln(
+            outputFile,
+            '[', level,'] ',
+            FormatDateTime('yyyy-mm-dd hh:nn:ss', Now),
+            ' ',
+            msg
+        );
         if (context <> nil) then
         begin
             writeln(outputFile, '==== Start context ====');
