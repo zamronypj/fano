@@ -6,39 +6,42 @@
  * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
  *}
 
-unit ResponseIntf;
+unit HeadersIntf;
 
 interface
 
+{$H+}
+
 uses
 
-    HeadersIntf,
     CloneableIntf;
 
 type
 
-    (*!----------------------------------------------
-     * interface for any class having capability as
-     * HTTP response
+    (*!------------------------------------------------
+     * interface for any class having capability to
+     * set and write HTTP headers
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    IResponse = interface(ICloneable)
-        ['{36D6274C-3EE1-4262-BACB-2A313C673206}']
+    IHeaders = interface(ICloneable)
+        ['{8CFE49E5-F77A-4949-B748-C2C63A6735C3}']
 
         (*!------------------------------------
-         * get http headers instance
+         * set http header
+         *-------------------------------------
+         * @param key name  of http header to set
+         * @param value value of header
+         * @return header instance
+         *-------------------------------------*)
+        function setHeader(const key : shortstring; const value : string) : IHeadersInterface;
+
+        (*!------------------------------------
+         * output http headers to STDIN
          *-------------------------------------
          * @return header instance
          *-------------------------------------*)
-        function headers() : IHeaders;
-
-        (*!------------------------------------
-         * output http response to STDIN
-         *-------------------------------------
-         * @return current instance
-         *-------------------------------------*)
-        function write() : IResponse;
+        function writeHeaders() : IHeaders;
     end;
 
 implementation
