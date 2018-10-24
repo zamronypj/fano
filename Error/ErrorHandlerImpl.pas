@@ -1,19 +1,31 @@
+{*!
+ * Fano Web Framework (https://fano.juhara.id)
+ *
+ * @link      https://github.com/zamronypj/fano
+ * @copyright Copyright (c) 2018 Zamrony P. Juhara
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
+ *}
+
 unit ErrorHandlerImpl;
 
 interface
+
 {$H+}
+
 uses
     sysutils,
     DependencyIntf,
-    ErrorHandlerIntf;
+    ErrorHandlerIntf,
+    BaseErrorHandlerImpl;
 
 type
 
-    {------------------------------------------------
-     default error handler for debugging
-     @author Zamrony P. Juhara <zamronypj@yahoo.com>
-    -----------------------------------------------}
-    TErrorHandler = class(TInterfacedObject, IErrorHandler, IDependency)
+    (*!---------------------------------------------------
+     * default error handler for debugging
+     *
+     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+     *---------------------------------------------------*)
+    TErrorHandler = class(TBaseErrorHandler, IErrorHandler, IDependency)
     private
         function getStackTrace(const e: Exception) : string;
     public
@@ -21,7 +33,7 @@ type
             const exc : Exception;
             const status : integer = 500;
             const msg : string  = 'Internal Server Error'
-        ) : IErrorHandler;
+        ) : IErrorHandler; override;
     end;
 
 implementation
