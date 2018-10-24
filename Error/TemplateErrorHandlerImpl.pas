@@ -68,5 +68,6 @@ uses
         writeln('Status: ', intToStr(status), ' ', msg);
         writeln();
         writeln(templateStr);
+        result := self;
     end;
 end.
