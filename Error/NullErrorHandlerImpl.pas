@@ -30,7 +30,7 @@ type
             const exc : Exception;
             const status : integer = 500;
             const msg : string  = 'Internal Server Error'
-        ) : IErrorHandler;
+        ) : IErrorHandler; override;
     end;
 
 implementation
