@@ -17,11 +17,11 @@ uses
     FactoryImpl;
 
 type
-    {------------------------------------------------
-     interface for any class having capability
-     to build request instance
-     @author Zamrony P. Juhara <zamronypj@yahoo.com>
-    -----------------------------------------------}
+    (*!------------------------------------------------
+     * THeaders factory class
+     *
+     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+     *-----------------------------------------------*)
     THeadersFactory = class(TFactory, IDependencyFactory)
     public
         {*!----------------------------------------
