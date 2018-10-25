@@ -6,7 +6,8 @@ interface
 uses
     EnvironmentIntf,
     RequestIntf,
-    HashListIntf;
+    HashListIntf,
+    KeyValueTypes;
 
 type
 
