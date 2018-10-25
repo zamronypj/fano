@@ -121,10 +121,10 @@ type
     var i, len : integer;
         hdr : PHeaderRec;
     begin
-        len := hdrList.count();
+        len := headerList.count();
         for i :=0 to len-1 do
         begin
-            hdr := hdrList.get(i);
+            hdr := headerList.get(i);
             writeln(hdr^.key, ':', hdr^.value);
         end;
         writeln();
