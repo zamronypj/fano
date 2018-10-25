@@ -28,7 +28,7 @@ type
      *-----------------------------------------------*)
     TDebugWebApplication = class(TInterfacedObject, IWebApplication, IRunnable)
     private
-        startTick : longint;
+        startTick : QWord;
         actualApp : IWebApplication;
     public
         constructor create(const app : IWebApplication);
@@ -42,9 +42,21 @@ uses
 
     sysutils;
 
+    function tickCount64: QWord;
+    var
+      ts: TTimeSpec;
+    begin
+       if clock_gettime(CLOCK_MONOTONIC, @ts)=0 then
+        begin
+          result = int64(ts.tv_sec) * 1000 * 1000 * 1000 + start_time.tv_nsec;
+          exit;
+       end;
+    end;
+
     constructor TDebugWebApplication.create(const app : IWebApplication);
     begin
-        startTick := getTickCount64();
+        //startTick := getTickCount64();
+        startTick := tickCount64;
         actualApp := app;
     end;
 
@@ -55,11 +67,14 @@ uses
     end;
 
     function TDebugWebApplication.run() : IRunnable;
-    var tick : longint;
+    var tick : Qword;
+        diffMicro : double;
     begin
         actualApp.run();
-        tick := getTickCount64() - startTick;
-        writeln('<!-- Exec:', tick, ' ms -->');
+        tick := tickCount64 - startTick;
+        diffMicro := tick/1000;
+        //tick := getTickCount64() - startTick;
+        writeln('<!-- Exec:', diffMicro, ' s -->');
         result := self;
     end;
 
