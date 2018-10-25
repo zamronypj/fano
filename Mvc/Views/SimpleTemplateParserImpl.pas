@@ -58,8 +58,8 @@ uses
         const closeTagStr : string
     );
     begin
-        openTag := regex.quote(openTagStr);
-        closeTag := regex.quote(closeTagStr);
+        openTag := openTagStr;
+        closeTag := closeTagStr;
     end;
 
     (*!---------------------------------------------------
