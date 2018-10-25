@@ -48,6 +48,11 @@ type
          read output buffer content and empty the buffer
         -----------------------------------------------}
         function flush() : string;
+
+        {------------------------------------------------
+         read content length
+        -----------------------------------------------}
+        function size() : integer;
     end;
 
 implementation
@@ -117,5 +122,13 @@ uses
     begin
         result := stream.dataString;
         stream.size := 0;
+    end;
+
+    {------------------------------------------------
+     read content length
+    -----------------------------------------------}
+    function TOutputBuffer.size() : int64;
+    begin
+        result := stream.size;
     end;
 end.

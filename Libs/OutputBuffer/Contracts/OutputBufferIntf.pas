@@ -38,6 +38,11 @@ type
          read output buffer content and empty the buffer
         -----------------------------------------------}
         function flush() : string;
+
+        {------------------------------------------------
+         read content length
+        -----------------------------------------------}
+        function size() : int64;
     end;
 
 implementation

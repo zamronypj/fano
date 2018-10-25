@@ -13,6 +13,7 @@ interface
 {$H+}
 
 uses
+    HeadersIntf,
     ResponseIntf,
     ViewParametersIntf,
     ViewIntf,
@@ -28,6 +29,7 @@ type
     TTemplateFileView = class(TTemplateView)
     public
         constructor create(
+            const hdrs : IHeaders;
             const outputBufferInst : IOutputBuffer;
             const templateParserInst : ITemplateParser;
             const templatePath : string
@@ -37,12 +39,14 @@ type
 implementation
 
     constructor TTemplateFileView.create(
+        const hdrs : IHeaders;
         const outputBufferInst : IOutputBuffer;
         const templateParserInst : ITemplateParser;
         const templatePath : string
     );
     begin
         inherited create(
+            hdrs,
             outputBufferInst,
             templateParserInst,
             readFileToString(templatePath)

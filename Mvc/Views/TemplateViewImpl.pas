@@ -13,6 +13,7 @@ interface
 {$H+}
 
 uses
+    HeadersIntf,
     ResponseIntf,
     ViewParametersIntf,
     ViewIntf,
@@ -31,15 +32,25 @@ type
         templateContent : string;
         outputBuffer : IOutputBuffer;
         templateParser : ITemplateParser;
+        httpHeaders : IHeaders;
     protected
         function readFileToString(const templatePath : string) : string;
     public
         constructor create(
+            const hdrs : IHeaders;
             const outputBufferInst : IOutputBuffer;
             const templateParserInst : ITemplateParser;
             const templateSrc : string
         ); virtual;
+
         destructor destroy(); override;
+
+        (*!------------------------------------
+         * get http headers instance
+         *-------------------------------------
+         * @return header instance
+         *-------------------------------------*)
+        function headers() : IHeaders;
 
         function render(
             const viewParams : IViewParameters;
@@ -63,11 +74,13 @@ uses
     sysutils;
 
     constructor TTemplateView.create(
+        const hdrs : IHeaders;
         const outputBufferInst : IOutputBuffer;
         const templateParserInst : ITemplateParser;
         const templateSrc : string
     );
     begin
+        httpHeaders := hdrs;
         outputBuffer := outputBufferInst;
         templateParser := templateParserInst;
         templateContent := templateSrc;
@@ -76,6 +89,7 @@ uses
     destructor TTemplateView.destroy();
     begin
         inherited destroy();
+        httpHeaders := nil;
         outputBuffer := nil;
         templateParser := nil;
     end;
@@ -91,18 +105,13 @@ uses
         finally
             outputBuffer.endBuffering();
         end;
+        httpHeader.setHeader('Content-Length', strToInt(outputBuffer.size()));
         result := self;
     end;
 
     function TTemplateView.write() : IResponse;
-    //var outputStr : string;
     begin
-        //TODO: move HTTP header to separate class
-        //outputStr := outputBuffer.flush();
-        writeln('Content-Type: text/html');
-        //writeln('Content-Length: ' + intToStr(length(outputStr)));
-        writeln();
-        //writeln(outputStr);
+        httpHeaders.writeHeaders();
         writeln(outputBuffer.flush());
         result := self;
     end;
