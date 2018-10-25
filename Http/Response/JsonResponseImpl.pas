@@ -45,6 +45,10 @@ type
 
 implementation
 
+uses
+
+    sysutils;
+
     constructor TJsonResponse.create(const hdrs : IHeaders; const jsonData : TJSONData);
     begin
         httpHeaders := hdrs;
