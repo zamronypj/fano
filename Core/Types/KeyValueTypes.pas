@@ -25,7 +25,7 @@ type
     end;
     PKeyValue = ^TKeyValue;
 
-    TArrayOfKeyValue = array of TKeyValueParam;
+    TArrayOfKeyValue = array of TKeyValue;
 
 implementation
 
