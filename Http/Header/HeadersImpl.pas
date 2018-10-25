@@ -41,7 +41,7 @@ type
          * @param value value of header
          * @return header instance
          *-------------------------------------*)
-        function setHeader(const key : shortstring; const value : string) : IHeadersInterface;
+        function setHeader(const key : shortstring; const value : string) : IHeaders;
 
         (*!------------------------------------
          * output http headers to STDIN
