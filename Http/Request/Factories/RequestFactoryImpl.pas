@@ -21,10 +21,11 @@ type
 implementation
 
 uses
-    RequestImpl;
+    RequestImpl,
+    HashListImpl;
 
     function TRequestFactory.build(const env : ICGIEnvironment) : IRequest;
     begin
-        result := TRequest.create(env);
+        result := TRequest.create(env, THashList.create(), THashList.create());
     end;
 end.
