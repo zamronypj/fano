@@ -15,8 +15,12 @@ type
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
     TCGIEnvironment = class(TInterfacedObject, ICGIEnvironment, IDependency)
-    private
     public
+        {-----------------------------------------
+         Retrieve an environment variable
+        ------------------------------------------}
+        function env(const key) : string;
+
         {-----------------------------------------
          Retrieve GATEWAY_INTERFACE environment variable
         ------------------------------------------}
@@ -107,6 +111,14 @@ implementation
 
 uses
     dos;
+
+    {-----------------------------------------
+     Retrieve an environment variable
+    ------------------------------------------}
+    function TCGIEnvironment.env(const key : string) : string;
+    begin
+        result := getenv(key);
+    end;
 
     {-----------------------------------------
      Retrieve GATEWAY_INTERFACE environment variable
@@ -242,5 +254,13 @@ uses
     function TCGIEnvironment.httpAcceptLanguage() : string;
     begin
         result := getenv('HTTP_ACCEPT_LANGUAGE');
+    end;
+
+    {-----------------------------------------
+     Retrieve HTTP_COOKIE environment variable
+    ------------------------------------------}
+    function TCGIEnvironment.httpCookie() : string;
+    begin
+        result := getenv('HTTP_COOKIE');
     end;
 end.

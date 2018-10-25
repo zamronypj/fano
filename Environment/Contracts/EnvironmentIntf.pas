@@ -1,6 +1,15 @@
+{*!
+ * Fano Web Framework (https://fano.juhara.id)
+ *
+ * @link      https://github.com/zamronypj/fano
+ * @copyright Copyright (c) 2018 Zamrony P. Juhara
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
+ *}
+
 unit EnvironmentIntf;
 
 interface
+
 {$H+}
 
 type
@@ -12,6 +21,11 @@ type
     -----------------------------------------------}
     ICGIEnvironment = interface
         ['{48E2E809-1176-4863-B940-D1E05CF1355C}']
+
+        {-----------------------------------------
+         Retrieve an environment variable
+        ------------------------------------------}
+        function env(const key) : string;
 
         {-----------------------------------------
          Retrieve GATEWAY_INTERFACE environment variable
@@ -97,6 +111,11 @@ type
          Retrieve HTTP_ACCEPT_LANGUAGE environment variable
         ------------------------------------------}
         function httpAcceptLanguage() : string;
+
+        {-----------------------------------------
+         Retrieve HTTP_COOKIE environment variable
+        ------------------------------------------}
+        function httpCookie() : string;
     end;
 
 implementation
