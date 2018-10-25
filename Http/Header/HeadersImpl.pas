@@ -50,6 +50,7 @@ type
          *-------------------------------------*)
         function writeHeaders() : IHeaders;
 
+        function clone() : ICloneable;
     end;
 
 implementation
@@ -127,6 +128,24 @@ type
         end;
         writeln();
         result := self;
+    end;
+
+    function THeaders.clone() : ICloneable;
+    var i, len : integer;
+        srcHdr, dstHdr : PHeaderRec;
+        newHashList : IHashList;
+    begin
+        newHashList := THashList.create();
+        len := headerList.count();
+        for i :=0 to len-1 do
+        begin
+            srcHdr := headerList.get(i);
+            new(dstHdr);
+            dstHdr^.key := srcHdr^.key;
+            dstHdr^.value := srcHdr^.value;
+            newHashList.add(dstHdr^.key, dstHdr);
+        end;
+        result := THeaders.create(newHashList);
     end;
 
 end.
