@@ -10,8 +10,6 @@ unit RouteHandlerIntf;
 
 interface
 
-{$H+}
-
 uses
     MiddlewareIntf,
     MiddlewareCollectionAwareIntf,
