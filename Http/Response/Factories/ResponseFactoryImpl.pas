@@ -20,10 +20,12 @@ type
 
 implementation
 uses
-    ResponseImpl;
+    ResponseImpl,
+    HeadersImpl,
+    HashListImpl;
 
     function TResponseFactory.build(const env : ICGIEnvironment) : IResponse;
     begin
-        result := TResponse.create(env);
+        result := TResponse.create(env, THeaders.create(THashList.create()));
     end;
 end.
