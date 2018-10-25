@@ -48,7 +48,10 @@ uses
      *------------------------------------------*}
     function THeadersFactory.build(const container : IDependencyContainer) : IDependency;
     begin
-        result := THeaders.create(THashList.create());
+        //create headers instance and one default header Content-Type
+        result := (THeaders.create(
+            THashList.create()
+        )).setHeader('Content-Type', 'text/html');
     end;
 
 end.

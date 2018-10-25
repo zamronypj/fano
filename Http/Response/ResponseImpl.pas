@@ -68,7 +68,7 @@ implementation
 
     function TResponse.write() : IResponse;
     begin
-        //TODO:
+        httpHeaders.writeHeaders();
         result := self;
     end;
 

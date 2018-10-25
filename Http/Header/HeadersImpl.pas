@@ -125,6 +125,7 @@ type
             hdr := hdrList.get(i);
             writeln(hdr^.key, ':', hdr^.value);
         end;
+        writeln();
         result := self;
     end;
 
