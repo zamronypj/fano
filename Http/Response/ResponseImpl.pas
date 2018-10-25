@@ -61,7 +61,7 @@ implementation
      *-------------------------------------
      * @return header instance
      *-------------------------------------*)
-    function headers() : IHeaders;
+    function TResponse.headers() : IHeaders;
     begin
         result := httpHeaders;
     end;
