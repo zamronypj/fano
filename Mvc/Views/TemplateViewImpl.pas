@@ -105,7 +105,7 @@ uses
         finally
             outputBuffer.endBuffering();
         end;
-        httpHeader.setHeader('Content-Length', strToInt(outputBuffer.size()));
+        httpHeaders.setHeader('Content-Length', strToInt(outputBuffer.size()));
         result := self;
     end;
 
