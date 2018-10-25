@@ -83,6 +83,8 @@ uses
      * contain key='name' with value='joko'
      * then for template content 'hello {{ name }}'
      * output will be  'hello joko'
+     * pattern {{name}} {{ name }} {{   name   }} are considered
+     * same
      *-----------------------------------------------------*)
     function TTemplateParser.parse(
         const templateStr : string;
