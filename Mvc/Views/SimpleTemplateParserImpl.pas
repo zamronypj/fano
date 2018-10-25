@@ -51,6 +51,8 @@ type
 implementation
 
 uses
+
+    sysutils,
     classes;
 
     constructor TSimpleTemplateParser.create(
