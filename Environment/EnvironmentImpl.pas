@@ -1,9 +1,18 @@
+{*!
+ * Fano Web Framework (https://fano.juhara.id)
+ *
+ * @link      https://github.com/zamronypj/fano
+ * @copyright Copyright (c) 2018 Zamrony P. Juhara
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
+ *}
+
 unit EnvironmentImpl;
 
 interface
 {$H+}
 
 uses
+
     DependencyIntf,
     EnvironmentIntf;
 
@@ -19,7 +28,7 @@ type
         {-----------------------------------------
          Retrieve an environment variable
         ------------------------------------------}
-        function env(const key) : string;
+        function env(const key : string) : string;
 
         {-----------------------------------------
          Retrieve GATEWAY_INTERFACE environment variable
@@ -105,6 +114,11 @@ type
          Retrieve HTTP_ACCEPT_LANGUAGE environment variable
         ------------------------------------------}
         function httpAcceptLanguage() : string;
+
+        {-----------------------------------------
+         Retrieve HTTP_COOKIE environment variable
+        ------------------------------------------}
+        function httpCookie() : string;
     end;
 
 implementation

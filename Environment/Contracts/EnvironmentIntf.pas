@@ -13,6 +13,7 @@ interface
 {$H+}
 
 type
+
     {------------------------------------------------
      interface for any class having capability to retrieve
      CGI environment variable
@@ -25,7 +26,7 @@ type
         {-----------------------------------------
          Retrieve an environment variable
         ------------------------------------------}
-        function env(const key) : string;
+        function env(const key : string) : string;
 
         {-----------------------------------------
          Retrieve GATEWAY_INTERFACE environment variable
