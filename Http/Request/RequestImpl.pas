@@ -104,6 +104,10 @@ type
 
 implementation
 
+uses
+
+    sysutils;
+
     constructor TRequest.create(
         const env : ICGIEnvironment;
         const query : IHashList;
