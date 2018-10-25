@@ -78,6 +78,11 @@ type
         function contentType() : string;
 
         {-----------------------------------------
+         Retrieve CONTENT_LENGTH environment variable
+        ------------------------------------------}
+        function contentLength() : string;
+
+        {-----------------------------------------
          Retrieve HTTP_HOST environment variable
         ------------------------------------------}
         function httpHost() : string;
@@ -197,6 +202,14 @@ uses
     function TCGIEnvironment.contentType() : string;
     begin
         result := getenv('CONTENT_TYPE');
+    end;
+
+    {-----------------------------------------
+    Retrieve CONTENT_LENGTH environment variable
+    ------------------------------------------}
+    function TCGIEnvironment.contentLength() : string;
+    begin
+        result := getenv('CONTENT_LENGTH');
     end;
 
     {-----------------------------------------

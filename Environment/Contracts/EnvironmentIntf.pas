@@ -74,6 +74,11 @@ type
         function contentType() : string;
 
         {-----------------------------------------
+         Retrieve CONTENT_LENGTH environment variable
+        ------------------------------------------}
+        function contentLength() : string;
+
+        {-----------------------------------------
          Retrieve HTTP_HOST environment variable
         ------------------------------------------}
         function httpHost() : string;
