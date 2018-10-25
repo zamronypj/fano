@@ -56,6 +56,10 @@ type
 
 implementation
 
+uses
+
+    HashListImpl;
+
 type
 
     THeaderRec = record
