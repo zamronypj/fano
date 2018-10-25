@@ -155,6 +155,7 @@ uses
     var clonedObj : TTemplateView;
     begin
         clonedObj := TTemplateView.create(
+            httpHeaders.clone() as IHeaders,
             outputBuffer,
             templateParser,
             templateContent

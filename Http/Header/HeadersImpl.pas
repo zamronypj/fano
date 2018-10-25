@@ -27,7 +27,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    THeaders = class(TInterfacedObject, IHeaders, IDependency)
+    THeaders = class(TInterfacedObject, IHeaders, IDependency, ICloneable)
     private
         headerList : IHashList;
         procedure clearHeaders(const hdrList : IHashList);
@@ -139,7 +139,6 @@ type
     var i, len : integer;
         srcHdr, dstHdr : PHeaderRec;
         newHashList : IHashList;
-        clonedObj : IHeaders;
     begin
         newHashList := THashList.create();
         len := headerList.count();
@@ -151,8 +150,7 @@ type
             dstHdr^.value := srcHdr^.value;
             newHashList.add(dstHdr^.key, dstHdr);
         end;
-        clonedObj := THeaders.create(newHashList);
-        result := clonedObj as ICloneable;
+        result := THeaders.create(newHashList);
     end;
 
 end.
