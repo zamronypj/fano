@@ -129,7 +129,7 @@ type
         for i :=0 to len-1 do
         begin
             hdr := headerList.get(i);
-            writeln(hdr^.key, ':', hdr^.value);
+            writeln(hdr^.key, ': ', hdr^.value);
         end;
         writeln();
         result := self;
