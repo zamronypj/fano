@@ -30,7 +30,7 @@ type
          * @param container dependency container instance
          * @return instance of IDependency interface
          *------------------------------------------*}
-        function build(const container : IDependencyContainer) : IDependency;
+        function build(const container : IDependencyContainer) : IDependency; override;
     end;
 
 implementation
@@ -51,7 +51,7 @@ uses
         //create headers instance and one default header Content-Type
         result := (THeaders.create(
             THashList.create()
-        )).setHeader('Content-Type', 'text/html');
+        )).setHeader('Content-Type', 'text/html') as IDependency;
     end;
 
 end.
