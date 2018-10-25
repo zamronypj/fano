@@ -99,7 +99,7 @@ uses
      *-------------------------------------
      * @return header instance
      *-------------------------------------*)
-    function headers() : IHeaders;
+    function TTemplateView.headers() : IHeaders;
     begin
         result := httpHeaders;
     end;
