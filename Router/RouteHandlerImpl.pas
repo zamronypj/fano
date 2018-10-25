@@ -55,9 +55,22 @@ type
          * get route argument data
          *--------------------------------------------*)
         function getArgs() : TArrayOfPlaceholders;
+
+        (*!-------------------------------------------
+         * get single route argument data
+         *--------------------------------------------*)
+        function getArg(const key : string) : TPlaceholder;
     end;
 
 implementation
+
+uses
+
+    ERouteArgNotFoundImpl;
+
+resourcestring
+
+    sRouteArgNotFound = 'Route argument %s not found';
 
     constructor TRouteHandler.create(
         const beforeMiddlewares : IMiddlewareCollection;
@@ -118,6 +131,25 @@ implementation
         *--------------------------------------------*)
     function TRouteHandler.getArgs() : TArrayOfPlaceholders;
     begin
-        result := varPlaceHolders;
+        result := varPlaceholders;
     end;
+
+    (*!-------------------------------------------
+     * get single route argument data
+     *--------------------------------------------*)
+    function TRouteHandler.getArg(const key : string) : TPlaceholder;
+    var i, len:integer;
+    begin
+        len := length(varPlaceholders);
+        for i:=0 to len-1 do
+        begin
+            if (key = varPlaceholders[i].phName) then
+            begin
+                result := varPlaceholders[i];
+                exit;
+            end;
+        end;
+        raise ERouteArgNotFound.createFmt(sRouteArgNotFound, [key]);
+    end;
+
 end.

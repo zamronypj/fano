@@ -37,6 +37,11 @@ type
          * get route argument data
          *--------------------------------------------*)
         function getArgs() : TArrayOfPlaceholders;
+
+        (*!-------------------------------------------
+         * get single route argument data
+         *--------------------------------------------*)
+        function getArg(const key : string) : TPlaceholder;
     end;
 
 implementation
