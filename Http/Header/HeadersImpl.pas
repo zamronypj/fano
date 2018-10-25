@@ -139,6 +139,7 @@ type
     var i, len : integer;
         srcHdr, dstHdr : PHeaderRec;
         newHashList : IHashList;
+        clonedObj : IHeaders;
     begin
         newHashList := THashList.create();
         len := headerList.count();
@@ -150,7 +151,8 @@ type
             dstHdr^.value := srcHdr^.value;
             newHashList.add(dstHdr^.key, dstHdr);
         end;
-        result := THeaders.create(newHashList);
+        clonedObj := THeaders.create(newHashList);
+        result := clonedObj as ICloneable;
     end;
 
 end.
