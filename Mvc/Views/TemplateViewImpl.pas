@@ -94,6 +94,16 @@ uses
         templateParser := nil;
     end;
 
+    (*!------------------------------------
+     * get http headers instance
+     *-------------------------------------
+     * @return header instance
+     *-------------------------------------*)
+    function headers() : IHeaders;
+    begin
+        result := httpHeaders;
+    end;
+
     function TTemplateView.render(
         const viewParams : IViewParameters;
         const response : IResponse
