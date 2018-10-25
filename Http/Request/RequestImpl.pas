@@ -141,8 +141,8 @@ uses
         begin
             keyvalue := arrOfQryStr[i].split('=');
             new(param);
-            param^.key = keyvalue[0];
-            param^.value = keyvalue[1];
+            param^.key := keyvalue[0];
+            param^.value := keyvalue[1];
             query.add(param^.key, param);
         end;
     end;
@@ -160,8 +160,8 @@ uses
         begin
             keyvalue := arrOfQryStr[i].split('=');
             new(param);
-            param^.key = keyvalue[0];
-            param^.value = keyvalue[1];
+            param^.key := keyvalue[0];
+            param^.value := keyvalue[1];
             cookies.add(param^.key, param);
         end;
     end;
