@@ -75,7 +75,7 @@ implementation
     function TResponse.clone() : ICloneable;
     var clonedObj : IResponse;
     begin
-        clonedObj := TResponse.create(webEnvironment, httpHeaders.clone());
+        clonedObj := TResponse.create(webEnvironment, httpHeaders.clone() as IHeaders);
         //TODO : copy any property
         result := clonedObj;
     end;
