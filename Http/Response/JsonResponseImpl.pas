@@ -29,7 +29,7 @@ type
         httpHeaders : IHeaders;
         jsonStr : string;
     public
-        constructor create(const hdrs : IHeaders; const jsonData : TJSONData);
+        constructor create(const hdrs : IHeaders; const json : string);
         destructor destroy(); override;
 
         (*!------------------------------------
@@ -49,10 +49,10 @@ uses
 
     sysutils;
 
-    constructor TJsonResponse.create(const hdrs : IHeaders; const jsonData : TJSONData);
+    constructor TJsonResponse.create(const hdrs : IHeaders; const json : string);
     begin
         httpHeaders := hdrs;
-        jsonStr := jsondata.asJSON;
+        jsonStr := json;
     end;
 
     destructor TJsonResponse.destroy();
