@@ -98,7 +98,7 @@ type
      * @param value value of header
      * @return header instance
      *-------------------------------------*)
-    function THeaders.setHeader(const key : shortstring; const value : string) : IHeadersInterface;
+    function THeaders.setHeader(const key : shortstring; const value : string) : IHeaders;
     var hdr : PHeaderRec;
     begin
         hdr := headerList.find(key);
