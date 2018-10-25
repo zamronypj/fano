@@ -52,7 +52,7 @@ type
         {------------------------------------------------
          read content length
         -----------------------------------------------}
-        function size() : integer;
+        function size() : int64;
     end;
 
 implementation

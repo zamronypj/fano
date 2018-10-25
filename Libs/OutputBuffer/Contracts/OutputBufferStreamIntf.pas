@@ -25,6 +25,7 @@ type
         function clear() : IOutputBufferStream;
         function seek(const streamPos : integer) : IOutputBufferStream;
         function getContent() : string;
+        function size() : int64;
     end;
 
 implementation

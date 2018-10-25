@@ -116,4 +116,12 @@ implementation
         result := stream.getContent();
         stream.clear();
     end;
+
+    {------------------------------------------------
+     read content length
+    -----------------------------------------------}
+    function TOutputBufferEx.size() : int64;
+    begin
+        result := stream.size;
+    end;
 end.
