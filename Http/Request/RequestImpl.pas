@@ -249,7 +249,8 @@ uses
                 inc(ctr);
             end;
 
-            if (contentType in ['application/x-www-form-urlencoded', 'multipart/form-data']) then
+            if ((contentType = 'application/x-www-form-urlencoded') or
+                (contentType = 'multipart/form-data')) then
             begin
                 arrOfBodyStr := bodyStr.split('&');
                 len := length(arrOfBodyStr);
