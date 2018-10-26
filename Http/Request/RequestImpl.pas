@@ -40,6 +40,11 @@ type
             const hashInst : IHashList
         );
 
+        procedure initPostBodyParamsFromStdInput(
+            const env : ICGIEnvironment;
+            const body : IHashList
+        );
+
         procedure initBodyParamsFromStdInput(
             const env : ICGIEnvironment;
             const body : IHashList
@@ -233,56 +238,65 @@ uses
         initParamsFromString(env.httpCookie(), cookies);
     end;
 
-    procedure TRequest.initBodyParamsFromStdInput(
+    procedure TRequest.initPostBodyParamsFromStdInput(
         const env : ICGIEnvironment;
         const body : IHashList
     );
     var contentLength, ctr, len : integer;
-        contentType, method, bodyStr : string;
+        contentType, bodyStr : string;
         ch : char;
         arrOfBodyStr, keyValue : TStringArray;
         param : PKeyValue;
     begin
-        method := env.requestMethod();
-        contentType := env.contentType();
+        //read STDIN
         contentLength := strToInt(env.contentLength());
+        ctr := 0;
+        setLength(bodyStr, contentLength);
+        while (ctr < contentLength) do
+        begin
+            read(ch);
+            bodyStr[ctr+1] := ch;
+            inc(ctr);
+        end;
+
+        contentType := env.contentType();
+        if ((contentType = 'application/x-www-form-urlencoded') or
+            (contentType = 'multipart/form-data')) then
+        begin
+            arrOfBodyStr := bodyStr.split('&');
+            len := length(arrOfBodyStr);
+            for ctr := 0 to len-1 do
+            begin
+                keyValue := arrOfBodyStr[ctr].split('=');
+                if (length(keyValue) = 2) then
+                begin
+                    new(param);
+                    param^.key := keyValue[0];
+                    param^.value := keyValue[1];
+                    body.add(param^.key, param);
+                end;
+            end;
+        end else
+        begin
+            //if POST but different contentType save it as it is
+            //with its contentType as key
+            new(param);
+            param^.key := contentType;
+            param^.value := bodyStr;
+            body.add(param^.key, param);
+        end;
+    end;
+
+    procedure TRequest.initBodyParamsFromStdInput(
+        const env : ICGIEnvironment;
+        const body : IHashList
+    );
+    var method : string;
+    begin
+        method := env.requestMethod();
         if (method = 'POST') then
         begin
-            //read STDIN
-            ctr := 0;
-            setLength(bodyStr, contentLength);
-            while (ctr < contentLength) do
-            begin
-                read(ch);
-                bodyStr[ctr+1] := ch;
-                inc(ctr);
-            end;
-
-            if ((contentType = 'application/x-www-form-urlencoded') or
-                (contentType = 'multipart/form-data')) then
-            begin
-                arrOfBodyStr := bodyStr.split('&');
-                len := length(arrOfBodyStr);
-                for ctr := 0 to len-1 do
-                begin
-                    keyValue := arrOfBodyStr[ctr].split('=');
-                    if (length(keyValue) = 2) then
-                    begin
-                        new(param);
-                        param^.key := keyValue[0];
-                        param^.value := keyValue[1];
-                        body.add(param^.key, param);
-                    end;
-                end;
-            end else
-            begin
-                //if POST but different contentType save it as it is
-                //with its contentType as key
-                new(param);
-                param^.key := contentType;
-                param^.value := bodyStr;
-                body.add(param^.key, param);
-            end;
+            initPostBodyParamsFromStdInput(env, body);
         end;
     end;
 
