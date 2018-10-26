@@ -280,7 +280,7 @@ uses
     procedure TRequest.initParamsFromEnvironment(
         const env : ICGIEnvironment;
         const query : IHashList;
-        const cookies : IHashList
+        const cookies : IHashList;
         const body : IHashList
     );
     begin
