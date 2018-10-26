@@ -78,7 +78,7 @@ type
             const env : ICGIEnvironment;
             const query : IHashList;
             const cookies : IHashList;
-            const body : IHashList;
+            const body : IHashList
         );
         destructor destroy(); override;
 
