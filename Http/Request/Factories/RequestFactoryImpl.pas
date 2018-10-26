@@ -26,6 +26,11 @@ uses
 
     function TRequestFactory.build(const env : ICGIEnvironment) : IRequest;
     begin
-        result := TRequest.create(env, THashList.create(), THashList.create());
+        result := TRequest.create(
+            env,
+            THashList.create(),
+            THashList.create(),
+            THashList.create()
+        );
     end;
 end.
