@@ -22,8 +22,14 @@ type
         webEnvironment : ICGIEnvironment;
         queryParams : IHashList;
         cookieParams : IHashList;
+        bodyParams : IHashList;
 
         procedure clearParams(const params : IHashList);
+
+        procedure initParamsFromString(
+            const data : string;
+            const query : IHashList
+        );
 
         procedure initQueryParamsFromEnvironment(
             const env : ICGIEnvironment;
@@ -65,7 +71,8 @@ type
         constructor create(
             const env : ICGIEnvironment;
             const query : IHashList;
-            const cookies : IHashList
+            const cookies : IHashList;
+            const body : IHashList;
         );
         destructor destroy(); override;
 
@@ -82,7 +89,7 @@ type
         (*!------------------------------------------------
          * get all query params
          *-------------------------------------------------
-         * @return array of TQueryParam
+         * @return array of TKeyValue
          *------------------------------------------------*)
         function getQueryParams() : TArrayOfKeyValue;
 
@@ -99,9 +106,26 @@ type
         (*!------------------------------------------------
          * get all query params
          *-------------------------------------------------
-         * @return array of TQueryParam
+         * @return array of TKeyValue
          *------------------------------------------------*)
         function getCookieParams() : TArrayOfKeyValue;
+
+        (*!------------------------------------------------
+         * get request body data
+         *-------------------------------------------------
+         * @param string key name of key
+         * @param string defValue default value to use if key
+         *               does not exist
+         * @return string value
+         *------------------------------------------------*)
+        function getParsedBodyParam(const key: string; const defValue : string = '') : string;
+
+        (*!------------------------------------------------
+         * get all request body data
+         *-------------------------------------------------
+         * @return array of TKeyValue
+         *------------------------------------------------*)
+        function getParsedBodyParams() : TArrayOfKeyValue;
     end;
 
 implementation
@@ -113,13 +137,20 @@ uses
     constructor TRequest.create(
         const env : ICGIEnvironment;
         const query : IHashList;
-        const cookies : IHashList
+        const cookies : IHashList;
+        const body : IHashList
     );
     begin
         webEnvironment := env;
         queryParams := query;
         cookieParams := cookies;
-        initParamsFromEnvironment(webEnvironment, queryParams, cookieParams);
+        bodyParams := body;
+        initParamsFromEnvironment(
+            webEnvironment,
+            queryParams,
+            cookieParams,
+            bodyParams
+        );
     end;
 
     destructor TRequest.destroy();
@@ -127,9 +158,11 @@ uses
         inherited destroy();
         clearParams(queryParams);
         clearParams(cookieParams);
+        clearParams(bodyParams);
         webEnvironment := nil;
         queryParams := nil;
         cookieParams := nil;
+        bodyParams := nil;
     end;
 
     procedure TRequest.clearParams(const params : IHashList);
@@ -145,15 +178,15 @@ uses
         end;
     end;
 
-    procedure TRequest.initQueryParamsFromEnvironment(
-        const env : ICGIEnvironment;
-        const query : IHashList
+    procedure TRequest.initParamsFromString(
+        const data : string;
+        const hashInst : IHashList
     );
     var arrOfQryStr, keyvalue : TStringArray;
         i, len, lenKeyValue : integer;
         param : PKeyValue;
     begin
-        arrOfQryStr := env.queryString().split(['&']);
+        arrOfQryStr := data.split(['&']);
         len := length(arrOfQryStr);
         for i:= 0 to len-1 do
         begin
@@ -164,31 +197,52 @@ uses
                 new(param);
                 param^.key := keyvalue[0];
                 param^.value := keyvalue[1];
-                query.add(param^.key, param);
+                hashInst.add(param^.key, param);
             end;
         end;
+    end;
+
+    procedure TRequest.initQueryParamsFromEnvironment(
+        const env : ICGIEnvironment;
+        const query : IHashList
+    );
+    begin
+        initParamsFromString(env.queryString(), query);
     end;
 
     procedure TRequest.initCookieParamsFromEnvironment(
         const env : ICGIEnvironment;
         const cookies : IHashList
     );
-    var arrOfQryStr, keyvalue : TStringArray;
-        i, len, lenKeyValue : integer;
-        param : PKeyValue;
     begin
-        arrOfQryStr := env.httpCookie().split(['&']);
-        len := length(arrOfQryStr);
-        for i:= 0 to len-1 do
+        initParamsFromString(env.httpCookie(), cookies);
+    end;
+
+    procedure TRequest.initBodyParamsFromStdInput(
+        const env : ICGIEnvironment;
+        const body : IHashList
+    );
+    var contentLength, ctr : integer;
+        contentType, method, body : string;
+        ch : char;
+    begin
+        method := env.requestMethod();
+        contentType := env.contentType();
+        contentLength := strToInt(env.contentLength());
+        if (method = 'POST') then
         begin
-            keyvalue := arrOfQryStr[i].split('=');
-            lenKeyValue := length(keyvalue);
-            if (lenKeyValue = 2) then
+            ctr := 0;
+            setLength(body, contentLength);
+            while (not eof(input)) or (ctr < contentLength) do
             begin
-                new(param);
-                param^.key := keyvalue[0];
-                param^.value := keyvalue[1];
-                cookies.add(param^.key, param);
+                read(ch);
+                body[ctr+1] := ch;
+            end;
+
+            if (contentType in ['application/x-www-form-urlencoded', 'multipart/form-data']) then
+            begin
+            end else
+            begin
             end;
         end;
     end;
@@ -297,5 +351,28 @@ uses
     function TRequest.getCookieParams() : TArrayOfKeyValue;
     begin
         result := getParams(cookieParams);
+    end;
+
+    (*!------------------------------------------------
+     * get request body data
+     *-------------------------------------------------
+     * @param string key name of key
+     * @param string defValue default value to use if key
+     *               does not exist
+     * @return string value
+     *------------------------------------------------*)
+    function TRequest.getParsedBodyParam(const key: string; const defValue : string = '') : string;
+    begin
+        result := getParam(bodyParams, key, defValue);
+    end;
+
+    (*!------------------------------------------------
+     * get all request body data
+     *-------------------------------------------------
+     * @return array of TKeyValue
+     *------------------------------------------------*)
+    function TRequest.getParsedBodyParams() : TArrayOfKeyValue;
+    begin
+        result := getParams(bodyParams);
     end;
 end.

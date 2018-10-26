@@ -40,7 +40,7 @@ type
         (*!------------------------------------------------
          * get all query params
          *-------------------------------------------------
-         * @return array of TQueryParam
+         * @return array of TKeyValue
          *------------------------------------------------*)
         function getQueryParams() : TArrayOfKeyValue;
 
@@ -57,9 +57,26 @@ type
         (*!------------------------------------------------
          * get all cookies params
          *-------------------------------------------------
-         * @return array of TQueryParam
+         * @return array of TKeyValue
          *------------------------------------------------*)
         function getCookieParams() : TArrayOfKeyValue;
+
+        (*!------------------------------------------------
+         * get request body data
+         *-------------------------------------------------
+         * @param string key name of key
+         * @param string defValue default value to use if key
+         *               does not exist
+         * @return string value
+         *------------------------------------------------*)
+        function getParsedBodyParam(const key: string; const defValue : string = '') : string;
+
+        (*!------------------------------------------------
+         * get all request body data
+         *-------------------------------------------------
+         * @return array of TKeyValue
+         *------------------------------------------------*)
+        function getParsedBodyParams() : TArrayOfKeyValue;
     end;
 
 implementation
