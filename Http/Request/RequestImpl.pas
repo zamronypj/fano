@@ -28,7 +28,7 @@ type
 
         procedure initParamsFromString(
             const data : string;
-            const query : IHashList
+            const hashInst : IHashList
         );
 
         procedure initBodyParamsFromStdInput(
