@@ -57,6 +57,7 @@ type
 implementation
 
 uses
+    sysutils,
     MiddlewareIntf;
 
     constructor TDispatcher.create(
@@ -89,14 +90,16 @@ uses
 
     function TDispatcher.dispatchRequest(const env: ICGIEnvironment) : IResponse;
     var routeHandler : IRouteHandler;
-        method, uri : string;
+        method : string;
+        uriParts : TStringArray;
         middlewareChain : IMiddlewareChain;
         routeMiddlewares : IMiddlewareCollectionAware;
     begin
         try
             method := env.requestMethod();
-            uri := env.requestUri();
-            routeHandler := routeCollection.match(method, uri);
+            //remove any query string parts
+            uriParts := env.requestUri().split('?');
+            routeHandler := routeCollection.match(method, uriParts[0]);
             routeMiddlewares := routeHandler.getMiddlewares();
             middlewareChain := middlewareChainFactory.build(
                 appBeforeMiddlewareList,
