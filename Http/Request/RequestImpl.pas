@@ -133,17 +133,22 @@ uses
         const query : IHashList
     );
     var arrOfQryStr, keyvalue : TStringArray;
-        i : integer;
+        i, len, lenKeyValue : integer;
         param : PKeyValue;
     begin
         arrOfQryStr := env.queryString().split(['&']);
-        for i:= low(arrOfQryStr) to high(arrOfQryStr) do
+        len := length(arrOfQryStr);
+        for i:= 0 to len-1 do
         begin
             keyvalue := arrOfQryStr[i].split('=');
-            new(param);
-            param^.key := keyvalue[0];
-            param^.value := keyvalue[1];
-            query.add(param^.key, param);
+            lenKeyValue := length(keyvalue);
+            if (lenKeyValue = 2) then
+            begin
+                new(param);
+                param^.key := keyvalue[0];
+                param^.value := keyvalue[1];
+                query.add(param^.key, param);
+            end;
         end;
     end;
 
@@ -152,17 +157,22 @@ uses
         const cookies : IHashList
     );
     var arrOfQryStr, keyvalue : TStringArray;
-        i : integer;
+        i, len, lenKeyValue : integer;
         param : PKeyValue;
     begin
         arrOfQryStr := env.httpCookie().split(['&']);
-        for i:= low(arrOfQryStr) to high(arrOfQryStr) do
+        len := length(arrOfQryStr);
+        for i:= 0 to len-1 do
         begin
             keyvalue := arrOfQryStr[i].split('=');
-            new(param);
-            param^.key := keyvalue[0];
-            param^.value := keyvalue[1];
-            cookies.add(param^.key, param);
+            lenKeyValue := length(keyvalue);
+            if (lenKeyValue = 2) then
+            begin
+                new(param);
+                param^.key := keyvalue[0];
+                param^.value := keyvalue[1];
+                cookies.add(param^.key, param);
+            end;
         end;
     end;
 
@@ -196,8 +206,10 @@ uses
         if (qry = nil) then
         begin
             result := defValue;
+        end else
+        begin
+            result := qry^.value;
         end;
-        result := qry^.value;
     end;
 
     (*!------------------------------------------------
