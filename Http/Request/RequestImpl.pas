@@ -23,6 +23,8 @@ type
         queryParams : IHashList;
         cookieParams : IHashList;
 
+        procedure clearParams(const params : IHashList);
+
         procedure initQueryParamsFromEnvironment(
             const env : ICGIEnvironment;
             const query : IHashList
@@ -123,9 +125,24 @@ uses
     destructor TRequest.destroy();
     begin
         inherited destroy();
+        clearParams(queryParams);
+        clearParams(cookieParams);
         webEnvironment := nil;
         queryParams := nil;
         cookieParams := nil;
+    end;
+
+    procedure TRequest.clearParams(const params : IHashList);
+    var i, len : integer;
+        param : PKeyValue;
+    begin
+        len := params.count();
+        for i:= len-1 downto 0 do
+        begin
+            param := params.get(i);
+            dispose(param);
+            params.delete(i);
+        end;
     end;
 
     procedure TRequest.initQueryParamsFromEnvironment(
