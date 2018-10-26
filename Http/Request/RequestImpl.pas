@@ -242,10 +242,9 @@ uses
         const env : ICGIEnvironment;
         const body : IHashList
     );
-    var contentLength, ctr, len : integer;
+    var contentLength, ctr : integer;
         contentType, bodyStr : string;
         ch : char;
-        arrOfBodyStr, keyValue : TStringArray;
         param : PKeyValue;
     begin
         //read STDIN
@@ -263,19 +262,7 @@ uses
         if ((contentType = 'application/x-www-form-urlencoded') or
             (contentType = 'multipart/form-data')) then
         begin
-            arrOfBodyStr := bodyStr.split('&');
-            len := length(arrOfBodyStr);
-            for ctr := 0 to len-1 do
-            begin
-                keyValue := arrOfBodyStr[ctr].split('=');
-                if (length(keyValue) = 2) then
-                begin
-                    new(param);
-                    param^.key := keyValue[0];
-                    param^.value := keyValue[1];
-                    body.add(param^.key, param);
-                end;
-            end;
+            initParamsFromString(bodyStr, body);
         end else
         begin
             //if POST but different contentType save it as it is
