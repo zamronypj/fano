@@ -1,6 +1,15 @@
+{*!
+ * Fano Web Framework (https://fano.juhara.id)
+ *
+ * @link      https://github.com/zamronypj/fano
+ * @copyright Copyright (c) 2018 Zamrony P. Juhara
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
+ *}
+
 unit RequestImpl;
 
 interface
+
 {$H+}
 
 uses
@@ -242,7 +251,7 @@ uses
             //read STDIN
             ctr := 0;
             setLength(bodyStr, contentLength);
-            while (not eof(input)) or (ctr < contentLength) do
+            while (ctr < contentLength) do
             begin
                 read(ch);
                 bodyStr[ctr+1] := ch;
