@@ -4,7 +4,7 @@ Pascal web application framework
 
 ## Requirement
 
-- [FreePascal](https://www.freepascal.org/) >= 3.0
+- [Free Pascal](https://www.freepascal.org/) >= 3.0
 - Web Server (Apache, nginx)
 
 ## Installation

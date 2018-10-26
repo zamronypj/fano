@@ -1,9 +1,18 @@
+{*!
+ * Fano Web Framework (https://fano.juhara.id)
+ *
+ * @link      https://github.com/zamronypj/fano
+ * @copyright Copyright (c) 2018 Zamrony P. Juhara
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
+ *}
+
 unit EnvironmentImpl;
 
 interface
 {$H+}
 
 uses
+
     DependencyIntf,
     EnvironmentIntf;
 
@@ -15,8 +24,12 @@ type
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
     TCGIEnvironment = class(TInterfacedObject, ICGIEnvironment, IDependency)
-    private
     public
+        {-----------------------------------------
+         Retrieve an environment variable
+        ------------------------------------------}
+        function env(const key : string) : string;
+
         {-----------------------------------------
          Retrieve GATEWAY_INTERFACE environment variable
         ------------------------------------------}
@@ -101,12 +114,25 @@ type
          Retrieve HTTP_ACCEPT_LANGUAGE environment variable
         ------------------------------------------}
         function httpAcceptLanguage() : string;
+
+        {-----------------------------------------
+         Retrieve HTTP_COOKIE environment variable
+        ------------------------------------------}
+        function httpCookie() : string;
     end;
 
 implementation
 
 uses
     dos;
+
+    {-----------------------------------------
+     Retrieve an environment variable
+    ------------------------------------------}
+    function TCGIEnvironment.env(const key : string) : string;
+    begin
+        result := getenv(key);
+    end;
 
     {-----------------------------------------
      Retrieve GATEWAY_INTERFACE environment variable
@@ -242,5 +268,13 @@ uses
     function TCGIEnvironment.httpAcceptLanguage() : string;
     begin
         result := getenv('HTTP_ACCEPT_LANGUAGE');
+    end;
+
+    {-----------------------------------------
+     Retrieve HTTP_COOKIE environment variable
+    ------------------------------------------}
+    function TCGIEnvironment.httpCookie() : string;
+    begin
+        result := getenv('HTTP_COOKIE');
     end;
 end.
