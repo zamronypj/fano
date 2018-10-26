@@ -47,6 +47,9 @@ type
 
 implementation
 
+uses
+    sysutils;
+
     constructor TSimpleDispatcher.create(
         const routes : IRouteMatcher;
         const respFactory : IResponseFactory;
@@ -68,12 +71,14 @@ implementation
 
     function TSimpleDispatcher.dispatchRequest(const env: ICGIEnvironment) : IResponse;
     var routeHandler : IRouteHandler;
-        method, uri : string;
+        method : string;
+        uriParts : TStringArray;
     begin
         try
             method := env.requestMethod();
-            uri := env.requestUri();
-            routeHandler := routeCollection.match(method, uri);
+            //remove any query string parts
+            uriParts := env.requestUri().split('?');
+            routeHandler := routeCollection.match(method, uriParts[0]);
             result := routeHandler.handleRequest(
                 requestFactory.build(env),
                 responseFactory.build(env)

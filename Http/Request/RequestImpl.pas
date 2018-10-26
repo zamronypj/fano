@@ -223,7 +223,7 @@ uses
     begin
         len := src.count();
         setLength(result, len);
-        for i := 0 to len -1 do
+        for i := 0 to len-1 do
         begin
             qry := src.get(i);
             result[i] := qry^;
