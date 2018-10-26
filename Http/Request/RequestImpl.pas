@@ -31,6 +31,11 @@ type
             const query : IHashList
         );
 
+        procedure initBodyParamsFromStdInput(
+            const env : ICGIEnvironment;
+            const body : IHashList
+        );
+
         procedure initQueryParamsFromEnvironment(
             const env : ICGIEnvironment;
             const query : IHashList
@@ -44,7 +49,8 @@ type
         procedure initParamsFromEnvironment(
             const env : ICGIEnvironment;
             const query : IHashList;
-            const cookies : IHashList
+            const cookies : IHashList;
+            const body : IHashList
         );
 
         (*!------------------------------------------------
@@ -222,27 +228,50 @@ uses
         const env : ICGIEnvironment;
         const body : IHashList
     );
-    var contentLength, ctr : integer;
-        contentType, method, body : string;
+    var contentLength, ctr, len : integer;
+        contentType, method, bodyStr : string;
         ch : char;
+        arrOfBodyStr, keyValue : TStringArray;
+        param : PKeyValue;
     begin
         method := env.requestMethod();
         contentType := env.contentType();
         contentLength := strToInt(env.contentLength());
         if (method = 'POST') then
         begin
+            //read STDIN
             ctr := 0;
-            setLength(body, contentLength);
+            setLength(bodyStr, contentLength);
             while (not eof(input)) or (ctr < contentLength) do
             begin
                 read(ch);
-                body[ctr+1] := ch;
+                bodyStr[ctr+1] := ch;
+                inc(ctr);
             end;
 
             if (contentType in ['application/x-www-form-urlencoded', 'multipart/form-data']) then
             begin
+                arrOfBodyStr := bodyStr.split('&');
+                len := length(arrOfBodyStr);
+                for ctr := 0 to len-1 do
+                begin
+                    keyValue := arrOfBodyStr[ctr].split('=');
+                    if (length(keyValue) = 2) then
+                    begin
+                        new(param);
+                        param^.key := keyValue[0];
+                        param^.value := keyValue[1];
+                        body.add(param^.key, param);
+                    end;
+                end;
             end else
             begin
+                //if POST but different contentType save it as it is
+                //with its contentType as key
+                new(param);
+                param^.key := contentType;
+                param^.value := bodyStr;
+                body.add(param^.key, param);
             end;
         end;
     end;
@@ -251,10 +280,12 @@ uses
         const env : ICGIEnvironment;
         const query : IHashList;
         const cookies : IHashList
+        const body : IHashList
     );
     begin
         initQueryParamsFromEnvironment(env, query);
         initCookieParamsFromEnvironment(env, cookies);
+        initBodyParamsFromStdInput(env, bodyParams);
     end;
 
     (*!------------------------------------------------
