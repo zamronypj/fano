@@ -15,6 +15,7 @@ interface
 
 uses
     ResponseIntf,
+    ResponseStreamIntf,
     HeadersIntf,
     CloneableIntf,
     fpjson;
@@ -42,6 +43,13 @@ type
 
         function write() : IResponse;
         function clone() : ICloneable;
+
+        (*!------------------------------------
+         * get response body
+         *-------------------------------------
+         * @return response body
+         *-------------------------------------*)
+        function body() : IResponseStream;
     end;
 
 implementation
@@ -89,5 +97,16 @@ uses
             jsonStr
         );
         result := clonedObj;
+    end;
+
+    (*!------------------------------------
+     * get response body
+     *-------------------------------------
+     * @return response body
+     *-------------------------------------*)
+    function TJsonResponse.body() : IResponseStream;
+    begin
+        //TODO: implement view response body
+        result := nil;
     end;
 end.
