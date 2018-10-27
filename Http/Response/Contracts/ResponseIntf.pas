@@ -15,7 +15,7 @@ interface
 uses
 
     HeadersIntf,
-    StreamIntf,
+    ResponseStreamIntf,
     CloneableIntf;
 
 type
