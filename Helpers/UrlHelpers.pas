@@ -40,7 +40,7 @@ implementation
     begin
         //Init
         result := '';
-        len := length(self);
+        len := self.length();
         for x := 1 to len do
         begin
             //Check if we have a safe char
