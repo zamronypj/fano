@@ -47,7 +47,7 @@ implementation
             if (self[x] in safeMask) then
             begin
                 //Append all other chars
-                result := result + url[x];
+                result := result + self[x];
             end else
             if (self[x] = ' ') then
             begin
@@ -69,7 +69,7 @@ implementation
         //Init
         result := '';
         x := 1;
-        len := length(self);
+        len := self.length;
         while x <= len do
         begin
             //Get single char
