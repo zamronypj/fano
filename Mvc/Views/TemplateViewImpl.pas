@@ -69,6 +69,13 @@ type
         ) : string;
 
         function clone() : ICloneable;
+
+        (*!------------------------------------
+         * get response body
+         *-------------------------------------
+         * @return response body
+         *-------------------------------------*)
+        function body() : IResponseStream;
     end;
 
 implementation
@@ -176,5 +183,16 @@ uses
         );
         //TODO : copy any property
         result := clonedObj;
+    end;
+
+    (*!------------------------------------
+     * get response body
+     *-------------------------------------
+     * @return response body
+     *-------------------------------------*)
+    function body() : IResponseStream;
+    begin
+        //TODO: implement view response body
+        result := nil;
     end;
 end.
