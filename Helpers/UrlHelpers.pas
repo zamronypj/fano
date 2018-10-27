@@ -56,7 +56,7 @@ implementation
             end else
             begin
                 //Convert to hex
-                result := result + '%' + intToHex(ord(self[x]), 2);
+                result := result + '%' + (ord(self[x])).tohexString(2);
             end;
         end;
     end;
@@ -87,9 +87,9 @@ implementation
             end else
             begin
                 //Get value
-                sVal := copy(self, x + 1, 2);
+                sVal := '$' + self.substring(x, 2);
                 //Convert sval to int then to char
-                result := result + char(strToInt('$' + sVal));
+                result := result + char(sVal.toInteger());
                 //Inc counter by 2
                 inc(x, 2);
             end;
