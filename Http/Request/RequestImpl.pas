@@ -153,7 +153,8 @@ implementation
 
 uses
 
-    sysutils;
+    SysUtils,
+    UrlHelpers;
 
     constructor TRequest.create(
         const env : ICGIEnvironment;
@@ -217,7 +218,7 @@ uses
             begin
                 new(param);
                 param^.key := keyvalue[0];
-                param^.value := keyvalue[1];
+                param^.value := (keyvalue[1]).urlDecode();
                 hashInst.add(param^.key, param);
             end;
         end;
