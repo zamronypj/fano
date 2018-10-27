@@ -53,7 +53,7 @@ implementation
         inherited destroy();
         for i := middlewareList.count - 1 downto 0 do
         begin
-            amiddleware := middlewareList.get(i);
+            amiddleware := get(i);
             amiddleware := nil;
             middlewareList.delete(i);
         end;
