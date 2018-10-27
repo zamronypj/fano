@@ -191,7 +191,7 @@ uses
      *-------------------------------------
      * @return response body
      *-------------------------------------*)
-    function body() : IResponseStream;
+    function TTemplateView.body() : IResponseStream;
     begin
         //TODO: implement view response body
         result := nil;
