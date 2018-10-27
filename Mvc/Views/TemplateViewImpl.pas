@@ -17,6 +17,7 @@ uses
 
     HeadersIntf,
     ResponseIntf,
+    ResponseStreamIntf,
     ViewParametersIntf,
     ViewIntf,
     TemplateFetcherIntf,
