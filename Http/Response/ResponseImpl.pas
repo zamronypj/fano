@@ -64,6 +64,8 @@ implementation
     begin
         webEnvironment := env;
         httpHeaders := hdrs;
+        //TODO: implement response body stream
+        bodyStream := nil;
     end;
 
     destructor TResponse.destroy();
@@ -102,7 +104,7 @@ implementation
      *-------------------------------------
      * @return response body
      *-------------------------------------*)
-    function TReesponse.body() : IResponseStream;
+    function TResponse.body() : IResponseStream;
     begin
         result := bodyStream;
     end;
