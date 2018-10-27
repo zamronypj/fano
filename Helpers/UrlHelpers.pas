@@ -11,6 +11,7 @@ unit UrlHelpers;
 interface
 
 {$MODE OBJFPC}
+{$MODESWITCH TYPEHELPERS}
 {$H+}
 
 uses
