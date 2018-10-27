@@ -36,7 +36,7 @@ type
 
 implementation
 
-    function TRouteList.match(const requestUri : string) : pointer;
+    function TRouteList.match(const requestUri : shortstring) : pointer;
     begin
         result := find(requestUri);
     end;
