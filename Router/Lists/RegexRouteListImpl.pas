@@ -3,33 +3,40 @@
  *
  * @link      https://github.com/zamronypj/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
  *}
 
 unit RegexRouteListImpl;
 
 interface
 
+{$MODE OBJFPC}
 {$H+}
 
 uses
     RouteListIntf,
     HashListImpl,
-    RegexIntf;
+    RegexIntf,
+    PlaceholderTypes;
 
 type
-    TPlaceholder = record
-        phName : string;
-        phValue : string;
-        phFormatRegex : string;
-    end;
-    TArrayOfPlaceholders = array of TPlaceholder;
 
-    {------------------------------------------------
-     interface for any class having capability to
-     handler route
-     @author Zamrony P. Juhara <zamronypj@yahoo.com>
-    -----------------------------------------------}
+
+    (*!------------------------------------------------
+     * class that store list of routes patterns and its
+     * associated data and match uri to retrieve matched
+     * patterns and its data.
+     *
+     * This class is similar to TCombineRegexRoutList
+     * but support regex for variable placeholder
+     * such /some/route/{id:[0-9]+}
+     * which means id only accept digit
+     *
+     * This is still EXPERIMENTAL due to limited capability
+     * of Free Pascal regexpr library
+     *
+     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+     * -----------------------------------------------*)
     TRegexRouteList = class(THashList, IRouteList)
     private
         regex : IRegex;

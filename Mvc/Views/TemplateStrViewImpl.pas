@@ -3,16 +3,18 @@
  *
  * @link      https://github.com/zamronypj/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
  *}
 
 unit TemplateStrViewImpl;
 
 interface
 
+{$MODE OBJFPC}
 {$H+}
 
 uses
+
     HeadersIntf,
     ResponseIntf,
     ViewParametersIntf,
@@ -22,22 +24,29 @@ uses
     TemplateParserIntf;
 
 type
-    {------------------------------------------------
-     View that can render from a HTML template in
-     pascal variable/const/resource string
 
-     @author Zamrony P. Juhara <zamronypj@yahoo.com>
-    -----------------------------------------------}
+    (*!------------------------------------------------
+     * View that can render from a HTML template in
+     * pascal variable/const/resource string
+     *
+     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+     *-------------------------------------------------*)
     TTemplateStrFileView = class(TTemplateView)
     protected
+
+        (*!------------------------------------------------
+         * Build template
+         *-------------------------------------------------
+         * @return HTML template
+         *-------------------------------------------------*)
         function buildTemplateStr(): string; virtual; abstract;
+
     public
         constructor create(
             const hdrs : IHeaders;
             const outputBufferInst : IOutputBuffer;
-            const templateParserInst : ITemplateParser;
-            const templatePath : string
-        ); override;
+            const templateParserInst : ITemplateParser
+        );
     end;
 
 implementation
@@ -45,8 +54,7 @@ implementation
     constructor TTemplateStrFileView.create(
         const hdrs : IHeaders;
         const outputBufferInst : IOutputBuffer;
-        const templateParserInst : ITemplateParser;
-        const templatePath : string
+        const templateParserInst : ITemplateParser
     );
     begin
         inherited create(

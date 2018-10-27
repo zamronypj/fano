@@ -1,19 +1,32 @@
+{*!
+ * Fano Web Framework (https://fano.juhara.id)
+ *
+ * @link      https://github.com/zamronypj/fano
+ * @copyright Copyright (c) 2018 Zamrony P. Juhara
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
+ *}
+
 unit MiddlewareCollectionImpl;
 
 interface
 
+{$MODE OBJFPC}
+
 uses
+
     classes,
     DependencyIntf,
     MiddlewareIntf,
     MiddlewareCollectionIntf;
 
 type
-    {------------------------------------------------
-     interface for any class having capability to
-     manage one or more middlewares
-     @author Zamrony P. Juhara <zamronypj@yahoo.com>
-    -----------------------------------------------}
+
+    (*!------------------------------------------------
+     * Basic class having capability to manage one or
+     * more middlewares
+     *
+     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+     *-------------------------------------------------*)
     TMiddlewareCollection = class(TInterfacedObject, IMiddlewareCollection, IDependency)
     private
         middlewareList : TInterfaceList;
@@ -34,11 +47,14 @@ implementation
     end;
 
     destructor TMiddlewareCollection.destroy();
-    var i:integer;
+    var i : integer;
+        amiddleware : IMiddleware;
     begin
         inherited destroy();
         for i := middlewareList.count - 1 downto 0 do
         begin
+            amiddleware := middlewareList.get(i);
+            amiddleware := nil;
             middlewareList.delete(i);
         end;
         middlewareList.free();

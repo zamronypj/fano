@@ -3,23 +3,26 @@
  *
  * @link      https://github.com/zamronypj/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
  *}
 
 unit NullRegexImpl;
 
 interface
 
+{$MODE OBJFPC}
 {$H+}
 
 uses
     RegexIntf;
 
 type
-    {------------------------------------------------
-     regex class that does nothing
-     @author Zamrony P. Juhara <zamronypj@yahoo.com>
-    -----------------------------------------------}
+
+    (*!------------------------------------------------
+     * IRegex implementation that does nothing
+     *
+     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+     *-----------------------------------------------*)
     TNullRegex = class(TInterfacedObject, IRegex)
     private
     public

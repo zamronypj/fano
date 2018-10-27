@@ -3,14 +3,17 @@
  *
  * @link      https://github.com/zamronypj/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
  *}
 
 unit ControllerImpl;
 
 interface
 
+{$MODE OBJFPC}
+
 uses
+
     ResponseIntf,
     RequestIntf,
     RouteHandlerIntf,
@@ -21,11 +24,11 @@ uses
 
 type
 
-  (*!------------------------------------------------
-   * basic controller implementation class
-   *
-   * @author Zamrony P. Juhara <zamronypj@yahoo.com>
-   *-----------------------------------------------*)
+    (*!------------------------------------------------
+     * basic controller implementation class
+     *
+     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+     *-----------------------------------------------*)
     TController = class(TRouteHandler)
     protected
         gView : IView;

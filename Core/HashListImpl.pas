@@ -3,12 +3,15 @@
  *
  * @link      https://github.com/zamronypj/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
  *}
 
 unit HashListImpl;
 
 interface
+
+{$MODE OBJFPC}
+{$H+}
 
 uses
     contnrs,
@@ -30,9 +33,9 @@ type
         function count() : integer;
         function get(const indx : integer) : pointer;
         procedure delete(const indx : integer);
-        function add(const key : string; const data : pointer) : integer;
-        function find(const key : string) : pointer;
-        function keyOfIndex(const indx : integer) : string;
+        function add(const key : shortstring; const data : pointer) : integer;
+        function find(const key : shortstring) : pointer;
+        function keyOfIndex(const indx : integer) : shortstring;
     end;
 
 implementation
@@ -44,6 +47,7 @@ implementation
 
     destructor THashList.destroy();
     begin
+        inherited destroy();
         hashes.free();
     end;
 
@@ -62,17 +66,17 @@ implementation
         hashes.delete(indx);
     end;
 
-    function THashList.add(const key : string; const data : pointer) : integer;
+    function THashList.add(const key : shortstring; const data : pointer) : integer;
     begin
         result := hashes.add(key, data);
     end;
 
-    function THashList.find(const key : string) : pointer;
+    function THashList.find(const key : shortstring) : pointer;
     begin
         result := hashes.find(key);
     end;
 
-    function THashList.keyOfIndex(const indx : integer) : string;
+    function THashList.keyOfIndex(const indx : integer) : shortstring;
     begin
         result := hashes.nameOfIndex(indx);
     end;

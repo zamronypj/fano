@@ -2,6 +2,9 @@ unit JsonFileConfigFactoryImpl;
 
 interface
 
+{$MODE OBJFPC}
+{$H+}
+
 uses
     DependencyIntf,
     DependencyContainerIntf,

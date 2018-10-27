@@ -3,12 +3,15 @@
  *
  * @link      https://github.com/zamronypj/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
  *}
 unit OutputBufferExImpl;
 
 interface
+
+{$MODE OBJFPC}
 {$H+}
+
 uses
     classes,
     DependencyIntf,
@@ -16,11 +19,13 @@ uses
     OutputBufferStreamIntf;
 
 type
-    {------------------------------------------------
-     class having capability to buffer
-     standard output to a storage
-     @author Zamrony P. Juhara <zamronypj@yahoo.com>
-    -----------------------------------------------}
+
+    (*!------------------------------------------------
+     * class having capability to buffer
+     * standard output to a storage using stream
+     *
+     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+     *-----------------------------------------------*)
     TOutputBufferEx = class(TInterfacedObject, IOutputBuffer, IDependency)
     private
         originalStdOutput, streamStdOutput: TextFile;

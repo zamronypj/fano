@@ -1,18 +1,31 @@
+{*!
+ * Fano Web Framework (https://fano.juhara.id)
+ *
+ * @link      https://github.com/zamronypj/fano
+ * @copyright Copyright (c) 2018 Zamrony P. Juhara
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
+ *}
+
 unit MiddlewareCollectionAwareImpl;
 
 interface
 
+{$MODE OBJFPC}
+
 uses
+
     DependencyIntf,
     MiddlewareIntf,
     MiddlewareCollectionIntf,
     MiddlewareCollectionAwareIntf;
 
 type
-    {------------------------------------------------
-     class that can maintain before and after middlewares
-     @author Zamrony P. Juhara <zamronypj@yahoo.com>
-    -----------------------------------------------}
+
+    (*!------------------------------------------------
+     * class that can maintain before and after middlewares
+     *
+     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+     *-------------------------------------------------*)
     TMiddlewareCollectionAware = class(TInterfacedObject, IDependency, IMiddlewareCollectionAware)
     private
         beforeMiddlewareList : IMiddlewareCollection;

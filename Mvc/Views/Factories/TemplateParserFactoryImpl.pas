@@ -3,33 +3,31 @@
  *
  * @link      https://github.com/zamronypj/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
  *}
 
 unit TemplateParserFactoryImpl;
 
 interface
+
+{$MODE OBJFPC}
 {$H+}
 
 uses
+
     DependencyIntf,
     DependencyContainerIntf,
-    FactoryImpl;
+    BaseTemplateParserFactoryImpl;
 
 type
-    {------------------------------------------------
-     basic class that can create template parser
-     @author Zamrony P. Juhara <zamronypj@yahoo.com>
-    -----------------------------------------------}
-    TTemplateParserFactory = class(TFactory, IDependencyFactory)
-    private
-        openTag : string;
-        closeTag : string;
+
+    (*!------------------------------------------------
+     * basic class that can create template parser
+     *
+     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+     *-------------------------------------------------*)
+    TTemplateParserFactory = class(TBaseTemplateParserFactory, IDependencyFactory)
     public
-        constructor create(
-            const openTagStr : string = '{{';
-            const closeTagStr : string = '}}'
-        );
         function build(const container : IDependencyContainer) : IDependency; override;
     end;
 
@@ -38,15 +36,6 @@ implementation
 uses
     TemplateParserImpl,
     RegexImpl;
-
-    constructor TTemplateParserFactory.create(
-        const openTagStr : string = '{{';
-        const closeTagStr : string = '}}'
-    );
-    begin
-        openTag := openTagStr;
-        closeTag := closeTagStr;
-    end;
 
     function TTemplateParserFactory.build(const container : IDependencyContainer) : IDependency;
     begin

@@ -3,16 +3,18 @@
  *
  * @link      https://github.com/zamronypj/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
  *}
 
 unit TemplateViewImpl;
 
 interface
 
+{$MODE OBJFPC}
 {$H+}
 
 uses
+
     HeadersIntf,
     ResponseIntf,
     ViewParametersIntf,
@@ -23,10 +25,12 @@ uses
     CloneableIntf;
 
 type
-    {------------------------------------------------
-     View that can render from a HTML template string
-     @author Zamrony P. Juhara <zamronypj@yahoo.com>
-    -----------------------------------------------}
+
+    (*!------------------------------------------------
+     * View that can render from a HTML template string
+     *
+     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+     *-------------------------------------------------*)
     TTemplateView = class(TInterfacedObject, ICloneable, IView, IResponse, ITemplateFetcher)
     private
         templateContent : string;

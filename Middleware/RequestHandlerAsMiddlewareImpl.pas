@@ -1,6 +1,16 @@
+{*!
+ * Fano Web Framework (https://fano.juhara.id)
+ *
+ * @link      https://github.com/zamronypj/fano
+ * @copyright Copyright (c) 2018 Zamrony P. Juhara
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
+ *}
+
 unit RequestHandlerAsMiddlewareImpl;
 
 interface
+
+{$MODE OBJFPC}
 
 uses
     RequestIntf,
@@ -9,14 +19,16 @@ uses
     MiddlewareIntf;
 
 type
-    {------------------------------------------------
-     adapter class that wrap request handler so it can
-     act as a middleware
-     @author Zamrony P. Juhara <zamronypj@yahoo.com>
-    -----------------------------------------------}
+
+    (*!------------------------------------------------
+     * adapter class that wrap request handler so it can
+     * act as a middleware
+     *
+     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+     *-------------------------------------------------*)
     TRequestHandlerAsMiddleware = class(TInterfacedObject, IMiddleware)
     private
-          requestHandler : IRequestHandler;
+        requestHandler : IRequestHandler;
     public
         constructor create(requestHandlerInst : IRequestHandler);
         destructor destroy(); override;

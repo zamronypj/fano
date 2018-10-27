@@ -3,12 +3,14 @@
  *
  * @link      https://github.com/zamronypj/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
  *}
+
 unit OutputBufferStreamImpl;
 
 interface
 
+{$MODE OBJFPC}
 {$H+}
 
 uses
@@ -18,12 +20,12 @@ uses
 
 type
 
-    {------------------------------------------------
-     base class for adapter class so TStream-based class
-     can be used for store output buffering content
-
-     @author Zamrony P. Juhara <zamronypj@yahoo.com>
-    -----------------------------------------------}
+    (*!------------------------------------------------
+     * base class for adapter class so TStream-based class
+     * can be used for store output buffering content
+     *
+     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+     *---------------------------------------------------*)
     TOutputBufferStreamAdapter = class(TInterfacedObject, IOutputBufferStream)
     protected
         fstream : TStream;

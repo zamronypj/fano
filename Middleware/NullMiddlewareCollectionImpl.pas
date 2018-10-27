@@ -1,6 +1,16 @@
+{*!
+ * Fano Web Framework (https://fano.juhara.id)
+ *
+ * @link      https://github.com/zamronypj/fano
+ * @copyright Copyright (c) 2018 Zamrony P. Juhara
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
+ *}
+
 unit NullMiddlewareCollectionImpl;
 
 interface
+
+{$MODE OBJFPC}
 
 uses
     classes,
@@ -9,12 +19,13 @@ uses
     MiddlewareCollectionIntf;
 
 type
-    {------------------------------------------------
-     IMiddlewareCollection implementation class that
-     does nothing
 
-     @author Zamrony P. Juhara <zamronypj@yahoo.com>
-    -----------------------------------------------}
+    (*!------------------------------------------------
+     * IMiddlewareCollection implementation class that
+     * does nothing
+     *
+     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+     *-------------------------------------------------*)
     TNullMiddlewareCollection = class(TInterfacedObject, IMiddlewareCollection, IDependency)
     public
         function add(const middleware : IMiddleware) : IMiddlewareCollection;

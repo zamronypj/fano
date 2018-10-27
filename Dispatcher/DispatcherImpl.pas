@@ -3,14 +3,17 @@
  *
  * @link      https://github.com/zamronypj/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
  *}
 
 unit DispatcherImpl;
 
 interface
 
+{$MODE OBJFPC}
+
 uses
+
     DispatcherIntf,
     DependencyIntf,
     EnvironmentIntf,
@@ -27,12 +30,13 @@ uses
     MiddlewareCollectionAwareIntf;
 
 type
-    {------------------------------------------------
-     Request dispatcher class having capability dispatch
-     request and return response and with middleware support
 
-     @author Zamrony P. Juhara <zamronypj@yahoo.com>
-    -----------------------------------------------}
+    (*!---------------------------------------------------
+     * Request dispatcher class having capability dispatch
+     * request and return response and with middleware support
+     *
+     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+     *---------------------------------------------------*)
     TDispatcher = class(TInterfacedObject, IDispatcher, IDependency)
     private
         routeCollection : IRouteMatcher;

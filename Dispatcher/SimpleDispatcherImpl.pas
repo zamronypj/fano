@@ -3,13 +3,16 @@
  *
  * @link      https://github.com/zamronypj/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
  *}
 unit SimpleDispatcherImpl;
 
 interface
 
+{$MODE OBJFPC}
+
 uses
+
     DispatcherIntf,
     DependencyIntf,
     EnvironmentIntf,
@@ -22,14 +25,14 @@ uses
     RouteMatcherIntf;
 
 type
-    {------------------------------------------------
-     simple dispatcher implementation without
-     middleware support. It is faster than
-     TDispatcher because it does not process middlewares
-     stack during dispatching request
-
-     @author Zamrony P. Juhara <zamronypj@yahoo.com>
-    -----------------------------------------------}
+    (*!------------------------------------------------
+     * simple dispatcher implementation without
+     * middleware support. It is faster than
+     * TDispatcher because it does not process middlewares
+     * stack during dispatching request
+     *
+     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+     *-----------------------------------------------*)
     TSimpleDispatcher = class(TInterfacedObject, IDispatcher, IDependency)
     private
         routeCollection : IRouteMatcher;

@@ -3,13 +3,17 @@
  *
  * @link      https://github.com/zamronypj/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
  *}
+
 unit MiddlewareChainImpl;
 
 interface
 
+{$MODE OBJFPC}
+
 uses
+
     MiddlewareIntf,
     MiddlewareChainIntf,
     RequestHandlerIntf,
@@ -18,11 +22,13 @@ uses
     MiddlewareCollectionIntf;
 
 type
-    {------------------------------------------------
-     class that chain one or more middlewares and have
-     capability to execute middlewares
-     @author Zamrony P. Juhara <zamronypj@yahoo.com>
-    -----------------------------------------------}
+
+    (*!------------------------------------------------
+     * class that chain one or more middlewares and have
+     * capability to execute middlewares
+     *
+     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+     *-------------------------------------------------*)
     TMiddlewareChain = class(TInterfacedObject, IMiddlewareChain)
     private
         ///application global middleware list executed before route handler
@@ -114,7 +120,7 @@ implementation
             newResponse := middleware.handleRequest(request, newResponse, canContinue);
             if (not canContinue) then
             begin
-                result := response;
+                result := newResponse;
                 exit();
             end;
         end;

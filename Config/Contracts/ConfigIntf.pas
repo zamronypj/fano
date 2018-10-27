@@ -1,6 +1,8 @@
 unit ConfigIntf;
 
 interface
+
+{$MODE OBJFPC}
 {$H+}
 
 type

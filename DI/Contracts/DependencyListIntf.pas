@@ -3,16 +3,20 @@
  *
  * @link      https://github.com/zamronypj/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
  *}
 unit DependencyListIntf;
 
 interface
 
+{$MODE OBJFPC}
+
 uses
+
     HashListIntf;
 
 type
+
     {------------------------------------------------
      interface for any class having capability to
      dependencies

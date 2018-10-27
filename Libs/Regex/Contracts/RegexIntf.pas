@@ -3,27 +3,30 @@
  *
  * @link      https://github.com/zamronypj/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
  *}
 
 unit RegexIntf;
 
 interface
 
+{$MODE OBJFPC}
 {$H+}
 
 type
+
     TRegexMatches = array of array of string;
     TRegexMatchResult = record
         matched : boolean;
         matches : TRegexMatches;
     end;
 
-    {------------------------------------------------
-     interface for any class having capability to replace string
-     using regex
-     @author Zamrony P. Juhara <zamronypj@yahoo.com>
-    -----------------------------------------------}
+    (*!------------------------------------------------
+     * interface for any class having capability to replace string
+     * using regex
+     *
+     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+     *-----------------------------------------------*)
     IRegex = interface
         ['{E08AD12B-C606-48FF-A9FA-728EAB14AB35}']
         function replace(

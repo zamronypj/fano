@@ -3,16 +3,19 @@
  *
  * @link      https://github.com/zamronypj/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
  *}
 
 unit ResponseIntf;
 
 interface
 
+{$MODE OBJFPC}
+
 uses
 
     HeadersIntf,
+    StreamIntf,
     CloneableIntf;
 
 type
@@ -39,6 +42,13 @@ type
          * @return current instance
          *-------------------------------------*)
         function write() : IResponse;
+
+        (*!------------------------------------
+         * get response body
+         *-------------------------------------
+         * @return response body
+         *-------------------------------------*)
+        function body() : IResponseStream;
     end;
 
 implementation

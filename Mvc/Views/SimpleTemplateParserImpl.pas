@@ -3,28 +3,32 @@
  *
  * @link      https://github.com/zamronypj/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
  *}
 
 unit SimpleTemplateParserImpl;
 
 interface
 
+{$MODE OBJFPC}
 {$H+}
 
 uses
+
     DependencyIntf,
     ViewParametersIntf,
     TemplateParserIntf;
 
 type
-    {------------------------------------------------
-     basic class that can parse template and replace
-     variable placeholder with value
-     This should be faster than TTemplateParser because
-     it does not use regular expression and just plain string replace
-     @author Zamrony P. Juhara <zamronypj@yahoo.com>
-    -----------------------------------------------}
+
+    (*!------------------------------------------------
+     * basic class that can parse template and replace
+     * variable placeholder with value
+     * This should be faster than TTemplateParser because
+     * it does not use regular expression and just plain string replace
+     *
+     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+     *-------------------------------------------------*)
     TSimpleTemplateParser = class(TInterfacedObject, ITemplateParser, IDependency)
     private
         openTag: string;

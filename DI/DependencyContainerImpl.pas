@@ -3,11 +3,14 @@
  *
  * @link      https://github.com/zamronypj/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
  *}
 unit DependencyContainerImpl;
 
 interface
+
+{$MODE OBJFPC}
+{$H+}
 
 uses
     contnrs,
@@ -27,9 +30,9 @@ type
     private
         dependencyList : IDependencyList;
         function addDependency(
-            const serviceName :string;
+            const serviceName : shortstring;
             const service : IDependencyFactory;
-            const singleInstance :boolean
+            const singleInstance : boolean
         ) : IDependencyContainer;
         procedure cleanUpDependencies();
     public
@@ -43,7 +46,7 @@ type
          * @param serviceName name of service
          * @return current dependency container instance
          *---------------------------------------------------------*)
-        function add(const serviceName :string; const service : IDependencyFactory) : IDependencyContainer;
+        function add(const serviceName : shortstring; const service : IDependencyFactory) : IDependencyContainer;
 
         (*!--------------------------------------------------------
          * Add factory instance to service registration as
@@ -52,7 +55,7 @@ type
          * @param serviceName name of service
          * @return current dependency container instance
          *---------------------------------------------------------*)
-        function factory(const serviceName :string; const service : IDependencyFactory) : IDependencyContainer;
+        function factory(const serviceName : shortstring; const service : IDependencyFactory) : IDependencyContainer;
 
         (*!--------------------------------------------------------
          * get instance from service registration using its name.
@@ -65,7 +68,7 @@ type
          * registered using factory(), this method will return
          * different instance everytim get() is called.s
          *---------------------------------------------------------*)
-        function get(const serviceName : string) : IDependency;
+        function get(const serviceName : shortstring) : IDependency;
     end;
 
 implementation
@@ -126,7 +129,7 @@ type
      * @return current dependency container instance
      *---------------------------------------------------------*)
     function TDependencyContainer.addDependency(
-        const serviceName : string;
+        const serviceName : shortstring;
         const service : IDependencyFactory;
         const singleInstance : boolean
     ) : IDependencyContainer;
@@ -153,7 +156,7 @@ type
      * @param service factory instance
      * @return current dependency container instance
      *---------------------------------------------------------*)
-    function TDependencyContainer.add(const serviceName :string; const service : IDependencyFactory) : IDependencyContainer;
+    function TDependencyContainer.add(const serviceName : shortstring; const service : IDependencyFactory) : IDependencyContainer;
     begin
         result := addDependency(serviceName, service, true);
     end;
@@ -166,7 +169,7 @@ type
      * @param service factory instance
      * @return current dependency container instance
      *---------------------------------------------------------*)
-    function TDependencyContainer.factory(const serviceName :string; const service : IDependencyFactory) : IDependencyContainer;
+    function TDependencyContainer.factory(const serviceName : shortstring; const service : IDependencyFactory) : IDependencyContainer;
     begin
         result := addDependency(serviceName, service, false);
     end;
@@ -184,7 +187,7 @@ type
      * registered using factory(), this method will return
      * different instance everytime it is called.
      *---------------------------------------------------------*)
-    function TDependencyContainer.get(const serviceName : string) : IDependency;
+    function TDependencyContainer.get(const serviceName : shortstring) : IDependency;
     var depRec : PDependencyRec;
     begin
         depRec := dependencyList.find(serviceName);

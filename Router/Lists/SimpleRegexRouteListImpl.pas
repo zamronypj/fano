@@ -3,13 +3,14 @@
  *
  * @link      https://github.com/zamronypj/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
  *}
 
 unit SimpleRegexRouteListImpl;
 
 interface
 
+{$MODE OBJFPC}
 {$H+}
 
 uses
@@ -26,6 +27,9 @@ type
      * class that store list of routes patterns and its
      * associated data and match uri to retrieve matched
      * patterns and its data
+     *
+     * This class match all routes by iterating all registered
+     * route and match them against regex pattern
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      * -----------------------------------------------*)

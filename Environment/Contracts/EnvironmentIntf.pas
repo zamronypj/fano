@@ -3,23 +3,24 @@
  *
  * @link      https://github.com/zamronypj/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
  *}
 
 unit EnvironmentIntf;
 
 interface
 
+{$MODE OBJFPC}
 {$H+}
 
 type
 
-    {------------------------------------------------
-     interface for any class having capability to retrieve
-     CGI environment variable
-
-     @author Zamrony P. Juhara <zamronypj@yahoo.com>
-    -----------------------------------------------}
+    (*!------------------------------------------------
+     * interface for any class having capability to retrieve
+     * CGI environment variable
+     *
+     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+     *-------------------------------------------------*)
     ICGIEnvironment = interface
         ['{48E2E809-1176-4863-B940-D1E05CF1355C}']
 

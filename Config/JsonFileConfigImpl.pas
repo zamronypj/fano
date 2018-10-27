@@ -3,12 +3,14 @@
  *
  * @link      https://github.com/zamronypj/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
  *}
 
 unit JsonFileConfigImpl;
 
 interface
+
+{$MODE OBJFPC}
 {$H+}
 
 uses
@@ -22,7 +24,7 @@ type
 
     (*!------------------------------------------------------------
      * Application configuration class that load data from JSON file
-
+     *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------------------*)
     TJsonFileConfig = class(TJsonConfig, IAppConfiguration, IDependency)

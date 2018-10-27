@@ -3,20 +3,29 @@
  *
  * @link      https://github.com/zamronypj/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
  *}
 
 unit SimpleRouteCollectionFactoryImpl;
 
 interface
 
+{$MODE OBJFPC}
+
 uses
+
     DependencyIntf,
     DependencyContainerIntf,
     FactoryImpl;
 
 type
 
+    (*!------------------------------------------------
+     * Factory class for route collection using
+     * TSimpleRouteList
+     *
+     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+     *-------------------------------------------------*)
     TSimpleRouteCollectionFactory = class(TFactory, IDependencyFactory)
     public
         function build(const container : IDependencyContainer) : IDependency; override;

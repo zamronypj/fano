@@ -3,25 +3,29 @@
  *
  * @link      https://github.com/zamronypj/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
  *}
 
 unit RegexImpl;
 
 interface
 
+{$MODE OBJFPC}
 {$H+}
 
 uses
+
     RegexIntf,
     regexpr;
 
 type
-    {------------------------------------------------
-     basic class having capability to replace string
-     using regex
-     @author Zamrony P. Juhara <zamronypj@yahoo.com>
-    -----------------------------------------------}
+
+    (*!------------------------------------------------
+     * basic class having capability to replace string
+     * using regex
+     *
+     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+     *-----------------------------------------------*)
     TRegex = class(TInterfacedObject, IRegex)
     private
         function getMatchesResult(

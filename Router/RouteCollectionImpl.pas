@@ -3,12 +3,14 @@
  *
  * @link      https://github.com/zamronypj/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
  *}
 
 unit RouteCollectionImpl;
 
 interface
+
+{$MODE OBJFPC}
 
 uses
     contnrs,
@@ -21,10 +23,11 @@ uses
 
 type
 
-    {------------------------------------------------
-     interface for any class that can set http verb
-     @author Zamrony P. Juhara <zamronypj@yahoo.com>
-    -----------------------------------------------}
+    (*!------------------------------------------------
+     * basic class that can manage and retrieve routes
+     *
+     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+     * -----------------------------------------------*)
     TRouteCollection = class(TInterfacedObject, IDependency, IRouteCollection, IRouteMatcher)
     private
         routeList : IRouteList;

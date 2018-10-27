@@ -3,11 +3,14 @@
  *
  * @link      https://github.com/zamronypj/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
  *}
 unit DependencyContainerIntf;
 
 interface
+
+{$MODE OBJFPC}
+{$H+}
 
 uses
     DependencyIntf;
@@ -38,7 +41,7 @@ type
          * @param service factory instance
          * @return current dependency container instance
          *---------------------------------------------------------*)
-        function add(const serviceName :string; const service : IDependencyFactory) : IDependencyContainer;
+        function add(const serviceName : shortstring; const service : IDependencyFactory) : IDependencyContainer;
 
         (*!--------------------------------------------------------
          * Add factory instance to service registration as
@@ -48,7 +51,7 @@ type
          * @param service factory instance
          * @return current dependency container instance
          *---------------------------------------------------------*)
-        function factory(const serviceName :string; const service : IDependencyFactory) : IDependencyContainer;
+        function factory(const serviceName : shortstring; const service : IDependencyFactory) : IDependencyContainer;
 
         (*!--------------------------------------------------------
          * get instance from service registration using its name.
@@ -61,7 +64,7 @@ type
          * registered using factory(), this method will return
          * different instance everytim get() is called.s
          *---------------------------------------------------------*)
-        function get(const serviceName : string) : IDependency;
+        function get(const serviceName : shortstring) : IDependency;
     end;
 
     {------------------------------------------------
@@ -83,4 +86,5 @@ type
     end;
 
 implementation
+
 end.

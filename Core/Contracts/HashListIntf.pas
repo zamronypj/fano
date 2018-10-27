@@ -3,12 +3,15 @@
  *
  * @link      https://github.com/zamronypj/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
  *}
 
 unit HashListIntf;
 
 interface
+
+{$MODE OBJFPC}
+{$H+}
 
 type
     {------------------------------------------------
@@ -20,9 +23,9 @@ type
         function count() : integer;
         function get(const indx : integer) : pointer;
         procedure delete(const indx : integer);
-        function add(const key : string; const routeData : pointer) : integer;
-        function find(const key : string) : pointer;
-        function keyOfIndex(const indx : integer) : string;
+        function add(const key : shortstring; const routeData : pointer) : integer;
+        function find(const key : shortstring) : pointer;
+        function keyOfIndex(const indx : integer) : shortstring;
     end;
 
 implementation

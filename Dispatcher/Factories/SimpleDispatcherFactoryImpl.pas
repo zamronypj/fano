@@ -2,6 +2,8 @@ unit SimpleDispatcherFactoryImpl;
 
 interface
 
+{$MODE OBJFPC}
+
 uses
     DependencyIntf,
     DependencyContainerIntf,
@@ -9,12 +11,13 @@ uses
     RouteMatcherIntf;
 
 type
-    {------------------------------------------------
-     interface for any class having capability to create
-     dispatcher instance
 
-     @author Zamrony P. Juhara <zamronypj@yahoo.com>
-    -----------------------------------------------}
+    (*!--------------------------------------------------
+     * interface for any class having capability to create
+     * dispatcher instance
+     *
+     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+     *---------------------------------------------------*)
     TSimpleDispatcherFactory = class(TFactory, IDependencyFactory)
     private
         routeMatcher : IRouteMatcher;

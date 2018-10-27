@@ -3,14 +3,17 @@
  *
  * @link      https://github.com/zamronypj/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
  *}
 
 unit RouteHandlerImpl;
 
 interface
 
+{$MODE OBJFPC}
+
 uses
+
     RequestIntf,
     ResponseIntf,
     MiddlewareIntf,
@@ -20,10 +23,12 @@ uses
     PlaceholderTypes;
 
 type
-    {------------------------------------------------
-     base class for route handler
-     @author Zamrony P. Juhara <zamronypj@yahoo.com>
-    -----------------------------------------------}
+
+    (*!------------------------------------------------
+     * basic abstract class that can act as route handler
+     *
+     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+     * -----------------------------------------------*)
     TRouteHandler = class(TInterfacedObject, IRouteHandler, IMiddlewareCollectionAware)
     private
         beforeMiddlewareList : IMiddlewareCollection;

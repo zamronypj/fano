@@ -3,16 +3,21 @@
  *
  * @link      https://github.com/zamronypj/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
  *}
 
 unit RouteCollectionIntf;
 
 interface
 
-uses RouteHandlerIntf;
+{$MODE OBJFPC}
+
+uses
+
+    RouteHandlerIntf;
 
 type
+
     (*!------------------------------------------------
      * interface for any class that can set route handler
      * for various http verb

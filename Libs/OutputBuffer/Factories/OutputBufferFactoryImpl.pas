@@ -3,11 +3,13 @@
  *
  * @link      https://github.com/zamronypj/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
  *}
 unit OutputBufferFactoryImpl;
 
 interface
+
+{$MODE OBJFPC}
 
 uses
     DependencyIntf,
@@ -15,11 +17,12 @@ uses
     FactoryImpl;
 
 type
-    {------------------------------------------------
-     factory class for TOutputBuffer
 
-     @author Zamrony P. Juhara <zamronypj@yahoo.com>
-    -----------------------------------------------}
+    (*!------------------------------------------------
+     * factory class for TOutputBuffer
+     *
+     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+     *-----------------------------------------------*)
     TOutputBufferFactory = class(TFactory, IDependencyFactory)
     public
         function build(const container : IDependencyContainer) : IDependency; override;

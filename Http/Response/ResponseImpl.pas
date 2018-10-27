@@ -3,17 +3,20 @@
  *
  * @link      https://github.com/zamronypj/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
  *}
 
 unit ResponseImpl;
 
 interface
 
+{$MODE OBJFPC}
+
 uses
     EnvironmentIntf,
     ResponseIntf,
     HeadersIntf,
+    ResponseStreamIntf,
     CloneableIntf;
 
 type
@@ -26,6 +29,7 @@ type
     private
         webEnvironment : ICGIEnvironment;
         httpHeaders : IHeaders;
+        bodyStream : IResponseStream;
     public
         constructor create(const env : ICGIEnvironment; const hdrs : IHeaders);
         destructor destroy(); override;
@@ -37,7 +41,20 @@ type
          *-------------------------------------*)
         function headers() : IHeaders;
 
+        (*!------------------------------------
+         * output http response to STDIN
+         *-------------------------------------
+         * @return current instance
+         *-------------------------------------*)
         function write() : IResponse;
+
+        (*!------------------------------------
+         * get response body
+         *-------------------------------------
+         * @return response body
+         *-------------------------------------*)
+        function body() : IResponseStream;
+
         function clone() : ICloneable;
     end;
 
@@ -78,5 +95,15 @@ implementation
         clonedObj := TResponse.create(webEnvironment, httpHeaders.clone() as IHeaders);
         //TODO : copy any property
         result := clonedObj;
+    end;
+
+    (*!------------------------------------
+     * get response body
+     *-------------------------------------
+     * @return response body
+     *-------------------------------------*)
+    function TReesponse.body() : IResponseStream;
+    begin
+        result := bodyStream;
     end;
 end.

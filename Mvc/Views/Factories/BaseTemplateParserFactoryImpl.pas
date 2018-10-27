@@ -6,13 +6,15 @@
  * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
  *}
 
-unit RouteCollectionFactoryImpl;
+unit BaseTemplateParserFactoryImpl;
 
 interface
 
 {$MODE OBJFPC}
+{$H+}
 
 uses
+
     DependencyIntf,
     DependencyContainerIntf,
     FactoryImpl;
@@ -20,25 +22,30 @@ uses
 type
 
     (*!------------------------------------------------
-     * Factory class for route collection using
-     * TRouteList
+     * base abstract class that can create template parser
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TRouteCollectionFactory = class(TFactory, IDependencyFactory)
+    TBaseTemplateParserFactory = class(TFactory, IDependencyFactory)
+    protected
+        openTag : string;
+        closeTag : string;
     public
-        function build(const container : IDependencyContainer) : IDependency; override;
+        constructor create(
+            const openTagStr : string = '{{';
+            const closeTagStr : string = '}}'
+        );
     end;
 
 implementation
 
-uses
-    RouteCollectionImpl,
-    RouteListImpl;
-
-    function TRouteCollectionFactory.build(const container : IDependencyContainer) : IDependency;
+    constructor TBaseTemplateParserFactory.create(
+        const openTagStr : string = '{{';
+        const closeTagStr : string = '}}'
+    );
     begin
-        result := TRouteCollection.create(TRouteList.create());
+        openTag := openTagStr;
+        closeTag := closeTagStr;
     end;
 
 end.

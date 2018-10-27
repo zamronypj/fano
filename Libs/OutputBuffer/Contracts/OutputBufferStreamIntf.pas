@@ -3,22 +3,24 @@
  *
  * @link      https://github.com/zamronypj/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
  *}
- unit OutputBufferStreamIntf;
+
+unit OutputBufferStreamIntf;
 
 interface
 
+{$MODE OBJFPC}
 {$H+}
 
 type
 
-    {------------------------------------------------
-     interface for any class having capability to store
-     of output buffering content
-
-     @author Zamrony P. Juhara <zamronypj@yahoo.com>
-    -----------------------------------------------}
+    (*!------------------------------------------------
+     * interface for any class having capability to store
+     * of output buffering content
+     *
+     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+     *--------------------------------------------------*)
     IOutputBufferStream = interface
         ['{F15C85F6-B420-4CFD-8E7D-496F59C3C58E}']
         function assignToFile(var f : TextFile) : IOutputBufferStream;

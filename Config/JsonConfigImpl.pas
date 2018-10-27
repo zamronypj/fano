@@ -3,12 +3,14 @@
  *
  * @link      https://github.com/zamronypj/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
  *}
 
 unit JsonConfigImpl;
 
 interface
+
+{$MODE OBJFPC}
 {$H+}
 
 uses
@@ -21,7 +23,7 @@ type
 
     (*!------------------------------------------------------------
      * Application configuration base class that load data from JSON
-
+     *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------------------*)
     TJsonConfig = class(TInterfacedObject, IAppConfiguration, IDependency)

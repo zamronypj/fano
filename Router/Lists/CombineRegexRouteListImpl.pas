@@ -3,16 +3,18 @@
  *
  * @link      https://github.com/zamronypj/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
  *}
 
 unit CombineRegexRouteListImpl;
 
 interface
 
+{$MODE OBJFPC}
 {$H+}
 
 uses
+
     HashListIntf,
     RouteListIntf,
     HashListImpl,
@@ -25,7 +27,11 @@ type
     (*!------------------------------------------------
      * class that store list of routes patterns and its
      * associated data and match uri to retrieve matched
-     * patterns and its data
+     * patterns and its data.
+     *
+     * This class match all routes using one regex matching
+     * by combining all route patterns
+     * as one big regex pattern.
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      * -----------------------------------------------*)

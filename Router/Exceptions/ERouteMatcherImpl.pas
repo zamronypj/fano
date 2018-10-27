@@ -3,17 +3,26 @@
  *
  * @link      https://github.com/zamronypj/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
  *}
 unit ERouteMatcherImpl;
 
 interface
 
+{$MODE OBJFPC}
+
 uses
+
     sysutils;
 
 type
 
+    (*!------------------------------------------------
+     * Exception that is raised when route matching
+     * is failed
+     *
+     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+     *-------------------------------------------------*)
     ERouteMatcher = class(Exception)
     end;
 

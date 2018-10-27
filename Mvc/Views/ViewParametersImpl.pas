@@ -3,16 +3,18 @@
  *
  * @link      https://github.com/zamronypj/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 2.0)
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
  *}
 
 unit ViewParametersImpl;
 
 interface
 
+{$MODE OBJFPC}
 {$H+}
 
 uses
+
     classes,
     contnrs,
     DependencyIntf,
