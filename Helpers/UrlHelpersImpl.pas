@@ -6,7 +6,7 @@
  * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
  *}
 
-unit UrlHelpers;
+unit UrlHelpersImpl;
 
 interface
 

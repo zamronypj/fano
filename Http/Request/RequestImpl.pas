@@ -154,7 +154,7 @@ implementation
 uses
 
     SysUtils,
-    UrlHelpers;
+    UrlHelpersImpl;
 
     constructor TRequest.create(
         const env : ICGIEnvironment;
