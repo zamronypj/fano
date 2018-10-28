@@ -6,7 +6,7 @@
  * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
  *}
 
-unit AlphaNumValidatorImpl;
+unit BaseValidatorImpl;
 
 interface
 
@@ -15,40 +15,31 @@ interface
 
 uses
 
-    RegexIntf,
-    ValidatorIntf,
-    BaseValidatorImpl;
+    HashListIntf,
+    ValidatorIntf;
 
 type
 
     (*!------------------------------------------------
-     * basic class having capability to
-     * validate input data using regex matching
+     * base abstract class having capability to
+     * validate input data
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TRegexValidator = class(TBaseValidator)
+    TBaseValidator = class(TInterfacedObject, IValidator)
     private
-        regex : IRegex;
-        regexPattern : string;
+        errorMsgFormat : string;
     public
         (*!------------------------------------------------
          * constructor
          *-------------------------------------------------
-         * @param regexInst instance of IRegex
-         * @param pattern regex pattern to use for matching
          * @param errMsgFormat message that is used as template
          *                    for error message
          *-------------------------------------------------
          * errMsgFormat can use format that is support by
          * SysUtils.Format() function
          *-------------------------------------------------*)
-        constructor create(
-            const regexInst : IRegex;
-            const pattern : string;
-            const errMsgFormat : string
-        );
-        destructor destroy(); override;
+        constructor create(const errMsgFormat : string);
 
         (*!------------------------------------------------
          * Validate data
@@ -60,10 +51,22 @@ type
          function isValid(
              const key : shortstring;
              const dataToValidate : IHashList
-         ) : boolean; override;
+         ) : boolean; virtual; abstract;
+
+        (*!------------------------------------------------
+         * Get validation error message
+         *-------------------------------------------------
+         * @param key name of filed that is being validated
+         * @return validation error message
+         *-------------------------------------------------*)
+        function errorMessage(const key : shortstring) : string;
     end;
 
 implementation
+
+uses
+
+    sysutils;
 
     (*!------------------------------------------------
      * constructor
@@ -76,31 +79,18 @@ implementation
      * errMsgFormat can use format that is support by
      * SysUtils.Format() function
      *-------------------------------------------------*)
-    constructor TRegexValidator.create(
-        const regexInst : IRegex;
-        const pattern : string;
-        const errMsgFormat : string
-    );
+    constructor TBaseValidator.create(const errMsgFormat : string);
     begin
-        inherited create(errMsgFormat);
-        regex := regexInst;
-        regexPattern := pattern;
-    end;
-
-    destructor TRegexValidator.destroy();
-    begin
-        inherited destroy();
-        regex := nil;
+        errorMsgFormat := errMsgFormat;
     end;
 
     (*!------------------------------------------------
-     * Validate data
+     * Get validation error message
      *-------------------------------------------------
-     * @param dataToValidate data to validate
-     * @return true if data is valid otherwise false
+     * @return validation error message
      *-------------------------------------------------*)
-    function TRegexValidator.isValid(const dataToValidate : string) : boolean;
+    function TBaseValidator.errorMessage(const key : shortstring) : string;
     begin
-        result := regex.match(regexPattern, dataToValidate).matched;
+        result := format(errorMsgFormat, [key]);
     end;
 end.

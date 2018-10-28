@@ -15,7 +15,8 @@ interface
 
 uses
 
-    RequestIntf;
+    RequestIntf,
+    ValidationResultTypes;
 
 type
 
@@ -32,9 +33,9 @@ type
          * Validate data from request
          *-------------------------------------------------
          * @param request request instance to validate
-         * @return true if data is valid otherwise false
+         * @return validation result
          *-------------------------------------------------*)
-        function validate(const request : IRequest) : boolean;
+        function validate(const request : IRequest) : TValidationResult;
     end;
 
 implementation

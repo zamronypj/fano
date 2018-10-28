@@ -43,7 +43,7 @@ type
          * @param request request instance to validate
          * @return true if data is valid otherwise false
          *-------------------------------------------------*)
-        function validate(const request : IRequest) : boolean;
+        function validate(const request : IRequest) : TValidationResult;
 
         (*!------------------------------------------------
          * Add rule and its validator
@@ -58,11 +58,17 @@ implementation
 
 uses
 
-    KeyValueTypes;
+    KeyValueTypes,
+    EInvalidValidatorImpl;
+
+resourcestring
+
+    sErrInvalidValidator = 'Validator for %s can not be nil';
 
 type
 
     TValidatorRec = record
+        key : shortstring;
         validator : IValidator;
     end;
     PValidatorRec = ^TValidatorRec;
@@ -96,27 +102,36 @@ type
     (*!------------------------------------------------
      * Validate data from key value pair array
      *-------------------------------------------------
-     * @param keyvalue array of key value pair
+     * @param inputData array of key value pair
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
-    function TValidation.validateKeyValue(const keyvalue : TArrayOfKeyValue) : boolean;
-    var i, len : integer;
+    function TValidation.validateKeyValue(const inputData : IHashList) : TValidationResult;
+    var i, len, numFailValidation : integer;
         valRec : PValidatorRec;
     begin
-        result := true;
-        len := length(keyvalue);
+        result.isValid := true;
+        len := validatorList.count();
+
+        //assume all validator will fail
+        setLength(result.errorMessages, len);
+        numFailValidation := 0;
         for i:= 0 to len-1 do
         begin
-            valRec := validatorList.find(keyvalue[i].key);
-            //if valRec equals nil, it means there is no validation rule
-            //registered for this key, so we assume validation always success
-            if ((valRec <> nil) and
-                (not valRec^.validator.isValid(keyvalue[i].value))) then
+            valRec := validatorList.get(i);
+            if (not valRec^.validator.isValid(valRec^.key, inputData)) then
             begin
-                result := false;
-                exit();
+                //validation is failed, get validation error message
+                with result.errorMessages[numFailValidation] do
+                begin
+                    key := valRec^.key;
+                    errorMessage := valRec^.validator.errorMessage(valRec^.key);
+                end;
+                inc(numFailValidation);
+                result.isValid := false;
             end;
         end;
+        //set to actual number of failed validation
+        setLength(result.errorMessages, numFailValidation);
     end;
 
     (*!------------------------------------------------
@@ -125,7 +140,7 @@ type
      * @param request request instance to validate
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
-    function TValidation.validateBody(const request : IRequest) : boolean;
+    function TValidation.validateBody(const request : IRequest) : TValidationResult;
     begin
         result := validateKeyValue(request.getParsedBodyParams());
     end;
@@ -136,7 +151,7 @@ type
      * @param request request instance to validate
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
-    function TValidation.validateQueryStr(const request : IRequest) : boolean;
+    function TValidation.validateQueryStr(const request : IRequest) : TValidationResult;
     begin
         result := validateKeyValue(request.getQueryParams());
     end;
@@ -147,9 +162,28 @@ type
      * @param request request instance to validate
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
-    function TValidation.validate(const request : IRequest) : boolean;
+    function TValidation.validate(const request : IRequest)  : TValidationResult;
+    var valResBody, valResQuery: TValidationResult;
+        i, ctr, lenBody, lenQuery :integer
     begin
-        result := (validateBody(request) and validateQueryStr(request));
+        //merge validation result
+        valResBody := validateBody(request);
+        valResQuery := validateQueryStr(request);
+        result.isValid := valResBody.isValid and valResQuery.isValid;
+        lenBody:=length(valResBody.errorMessages);
+        lenQuery:=length(valResQuery.errorMessages);
+        setlength(result.errorMessages, lenBody + lenQuery);
+        ctr := 0;
+        for i:=0 to lenBody-1 do
+        begin
+            result.errorMessage[ctr] := valResBody.errorMessages[i];
+            inc(ctr);
+        end;
+        for i:=0 to lenQuery-1 do
+        begin
+            result.errorMessage[ctr] := valResQuery.errorMessages[i];
+            inc(ctr);
+        end;
     end;
 
     (*!------------------------------------------------
@@ -161,12 +195,18 @@ type
     function addRule(const key : shortstring; const validator : IValidator) : IValidationRule;
     var valRec : PValidatorRec;
     begin
+        if (validator = nil) then
+        begin
+            raise EInvalidValidator.createFmt(sErrInvalidValidator, [key]);
+        end;
+
         valRec := validatorList.find(key);
         if (valRec = nil) then
         begin
             new(valRec);
             validatorList.add(key, valRec);
         end;
+        valRec^.key := key;
         valRec^.validator := validator;
         result := self;
     end;

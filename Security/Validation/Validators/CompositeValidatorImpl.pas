@@ -16,31 +16,39 @@ interface
 uses
 
     classes,
+    HashListIntf,
     ValidatorIntf,
-    ValidatorCollectionIntf;
+    ValidatorCollectionIntf,
+    BaseValidatorImpl;
 
 type
 
     (*!------------------------------------------------
      * basic class having capability to
-     * manage validator instances and validate data
+     * validate data using one or more validator
+     * This is provided to allow complex validation using
+     * several simple validator
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *------------------------------------------------*)
-    TValidatorCollection = class(TInterfacedObject, IValidatorCollection, IValidator)
+    TCompositeValidator = class(TBaseValidator, IValidatorCollection)
     private
         validatorList : TInterfaceList;
     public
-        constructor create();
+        constructor create(const errMsgFormat : string);
         destructor destroy(); override;
 
         (*!------------------------------------------------
          * Validate data
          *-------------------------------------------------
-         * @param dataToValidate data to validate
+         * @param key name of field
+         * @param dataToValidate input data
          * @return true if data is valid otherwise false
          *-------------------------------------------------*)
-        function isValid(const dataToValidate : string) : boolean;
+         function isValid(
+             const key : shortstring;
+             const dataToValidate : IHashList
+         ) : boolean; override;
 
         (*!------------------------------------------------
          * Add validator to collection
@@ -67,8 +75,9 @@ type
 
 implementation
 
-    constructor TValidatorCollection.create();
+    constructor TCompositeValidator.create(const errMsgFormat : string);
     begin
+        inherited create(errMsgFormat);
         validatorList := TInterfaceList.create();
     end;
 
@@ -84,7 +93,10 @@ implementation
      * @param dataToValidate data to validate
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
-    function TValidatorCollection.isValid(const dataToValidate : string) : boolean;
+    function TCompositeValidator.isValid(
+        const key : shortstring;
+        const dataToValidate : IHashList
+    ) : boolean;
     var i, len : integer;
         validator : IValidator;
     begin
@@ -93,7 +105,7 @@ implementation
         for i := 0 to len-1 do
         begin
             validator := get(i);
-            if (not validator.isValid(dataToValidate)) then
+            if (not validator.isValid(key, dataToValidate)) then
             begin
                 result := false;
                 exit();
@@ -107,7 +119,7 @@ implementation
      * @param validator validator instance to add
      * @return current validator collection
      *-------------------------------------------------*)
-    function TValidatorCollection.add(const validator : IValidator) : IValidatorCollection;
+    function TCompositeValidator.add(const validator : IValidator) : IValidatorCollection;
     begin
         validatorList.add(validator);
     end;
@@ -117,7 +129,7 @@ implementation
      *-------------------------------------------------
      * @return current validator collection
      *-------------------------------------------------*)
-    function TValidatorCollection.count() : integer;
+    function TCompositeValidator.count() : integer;
     begin
         result := validatorList.count;
     end;
@@ -127,9 +139,8 @@ implementation
      *-------------------------------------------------
      * @return validator instance
      *-------------------------------------------------*)
-    function TValidatorCollection.get(const indx : integer) : IValidator;
+    function TCompositeValidator.get(const indx : integer) : IValidator;
     begin
         result := validatorList[indx] as IValidator;
     end;
-
 end.

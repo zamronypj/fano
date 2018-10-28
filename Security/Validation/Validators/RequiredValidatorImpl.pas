@@ -6,7 +6,7 @@
  * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
  *}
 
-unit IntegerValidatorImpl;
+unit RequiredValidatorImpl;
 
 interface
 
@@ -15,6 +15,7 @@ interface
 
 uses
 
+    HashListIntf,
     ValidatorIntf,
     BaseValidatorImpl;
 
@@ -22,11 +23,12 @@ type
 
     (*!------------------------------------------------
      * basic class having capability to
-     * validate alpha numeric input data
+     * validate required input data, i.e, data that must
+     * be present and not empty
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TIntegerValidator = class(TBaseValidator)
+    TRequiredValidator = class(TBaseValidator)
     public
         (*!------------------------------------------------
          * constructor
@@ -54,43 +56,33 @@ uses
 
 resourcestring
 
-    sErrFieldMustBeInteger = 'Field %s must be integer value';
+    sErrFieldIsRequired = 'Field %s is required and not empty';
 
     (*!------------------------------------------------
      * constructor
      *-------------------------------------------------*)
-    constructor TIntegerValidator.create();
+    constructor TRequiredValidator.create();
     begin
-        inherited create(sErrFieldMustBeInteger);
+        inherited create(sErrFieldIsRequired);
     end;
 
     (*!------------------------------------------------
      * Validate data
      *-------------------------------------------------
-     * @param dataToValidate data to validate
+     * @param key name of field
+     * @param dataToValidate input data
      * @return true if data is valid otherwise false
+     *-------------------------------------------------
+     * We assume dataToValidate <> nil
      *-------------------------------------------------*)
-    function TIntegerValidator.isValid(
+    function TRequiredValidator.isValid(
         const key : shortstring;
         const dataToValidate : IHashList
     ) : boolean;
     var val : PKeyValueType;
     begin
         val := dataToValidate.find(key);
-        if (val = nil) then
-        begin
-            //if we get here it means there is no field with that name
-            //so assume that validation is success
-            result := true;
-        end;
-
-        try
-            val^.value.toInteger();
-            result := true;
-        except
-            //if we get here, mostly because of EConvertError exception
-            //so assume it is not valid integer.
-            result := false;
-        end;
+        result := (val <> nil) and (length(val^.value) > 0);
     end;
+
 end.

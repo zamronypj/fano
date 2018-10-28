@@ -15,7 +15,7 @@ interface
 
 uses
 
-    KeyValueTypes;
+    HashListIntf;
 
 type
 
@@ -43,7 +43,7 @@ type
          *-------------------------------------------------
          * @return array of TKeyValue
          *------------------------------------------------*)
-        function getQueryParams() : TArrayOfKeyValue;
+        function getQueryParams() : IHashList;
 
         (*!------------------------------------------------
          * get single cookie param value by its name
@@ -60,7 +60,7 @@ type
          *-------------------------------------------------
          * @return array of TKeyValue
          *------------------------------------------------*)
-        function getCookieParams() : TArrayOfKeyValue;
+        function getCookieParams() : IHashList;
 
         (*!------------------------------------------------
          * get request body data
@@ -77,7 +77,7 @@ type
          *-------------------------------------------------
          * @return array of TKeyValue
          *------------------------------------------------*)
-        function getParsedBodyParams() : TArrayOfKeyValue;
+        function getParsedBodyParams() : IHashList;
     end;
 
 implementation

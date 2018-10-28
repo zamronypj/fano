@@ -82,12 +82,6 @@ type
             const defValue : string = ''
         ) : string;
 
-        (*!------------------------------------------------
-         * get all params
-         *-------------------------------------------------
-         * @return array of TQueryParam
-         *------------------------------------------------*)
-        function getParams(const src : IHashList) : TArrayOfKeyValue;
     public
         constructor create(
             const env : ICGIEnvironment;
@@ -112,7 +106,7 @@ type
          *-------------------------------------------------
          * @return array of TKeyValue
          *------------------------------------------------*)
-        function getQueryParams() : TArrayOfKeyValue;
+        function getQueryParams() : IHashList;
 
         (*!------------------------------------------------
          * get single cookie param value by its name
@@ -129,7 +123,7 @@ type
          *-------------------------------------------------
          * @return array of TKeyValue
          *------------------------------------------------*)
-        function getCookieParams() : TArrayOfKeyValue;
+        function getCookieParams() : IHashList;
 
         (*!------------------------------------------------
          * get request body data
@@ -146,7 +140,7 @@ type
          *-------------------------------------------------
          * @return array of TKeyValue
          *------------------------------------------------*)
-        function getParsedBodyParams() : TArrayOfKeyValue;
+        function getParsedBodyParams() : IHashList;
     end;
 
 implementation
@@ -328,24 +322,6 @@ uses
     end;
 
     (*!------------------------------------------------
-     * get all params
-     *-------------------------------------------------
-     * @return array of TKeyValue
-     *------------------------------------------------*)
-    function TRequest.getParams(const src : IHashList) : TArrayOfKeyValue;
-    var i, len : integer;
-        qry : PKeyValue;
-    begin
-        len := src.count();
-        setLength(result, len);
-        for i := 0 to len-1 do
-        begin
-            qry := src.get(i);
-            result[i] := qry^;
-        end;
-    end;
-
-    (*!------------------------------------------------
      * get single query param value by its name
      *-------------------------------------------------
      * @param string key name of key
@@ -359,16 +335,13 @@ uses
     end;
 
     (*!------------------------------------------------
-     * get single query param value by its name
+     * get all request query strings data
      *-------------------------------------------------
-     * @param string key name of key
-     * @param string defValue default value to use if key
-     *               does not exist
-     * @return string value
+     * @return list of request query string parameters
      *------------------------------------------------*)
-    function TRequest.getQueryParams() : TArrayOfKeyValue;
+    function TRequest.getQueryParams() : IHashList;
     begin
-        result := getParams(queryParams);
+        result := queryParams;
     end;
 
     (*!------------------------------------------------
@@ -385,16 +358,13 @@ uses
     end;
 
     (*!------------------------------------------------
-     * get single cookie param value by its name
+     * get all request cookie data
      *-------------------------------------------------
-     * @param string key name of key
-     * @param string defValue default value to use if key
-     *               does not exist
-     * @return string value
+     * @return list of request cookies parameters
      *------------------------------------------------*)
-    function TRequest.getCookieParams() : TArrayOfKeyValue;
+    function TRequest.getCookieParams() : IHashList;
     begin
-        result := getParams(cookieParams);
+        result := cookieParams;
     end;
 
     (*!------------------------------------------------
@@ -413,10 +383,10 @@ uses
     (*!------------------------------------------------
      * get all request body data
      *-------------------------------------------------
-     * @return array of TKeyValue
+     * @return list of request body parameters
      *------------------------------------------------*)
-    function TRequest.getParsedBodyParams() : TArrayOfKeyValue;
+    function TRequest.getParsedBodyParams() : IHashList;
     begin
-        result := getParams(bodyParams);
+        result := bodyParams;
     end;
 end.

@@ -6,7 +6,7 @@
  * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
  *}
 
-unit EMethodNotAllowedImpl;
+unit EInvalidValidatorImpl;
 
 interface
 
@@ -19,13 +19,11 @@ uses
 type
 
     (*!------------------------------------------------
-     * Exception that is raised when request method
-     * not allowed. For example route is registerd for POST
-     * but route is requested with GET.
+     * Exception that is raised when validator is nil.
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    EMethodNotAllowed = class(Exception)
+    EInvalidValidator = class(Exception)
     end;
 
 implementation

@@ -13,6 +13,10 @@ interface
 {$MODE OBJFPC}
 {$H+}
 
+uses
+
+    HashListIntf;
+
 type
 
     (*!------------------------------------------------
@@ -24,14 +28,25 @@ type
     IValidator = interface
         ['{CEC67097-2D57-4278-BE8F-7B77EAB614FB}']
 
-
         (*!------------------------------------------------
          * Validate data
          *-------------------------------------------------
-         * @param dataToValidate data to validate
+         * @param key name of field
+         * @param dataToValidate input data
          * @return true if data is valid otherwise false
          *-------------------------------------------------*)
-        function isValid(const dataToValidate : string) : boolean;
+        function isValid(
+            const key : shortstring;
+            const dataToValidate : IHashList
+        ) : boolean;
+
+        (*!------------------------------------------------
+         * Get validation error message
+         *-------------------------------------------------
+         * @param key name of filed that is being validated
+         * @return validation error message
+         *-------------------------------------------------*)
+        function errorMessage(const key : shortstring) : string;
     end;
 
 implementation

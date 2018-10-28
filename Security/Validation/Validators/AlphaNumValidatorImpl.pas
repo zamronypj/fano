@@ -33,9 +33,13 @@ type
 
 implementation
 
+resourcestring
+
+    sErrNotValidAlphaNum = 'Field ''%s'' must be alpha numeric charaters';
+
     constructor TAlphaNumValidator.create(const regexInst : IRegex);
     begin
-        inherited create(regexInst, '^[a-zA-Z0-9]+$');
+        inherited create(regexInst, '^[a-zA-Z0-9]+$', sErrNotValidAlphaNum);
     end;
 
 end.
