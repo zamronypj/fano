@@ -41,7 +41,7 @@ type
         (*!------------------------------------------------
          * get all query params
          *-------------------------------------------------
-         * @return array of TKeyValue
+         * @return list of query string params
          *------------------------------------------------*)
         function getQueryParams() : IHashList;
 
@@ -58,7 +58,7 @@ type
         (*!------------------------------------------------
          * get all cookies params
          *-------------------------------------------------
-         * @return array of TKeyValue
+         * @return list of cookie params
          *------------------------------------------------*)
         function getCookieParams() : IHashList;
 
@@ -75,7 +75,7 @@ type
         (*!------------------------------------------------
          * get all request body data
          *-------------------------------------------------
-         * @return array of TKeyValue
+         * @return array of parsed body params
          *------------------------------------------------*)
         function getParsedBodyParams() : IHashList;
     end;

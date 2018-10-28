@@ -36,6 +36,22 @@ type
          * @return validation result
          *-------------------------------------------------*)
         function validate(const request : IRequest) : TValidationResult;
+
+        (*!------------------------------------------------
+         * get last validation status result
+         *-------------------------------------------------
+         * @return validation result
+         *-------------------------------------------------
+         * This mechanism is provided to allow application doing
+         * validation in middleware before controller is exceuted
+         * and then get validation result in controller/route handler
+         * if course with assumption that it is same request validator
+         * instance that is shared between middleware and
+         * controller/route handler.
+         * IRequestValidator implementation must maintain
+         * state of last validate() call result.
+         *-------------------------------------------------*)
+        function lastValidationResult() : TValidationResult;
     end;
 
 implementation

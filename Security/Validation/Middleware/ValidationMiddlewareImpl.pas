@@ -19,7 +19,6 @@ uses
     RequestIntf,
     ResponseIntf,
     RequestValidatorintf,
-    ValidationRulesIntf,
     MiddlewareIntf;
 
 type
@@ -31,7 +30,12 @@ type
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
     TValidationMiddleware = class(TInterfacedObject, IMiddleware, IDependency)
+    private
+        validation : IRequestValidator;
     public
+        constructor create(const validationInst : IRequestValidator);
+        destructor destroy(); override;
+
         (*!---------------------------------------
          * handle request and validate request
          *----------------------------------------
@@ -55,6 +59,21 @@ type
 
 implementation
 
+uses
+
+    ValidationResultTypes;
+
+    constructor TValidationMiddleware.create(const validationInst : IRequestValidator);
+    begin
+        validation := validationInst;
+    end;
+
+    destructor TValidationMiddleware.destroy();
+    begin
+        inherited destroy();
+        validation := nil;
+    end;
+
     (*!---------------------------------------
      * handle request
      *----------------------------------------
@@ -65,12 +84,14 @@ implementation
      *        to stop execution
      * @return response
      *----------------------------------------*)
-    function handleRequest(
+    function TValidationMiddleware.handleRequest(
         const request : IRequest;
         const response : IResponse;
         var canContinue : boolean
     ) : IResponse;
     begin
+        validation.validate(request);
+        result := response;
     end;
 
 end.

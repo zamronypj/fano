@@ -30,6 +30,7 @@ type
      *-------------------------------------------------*)
     TValidation = class(TInterfacedObject, IRequestValidator, IValidationRules, IDependency)
     private
+        validationResult : TValidationResult;
         validatorList : IHashList;
         procedure clearValidator();
     public
@@ -44,6 +45,22 @@ type
          * @return true if data is valid otherwise false
          *-------------------------------------------------*)
         function validate(const request : IRequest) : TValidationResult;
+
+        (*!------------------------------------------------
+         * get last validation status result
+         *-------------------------------------------------
+         * @return validation result
+         *-------------------------------------------------
+         * This mechanism is provided to allow application doing
+         * validation in middleware before controller and then
+         * get validation result in controller/route handler
+         * with assumption that it is same request validator
+         * instance that is used in middleware and
+         * controller/route handler.
+         * IRequestValidator implementation must maintain
+         * state of last validate() call result.
+         *-------------------------------------------------*)
+        function lastValidationResult() : TValidationResult;
 
         (*!------------------------------------------------
          * Add rule and its validator
@@ -76,6 +93,8 @@ type
     constructor TValidation.create(const validators : IHashList);
     begin
         validatorList := validators;
+        validationResult.isValid := true;
+        validationResult.errorMessages := nil;
     end;
 
     destructor TValidation.destroy();
@@ -164,7 +183,7 @@ type
      *-------------------------------------------------*)
     function TValidation.validate(const request : IRequest)  : TValidationResult;
     var valResBody, valResQuery: TValidationResult;
-        i, ctr, lenBody, lenQuery :integer
+        i, ctr, lenBody, lenQuery : integer;
     begin
         //merge validation result
         valResBody := validateBody(request);
@@ -173,6 +192,7 @@ type
         lenBody:=length(valResBody.errorMessages);
         lenQuery:=length(valResQuery.errorMessages);
         setlength(result.errorMessages, lenBody + lenQuery);
+        //TODO: can we improve by removing loop?
         ctr := 0;
         for i:=0 to lenBody-1 do
         begin
@@ -184,6 +204,17 @@ type
             result.errorMessage[ctr] := valResQuery.errorMessages[i];
             inc(ctr);
         end;
+        validationResult := result;
+    end;
+
+    (*!------------------------------------------------
+     * get last validation status result
+     *-------------------------------------------------
+     * @return validation result
+     *-------------------------------------------------*)
+    function TValidation.lastValidationResult() : TValidationResult;
+    begin
+        result := validationResult;
     end;
 
     (*!------------------------------------------------

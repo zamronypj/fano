@@ -167,6 +167,7 @@ uses
             cookieParams,
             bodyParams
         );
+
     end;
 
     destructor TRequest.destroy();
