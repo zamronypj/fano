@@ -52,7 +52,7 @@ type
          *-------------------------------------
          * @return size of stream in bytes
          *-------------------------------------*)
-        function size() : longint;
+        function size() : int64;
 
         (*!------------------------------------
          * seek
@@ -63,7 +63,7 @@ type
          * if offset >= stream size then it is capped
          * to stream size-1
          *-------------------------------------*)
-        function seek(const offset : longint) : longint;
+        function seek(const offset : longint) : int64;
     end;
 
 implementation
