@@ -6,7 +6,7 @@
  * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
  *}
 
-unit AppIntf;
+unit EInvalidDispatcherImpl;
 
 interface
 
@@ -14,17 +14,17 @@ interface
 
 uses
 
-    RunnableIntf;
+    sysutils;
 
 type
 
     (*!------------------------------------------------
-     * interface for any application
+     * Exception that is raised when application is
+     * given an invalid dispatcher instance.
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
-     *-----------------------------------------------*)
-    IWebApplication = interface(IRunnable)
-        ['{DE7521ED-D26F-4E97-9618-D745D38F0814}']
+     *-------------------------------------------------*)
+    EInvalidDispatcher = class(Exception)
     end;
 
 implementation

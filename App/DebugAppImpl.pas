@@ -27,6 +27,8 @@ type
      * Decorator class that implements IWebApplication
      * and wrap other IWebApplication to calculate
      * and display execution timing
+     *
+     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
     TDebugWebApplication = class(TInterfacedObject, IWebApplication, IRunnable)
     private
