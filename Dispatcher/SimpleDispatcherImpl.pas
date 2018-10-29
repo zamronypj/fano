@@ -88,6 +88,7 @@ uses
             );
         finally
             routeHandler := nil;
+            uriParts := nil;
         end;
     end;
 end.

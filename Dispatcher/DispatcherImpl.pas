@@ -120,6 +120,7 @@ uses
             routeHandler := nil;
             middlewareChain := nil;
             routeMiddlewares := nil;
+            uriParts := nil;
         end;
     end;
 end.
