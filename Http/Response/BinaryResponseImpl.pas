@@ -110,6 +110,8 @@ const
         handleStream := THandleStream.create(getFileHandle(Output));
         try
             respBody.seek(0);
+            //binary stream maybe big in size, so read in loop
+            //by using smaller buffer to avoid consuming too much resource
             repeat
                 numBytesRead := respBody.read(buff, BUFFER_SIZE);
                 handleStream.write(buff, numBytesRead);
