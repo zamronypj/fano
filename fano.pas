@@ -66,7 +66,7 @@ uses
 type
     (*!-----------------------------------------------
      * Redeclare all classes in one unit to simplify
-     * including classes.
+     * including classes in application code
      *-------------------------------------------------
      * If you use this unit, then you do not to include
      * other unit otherwise you will get compilation error
@@ -77,6 +77,7 @@ type
 
     //interface aliases
     IDependencyContainer = DependencyContainerIntf.IDependencyContainer;
+    IDependencyFactory = DependencyContainerIntf.IDependencyFactory;
     IRunnable = RunnableIntf.IRunnable;
     IDispatcher = DispatcherIntf.IDispatcher;
     ICGIEnvironment = EnvironmentIntf.ICGIEnvironment;
