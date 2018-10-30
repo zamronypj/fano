@@ -78,6 +78,7 @@ type
     //interface aliases
     IDependencyContainer = DependencyContainerIntf.IDependencyContainer;
     IDependencyFactory = DependencyContainerIntf.IDependencyFactory;
+    IDependency = DependencyIntf.IDependency;
     IRunnable = RunnableIntf.IRunnable;
     IDispatcher = DispatcherIntf.IDispatcher;
     ICGIEnvironment = EnvironmentIntf.ICGIEnvironment;
