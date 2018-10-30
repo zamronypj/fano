@@ -64,7 +64,7 @@ uses
     TemplateParserFactoryImpl,
     SimpleTemplateParserFactoryImpl,
     TemplateFileViewImpl,
-    ViewParametersFactoryImpl
+    ViewParametersFactoryImpl,
     PlaceholderTypes;
 
 type
