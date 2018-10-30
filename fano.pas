@@ -41,6 +41,7 @@ uses
     TemplateParserIntf,
     ViewIntf,
     ViewParametersIntf,
+    LoggerIntf,
 
     {*! -------------------------------
         unit implementations
@@ -73,6 +74,7 @@ uses
     TemplateFileViewImpl,
     ViewParametersFactoryImpl,
     ControllerImpl,
+    FileLoggerImpl,
 
     {*! -------------------------------
         data type unit
@@ -118,6 +120,7 @@ type
     IView = ViewIntf.IView;
     IViewParameters = ViewParametersIntf.IViewParameters;
     ITemplateParser = TemplateParserIntf.ITemplateParser;
+    ILogger = LoggerIntf.ILogger;
 
     //implementation aliases
     TDependencyContainer = DependencyContainerImpl.TDependencyContainer;
@@ -139,6 +142,8 @@ type
     TViewParametersFactory = ViewParametersFactoryImpl.TViewParametersFactory;
     TTemplateFileView = TemplateFileViewImpl.TTemplateFileView;
     TJsonResponse = JsonResponseImpl.TJsonResponse;
+    TFileLogger = FileLoggerImpl.TFileLogger;
+
     TPlaceholder = PlaceholderTypes.TPlaceholder;
     TArrayOfPlaceholders = PlaceholderTypes.TArrayOfPlaceholders;
     TKeyValue = KeyValueTypes.TKeyValue;
