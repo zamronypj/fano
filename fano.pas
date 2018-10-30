@@ -18,6 +18,7 @@ uses
         unit interfaces
     ----------------------------------- *}
     DependencyContainerIntf,
+    DependencyIntf,
     RunnableIntf,
     DispatcherIntf,
     EnvironmentIntf,
