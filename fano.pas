@@ -82,6 +82,7 @@ type
     IRouteHandler = RouteHandlerIntf.IRouteHandler;
     IMiddlewareCollectionAware = MiddlewareCollectionAwareIntf.IMiddlewareCollectionAware;
     IAppConfiguration = ConfigIntf.IAppConfiguration;
+    IOutputBuffer = OutputBufferIntf.IOutputBuffer;
 
     //implementation aliases
     TDependencyContainer = DependencyContainerImpl.TDependencyContainer;
