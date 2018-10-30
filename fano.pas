@@ -36,6 +36,7 @@ uses
     TemplateParserIntf,
     ViewIntf,
     ViewParametersIntf,
+    HeadersIntf,
 
     {*! -------------------------------
         unit implementations
@@ -97,6 +98,7 @@ type
     IMiddlewareCollectionAware = MiddlewareCollectionAwareIntf.IMiddlewareCollectionAware;
     IAppConfiguration = ConfigIntf.IAppConfiguration;
     IOutputBuffer = OutputBufferIntf.IOutputBuffer;
+    IHeaders = HeadersIntf.IHeaders;
     IRequest = RequestIntf.IRequest;
     IResponse = ResponseIntf.IResponse;
     IView = ViewIntf.IView;
