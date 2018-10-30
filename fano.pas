@@ -37,7 +37,6 @@ uses
     TemplateParserIntf,
     ViewIntf,
     ViewParametersIntf,
-    TemplateParserIntf,
 
     {*! -------------------------------
         unit implementations
