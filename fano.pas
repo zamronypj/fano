@@ -35,6 +35,7 @@ uses
     OutputBufferIntf,
     TemplateParserIntf,
     ViewIntf,
+    ViewParametersIntf,
 
     {*! -------------------------------
         unit implementations
@@ -99,6 +100,9 @@ type
     IRequest = RequestIntf.IRequest;
     IResponse = ResponseIntf.IResponse;
     IView = ViewIntf.IView;
+    IViewParameters = ViewParametersIntf.IViewParameters;
+
+
 
     //implementation aliases
     TDependencyContainer = DependencyContainerImpl.TDependencyContainer;
