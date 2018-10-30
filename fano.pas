@@ -30,9 +30,11 @@ uses
     RouteCollectionIntf,
     RouteHandlerIntf,
     MiddlewareCollectionAwareIntf,
+    MiddlewareCollectionIntf,
     ConfigIntf,
     OutputBufferIntf,
     TemplateParserIntf,
+    ViewIntf,
 
     {*! -------------------------------
         unit implementations
@@ -88,11 +90,13 @@ type
     IWebApplication = AppIntf.IWebApplication;
     IRouteCollection = RouteCollectionIntf.IRouteCollection;
     IRouteHandler = RouteHandlerIntf.IRouteHandler;
+    IMiddlewareCollection = MiddlewareCollectionIntf.IMiddlewareCollection;
     IMiddlewareCollectionAware = MiddlewareCollectionAwareIntf.IMiddlewareCollectionAware;
     IAppConfiguration = ConfigIntf.IAppConfiguration;
     IOutputBuffer = OutputBufferIntf.IOutputBuffer;
     IRequest = RequestIntf.IRequest;
     IResponse = ResponseIntf.IResponse;
+    IView = ViewIntf.IView;
 
     //implementation aliases
     TDependencyContainer = DependencyContainerImpl.TDependencyContainer;
@@ -102,6 +106,7 @@ type
     TFanoWebApplication = AppImpl.TFanoWebApplication;
     TFactory = FactoryImpl.TFactory;
     TRouteHandler = RouteHandlerImpl.TRouteHandler;
+    TController = ControllerImpl.TController;
     TJsonFileConfigFactory = JsonFileConfigFactoryImpl.TJsonFileConfigFactory;
     TNullMiddlewareCollectionAwareFactory = NullMiddlewareCollectionAwareFactoryImpl.TNullMiddlewareCollectionAwareFactory;
     TSimpleRouteCollectionFactory = SimpleRouteCollectionFactoryImpl.TSimpleRouteCollectionFactory;
