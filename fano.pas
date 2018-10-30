@@ -99,6 +99,8 @@ type
     TSimpleDispatcherFactory = SimpleDispatcherFactoryImpl.TSimpleDispatcherFactory;
     THeadersFactory = HeadersFactoryImpl.THeadersFactory;
     TOutputBufferFactory = OutputBufferFactoryImpl.TOutputBufferFactory;
+    TSimpleTemplateParserFactory = SimpleTemplateParserFactoryImpl.TSimpleTemplateParserFactory;
+    TTemplateParserFactory = TemplateParserFactoryImpl.TTemplateParserFactory;
 
 implementation
 
