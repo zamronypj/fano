@@ -25,6 +25,7 @@ uses
     EnvironmentIntf,
     ErrorHandlerIntf,
     HashListIntf,
+    DependencyListIntf,
     SerializeableIntf,
     AppIntf,
     HeadersIntf,
@@ -101,6 +102,7 @@ type
     ICGIEnvironment = EnvironmentIntf.ICGIEnvironment;
     IErrorHandler = ErrorHandlerIntf.IErrorHandler;
     IHashList = HashListIntf.IHashList;
+    IDependencyList = DependencyListIntf.IDependencyList;
     ISerializeable = SerializeableIntf.ISerializeable;
     IRouteMatcher = RouteMatcherIntf.IRouteMatcher;
     IWebApplication = AppIntf.IWebApplication;
