@@ -59,6 +59,7 @@ uses
     HeadersFactoryImpl,
     OutputBufferFactoryImpl,
     ErrorHandlerFactoryImpl,
+    TJsonResponse = JsonResponseImpl.TJsonResponse;
     JsonFileConfigImpl,
     JsonFileConfigFactoryImpl,
     MiddlewareCollectionAwareFactoryImpl,
