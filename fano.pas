@@ -47,7 +47,7 @@ uses
     DispatcherFactoryImpl,
     SimpleDispatcherFactoryImpl,
     FactoryImpl,
-
+    RouteHandlerImpl,
     RouteCollectionFactoryImpl,
     SimpleRouteCollectionFactoryImpl,
     CombineRouteCollectionFactoryImpl,
@@ -101,6 +101,7 @@ type
     TErrorHandler = ErrorHandlerImpl.TErrorHandler;
     TFanoWebApplication = AppImpl.TFanoWebApplication;
     TFactory = FactoryImpl.TFactory;
+    TRouteHandler = RouteHandlerImpl.TRouteHandler;
     TJsonFileConfigFactory = JsonFileConfigFactoryImpl.TJsonFileConfigFactory;
     TNullMiddlewareCollectionAwareFactory = NullMiddlewareCollectionAwareFactoryImpl.TNullMiddlewareCollectionAwareFactory;
     TSimpleRouteCollectionFactory = SimpleRouteCollectionFactoryImpl.TSimpleRouteCollectionFactory;
