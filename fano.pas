@@ -64,7 +64,8 @@ uses
     TemplateParserFactoryImpl,
     SimpleTemplateParserFactoryImpl,
     TemplateFileViewImpl,
-    ViewParametersFactoryImpl;
+    ViewParametersFactoryImpl
+    PlaceholderTypes;
 
 type
     (*!-----------------------------------------------
@@ -116,6 +117,8 @@ type
     TSimpleTemplateParserFactory = SimpleTemplateParserFactoryImpl.TSimpleTemplateParserFactory;
     TTemplateParserFactory = TemplateParserFactoryImpl.TTemplateParserFactory;
     TViewParametersFactory = ViewParametersFactoryImpl.TViewParametersFactory;
+    TPlaceholder = PlaceholderTypes.TPlaceholder;
+    TArrayOfPlaceholders = PlaceholderTypes.TArrayOfPlaceholders;
 
 implementation
 
