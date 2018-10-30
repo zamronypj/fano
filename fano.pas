@@ -23,7 +23,8 @@ uses
     EnvironmentIntf,
     ErrorHandlerIntf,
     AppIntf,
-
+    RequestIntf,
+    ResponseIntf,
     RouteMatcherIntf,
     RouteCollectionIntf,
     RouteHandlerIntf,
@@ -44,6 +45,7 @@ uses
     AppImpl,
     DispatcherFactoryImpl,
     SimpleDispatcherFactoryImpl,
+    FactoryImpl,
 
     RouteCollectionFactoryImpl,
     SimpleRouteCollectionFactoryImpl,
@@ -86,6 +88,8 @@ type
     IMiddlewareCollectionAware = MiddlewareCollectionAwareIntf.IMiddlewareCollectionAware;
     IAppConfiguration = ConfigIntf.IAppConfiguration;
     IOutputBuffer = OutputBufferIntf.IOutputBuffer;
+    IRequest = RequestIntf.IRequest;
+    IResponse = ResponseIntf.IResponse;
 
     //implementation aliases
     TDependencyContainer = DependencyContainerImpl.TDependencyContainer;
@@ -93,6 +97,7 @@ type
     TCGIEnvironment = EnvironmentImpl.TCGIEnvironment;
     TErrorHandler = ErrorHandlerImpl.TErrorHandler;
     TFanoWebApplication = AppImpl.TFanoWebApplication;
+    TFactory = FactoryImpl.TFactory;
     TJsonFileConfigFactory = JsonFileConfigFactoryImpl.TJsonFileConfigFactory;
     TNullMiddlewareCollectionAwareFactory = NullMiddlewareCollectionAwareFactoryImpl.TNullMiddlewareCollectionAwareFactory;
     TSimpleRouteCollectionFactory = SimpleRouteCollectionFactoryImpl.TSimpleRouteCollectionFactory;
