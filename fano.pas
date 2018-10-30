@@ -19,10 +19,13 @@ uses
     ----------------------------------- *}
     DependencyContainerIntf,
     DependencyIntf,
+    CloneableIntf,
     RunnableIntf,
     DispatcherIntf,
     EnvironmentIntf,
     ErrorHandlerIntf,
+    HashListIntf,
+    SerializeableIntf,
     AppIntf,
     HeadersIntf,
     RequestIntf,
@@ -69,6 +72,11 @@ uses
     TemplateFileViewImpl,
     ViewParametersFactoryImpl,
     ControllerImpl,
+
+    {*! -------------------------------
+        data type unit
+    ----------------------------------- *}
+    KeyValueTypes,
     PlaceholderTypes;
 
 type
@@ -87,10 +95,13 @@ type
     IDependencyContainer = DependencyContainerIntf.IDependencyContainer;
     IDependencyFactory = DependencyContainerIntf.IDependencyFactory;
     IDependency = DependencyIntf.IDependency;
+    ICloneable = CloneableIntf.ICloneable;
     IRunnable = RunnableIntf.IRunnable;
     IDispatcher = DispatcherIntf.IDispatcher;
     ICGIEnvironment = EnvironmentIntf.ICGIEnvironment;
     IErrorHandler = ErrorHandlerIntf.IErrorHandler;
+    IHashList = HashListIntf.IHashList;
+    ISerializeable = SerializeableIntf.ISerializeable;
     IRouteMatcher = RouteMatcherIntf.IRouteMatcher;
     IWebApplication = AppIntf.IWebApplication;
     IRouteCollection = RouteCollectionIntf.IRouteCollection;
@@ -128,6 +139,8 @@ type
     TJsonResponse = JsonResponseImpl.TJsonResponse;
     TPlaceholder = PlaceholderTypes.TPlaceholder;
     TArrayOfPlaceholders = PlaceholderTypes.TArrayOfPlaceholders;
+    TKeyValue = KeyValueTypes.TKeyValue;
+    TArrayOfKeyValue = KeyValueTypes.TArrayOfKeyValue;
 
 implementation
 
