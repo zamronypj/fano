@@ -95,6 +95,7 @@ type
     TSimpleRouteCollectionFactory = SimpleRouteCollectionFactoryImpl.TSimpleRouteCollectionFactory;
     TSimpleDispatcherFactory = SimpleDispatcherFactoryImpl.TSimpleDispatcherFactory;
     THeadersFactory = HeadersFactoryImpl.THeadersFactory;
+    TOutputBufferFactory = OutputBufferFactoryImpl.TOutputBufferFactory;
 
 implementation
 
