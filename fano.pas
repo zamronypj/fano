@@ -59,7 +59,7 @@ uses
     HeadersFactoryImpl,
     OutputBufferFactoryImpl,
     ErrorHandlerFactoryImpl,
-    TJsonResponse = JsonResponseImpl.TJsonResponse;
+    JsonResponseImpl,
     JsonFileConfigImpl,
     JsonFileConfigFactoryImpl,
     MiddlewareCollectionAwareFactoryImpl,
@@ -125,6 +125,7 @@ type
     TTemplateParserFactory = TemplateParserFactoryImpl.TTemplateParserFactory;
     TViewParametersFactory = ViewParametersFactoryImpl.TViewParametersFactory;
     TTemplateFileView = TemplateFileViewImpl.TTemplateFileView;
+    TJsonResponse = JsonResponseImpl.TJsonResponse;
     TPlaceholder = PlaceholderTypes.TPlaceholder;
     TArrayOfPlaceholders = PlaceholderTypes.TArrayOfPlaceholders;
 
