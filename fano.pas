@@ -101,6 +101,7 @@ type
     TOutputBufferFactory = OutputBufferFactoryImpl.TOutputBufferFactory;
     TSimpleTemplateParserFactory = SimpleTemplateParserFactoryImpl.TSimpleTemplateParserFactory;
     TTemplateParserFactory = TemplateParserFactoryImpl.TTemplateParserFactory;
+    TViewParametersFactory = ViewParametersFactoryImpl.TViewParametersFactory;
 
 implementation
 
