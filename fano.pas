@@ -65,7 +65,11 @@ uses
 type
     (*!-----------------------------------------------
      * Redeclare all classes in one unit to simplify
-     * including classes
+     * including classes.
+     *-------------------------------------------------
+     * If you use this unit, then you do not to include
+     * other unit otherwise you will get compilation error
+     * about duplicate identifier
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *------------------------------------------------*)
