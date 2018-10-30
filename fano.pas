@@ -102,8 +102,6 @@ type
     IView = ViewIntf.IView;
     IViewParameters = ViewParametersIntf.IViewParameters;
 
-
-
     //implementation aliases
     TDependencyContainer = DependencyContainerImpl.TDependencyContainer;
     TDependencyList = DependencyListImpl.TDependencyList;
@@ -122,6 +120,7 @@ type
     TSimpleTemplateParserFactory = SimpleTemplateParserFactoryImpl.TSimpleTemplateParserFactory;
     TTemplateParserFactory = TemplateParserFactoryImpl.TTemplateParserFactory;
     TViewParametersFactory = ViewParametersFactoryImpl.TViewParametersFactory;
+    TTemplateFileView = TemplateFileViewImpl.TTemplateFileView;
     TPlaceholder = PlaceholderTypes.TPlaceholder;
     TArrayOfPlaceholders = PlaceholderTypes.TArrayOfPlaceholders;
 
