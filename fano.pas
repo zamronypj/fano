@@ -24,6 +24,7 @@ uses
     EnvironmentIntf,
     ErrorHandlerIntf,
     AppIntf,
+    HeadersIntf,
     RequestIntf,
     ResponseIntf,
     RouteMatcherIntf,
@@ -36,7 +37,7 @@ uses
     TemplateParserIntf,
     ViewIntf,
     ViewParametersIntf,
-    HeadersIntf,
+    TemplateParserIntf,
 
     {*! -------------------------------
         unit implementations
@@ -103,6 +104,7 @@ type
     IResponse = ResponseIntf.IResponse;
     IView = ViewIntf.IView;
     IViewParameters = ViewParametersIntf.IViewParameters;
+    ITemplateParser = TemplateParserIntf.ITemplateParser;
 
     //implementation aliases
     TDependencyContainer = DependencyContainerImpl.TDependencyContainer;
