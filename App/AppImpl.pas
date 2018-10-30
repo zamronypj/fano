@@ -175,7 +175,7 @@ resourcestring
      * implementation they like, we need to be informed
      * about it.
      *-----------------------------------------------*)
-    procedure buildDispatcher(const container : IDependencyContainer);
+    procedure TFanoWebApplication.buildDispatcher(const container : IDependencyContainer);
     begin
         dispatcher := initDispatcher(container);
         if (dispatcher = nil) then
