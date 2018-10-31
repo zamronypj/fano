@@ -20,7 +20,8 @@ uses
 type
 
     (*!------------------------------------------------
-     * interface for any application
+     * interface for any class having capability to handle
+     * exception
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
