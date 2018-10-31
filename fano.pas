@@ -22,6 +22,7 @@ uses
     CloneableIntf,
     RunnableIntf,
     DispatcherIntf,
+    RequestHandlerIntf,
     EnvironmentIntf,
     ErrorHandlerIntf,
     HashListIntf,
@@ -51,11 +52,17 @@ uses
     EnvironmentImpl,
     EnvironmentFactoryImpl,
     ErrorHandlerImpl,
+    EDependencyNotFoundImpl,
+    EInvalidFactoryImpl,
+    FactoryImpl,
 
-    AppImpl,
     DispatcherFactoryImpl,
     SimpleDispatcherFactoryImpl,
-    FactoryImpl,
+    EInvalidDispatcherImpl,
+    EMethodNotAllowedImpl,
+    ERouteHandlerNotFoundImpl,
+
+    AppImpl,
     RouteHandlerImpl,
     RouteCollectionFactoryImpl,
     SimpleRouteCollectionFactoryImpl,
@@ -101,6 +108,7 @@ type
     ICloneable = CloneableIntf.ICloneable;
     IRunnable = RunnableIntf.IRunnable;
     IDispatcher = DispatcherIntf.IDispatcher;
+    IRequestHandler = RequestHandlerIntf.IRequestHandler;
     ICGIEnvironment = EnvironmentIntf.ICGIEnvironment;
     IErrorHandler = ErrorHandlerIntf.IErrorHandler;
     IHashList = HashListIntf.IHashList;
@@ -125,10 +133,17 @@ type
     //implementation aliases
     TDependencyContainer = DependencyContainerImpl.TDependencyContainer;
     TDependencyList = DependencyListImpl.TDependencyList;
+    TFactory = FactoryImpl.TFactory;
+    EDependencyNotFound = EDependencyNotFoundImpl.EDependencyNotFound;
+    EInvalidFactory = EInvalidFactoryImpl.EInvalidFactory;
+
+    EInvalidDispatcher = EInvalidDispatcherImpl.EInvalidDispatcher;
+    EMethodNotAllowed = EMethodNotAllowedImpl.EMethodNotAllowed;
+    ERouteHandlerNotFound = ERouteHandlerNotFoundImpl.ERouteHandlerNotFound;
+
     TCGIEnvironment = EnvironmentImpl.TCGIEnvironment;
     TErrorHandler = ErrorHandlerImpl.TErrorHandler;
     TFanoWebApplication = AppImpl.TFanoWebApplication;
-    TFactory = FactoryImpl.TFactory;
     TRouteHandler = RouteHandlerImpl.TRouteHandler;
     TController = ControllerImpl.TController;
     TJsonFileConfigFactory = JsonFileConfigFactoryImpl.TJsonFileConfigFactory;
