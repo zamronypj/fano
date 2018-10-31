@@ -44,7 +44,8 @@ implementation
         i: integer;
         frames: PPointer;
     begin
-        result := '<!DOCTYPE html><html><head><title>Program exception</title></head><body>' +
+        result := '<!DOCTYPE html><html><head>'+
+                  '<title>Program exception</title></head><body>' +
                   '<h2>Program exception</h2>';
         if (e <> nil) then
         begin
@@ -59,7 +60,7 @@ implementation
         frames := ExceptFrames;
         for i := 0 to ExceptFrameCount - 1 do
         begin
-            result := result + BackTraceStrFunc(frames[I]) + LineEnding;
+            result := result + BackTraceStrFunc(frames[i]) + LineEnding;
         end;
         result := result + '</pre></body></html>';
     end;
