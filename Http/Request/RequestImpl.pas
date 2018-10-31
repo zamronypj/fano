@@ -141,6 +141,13 @@ type
          * @return array of TKeyValue
          *------------------------------------------------*)
         function getParsedBodyParams() : IHashList;
+
+        (*!------------------------------------------------
+         * test if current request is comming from AJAX request
+         *-------------------------------------------------
+         * @return true if ajax request
+         *------------------------------------------------*)
+        function isXhr() : boolean;
     end;
 
 implementation
@@ -389,5 +396,15 @@ uses
     function TRequest.getParsedBodyParams() : IHashList;
     begin
         result := bodyParams;
+    end;
+
+    (*!------------------------------------------------
+     * test if current request is coming from AJAX request
+     *-------------------------------------------------
+     * @return true if ajax request false otherwise
+     *------------------------------------------------*)
+    function TRequest.isXhr() : boolean;
+    begin
+        result := (webEnvironment.env('HTTP_X_REQUESTED_WITH') = 'XMLHttpRequest');
     end;
 end.
