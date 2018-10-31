@@ -6,7 +6,7 @@
  * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
  *}
 
-unit ValidatorCollectionImpl;
+unit CompositeValidatorImpl;
 
 interface
 
@@ -81,7 +81,7 @@ implementation
         validatorList := TInterfaceList.create();
     end;
 
-    destructor TValidatorCollection.destroy();
+    destructor TCompositeValidator.destroy();
     begin
         inherited destroy();
         validatorList.free();
