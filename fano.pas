@@ -52,6 +52,7 @@ uses
     EnvironmentImpl,
     EnvironmentFactoryImpl,
     ErrorHandlerImpl,
+    AjaxErrorHandlerImpl,
     EDependencyNotFoundImpl,
     EInvalidFactoryImpl,
     FactoryImpl,
@@ -143,6 +144,7 @@ type
 
     TCGIEnvironment = EnvironmentImpl.TCGIEnvironment;
     TErrorHandler = ErrorHandlerImpl.TErrorHandler;
+    TAjaxErrorHandler = AjaxErrorHandlerImpl.TAjaxErrorHandler;
     TFanoWebApplication = AppImpl.TFanoWebApplication;
     TRouteHandler = RouteHandlerImpl.TRouteHandler;
     TController = ControllerImpl.TController;
