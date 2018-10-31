@@ -27,6 +27,4 @@ type
 
 implementation
 
-
-
 end.
