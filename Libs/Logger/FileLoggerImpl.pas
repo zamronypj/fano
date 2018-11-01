@@ -45,7 +45,6 @@ type
     TFileLogger = class(TAbstractLogger, IDependency, ILogger)
     private
         outputFile : TextFile;
-        flushCounter : integer;
         isOpen : boolean;
         fileBuffer : TFileBuffer;
 
@@ -91,12 +90,6 @@ type
 
 implementation
 
-const
-
-    (*!--------------------------------------
-     * number of time before we flush data to file
-     *---------------------------------------*)
-    FLUSH_AFTER = 500;
 
     (*!--------------------------------------
      * try opening file
@@ -146,7 +139,6 @@ const
 
         //tryOpenFileOrExcept() will throw EInOutError when
         //failed. If we get here then, I/O operation is successful
-        flushCounter := 0;
         isOpen := true;
     end;
 
@@ -196,14 +188,6 @@ const
             writeln(outputFile, context.serialize());
             writeln(outputFile, '==== End context ====');
         end;
-
-        inc(flushCounter);
-        if (flushCounter > FLUSH_AFTER) then
-        begin
-            flush(outputFile);
-            flushCounter := 0;
-        end;
-
         result := self;
     end;
 
