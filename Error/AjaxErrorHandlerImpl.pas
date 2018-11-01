@@ -61,7 +61,7 @@ implementation
         len := ExceptFrameCount();
         for i := 0 to len - 1 do
         begin
-            result := result + '"' + BackTraceStrFunc(frames[i]) . '"';
+            result := result + '"' + BackTraceStrFunc(frames[i]) + '"';
             if (i < len - 1) then
             begin
                 result := result + ',' + LineEnding;
