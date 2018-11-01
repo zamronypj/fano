@@ -83,6 +83,9 @@ uses
     ViewParametersFactoryImpl,
     ControllerImpl,
     FileLoggerImpl,
+    FileLoggerFactoryImpl,
+    NullLoggerImpl,
+    NullLoggerFactoryImpl,
 
     {*! -------------------------------
         data type unit
@@ -93,7 +96,7 @@ uses
 type
     (*!-----------------------------------------------
      * Redeclare all classes in one unit to simplify
-     * including classes in application code
+     * using classes in application code
      *-------------------------------------------------
      * If you use this unit, then you do not to include
      * other unit otherwise you will get compilation error
@@ -159,7 +162,11 @@ type
     TViewParametersFactory = ViewParametersFactoryImpl.TViewParametersFactory;
     TTemplateFileView = TemplateFileViewImpl.TTemplateFileView;
     TJsonResponse = JsonResponseImpl.TJsonResponse;
+
     TFileLogger = FileLoggerImpl.TFileLogger;
+    TFileLoggerFactory = FileLoggerFactoryImpl.TFileLoggerFactory;
+    TNullLogger = NullLoggerImpl.TNullLogger;
+    TNullLoggerFactory = NullLoggerFactoryImpl.TNullLoggerFactory;
 
     TPlaceholder = PlaceholderTypes.TPlaceholder;
     TArrayOfPlaceholders = PlaceholderTypes.TArrayOfPlaceholders;
