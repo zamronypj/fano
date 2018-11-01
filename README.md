@@ -21,6 +21,10 @@ When you clone [Fano App](https://github.com/zamronypj/fano-app) repository, it 
 
 Follow the instruction [Fano App](https://github.com/zamronypj/fano-app) repository for installation.
 
+Other available sample application:
+
+- [Fano Api](https://github.com/zamronypj/fano-api), base REST API web application skeleton.
+
 ### From Scratch With git submodule
 
 If you decide to start from scratch,
@@ -51,3 +55,9 @@ Free Pascal, directory where to search Fano units.
 This approach, however, has disadvantage. When you update your Fano repository,
 all your applications that depends on Fano will be affected. If newer version of Fano repository introduces breaking changes, application that requires older version of Fano repository may fail.
 
+### From Fano Command Line tool
+
+[Fano Cli](https://github.com/zamronypj/fano-cli) is command line tool intended
+for scaffolding web application using Fano, creating controllers, views, etc . It is similar how Laravel Artisan tool works.
+
+However the tools is not ready yet.
