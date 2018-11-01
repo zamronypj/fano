@@ -6,7 +6,7 @@
  * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
  *}
 
-unit ErrorHandlerImpl;
+unit AjaxErrorHandlerImpl;
 
 interface
 
@@ -22,11 +22,12 @@ uses
 type
 
     (*!---------------------------------------------------
-     * default error handler for debugging
+     * default error handler for debugging that returns
+     * error response as JSON
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *---------------------------------------------------*)
-    TErrorHandler = class(TBaseErrorHandler, IErrorHandler, IDependency)
+    TAjaxErrorHandler = class(TBaseErrorHandler, IErrorHandler, IDependency)
     private
         function getStackTrace(const e: Exception) : string;
     public
@@ -39,39 +40,46 @@ type
 
 implementation
 
-    function TErrorHandler.getStackTrace(const e : Exception) : string;
+    function TAjaxErrorHandler.getStackTrace(const e : Exception) : string;
     var
-        i: integer;
+        i, len: integer;
         frames: PPointer;
     begin
-        result := '<!DOCTYPE html><html><head>'+
-                  '<title>Program exception</title></head><body>' +
-                  '<h2>Program exception</h2>';
+        result := '{';
         if (e <> nil) then
         begin
             result := result +
-                '<div>Exception class : <strong>' + e.className + '</strong></div>' + LineEnding  +
-                '<div>Message : <strong>' + e.message + '</strong></div>'+ LineEnding;
+                '"exception" : "' + e.className + '",' + LineEnding  +
+                '"message" : "' + e.message + '",' + LineEnding;
         end;
 
-        result := result + '<div>Stacktrace:</div>' + LineEnding +
-            '<pre>' + LineEnding + BackTraceStrFunc(ExceptAddr) + LineEnding;
+        result := result + '"stacktrace": {' +
+            '"exception_address" : "' + trim(BackTraceStrFunc(ExceptAddr)) + '",' + LineEnding +
+            '"traces" : [';
 
         frames := ExceptFrames;
-        for i := 0 to ExceptFrameCount - 1 do
+        len := ExceptFrameCount();
+        for i := 0 to len - 1 do
         begin
-            result := result + BackTraceStrFunc(frames[i]) + LineEnding;
+            result := result + BackTraceStrFunc(frames[i]);
+            if (i < len - 1) then
+            begin
+                result := result + ',' + LineEnding;
+            end else
+            begin
+                result := result + LineEnding;
+            end;
         end;
-        result := result + '</pre></body></html>';
+        result := result + ']' + LineEnding + '}' + LineEnding + '}';
     end;
 
-    function TErrorHandler.handleError(
+    function TAjaxErrorHandler.handleError(
         const exc : Exception;
         const status : integer = 500;
         const msg : string  = 'Internal Server Error'
     ) : IErrorHandler;
     begin
-        writeln('Content-Type: text/html');
+        writeln('Content-Type: application/json');
         writeln('Status: ', intToStr(status), ' ', msg);
         writeln();
         writeln(getStackTrace(exc));

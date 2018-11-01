@@ -6,12 +6,11 @@
  * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
  *}
 
-unit ErrorHandlerIntf;
+unit EInvalidDispatcherImpl;
 
 interface
 
 {$MODE OBJFPC}
-{$H+}
 
 uses
 
@@ -20,19 +19,14 @@ uses
 type
 
     (*!------------------------------------------------
-     * interface for any class having capability to handle
-     * exception
+     * Exception that is raised when application is
+     * given an invalid dispatcher instance.
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    IErrorHandler = interface
-        ['{2D6BF281-BBF9-41A0-BE5D-33E84E39B1C6}']
-        function handleError(
-            const exc : Exception;
-            const status : integer = 500;
-            const msg : string  = 'Internal Server Error'
-        ) : IErrorHandler;
+    EInvalidDispatcher = class(Exception)
     end;
 
 implementation
+
 end.

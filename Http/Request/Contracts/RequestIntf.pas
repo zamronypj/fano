@@ -78,6 +78,13 @@ type
          * @return array of parsed body params
          *------------------------------------------------*)
         function getParsedBodyParams() : IHashList;
+
+        (*!------------------------------------------------
+         * test if current request is coming from AJAX request
+         *-------------------------------------------------
+         * @return true if ajax request false otherwise
+         *------------------------------------------------*)
+        function isXhr() : boolean;
     end;
 
 implementation
