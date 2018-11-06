@@ -34,6 +34,8 @@ type
         cookieParams : IHashList;
         bodyParams : IHashList;
 
+        function getContentLength(const env : ICGIEnvironment) : integer;
+
         procedure clearParams(const params : IHashList);
 
         procedure initParamsFromString(
@@ -154,8 +156,13 @@ implementation
 
 uses
 
-    SysUtils,
-    UrlHelpersImpl;
+    sysutils,
+    UrlHelpersImpl,
+    EInvalidRequestImpl;
+
+resourcestring
+
+    sErrInvalidContentLength = 'Invalid content length';
 
     constructor TRequest.create(
         const env : ICGIEnvironment;
@@ -242,6 +249,18 @@ uses
         initParamsFromString(env.httpCookie(), cookies);
     end;
 
+    function TRequest.getContentLength(const env : ICGIEnvironment) : integer;
+    begin
+        try
+            result := strToInt(env.contentLength());
+        except
+            on e:EConvertError do
+            begin
+                raise EInvalidRequest.create(sErrInvalidContentLength);
+            end;
+        end;
+    end;
+
     procedure TRequest.initPostBodyParamsFromStdInput(
         const env : ICGIEnvironment;
         const body : IHashList
@@ -252,7 +271,7 @@ uses
         param : PKeyValue;
     begin
         //read STDIN
-        contentLength := strToInt(env.contentLength());
+        contentLength := getContentLength(env);
         ctr := 0;
         setLength(bodyStr, contentLength);
         while (ctr < contentLength) do

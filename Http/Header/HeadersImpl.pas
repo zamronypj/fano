@@ -46,6 +46,23 @@ type
         function setHeader(const key : shortstring; const value : string) : IHeaders;
 
         (*!------------------------------------
+         * get http header
+         *-------------------------------------
+         * @param key name  of http header to get
+         * @return header value
+         * @throws EHeaderNotSet
+         *-------------------------------------*)
+        function getHeader(const key : shortstring) : string;
+
+        (*!------------------------------------
+         * test if http header already been set
+         *-------------------------------------
+         * @param key name  of http header to test
+         * @return boolean true if header is set
+         *-------------------------------------*)
+        function has(const key : shortstring) : boolean;
+
+        (*!------------------------------------
          * output http headers to STDIN
          *-------------------------------------
          * @return header instance
@@ -59,7 +76,12 @@ implementation
 
 uses
 
-    HashListImpl;
+    HashListImpl,
+    EHeaderNotSetImpl;
+
+resourcestring
+
+    sErrHeaderNotSet = 'Header %s is not set';
 
 type
 
@@ -115,6 +137,35 @@ type
         hdr^.key := key;
         hdr^.value := value;
         result := self;
+    end;
+
+    (*!------------------------------------
+     * get http header
+     *-------------------------------------
+     * @param key name  of http header to get
+     * @return header value
+     * @throws EHeaderNotSet
+     *-------------------------------------*)
+    function THeaders.getHeader(const key : shortstring) : string;
+    var hdr : PHeaderRec;
+    begin
+        hdr := headerList.find(key);
+        if (hdr = nil) then
+        begin
+            raise EHeaderNotSet.createFmt(sErrHeaderNotSet, [key]);
+        end;
+        result := hdr^.value;
+    end;
+
+    (*!------------------------------------
+     * test if http header already been set
+     *-------------------------------------
+     * @param key name  of http header to test
+     * @return boolean true if header is set
+     *-------------------------------------*)
+    function THeaders.has(const key : shortstring) : boolean;
+    begin
+        result := (headerList.find(key) <> nil);
     end;
 
     (*!------------------------------------

@@ -35,6 +35,7 @@ uses
     RouteMatcherIntf,
     RouteCollectionIntf,
     RouteHandlerIntf,
+    MiddlewareIntf,
     MiddlewareCollectionAwareIntf,
     MiddlewareCollectionIntf,
     ConfigIntf,
@@ -122,6 +123,7 @@ type
     IWebApplication = AppIntf.IWebApplication;
     IRouteCollection = RouteCollectionIntf.IRouteCollection;
     IRouteHandler = RouteHandlerIntf.IRouteHandler;
+    IMiddleware = MiddlewareIntf.IMiddleware;
     IMiddlewareCollection = MiddlewareCollectionIntf.IMiddlewareCollection;
     IMiddlewareCollectionAware = MiddlewareCollectionAwareIntf.IMiddlewareCollectionAware;
     IAppConfiguration = ConfigIntf.IAppConfiguration;
@@ -152,9 +154,13 @@ type
     TRouteHandler = RouteHandlerImpl.TRouteHandler;
     TController = ControllerImpl.TController;
     TJsonFileConfigFactory = JsonFileConfigFactoryImpl.TJsonFileConfigFactory;
+    TMiddlewareCollectionAwareFactory = MiddlewareCollectionAwareFactoryImpl.TMiddlewareCollectionAwareFactory;
     TNullMiddlewareCollectionAwareFactory = NullMiddlewareCollectionAwareFactoryImpl.TNullMiddlewareCollectionAwareFactory;
     TSimpleRouteCollectionFactory = SimpleRouteCollectionFactoryImpl.TSimpleRouteCollectionFactory;
+
+    TDispatcherFactory = DispatcherFactoryImpl.TDispatcherFactory;
     TSimpleDispatcherFactory = SimpleDispatcherFactoryImpl.TSimpleDispatcherFactory;
+
     THeadersFactory = HeadersFactoryImpl.THeadersFactory;
     TOutputBufferFactory = OutputBufferFactoryImpl.TOutputBufferFactory;
     TSimpleTemplateParserFactory = SimpleTemplateParserFactoryImpl.TSimpleTemplateParserFactory;

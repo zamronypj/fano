@@ -24,6 +24,7 @@ Follow the instruction [Fano App](https://github.com/zamronypj/fano-app) reposit
 Other available sample application:
 
 - [Fano Api](https://github.com/zamronypj/fano-api), base REST API web application skeleton.
+- [Fano App Middleware](https://github.com/zamronypj/fano-app-middleware), base REST API web application skeleton with middleware support.
 
 ### From Scratch With git submodule
 
