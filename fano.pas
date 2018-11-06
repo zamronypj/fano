@@ -35,6 +35,7 @@ uses
     RouteMatcherIntf,
     RouteCollectionIntf,
     RouteHandlerIntf,
+    MiddlewareIntf,
     MiddlewareCollectionAwareIntf,
     MiddlewareCollectionIntf,
     ConfigIntf,
@@ -122,6 +123,7 @@ type
     IWebApplication = AppIntf.IWebApplication;
     IRouteCollection = RouteCollectionIntf.IRouteCollection;
     IRouteHandler = RouteHandlerIntf.IRouteHandler;
+    IMiddleware = MiddlewareIntf.IMiddleware;
     IMiddlewareCollection = MiddlewareCollectionIntf.IMiddlewareCollection;
     IMiddlewareCollectionAware = MiddlewareCollectionAwareIntf.IMiddlewareCollectionAware;
     IAppConfiguration = ConfigIntf.IAppConfiguration;
