@@ -154,9 +154,13 @@ type
     TRouteHandler = RouteHandlerImpl.TRouteHandler;
     TController = ControllerImpl.TController;
     TJsonFileConfigFactory = JsonFileConfigFactoryImpl.TJsonFileConfigFactory;
+    TMiddlewareCollectionAwareFactory = MiddlewareCollectionAwareFactoryImpl.TMiddlewareCollectionAwareFactory;
     TNullMiddlewareCollectionAwareFactory = NullMiddlewareCollectionAwareFactoryImpl.TNullMiddlewareCollectionAwareFactory;
     TSimpleRouteCollectionFactory = SimpleRouteCollectionFactoryImpl.TSimpleRouteCollectionFactory;
+
+    TDispatcherFactory = DispatcherFactoryImpl.TDispatcherFactory;
     TSimpleDispatcherFactory = SimpleDispatcherFactoryImpl.TSimpleDispatcherFactory;
+
     THeadersFactory = HeadersFactoryImpl.THeadersFactory;
     TOutputBufferFactory = OutputBufferFactoryImpl.TOutputBufferFactory;
     TSimpleTemplateParserFactory = SimpleTemplateParserFactoryImpl.TSimpleTemplateParserFactory;
