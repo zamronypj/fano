@@ -1,3 +1,11 @@
+{*!
+ * Fano Web Framework (https://fano.juhara.id)
+ *
+ * @link      https://github.com/zamronypj/fano
+ * @copyright Copyright (c) 2018 Zamrony P. Juhara
+ * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
+ *}
+
 unit SimpleDispatcherFactoryImpl;
 
 interface
@@ -13,8 +21,9 @@ uses
 type
 
     (*!--------------------------------------------------
-     * interface for any class having capability to create
-     * dispatcher instance
+     * factory class for TSimpleDispatcher,
+     * route dispatcher implementation which does not support
+     * middleware
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *---------------------------------------------------*)
@@ -22,9 +31,7 @@ type
     private
         routeMatcher : IRouteMatcher;
     public
-        constructor create (
-            const routeMatcherInst : IRouteMatcher
-        );
+        constructor create (const routeMatcherInst : IRouteMatcher);
         destructor destroy(); override;
         function build(const container : IDependencyContainer) : IDependency; override;
     end;

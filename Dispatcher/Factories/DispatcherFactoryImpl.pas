@@ -21,12 +21,12 @@ uses
 
 type
 
-    (*!----------------------------------------------------
-     * interface for any class having capability to create
-     * dispatcher instance
+    (*!--------------------------------------------------
+     * factory class for TDispatcher,
+     * route dispatcher implementation which support middleware
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
-     *-----------------------------------------------------*)
+     *---------------------------------------------------*)
     TDispatcherFactory = class(TFactory, IDependencyFactory)
     private
         appMiddlewares : IMiddlewareCollectionAware;
