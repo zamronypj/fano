@@ -46,6 +46,15 @@ type
         function setHeader(const key : shortstring; const value : string) : IHeaders;
 
         (*!------------------------------------
+         * get http header
+         *-------------------------------------
+         * @param key name  of http header to get
+         * @return header value
+         * @throws EHeaderNotSet
+         *-------------------------------------*)
+        function getHeader(const key : shortstring) : string;
+
+        (*!------------------------------------
          * test if http header already been set
          *-------------------------------------
          * @param key name  of http header to test
