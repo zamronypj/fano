@@ -14,17 +14,17 @@ because it depends on an application to bootstrap.
 
 ### From Sample Application
 
-You may clone [Fano App](https://github.com/zamronypj/fano-app) repository as
+You may clone [Fano App](https://github.com/fanoframework/fano-app) repository as
 base application skeleton.
 
-When you clone [Fano App](https://github.com/zamronypj/fano-app) repository, it automatically pulls this repository as its submodule which then ready to be compiled and run.
+When you clone [Fano App](https://github.com/fanoframework/fano-app) repository, it automatically pulls this repository as its submodule which then ready to be compiled and run.
 
-Follow the instruction [Fano App](https://github.com/zamronypj/fano-app) repository for installation.
+Follow the instruction [Fano App](https://github.com/fanoframework/fano-app) repository for installation.
 
 Other available sample application:
 
-- [Fano Api](https://github.com/zamronypj/fano-api), base REST API web application skeleton.
-- [Fano App Middleware](https://github.com/zamronypj/fano-app-middleware), base REST API web application skeleton with middleware support.
+- [Fano Api](https://github.com/fanoframework/fano-api), base REST API web application skeleton.
+- [Fano App Middleware](https://github.com/fanoframework/fano-app-middleware), base REST API web application skeleton with middleware support.
 
 ### From Scratch With git submodule
 
@@ -37,7 +37,7 @@ If you decide to start from scratch,
 
 If you do not use SSH, then you can use HTTPS
 
-    $ git submodule add https://github.com/zamronypj/fano.git
+    $ git submodule add https://github.com/fanoframework/fano.git
 
 This command will pull Fano Web Framework repository into `fano` directory inside
 your `my-cool-app` directory.
@@ -58,7 +58,7 @@ all your applications that depends on Fano will be affected. If newer version of
 
 ### From Fano Command Line tool
 
-[Fano Cli](https://github.com/zamronypj/fano-cli) is command line tool intended
+[Fano Cli](https://github.com/fanoframework/fano-cli) is command line tool intended
 for scaffolding web application using Fano, creating controllers, views, etc . It is similar how Laravel Artisan tool works.
 
 However the tools is not ready yet.

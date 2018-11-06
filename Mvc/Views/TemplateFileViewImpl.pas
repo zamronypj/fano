@@ -1,5 +1,5 @@
 {*!
- * Fano Web Framework (https://fano.juhara.id)
+ * Fano Web Framework (https://fanoframework.github.io)
  *
  * @link      https://github.com/zamronypj/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
