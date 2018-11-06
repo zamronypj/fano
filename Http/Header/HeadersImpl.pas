@@ -154,7 +154,7 @@ type
         begin
             raise EHeaderNotSet.createFmt(sErrHeaderNotSet, [key]);
         end;
-        result : = hdr^.value;
+        result := hdr^.value;
     end;
 
     (*!------------------------------------
