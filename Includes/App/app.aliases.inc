@@ -1,1 +1,0 @@
-IWebApplication = AppIntf.IWebApplication;
