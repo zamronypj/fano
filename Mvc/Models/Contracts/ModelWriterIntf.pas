@@ -33,7 +33,7 @@ type
          * @param data data being stored
          * @return current instance
          *-----------------------------------------------*)
-        function write(const params : IModelData; const data : IModelData) : IModel;
+        function write(const params : IModelData; const data : IModelData) : IModelWriter;
     end;
 
 implementation
