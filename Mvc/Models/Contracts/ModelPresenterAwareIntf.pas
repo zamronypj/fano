@@ -6,26 +6,32 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit ModelDataIntf;
+unit ModelPresenterIntf;
 
 interface
 
 {$MODE OBJFPC}
-{$H+}
+
+uses
+
+    ModelPresenterIntf;
 
 type
 
     (*!------------------------------------------------
-     * interface that store model data
+     * interface for class that has presenter
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    IModelData = interface
-        ['{DCC3EA21-DC74-46A2-BF54-54621B736E49}']
-        function readString(const key : string) : string;
-        function writeString(const key : string; const value : string) : IModelData;
-        function readInteger(const key : string) : integer;
-        function writeInteger(const key : string; const value : integer) : IModelData;
+    IModelPresenterAware = interface
+        ['{DA04DD04-101E-4AAC-AAD7-9E7EB0A88730}']
+
+        (*!----------------------------------------------
+         * get presenter
+         *-----------------------------------------------
+         * @return model presenter
+         *-----------------------------------------------*)
+        function presenter() : IModelPresenter;
     end;
 
 implementation

@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit ModelIntf;
+unit ModelReaderIntf;
 
 interface
 
@@ -19,17 +19,13 @@ uses
 type
 
     (*!------------------------------------------------
-     * interface for model
+     * interface for model that can retrieve data
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    IModel = interface
-        ['{A8601E0D-0D5F-4580-BAED-55C598AEBDEF}']
-        function get(const params : IModelData) : IModelData;
-        function save(
-            const params : IModelData;
-            const data : IModelData;
-        ) : IModel;
+    IModelReader = interface
+        ['{8066B3EE-A1F6-4971-8545-1BC741333986}']
+        function read(const params : IModelData) : IModelData;
     end;
 
 implementation

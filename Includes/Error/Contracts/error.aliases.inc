@@ -1,0 +1,1 @@
+IErrorHandler = ErrorHandlerIntf.IErrorHandler;
