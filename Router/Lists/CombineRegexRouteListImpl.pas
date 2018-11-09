@@ -389,7 +389,6 @@ const
             result := result + '^' + keyOfIndex(indx) + '$|';
         end;
         result := result + '^' + keyOfIndex(totalRoutes-1) + '$';
-        writeln(result);
     end;
 
     (*------------------------------------------------
