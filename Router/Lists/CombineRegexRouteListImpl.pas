@@ -373,19 +373,17 @@ const
      *
      * This is done so we can match all routes using only one
      * regex matching call.
+     *--------------------------------------------------
+     * TODO: combined regex pattern need only to be built one time
+     * TODO: once all routes is defined. We can save few loops
      *---------------------------------------------------*)
     function TCombineRegexRouteList.combineRegexRoutes() : string;
     var indx, totalRoutes : integer;
     begin
-        //TODO: combined regex pattern need only to be built one time
-        //TODO: once all routes is defined. We can save few loops
+        //if we get here it is safe to assume that
+        //totalRoutes > 0
         result := '';
         totalRoutes := count();
-        if (totalRoutes = 0) then
-        begin
-            exit;
-        end;
-
         for indx := 0 to totalRoutes-2 do
         begin
             result := result + '^(' + keyOfIndex(indx) + ')$|';
