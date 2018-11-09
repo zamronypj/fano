@@ -22,6 +22,8 @@ type
      * interface for any class that can set route handler
      * for various http verb
      *
+     * This interface will be deprecated. You should use IRouter
+     *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
     IRouteCollection = interface(IRouter)
