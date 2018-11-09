@@ -249,28 +249,40 @@ const
     ) : TArrayOfPlaceholders;
     var i, totalPlaceHolders : longint;
     begin
-        totalPlaceHolders := length(placeholders);
-
         (*----------------------------
           if request uri is
           /name/juhara/nice/edback
 
+          and following routes pattern
+          (0) /article/([^/]+)/([^/]+)
+          (1) /nice-articles/([^/]+)/([^/]+)
+          (2) /name/([^/]+)/([^/]+)/edback
+
           matches will contain following data:
 
-          length(matches.matches) == 3
+          length(placeholders) == 2
           matches.matched = true
           matches.matches[0][0] = '/name/juhara/nice/edback'
+          matches.matches[0][1] = ''
+          matches.matches[0][2] = ''
+          matches.matches[0][3] = ''
+          matches.matches[0][4] = ''
+          matches.matches[0][5] = ''
+          matches.matches[0][6] = ''
+          matches.matches[0][7] = '/name/juhara/nice/edback'
+          matches.matches[0][8] = 'juhara'
+          matches.matches[0][9] = 'nice'
 
-          matches.matches[0][1] = 'juhara'
-
-          matches.matches[0][2] = 'nice'
+          matchIndex = 7
 
           So to extract value names, we
-          only need to extract from
+          need to extract from
 
-          matches.matches[0][n]
-          where n=1..length(matches.matches)-1
+          matches.matches[0][matchIndex + i + 1]
+          where i=0..length(placeholders)-1
          ----------------------------*)
+
+        totalPlaceHolders := length(placeholders);
         for i:=0 to totalPlaceholders-1 do
         begin
             //placeholders[i].phName already contain variable name
@@ -489,7 +501,7 @@ const
         //combined regex pattern not individual route pattern
         for indx:=1 to totalMatch-1 do
         begin
-            //our task is to find match that is not empty
+            //our task is to find first non empty
             if (length(matchResult.matches[0][indx]) > 0) then
             begin
                 result := findRouteByMatchIndex(indx);
