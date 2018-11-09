@@ -15,6 +15,7 @@ interface
 uses
     contnrs,
     RouteHandlerIntf,
+    RouterIntf,
     RouteCollectionIntf,
     RouteMatcherIntf,
     RouteListIntf,
@@ -28,7 +29,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      * -----------------------------------------------*)
-    TRouteCollection = class(TInterfacedObject, IDependency, IRouteCollection, IRouteMatcher)
+    TRouteCollection = class(TInterfacedObject, IDependency, IRouter, IRouteCollection, IRouteMatcher)
     private
         routeList : IRouteList;
 
