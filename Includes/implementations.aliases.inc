@@ -25,5 +25,4 @@
 {$INCLUDE Router/Implementations/router.aliases.inc}
 {$INCLUDE Http/Implementations/http.aliases.inc}
 {$INCLUDE Libs/Implementations/libs.aliases.inc}
-{$INCLUDE Mvc/Controllers/Implementations/controllers.aliases.inc}
 {$INCLUDE Mvc/Implementations/mvc.aliases.inc}
