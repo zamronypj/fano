@@ -367,9 +367,9 @@ const
      * We will combine all registered route patterns in list into one
      * string regex, in following format
      *
-     *  ^(/name/([^/]+)/([^/]+)/edback)$|
-     *  ^(/article/([^/]+)/([^/]+))$|
-     *  ^(/nice-articles/([^/]+)/([^/]+))$
+     *  ^/name/([^/]+)/([^/]+)/edback$|
+     *  ^/article/([^/]+)/([^/]+)$|
+     *  ^/nice-articles/([^/]+)/([^/]+)$
      *
      * This is done so we can match all routes using only one
      * regex matching call.
@@ -386,9 +386,10 @@ const
         totalRoutes := count();
         for indx := 0 to totalRoutes-2 do
         begin
-            result := result + '^(' + keyOfIndex(indx) + ')$|';
+            result := result + '^' + keyOfIndex(indx) + '$|';
         end;
-        result := result + '^(' + keyOfIndex(totalRoutes-1) + ')$';
+        result := result + '^' + keyOfIndex(totalRoutes-1) + '$';
+        writeln(result);
     end;
 
     (*------------------------------------------------
