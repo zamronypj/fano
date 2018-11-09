@@ -14,45 +14,16 @@
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
  *-----------------------------------------------*)
 
-TDependencyContainer = DependencyContainerImpl.TDependencyContainer;
-TDependencyList = DependencyListImpl.TDependencyList;
-TFactory = FactoryImpl.TFactory;
-EDependencyNotFound = EDependencyNotFoundImpl.EDependencyNotFound;
-EInvalidFactory = EInvalidFactoryImpl.EInvalidFactory;
-
-EInvalidDispatcher = EInvalidDispatcherImpl.EInvalidDispatcher;
-EMethodNotAllowed = EMethodNotAllowedImpl.EMethodNotAllowed;
-ERouteHandlerNotFound = ERouteHandlerNotFoundImpl.ERouteHandlerNotFound;
-
-TCGIEnvironment = EnvironmentImpl.TCGIEnvironment;
-TErrorHandler = ErrorHandlerImpl.TErrorHandler;
-TAjaxErrorHandler = AjaxErrorHandlerImpl.TAjaxErrorHandler;
-TFanoWebApplication = AppImpl.TFanoWebApplication;
-TRouteHandler = RouteHandlerImpl.TRouteHandler;
-TController = ControllerImpl.TController;
-TJsonFileConfigFactory = JsonFileConfigFactoryImpl.TJsonFileConfigFactory;
-TMiddlewareCollectionAwareFactory = MiddlewareCollectionAwareFactoryImpl.TMiddlewareCollectionAwareFactory;
-TNullMiddlewareCollectionAwareFactory = NullMiddlewareCollectionAwareFactoryImpl.TNullMiddlewareCollectionAwareFactory;
-TSimpleRouteCollectionFactory = SimpleRouteCollectionFactoryImpl.TSimpleRouteCollectionFactory;
-TCombineRouteCollectionFactory = CombineRouteCollectionFactoryImpl.TCombineRouteCollectionFactory;
-
-TDispatcherFactory = DispatcherFactoryImpl.TDispatcherFactory;
-TSimpleDispatcherFactory = SimpleDispatcherFactoryImpl.TSimpleDispatcherFactory;
-
-THeadersFactory = HeadersFactoryImpl.THeadersFactory;
-TOutputBufferFactory = OutputBufferFactoryImpl.TOutputBufferFactory;
-TSimpleTemplateParserFactory = SimpleTemplateParserFactoryImpl.TSimpleTemplateParserFactory;
-TTemplateParserFactory = TemplateParserFactoryImpl.TTemplateParserFactory;
-TViewParametersFactory = ViewParametersFactoryImpl.TViewParametersFactory;
-TTemplateFileView = TemplateFileViewImpl.TTemplateFileView;
-TJsonResponse = JsonResponseImpl.TJsonResponse;
-
-TFileLogger = FileLoggerImpl.TFileLogger;
-TFileLoggerFactory = FileLoggerFactoryImpl.TFileLoggerFactory;
-TNullLogger = NullLoggerImpl.TNullLogger;
-TNullLoggerFactory = NullLoggerFactoryImpl.TNullLoggerFactory;
-
-TPlaceholder = PlaceholderTypes.TPlaceholder;
-TArrayOfPlaceholders = PlaceholderTypes.TArrayOfPlaceholders;
-TKeyValue = KeyValueTypes.TKeyValue;
-TArrayOfKeyValue = KeyValueTypes.TArrayOfKeyValue;
+{$INCLUDE Core/Implementations/core.aliases.inc}
+{$INCLUDE DI/Implementations/di.aliases.inc}
+{$INCLUDE Environment/Implementations/environment.aliases.inc}
+{$INCLUDE Error/Implementations/error.aliases.inc}
+{$INCLUDE App/Implementations/app.aliases.inc}
+{$INCLUDE Config/Implementations/config.aliases.inc}
+{$INCLUDE Dispatcher/Implementations/dispatcher.aliases.inc}
+{$INCLUDE Middleware/Implementations/middleware.aliases.inc}
+{$INCLUDE Router/Implementations/router.aliases.inc}
+{$INCLUDE Http/Implementations/http.aliases.inc}
+{$INCLUDE Libs/Implementations/libs.aliases.inc}
+{$INCLUDE Mvc/Controllers/Implementations/controllers.aliases.inc}
+{$INCLUDE Mvc/Implementations/mvc.aliases.inc}

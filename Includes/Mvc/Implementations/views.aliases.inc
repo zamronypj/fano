@@ -1,0 +1,4 @@
+TSimpleTemplateParserFactory = SimpleTemplateParserFactoryImpl.TSimpleTemplateParserFactory;
+TTemplateParserFactory = TemplateParserFactoryImpl.TTemplateParserFactory;
+TViewParametersFactory = ViewParametersFactoryImpl.TViewParametersFactory;
+TTemplateFileView = TemplateFileViewImpl.TTemplateFileView;

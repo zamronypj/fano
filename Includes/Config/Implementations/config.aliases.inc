@@ -1,0 +1,1 @@
+TJsonFileConfigFactory = JsonFileConfigFactoryImpl.TJsonFileConfigFactory;

@@ -25,5 +25,4 @@
 {$INCLUDE Middleware/Contracts/middleware.aliases.inc}
 {$INCLUDE Http/Contracts/http.aliases.inc}
 {$INCLUDE Libs/Contracts/libs.aliases.inc}
-{$INCLUDE Mvc/Views/Contracts/views.aliases.inc}
-{$INCLUDE Mvc/Models/Contracts/models.aliases.inc}
+{$INCLUDE Mvc/Contracts/mvc.aliases.inc}
