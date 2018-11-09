@@ -17,8 +17,7 @@ uses
     AppIntf,
     DispatcherIntf,
     EnvironmentIntf,
-    ErrorHandlerIntf,
-    RouteCollectionIntf;
+    ErrorHandlerIntf;
 
 type
 
