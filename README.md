@@ -59,6 +59,6 @@ all your applications that depends on Fano will be affected. If newer version of
 ### From Fano Command Line tool
 
 [Fano Cli](https://github.com/fanoframework/fano-cli) is command line tool intended
-for scaffolding web application using Fano, creating controllers, views, etc . It is similar how Laravel Artisan tool works.
+for [scaffolding web application](https://fanoframework.github.io/scaffolding-with-fano-cli/) using Fano, creating controllers, views, etc . It is similar how Laravel Artisan tool works.
 
 However the tools is not ready yet.
