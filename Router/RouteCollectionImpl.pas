@@ -13,7 +13,7 @@ interface
 {$MODE OBJFPC}
 
 uses
-    RouterCollectionIntf,
+    RouteCollectionIntf,
     RouterImpl;
 
 type
