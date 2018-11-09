@@ -386,9 +386,9 @@ const
         totalRoutes := count();
         for indx := 0 to totalRoutes-2 do
         begin
-            result := result + '^' + keyOfIndex(indx) + '$|';
+            result := result + '^(' + keyOfIndex(indx) + ')$|';
         end;
-        result := result + '^' + keyOfIndex(totalRoutes-1) + '$';
+        result := result + '^(' + keyOfIndex(totalRoutes-1) + ')$';
     end;
 
     (*------------------------------------------------
