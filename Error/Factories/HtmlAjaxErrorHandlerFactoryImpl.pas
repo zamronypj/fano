@@ -50,7 +50,8 @@ implementation
 uses
 
     ErrorHandlerImpl,
-    AjaxErrorHandlerImpl;
+    AjaxErrorHandlerImpl,
+    HtmlAjaxErrorHandlerImpl;
 
     (*!---------------------------------------------------
      * constructor
