@@ -11,7 +11,6 @@ unit NullErrorHandlerFactoryImpl;
 interface
 
 {$MODE OBJFPC}
-{$H+}
 
 uses
     DependencyIntf,

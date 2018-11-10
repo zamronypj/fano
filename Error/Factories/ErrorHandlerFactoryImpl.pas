@@ -11,7 +11,6 @@ unit ErrorHandlerFactoryImpl;
 interface
 
 {$MODE OBJFPC}
-{$H+}
 
 uses
 

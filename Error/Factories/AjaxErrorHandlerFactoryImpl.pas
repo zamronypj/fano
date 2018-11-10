@@ -5,35 +5,50 @@
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
-unit FactoryImpl;
+
+unit AjaxErrorHandlerFactoryImpl;
 
 interface
 
 {$MODE OBJFPC}
 
 uses
+
     DependencyIntf,
-    DependencyContainerIntf;
+    DependencyContainerIntf,
+    FactoryImpl;
 
 type
 
     (*!------------------------------------------------
-     * base class for any class having capability to create
-     * other object
+     * factory class for TAjaxErrorHandler
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TFactory = class(TInterfacedObject, IDependencyFactory)
+    TAjaxErrorHandlerFactory = class(TFactory, IDependencyFactory)
     public
-
         (*!---------------------------------------------------
          * build class instance
          *----------------------------------------------------
          * @param container dependency container instance
          *---------------------------------------------------*)
-        function build(const container : IDependencyContainer) : IDependency; virtual; abstract;
+        function build(const container : IDependencyContainer) : IDependency; override;
     end;
 
 implementation
+
+uses
+
+    AjaxErrorHandlerImpl;
+
+    (*!---------------------------------------------------
+     * build TAjaxErrorHandler class instance
+     *----------------------------------------------------
+     * @param container dependency container instance
+     *---------------------------------------------------*)
+    function TAjaxErrorHandlerFactory.build(const container : IDependencyContainer) : IDependency;
+    begin
+        result := TAjaxErrorHandler.create();
+    end;
 
 end.

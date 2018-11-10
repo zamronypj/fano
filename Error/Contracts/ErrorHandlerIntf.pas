@@ -15,7 +15,7 @@ interface
 
 uses
 
-    sysutils;
+    SysUtils;
 
 type
 
@@ -27,6 +27,14 @@ type
      *-------------------------------------------------*)
     IErrorHandler = interface
         ['{2D6BF281-BBF9-41A0-BE5D-33E84E39B1C6}']
+
+        (*!---------------------------------------------------
+         * handle exception
+         *----------------------------------------------------
+         * @param exc exception that is to be handled
+         * @param status HTTP error status, default is HTTP error 500
+         * @param msg HTTP error message
+         *---------------------------------------------------*)
         function handleError(
             const exc : Exception;
             const status : integer = 500;

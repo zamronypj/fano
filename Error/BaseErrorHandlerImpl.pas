@@ -14,6 +14,7 @@ interface
 {$H+}
 
 uses
+
     sysutils,
     DependencyIntf,
     ErrorHandlerIntf;
@@ -28,6 +29,13 @@ type
      *---------------------------------------------------*)
     TBaseErrorHandler = class(TInterfacedObject, IErrorHandler, IDependency)
     public
+        (*!---------------------------------------------------
+         * handle exception
+         *----------------------------------------------------
+         * @param exc exception that is to be handled
+         * @param status HTTP error status, default is HTTP error 500
+         * @param msg HTTP error message
+         *---------------------------------------------------*)
         function handleError(
             const exc : Exception;
             const status : integer = 500;

@@ -15,7 +15,6 @@ interface
 
 uses
     sysutils,
-    DependencyIntf,
     ErrorHandlerIntf,
     BaseErrorHandlerImpl;
 
@@ -26,7 +25,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *---------------------------------------------------*)
-    TErrorHandler = class(TBaseErrorHandler, IErrorHandler, IDependency)
+    TErrorHandler = class(TBaseErrorHandler)
     private
         function getStackTrace(const e: Exception) : string;
     public
