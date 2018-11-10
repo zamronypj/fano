@@ -52,6 +52,16 @@ uses
     TemplateErrorHandlerImpl;
 
     (*!---------------------------------------------------
+     * constructor
+     *----------------------------------------------------
+     * @param tplFilename html template file to load
+     *---------------------------------------------------*)
+    constructor TTemplateErrorHandlerFactory.create(const tplFilename : string);
+    begin
+        templateFilename := tplFilename;
+    end;
+
+    (*!---------------------------------------------------
      * build TTemplateErrorHandler class instance
      *----------------------------------------------------
      * @param container dependency container instance
