@@ -9,7 +9,7 @@ Pascal web application framework
 
 ## Installation
 
-Fano is standalone library and basically is not very useful on its own
+Fano is standalone library, and basically, is not very useful on its own,
 because it depends on an application to bootstrap.
 
 ### From Sample Application
@@ -17,7 +17,8 @@ because it depends on an application to bootstrap.
 You may clone [Fano App](https://github.com/fanoframework/fano-app) repository as
 base application skeleton.
 
-When you clone [Fano App](https://github.com/fanoframework/fano-app) repository, it automatically pulls this repository as its submodule which then ready to be compiled and run.
+When you clone [Fano App](https://github.com/fanoframework/fano-app) repository,
+it pulls this repository as its submodule automatically. After that, it is ready to be compiled and run.
 
 Follow the instruction [Fano App](https://github.com/fanoframework/fano-app) repository for installation.
 
@@ -26,14 +27,23 @@ Other available sample application:
 - [Fano Api](https://github.com/fanoframework/fano-api), base REST API web application skeleton.
 - [Fano App Middleware](https://github.com/fanoframework/fano-app-middleware), base REST API web application skeleton with middleware support.
 
-### From Scratch With git submodule
+### Install from Fano Command Line tool
+
+[Fano Cli](https://github.com/fanoframework/fano-cli) is command line tool intended
+for [scaffolding web application](https://fanoframework.github.io/scaffolding-with-fano-cli/) using Fano, creating controllers, views, etc . It is similar how Laravel Artisan tool works.
+
+    $ fanocli --create-project=my-cool-app
+
+While you can create project structure and initialize Fano repository, the tools is not ready yet.
+
+### Install from scratch with Git submodule
 
 If you decide to start from scratch,
 
     $ mkdir my-cool-app
     $ cd my-cool-app
     $ git init
-    $ git submodule add git@github.com:zamronypj/fano.git
+    $ git submodule add git@github.com:fanoframework/fano.git
 
 If you do not use SSH, then you can use HTTPS
 
@@ -42,7 +52,7 @@ If you do not use SSH, then you can use HTTPS
 This command will pull Fano Web Framework repository into `fano` directory inside
 your `my-cool-app` directory.
 
-### From Scratch Without git submodule
+### Install from scratch without Git submodule
 
 Using `git submodule` requires you to have copy of Fano respository locked to specific commit in your
 application project directory structure. If you have multiple applications that uses Fano, each of them will have their own copy of Fano respository that may locked to different commit version. Updating Fano repository in one application
@@ -55,10 +65,3 @@ Free Pascal, directory where to search Fano units.
 
 This approach, however, has disadvantage. When you update your Fano repository,
 all your applications that depends on Fano will be affected. If newer version of Fano repository introduces breaking changes, application that requires older version of Fano repository may fail.
-
-### From Fano Command Line tool
-
-[Fano Cli](https://github.com/fanoframework/fano-cli) is command line tool intended
-for [scaffolding web application](https://fanoframework.github.io/scaffolding-with-fano-cli/) using Fano, creating controllers, views, etc . It is similar how Laravel Artisan tool works.
-
-However the tools is not ready yet.
