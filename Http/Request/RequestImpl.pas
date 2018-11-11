@@ -17,6 +17,7 @@ uses
     EnvironmentIntf,
     RequestIntf,
     HashListIntf,
+    MultipartFormDataParserIntf,
     KeyValueTypes;
 
 type
@@ -33,8 +34,10 @@ type
         queryParams : IHashList;
         cookieParams : IHashList;
         bodyParams : IHashList;
+        multipartFormDataParser : IMultipartFormDataParser;
 
         function getContentLength(const env : ICGIEnvironment) : integer;
+        function readStdIn(const contentLength : integer) : string;
 
         procedure clearParams(const params : IHashList);
 
@@ -89,7 +92,8 @@ type
             const env : ICGIEnvironment;
             const query : IHashList;
             const cookies : IHashList;
-            const body : IHashList
+            const body : IHashList;
+            const multipartFormDataParserInst : IMultipartFormDataParser
         );
         destructor destroy(); override;
 
@@ -145,6 +149,23 @@ type
         function getParsedBodyParams() : IHashList;
 
         (*!------------------------------------------------
+         * get request uploaded file by name
+         *-------------------------------------------------
+         * @param string key name of key
+         * @return instance of IUploadedFile or nil if is not
+         *         exists
+         *------------------------------------------------*)
+        function getUploadedFile(const key: string) : IUploadedFile;
+
+        (*!------------------------------------------------
+         * get all uploaded files
+         *-------------------------------------------------
+         * @return IUploadedFileCollection or nil if no file
+         *         upload
+         *------------------------------------------------*)
+        function getUploadedFiles() : IUploadedFileCollection;
+
+        (*!------------------------------------------------
          * test if current request is comming from AJAX request
          *-------------------------------------------------
          * @return true if ajax request
@@ -168,13 +189,15 @@ resourcestring
         const env : ICGIEnvironment;
         const query : IHashList;
         const cookies : IHashList;
-        const body : IHashList
+        const body : IHashList;
+        const multipartFormDataParserInst : IMultipartFormDataParser
     );
     begin
         webEnvironment := env;
         queryParams := query;
         cookieParams := cookies;
         bodyParams := body;
+        multipartFormDataParser := multipartFormDataParserInst;
         initParamsFromEnvironment(
             webEnvironment,
             queryParams,
@@ -194,6 +217,7 @@ resourcestring
         queryParams := nil;
         cookieParams := nil;
         bodyParams := nil;
+        multipartFormDataParser := nil;
     end;
 
     procedure TRequest.clearParams(const params : IHashList);
@@ -261,31 +285,41 @@ resourcestring
         end;
     end;
 
+    function TRequest.readStdIn(const contentLength : integer) : string;
+    var ctr : integer;
+        ch : char;
+    begin
+        //read STDIN
+        ctr := 0;
+        setLength(result, contentLength);
+        while (ctr < contentLength) do
+        begin
+            read(ch);
+            result[ctr+1] := ch;
+            inc(ctr);
+        end;
+    end;
+
     procedure TRequest.initPostBodyParamsFromStdInput(
         const env : ICGIEnvironment;
         const body : IHashList
     );
-    var contentLength, ctr : integer;
+    var contentLength : integer;
         contentType, bodyStr : string;
-        ch : char;
         param : PKeyValue;
     begin
-        //read STDIN
-        contentLength := getContentLength(env);
-        ctr := 0;
-        setLength(bodyStr, contentLength);
-        while (ctr < contentLength) do
-        begin
-            read(ch);
-            bodyStr[ctr+1] := ch;
-            inc(ctr);
-        end;
-
         contentType := env.contentType();
-        if ((contentType = 'application/x-www-form-urlencoded') or
-            (contentType = 'multipart/form-data')) then
+        if (contentType = 'application/x-www-form-urlencoded') then
         begin
+            //read STDIN
+            contentLength := getContentLength(env);
+            bodyStr := readStdIn(contentLength);
             initParamsFromString(bodyStr, body);
+        end
+        else if (contentType = 'multipart/form-data') then
+        begin
+            contentLength := getContentLength(env);
+            multipartFormDataParser.parse(body, files);
         end else
         begin
             //if POST but different contentType save it as it is
@@ -415,6 +449,28 @@ resourcestring
     function TRequest.getParsedBodyParams() : IHashList;
     begin
         result := bodyParams;
+    end;
+
+    (*!------------------------------------------------
+     * get request uploaded file by name
+     *-------------------------------------------------
+     * @param string key name of key
+     * @return instance of IUploadedFile or nil if is not
+     *         exists
+     *------------------------------------------------*)
+    function TRequest.getUploadedFile(const key: string) : IUploadedFile;
+    begin
+        result := uploadedFiles.find(key);
+    end;
+
+    (*!------------------------------------------------
+     * get all uploaded files
+     *-------------------------------------------------
+     * @return IUploadedFileCollection
+     *------------------------------------------------*)
+    function getUploadedFiles() : IUploadedFileCollection;
+    begin
+        result := uploadedFiles;
     end;
 
     (*!------------------------------------------------

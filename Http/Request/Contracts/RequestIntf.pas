@@ -15,7 +15,9 @@ interface
 
 uses
 
-    HashListIntf;
+    HashListIntf,
+    UploadedFileIntf,
+    UploadedFileCollectionIntf;
 
 type
 
@@ -78,6 +80,23 @@ type
          * @return array of parsed body params
          *------------------------------------------------*)
         function getParsedBodyParams() : IHashList;
+
+        (*!------------------------------------------------
+         * get request uploaded file by name
+         *-------------------------------------------------
+         * @param string key name of key
+         * @return instance of IUploadedFile or nil if is not
+         *         exists
+         *------------------------------------------------*)
+        function getUploadedFile(const key: string) : IUploadedFile;
+
+        (*!------------------------------------------------
+         * get all uploaded files
+         *-------------------------------------------------
+         * @return IUploadedFileCollection or nil if no file
+         *         upload
+         *------------------------------------------------*)
+        function getUploadedFiles() : IUploadedFileCollection;
 
         (*!------------------------------------------------
          * test if current request is coming from AJAX request

@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit UploadedFileIntf;
+unit UploadedFileImpl;
 
 interface
 
@@ -21,9 +21,9 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    IUploadedFile = interface
-        ['{FB845D92-7F41-4902-8C7A-F43EAEEA205D}']
-
+    TUploadedFile= class(TinterfacedObject, IUploadedFile)
+    private
+    public
 
         (*!------------------------------------------------
          * move uploaded file to specified
@@ -61,5 +61,51 @@ type
     end;
 
 implementation
+
+    (*!------------------------------------------------
+     * move uploaded file to specified
+     *-------------------------------------------------
+     * @param string target path
+     * @return current instance
+     * @throws EInvalidOperation
+     *------------------------------------------------
+     * Implementor must raise exception when moveTo()
+     * called multiple time
+     * Implementor must check for file permission
+     *------------------------------------------------*)
+    function moveTo(const targetPath : string) : IUploadedFile;
+    begin
+
+    end;
+
+    (*!------------------------------------------------
+     * get uploaded file size
+     *-------------------------------------------------
+     * @return size in bytes of uploaded file
+     *------------------------------------------------*)
+    function size() : int64;
+    begin
+
+    end;
+
+    (*!------------------------------------------------
+     * get client side filename
+     *-------------------------------------------------
+     * @return string original filename as uploaded by client
+     *------------------------------------------------*)
+    function getClientFilename() : string;
+    begin
+
+    end;
+
+    (*!------------------------------------------------
+     * get client side MIME type
+     *-------------------------------------------------
+     * @return string original MIME type as uploaded by client
+     *------------------------------------------------*)
+    function getClientMediaType() : string;
+    begin
+
+    end;
 
 end.
