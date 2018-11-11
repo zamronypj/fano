@@ -12,7 +12,7 @@ Pascal web application framework
 Fano is standalone library, and basically, is not very useful on its own,
 because it depends on an application to bootstrap.
 
-### From Sample Application
+### Install from sample application
 
 You may clone [Fano App](https://github.com/fanoframework/fano-app) repository as
 base application skeleton.
