@@ -14,15 +14,7 @@
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
  *-----------------------------------------------*)
 
-{$INCLUDE Core/Contracts/interfaces.inc}
-{$INCLUDE DI/Contracts/interfaces.inc}
-{$INCLUDE Dispatcher/Contracts/interfaces.inc}
-{$INCLUDE Environment/Contracts/interfaces.inc}
-{$INCLUDE Error/Contracts/interfaces.inc}
-{$INCLUDE App/Contracts/interfaces.inc}
-{$INCLUDE Http/Contracts/interfaces.inc}
-{$INCLUDE Router/Contracts/interfaces.inc}
-{$INCLUDE Middleware/Contracts/interfaces.inc}
-{$INCLUDE Config/Contracts/interfaces.inc}
-{$INCLUDE Libs/Contracts/interfaces.inc}
-{$INCLUDE Mvc/Contracts/interfaces.inc}
+CloneableIntf,
+RunnableIntf,
+SerializeableIntf,
+HashListIntf,
