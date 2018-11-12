@@ -34,7 +34,7 @@ type
     public
         constructor create(
             const hdrs : IHeaders;
-            const contentType : string;
+            const strContentType : string;
             const respBody : IResponseStream
         );
         destructor destroy(); override;
@@ -66,7 +66,7 @@ uses
 
 const
 
-    BUFFER_SIZE = 8 * 1204;
+    BUFFER_SIZE = 8 * 1024;
 
     constructor TBinaryResponse.create(
         const hdrs : IHeaders;
@@ -104,20 +104,23 @@ const
      *-------------------------------------*)
     procedure TBinaryResponse.writeToStdOutput(const respBody : IResponseStream);
     var numBytesRead: longint;
-        handleStream : THandleStream;
+        strStream : TStringStream;
         buff : array [0..BUFFER_SIZE-1] of byte;
     begin
-        handleStream := THandleStream.create(getFileHandle(Output));
+        strStream := TStringStream.create('');
         try
             respBody.seek(0);
             //binary stream maybe big in size, so read in loop
             //by using smaller buffer to avoid consuming too much resource
             repeat
+                //TODO: need to think about performance because it seems
+                //TODO: too many copy is happening here
                 numBytesRead := respBody.read(buff, BUFFER_SIZE);
-                handleStream.write(buff, numBytesRead);
+                strStream.write(buff, numBytesRead);
+                system.write(strStream.dataString);
             until (numBytesRead < BUFFER_SIZE);
         finally
-            handleStream.free();
+            strStream.free();
         end;
     end;
 

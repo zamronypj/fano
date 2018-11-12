@@ -14,4 +14,7 @@
  *-----------------------------------------------*)
 
 HeadersFactoryImpl,
+ResponseImpl,
 JsonResponseImpl,
+BinaryResponseImpl,
+ResponseStreamImpl,

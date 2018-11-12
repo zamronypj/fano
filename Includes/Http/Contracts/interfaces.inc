@@ -15,3 +15,4 @@
 HeadersIntf,
 RequestIntf,
 ResponseIntf,
+ResponseStreamIntf,
