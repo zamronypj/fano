@@ -30,7 +30,7 @@ type
     TResponseStream = class(TInterfacedObject, IResponseStream, IDependency)
     private
         stream : TStream;
-        isOwned : boolean
+        isOwned : boolean;
     public
         (*!------------------------------------
          * constructor
