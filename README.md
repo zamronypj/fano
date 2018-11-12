@@ -54,10 +54,7 @@ your `my-cool-app` directory.
 
 ### Install from scratch without Git submodule
 
-Using `git submodule` requires you to have copy of Fano respository locked to specific commit in your
-application project directory structure. If you have multiple applications that uses Fano, each of them will have their own copy of Fano respository that may locked to different commit version. Updating Fano repository in one application
-does not affect other applications. It is roughly similar to how Composer (PHP)
-or NPM (Node.js) works.
+Using `git submodule` requires you to have copy of Fano respository locked to specific commit in your application project directory structure. If you have multiple applications that uses Fano, each of them will have their own copy of Fano respository that may be locked to different commit version. Updating Fano repository in one application does not affect other applications. It is roughly similar to how Composer (PHP) or NPM (Node.js) works.
 
 If you do not want this code duplication, you may clone Fano repository as usual
 in a directory, then, in your each application project configuration, you tell
