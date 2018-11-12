@@ -66,7 +66,7 @@ uses
 
 const
 
-    BUFFER_SIZE = 8 * 1204;
+    BUFFER_SIZE = 8 * 1024;
 
     constructor TBinaryResponse.create(
         const hdrs : IHeaders;
