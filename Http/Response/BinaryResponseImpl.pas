@@ -34,7 +34,7 @@ type
     public
         constructor create(
             const hdrs : IHeaders;
-            const contentType : string;
+            const strContentType : string;
             const respBody : IResponseStream
         );
         destructor destroy(); override;
