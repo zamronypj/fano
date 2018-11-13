@@ -26,3 +26,4 @@
 {$INCLUDE Http/Contracts/http.aliases.inc}
 {$INCLUDE Libs/Contracts/libs.aliases.inc}
 {$INCLUDE Mvc/Contracts/mvc.aliases.inc}
+{$INCLUDE Security/Contracts/security.aliases.inc}

@@ -26,3 +26,4 @@
 {$INCLUDE Http/Implementations/http.aliases.inc}
 {$INCLUDE Libs/Implementations/libs.aliases.inc}
 {$INCLUDE Mvc/Implementations/mvc.aliases.inc}
+{$INCLUDE Security/Implementations/security.aliases.inc}

@@ -25,3 +25,4 @@
 {$INCLUDE Config/Implementations/implementations.inc}
 {$INCLUDE Middleware/Implementations/implementations.inc}
 {$INCLUDE Mvc/Implementations/implementations.inc}
+{$INCLUDE Security/Implementations/implementations.inc}

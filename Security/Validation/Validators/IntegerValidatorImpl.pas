@@ -22,7 +22,7 @@ type
 
     (*!------------------------------------------------
      * basic class having capability to
-     * validate alpha numeric input data
+     * validate integer data
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)

@@ -223,7 +223,7 @@ type
      * @param key name of field in GET, POST request input data
      * @return current validation rules
      *-------------------------------------------------*)
-    function addRule(const key : shortstring; const validator : IValidator) : IValidationRule;
+    function TValidation.addRule(const key : shortstring; const validator : IValidator) : IValidationRule;
     var valRec : PValidatorRec;
     begin
         if (validator = nil) then

@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit RegexValidatorImpl;
+unit MaxIntegerValidatorImpl;
 
 interface
 
@@ -15,7 +15,6 @@ interface
 
 uses
 
-    RegexIntf,
     ValidatorIntf,
     BaseValidatorImpl;
 
@@ -23,32 +22,18 @@ type
 
     (*!------------------------------------------------
      * basic class having capability to
-     * validate input data using regex matching
+     * validate if data does not less than a reference value
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TRegexValidator = class(TBaseValidator)
-    private
-        regex : IRegex;
-        regexPattern : string;
+    TMaxIntegerValidator = class(TBaseValidator)
     public
         (*!------------------------------------------------
          * constructor
          *-------------------------------------------------
-         * @param regexInst instance of IRegex
-         * @param pattern regex pattern to use for matching
-         * @param errMsgFormat message that is used as template
-         *                    for error message
-         *-------------------------------------------------
-         * errMsgFormat can use format that is support by
-         * SysUtils.Format() function
+         * @param maxValue maximum value allowed
          *-------------------------------------------------*)
-        constructor create(
-            const regexInst : IRegex;
-            const pattern : string;
-            const errMsgFormat : string
-        );
-        destructor destroy(); override;
+        constructor create(const maxValue : integer);
 
         (*!------------------------------------------------
          * Validate data
@@ -65,32 +50,20 @@ type
 
 implementation
 
+uses
+
+    KeyValueTypes;
+
+resourcestring
+
+    sErrFieldMustBeIntegerWithMaxValue = 'Field %s must be integer with maximum value of ';
+
     (*!------------------------------------------------
      * constructor
-     *-------------------------------------------------
-     * @param regexInst instance of IRegex
-     * @param pattern regex pattern to use for matching
-     * @param errMsgFormat message that is used as template
-     *                    for error message
-     *-------------------------------------------------
-     * errMsgFormat can use format that is support by
-     * SysUtils.Format() function
      *-------------------------------------------------*)
-    constructor TRegexValidator.create(
-        const regexInst : IRegex;
-        const pattern : string;
-        const errMsgFormat : string
-    );
+    constructor TMaxIntegerValidator.create(const maxValue : integer);
     begin
-        inherited create(errMsgFormat);
-        regex := regexInst;
-        regexPattern := pattern;
-    end;
-
-    destructor TRegexValidator.destroy();
-    begin
-        inherited destroy();
-        regex := nil;
+        inherited create(sErrFieldMustBeIntegerWithMaxValue + intToStr(maxValue));
     end;
 
     (*!------------------------------------------------
@@ -99,8 +72,28 @@ implementation
      * @param dataToValidate data to validate
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
-    function TRegexValidator.isValid(const dataToValidate : string) : boolean;
+    function TMaxIntegerValidator.isValid(
+        const key : shortstring;
+        const dataToValidate : IHashList
+    ) : boolean;
+    var val : PKeyValueType;
+        intValue : integer;
     begin
-        result := regex.match(regexPattern, dataToValidate).matched;
+        val := dataToValidate.find(key);
+        if (val = nil) then
+        begin
+            //if we get here it means there is no field with that name
+            //so assume that validation is success
+            result := true;
+        end;
+
+        try
+            intValue := val^.value.toInteger();
+            result := (intValue <= maxValue);
+        except
+            //if we get here, mostly because of EConvertError exception
+            //so assume it is not valid integer.
+            result := false;
+        end;
     end;
 end.
