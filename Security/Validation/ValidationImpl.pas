@@ -18,7 +18,7 @@ uses
     DependencyIntf,
     HashListIntf,
     RequestIntf,
-    ValidationIntf,
+    ValidatorIntf,
     RequestValidatorintf,
     ValidationRulesIntf,
     ValidationResultTypes;
