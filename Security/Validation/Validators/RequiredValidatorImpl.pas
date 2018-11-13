@@ -79,7 +79,7 @@ resourcestring
         const key : shortstring;
         const dataToValidate : IHashList
     ) : boolean;
-    var val : PKeyValueType;
+    var val : PKeyValue;
     begin
         val := dataToValidate.find(key);
         result := (val <> nil) and (length(val^.value) > 0);

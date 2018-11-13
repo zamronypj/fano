@@ -15,6 +15,7 @@ interface
 
 uses
 
+    RegexIntf,
     ValidatorIntf,
     RegexValidatorImpl;
 

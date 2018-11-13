@@ -21,7 +21,7 @@ EInvalidValidatorImpl,
 
 BaseValidatorImpl,
 AlphaNumValidatorImpl,
-AlphaNumValidatorImpl,
+AlphaNumSpaceValidatorImpl,
 CompositeValidatorImpl,
 IntegerValidatorImpl,
 MaxIntegerValidatorImpl,

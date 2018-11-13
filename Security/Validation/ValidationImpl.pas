@@ -16,9 +16,12 @@ interface
 uses
 
     DependencyIntf,
+    HashListIntf,
     RequestIntf,
+    ValidationIntf,
     RequestValidatorintf,
-    ValidationRulesIntf;
+    ValidationRulesIntf,
+    ValidationResultTypes;
 
 type
 
@@ -33,6 +36,9 @@ type
         validationResult : TValidationResult;
         validatorList : IHashList;
         procedure clearValidator();
+        function validateKeyValue(const inputData : IHashList) : TValidationResult;
+        function validateBody(const request : IRequest) : TValidationResult;
+        function validateQueryStr(const request : IRequest) : TValidationResult;
     public
 
         constructor create(const validators : IHashList);
@@ -68,7 +74,7 @@ type
          * @param key name of field in GET, POST request input data
          * @return current validation rules
          *-------------------------------------------------*)
-        function addRule(const key : shortstring; const validator : IValidator) : IValidationRule;
+        function addRule(const key : shortstring; const validator : IValidator) : IValidationRules;
     end;
 
 implementation
@@ -196,12 +202,12 @@ type
         ctr := 0;
         for i:=0 to lenBody-1 do
         begin
-            result.errorMessage[ctr] := valResBody.errorMessages[i];
+            result.errorMessages[ctr] := valResBody.errorMessages[i];
             inc(ctr);
         end;
         for i:=0 to lenQuery-1 do
         begin
-            result.errorMessage[ctr] := valResQuery.errorMessages[i];
+            result.errorMessages[ctr] := valResQuery.errorMessages[i];
             inc(ctr);
         end;
         validationResult := result;
@@ -223,7 +229,7 @@ type
      * @param key name of field in GET, POST request input data
      * @return current validation rules
      *-------------------------------------------------*)
-    function TValidation.addRule(const key : shortstring; const validator : IValidator) : IValidationRule;
+    function TValidation.addRule(const key : shortstring; const validator : IValidator) : IValidationRules;
     var valRec : PValidatorRec;
     begin
         if (validator = nil) then

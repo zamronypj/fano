@@ -15,6 +15,7 @@ interface
 
 uses
 
+    HashListIntf,
     ValidatorIntf,
     BaseValidatorImpl;
 
@@ -27,6 +28,8 @@ type
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
     TMaxIntegerValidator = class(TBaseValidator)
+    private
+        maximumValue : integer;
     public
         (*!------------------------------------------------
          * constructor
@@ -52,6 +55,7 @@ implementation
 
 uses
 
+    SysUtils,
     KeyValueTypes;
 
 resourcestring
@@ -64,6 +68,7 @@ resourcestring
     constructor TMaxIntegerValidator.create(const maxValue : integer);
     begin
         inherited create(sErrFieldMustBeIntegerWithMaxValue + intToStr(maxValue));
+        maximumValue := maxValue;
     end;
 
     (*!------------------------------------------------
@@ -76,7 +81,7 @@ resourcestring
         const key : shortstring;
         const dataToValidate : IHashList
     ) : boolean;
-    var val : PKeyValueType;
+    var val : PKeyValue;
         intValue : integer;
     begin
         val := dataToValidate.find(key);
@@ -85,11 +90,12 @@ resourcestring
             //if we get here it means there is no field with that name
             //so assume that validation is success
             result := true;
+            exit();
         end;
 
         try
-            intValue := val^.value.toInteger();
-            result := (intValue <= maxValue);
+            intValue := strToInt(val^.value);
+            result := (intValue <= maximumValue);
         except
             //if we get here, mostly because of EConvertError exception
             //so assume it is not valid integer.

@@ -14,7 +14,7 @@
  *-----------------------------------------------*)
 
 ICsrf = CsrfIntf.ICsrf;
-ISanitizer = Intf.ISanitizer;
+ISanitizer = SanitizerIntf.ISanitizer;
 IValidator = ValidatorIntf.IValidator;
 IValidatorCollection = ValidatorCollectionIntf.IValidatorCollection;
 IValidationRules = ValidationRulesIntf.IValidationRules;
