@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit AlphaNumValidatorImpl;
+unit RegexValidatorImpl;
 
 interface
 
@@ -15,6 +15,7 @@ interface
 
 uses
 
+    HashListIntf,
     RegexIntf,
     ValidatorIntf,
     BaseValidatorImpl;
@@ -65,6 +66,10 @@ type
 
 implementation
 
+uses
+
+    KeyValueTypes;
+
     (*!------------------------------------------------
      * constructor
      *-------------------------------------------------
@@ -96,11 +101,25 @@ implementation
     (*!------------------------------------------------
      * Validate data
      *-------------------------------------------------
+     * @param key name of the field
      * @param dataToValidate data to validate
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
-    function TRegexValidator.isValid(const dataToValidate : string) : boolean;
+    function TRegexValidator.isValid(
+        const key : shortstring;
+        const dataToValidate : IHashList
+    ) : boolean;
+    var val : PKeyValue;
     begin
-        result := regex.match(regexPattern, dataToValidate).matched;
+        val := dataToValidate.find(key);
+        if (val = nil) then
+        begin
+            //if we get here it means there is no field with that name
+            //so assume that validation is success
+            result := true;
+            exit();
+        end;
+
+        result := regex.match(regexPattern, val^.value).matched;
     end;
 end.

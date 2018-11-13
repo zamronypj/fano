@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit RequiredValidatorImpl;
+unit MaxIntegerValidatorImpl;
 
 interface
 
@@ -23,17 +23,20 @@ type
 
     (*!------------------------------------------------
      * basic class having capability to
-     * validate required input data, i.e, data that must
-     * be present and not empty
+     * validate if data does not less than a reference value
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TRequiredValidator = class(TBaseValidator)
+    TMaxIntegerValidator = class(TBaseValidator)
+    private
+        maximumValue : integer;
     public
         (*!------------------------------------------------
          * constructor
+         *-------------------------------------------------
+         * @param maxValue maximum value allowed
          *-------------------------------------------------*)
-        constructor create();
+        constructor create(const maxValue : integer);
 
         (*!------------------------------------------------
          * Validate data
@@ -52,37 +55,51 @@ implementation
 
 uses
 
+    SysUtils,
     KeyValueTypes;
 
 resourcestring
 
-    sErrFieldIsRequired = 'Field %s is required and not empty';
+    sErrFieldMustBeIntegerWithMaxValue = 'Field %s must be integer with maximum value of ';
 
     (*!------------------------------------------------
      * constructor
      *-------------------------------------------------*)
-    constructor TRequiredValidator.create();
+    constructor TMaxIntegerValidator.create(const maxValue : integer);
     begin
-        inherited create(sErrFieldIsRequired);
+        inherited create(sErrFieldMustBeIntegerWithMaxValue + intToStr(maxValue));
+        maximumValue := maxValue;
     end;
 
     (*!------------------------------------------------
      * Validate data
      *-------------------------------------------------
-     * @param key name of field
-     * @param dataToValidate input data
+     * @param dataToValidate data to validate
      * @return true if data is valid otherwise false
-     *-------------------------------------------------
-     * We assume dataToValidate <> nil
      *-------------------------------------------------*)
-    function TRequiredValidator.isValid(
+    function TMaxIntegerValidator.isValid(
         const key : shortstring;
         const dataToValidate : IHashList
     ) : boolean;
     var val : PKeyValue;
+        intValue : integer;
     begin
         val := dataToValidate.find(key);
-        result := (val <> nil) and (length(val^.value) > 0);
-    end;
+        if (val = nil) then
+        begin
+            //if we get here it means there is no field with that name
+            //so assume that validation is success
+            result := true;
+            exit();
+        end;
 
+        try
+            intValue := strToInt(val^.value);
+            result := (intValue <= maximumValue);
+        except
+            //if we get here, mostly because of EConvertError exception
+            //so assume it is not valid integer.
+            result := false;
+        end;
+    end;
 end.

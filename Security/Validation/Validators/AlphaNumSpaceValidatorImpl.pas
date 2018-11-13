@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit AlphaNumValidatorImpl;
+unit AlphaNumSpaceValidatorImpl;
 
 interface
 
@@ -15,6 +15,7 @@ interface
 
 uses
 
+    RegexIntf,
     ValidatorIntf,
     RegexValidatorImpl;
 

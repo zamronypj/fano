@@ -15,6 +15,7 @@ interface
 
 uses
 
+    HashListIntf,
     ValidatorIntf,
     BaseValidatorImpl;
 
@@ -22,7 +23,7 @@ type
 
     (*!------------------------------------------------
      * basic class having capability to
-     * validate alpha numeric input data
+     * validate integer data
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
@@ -50,6 +51,7 @@ implementation
 
 uses
 
+    SysUtils,
     KeyValueTypes;
 
 resourcestring
@@ -74,7 +76,8 @@ resourcestring
         const key : shortstring;
         const dataToValidate : IHashList
     ) : boolean;
-    var val : PKeyValueType;
+    var val : PKeyValue;
+        intValue : integer;
     begin
         val := dataToValidate.find(key);
         if (val = nil) then
@@ -82,10 +85,11 @@ resourcestring
             //if we get here it means there is no field with that name
             //so assume that validation is success
             result := true;
+            exit();
         end;
 
         try
-            val^.value.toInteger();
+            intvalue := strToInt(val^.value);
             result := true;
         except
             //if we get here, mostly because of EConvertError exception

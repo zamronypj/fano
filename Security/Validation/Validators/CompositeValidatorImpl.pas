@@ -122,6 +122,7 @@ implementation
     function TCompositeValidator.add(const validator : IValidator) : IValidatorCollection;
     begin
         validatorList.add(validator);
+        result := self;
     end;
 
     (*!------------------------------------------------
