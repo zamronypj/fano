@@ -46,5 +46,6 @@ implementation
         writeln('Status: ', intToStr(status), ' ', msg);
         writeln();
         writeln('');
+        result := self;
     end;
 end.
