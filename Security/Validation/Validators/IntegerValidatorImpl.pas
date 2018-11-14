@@ -77,7 +77,6 @@ resourcestring
         const dataToValidate : IHashList
     ) : boolean;
     var val : PKeyValue;
-        intValue : integer;
     begin
         val := dataToValidate.find(key);
         if (val = nil) then
@@ -89,7 +88,8 @@ resourcestring
         end;
 
         try
-            intvalue := strToInt(val^.value);
+            //try to convert string to integer
+            strToInt(val^.value);
             result := true;
         except
             //if we get here, mostly because of EConvertError exception
