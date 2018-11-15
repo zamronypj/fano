@@ -9,13 +9,12 @@ Web application framework for modern Pascal programming language.
 
 ## Installation
 
-Fano is standalone library, and basically, is not very useful on its own,
-because it depends on an application to bootstrap.
+Fano is standalone library, and basically, is not very useful on its own.
+It depends on an application to bootstrap.
 
 ### Install from sample application
 
-You may clone [Fano App](https://github.com/fanoframework/fano-app) repository as
-base application skeleton.
+You may clone [Fano App](https://github.com/fanoframework/fano-app) repository as base application skeleton.
 
 When you clone [Fano App](https://github.com/fanoframework/fano-app) repository,
 it pulls this repository as its submodule automatically. After that, it is ready to be compiled and run.
@@ -35,6 +34,7 @@ for [scaffolding web application](https://fanoframework.github.io/scaffolding-wi
     $ fanocli --create-project=my-cool-app
     $ cd my-cool-app
     $ fanocli --create-controller=Hello
+    $ ./build.sh
 
 While you can create project structure, initialize Fano repository and create controller, the tools is still in development.
 
@@ -47,8 +47,7 @@ If you decide to start from scratch,
     $ git init
     $ git submodule add https://github.com/fanoframework/fano.git
 
-This command will pull Fano Web Framework repository into `fano` directory inside
-your `my-cool-app` directory.
+This command will pull Fano Web Framework repository into `fano` directory inside your `my-cool-app` directory.
 
 ### Install from scratch without Git submodule
 
