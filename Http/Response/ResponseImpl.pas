@@ -70,6 +70,9 @@ type
 
 implementation
 
+uses
+    SysUtils;
+
     constructor TResponse.create(
         const env : ICGIEnvironment;
         const hdrs : IHeaders;
