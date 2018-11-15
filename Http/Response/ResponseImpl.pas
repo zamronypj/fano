@@ -31,7 +31,11 @@ type
         httpHeaders : IHeaders;
         bodyStream : IResponseStream;
     public
-        constructor create(const env : ICGIEnvironment; const hdrs : IHeaders);
+        constructor create(
+            const env : ICGIEnvironment;
+            const hdrs : IHeaders;
+            const body : IResponseStream
+        );
         destructor destroy(); override;
 
         (*!------------------------------------
@@ -60,12 +64,15 @@ type
 
 implementation
 
-    constructor TResponse.create(const env : ICGIEnvironment; const hdrs : IHeaders);
+    constructor TResponse.create(
+        const env : ICGIEnvironment;
+        const hdrs : IHeaders;
+        const body : IResponseStream
+    );
     begin
         webEnvironment := env;
         httpHeaders := hdrs;
-        //TODO: implement response body stream
-        bodyStream := nil;
+        bodyStream := body;
     end;
 
     destructor TResponse.destroy();
@@ -73,6 +80,7 @@ implementation
         inherited destroy();
         webEnvironment := nil;
         httpHeaders := nil;
+        bodyStream := nil
     end;
 
     (*!------------------------------------
@@ -94,7 +102,14 @@ implementation
     function TResponse.clone() : ICloneable;
     var clonedObj : IResponse;
     begin
-        clonedObj := TResponse.create(webEnvironment, httpHeaders.clone() as IHeaders);
+        clonedObj := TResponse.create(
+            webEnvironment,
+            httpHeaders.clone() as IHeaders,
+            //TODO : do we need to create new instance?
+            //response stream may contain big data
+            //so just pass the current stream (for now)
+            responseStream
+        );
         //TODO : copy any property
         result := clonedObj;
     end;
