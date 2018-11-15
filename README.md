@@ -36,7 +36,7 @@ for [scaffolding web application](https://fanoframework.github.io/scaffolding-wi
     $ cd my-cool-app
     $ fanocli --create-controller=Hello
 
-While you can create project structure and initialize Fano repository, create controller, the tools is still in development.
+While you can create project structure, initialize Fano repository and create controller, the tools is still in development.
 
 ### Install from scratch with Git submodule
 
