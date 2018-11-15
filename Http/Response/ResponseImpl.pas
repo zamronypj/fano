@@ -70,9 +70,6 @@ type
 
 implementation
 
-uses
-    SysUtils;
-
     constructor TResponse.create(
         const env : ICGIEnvironment;
         const hdrs : IHeaders;
@@ -111,16 +108,15 @@ uses
     procedure TResponse.writeToStdOutput(const respBody : IResponseStream);
     var numBytesRead: longint;
         buff : string;
-        handle : THandle;
     begin
-        handle := getFileHandle(Output);
         setLength(buff, BUFFER_SIZE);
         respBody.seek(0);
         //stream maybe big in size, so read in loop
         //by using smaller buffer to avoid consuming too much resource
         repeat
             numBytesRead := respBody.read(buff[1], BUFFER_SIZE);
-            blockWrite(handle, buff[1], numBytesRead);
+            setlength(buff, numBytesRead);
+            system.write(buff);
         until (numBytesRead < BUFFER_SIZE);
     end;
 
