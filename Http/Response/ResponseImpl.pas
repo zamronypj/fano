@@ -108,14 +108,16 @@ implementation
     procedure TResponse.writeToStdOutput(const respBody : IResponseStream);
     var numBytesRead: longint;
         buff : string;
+        handle : THandle;
     begin
+        handle := getFileHandle(Output);
         setLength(buff, BUFFER_SIZE);
         respBody.seek(0);
         //stream maybe big in size, so read in loop
         //by using smaller buffer to avoid consuming too much resource
         repeat
             numBytesRead := respBody.read(buff[1], BUFFER_SIZE);
-            system.write(buff);
+            blockWrite(handle, buff[1], numBytesRead);
         until (numBytesRead < BUFFER_SIZE);
     end;
 
