@@ -108,7 +108,7 @@ implementation
             //TODO : do we need to create new instance?
             //response stream may contain big data
             //so just pass the current stream (for now)
-            responseStream
+            bodyStream
         );
         //TODO : copy any property
         result := clonedObj;
