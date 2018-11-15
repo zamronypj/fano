@@ -74,15 +74,13 @@ uses
     end;
 
     function TBinaryResponse.clone() : ICloneable;
-    var clonedObj : IResponse;
     begin
-        clonedObj := TBinaryResponse.create(
-            httpHeaders.clone() as IHeaders,
+        result := TBinaryResponse.create(
+            headers().clone() as IHeaders,
             contentType,
             //not clone response body as they may be big in size
-            responseBody
+            body()
         );
-        result := clonedObj;
     end;
 
 end.
