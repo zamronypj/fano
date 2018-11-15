@@ -48,6 +48,14 @@ type
         function write(const buffer; const sizeToWrite : longint) : longint;
 
         (*!------------------------------------
+         * write string to stream
+         *-------------------------------------
+         * @param buffer string to write
+         * @return number of bytes actually written
+         *-------------------------------------*)
+        function write(const buffer : string) : longint;
+
+        (*!------------------------------------
          * get stream size
          *-------------------------------------
          * @return size of stream in bytes
