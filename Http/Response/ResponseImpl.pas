@@ -115,7 +115,13 @@ implementation
         //by using smaller buffer to avoid consuming too much resource
         repeat
             numBytesRead := respBody.read(buff[1], BUFFER_SIZE);
-            setlength(buff, numBytesRead);
+            if (numBytesRead < BUFFER_SIZE) then
+            begin
+                //setLength will allocate new memory
+                //which expensive in a loop, so only doing it
+                //when we are in end of buffer
+                setLength(buff, numBytesRead);
+            end;
             system.write(buff);
         until (numBytesRead < BUFFER_SIZE);
     end;
