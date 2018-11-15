@@ -30,7 +30,7 @@ Other available sample application:
 ### Install from Fano Command Line tool
 
 [Fano Cli](https://github.com/fanoframework/fano-cli) is command line tool intended
-for [scaffolding web application](https://fanoframework.github.io/scaffolding-with-fano-cli/) using Fano, creating controllers, views, etc . It is similar how Laravel Artisan tool works.
+for [scaffolding web application](https://fanoframework.github.io/scaffolding-with-fano-cli/) using Fano, creating controllers, views, etc . It is inspired by Laravel Artisan tool.
 
     $ fanocli --create-project=my-cool-app
     $ cd my-cool-app
