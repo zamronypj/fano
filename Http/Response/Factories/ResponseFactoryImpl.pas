@@ -42,7 +42,7 @@ uses
         result := TResponse.create(
             env,
             THeaders.create(THashList.create()),
-            TResponseStream.create(TStringStream.create())
+            TResponseStream.create(TStringStream.create(''))
         );
     end;
 end.
