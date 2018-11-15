@@ -11,6 +11,7 @@ unit ResponseImpl;
 interface
 
 {$MODE OBJFPC}
+{$H+}
 
 uses
     EnvironmentIntf,
@@ -18,6 +19,10 @@ uses
     HeadersIntf,
     ResponseStreamIntf,
     CloneableIntf;
+
+const
+
+    BUFFER_SIZE = 8 * 1024;
 
 type
     (*!------------------------------------------------
@@ -30,6 +35,7 @@ type
         webEnvironment : ICGIEnvironment;
         httpHeaders : IHeaders;
         bodyStream : IResponseStream;
+        procedure writeToStdOutput(const respBody : IResponseStream);
     public
         constructor create(
             const env : ICGIEnvironment;
@@ -93,9 +99,30 @@ implementation
         result := httpHeaders;
     end;
 
+    (*!------------------------------------
+     * read response body and output it to
+     * standard output
+     *-------------------------------------
+     * @param respBody response stream to output
+     *-------------------------------------*)
+    procedure TResponse.writeToStdOutput(const respBody : IResponseStream);
+    var numBytesRead: longint;
+        buff : string;
+    begin
+        setLength(buff, BUFFER_SIZE);
+        respBody.seek(0);
+        //stream maybe big in size, so read in loop
+        //by using smaller buffer to avoid consuming too much resource
+        repeat
+            numBytesRead := respBody.read(buff[1], BUFFER_SIZE);
+            system.write(buff);
+        until (numBytesRead < BUFFER_SIZE);
+    end;
+
     function TResponse.write() : IResponse;
     begin
         httpHeaders.writeHeaders();
+        writeToStdOutput(bodyStream);
         result := self;
     end;
 
