@@ -14,7 +14,8 @@ interface
 
 uses
 
-    ViewIntf;
+    SerializeableIntf,
+    ModelDataIntf;
 
 type
 
@@ -24,16 +25,10 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    IModelPresenter = interface
+    IModelPresenter = interface(ISerializable)
         ['{16CB66AA-A3D1-4F41-8A0D-86BBD4227071}']
 
-        (*!----------------------------------------------
-         * display model data to view
-         *-----------------------------------------------
-         * @param targetView view where to render data
-         * @return view instance
-         *-----------------------------------------------*)
-        function display(const targetView : IView) : IView;
+        procedure setData(const modelData : IModelData);
     end;
 
 implementation

@@ -25,7 +25,14 @@ type
      *-----------------------------------------------*)
     IModelReader = interface
         ['{8066B3EE-A1F6-4971-8545-1BC741333986}']
-        function read(const params : IModelData) : IModelData;
+
+        (*!----------------------------------------------
+         * read data from storage
+         *-----------------------------------------------
+         * @param params parameter for search/filtering
+         * @return model presenter
+         *-----------------------------------------------*)
+        function read(const params : IModelData = nil) : IModelData;
     end;
 
 implementation

@@ -26,6 +26,14 @@ type
      *-----------------------------------------------*)
     IView = interface(IResponse)
         ['{04F99A16-DDBC-403B-A099-8BB44BE3CCC5}']
+
+        (*!------------------------------------------------
+         * render view
+         *------------------------------------------------
+         * @param viewParams view parameters
+         * @param response response instance
+         * @return response
+         *-----------------------------------------------*)
         function render(
             const viewParams : IViewParameters;
             const response : IResponse
