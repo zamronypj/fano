@@ -11,13 +11,15 @@ unit ResponseImpl;
 interface
 
 {$MODE OBJFPC}
+{$H+}
 
 uses
     EnvironmentIntf,
     ResponseIntf,
     HeadersIntf,
     ResponseStreamIntf,
-    CloneableIntf;
+    CloneableIntf,
+    BaseResponseImpl;
 
 type
     (*!------------------------------------------------
@@ -25,87 +27,50 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TResponse = class(TInterfacedObject, IResponse, ICloneable)
+    TResponse = class(TBaseResponse)
     private
         webEnvironment : ICGIEnvironment;
-        httpHeaders : IHeaders;
-        bodyStream : IResponseStream;
     public
-        constructor create(const env : ICGIEnvironment; const hdrs : IHeaders);
+        constructor create(
+            const env : ICGIEnvironment;
+            const hdrs : IHeaders;
+            const bodyStrs : IResponseStream
+        );
         destructor destroy(); override;
 
-        (*!------------------------------------
-         * get http headers instance
-         *-------------------------------------
-         * @return header instance
-         *-------------------------------------*)
-        function headers() : IHeaders;
-
-        (*!------------------------------------
-         * output http response to STDIN
-         *-------------------------------------
-         * @return current instance
-         *-------------------------------------*)
-        function write() : IResponse;
-
-        (*!------------------------------------
-         * get response body
-         *-------------------------------------
-         * @return response body
-         *-------------------------------------*)
-        function body() : IResponseStream;
-
-        function clone() : ICloneable;
+        function clone() : ICloneable; override;
     end;
 
 implementation
 
-    constructor TResponse.create(const env : ICGIEnvironment; const hdrs : IHeaders);
+    constructor TResponse.create(
+        const env : ICGIEnvironment;
+        const hdrs : IHeaders;
+        const bodyStrs : IResponseStream
+    );
     begin
+        inherited create(hdrs, bodyStrs);
         webEnvironment := env;
-        httpHeaders := hdrs;
-        //TODO: implement response body stream
-        bodyStream := nil;
     end;
 
     destructor TResponse.destroy();
     begin
         inherited destroy();
         webEnvironment := nil;
-        httpHeaders := nil;
-    end;
-
-    (*!------------------------------------
-     * get http headers instance
-     *-------------------------------------
-     * @return header instance
-     *-------------------------------------*)
-    function TResponse.headers() : IHeaders;
-    begin
-        result := httpHeaders;
-    end;
-
-    function TResponse.write() : IResponse;
-    begin
-        httpHeaders.writeHeaders();
-        result := self;
     end;
 
     function TResponse.clone() : ICloneable;
     var clonedObj : IResponse;
     begin
-        clonedObj := TResponse.create(webEnvironment, httpHeaders.clone() as IHeaders);
+        clonedObj := TResponse.create(
+            webEnvironment,
+            headers().clone() as IHeaders,
+            //TODO : do we need to create new instance?
+            //response stream may contain big data
+            //so just pass the current stream (for now)
+            body()
+        );
         //TODO : copy any property
         result := clonedObj;
-    end;
-
-    (*!------------------------------------
-     * get response body
-     *-------------------------------------
-     * @return response body
-     *-------------------------------------*)
-    function TResponse.body() : IResponseStream;
-    begin
-        result := bodyStream;
     end;
 end.

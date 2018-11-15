@@ -1,6 +1,6 @@
-# Fano Web Framework
+# Fano Framework
 
-Pascal web application framework
+Web application framework for modern Pascal programming language.
 
 ## Requirement
 
@@ -9,13 +9,12 @@ Pascal web application framework
 
 ## Installation
 
-Fano is standalone library, and basically, is not very useful on its own,
-because it depends on an application to bootstrap.
+Fano is standalone library, and basically, is not very useful on its own.
+It depends on an application to bootstrap.
 
 ### Install from sample application
 
-You may clone [Fano App](https://github.com/fanoframework/fano-app) repository as
-base application skeleton.
+You may clone [Fano App](https://github.com/fanoframework/fano-app) repository as base application skeleton.
 
 When you clone [Fano App](https://github.com/fanoframework/fano-app) repository,
 it pulls this repository as its submodule automatically. After that, it is ready to be compiled and run.
@@ -30,11 +29,14 @@ Other available sample application:
 ### Install from Fano Command Line tool
 
 [Fano Cli](https://github.com/fanoframework/fano-cli) is command line tool intended
-for [scaffolding web application](https://fanoframework.github.io/scaffolding-with-fano-cli/) using Fano, creating controllers, views, etc . It is similar how Laravel Artisan tool works.
+for [scaffolding web application](https://fanoframework.github.io/scaffolding-with-fano-cli/) using Fano, creating controllers, views, etc . It is inspired by Laravel Artisan tool.
 
     $ fanocli --create-project=my-cool-app
+    $ cd my-cool-app
+    $ fanocli --create-controller=Hello
+    $ ./build.sh
 
-While you can create project structure and initialize Fano repository, the tools is not ready yet.
+While you can create project structure, initialize Fano repository and create controller, the tools is still in development.
 
 ### Install from scratch with Git submodule
 
@@ -43,14 +45,9 @@ If you decide to start from scratch,
     $ mkdir my-cool-app
     $ cd my-cool-app
     $ git init
-    $ git submodule add git@github.com:fanoframework/fano.git
-
-If you do not use SSH, then you can use HTTPS
-
     $ git submodule add https://github.com/fanoframework/fano.git
 
-This command will pull Fano Web Framework repository into `fano` directory inside
-your `my-cool-app` directory.
+This command will pull Fano Web Framework repository into `fano` directory inside your `my-cool-app` directory.
 
 ### Install from scratch without Git submodule
 
