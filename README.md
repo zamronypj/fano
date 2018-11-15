@@ -45,10 +45,6 @@ If you decide to start from scratch,
     $ mkdir my-cool-app
     $ cd my-cool-app
     $ git init
-    $ git submodule add git@github.com:fanoframework/fano.git
-
-If you do not use SSH, then you can use HTTPS
-
     $ git submodule add https://github.com/fanoframework/fano.git
 
 This command will pull Fano Web Framework repository into `fano` directory inside
