@@ -49,7 +49,7 @@ implementation
         const bodyStrs : IResponseStream
     );
     begin
-        inherited create(hrds, bodyStrs);
+        inherited create(hdrs, bodyStrs);
         webEnvironment := env;
     end;
 
