@@ -18,11 +18,8 @@ uses
     ResponseIntf,
     HeadersIntf,
     ResponseStreamIntf,
-    CloneableIntf;
-
-const
-
-    BUFFER_SIZE = 8 * 1024;
+    CloneableIntf,
+    BaseResponseImpl;
 
 type
     (*!------------------------------------------------
@@ -30,42 +27,18 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TResponse = class(TInterfacedObject, IResponse, ICloneable)
+    TResponse = class(TBaseResponse)
     private
         webEnvironment : ICGIEnvironment;
-        httpHeaders : IHeaders;
-        bodyStream : IResponseStream;
-        procedure writeToStdOutput(const respBody : IResponseStream);
     public
         constructor create(
             const env : ICGIEnvironment;
             const hdrs : IHeaders;
-            const body : IResponseStream
+            const bodyStrs : IResponseStream
         );
         destructor destroy(); override;
 
-        (*!------------------------------------
-         * get http headers instance
-         *-------------------------------------
-         * @return header instance
-         *-------------------------------------*)
-        function headers() : IHeaders;
-
-        (*!------------------------------------
-         * output http response to STDIN
-         *-------------------------------------
-         * @return current instance
-         *-------------------------------------*)
-        function write() : IResponse;
-
-        (*!------------------------------------
-         * get response body
-         *-------------------------------------
-         * @return response body
-         *-------------------------------------*)
-        function body() : IResponseStream;
-
-        function clone() : ICloneable;
+        function clone() : ICloneable; override;
     end;
 
 implementation
@@ -73,64 +46,17 @@ implementation
     constructor TResponse.create(
         const env : ICGIEnvironment;
         const hdrs : IHeaders;
-        const body : IResponseStream
+        const bodyStrs : IResponseStream
     );
     begin
+        inherited create(hrds, bodyStrs);
         webEnvironment := env;
-        httpHeaders := hdrs;
-        bodyStream := body;
     end;
 
     destructor TResponse.destroy();
     begin
         inherited destroy();
         webEnvironment := nil;
-        httpHeaders := nil;
-        bodyStream := nil
-    end;
-
-    (*!------------------------------------
-     * get http headers instance
-     *-------------------------------------
-     * @return header instance
-     *-------------------------------------*)
-    function TResponse.headers() : IHeaders;
-    begin
-        result := httpHeaders;
-    end;
-
-    (*!------------------------------------
-     * read response body and output it to
-     * standard output
-     *-------------------------------------
-     * @param respBody response stream to output
-     *-------------------------------------*)
-    procedure TResponse.writeToStdOutput(const respBody : IResponseStream);
-    var numBytesRead: longint;
-        buff : string;
-    begin
-        setLength(buff, BUFFER_SIZE);
-        respBody.seek(0);
-        //stream maybe big in size, so read in loop
-        //by using smaller buffer to avoid consuming too much resource
-        repeat
-            numBytesRead := respBody.read(buff[1], BUFFER_SIZE);
-            if (numBytesRead < BUFFER_SIZE) then
-            begin
-                //setLength will allocate new memory
-                //which expensive in a loop, so only doing it
-                //when we are in end of buffer
-                setLength(buff, numBytesRead);
-            end;
-            system.write(buff);
-        until (numBytesRead < BUFFER_SIZE);
-    end;
-
-    function TResponse.write() : IResponse;
-    begin
-        httpHeaders.writeHeaders();
-        writeToStdOutput(bodyStream);
-        result := self;
     end;
 
     function TResponse.clone() : ICloneable;
@@ -146,15 +72,5 @@ implementation
         );
         //TODO : copy any property
         result := clonedObj;
-    end;
-
-    (*!------------------------------------
-     * get response body
-     *-------------------------------------
-     * @return response body
-     *-------------------------------------*)
-    function TResponse.body() : IResponseStream;
-    begin
-        result := bodyStream;
     end;
 end.
