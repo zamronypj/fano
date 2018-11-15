@@ -64,11 +64,11 @@ implementation
     begin
         clonedObj := TResponse.create(
             webEnvironment,
-            httpHeaders.clone() as IHeaders,
+            headers().clone() as IHeaders,
             //TODO : do we need to create new instance?
             //response stream may contain big data
             //so just pass the current stream (for now)
-            bodyStream
+            body()
         );
         //TODO : copy any property
         result := clonedObj;
