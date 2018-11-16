@@ -14,7 +14,7 @@
 
 TemplateParserIntf,
 ViewIntf,
-PartialIntf,
+ViewPartialIntf,
 ViewParametersIntf,
 ModelDataIntf,
 ModelWriterIntf,

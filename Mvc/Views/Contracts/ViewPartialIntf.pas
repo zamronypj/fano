@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit PartialIntf;
+unit ViewPartialIntf;
 
 interface
 
@@ -26,7 +26,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    IPartial = interface
+    IViewPartial = interface
         ['{220077B3-F4A1-4EEB-91FF-AB3E3A2E85F7}']
 
         (*!------------------------------------------------
@@ -36,7 +36,7 @@ type
          * @param templatePath file path of template
          * @param viewParams instance contains view parameters
          *-----------------------------------------------*)
-        function fetch(
+        function partial(
             const templatePath : string;
             const viewParams : IViewParameters
         ) : string;
