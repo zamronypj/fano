@@ -14,7 +14,8 @@ interface
 
 uses
 
-    ModelDataIntf;
+    ModelWriteOnlyDataIntf,
+    ModelReadOnlyDataIntf;
 
 type
 
@@ -30,9 +31,16 @@ type
          * read data from storage
          *-----------------------------------------------
          * @param params parameter for search/filtering
-         * @return model presenter
+         * @return model data
+s         *-----------------------------------------------*)
+        function read(const params : IModelWriteOnlyData = nil) : IModelReadOnlyData;
+
+        (*!----------------------------------------------
+         * return data instance after read() is execute
+         *-----------------------------------------------
+         * @return model data
          *-----------------------------------------------*)
-        function read(const params : IModelData = nil) : IModelData;
+        function data() : IModelReadOnlyData;
     end;
 
 implementation

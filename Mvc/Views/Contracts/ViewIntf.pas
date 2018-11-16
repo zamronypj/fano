@@ -24,7 +24,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    IView = interface(IResponse)
+    IView = interface
         ['{04F99A16-DDBC-403B-A099-8BB44BE3CCC5}']
 
         (*!------------------------------------------------

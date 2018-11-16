@@ -19,7 +19,6 @@ uses
     ViewParametersIntf,
     ViewIntf,
     TemplateParserIntf,
-    OutputBufferIntf,
     CloneableIntf,
     ViewPartialIntf;
 
@@ -30,18 +29,16 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TView = class(TInterfacedObject, ICloneable, IView, , IViewPartial, IResponse)
+    TView = class(TInterfacedObject, ICloneable, IView, IViewPartial, IResponse)
     private
         responseInst : IResponse;
         partialInst : IViewPartial;
         templateContent : string;
-        outputBuffer : IOutputBuffer;
         templateParser : ITemplateParser;
     public
         constructor create(
             const respInst : IResponse;
             const partInst : IViewPartial;
-            const outputBufferInst : IOutputBuffer;
             const templateParserInst : ITemplateParser;
             const templateSrc : string
         );
@@ -66,19 +63,19 @@ type
 implementation
 
 uses
-    sysutils;
+    sysutils,
+
+    ResponseStreamIntf;
 
     constructor TView.create(
         const respInst : IResponse;
         const partInst : IViewPartial;
-        const outputBufferInst : IOutputBuffer;
         const templateParserInst : ITemplateParser;
         const templateSrc : string
     );
     begin
         responseInst := respInst;
         partialInst := partInst;
-        outputBuffer := outputBufferInst;
         templateParser := templateParserInst;
         templateContent := templateSrc;
     end;
@@ -88,7 +85,6 @@ uses
         inherited destroy();
         responseInst := nil;
         partialInst := nil;
-        outputBuffer := nil;
         templateParser := nil;
     end;
 
@@ -96,23 +92,21 @@ uses
         const viewParams : IViewParameters;
         const response : IResponse
     ) : IResponse;
+    var bodyInst : IResponseStream;
+        contentLength : string;
     begin
-        outputBuffer.beginBuffering();
-        try
-            writeln(templateParser.parse(templateContent, viewParams));
-        finally
-            outputBuffer.endBuffering();
-        end;
-        response.headers().setHeader('Content-Length', intToStr(outputBuffer.size()));
+        bodyInst := responseInst.body();
+        bodyInst.write(templateParser.parse(templateContent, viewParams));
+        contentLength := intToStr(bodyInst.size());
+        responseInst.headers().setHeader('Content-Length',  contentLength);
         result := self;
     end;
 
     function TView.clone() : ICloneable;
     begin
         result := TView.create(
-            response.clone() as IResponse,
+            responseInst.clone() as IResponse,
             partialInst,
-            outputBuffer,
             templateParser,
             templateContent
         );
