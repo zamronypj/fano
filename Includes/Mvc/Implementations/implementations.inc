@@ -17,5 +17,5 @@ TemplateParserFactoryImpl,
 SimpleTemplateParserFactoryImpl,
 TemplateFileViewImpl,
 ViewParametersFactoryImpl,
-
+ViewPartialImpl,
 ControllerImpl,
