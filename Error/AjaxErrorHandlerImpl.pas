@@ -58,7 +58,7 @@ implementation
         begin
             result := result +
                 '"exception" : "' + e.className + '",' + LineEnding  +
-                '"message" : "' + e.message + '",' + LineEnding;
+                '"message" : "' + stringReplace(e.message, '"', '\"') + '",' + LineEnding;
         end;
 
         result := result + '"stacktrace": {' +
