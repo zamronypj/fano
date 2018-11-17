@@ -6,36 +6,28 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit ViewPartialFactoryImpl;
+unit AdapterResponseFactoryImpl;
 
 interface
 
 {$MODE OBJFPC}
-{$H+}
 
 uses
 
     DependencyIntf,
     DependencyContainerIntf,
-    ViewParametersIntf,
-    ViewPartialIntf,
-    TemplateParserIntf,
     FactoryImpl;
 
 type
-
     (*!------------------------------------------------
-     * View that can render from a HTML template to string
+     * Factory for TResponseFactory class. This class is
+     * provided so we can inject TResponseFactory class into
+     * dependency container
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
-     *-------------------------------------------------*)
-    TViewPartialFactory = class(TFactory)
-    private
-        parser : ITemplateParser;
+     *-----------------------------------------------*)
+    TAdapterResponseFactory = class(TFactory)
     public
-        constructor create(const parserInst : ITemplateParser);
-        destructor destroy(); override;
-
         (*!---------------------------------------------------
          * build class instance
          *----------------------------------------------------
@@ -48,28 +40,15 @@ implementation
 
 uses
 
-    ViewPartialImpl,
-    StringFileReaderImpl;
-
-    constructor TViewPartialFactory.create(const parserInst : ITemplateParser);
-    begin
-        parser := parserInst;
-    end;
-
-    destructor TViewPartialFactory.destroy();
-    begin
-        inherited destroy();
-        parser := nil;
-    end;
+    ResponseFactoryImpl;
 
     (*!---------------------------------------------------
      * build class instance
      *----------------------------------------------------
      * @param container dependency container instance
      *---------------------------------------------------*)
-    function TViewPartialFactory.build(const container : IDependencyContainer) : IDependency;
+    function TAdapterResponseFactory.build(const container : IDependencyContainer) : IDependency; override;
     begin
-        result := TViewPartial.create(parser, TStringFileReader.create());
+        result := TResponseFactory.create();
     end;
-
 end.

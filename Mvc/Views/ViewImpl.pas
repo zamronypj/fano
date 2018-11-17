@@ -19,9 +19,7 @@ uses
     ResponseIntf,
     ViewParametersIntf,
     ViewIntf,
-    TemplateParserIntf,
-    CloneableIntf,
-    ViewPartialIntf;
+    TemplateParserIntf;
 
 type
 
@@ -30,18 +28,14 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TView = class(TInterfacedObject, ICloneable, IView, IViewPartial, IResponse, IDependency)
+    TView = class(TInterfacedObject, IView, IDependency)
     private
-        responseInst : IResponse;
-        partialInst : IViewPartial;
         templateContent : string;
         templateParser : ITemplateParser;
     public
         constructor create(
-            const respInst : IResponse;
-            const partInst : IViewPartial;
             const templateParserInst : ITemplateParser;
-            const templateSrc : string
+            const tplContent : string
         );
 
         destructor destroy(); override;
@@ -51,41 +45,27 @@ type
             const response : IResponse
         ) : IResponse;
 
-
-        function clone() : ICloneable;
-
-        //delegate IResponse implementation to external class
-        property response : IResponse read responseInst implements IResponse;
-
-        //delegate IViewPartial to external class
-        property partial : IViewPartial read partialInst implements IViewPartial;
     end;
 
 implementation
 
 uses
-    sysutils,
 
+    SysUtils,
     ResponseStreamIntf;
 
     constructor TView.create(
-        const respInst : IResponse;
-        const partInst : IViewPartial;
         const templateParserInst : ITemplateParser;
-        const templateSrc : string
+        const tplContent : string
     );
     begin
-        responseInst := respInst;
-        partialInst := partInst;
         templateParser := templateParserInst;
-        templateContent := templateSrc;
+        templateContent := tplContent;
     end;
 
     destructor TView.destroy();
     begin
         inherited destroy();
-        responseInst := nil;
-        partialInst := nil;
         templateParser := nil;
     end;
 
@@ -96,20 +76,10 @@ uses
     var bodyInst : IResponseStream;
         contentLength : string;
     begin
-        bodyInst := responseInst.body();
+        bodyInst := response.body();
         bodyInst.write(templateParser.parse(templateContent, viewParams));
         contentLength := intToStr(bodyInst.size());
-        responseInst.headers().setHeader('Content-Length',  contentLength);
-        result := self;
-    end;
-
-    function TView.clone() : ICloneable;
-    begin
-        result := TView.create(
-            responseInst.clone() as IResponse,
-            partialInst,
-            templateParser,
-            templateContent
-        );
+        response.headers().setHeader('Content-Length',  contentLength);
+        result := response;
     end;
 end.

@@ -14,7 +14,8 @@ interface
 {$H+}
 
 uses
-    EnvironmentIntf,
+
+    DependencyIntf,
     ResponseIntf,
     HeadersIntf,
     ResponseStreamIntf,
@@ -27,43 +28,17 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TResponse = class(TBaseResponse)
-    private
-        webEnvironment : ICGIEnvironment;
+    TResponse = class(TBaseResponse, IDependency)
     public
-        constructor create(
-            const env : ICGIEnvironment;
-            const hdrs : IHeaders;
-            const bodyStrs : IResponseStream
-        );
-        destructor destroy(); override;
-
         function clone() : ICloneable; override;
     end;
 
 implementation
 
-    constructor TResponse.create(
-        const env : ICGIEnvironment;
-        const hdrs : IHeaders;
-        const bodyStrs : IResponseStream
-    );
-    begin
-        inherited create(hdrs, bodyStrs);
-        webEnvironment := env;
-    end;
-
-    destructor TResponse.destroy();
-    begin
-        inherited destroy();
-        webEnvironment := nil;
-    end;
-
     function TResponse.clone() : ICloneable;
     var clonedObj : IResponse;
     begin
         clonedObj := TResponse.create(
-            webEnvironment,
             headers().clone() as IHeaders,
             //TODO : do we need to create new instance?
             //response stream may contain big data

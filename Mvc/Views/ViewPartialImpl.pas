@@ -18,7 +18,8 @@ uses
     DependencyIntf,
     ViewParametersIntf,
     ViewPartialIntf,
-    TemplateParserIntf;
+    TemplateParserIntf,
+    FileReaderIntf;
 
 type
 
@@ -30,10 +31,12 @@ type
     TViewPartial = class(TInterfacedObject, IViewPartial, IDependency)
     private
         templateParser : ITemplateParser;
-    private
-        function readFileToString(const templatePath : string) : string;
+        fileReader : IFileReader;
     public
-        constructor create(const templateParserInst : ITemplateParser);
+        constructor create(
+            const templateParserInst : ITemplateParser;
+            const fileReaderInst : IFileReader
+        );
         destructor destroy(); override;
 
         function partial(
@@ -48,33 +51,20 @@ uses
     classes,
     sysutils;
 
-    constructor TViewPartial.create(const templateParserInst : ITemplateParser);
+    constructor TViewPartial.create(
+        const templateParserInst : ITemplateParser;
+        const fileReaderInst : IFileReader
+    );
     begin
         templateParser := templateParserInst;
+        fileReader := fileReaderInst;
     end;
 
     destructor TViewPartial.destroy();
     begin
         inherited destroy();
         templateParser := nil;
-    end;
-
-    function TViewPartial.readFileToString(const templatePath : string) : string;
-    var fstream : TFileStream;
-        len : int64;
-    begin
-        //open for read and share but deny write
-        //so if multiple processes of our application access same file
-        //at the same time they stil can open and read it
-        fstream := TFileStream.create(templatePath, fmOpenRead or fmShareDenyWrite);
-        try
-            len := fstream.size;
-            setLength(result, len);
-            //pascal string start from index 1
-            fstream.read(result[1], len);
-        finally
-            fstream.free();
-        end;
+        fileReader := nil;
     end;
 
     function TViewPartial.partial(
@@ -83,7 +73,7 @@ uses
     ) : string;
     begin
         result := templateParser.parse(
-            readFileToString(templatePath),
+            fileReader.readFile(templatePath),
             viewParams
         );
     end;
