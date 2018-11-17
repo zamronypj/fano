@@ -15,7 +15,7 @@ interface
 uses
 
     SerializeableIntf,
-    ModelDataIntf;
+    ModelReadOnlyDataIntf;
 
 type
 
@@ -28,7 +28,7 @@ type
     IModelPresenter = interface(ISerializeable)
         ['{16CB66AA-A3D1-4F41-8A0D-86BBD4227071}']
 
-        procedure setData(const modelData : IModelData);
+        procedure setData(const modelData : IModelReadOnlyData);
     end;
 
 implementation
