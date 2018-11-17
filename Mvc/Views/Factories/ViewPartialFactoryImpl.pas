@@ -15,9 +15,12 @@ interface
 
 uses
 
+    DependencyIntf,
+    DependencyContainerIntf,
     ViewParametersIntf,
     ViewPartialIntf,
-    TemplateParserIntf;
+    TemplateParserIntf,
+    FactoryImpl;
 
 type
 

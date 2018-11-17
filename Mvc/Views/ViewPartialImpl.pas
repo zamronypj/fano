@@ -15,6 +15,7 @@ interface
 
 uses
 
+    DependencyIntf,
     ViewParametersIntf,
     ViewPartialIntf,
     TemplateParserIntf;
@@ -26,7 +27,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TViewPartial = class(TInterfacedObject, IViewPartial)
+    TViewPartial = class(TInterfacedObject, IViewPartial, IDependency)
     private
         templateParser : ITemplateParser;
     private

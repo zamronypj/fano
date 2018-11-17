@@ -5,3 +5,4 @@ TTemplateFileView = TemplateFileViewImpl.TTemplateFileView;
 
 TView = ViewImpl.TView;
 TViewPartial = ViewPartialImpl.TViewPartial;
+TViewPartialFactory = ViewPartialFactoryImpl.TViewPartialFactory;

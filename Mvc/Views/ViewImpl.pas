@@ -15,6 +15,7 @@ interface
 
 uses
 
+    DependencyIntf,
     ResponseIntf,
     ViewParametersIntf,
     ViewIntf,
@@ -29,7 +30,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TView = class(TInterfacedObject, ICloneable, IView, IViewPartial, IResponse)
+    TView = class(TInterfacedObject, ICloneable, IView, IViewPartial, IResponse, IDependency)
     private
         responseInst : IResponse;
         partialInst : IViewPartial;
