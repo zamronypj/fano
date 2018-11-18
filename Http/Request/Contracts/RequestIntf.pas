@@ -15,7 +15,7 @@ interface
 
 uses
 
-    HashListIntf;
+    ListIntf;
 
 type
 
@@ -43,7 +43,7 @@ type
          *-------------------------------------------------
          * @return list of query string params
          *------------------------------------------------*)
-        function getQueryParams() : IHashList;
+        function getQueryParams() : IList;
 
         (*!------------------------------------------------
          * get single cookie param value by its name
@@ -60,7 +60,7 @@ type
          *-------------------------------------------------
          * @return list of cookie params
          *------------------------------------------------*)
-        function getCookieParams() : IHashList;
+        function getCookieParams() : IList;
 
         (*!------------------------------------------------
          * get request body data
@@ -77,7 +77,7 @@ type
          *-------------------------------------------------
          * @return array of parsed body params
          *------------------------------------------------*)
-        function getParsedBodyParams() : IHashList;
+        function getParsedBodyParams() : IList;
 
         (*!------------------------------------------------
          * test if current request is coming from AJAX request

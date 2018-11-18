@@ -16,7 +16,7 @@ interface
 uses
 
     DependencyIntf,
-    HashListIntf,
+    ListIntf,
     RequestIntf,
     ValidatorIntf,
     RequestValidatorintf,
@@ -34,14 +34,14 @@ type
     TValidation = class(TInterfacedObject, IRequestValidator, IValidationRules, IDependency)
     private
         validationResult : TValidationResult;
-        validatorList : IHashList;
+        validatorList : IList;
         procedure clearValidator();
-        function validateKeyValue(const inputData : IHashList) : TValidationResult;
+        function validateKeyValue(const inputData : IList) : TValidationResult;
         function validateBody(const request : IRequest) : TValidationResult;
         function validateQueryStr(const request : IRequest) : TValidationResult;
     public
 
-        constructor create(const validators : IHashList);
+        constructor create(const validators : IList);
         destructor destroy(); override;
 
         (*!------------------------------------------------
@@ -96,7 +96,7 @@ type
     end;
     PValidatorRec = ^TValidatorRec;
 
-    constructor TValidation.create(const validators : IHashList);
+    constructor TValidation.create(const validators : IList);
     begin
         validatorList := validators;
         validationResult.isValid := true;
@@ -130,7 +130,7 @@ type
      * @param inputData array of key value pair
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
-    function TValidation.validateKeyValue(const inputData : IHashList) : TValidationResult;
+    function TValidation.validateKeyValue(const inputData : IList) : TValidationResult;
     var i, len, numFailValidation : integer;
         valRec : PValidatorRec;
     begin

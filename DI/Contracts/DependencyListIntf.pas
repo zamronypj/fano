@@ -13,7 +13,7 @@ interface
 
 uses
 
-    HashListIntf;
+    ListIntf;
 
 type
 
@@ -22,7 +22,7 @@ type
      dependencies
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
-    IDependencyList = interface(IHashList)
+    IDependencyList = interface(IList)
         ['{BBDB53E2-D4DF-4FD0-86D4-2291124236B1}']
     end;
 

@@ -13,7 +13,7 @@ interface
 {$MODE OBJFPC}
 
 uses
-    HashListIntf;
+    ListIntf;
 
 type
 
@@ -23,7 +23,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    IRouteList = interface(IHashList)
+    IRouteList = interface(IList)
         ['{0BE04022-B3E7-4AE9-83F8-829D07F7EB83}']
 
         (*!-----------------------------------------

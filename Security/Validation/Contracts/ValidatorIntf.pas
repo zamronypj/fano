@@ -15,7 +15,7 @@ interface
 
 uses
 
-    HashListIntf;
+    ListIntf;
 
 type
 
@@ -37,7 +37,7 @@ type
          *-------------------------------------------------*)
         function isValid(
             const key : shortstring;
-            const dataToValidate : IHashList
+            const dataToValidate : IList
         ) : boolean;
 
         (*!------------------------------------------------

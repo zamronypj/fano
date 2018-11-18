@@ -16,7 +16,7 @@ interface
 uses
 
     classes,
-    HashListIntf,
+    ListIntf,
     ValidatorIntf,
     ValidatorCollectionIntf,
     BaseValidatorImpl;
@@ -47,7 +47,7 @@ type
          *-------------------------------------------------*)
          function isValid(
              const key : shortstring;
-             const dataToValidate : IHashList
+             const dataToValidate : IList
          ) : boolean; override;
 
         (*!------------------------------------------------
@@ -95,7 +95,7 @@ implementation
      *-------------------------------------------------*)
     function TCompositeValidator.isValid(
         const key : shortstring;
-        const dataToValidate : IHashList
+        const dataToValidate : IList
     ) : boolean;
     var i, len : integer;
         validator : IValidator;

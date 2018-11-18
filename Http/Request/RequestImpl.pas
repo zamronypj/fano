@@ -16,7 +16,7 @@ interface
 uses
     EnvironmentIntf,
     RequestIntf,
-    HashListIntf,
+    ListIntf,
     KeyValueTypes;
 
 type
@@ -30,44 +30,44 @@ type
     TRequest = class(TInterfacedObject, IRequest)
     private
         webEnvironment : ICGIEnvironment;
-        queryParams : IHashList;
-        cookieParams : IHashList;
-        bodyParams : IHashList;
+        queryParams : IList;
+        cookieParams : IList;
+        bodyParams : IList;
 
         function getContentLength(const env : ICGIEnvironment) : integer;
 
-        procedure clearParams(const params : IHashList);
+        procedure clearParams(const params : IList);
 
         procedure initParamsFromString(
             const data : string;
-            const hashInst : IHashList
+            const hashInst : IList
         );
 
         procedure initPostBodyParamsFromStdInput(
             const env : ICGIEnvironment;
-            const body : IHashList
+            const body : IList
         );
 
         procedure initBodyParamsFromStdInput(
             const env : ICGIEnvironment;
-            const body : IHashList
+            const body : IList
         );
 
         procedure initQueryParamsFromEnvironment(
             const env : ICGIEnvironment;
-            const query : IHashList
+            const query : IList
         );
 
         procedure initCookieParamsFromEnvironment(
             const env : ICGIEnvironment;
-            const cookies : IHashList
+            const cookies : IList
         );
 
         procedure initParamsFromEnvironment(
             const env : ICGIEnvironment;
-            const query : IHashList;
-            const cookies : IHashList;
-            const body : IHashList
+            const query : IList;
+            const cookies : IList;
+            const body : IList
         );
 
         (*!------------------------------------------------
@@ -79,7 +79,7 @@ type
          * @return string value
          *------------------------------------------------*)
         function getParam(
-            const src :IHashList;
+            const src :IList;
             const key: string;
             const defValue : string = ''
         ) : string;
@@ -87,9 +87,9 @@ type
     public
         constructor create(
             const env : ICGIEnvironment;
-            const query : IHashList;
-            const cookies : IHashList;
-            const body : IHashList
+            const query : IList;
+            const cookies : IList;
+            const body : IList
         );
         destructor destroy(); override;
 
@@ -108,7 +108,7 @@ type
          *-------------------------------------------------
          * @return array of TKeyValue
          *------------------------------------------------*)
-        function getQueryParams() : IHashList;
+        function getQueryParams() : IList;
 
         (*!------------------------------------------------
          * get single cookie param value by its name
@@ -125,7 +125,7 @@ type
          *-------------------------------------------------
          * @return array of TKeyValue
          *------------------------------------------------*)
-        function getCookieParams() : IHashList;
+        function getCookieParams() : IList;
 
         (*!------------------------------------------------
          * get request body data
@@ -142,7 +142,7 @@ type
          *-------------------------------------------------
          * @return array of TKeyValue
          *------------------------------------------------*)
-        function getParsedBodyParams() : IHashList;
+        function getParsedBodyParams() : IList;
 
         (*!------------------------------------------------
          * test if current request is comming from AJAX request
@@ -166,9 +166,9 @@ resourcestring
 
     constructor TRequest.create(
         const env : ICGIEnvironment;
-        const query : IHashList;
-        const cookies : IHashList;
-        const body : IHashList
+        const query : IList;
+        const cookies : IList;
+        const body : IList
     );
     begin
         webEnvironment := env;
@@ -196,7 +196,7 @@ resourcestring
         bodyParams := nil;
     end;
 
-    procedure TRequest.clearParams(const params : IHashList);
+    procedure TRequest.clearParams(const params : IList);
     var i, len : integer;
         param : PKeyValue;
     begin
@@ -211,7 +211,7 @@ resourcestring
 
     procedure TRequest.initParamsFromString(
         const data : string;
-        const hashInst : IHashList
+        const hashInst : IList
     );
     var arrOfQryStr, keyvalue : TStringArray;
         i, len, lenKeyValue : integer;
@@ -235,7 +235,7 @@ resourcestring
 
     procedure TRequest.initQueryParamsFromEnvironment(
         const env : ICGIEnvironment;
-        const query : IHashList
+        const query : IList
     );
     begin
         initParamsFromString(env.queryString(), query);
@@ -243,7 +243,7 @@ resourcestring
 
     procedure TRequest.initCookieParamsFromEnvironment(
         const env : ICGIEnvironment;
-        const cookies : IHashList
+        const cookies : IList
     );
     begin
         initParamsFromString(env.httpCookie(), cookies);
@@ -263,7 +263,7 @@ resourcestring
 
     procedure TRequest.initPostBodyParamsFromStdInput(
         const env : ICGIEnvironment;
-        const body : IHashList
+        const body : IList
     );
     var contentLength, ctr : integer;
         contentType, bodyStr : string;
@@ -299,7 +299,7 @@ resourcestring
 
     procedure TRequest.initBodyParamsFromStdInput(
         const env : ICGIEnvironment;
-        const body : IHashList
+        const body : IList
     );
     var method : string;
     begin
@@ -312,9 +312,9 @@ resourcestring
 
     procedure TRequest.initParamsFromEnvironment(
         const env : ICGIEnvironment;
-        const query : IHashList;
-        const cookies : IHashList;
-        const body : IHashList
+        const query : IList;
+        const cookies : IList;
+        const body : IList
     );
     begin
         initQueryParamsFromEnvironment(env, query);
@@ -325,14 +325,14 @@ resourcestring
     (*!------------------------------------------------
      * get single param value by its name
      *-------------------------------------------------
-     * @param IHashList src hash list instance
+     * @param IList src hash list instance
      * @param string key name of key
      * @param string defValue default value to use if key
      *               does not exist
      * @return string value
      *------------------------------------------------*)
     function TRequest.getParam(
-        const src : IHashList;
+        const src : IList;
         const key: string;
         const defValue : string = ''
     ) : string;
@@ -366,7 +366,7 @@ resourcestring
      *-------------------------------------------------
      * @return list of request query string parameters
      *------------------------------------------------*)
-    function TRequest.getQueryParams() : IHashList;
+    function TRequest.getQueryParams() : IList;
     begin
         result := queryParams;
     end;
@@ -389,7 +389,7 @@ resourcestring
      *-------------------------------------------------
      * @return list of request cookies parameters
      *------------------------------------------------*)
-    function TRequest.getCookieParams() : IHashList;
+    function TRequest.getCookieParams() : IList;
     begin
         result := cookieParams;
     end;
@@ -412,7 +412,7 @@ resourcestring
      *-------------------------------------------------
      * @return list of request body parameters
      *------------------------------------------------*)
-    function TRequest.getParsedBodyParams() : IHashList;
+    function TRequest.getParsedBodyParams() : IList;
     begin
         result := bodyParams;
     end;
