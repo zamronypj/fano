@@ -123,6 +123,11 @@ const
 
     function TBaseResponse.write() : IResponse;
     begin
+        if (not httpHeaders.has('Content-Type')) then
+        begin
+            //if not Content-Type header defined assume html
+            httpHeaders.setHeader('Content-Type', 'text/html');
+        end;
         httpHeaders.writeHeaders();
         writeToStdOutput(bodyStream);
         result := self;

@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit ModelPresenterIntf;
+unit StringFileReaderFactoryImpl;
 
 interface
 
@@ -14,23 +14,31 @@ interface
 
 uses
 
-    SerializeableIntf,
-    ModelReadOnlyDataIntf;
+    DependencyIntf,
+    DependencyContainerIntf,
+    FactoryImpl;
 
 type
 
     (*!------------------------------------------------
-     * interface for model that can display/visualize
-     * data to view
+     * factory class for StringFileReaderFactory
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    IModelPresenter = interface(ISerializeable)
-        ['{16CB66AA-A3D1-4F41-8A0D-86BBD4227071}']
-
-        procedure setData(const modelData : IModelReadOnlyData);
+    TStringFileReaderFactory = class(TFactory)
+    public
+        function build(const container : IDependencyContainer) : IDependency; override;
     end;
 
 implementation
+
+uses
+
+    StringFileReaderImpl;
+
+    function TStringFileReaderFactory.build(const container : IDependencyContainer) : IDependency;
+    begin
+        result := TStringFileReader.create();
+    end;
 
 end.

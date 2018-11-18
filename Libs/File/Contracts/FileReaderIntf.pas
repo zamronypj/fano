@@ -6,35 +6,31 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit ModelWriterIntf;
+unit FileReaderIntf;
 
 interface
 
 {$MODE OBJFPC}
-
-uses
-
-    ModelReadOnlyDataIntf,
-    ModelWriteOnlyDataIntf;
+{$H+}
 
 type
 
     (*!------------------------------------------------
-     * interface for model that can write data to storage
+     * interface for any class having capability to read
+     * file content to string
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    IModelWriter = interface
-        ['{B12E2CDF-EA14-4DAC-83E9-ABB5919AA7D1}']
+    IFileReader = interface
+        ['{18E68492-86C7-43C5-80B6-0364FCA8F235}']
 
-        (*!----------------------------------------------
-         * write data to storage
+        (*!------------------------------------------------
+         * read file content to string
          *-----------------------------------------------
-         * @param params parameters related to data being stored
-         * @param data data being stored
-         * @return current instance
+         * @param filePath path of file to be read
+         * @return file content
          *-----------------------------------------------*)
-        function write(const params : IModelReadOnlyData; const data : IModelReadOnlyData) : IModelWriter;
+        function readFile(const filePath : string) : string;
     end;
 
 implementation

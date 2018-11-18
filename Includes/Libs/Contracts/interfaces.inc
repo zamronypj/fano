@@ -14,3 +14,4 @@
 
 OutputBufferIntf,
 LoggerIntf,
+FileReaderIntf,

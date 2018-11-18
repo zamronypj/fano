@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit ModelDataIntf;
+unit ModelWriteOnlyDataIntf;
 
 interface
 
@@ -20,12 +20,11 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    IModelData = interface
-        ['{DCC3EA21-DC74-46A2-BF54-54621B736E49}']
-        function readString(const key : string) : string;
-        function writeString(const key : string; const value : string) : IModelData;
-        function readInteger(const key : string) : integer;
-        function writeInteger(const key : string; const value : integer) : IModelData;
+    IModelWriteOnlyData = interface
+        ['{6CB5843D-56E3-4012-AB5B-7A354A0EE5D3}']
+
+        function writeString(const key : string; const value : string) : IModelWriteOnlyData;
+        function writeInteger(const key : string; const value : integer) : IModelWriteOnlyData;
     end;
 
 implementation

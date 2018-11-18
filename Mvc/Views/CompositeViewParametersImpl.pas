@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit ViewParametersImpl;
+unit CompositeViewParametersImpl;
 
 interface
 
@@ -23,17 +23,21 @@ uses
 type
 
     (*!------------------------------------------------
-     * class having capability to store view parameters
+     * class having capability to combine
+     * two view parameters as one
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TViewParameters = class(TInterfacedObject, IViewParameters, IDependency)
+    TCompositeViewParameters = class(TInterfacedObject, IViewParameters, IDependency)
     private
-        keyValueMap : TFPHashList;
-        keys : TStringList;
-        procedure clearVars();
+        firstViewParam : IViewParameters;
+        secondViewParam : IViewParameters;
+
     public
-        constructor create();
+        constructor create(
+            const firstParam : IViewParameters;
+            const secondParam : IViewParameters
+        );
         destructor destroy(); override;
 
         (*!------------------------------------------------
@@ -70,42 +74,21 @@ uses
 
     EKeyNotFoundImpl;
 
-resourcestring
-
-    sKeyNotFound = 'View parameter %s not found.';
-
-type
-
-    TValue = record
-        data : string;
-    end;
-    PValue = ^TValue;
-
-
-    constructor TViewParameters.create();
+    constructor TCompositeViewParameters.create(
+        const firstParam : IViewParameters;
+        const secondParam : IViewParameters
+    );
     begin
-        keyValueMap := TFPHashList.create();
+        firstViewParam := firstParam;
+        secondViewParam := secondParam;
         keys := TStringList.create();
     end;
 
-    procedure TViewParameters.clearVars();
-    var i :integer;
-        param : PValue;
-    begin
-        for i:=keyValueMap.count-1 downto 0 do
-        begin
-            param := keyValueMap.find(keyValueMap.nameOfIndex(i));
-            setlength(param^.data, 0);
-            dispose(param);
-            keyValueMap.delete(i);
-        end;
-    end;
-
-    destructor TViewParameters.destroy();
+    destructor TCompositeViewParameters.destroy();
     begin
         inherited destroy();
-        clearVars();
-        keyValueMap.free();
+        firstViewParam := nil;
+        secondViewParam := nil;
         keys.free();
     end;
 
@@ -117,8 +100,25 @@ type
      * Note: caller MUST not modify or destroy TStrings
      * instance and should read only
      *-----------------------------------------------*)
-    function TViewParameters.vars() : TStrings;
+    function TCompositeViewParameters.vars() : TStrings;
+    var firstKeys, secondKeys : TStrings;
+        indx, firstCount, secondCount : integer;
     begin
+        firstKeys := firstViewParam.vars();
+        secondKeys := secondViewParam.vars();
+        firstCount := firstKeys.count;
+        secondCount := secondKeys.count;
+        keys.clear();
+        keys.capacity := firstCount + secondCount;
+        for indx := 0 to firstCount-1 do
+        begin
+            keys.add(firstKeys[i]);
+        end;
+
+        for indx := 0 to secondCount-1 do
+        begin
+            keys.add(secondKeys[i]);
+        end;
         result := keys;
     end;
 
@@ -128,16 +128,16 @@ type
      * @param varName name of variable
      * @return value of variable
      *-----------------------------------------------*)
-    function TViewParameters.getVar(const varName : shortstring) : string;
-    var param : PValue;
+    function TCompositeViewParameters.getVar(const varName : shortstring) : string;
     begin
-        param := keyValueMap.find(varName);
-        if (param <> nil) then
-        begin
-            result := param^.data;
-        end else
-        begin
-            raise EKeyNotFound.createFmt(sKeyNotFound, [varName]);
+        try
+            result := firstViewParam.getVar(varName);
+        except
+            on e : EKeyNotFound do
+            begin
+                //not found on firstViewParam, try with secondViewParam
+                result := secondViewParam.getVar(varName);
+            end;
         end;
     end;
 
@@ -148,24 +148,13 @@ type
      * @param valueData value to be store
      * @return current class instance
      *-----------------------------------------------*)
-    function TViewParameters.setVar(
+    function TCompositeViewParameters.setVar(
         const varName : shortstring;
         const valueData :string
     ) : IViewParameters;
-    var param : PValue;
     begin
-        param := keyValueMap.find(varName);
-        if (param = nil) then
-        begin
-            //not exists
-            new(param);
-            param^.data := valueData;
-            keyValueMap.add(varName, param);
-            keys.add(varName);
-        end else
-        begin
-            param^.data := valueData;
-        end;;
+        firstViewParam.setVar(varName, valueData);
+        secondViewParam.setVar(varName, valueData);
         result := self;
     end;
 end.

@@ -13,10 +13,13 @@
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
  *-----------------------------------------------*)
 
- OutputBufferFactoryImpl,
+OutputBufferFactoryImpl,
 
- FileLoggerImpl,
- FileLoggerFactoryImpl,
+FileLoggerImpl,
+FileLoggerFactoryImpl,
 
- NullLoggerImpl,
- NullLoggerFactoryImpl,  //note: coma, instead of semicolon, is intentional
+NullLoggerImpl,
+NullLoggerFactoryImpl,
+
+StringFileReaderImpl,
+StringFileReaderFactoryImpl,

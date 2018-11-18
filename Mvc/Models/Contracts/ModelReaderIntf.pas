@@ -14,7 +14,8 @@ interface
 
 uses
 
-    ModelDataIntf;
+    ModelWriteOnlyDataIntf,
+    ModelReadOnlyDataIntf;
 
 type
 
@@ -25,7 +26,21 @@ type
      *-----------------------------------------------*)
     IModelReader = interface
         ['{8066B3EE-A1F6-4971-8545-1BC741333986}']
-        function read(const params : IModelData) : IModelData;
+
+        (*!----------------------------------------------
+         * read data from storage
+         *-----------------------------------------------
+         * @param params parameter for search/filtering
+         * @return model data
+s         *-----------------------------------------------*)
+        function read(const params : IModelWriteOnlyData = nil) : IModelReadOnlyData;
+
+        (*!----------------------------------------------
+         * return data instance after read() is execute
+         *-----------------------------------------------
+         * @return model data
+         *-----------------------------------------------*)
+        function data() : IModelReadOnlyData;
     end;
 
 implementation

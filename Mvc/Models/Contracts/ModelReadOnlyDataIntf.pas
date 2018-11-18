@@ -6,55 +6,45 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit ViewParametersIntf;
+unit ModelReadOnlyDataIntf;
 
 interface
 
 {$MODE OBJFPC}
 {$H+}
 
-uses
-
-    Classes;
-
 type
 
     (*!------------------------------------------------
-     * interface for any class having capability as
-     * view parameters
+     * interface that store model data
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    IViewParameters = interface
-        ['{F93CA7D6-4454-4A04-A585-78BFF12F49E3}']
+    IModelReadOnlyData = interface
+        ['{DCC3EA21-DC74-46A2-BF54-54621B736E49}']
 
         (*!------------------------------------------------
-         * get all registered variable name as array of string
+         * get total data
          *-----------------------------------------------
-         * @return instance of TStrings
-         *-----------------------------------------------
-         * Note: caller MUST not modify or destroy TStrings
-         * instance and should read only
+         * @return total data
          *-----------------------------------------------*)
-        function vars() : TStrings;
+        function count() : integer;
 
         (*!------------------------------------------------
-         * get variable value by name
+         * move data pointer to next record
          *-----------------------------------------------
-         * @param varName name of variable
-         * @return value of variable
+         * @return true if successful, false if no more record
          *-----------------------------------------------*)
-        function getVar(const varName : shortstring) : string;
+        function next() : boolean;
 
         (*!------------------------------------------------
-         * set variable value by name
+         * read data from current active record by its name
          *-----------------------------------------------
-         * @param varName name of variable
-         * @param valueData value to be store
-         * @return current class instance
+         * @return value in record
          *-----------------------------------------------*)
-        function setVar(const varName : shortstring; const valueData :string) : IViewParameters;
+        function readString(const key : string) : string;
     end;
 
 implementation
+
 end.
