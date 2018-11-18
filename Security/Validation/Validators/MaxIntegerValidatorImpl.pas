@@ -15,7 +15,7 @@ interface
 
 uses
 
-    HashListIntf,
+    ListIntf,
     ValidatorIntf,
     BaseValidatorImpl;
 
@@ -47,7 +47,7 @@ type
          *-------------------------------------------------*)
          function isValid(
              const key : shortstring;
-             const dataToValidate : IHashList
+             const dataToValidate : IList
          ) : boolean; override;
     end;
 
@@ -79,7 +79,7 @@ resourcestring
      *-------------------------------------------------*)
     function TMaxIntegerValidator.isValid(
         const key : shortstring;
-        const dataToValidate : IHashList
+        const dataToValidate : IList
     ) : boolean;
     var val : PKeyValue;
         intValue : integer;

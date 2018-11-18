@@ -15,7 +15,7 @@ interface
 
 uses
     contnrs,
-    HashListIntf;
+    ListIntf;
 
 type
     {------------------------------------------------
@@ -23,7 +23,7 @@ type
      hash list
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
-    THashList = class(TInterfacedObject, IHashList)
+    THashList = class(TInterfacedObject, IList)
     private
         hashes : TFPHashList;
     public

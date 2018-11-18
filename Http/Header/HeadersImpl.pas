@@ -17,7 +17,7 @@ uses
 
     DependencyIntf,
     CloneableIntf,
-    HashListIntf,
+    ListIntf,
     HeadersIntf;
 
 type
@@ -30,10 +30,10 @@ type
      *-----------------------------------------------*)
     THeaders = class(TInterfacedObject, IHeaders, IDependency, ICloneable)
     private
-        headerList : IHashList;
-        procedure clearHeaders(const hdrList : IHashList);
+        headerList : IList;
+        procedure clearHeaders(const hdrList : IList);
     public
-        constructor create(const hdrList : IHashList);
+        constructor create(const hdrList : IList);
         destructor destroy(); override;
 
         (*!------------------------------------
@@ -91,7 +91,7 @@ type
     end;
     PHeaderRec = ^THeaderRec;
 
-    constructor THeaders.create(const hdrList : IHashList);
+    constructor THeaders.create(const hdrList : IList);
     begin
         headerList := hdrList;
     end;
@@ -103,7 +103,7 @@ type
         headerList := nil;
     end;
 
-    procedure THeaders.clearHeaders(const hdrList : IHashList);
+    procedure THeaders.clearHeaders(const hdrList : IList);
     var i, len : integer;
         hdr : PHeaderRec;
     begin
@@ -190,7 +190,7 @@ type
     function THeaders.clone() : ICloneable;
     var i, len : integer;
         srcHdr, dstHdr : PHeaderRec;
-        newHashList : IHashList;
+        newHashList : IList;
     begin
         newHashList := THashList.create();
         len := headerList.count();

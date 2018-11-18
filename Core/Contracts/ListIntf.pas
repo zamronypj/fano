@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit HashListIntf;
+unit ListIntf;
 
 interface
 
@@ -18,7 +18,7 @@ type
      interface for any class having capability store hash list
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
-    IHashList = interface
+    IList = interface
         ['{7EEE23CC-9713-49E2-BE92-CC63BDEA17F3}']
         function count() : integer;
         function get(const indx : integer) : pointer;

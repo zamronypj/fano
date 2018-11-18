@@ -15,7 +15,7 @@ interface
 
 uses
 
-    HashListIntf,
+    ListIntf,
     RegexIntf,
     ValidatorIntf,
     BaseValidatorImpl;
@@ -60,7 +60,7 @@ type
          *-------------------------------------------------*)
          function isValid(
              const key : shortstring;
-             const dataToValidate : IHashList
+             const dataToValidate : IList
          ) : boolean; override;
     end;
 
@@ -107,7 +107,7 @@ uses
      *-------------------------------------------------*)
     function TRegexValidator.isValid(
         const key : shortstring;
-        const dataToValidate : IHashList
+        const dataToValidate : IList
     ) : boolean;
     var val : PKeyValue;
     begin

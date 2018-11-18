@@ -15,7 +15,7 @@ interface
 
 uses
 
-    HashListIntf,
+    ListIntf,
     RouteListIntf,
     HashListImpl,
     RegexIntf,
@@ -35,10 +35,10 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      * -----------------------------------------------*)
-    TCombineRegexRouteList = class(TInterfacedObject, IHashList, IRouteList)
+    TCombineRegexRouteList = class(TInterfacedObject, IList, IRouteList)
     private
         regex : IRegex;
-        hashesList : IHashList;
+        hashesList : IList;
 
         function getPlaceholderFromOriginalRoute(
             const originalRouteWithRegex : string
@@ -59,7 +59,7 @@ type
         function findMatchedRoute(const matchResult : TRegexMatchResult) : PRouteRec;
         function translateRouteName(const originalRouteWithRegex : string) : string;
     public
-        constructor create(const regexInst : IRegex; const hashes : IHashList);
+        constructor create(const regexInst : IRegex; const hashes : IList);
         destructor destroy(); override;
 
         (*!------------------------------------------------
@@ -123,7 +123,7 @@ const
     -------------------------------------------------*)
     ROUTE_DISPATCH_REGEX = '([^/]+)';
 
-    constructor TCombineRegexRouteList.create(const regexInst : IRegex; const hashes : IHashList);
+    constructor TCombineRegexRouteList.create(const regexInst : IRegex; const hashes : IList);
     begin
         hashesList := hashes;
         regex := regexInst;

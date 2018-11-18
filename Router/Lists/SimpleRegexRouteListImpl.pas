@@ -14,7 +14,7 @@ interface
 {$H+}
 
 uses
-    HashListIntf,
+    ListIntf,
     RouteListIntf,
     HashListImpl,
     RegexIntf,
@@ -33,10 +33,10 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      * -----------------------------------------------*)
-    TSimpleRegexRouteList = class(TInterfacedObject, IHashList, IRouteList)
+    TSimpleRegexRouteList = class(TInterfacedObject, IList, IRouteList)
     private
         regex : IRegex;
-        hashesList : IHashList;
+        hashesList : IList;
 
         function getPlaceholderFromOriginalRoute(
             const originalRouteWithRegex : string
@@ -50,7 +50,7 @@ type
         procedure clearRoutes();
         function translateRouteName(const originalRouteWithRegex : string) : string;
     public
-        constructor create(const regexInst : IRegex; const hashes : IHashList);
+        constructor create(const regexInst : IRegex; const hashes : IList);
         destructor destroy(); override;
 
         (*!------------------------------------------------
@@ -114,7 +114,7 @@ const
     -------------------------------------------------*)
     ROUTE_DISPATCH_REGEX = '([^/]+)';
 
-    constructor TSimpleRegexRouteList.create(const regexInst : IRegex; const hashes : IHashList);
+    constructor TSimpleRegexRouteList.create(const regexInst : IRegex; const hashes : IList);
     begin
         hashesList := hashes;
         regex := regexInst;
