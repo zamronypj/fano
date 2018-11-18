@@ -53,10 +53,10 @@ type
 implementation
 
     (*!------------------------------------------------
-        * get total uploaded file in collection
-        *-------------------------------------------------
-        * @return number of item in collection
-        *------------------------------------------------*)
+     * get total uploaded file in collection
+     *-------------------------------------------------
+     * @return number of item in collection
+     *------------------------------------------------*)
     function TUploadedFileCollection.count() : integer;
     begin
         //TODO: implement count()
@@ -64,10 +64,10 @@ implementation
     end;
 
     (*!------------------------------------------------
-        * get IUploadedFile instance by name
-        *-------------------------------------------------
-        * @return IUploadedFile instance
-        *------------------------------------------------*)
+     * get IUploadedFile instance by name
+     *-------------------------------------------------
+     * @return IUploadedFile instance
+     *------------------------------------------------*)
     function TUploadedFileCollection.getUploadedFile(const key : shortstring) : IUploadedFile;
     begin
         //TODO: implement getuploadedFile()
@@ -75,10 +75,10 @@ implementation
     end;
 
     (*!------------------------------------------------
-        * get IUploadedFile instance by index
-        *-------------------------------------------------
-        * @return IUploadedFile instance
-        *------------------------------------------------*)
+     * get IUploadedFile instance by index
+     *-------------------------------------------------
+     * @return IUploadedFile instance
+     *------------------------------------------------*)
     function TUploadedFileCollection.getUploadedFile(const indx : integer) : IUploadedFile;
     begin
         //TODO: implement getuploadedFile()
