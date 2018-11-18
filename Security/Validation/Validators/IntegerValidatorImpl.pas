@@ -1,9 +1,9 @@
 {*!
- * Fano Web Framework (https://fano.juhara.id)
+ * Fano Web Framework (https://fanoframework.github.io)
  *
- * @link      https://github.com/zamronypj/fano
+ * @link      https://github.com/fanoframework/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
+ * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
 unit IntegerValidatorImpl;
@@ -15,6 +15,7 @@ interface
 
 uses
 
+    ListIntf,
     ValidatorIntf,
     BaseValidatorImpl;
 
@@ -22,7 +23,7 @@ type
 
     (*!------------------------------------------------
      * basic class having capability to
-     * validate alpha numeric input data
+     * validate integer data
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
@@ -42,7 +43,7 @@ type
          *-------------------------------------------------*)
          function isValid(
              const key : shortstring;
-             const dataToValidate : IHashList
+             const dataToValidate : IList
          ) : boolean; override;
     end;
 
@@ -50,6 +51,7 @@ implementation
 
 uses
 
+    SysUtils,
     KeyValueTypes;
 
 resourcestring
@@ -72,9 +74,9 @@ resourcestring
      *-------------------------------------------------*)
     function TIntegerValidator.isValid(
         const key : shortstring;
-        const dataToValidate : IHashList
+        const dataToValidate : IList
     ) : boolean;
-    var val : PKeyValueType;
+    var val : PKeyValue;
     begin
         val := dataToValidate.find(key);
         if (val = nil) then
@@ -82,10 +84,12 @@ resourcestring
             //if we get here it means there is no field with that name
             //so assume that validation is success
             result := true;
+            exit();
         end;
 
         try
-            val^.value.toInteger();
+            //try to convert string to integer
+            strToInt(val^.value);
             result := true;
         except
             //if we get here, mostly because of EConvertError exception

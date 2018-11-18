@@ -1,9 +1,9 @@
 {*!
- * Fano Web Framework (https://fano.juhara.id)
+ * Fano Web Framework (https://fanoframework.github.io)
  *
- * @link      https://github.com/zamronypj/fano
+ * @link      https://github.com/fanoframework/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
+ * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
 unit ValidationImpl;
@@ -16,9 +16,12 @@ interface
 uses
 
     DependencyIntf,
+    ListIntf,
     RequestIntf,
+    ValidatorIntf,
     RequestValidatorintf,
-    ValidationRulesIntf;
+    ValidationRulesIntf,
+    ValidationResultTypes;
 
 type
 
@@ -31,11 +34,14 @@ type
     TValidation = class(TInterfacedObject, IRequestValidator, IValidationRules, IDependency)
     private
         validationResult : TValidationResult;
-        validatorList : IHashList;
+        validatorList : IList;
         procedure clearValidator();
+        function validateKeyValue(const inputData : IList) : TValidationResult;
+        function validateBody(const request : IRequest) : TValidationResult;
+        function validateQueryStr(const request : IRequest) : TValidationResult;
     public
 
-        constructor create(const validators : IHashList);
+        constructor create(const validators : IList);
         destructor destroy(); override;
 
         (*!------------------------------------------------
@@ -68,7 +74,7 @@ type
          * @param key name of field in GET, POST request input data
          * @return current validation rules
          *-------------------------------------------------*)
-        function addRule(const key : shortstring; const validator : IValidator) : IValidationRule;
+        function addRule(const key : shortstring; const validator : IValidator) : IValidationRules;
     end;
 
 implementation
@@ -90,7 +96,7 @@ type
     end;
     PValidatorRec = ^TValidatorRec;
 
-    constructor TValidation.create(const validators : IHashList);
+    constructor TValidation.create(const validators : IList);
     begin
         validatorList := validators;
         validationResult.isValid := true;
@@ -124,7 +130,7 @@ type
      * @param inputData array of key value pair
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
-    function TValidation.validateKeyValue(const inputData : IHashList) : TValidationResult;
+    function TValidation.validateKeyValue(const inputData : IList) : TValidationResult;
     var i, len, numFailValidation : integer;
         valRec : PValidatorRec;
     begin
@@ -196,12 +202,12 @@ type
         ctr := 0;
         for i:=0 to lenBody-1 do
         begin
-            result.errorMessage[ctr] := valResBody.errorMessages[i];
+            result.errorMessages[ctr] := valResBody.errorMessages[i];
             inc(ctr);
         end;
         for i:=0 to lenQuery-1 do
         begin
-            result.errorMessage[ctr] := valResQuery.errorMessages[i];
+            result.errorMessages[ctr] := valResQuery.errorMessages[i];
             inc(ctr);
         end;
         validationResult := result;
@@ -223,7 +229,7 @@ type
      * @param key name of field in GET, POST request input data
      * @return current validation rules
      *-------------------------------------------------*)
-    function addRule(const key : shortstring; const validator : IValidator) : IValidationRule;
+    function TValidation.addRule(const key : shortstring; const validator : IValidator) : IValidationRules;
     var valRec : PValidatorRec;
     begin
         if (validator = nil) then

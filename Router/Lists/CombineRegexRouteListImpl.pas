@@ -1,9 +1,9 @@
 {*!
- * Fano Web Framework (https://fano.juhara.id)
+ * Fano Web Framework (https://fanoframework.github.io)
  *
- * @link      https://github.com/zamronypj/fano
+ * @link      https://github.com/fanoframework/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
+ * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
 unit CombineRegexRouteListImpl;
@@ -15,7 +15,7 @@ interface
 
 uses
 
-    HashListIntf,
+    ListIntf,
     RouteListIntf,
     HashListImpl,
     RegexIntf,
@@ -35,18 +35,19 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      * -----------------------------------------------*)
-    TCombineRegexRouteList = class(TInterfacedObject, IHashList, IRouteList)
+    TCombineRegexRouteList = class(TInterfacedObject, IList, IRouteList)
     private
         regex : IRegex;
-        hashesList : IHashList;
+        hashesList : IList;
 
         function getPlaceholderFromOriginalRoute(
             const originalRouteWithRegex : string
         ) : TArrayOfPlaceholders;
 
         function getPlaceholderValuesFromUri(
-             const matches : TRegexMatchResult;
-             const placeHolders : TArrayOfPlaceholders
+            const matchIndex : integer;
+            const matches : TRegexMatchResult;
+            const placeHolders : TArrayOfPlaceholders
         ) : TArrayOfPlaceholders;
 
         procedure clearRoutes();
@@ -58,7 +59,7 @@ type
         function findMatchedRoute(const matchResult : TRegexMatchResult) : PRouteRec;
         function translateRouteName(const originalRouteWithRegex : string) : string;
     public
-        constructor create(const regexInst : IRegex; const hashes : IHashList);
+        constructor create(const regexInst : IRegex; const hashes : IList);
         destructor destroy(); override;
 
         (*!------------------------------------------------
@@ -122,7 +123,7 @@ const
     -------------------------------------------------*)
     ROUTE_DISPATCH_REGEX = '([^/]+)';
 
-    constructor TCombineRegexRouteList.create(const regexInst : IRegex; const hashes : IHashList);
+    constructor TCombineRegexRouteList.create(const regexInst : IRegex; const hashes : IList);
     begin
         hashesList := hashes;
         regex := regexInst;
@@ -242,54 +243,51 @@ const
      *
      *---------------------------------------------------*)
     function TCombineRegexRouteList.getPlaceholderValuesFromUri(
-         const matches : TRegexMatchResult;
-         const placeHolders : TArrayOfPlaceholders
+        const matchIndex : integer;
+        const matches : TRegexMatchResult;
+        const placeHolders : TArrayOfPlaceholders
     ) : TArrayOfPlaceholders;
-    var i, totalValue, totalPlaceHolders : longint;
+    var i, totalPlaceHolders : longint;
     begin
-        totalPlaceHolders := length(placeholders);
-        //matches.matches will always contain 1 element
-        //totalValue will contain number of placeholder+1 (full match)
-        totalValue := length(matches.matches[0])-1;
-
-        if (totalPlaceHolders <> totalValue) then
-        begin
-            //Something is wrong as both must be equal!
-            raise ERouteMatcher.createFmt(
-                sTotalPlaceHolderAndValueNotEqual,
-                [totalPlaceHolders, totalValue]
-            )
-        end;
-
         (*----------------------------
-          if we get here then placeholders will contain
-          data that is same as output getPlaceholderFromOriginalRoute
-          So we do not need to call setLength() anymore
-
           if request uri is
           /name/juhara/nice/edback
 
+          and following routes pattern
+          (0) /article/([^/]+)/([^/]+)
+          (1) /nice-articles/([^/]+)/([^/]+)
+          (2) /name/([^/]+)/([^/]+)/edback
+
           matches will contain following data:
 
-          length(matches.matches) == 3
+          length(placeholders) == 2
           matches.matched = true
           matches.matches[0][0] = '/name/juhara/nice/edback'
+          matches.matches[0][1] = ''
+          matches.matches[0][2] = ''
+          matches.matches[0][3] = ''
+          matches.matches[0][4] = ''
+          matches.matches[0][5] = ''
+          matches.matches[0][6] = ''
+          matches.matches[0][7] = '/name/juhara/nice/edback'
+          matches.matches[0][8] = 'juhara'
+          matches.matches[0][9] = 'nice'
 
-          matches.matches[0][1] = 'juhara'
-
-          matches.matches[0][2] = 'nice'
+          matchIndex = 7
 
           So to extract value names, we
-          only need to extract from
+          need to extract from
 
-          matches.matches[0][n]
-          where n=1..length(matches.matches)-1
+          matches.matches[0][matchIndex + i + 1]
+          where i=0..length(placeholders)-1
          ----------------------------*)
+
+        totalPlaceHolders := length(placeholders);
         for i:=0 to totalPlaceholders-1 do
         begin
             //placeholders[i].phName already contain variable name
             //so our concern only to fill its value
-            placeholders[i].phValue := matches.matches[0][i+1];
+            placeholders[i].phValue := matches.matches[0][matchIndex + i + 1];
         end;
         result := placeHolders;
     end;
@@ -367,50 +365,60 @@ const
      * We will combine all registered route patterns in list into one
      * string regex, in following format
      *
-     *  ^(/name/([^/]+)/([^/]+)/edback)$|
-     *  ^(/article/([^/]+)/([^/]+))$|
-     *  ^(/nice-articles/([^/]+)/([^/]+))$
+     *  ^/name/([^/]+)/([^/]+)/edback$|
+     *  ^/article/([^/]+)/([^/]+)$|
+     *  ^/nice-articles/([^/]+)/([^/]+)$
      *
      * This is done so we can match all routes using only one
      * regex matching call.
+     *--------------------------------------------------
+     * TODO: combined regex pattern need only to be built one time
+     * TODO: once all routes is defined. We can save few loops
      *---------------------------------------------------*)
     function TCombineRegexRouteList.combineRegexRoutes() : string;
-    var i, len : integer;
+    var indx, totalRoutes : integer;
     begin
-        //TODO: combined regex pattern need only to be built one time
-        //TODO: once all routes is defined. We can save few loops
+        //if we get here it is safe to assume that
+        //totalRoutes > 0
         result := '';
-        len := count();
-        for i := 0 to len-1 do
+        totalRoutes := count();
+        for indx := 0 to totalRoutes-2 do
         begin
-            if (i < len-1) then
-            begin
-                result := result + '^(' + keyOfIndex(i) + ')$|';
-            end else
-            begin
-                result := result + '^(' + keyOfIndex(i) + ')$';
-            end;
+            result := result + '^(' + keyOfIndex(indx) + ')$|';
         end;
+        result := result + '^(' + keyOfIndex(totalRoutes-1) + ')$';
     end;
 
     (*------------------------------------------------
-     * count number of route patterns and its sub group
+     * Find route data based on matched index
      *------------------------------------------------
-     * @param startIndx start index to look
-     * @param startIndx start index to look
-     * @return number ot route patterns ant its subgroup
+     * @param matchIndex index where route is matched
+     * @return route data
      *-------------------------------------------------
-     * For example, if we have following registered route patterns
-     *  (0) /name/([^/]+)/([^/]+)/edback/([^/]+)
-     *  (1) /article/([^/]+)/([^/]+)
-     *  (2) /nice-articles/([^/]+)/([^/]+)
+     * For example, if we have following uri
+     *   /name/juhara/nice/edback
+     * and following registered route patterns
+     *  (0) /article/([^/]+)/([^/]+)
+     *  (1) /nice-articles/([^/]+)/([^/]+)
+     *  (2) /name/([^/]+)/([^/]+)/edback
      *
-     *  and input of startIndex = 0 and endIndex=1
+     *  matchIndex = 7 (see findMatchedRoute() comment)
+     *  totalRoutes = 3
+     *  totalPattern = 0 (initial value)
      *
      *  at iteration, i=0
-     *  result = 4 (1 for first route pattern + 4 for ([^/]+) groups)
+     *    matchIndex-1 = 6, totalPattern = 0 ===> false
+     *    totalPattern = 3 (1 for first route pattern + 2 for ([^/]+) groups)
+     *
      *  at iteration, i=1
-     *  result = 7 (4 + 1 for second route pattern + 2 for ([^/]+) groups)
+     *    matchIndex-1 = 6, totalPattern = 3 ===> false
+     *    totalPattern = 6 (3 + 1 for second route pattern + 2 for ([^/]+) groups)
+     *
+     *  at iteration, i=2
+     *    matchIndex-1 = 6, totalPattern = 6 ===> true
+     *---------------------------------------------------
+     * This method basically translate match index into
+     * index in list
      *---------------------------------------------------*)
     function TCombineRegexRouteList.findRouteByMatchIndex(
         const matchIndex : integer
@@ -424,21 +432,12 @@ const
         for i := 0 to totalRoutes-1 do
         begin
             routeRec := hashesList.get(i);
-            if ((matchIndex-1 = 0) and (i=0)) then
+            if (matchIndex-1 = totalPattern) then
             begin
-                //match first route,
-                //no need to do number of placeholder calculation
                 result := routeRec;
                 exit;
-            end else
-            begin
-                totalPattern := totalPattern + 1 + length(routeRec^.placeHolders);
-                if (matchIndex = totalPattern-1) then
-                begin
-                    result := routeRec;
-                    exit;
-                end;
             end;
+            totalPattern := totalPattern + 1 + length(routeRec^.placeHolders);
         end;
     end;
 
@@ -460,6 +459,8 @@ const
      * matchResult contain following values:
      *
      * matchResult.matched=true
+     *
+     * ==== match against whole combined regex pattern (we will ignore this) ===
      * matchResult.matches[0][0]='/name/juhara/nice/edback'
      *
      * ===== route pattern /article/([^/]+)/([^/]+), no match=====
@@ -483,27 +484,34 @@ const
      *
      * this method job is to find the first non empty matches
      * for matchResult.matches[0][n] where n>0
+     *
+     * For particular case above, matched index = 7
+     * ===== route pattern /name/([^/]+)/([^/]+)/edback, match=====
+     * matchResult.matches[0][7]='/name/juhara/nice/edback'
      *---------------------------------------------------*)
     function TCombineRegexRouteList.findMatchedRoute(const matchResult : TRegexMatchResult) : PRouteRec;
-    var i, j, len, len2 : integer;
+    var indx, totalMatch : integer;
     begin
         result := nil;
-        len := length(matchResult.matches);
-        for i:=0 to len-1 do
+        //It will always contain one element,
+        //so it is safe to assume index 0 present
+        totalMatch := length(matchResult.matches[0]);
+
+        //we skip first match (indx > 0) because it is for match against whole
+        //combined regex pattern not individual route pattern
+        for indx:=1 to totalMatch-1 do
         begin
-            len2 := length(matchResult.matches[i]);
-            for j:=0 to len2-1 do
+            //our task is to find first non empty
+            if (length(matchResult.matches[0][indx]) > 0) then
             begin
-                if ((j>0) and (length(matchResult.matches[i][j]) > 0)) then
-                begin
-                    result := findRouteByMatchIndex(j);
-                    result^.placeholders := getPlaceholderValuesFromUri(
-                        matchResult,
-                        result^.placeHolders
-                    );
-                    exit;
-                end
-            end;
+                result := findRouteByMatchIndex(indx);
+                result^.placeholders := getPlaceholderValuesFromUri(
+                    indx,
+                    matchResult,
+                    result^.placeHolders
+                );
+                exit;
+            end
         end;
     end;
 
@@ -553,7 +561,7 @@ const
     function TCombineRegexRouteList.match(const requestUri : shortstring) : pointer;
     begin
         result := nil;
-        if (count() <> 0) then
+        if (count() > 0) then
         begin
             result := findRoute(requestUri);
         end;

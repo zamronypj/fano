@@ -1,9 +1,9 @@
 {*!
- * Fano Web Framework (https://fano.juhara.id)
+ * Fano Web Framework (https://fanoframework.github.io)
  *
- * @link      https://github.com/zamronypj/fano
+ * @link      https://github.com/fanoframework/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
+ * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
 unit RouteListIntf;
@@ -13,7 +13,7 @@ interface
 {$MODE OBJFPC}
 
 uses
-    HashListIntf;
+    ListIntf;
 
 type
 
@@ -23,7 +23,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    IRouteList = interface(IHashList)
+    IRouteList = interface(IList)
         ['{0BE04022-B3E7-4AE9-83F8-829D07F7EB83}']
 
         (*!-----------------------------------------

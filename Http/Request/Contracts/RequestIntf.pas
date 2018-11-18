@@ -1,9 +1,9 @@
 {*!
- * Fano Web Framework (https://fano.juhara.id)
+ * Fano Web Framework (https://fanoframework.github.io)
  *
- * @link      https://github.com/zamronypj/fano
+ * @link      https://github.com/fanoframework/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
+ * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
 unit RequestIntf;
@@ -15,7 +15,7 @@ interface
 
 uses
 
-    HashListIntf;
+    ListIntf;
 
 type
 
@@ -43,7 +43,7 @@ type
          *-------------------------------------------------
          * @return list of query string params
          *------------------------------------------------*)
-        function getQueryParams() : IHashList;
+        function getQueryParams() : IList;
 
         (*!------------------------------------------------
          * get single cookie param value by its name
@@ -60,7 +60,7 @@ type
          *-------------------------------------------------
          * @return list of cookie params
          *------------------------------------------------*)
-        function getCookieParams() : IHashList;
+        function getCookieParams() : IList;
 
         (*!------------------------------------------------
          * get request body data
@@ -77,7 +77,7 @@ type
          *-------------------------------------------------
          * @return array of parsed body params
          *------------------------------------------------*)
-        function getParsedBodyParams() : IHashList;
+        function getParsedBodyParams() : IList;
 
         (*!------------------------------------------------
          * test if current request is coming from AJAX request

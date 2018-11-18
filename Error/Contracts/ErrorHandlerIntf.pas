@@ -1,9 +1,9 @@
 {*!
- * Fano Web Framework (https://fano.juhara.id)
+ * Fano Web Framework (https://fanoframework.github.io)
  *
- * @link      https://github.com/zamronypj/fano
+ * @link      https://github.com/fanoframework/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
+ * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
 unit ErrorHandlerIntf;
@@ -15,7 +15,7 @@ interface
 
 uses
 
-    sysutils;
+    SysUtils;
 
 type
 
@@ -27,6 +27,14 @@ type
      *-------------------------------------------------*)
     IErrorHandler = interface
         ['{2D6BF281-BBF9-41A0-BE5D-33E84E39B1C6}']
+
+        (*!---------------------------------------------------
+         * handle exception
+         *----------------------------------------------------
+         * @param exc exception that is to be handled
+         * @param status HTTP error status, default is HTTP error 500
+         * @param msg HTTP error message
+         *---------------------------------------------------*)
         function handleError(
             const exc : Exception;
             const status : integer = 500;

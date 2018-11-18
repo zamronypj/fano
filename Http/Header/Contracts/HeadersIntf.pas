@@ -1,9 +1,9 @@
 {*!
- * Fano Web Framework (https://fano.juhara.id)
+ * Fano Web Framework (https://fanoframework.github.io)
  *
- * @link      https://github.com/zamronypj/fano
+ * @link      https://github.com/fanoframework/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
+ * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
 unit HeadersIntf;
@@ -36,6 +36,23 @@ type
          * @return header instance
          *-------------------------------------*)
         function setHeader(const key : shortstring; const value : string) : IHeaders;
+
+        (*!------------------------------------
+         * get http header
+         *-------------------------------------
+         * @param key name  of http header to get
+         * @return header value
+         * @throws EHeaderNotSet
+         *-------------------------------------*)
+        function getHeader(const key : shortstring) : string;
+
+        (*!------------------------------------
+         * test if http header already been set
+         *-------------------------------------
+         * @param key name  of http header to test
+         * @return boolean true if header is set
+         *-------------------------------------*)
+        function has(const key : shortstring) : boolean;
 
         (*!------------------------------------
          * output http headers to STDIN

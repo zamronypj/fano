@@ -1,9 +1,9 @@
 {*!
- * Fano Web Framework (https://fano.juhara.id)
+ * Fano Web Framework (https://fanoframework.github.io)
  *
- * @link      https://github.com/zamronypj/fano
+ * @link      https://github.com/fanoframework/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
+ * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
 unit CompositeValidatorImpl;
@@ -16,7 +16,7 @@ interface
 uses
 
     classes,
-    HashListIntf,
+    ListIntf,
     ValidatorIntf,
     ValidatorCollectionIntf,
     BaseValidatorImpl;
@@ -47,7 +47,7 @@ type
          *-------------------------------------------------*)
          function isValid(
              const key : shortstring;
-             const dataToValidate : IHashList
+             const dataToValidate : IList
          ) : boolean; override;
 
         (*!------------------------------------------------
@@ -95,7 +95,7 @@ implementation
      *-------------------------------------------------*)
     function TCompositeValidator.isValid(
         const key : shortstring;
-        const dataToValidate : IHashList
+        const dataToValidate : IList
     ) : boolean;
     var i, len : integer;
         validator : IValidator;
@@ -122,6 +122,7 @@ implementation
     function TCompositeValidator.add(const validator : IValidator) : IValidatorCollection;
     begin
         validatorList.add(validator);
+        result := self;
     end;
 
     (*!------------------------------------------------

@@ -1,9 +1,9 @@
 {*!
- * Fano Web Framework (https://fano.juhara.id)
+ * Fano Web Framework (https://fanoframework.github.io)
  *
- * @link      https://github.com/zamronypj/fano
+ * @link      https://github.com/fanoframework/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
+ * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
 unit ViewIntf;
@@ -24,8 +24,16 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    IView = interface(IResponse)
+    IView = interface
         ['{04F99A16-DDBC-403B-A099-8BB44BE3CCC5}']
+
+        (*!------------------------------------------------
+         * render view
+         *------------------------------------------------
+         * @param viewParams view parameters
+         * @param response response instance
+         * @return response
+         *-----------------------------------------------*)
         function render(
             const viewParams : IViewParameters;
             const response : IResponse

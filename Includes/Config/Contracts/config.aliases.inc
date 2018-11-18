@@ -1,0 +1,1 @@
+IAppConfiguration = ConfigIntf.IAppConfiguration;

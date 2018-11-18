@@ -1,9 +1,9 @@
 {*!
- * Fano Web Framework (https://fano.juhara.id)
+ * Fano Web Framework (https://fanoframework.github.io)
  *
- * @link      https://github.com/zamronypj/fano
+ * @link      https://github.com/fanoframework/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
+ * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 unit DependencyListIntf;
 
@@ -13,7 +13,7 @@ interface
 
 uses
 
-    HashListIntf;
+    ListIntf;
 
 type
 
@@ -22,7 +22,7 @@ type
      dependencies
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
-    IDependencyList = interface(IHashList)
+    IDependencyList = interface(IList)
         ['{BBDB53E2-D4DF-4FD0-86D4-2291124236B1}']
     end;
 

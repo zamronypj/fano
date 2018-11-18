@@ -1,9 +1,9 @@
 {*!
- * Fano Web Framework (https://fano.juhara.id)
+ * Fano Web Framework (https://fanoframework.github.io)
  *
- * @link      https://github.com/zamronypj/fano
+ * @link      https://github.com/fanoframework/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
+ * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
 unit ViewParametersImpl;
@@ -35,8 +35,32 @@ type
     public
         constructor create();
         destructor destroy(); override;
+
+        (*!------------------------------------------------
+         * get all registered variable name as array of string
+         *-----------------------------------------------
+         * @return instance of TStrings
+         *-----------------------------------------------
+         * Note: caller MUST not modify or destroy TStrings
+         * instance and should read only
+         *-----------------------------------------------*)
         function vars() : TStrings;
+
+        (*!------------------------------------------------
+         * get variable value by name
+         *-----------------------------------------------
+         * @param varName name of variable
+         * @return value of variable
+         *-----------------------------------------------*)
         function getVar(const varName : shortstring) : string;
+
+        (*!------------------------------------------------
+         * set variable value by name
+         *-----------------------------------------------
+         * @param varName name of variable
+         * @param valueData value to be store
+         * @return current class instance
+         *-----------------------------------------------*)
         function setVar(const varName : shortstring; const valueData :string) : IViewParameters;
     end;
 
@@ -85,11 +109,25 @@ type
         keys.free();
     end;
 
+    (*!------------------------------------------------
+     * get all registered variable name as array of string
+     *-----------------------------------------------
+     * @return instance of TStrings
+     *-----------------------------------------------
+     * Note: caller MUST not modify or destroy TStrings
+     * instance and should read only
+     *-----------------------------------------------*)
     function TViewParameters.vars() : TStrings;
     begin
         result := keys;
     end;
 
+    (*!------------------------------------------------
+     * get variable value by name
+     *-----------------------------------------------
+     * @param varName name of variable
+     * @return value of variable
+     *-----------------------------------------------*)
     function TViewParameters.getVar(const varName : shortstring) : string;
     var param : PValue;
     begin
@@ -103,6 +141,13 @@ type
         end;
     end;
 
+    (*!------------------------------------------------
+     * set variable value by name
+     *-----------------------------------------------
+     * @param varName name of variable
+     * @param valueData value to be store
+     * @return current class instance
+     *-----------------------------------------------*)
     function TViewParameters.setVar(
         const varName : shortstring;
         const valueData :string

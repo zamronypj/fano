@@ -1,9 +1,9 @@
 {*!
- * Fano Web Framework (https://fano.juhara.id)
+ * Fano Web Framework (https://fanoframework.github.io)
  *
- * @link      https://github.com/zamronypj/fano
+ * @link      https://github.com/fanoframework/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
+ * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
 unit ResponseStreamIntf;
@@ -46,6 +46,14 @@ type
          * @return number of bytes actually written
          *-------------------------------------*)
         function write(const buffer; const sizeToWrite : longint) : longint;
+
+        (*!------------------------------------
+         * write string to stream
+         *-------------------------------------
+         * @param buffer string to write
+         * @return number of bytes actually written
+         *-------------------------------------*)
+        function write(const buffer : string) : longint;
 
         (*!------------------------------------
          * get stream size

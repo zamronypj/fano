@@ -1,9 +1,9 @@
 {*!
- * Fano Web Framework (https://fano.juhara.id)
+ * Fano Web Framework (https://fanoframework.github.io)
  *
- * @link      https://github.com/zamronypj/fano
+ * @link      https://github.com/fanoframework/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
+ * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
 unit ValidationRulesIntf;
@@ -35,11 +35,9 @@ type
          * @param key name of field in GET, POST request input data
          * @return current validation rules
          *-------------------------------------------------*)
-        function addRule(const key : shortstring; const validator : IValidator) : IValidationRule;
+        function addRule(const key : shortstring; const validator : IValidator) : IValidationRules;
     end;
 
 implementation
-
-
 
 end.

@@ -1,9 +1,9 @@
 {*!
- * Fano Web Framework (https://fano.juhara.id)
+ * Fano Web Framework (https://fanoframework.github.io)
  *
- * @link      https://github.com/zamronypj/fano
+ * @link      https://github.com/fanoframework/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
+ * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
 unit HeadersImpl;
@@ -17,7 +17,7 @@ uses
 
     DependencyIntf,
     CloneableIntf,
-    HashListIntf,
+    ListIntf,
     HeadersIntf;
 
 type
@@ -30,10 +30,10 @@ type
      *-----------------------------------------------*)
     THeaders = class(TInterfacedObject, IHeaders, IDependency, ICloneable)
     private
-        headerList : IHashList;
-        procedure clearHeaders(const hdrList : IHashList);
+        headerList : IList;
+        procedure clearHeaders(const hdrList : IList);
     public
-        constructor create(const hdrList : IHashList);
+        constructor create(const hdrList : IList);
         destructor destroy(); override;
 
         (*!------------------------------------
@@ -44,6 +44,23 @@ type
          * @return header instance
          *-------------------------------------*)
         function setHeader(const key : shortstring; const value : string) : IHeaders;
+
+        (*!------------------------------------
+         * get http header
+         *-------------------------------------
+         * @param key name  of http header to get
+         * @return header value
+         * @throws EHeaderNotSet
+         *-------------------------------------*)
+        function getHeader(const key : shortstring) : string;
+
+        (*!------------------------------------
+         * test if http header already been set
+         *-------------------------------------
+         * @param key name  of http header to test
+         * @return boolean true if header is set
+         *-------------------------------------*)
+        function has(const key : shortstring) : boolean;
 
         (*!------------------------------------
          * output http headers to STDIN
@@ -59,7 +76,12 @@ implementation
 
 uses
 
-    HashListImpl;
+    HashListImpl,
+    EHeaderNotSetImpl;
+
+resourcestring
+
+    sErrHeaderNotSet = 'Header %s is not set';
 
 type
 
@@ -69,7 +91,7 @@ type
     end;
     PHeaderRec = ^THeaderRec;
 
-    constructor THeaders.create(const hdrList : IHashList);
+    constructor THeaders.create(const hdrList : IList);
     begin
         headerList := hdrList;
     end;
@@ -81,7 +103,7 @@ type
         headerList := nil;
     end;
 
-    procedure THeaders.clearHeaders(const hdrList : IHashList);
+    procedure THeaders.clearHeaders(const hdrList : IList);
     var i, len : integer;
         hdr : PHeaderRec;
     begin
@@ -118,6 +140,35 @@ type
     end;
 
     (*!------------------------------------
+     * get http header
+     *-------------------------------------
+     * @param key name  of http header to get
+     * @return header value
+     * @throws EHeaderNotSet
+     *-------------------------------------*)
+    function THeaders.getHeader(const key : shortstring) : string;
+    var hdr : PHeaderRec;
+    begin
+        hdr := headerList.find(key);
+        if (hdr = nil) then
+        begin
+            raise EHeaderNotSet.createFmt(sErrHeaderNotSet, [key]);
+        end;
+        result := hdr^.value;
+    end;
+
+    (*!------------------------------------
+     * test if http header already been set
+     *-------------------------------------
+     * @param key name  of http header to test
+     * @return boolean true if header is set
+     *-------------------------------------*)
+    function THeaders.has(const key : shortstring) : boolean;
+    begin
+        result := (headerList.find(key) <> nil);
+    end;
+
+    (*!------------------------------------
      * output http headers to STDIN
      *-------------------------------------
      * @return header instance
@@ -139,7 +190,7 @@ type
     function THeaders.clone() : ICloneable;
     var i, len : integer;
         srcHdr, dstHdr : PHeaderRec;
-        newHashList : IHashList;
+        newHashList : IList;
     begin
         newHashList := THashList.create();
         len := headerList.count();

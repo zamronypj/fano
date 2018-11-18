@@ -1,9 +1,9 @@
 {*!
- * Fano Web Framework (https://fano.juhara.id)
+ * Fano Web Framework (https://fanoframework.github.io)
  *
- * @link      https://github.com/zamronypj/fano
+ * @link      https://github.com/fanoframework/fano
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
- * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
+ * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
 unit MiddlewareCollectionImpl;
@@ -36,6 +36,14 @@ type
         function add(const middleware : IMiddleware) : IMiddlewareCollection;
         function count() : integer;
         function get(const indx : integer) : IMiddleware;
+
+        (*!------------------------------------------------
+         * Merge current middleware collection with another
+         * and return as new instance
+         *-------------------------------------------------
+         * @param middlewares another middleware collection
+         * @return new merged middleware collection
+         *-------------------------------------------------*)
         function merge(const middlewares : IMiddlewareCollection) : IMiddlewareCollection;
     end;
 
@@ -43,7 +51,7 @@ implementation
 
     constructor TMiddlewareCollection.create();
     begin
-        middlewareList := TInterfaceList.Create();
+        middlewareList := TInterfaceList.create();
     end;
 
     destructor TMiddlewareCollection.destroy();
@@ -73,8 +81,15 @@ implementation
         result := middlewareList.items[indx] as IMiddleware;
     end;
 
+    (*!------------------------------------------------
+     * Merge current middleware collection with another
+     * and return as new instance
+     *-------------------------------------------------
+     * @param middlewares another middleware collection
+     * @return new merged middleware collection
+     *-------------------------------------------------*)
     function TMiddlewareCollection.merge(const middlewares : IMiddlewareCollection) : IMiddlewareCollection;
-    var newCollection : TMiddlewareCollection;
+    var newCollection : IMiddlewareCollection;
         i, len : integer;
     begin
         newCollection := TMiddlewareCollection.create();
