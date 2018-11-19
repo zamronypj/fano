@@ -226,6 +226,7 @@ resourcestring
         dbInstance.DatabaseName := dbname;
         dbInstance.UserName := username;
         dbInstance.Password := password;
+        result := self;
     end;
 
     (*!------------------------------------------------
@@ -241,6 +242,7 @@ resourcestring
             raise EInvalidDbConnection.create(sErrInvalidConnection);
         end;
         dbInstance.startTransaction();
+        result := self;
     end;
 
     (*!------------------------------------------------
@@ -255,6 +257,7 @@ resourcestring
             raise EInvalidDbConnection.create(sErrInvalidConnection);
         end;
         dbInstance.endTransaction();
+        result := self;
     end;
 
     (*!------------------------------------------------
@@ -264,7 +267,7 @@ resourcestring
      *-------------------------------------------------*)
     function TMySQLDb.exec(const sql : string) : IRdbmsResultSet;
     begin
-        query.sql := sql;
+        query.sql.text := sql;
         query.open();
         result := self;
     end;
