@@ -41,14 +41,14 @@ implementation
 
 uses
 
-    MySqlDbImpl,
+    MySqlDbImpl;
 
     (*!---------------------------------------------------
      * build class instance
      *----------------------------------------------------
      * @param container dependency container instance
      *---------------------------------------------------*)
-    function TMySQLDbFactory.build(const container : IDependencyContainer) : IDependency; override;
+    function TMySQLDbFactory.build(const container : IDependencyContainer) : IDependency;
     begin
         result := TMySQLDb.create();
     end;
