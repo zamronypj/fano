@@ -341,7 +341,7 @@ resourcestring
      *-------------------------------------------------*)
     function TMySQLDb.fieldByIndex(const indx : integer) : IRdbmsField;
     begin
-        currentField := query.fields.fieldByNumber(name);
+        currentField := query.fields.fieldByNumber(indx);
         result := self;
     end;
 
