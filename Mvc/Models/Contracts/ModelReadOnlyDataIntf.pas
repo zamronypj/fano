@@ -28,7 +28,7 @@ type
          *-----------------------------------------------
          * @return total data
          *-----------------------------------------------*)
-        function count() : integer;
+        function count() : largeInt;
 
         (*!------------------------------------------------
          * move data pointer to next record

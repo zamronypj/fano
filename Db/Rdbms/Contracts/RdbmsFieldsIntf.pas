@@ -30,7 +30,7 @@ type
          *-------------------------------------------------
          * @return integer number of fields
          *-------------------------------------------------*)
-        function count() : integer;
+        function fieldCount() : integer;
 
         (*!------------------------------------------------
          * get field by name
