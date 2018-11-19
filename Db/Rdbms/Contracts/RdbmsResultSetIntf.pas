@@ -6,13 +6,16 @@
  * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
  *}
 
-unit RdbmsIntf;
+unit RdbmsResultSetIntf;
 
 interface
 
 {$MODE OBJFPC}
 {$H+}
 
+uses
+
+    RdbmsFieldsIntf;
 
 type
 
@@ -30,7 +33,7 @@ type
          *-------------------------------------------------
          * @return total data in current result set
          *-------------------------------------------------*)
-        function resultCount() : largeInt;
+        function resultCount() : int64;
 
         (*!------------------------------------------------
          * test if we in end of result set

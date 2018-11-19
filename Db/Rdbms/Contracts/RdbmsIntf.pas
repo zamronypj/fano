@@ -13,6 +13,9 @@ interface
 {$MODE OBJFPC}
 {$H+}
 
+uses
+
+    IRdbmsResultSet;
 
 type
 

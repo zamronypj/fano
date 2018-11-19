@@ -6,13 +6,16 @@
  * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
  *}
 
-unit RdbmsIntf;
+unit RdbmsFieldsIntf;
 
 interface
 
 {$MODE OBJFPC}
 {$H+}
 
+uses
+
+    RdbmsFieldIntf;
 
 type
 
