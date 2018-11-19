@@ -17,6 +17,9 @@ uses
 
     DependencyIntf,
     RdbmsIntf,
+    RdbmsResultSetIntf,
+    RdbmsFieldsIntf,
+    RdbmsFieldIntf,
     db,
     sqldb,
     mysql56conn;
