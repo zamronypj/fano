@@ -132,6 +132,41 @@ type
            * @return field
            *-------------------------------------------------*)
           function fieldByIndex(const indx : integer) : IRdbmsField;
+
+          (*!------------------------------------------------
+           * return field data as boolean
+           *-------------------------------------------------
+           * @return boolean value of field
+           *-------------------------------------------------*)
+          function asBoolean() : boolean;
+
+          (*!------------------------------------------------
+           * return field data as integer value
+           *-------------------------------------------------
+           * @return value of field
+           *-------------------------------------------------*)
+          function asInteger() : integer;
+
+          (*!------------------------------------------------
+           * return field data as string value
+           *-------------------------------------------------
+           * @return value of field
+           *-------------------------------------------------*)
+          function asString() : string;
+
+          (*!------------------------------------------------
+           * return field data as double value
+           *-------------------------------------------------
+           * @return value of field
+           *-------------------------------------------------*)
+          function asFloat() : double;
+
+          (*!------------------------------------------------
+           * return field data as datetime value
+           *-------------------------------------------------
+           * @return value of field
+           *-------------------------------------------------*)
+          function asDateTime() : TDateTime;
     end;
 
 implementation
