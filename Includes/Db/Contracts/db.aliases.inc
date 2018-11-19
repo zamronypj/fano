@@ -13,6 +13,6 @@
  *-----------------------------------------------*)
 
  IRdbms = RdbmsIntf.IRdbms;
- IRdbmsResultSet = RdbmsIntf.IRdbmsResultSet;
- IRdbmsFields = RdbmsIntf.IRdbmsFields;
- IRdbmsField = RdbmsIntf.IRdbmsField;
+ IRdbmsResultSet = RdbmsResultSetIntf.IRdbmsResultSet;
+ IRdbmsFields = RdbmsFieldsIntf.IRdbmsFields;
+ IRdbmsField = RdbmsFieldIntf.IRdbmsField;
