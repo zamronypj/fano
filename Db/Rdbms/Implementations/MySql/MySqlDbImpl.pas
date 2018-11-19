@@ -73,6 +73,62 @@ type
          * rollback
          *-------------------------------------------------*)
         function endTransaction() : IRdbms;
+
+        (*!------------------------------------------------
+         * execute query
+         *-------------------------------------------------
+         * @return result set
+         *-------------------------------------------------*)
+        function exec(const sql : string) : IRdbmsResultSet;
+
+          (*!------------------------------------------------
+           * total data in result set
+           *-------------------------------------------------
+           * @return total data in current result set
+           *-------------------------------------------------*)
+          function resultCount() : largeInt;
+
+          (*!------------------------------------------------
+           * test if we in end of result set
+           *-------------------------------------------------
+           * @return true if at end of file and no more record
+           *-------------------------------------------------*)
+          function eof() : boolean;
+
+          (*!------------------------------------------------
+           * advanced cursor position to next record
+           *-------------------------------------------------
+           * @return true if at end of file and no more record
+           *-------------------------------------------------*)
+          function next() : IRdbmsResultSet;
+
+          (*!------------------------------------------------
+           * get list of fields
+           *-------------------------------------------------
+           * @return current fields
+           *-------------------------------------------------*)
+          function fields() : IRdbmsFields;
+
+          (*!------------------------------------------------
+           * number of fields
+           *-------------------------------------------------
+           * @return integer number of fields
+           *-------------------------------------------------*)
+          function fieldCount() : integer;
+
+          (*!------------------------------------------------
+           * get field by name
+           *-------------------------------------------------
+           * @return field
+           *-------------------------------------------------*)
+          function fieldByName(const name : shortstring) : IRdbmsField;
+
+          (*!------------------------------------------------
+           * get field by name
+           *-------------------------------------------------
+           * @return field
+           *-------------------------------------------------*)
+          function fieldByIndex(const indx : integer) : IRdbmsField;
     end;
 
 implementation
@@ -176,6 +232,16 @@ resourcestring
     end;
 
     (*!------------------------------------------------
+     * number of record in result set
+     *-------------------------------------------------
+     * @return largeInt number of records
+     *-------------------------------------------------*)
+    function TMySQLDb.resultCount() : largeInt;
+    begin
+        result := query.RecordCount;
+    end;
+
+    (*!------------------------------------------------
      * test if we in end of result set
      *-------------------------------------------------
      * @return true if at end of file and no more record
@@ -211,7 +277,7 @@ resourcestring
      *-------------------------------------------------
      * @return integer number of fields
      *-------------------------------------------------*)
-    function TMySQLDb.count() : integer;
+    function TMySQLDb.fieldCount() : integer;
     begin
         result := query.fields.count;
     end;

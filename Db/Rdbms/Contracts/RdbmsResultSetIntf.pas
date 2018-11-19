@@ -26,6 +26,13 @@ type
         ['{25A61EEB-5DC8-4D81-AB88-1EF5F549EC85}']
 
         (*!------------------------------------------------
+         * total data in result set
+         *-------------------------------------------------
+         * @return total data in current result set
+         *-------------------------------------------------*)
+        function resultCount() : largeInt;
+
+        (*!------------------------------------------------
          * test if we in end of result set
          *-------------------------------------------------
          * @return true if at end of file and no more record
