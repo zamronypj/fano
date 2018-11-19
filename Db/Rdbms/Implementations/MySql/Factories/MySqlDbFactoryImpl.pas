@@ -16,7 +16,7 @@ interface
 uses
 
     DependencyIntf,
-    DepenContainerIntf,
+    DependencyContainerIntf,
     FactoryImpl;
 
 type
