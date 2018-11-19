@@ -15,7 +15,7 @@ interface
 
 uses
 
-    IRdbmsResultSet;
+    RdbmsResultSetIntf;
 
 type
 
