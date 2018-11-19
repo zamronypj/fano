@@ -12,12 +12,5 @@
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
  *-----------------------------------------------*)
 
-TemplateParserIntf,
-ViewIntf,
-ViewPartialIntf,
-ViewParametersIntf,
-
-ModelReadOnlyDataIntf,
-ModelWriteOnlyDataIntf,
-ModelWriterIntf,
-ModelReaderIntf,
+TMySQLDb = MySqlDbImpl.TMySQLDb;
+TMySQLDbFactory = MySqlDbFactoryImpl.TMySQLDbFactory;

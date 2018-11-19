@@ -7,17 +7,10 @@
  *}
 
 (*! ---------------------------------------------
- * unit interfaces that is included in fano.pas unit
+ * implementation units for rdbms that is
+ * included in fano.pas unit
  *
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
  *-----------------------------------------------*)
 
-TemplateParserIntf,
-ViewIntf,
-ViewPartialIntf,
-ViewParametersIntf,
-
-ModelReadOnlyDataIntf,
-ModelWriteOnlyDataIntf,
-ModelWriterIntf,
-ModelReaderIntf,
+MySqlDbImpl,

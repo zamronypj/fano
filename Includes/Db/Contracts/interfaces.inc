@@ -12,12 +12,7 @@
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
  *-----------------------------------------------*)
 
-TemplateParserIntf,
-ViewIntf,
-ViewPartialIntf,
-ViewParametersIntf,
-
-ModelReadOnlyDataIntf,
-ModelWriteOnlyDataIntf,
-ModelWriterIntf,
-ModelReaderIntf,
+RdbmsIntf,
+RdbmsResultSetIntf,
+RdbmsFieldsIntf,
+RdbmsFieldIntf,

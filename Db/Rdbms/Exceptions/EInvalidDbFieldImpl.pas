@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit ModelPresenterIntf;
+unit EInvalidDbFieldImpl;
 
 interface
 
@@ -14,21 +14,17 @@ interface
 
 uses
 
-    SerializeableIntf,
-    ModelReadOnlyDataIntf;
+    sysutils;
 
 type
 
     (*!------------------------------------------------
-     * interface for model that can display/visualize
-     * data to view
+     * Exception that is raised when database connection
+     * is not initialized.
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
-     *-----------------------------------------------*)
-    IModelPresenter = interface(ISerializeable)
-        ['{16CB66AA-A3D1-4F41-8A0D-86BBD4227071}']
-
-        procedure setData(const modelData : IModelReadOnlyData);
+     *-------------------------------------------------*)
+    EInvalidDbField = class(Exception)
     end;
 
 implementation
