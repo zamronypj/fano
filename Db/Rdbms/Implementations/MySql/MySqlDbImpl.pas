@@ -22,7 +22,8 @@ uses
     RdbmsFieldIntf,
     db,
     sqldb,
-    mysql56conn;
+    mysql56conn,
+    mysql57conn;
 
 type
 
@@ -37,8 +38,9 @@ type
         dbInstance : TSQLConnector;
         query : TSQLQuery;
         currentField : TField;
+        version : string;
     public
-        constructor create();
+        constructor create(const mysqlVersion : string);
         destructor destroy(); override;
 
         (*!------------------------------------------------
@@ -181,11 +183,12 @@ resourcestring
     sErrInvalidConnection = 'Invalid connection';
     sErrInvalidField = 'Invalid field.';
 
-    constructor TMySQLDb.create();
+    constructor TMySQLDb.create(const mysqlVersion : string);
     begin
         dbInstance := nil;
         query := nil;
         currentField := nil;
+        version := mysqlVersion;
     end;
 
     destructor TMySQLDb.destroy();
@@ -221,7 +224,7 @@ resourcestring
             query := TSQLQuery.create(nil);
             query.database := dbInstance;
         end;
-        dbInstance.ConnectorType := 'mysql 5.6';
+        dbInstance.ConnectorType := version;
         dbInstance.HostName := host;
         dbInstance.DatabaseName := dbname;
         dbInstance.UserName := username;

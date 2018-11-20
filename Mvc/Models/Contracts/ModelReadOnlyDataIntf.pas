@@ -31,6 +31,13 @@ type
         function count() : int64;
 
         (*!------------------------------------------------
+         * test if in end of result set
+         *-----------------------------------------------
+         * @return true if no more record
+         *-----------------------------------------------*)
+        function eof() : boolean;
+
+        (*!------------------------------------------------
          * move data pointer to next record
          *-----------------------------------------------
          * @return true if successful, false if no more record

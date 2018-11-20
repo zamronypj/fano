@@ -28,7 +28,34 @@ type
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
     TMySQLDbFactory = class(TFactory)
+    private
+        mysqlVersion : string;
+        databaseHostname : string;
+        databaseName : string;
+        databaseUsername : string;
+        databasePassword : string;
+        databasePort : word;
     public
+
+        (*!------------------------------------------------
+         * create connection to RDBMS server
+         *-------------------------------------------------
+         * @param host hostname/ip where RDBMS server run
+         * @param dbname database name to use
+         * @param username user name credential to login
+         * @param password password credential to login
+         * @param port TCP port where RDBMS listen
+         * @return current instance
+         *-------------------------------------------------*)
+        constructor create(
+            const version : string;
+            const host : string;
+            const dbname : string;
+            const username : string;
+            const password : string;
+            const port : word = 3306
+        );
+
         (*!---------------------------------------------------
          * build class instance
          *----------------------------------------------------
@@ -41,7 +68,36 @@ implementation
 
 uses
 
+    RdbmsIntf,
     MySqlDbImpl;
+
+    (*!------------------------------------------------
+     * create connection to RDBMS server
+     *-------------------------------------------------
+     * @param host hostname/ip where RDBMS server run
+     * @param dbname database name to use
+     * @param username user name credential to login
+     * @param password password credential to login
+     * @param port TCP port where RDBMS listen
+     * @return current instance
+     *-------------------------------------------------*)
+    constructor TMySQLDbFactory.create(
+        const version : string;
+        const host : string;
+        const dbname : string;
+        const username : string;
+        const password : string;
+        const port : word = 3306
+    );
+    begin
+        mysqlVersion := version;
+        databaseHostname := host;
+        databaseName := dbname;
+        databaseUsername := username;
+        databasePassword := password;
+        databasePort := port;
+    end;
+
 
     (*!---------------------------------------------------
      * build class instance
@@ -49,8 +105,17 @@ uses
      * @param container dependency container instance
      *---------------------------------------------------*)
     function TMySQLDbFactory.build(const container : IDependencyContainer) : IDependency;
+    var db : IRdbms;
     begin
-        result := TMySQLDb.create();
+        db := TMySQLDb.create(mysqlVersion);
+        db.connect(
+            databaseHostname,
+            databaseName,
+            databaseUsername,
+            databasePassword,
+            databasePort
+        );
+        result := db as IDependency;
     end;
 
 end.
