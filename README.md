@@ -66,10 +66,12 @@ all your applications that depends on Fano will be affected. If newer version of
 
 - Secure file upload support (in progress)
 - FastCGI protocol support (in progress)
+- Cookie and session support
 - Run application with built-in web server
 - Run application as Apache module
 - Improve route matching performance
 - MongoDb database support
 - Redis database support
 - Elasticsearch database support
+- Improve data validation and sanitation
 - Unit test
