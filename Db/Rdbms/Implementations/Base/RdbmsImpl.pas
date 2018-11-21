@@ -186,7 +186,7 @@ resourcestring
         dbInstance := nil;
         query := nil;
         currentField := nil;
-        version := mysqlVersion;
+        connectionType := connType;
     end;
 
     destructor TRdbms.destroy();
@@ -222,7 +222,7 @@ resourcestring
             query := TSQLQuery.create(nil);
             query.database := dbInstance;
         end;
-        dbInstance.ConnectorType := version;
+        dbInstance.ConnectorType := connectionType;
         dbInstance.HostName := host;
         dbInstance.DatabaseName := dbname;
         dbInstance.UserName := username;
