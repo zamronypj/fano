@@ -4,5 +4,6 @@ TViewParametersFactory = ViewParametersFactoryImpl.TViewParametersFactory;
 TTemplateFileView = TemplateFileViewImpl.TTemplateFileView;
 
 TView = ViewImpl.TView;
+TCompositeView = CompositeViewImpl.TCompositeView;
 TViewPartial = ViewPartialImpl.TViewPartial;
 TViewPartialFactory = ViewPartialFactoryImpl.TViewPartialFactory;

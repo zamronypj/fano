@@ -15,6 +15,7 @@
 
 DependencyContainerImpl,
 DependencyListImpl,
+InjectableObjectImpl,
 
 EDependencyNotFoundImpl,
 EInvalidFactoryImpl,
