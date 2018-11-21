@@ -12,5 +12,6 @@
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
  *-----------------------------------------------*)
 
+TRdbms = RdbmsImpl.TRdbms;
 TMySQLDb = MySqlDbImpl.TMySQLDb;
 TMySQLDbFactory = MySqlDbFactoryImpl.TMySQLDbFactory;
