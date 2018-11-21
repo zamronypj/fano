@@ -27,7 +27,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TMySQLDbFactory = class(TFactory)
+    TMySqlDbFactory = class(TFactory)
     private
         mysqlVersion : string;
         databaseHostname : string;
@@ -81,7 +81,7 @@ uses
      * @param port TCP port where RDBMS listen
      * @return current instance
      *-------------------------------------------------*)
-    constructor TMySQLDbFactory.create(
+    constructor TMySqlDbFactory.create(
         const version : string;
         const host : string;
         const dbname : string;
@@ -104,10 +104,10 @@ uses
      *----------------------------------------------------
      * @param container dependency container instance
      *---------------------------------------------------*)
-    function TMySQLDbFactory.build(const container : IDependencyContainer) : IDependency;
+    function TMySqlDbFactory.build(const container : IDependencyContainer) : IDependency;
     var db : IRdbms;
     begin
-        db := TMySQLDb.create(mysqlVersion);
+        db := TMySqlDb.create(mysqlVersion);
         db.connect(
             databaseHostname,
             databaseName,

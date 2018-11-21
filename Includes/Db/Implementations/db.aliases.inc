@@ -13,5 +13,6 @@
  *-----------------------------------------------*)
 
 TRdbms = RdbmsImpl.TRdbms;
-TMySQLDb = MySqlDbImpl.TMySQLDb;
+TMySqlDb = MySqlDbImpl.TMySqlDb;
 TMySQLDbFactory = MySqlDbFactoryImpl.TMySQLDbFactory;
+TPostgreSqlDb = PostgreSqlDbImpl.TPostgreSqlDb;

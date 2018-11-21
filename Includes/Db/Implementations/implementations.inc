@@ -16,3 +16,4 @@
 RdbmsImpl,
 MySqlDbImpl,
 MySqlDbFactoryImpl,
+PostgreSqlDbImpl,

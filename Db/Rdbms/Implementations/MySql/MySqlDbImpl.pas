@@ -25,7 +25,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TMySQLDb = class(TRdbms)
+    TMySqlDb = class(TRdbms)
     end;
 
 implementation

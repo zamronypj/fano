@@ -25,7 +25,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TPostgreSQLDb = class(TRdbms)
+    TPostgreSqlDb = class(TRdbms)
     end;
 
 implementation
