@@ -216,6 +216,7 @@ implementation
 
 uses
 
+    SysUtils,
     EInvalidDbConnectionImpl,
     EInvalidDbFieldImpl;
 
