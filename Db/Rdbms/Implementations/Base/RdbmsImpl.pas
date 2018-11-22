@@ -17,6 +17,7 @@ uses
 
     RdbmsIntf,
     RdbmsResultSetIntf,
+    RdbmsStatementIntf,
     RdbmsFieldsIntf,
     RdbmsFieldIntf,
     db,
@@ -31,7 +32,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TRdbms = class(TInjectableObject, IRdbms, IRdbmsResultSet, IRdbmsFields, IRdbmsField)
+    TRdbms = class(TInjectableObject, IRdbms, IRdbmsResultSet, IRdbmsFields, IRdbmsField, IRdbmsStatement)
     private
         dbInstance : TSQLConnector;
         query : TSQLQuery;
@@ -80,93 +81,123 @@ type
         (*!------------------------------------------------
          * execute query
          *-------------------------------------------------
+         * @param sql sql command
          * @return result set
          *-------------------------------------------------*)
         function exec(const sql : string) : IRdbmsResultSet;
 
-          (*!------------------------------------------------
-           * total data in result set
-           *-------------------------------------------------
-           * @return total data in current result set
-           *-------------------------------------------------*)
-          function resultCount() : largeInt;
+        (*!------------------------------------------------
+         * prepare sql statement
+         *-------------------------------------------------
+         * @param sql sql command
+         * @return result set
+         *-------------------------------------------------*)
+        function prepare(const sql : string) : IRdbmsStatement;
 
-          (*!------------------------------------------------
-           * test if we in end of result set
-           *-------------------------------------------------
-           * @return true if at end of file and no more record
-           *-------------------------------------------------*)
-          function eof() : boolean;
+        (*!------------------------------------------------
+         * total data in result set
+         *-------------------------------------------------
+         * @return total data in current result set
+         *-------------------------------------------------*)
+        function resultCount() : largeInt;
 
-          (*!------------------------------------------------
-           * advanced cursor position to next record
-           *-------------------------------------------------
-           * @return true if at end of file and no more record
-           *-------------------------------------------------*)
-          function next() : IRdbmsResultSet;
+        (*!------------------------------------------------
+         * test if we in end of result set
+         *-------------------------------------------------
+         * @return true if at end of file and no more record
+         *-------------------------------------------------*)
+        function eof() : boolean;
 
-          (*!------------------------------------------------
-           * get list of fields
-           *-------------------------------------------------
-           * @return current fields
-           *-------------------------------------------------*)
-          function fields() : IRdbmsFields;
+        (*!------------------------------------------------
+         * advanced cursor position to next record
+         *-------------------------------------------------
+         * @return true if at end of file and no more record
+         *-------------------------------------------------*)
+        function next() : IRdbmsResultSet;
 
-          (*!------------------------------------------------
-           * number of fields
-           *-------------------------------------------------
-           * @return integer number of fields
-           *-------------------------------------------------*)
-          function fieldCount() : integer;
+        (*!------------------------------------------------
+         * get list of fields
+         *-------------------------------------------------
+         * @return current fields
+         *-------------------------------------------------*)
+        function fields() : IRdbmsFields;
 
-          (*!------------------------------------------------
-           * get field by name
-           *-------------------------------------------------
-           * @return field
-           *-------------------------------------------------*)
-          function fieldByName(const name : shortstring) : IRdbmsField;
+        (*!------------------------------------------------
+         * number of fields
+         *-------------------------------------------------
+         * @return integer number of fields
+         *-------------------------------------------------*)
+        function fieldCount() : integer;
 
-          (*!------------------------------------------------
-           * get field by name
-           *-------------------------------------------------
-           * @return field
-           *-------------------------------------------------*)
-          function fieldByIndex(const indx : integer) : IRdbmsField;
+        (*!------------------------------------------------
+         * get field by name
+         *-------------------------------------------------
+         * @return field
+         *-------------------------------------------------*)
+        function fieldByName(const name : shortstring) : IRdbmsField;
 
-          (*!------------------------------------------------
-           * return field data as boolean
-           *-------------------------------------------------
-           * @return boolean value of field
-           *-------------------------------------------------*)
-          function asBoolean() : boolean;
+        (*!------------------------------------------------
+         * get field by name
+         *-------------------------------------------------
+         * @return field
+         *-------------------------------------------------*)
+        function fieldByIndex(const indx : integer) : IRdbmsField;
 
-          (*!------------------------------------------------
-           * return field data as integer value
-           *-------------------------------------------------
-           * @return value of field
-           *-------------------------------------------------*)
-          function asInteger() : integer;
+        (*!------------------------------------------------
+         * return field data as boolean
+         *-------------------------------------------------
+         * @return boolean value of field
+         *-------------------------------------------------*)
+        function asBoolean() : boolean;
 
-          (*!------------------------------------------------
-           * return field data as string value
-           *-------------------------------------------------
-           * @return value of field
-           *-------------------------------------------------*)
-          function asString() : string;
+        (*!------------------------------------------------
+         * return field data as integer value
+         *-------------------------------------------------
+         * @return value of field
+         *-------------------------------------------------*)
+        function asInteger() : integer;
 
-          (*!------------------------------------------------
-           * return field data as double value
-           *-------------------------------------------------
-           * @return value of field
-           *-------------------------------------------------*)
-          function asFloat() : double;
+        (*!------------------------------------------------
+         * return field data as string value
+         *-------------------------------------------------
+         * @return value of field
+         *-------------------------------------------------*)
+        function asString() : string;
 
-          (*!------------------------------------------------
-           * return field data as datetime value
-           *-------------------------------------------------
-           * @return value of field
-           *-------------------------------------------------*)
-          function asDateTime() : TDateTime;
+        (*!------------------------------------------------
+         * return field data as double value
+         *-------------------------------------------------
+         * @return value of field
+         *-------------------------------------------------*)
+        function asFloat() : double;
+
+        (*!------------------------------------------------
+         * return field data as datetime value
+         *-------------------------------------------------
+         * @return value of field
+         *-------------------------------------------------*)
+        function asDateTime() : TDateTime;
+
+        (*!------------------------------------------------
+         * execute statement
+         *-------------------------------------------------
+         * @return result set
+         *-------------------------------------------------*)
+        function execute() : IRdbmsResultSet;
+
+        (*!------------------------------------------------
+         * set parameter string value
+         *-------------------------------------------------
+         * @return current statement
+         *-------------------------------------------------*)
+        function paramStr(const strName : string; const strValue : string) : IRdbmsStatement;
+
+        (*!------------------------------------------------
+         * set parameter integer value
+         *-------------------------------------------------
+         * @return current statement
+         *-------------------------------------------------*)
+        function paramInt(const strName : string; const strValue : integer) : IRdbmsStatement;
     end;
 
 implementation
@@ -258,18 +289,6 @@ resourcestring
             raise EInvalidDbConnection.create(sErrInvalidConnection);
         end;
         dbInstance.endTransaction();
-        result := self;
-    end;
-
-    (*!------------------------------------------------
-     * execute query
-     *-------------------------------------------------
-     * @return result set
-     *-------------------------------------------------*)
-    function TRdbms.exec(const sql : string) : IRdbmsResultSet;
-    begin
-        query.sql.text := sql;
-        query.open();
         result := self;
     end;
 
@@ -414,5 +433,48 @@ resourcestring
             raise EInvalidDbField.create(sErrInvalidField);
         end;
         result := currentField.asDateTime;
+    end;
+
+    (*!------------------------------------------------
+     * prepare sql statement
+     *-------------------------------------------------
+     * @param sql sql command
+     * @return result set
+     *-------------------------------------------------*)
+    function TRdbms.prepare(const sqlCommand : string) : IRdbmsStatement;
+    begin
+        query.sql.text := sql;
+    end;
+
+    (*!------------------------------------------------
+     * execute statement
+     *-------------------------------------------------
+     * @return result set
+     *-------------------------------------------------*)
+    function TRdbms.execute() : IRdbmsResultSet;
+    begin
+        query.open();
+    end;
+
+    (*!------------------------------------------------
+     * set parameter string value
+     *-------------------------------------------------
+     * @return current statement
+     *-------------------------------------------------*)
+    function TRdbms.paramStr(const strName : string; const strValue : string) : IRdbmsStatement;
+    begin
+        query.params.paramByName(strName).asString := strValue;
+        result := self;
+    end;
+
+    (*!------------------------------------------------
+     * set parameter integer value
+     *-------------------------------------------------
+     * @return current statement
+     *-------------------------------------------------*)
+    function TRdbms.paramInt(const strName : string; const strValue : integer) : IRdbmsStatement;
+    begin
+        query.params.paramByName(strName).asInteger := strValue;
+        result := self;
     end;
 end.

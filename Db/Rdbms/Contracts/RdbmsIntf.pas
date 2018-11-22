@@ -15,7 +15,8 @@ interface
 
 uses
 
-    RdbmsResultSetIntf;
+    RdbmsResultSetIntf,
+    RdbmsStatementIntf;
 
 type
 
@@ -64,12 +65,11 @@ type
         function endTransaction() : IRdbms;
 
         (*!------------------------------------------------
-         * execute query
+         * created prepared sql statement
          *-------------------------------------------------
          * @return result set
          *-------------------------------------------------*)
-        function exec(const sql : string) : IRdbmsResultSet;
-
+        function prepare(const sql : string) : IRdbmsStatement;
     end;
 
 implementation
