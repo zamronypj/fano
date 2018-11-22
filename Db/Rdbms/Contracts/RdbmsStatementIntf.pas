@@ -48,6 +48,20 @@ type
          * @return current statement
          *-------------------------------------------------*)
         function paramInt(const strName : string; const strValue : integer) : IRdbmsStatement;
+
+        (*!------------------------------------------------
+         * set parameter float value
+         *-------------------------------------------------
+         * @return current statement
+         *-------------------------------------------------*)
+        function paramFloat(const strName : string; const strValue : double) : IRdbmsStatement;
+
+        (*!------------------------------------------------
+         * set parameter datetime value
+         *-------------------------------------------------
+         * @return current statement
+         *-------------------------------------------------*)
+        function paramDateTime(const strName : string; const strValue : TDateTime) : IRdbmsStatement;
     end;
 
 implementation

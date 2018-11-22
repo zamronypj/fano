@@ -38,6 +38,12 @@ type
         query : TSQLQuery;
         currentField : TField;
         connectionType : string;
+
+        //true if current sql is if data retrival command (SELECT)
+        //false for everything else
+        isSelect : boolean;
+
+        procedure raiseExceptionIfInvalidField();
     public
         constructor create(const connType : string);
         destructor destroy(); override;
@@ -77,22 +83,6 @@ type
          * rollback
          *-------------------------------------------------*)
         function endTransaction() : IRdbms;
-
-        (*!------------------------------------------------
-         * execute query
-         *-------------------------------------------------
-         * @param sql sql command
-         * @return result set
-         *-------------------------------------------------*)
-        function exec(const sql : string) : IRdbmsResultSet;
-
-        (*!------------------------------------------------
-         * prepare sql statement
-         *-------------------------------------------------
-         * @param sql sql command
-         * @return result set
-         *-------------------------------------------------*)
-        function prepare(const sql : string) : IRdbmsStatement;
 
         (*!------------------------------------------------
          * total data in result set
@@ -179,7 +169,15 @@ type
         function asDateTime() : TDateTime;
 
         (*!------------------------------------------------
-         * execute statement
+         * prepare sql statement
+         *-------------------------------------------------
+         * @param sql sql command
+         * @return result set
+         *-------------------------------------------------*)
+        function prepare(const sql : string) : IRdbmsStatement;
+
+        (*!------------------------------------------------
+         * execute prepared statement
          *-------------------------------------------------
          * @return result set
          *-------------------------------------------------*)
@@ -198,6 +196,20 @@ type
          * @return current statement
          *-------------------------------------------------*)
         function paramInt(const strName : string; const strValue : integer) : IRdbmsStatement;
+
+        (*!------------------------------------------------
+         * set parameter float value
+         *-------------------------------------------------
+         * @return current statement
+         *-------------------------------------------------*)
+        function paramFloat(const strName : string; const strValue : double) : IRdbmsStatement;
+
+        (*!------------------------------------------------
+         * set parameter datetime value
+         *-------------------------------------------------
+         * @return current statement
+         *-------------------------------------------------*)
+        function paramDateTime(const strName : string; const strValue : TDateTime) : IRdbmsStatement;
     end;
 
 implementation
@@ -366,16 +378,24 @@ resourcestring
     end;
 
     (*!------------------------------------------------
+     * test currentField for validity and raise exception
+     *-------------------------------------------------*)
+    procedure TRdbms.raiseExceptionIfInvalidField();
+    begin
+        if (currentField = nil) then
+        begin
+            raise EInvalidDbField.create(sErrInvalidField);
+        end;
+    end;
+
+    (*!------------------------------------------------
      * return field data as boolean
      *-------------------------------------------------
      * @return boolean value of field
      *-------------------------------------------------*)
     function TRdbms.asBoolean() : boolean;
     begin
-        if (currentField = nil) then
-        begin
-            raise EInvalidDbField.create(sErrInvalidField);
-        end;
+        raiseExceptionIfInvalidField();
         result := currentField.asBoolean;
     end;
 
@@ -386,10 +406,7 @@ resourcestring
      *-------------------------------------------------*)
     function TRdbms.asInteger() : integer;
     begin
-        if (currentField = nil) then
-        begin
-            raise EInvalidDbField.create(sErrInvalidField);
-        end;
+        raiseExceptionIfInvalidField();
         result := currentField.asInteger;
     end;
 
@@ -400,10 +417,7 @@ resourcestring
      *-------------------------------------------------*)
     function TRdbms.asString() : string;
     begin
-        if (currentField = nil) then
-        begin
-            raise EInvalidDbField.create(sErrInvalidField);
-        end;
+        raiseExceptionIfInvalidField();
         result := currentField.asString;
     end;
 
@@ -414,10 +428,7 @@ resourcestring
      *-------------------------------------------------*)
     function TRdbms.asFloat() : double;
     begin
-        if (currentField = nil) then
-        begin
-            raise EInvalidDbField.create(sErrInvalidField);
-        end;
+        raiseExceptionIfInvalidField();
         result := currentField.asFloat;
     end;
 
@@ -428,10 +439,7 @@ resourcestring
      *-------------------------------------------------*)
     function TRdbms.asDateTime() : TDateTime;
     begin
-        if (currentField = nil) then
-        begin
-            raise EInvalidDbField.create(sErrInvalidField);
-        end;
+        raiseExceptionIfInvalidField();
         result := currentField.asDateTime;
     end;
 
@@ -441,9 +449,11 @@ resourcestring
      * @param sql sql command
      * @return result set
      *-------------------------------------------------*)
-    function TRdbms.prepare(const sqlCommand : string) : IRdbmsStatement;
+    function TRdbms.prepare(const sql : string) : IRdbmsStatement;
     begin
+        isSelect := (pos('select', trimLeft(lowerCase(sql))) = 1);
         query.sql.text := sql;
+        result := self;
     end;
 
     (*!------------------------------------------------
@@ -453,7 +463,14 @@ resourcestring
      *-------------------------------------------------*)
     function TRdbms.execute() : IRdbmsResultSet;
     begin
-        query.open();
+        if (isSelect) then
+        begin
+            query.open();
+        end else
+        begin
+            query.execSql();
+        end;
+        result:= self;
     end;
 
     (*!------------------------------------------------
@@ -475,6 +492,28 @@ resourcestring
     function TRdbms.paramInt(const strName : string; const strValue : integer) : IRdbmsStatement;
     begin
         query.params.paramByName(strName).asInteger := strValue;
+        result := self;
+    end;
+
+    (*!------------------------------------------------
+     * set parameter float value
+     *-------------------------------------------------
+     * @return current statement
+     *-------------------------------------------------*)
+    function TRdbms.paramFloat(const strName : string; const strValue : double) : IRdbmsStatement;
+    begin
+        query.params.paramByName(strName).asFloat := strValue;
+        result := self;
+    end;
+
+    (*!------------------------------------------------
+     * set parameter datetime value
+     *-------------------------------------------------
+     * @return current statement
+     *-------------------------------------------------*)
+    function TRdbms.paramDateTime(const strName : string; const strValue : TDateTime) : IRdbmsStatement;
+    begin
+        query.params.paramByName(strName).asDateTime := strValue;
         result := self;
     end;
 end.
