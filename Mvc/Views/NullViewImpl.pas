@@ -10,9 +10,10 @@ unit NullViewImpl;
 
 interface
 
+{$MODE OBJFPC}
+
 uses
 
-    DependencyIntf,
     ResponseIntf,
     ViewIntf,
     ViewParametersIntf,

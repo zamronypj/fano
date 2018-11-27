@@ -15,9 +15,9 @@ interface
 
 uses
 
-    DependencyIntf,
     ViewParametersIntf,
-    TemplateParserIntf;
+    TemplateParserIntf,
+    InjectableObjectImpl;
 
 type
 
@@ -29,7 +29,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TSimpleTemplateParser = class(TInterfacedObject, ITemplateParser, IDependency)
+    TSimpleTemplateParser = class(TInjectableObject, ITemplateParser)
     private
         openTag: string;
         closeTag : string;

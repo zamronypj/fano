@@ -10,6 +10,8 @@ unit InjectableObjectImpl;
 
 interface
 
+{$MODE OBJFPC}
+
 uses
 
     DependencyIntf;

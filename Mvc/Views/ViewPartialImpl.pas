@@ -15,11 +15,11 @@ interface
 
 uses
 
-    DependencyIntf,
     ViewParametersIntf,
     ViewPartialIntf,
     TemplateParserIntf,
-    FileReaderIntf;
+    FileReaderIntf,
+    InjectableObjectImpl;
 
 type
 
@@ -28,7 +28,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TViewPartial = class(TInterfacedObject, IViewPartial, IDependency)
+    TViewPartial = class(TInjectableObject, IViewPartial)
     private
         templateParser : ITemplateParser;
         fileReader : IFileReader;

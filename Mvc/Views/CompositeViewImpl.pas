@@ -10,9 +10,10 @@ unit CompositeViewImpl;
 
 interface
 
+{$MODE OBJFPC}
+
 uses
 
-    DependencyIntf,
     ResponseIntf,
     ViewIntf,
     ViewParametersIntf,
