@@ -15,9 +15,9 @@ interface
 
 uses
 
-    DependencyIntf,
     SerializeableIntf,
-    LoggerIntf;
+    LoggerIntf,
+    InjectableObjectImpl;
 
 type
 
@@ -27,7 +27,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TAbstractLogger = class(TInterfacedObject, IDependency, ILogger)
+    TAbstractLogger = class(TInjectableObject, ILogger)
     public
 
         (*!--------------------------------------
