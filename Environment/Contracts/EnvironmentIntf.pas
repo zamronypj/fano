@@ -94,6 +94,14 @@ type
         ------------------------------------------}
         function contentLength() : string;
 
+        (*-----------------------------------------
+         * Retrieve CONTENT_LENGTH environment variable
+         * as integer value
+         *------------------------------------------
+         * @return content length as integer value
+         *------------------------------------------*)
+        function intContentLength() : integer;
+
         {-----------------------------------------
          Retrieve HTTP_HOST environment variable
         ------------------------------------------}

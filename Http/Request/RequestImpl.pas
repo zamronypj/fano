@@ -34,9 +34,9 @@ type
         queryParams : IList;
         cookieParams : IList;
         bodyParams : IList;
+        uploadedFiles: IUploadedFileCollection;
         multipartFormDataParser : IMultipartFormDataParser;
 
-        function getContentLength(const env : ICGIEnvironment) : integer;
         function readStdIn(const contentLength : integer) : string;
 
         procedure clearParams(const params : IList);
@@ -181,10 +181,6 @@ uses
     UrlHelpersImpl,
     EInvalidRequestImpl;
 
-resourcestring
-
-    sErrInvalidContentLength = 'Invalid content length';
-
     constructor TRequest.create(
         const env : ICGIEnvironment;
         const query : IList;
@@ -198,6 +194,7 @@ resourcestring
         cookieParams := cookies;
         bodyParams := body;
         multipartFormDataParser := multipartFormDataParserInst;
+        uploadedFiles := nil;
         initParamsFromEnvironment(
             webEnvironment,
             queryParams,
@@ -217,6 +214,7 @@ resourcestring
         queryParams := nil;
         cookieParams := nil;
         bodyParams := nil;
+        uploadedFiles := nil;
         multipartFormDataParser := nil;
     end;
 
@@ -273,18 +271,6 @@ resourcestring
         initParamsFromString(env.httpCookie(), cookies);
     end;
 
-    function TRequest.getContentLength(const env : ICGIEnvironment) : integer;
-    begin
-        try
-            result := strToInt(env.contentLength());
-        except
-            on e:EConvertError do
-            begin
-                raise EInvalidRequest.create(sErrInvalidContentLength);
-            end;
-        end;
-    end;
-
     function TRequest.readStdIn(const contentLength : integer) : string;
     var ctr : integer;
         ch : char;
@@ -302,24 +288,28 @@ resourcestring
 
     procedure TRequest.initPostBodyParamsFromStdInput(
         const env : ICGIEnvironment;
-        const body : IHashList
+        const body : IList
     );
     var contentLength : integer;
         contentType, bodyStr : string;
         param : PKeyValue;
     begin
+        (*!---------------------------------------
+         * TODO: implement limit max POST size and
+         * max upload size of request
+         *----------------------------------------*)
+
         contentType := env.contentType();
         if (contentType = 'application/x-www-form-urlencoded') then
         begin
             //read STDIN
-            contentLength := getContentLength(env);
+            contentLength := env.intContentLength();
             bodyStr := readStdIn(contentLength);
             initParamsFromString(bodyStr, body);
         end
         else if (contentType = 'multipart/form-data') then
         begin
-            contentLength := getContentLength(env);
-            multipartFormDataParser.parse(body, files);
+            multipartFormDataParser.parse(env, body, uploadedFiles);
         end else
         begin
             //if POST but different contentType save it as it is

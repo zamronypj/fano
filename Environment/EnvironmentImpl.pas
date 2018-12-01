@@ -16,7 +16,8 @@ interface
 uses
 
     DependencyIntf,
-    EnvironmentIntf;
+    EnvironmentIntf,
+    InjectableObjectImpl;
 
 type
 
@@ -26,7 +27,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *--------------------------------------------------*)
-    TCGIEnvironment = class(TInterfacedObject, ICGIEnvironment, IDependency)
+    TCGIEnvironment = class(TInjectableObject, ICGIEnvironment)
     public
         {-----------------------------------------
          Retrieve an environment variable
@@ -98,6 +99,14 @@ type
         ------------------------------------------}
         function contentLength() : string;
 
+        (*-----------------------------------------
+         * Retrieve CONTENT_LENGTH environment variable
+         * as integer value
+         *------------------------------------------
+         * @return content length as integer value
+         *------------------------------------------*)
+        function intContentLength() : integer;
+
         {-----------------------------------------
          Retrieve HTTP_HOST environment variable
         ------------------------------------------}
@@ -127,7 +136,12 @@ type
 implementation
 
 uses
-    dos;
+    dos,
+    sysutils;
+
+resourcestring
+
+    sErrInvalidContentLength = 'Invalid content length';
 
     {-----------------------------------------
      Retrieve an environment variable
@@ -239,6 +253,24 @@ uses
     function TCGIEnvironment.contentLength() : string;
     begin
         result := getenv('CONTENT_LENGTH');
+    end;
+
+    (*-----------------------------------------
+     * Retrieve CONTENT_LENGTH environment variable
+     * as integer value
+     *------------------------------------------
+     * @return content length as integer value
+     *------------------------------------------*)
+    function TCGIEnvironment.intContentLength() : integer;
+    begin
+        try
+            result := strToInt(contentLength());
+        except
+            on e:EConvertError do
+            begin
+                raise EInvalidRequest.create(sErrInvalidContentLength);
+            end;
+        end;
     end;
 
     {-----------------------------------------

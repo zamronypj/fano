@@ -11,10 +11,12 @@ unit MultipartFormDataParserIntf;
 interface
 
 {$MODE OBJFPC}
+{$H+}
 
 uses
 
-    HashIntf,
+    ListIntf,
+    EnvironmentIntf,
     UploadedFileCollectionIntf;
 
 type
@@ -28,9 +30,23 @@ type
     IMultipartFormDataParser = interface
         ['{F0C5A45D-B8F0-4CF6-86FD-84C60C17E67E}']
 
+        (*!----------------------------------------
+         * Read POST data in standard input and parse
+         * it and store parsed data in body request parameter
+         * and uploaded files (if any). If not file upload
+         * then TNullUploadedFileCollection instance is return
+         *------------------------------------------
+         * @param env CGI environment variable
+         * @param body instance of IList that will store
+         *             parsed body parameter
+         * @param uploadedFiles instance of uploaded file collection
+         * @return current instance
+         *------------------------------------------*)
         function parse(
-            const body : IHashList;
-            const uploadedFiles : IUploadedFileCollection) : IMultipartFormDataParser;
+            const env : ICGIEnvironment;
+            const body : IList;
+            out uploadedFiles : IUploadedFileCollection
+        ) : IMultipartFormDataParser;
     end;
 
 implementation
