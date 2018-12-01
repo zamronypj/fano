@@ -61,3 +61,17 @@ Free Pascal, directory where to search Fano units.
 
 This approach, however, has disadvantage. When you update your Fano repository,
 all your applications that depends on Fano will be affected. If newer version of Fano repository introduces breaking changes, application that requires older version of Fano repository may fail.
+
+## Roadmap
+
+- Secure file upload support (in progress)
+- FastCGI protocol support (in progress)
+- Cookie and session support
+- Run application with built-in web server
+- Run application as Apache module
+- Improve route matching performance
+- MongoDb database support
+- Redis database support
+- Elasticsearch database support
+- Improve data validation and sanitation
+- Unit test

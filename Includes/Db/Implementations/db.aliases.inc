@@ -7,20 +7,12 @@
  *}
 
 (*! ---------------------------------------------
- * implementation units for mvc
- * that is included in fano.pas unit
+ * unit interfaces that is included in fano.pas unit
  *
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
  *-----------------------------------------------*)
 
-TemplateParserFactoryImpl,
-SimpleTemplateParserFactoryImpl,
-NullTemplateParserFactoryImpl,
-TemplateFileViewImpl,
-ViewParametersFactoryImpl,
-ViewImpl,
-CompositeViewImpl,
-NullViewImpl,
-ViewPartialImpl,
-ViewPartialFactoryImpl,
-ControllerImpl,
+TRdbms = RdbmsImpl.TRdbms;
+TMySqlDb = MySqlDbImpl.TMySqlDb;
+TMySQLDbFactory = MySqlDbFactoryImpl.TMySQLDbFactory;
+TPostgreSqlDb = PostgreSqlDbImpl.TPostgreSqlDb;

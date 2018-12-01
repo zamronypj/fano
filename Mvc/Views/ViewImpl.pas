@@ -15,11 +15,11 @@ interface
 
 uses
 
-    DependencyIntf,
     ResponseIntf,
     ViewParametersIntf,
     ViewIntf,
-    TemplateParserIntf;
+    TemplateParserIntf,
+    InjectableObjectImpl;
 
 type
 
@@ -28,18 +28,44 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TView = class(TInterfacedObject, IView, IDependency)
+    TView = class(TInjectableObject, IView)
     private
+
+        (*!------------------------------------------------
+         * original HTML template content
+         *-----------------------------------------------*)
         templateContent : string;
+
+        (*!------------------------------------------------
+         * helper class that will parse template content
+         * and replace variable placeholder with value
+         *-----------------------------------------------*)
         templateParser : ITemplateParser;
     public
+
+        (*!------------------------------------------------
+         * constructor
+         *------------------------------------------------
+         * @param templateParserInst template variable parser
+         * @param tplContent template content
+         *-----------------------------------------------*)
         constructor create(
             const templateParserInst : ITemplateParser;
             const tplContent : string
         );
 
+        (*!------------------------------------------------
+         * destructor
+         *-----------------------------------------------*)
         destructor destroy(); override;
 
+        (*!------------------------------------------------
+         * render view
+         *------------------------------------------------
+         * @param viewParams view parameters
+         * @param response response instance
+         * @return response
+         *-----------------------------------------------*)
         function render(
             const viewParams : IViewParameters;
             const response : IResponse
@@ -54,6 +80,12 @@ uses
     SysUtils,
     ResponseStreamIntf;
 
+    (*!------------------------------------------------
+     * constructor
+     *------------------------------------------------
+     * @param templateParserInst template variable parser
+     * @param tplContent template content
+     *-----------------------------------------------*)
     constructor TView.create(
         const templateParserInst : ITemplateParser;
         const tplContent : string
@@ -63,12 +95,22 @@ uses
         templateContent := tplContent;
     end;
 
+    (*!------------------------------------------------
+     * destructor
+     *-----------------------------------------------*)
     destructor TView.destroy();
     begin
         inherited destroy();
         templateParser := nil;
     end;
 
+    (*!------------------------------------------------
+     * render view
+     *------------------------------------------------
+     * @param viewParams view parameters
+     * @param response response instance
+     * @return response
+     *-----------------------------------------------*)
     function TView.render(
         const viewParams : IViewParameters;
         const response : IResponse

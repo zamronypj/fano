@@ -7,20 +7,13 @@
  *}
 
 (*! ---------------------------------------------
- * implementation units for mvc
- * that is included in fano.pas unit
+ * implementation units for rdbms that is
+ * included in fano.pas unit
  *
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
  *-----------------------------------------------*)
 
-TemplateParserFactoryImpl,
-SimpleTemplateParserFactoryImpl,
-NullTemplateParserFactoryImpl,
-TemplateFileViewImpl,
-ViewParametersFactoryImpl,
-ViewImpl,
-CompositeViewImpl,
-NullViewImpl,
-ViewPartialImpl,
-ViewPartialFactoryImpl,
-ControllerImpl,
+RdbmsImpl,
+MySqlDbImpl,
+MySqlDbFactoryImpl,
+PostgreSqlDbImpl,

@@ -15,10 +15,10 @@ interface
 
 uses
 
-    DependencyIntf,
     ViewParametersIntf,
     TemplateParserIntf,
-    RegexIntf;
+    RegexIntf,
+    InjectableObjectImpl;
 
 type
 
@@ -28,7 +28,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TTemplateParser = class(TInterfacedObject, ITemplateParser, IDependency)
+    TTemplateParser = class(TInjectableObject, ITemplateParser)
     private
         regex : IRegex;
         openTag: string;

@@ -17,8 +17,8 @@ uses
 
     classes,
     contnrs,
-    DependencyIntf,
-    ViewParametersIntf;
+    ViewParametersIntf,
+    InjectableObjectImpl;
 
 type
 
@@ -27,7 +27,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TViewParameters = class(TInterfacedObject, IViewParameters, IDependency)
+    TViewParameters = class(TInjectableObject, IViewParameters)
     private
         keyValueMap : TFPHashList;
         keys : TStringList;

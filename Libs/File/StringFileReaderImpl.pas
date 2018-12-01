@@ -15,7 +15,7 @@ interface
 
 uses
 
-    DependencyIntf,
+    InjectableObjectImpl,
     FileReaderIntf;
 
 type
@@ -26,7 +26,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TStringFileReader = class(TInterfacedObject, IFileReader, IDependency)
+    TStringFileReader = class(TInjectableObject, IFileReader)
     public
 
         (*!------------------------------------------------
