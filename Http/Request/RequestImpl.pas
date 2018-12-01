@@ -16,12 +16,8 @@ interface
 uses
     EnvironmentIntf,
     RequestIntf,
-<<<<<<< HEAD
-    HashListIntf,
-    MultipartFormDataParserIntf,
-=======
     ListIntf,
->>>>>>> master
+    MultipartFormDataParserIntf,
     KeyValueTypes;
 
 type
@@ -35,16 +31,10 @@ type
     TRequest = class(TInterfacedObject, IRequest)
     private
         webEnvironment : ICGIEnvironment;
-<<<<<<< HEAD
-        queryParams : IHashList;
-        cookieParams : IHashList;
-        bodyParams : IHashList;
-        multipartFormDataParser : IMultipartFormDataParser;
-=======
         queryParams : IList;
         cookieParams : IList;
         bodyParams : IList;
->>>>>>> master
+        multipartFormDataParser : IMultipartFormDataParser;
 
         function getContentLength(const env : ICGIEnvironment) : integer;
         function readStdIn(const contentLength : integer) : string;
@@ -100,16 +90,10 @@ type
     public
         constructor create(
             const env : ICGIEnvironment;
-<<<<<<< HEAD
-            const query : IHashList;
-            const cookies : IHashList;
-            const body : IHashList;
-            const multipartFormDataParserInst : IMultipartFormDataParser
-=======
             const query : IList;
             const cookies : IList;
-            const body : IList
->>>>>>> master
+            const body : IList;
+            const multipartFormDataParserInst : IMultipartFormDataParser
         );
         destructor destroy(); override;
 
@@ -203,16 +187,10 @@ resourcestring
 
     constructor TRequest.create(
         const env : ICGIEnvironment;
-<<<<<<< HEAD
-        const query : IHashList;
-        const cookies : IHashList;
-        const body : IHashList;
-        const multipartFormDataParserInst : IMultipartFormDataParser
-=======
         const query : IList;
         const cookies : IList;
-        const body : IList
->>>>>>> master
+        const body : IList;
+        const multipartFormDataParserInst : IMultipartFormDataParser
     );
     begin
         webEnvironment := env;

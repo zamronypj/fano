@@ -21,7 +21,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TUploadedFile= class(TinterfacedObject, IUploadedFile)
+    TUploadedFile= class(TInterfacedObject, IUploadedFile)
     private
     public
 
