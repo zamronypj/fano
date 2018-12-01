@@ -188,8 +188,14 @@ resourcestring
      * Example of actualData
      *
      * Content-Disposition: form-data; name="text"
-     * \r\n
+     * \n\n
      * text default
+     *
+     * or
+     * Content-Disposition: form-data; name="photo"; filename="shell300x300.jpg"
+     * Content-Type: image/jpeg
+     * \n\n
+     * [binary data]
      *------------------------------------------*)
     procedure TMultipartFormDataParser.parseData(
         const actualData : string;
@@ -197,7 +203,7 @@ resourcestring
         const uploadedFiles : IUploadedFileCollection
     );
     var splittedData : TStringArray;
-        delimiter : string;
+        header, delimiter, varName : string;
         posFilename, posName : integer;
     begin
         delimiter := #10#10;
@@ -206,14 +212,27 @@ resourcestring
         splittedData := actualData.split([ delimiter ]);
         //for multipart/form-data, 'Content-Disposition' always 'form-data'
         //so we can just simply read 'name'
-        if (pos('filename="') > 0) then
+        posFilename := pos('filename="', splittedData[0]);
+        if (posFilename > 0) then
         begin
             //if we get here it means we handle a file upload
+            posName := pos('name="', splittedData[0]);
+            if (posName > 0) then
+            begin
+                //6= length of 'name="'
+                varName := copy(splittedData[0], posName + 6, length(splittedData[0]));
+                uploadedFiles.add(copy(splittedData[0], posName + 6));
+            end;
         end else
         begin
             //we handle ordinary form input
-            if (pos('name="', splittedData[0])
-            body.add()
+            posName := pos('name="', splittedData[0]);
+            if (posName > 0) then
+            begin
+                //6= length of 'name="'
+                varName := copy(splittedData[0], posName + 6, length())
+                body.add(copy(splittedData[0], posName + 6))
+            end;
         end;
     end;
 
