@@ -14,13 +14,20 @@
  *-----------------------------------------------*)
 
 TemplateParserFactoryImpl,
+TemplateParserImpl,
+
 SimpleTemplateParserFactoryImpl,
+SimpleTemplateParserImpl,
+
 NullTemplateParserFactoryImpl,
+NullTemplateParserImpl,
+
 TemplateFileViewImpl,
 ViewParametersFactoryImpl,
 ViewImpl,
 CompositeViewImpl,
 NullViewImpl,
+NullViewFactoryImpl,
 ViewPartialImpl,
 ViewPartialFactoryImpl,
 ControllerImpl,

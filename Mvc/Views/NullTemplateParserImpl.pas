@@ -45,7 +45,6 @@ type
 
 implementation
 
-uses
 
     (*!---------------------------------------------------
      * replace template content with view parameters
