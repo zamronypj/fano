@@ -12,5 +12,6 @@ TTemplateFileView = TemplateFileViewImpl.TTemplateFileView;
 TView = ViewImpl.TView;
 TCompositeView = CompositeViewImpl.TCompositeView;
 TNullView = NullViewImpl.TNullView;
+TNullViewFactory = NullViewFactoryImpl.TNullViewFactory;
 TViewPartial = ViewPartialImpl.TViewPartial;
 TViewPartialFactory = ViewPartialFactoryImpl.TViewPartialFactory;
