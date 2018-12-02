@@ -14,8 +14,14 @@
  *-----------------------------------------------*)
 
 TemplateParserFactoryImpl,
+TemplateParserImpl,
+
 SimpleTemplateParserFactoryImpl,
+SimpleTemplateParserImpl,
+
 NullTemplateParserFactoryImpl,
+NullTemplateParserImpl,
+
 TemplateFileViewImpl,
 ViewParametersFactoryImpl,
 ViewImpl,
