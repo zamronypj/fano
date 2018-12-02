@@ -16,6 +16,7 @@ interface
 uses
 
     classes,
+    DependencyContainerIntf,
     MultipartFormDataParserIntf;
 
 type
@@ -28,6 +29,7 @@ type
      *-----------------------------------------------*)
     TMultipartFormDataParser = class(TInterfacedObject, IMultipartFormDataParser)
     private
+        uploadedFilesFactory : IUploadedFileCollectionFactory;
 
         (*!----------------------------------------------
          * extract boundary from multipart/form-data content type
@@ -111,7 +113,22 @@ type
            const contentLength : integer;
            const boundary : string
         );
+
     public
+
+        (*!----------------------------------------
+         * constructor
+         *------------------------------------------
+         * @param factory factory instance to build uploaded file
+         *        collection instance
+         *------------------------------------------*)
+        constructor create(const factory : IUploadedFileCollectionFactory);
+
+        (*!----------------------------------------
+         * destructor
+         *------------------------------------------*)
+        destructor destroy(); override;
+
         (*!----------------------------------------
          * Read POST data in standard input and parse
          * it and store parsed data in body request parameter
@@ -142,6 +159,26 @@ uses
 resourcestring
 
     sErrInvalidBoundary = 'Invalid multipart/form-data boundary';
+
+    (*!----------------------------------------
+     * constructor
+     *------------------------------------------
+     * @param factory factory instance to build uploaded file
+     *        collection instance
+     *------------------------------------------*)
+    constructor TMultipartFormDataParser.create(const factory : IUploadedFileCollectionFactory);
+    begin
+        uploadedFilesFactory := factory;
+    end;
+
+    (*!----------------------------------------
+     * destructor
+     *------------------------------------------*)
+    destructor TMultipartFormDataParser.destroy();
+    begin
+        inherited destroy();
+        uploadedFilesFactory := nil;
+    end;
 
     (*!----------------------------------------------
      * extract boundary from multipart/form-data content type
@@ -176,6 +213,7 @@ resourcestring
             length(contentType) - boundaryPos
         );
     end;
+
     (*!----------------------------------------
      * parse data in string store parsed data in body request parameter
      * and uploaded files (if any).
@@ -268,6 +306,7 @@ resourcestring
      *
      * --xxx12345678--
      * @link : https://stackoverflow.com/questions/4238809/example-of-multipart-form-data
+     * @link : https://tools.ietf.org/html/rfc7578
      *------------------------------------------
      * Instead of read all standard input and collecting
      * them as one big string and then parse them,
@@ -292,10 +331,16 @@ resourcestring
         totalRead := 0;
         accumulatedRead := 0;
         matchingBoundary := false;
+        //-- character is requirement in RFC 7578 Section 4.1
         boundaryLen := length('--' + boundary);
         isLastBoundary := false;
         repeat
             totalRead := inputStream.read(buffer[1], BUFFER_SIZE);
+            if (totalRead < BUFFER_SIZE) then
+            begin
+                //this must be last data
+                setLength(buffer, totalRead);
+            end;
             accumulatedRead := accumulatedRead + totalRead;
             accumulatedBuffer := accumulatedBuffer + buffer;
             boundaryPos := pos('--' + boundary, accumulatedBuffer);
@@ -322,6 +367,7 @@ resourcestring
                 end;
 
                 //check if this is last boundary
+                //-- at last is requirement of RFC 7578 Section 4.1
                 isLastBoundary := (pos('--' + boundary + '--', accumulatedBuffer) > 0);
 
             end;
@@ -349,7 +395,7 @@ resourcestring
     begin
         boundary := getBoundary(env.contentType());
         inputStream := TIOStream.create(iosInput);
-        uploadedFiles := TUploadedFileCollection.create();
+        uploadedFiles := uploadedFilesFactory.createCollection();
         try
             readAndParseInputStream(
                 inputStream,

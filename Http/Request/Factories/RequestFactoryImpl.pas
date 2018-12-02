@@ -19,8 +19,7 @@ uses
 
 type
     (*!------------------------------------------------
-     * interface for any class having capability
-     * to build request instance
+     * factory class for TRequest
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
@@ -33,7 +32,8 @@ implementation
 
 uses
     RequestImpl,
-    HashListImpl;
+    HashListImpl,
+    MultipartFormDataParserImpl;
 
     function TRequestFactory.build(const env : ICGIEnvironment) : IRequest;
     begin
@@ -41,7 +41,8 @@ uses
             env,
             THashList.create(),
             THashList.create(),
-            THashList.create()
+            THashList.create(),
+            TMultipartFormDataParser.create()
         );
     end;
 end.
