@@ -148,6 +148,7 @@ resourcestring
         const errHandler : IErrorHandler
     );
     begin
+        randomize();
         reset();
         environment := env;
         errorHandler := errHandler;

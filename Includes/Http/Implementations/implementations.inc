@@ -14,9 +14,12 @@
  *-----------------------------------------------*)
 
 HeadersFactoryImpl,
+RequestImpl,
 ResponseImpl,
 JsonResponseImpl,
 BinaryResponseImpl,
 ResponseStreamImpl,
 UploadedFileImpl,
 UploadedFileCollectionImpl,
+EInvalidRequestImpl,
+EInvalidUploadedFileImpl,

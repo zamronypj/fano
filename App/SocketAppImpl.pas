@@ -89,6 +89,7 @@ type
 
     constructor TSocketWebApplication.create(const port : integer);
     begin
+        randomize();
         evLoop := TEventLoop.create;
         server := TTCPServer.create(nil);
         server.EventLoop := evLoop;

@@ -65,6 +65,7 @@ uses
         const port : integer
     );
     begin
+        randomize();
         actualApp := appInst;
         serverPort := port;
     end;
