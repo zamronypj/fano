@@ -14,7 +14,6 @@ interface
 uses
 
     DispatcherIntf,
-    DependencyIntf,
     EnvironmentIntf,
     ResponseIntf,
     ResponseFactoryIntf,
@@ -22,7 +21,8 @@ uses
     RequestFactoryIntf,
     RequestHandlerIntf,
     RouteHandlerIntf,
-    RouteMatcherIntf;
+    RouteMatcherIntf,
+    InjectableObjectImpl;
 
 type
     (*!------------------------------------------------
@@ -33,7 +33,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TSimpleDispatcher = class(TInterfacedObject, IDispatcher, IDependency)
+    TSimpleDispatcher = class(TInjectableObject, IDispatcher)
     private
         routeCollection : IRouteMatcher;
         responseFactory : IResponseFactory;
