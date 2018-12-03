@@ -15,7 +15,6 @@ interface
 uses
 
     DispatcherIntf,
-    DependencyIntf,
     EnvironmentIntf,
     ResponseIntf,
     ResponseFactoryIntf,
@@ -27,7 +26,8 @@ uses
     MiddlewareChainIntf,
     MiddlewareCollectionIntf,
     MiddlewareChainFactoryIntf,
-    MiddlewareCollectionAwareIntf;
+    MiddlewareCollectionAwareIntf,
+    InjectableObjectImpl;
 
 type
 
@@ -37,7 +37,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *---------------------------------------------------*)
-    TDispatcher = class(TInterfacedObject, IDispatcher, IDependency)
+    TDispatcher = class(TInjectableObject, IDispatcher)
     private
         routeCollection : IRouteMatcher;
         responseFactory : IResponseFactory;
