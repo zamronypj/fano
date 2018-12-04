@@ -14,7 +14,6 @@ interface
 
 uses
 
-    DependencyIntf,
     ResponseIntf,
     RequestIntf,
     RouteHandlerIntf,
@@ -30,7 +29,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TController = class(TRouteHandler, IDependency)
+    TController = class(TRouteHandler)
     protected
         gView : IView;
         viewParams : IViewParameters;

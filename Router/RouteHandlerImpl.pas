@@ -20,7 +20,8 @@ uses
     MiddlewareCollectionIntf,
     MiddlewareCollectionAwareIntf,
     RouteHandlerIntf,
-    PlaceholderTypes;
+    PlaceholderTypes,
+    InjectableObjectImpl;
 
 type
 
@@ -29,7 +30,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      * -----------------------------------------------*)
-    TRouteHandler = class(TInterfacedObject, IRouteHandler, IMiddlewareCollectionAware)
+    TRouteHandler = class(TInjectableObject, IRouteHandler, IMiddlewareCollectionAware)
     private
         beforeMiddlewareList : IMiddlewareCollection;
         afterMiddlewareList : IMiddlewareCollection;
