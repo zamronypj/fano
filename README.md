@@ -27,6 +27,7 @@ Other available sample application:
 - [Fano App Middleware](https://github.com/fanoframework/fano-app-middleware), base REST API web application skeleton with middleware support.
 - [Fano Image](https://github.com/fanoframework/fano-app-img), sample web application that generate PNG image on the fly.
 - [Fano Mvc](https://github.com/fanoframework/fano-mvc), sample MVC web application that load data from model and display it in view.
+- [Fano Db](https://github.com/fanoframework/fano-app-db), sample MVC web application that load data from MySQL and display it in view.
 
 ### Install from Fano Command Line tool
 
