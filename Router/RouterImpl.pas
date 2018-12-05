@@ -19,8 +19,8 @@ uses
     RouteCollectionIntf,
     RouteMatcherIntf,
     RouteListIntf,
-    DependencyIntf,
-    RouteDataTypes;
+    RouteDataTypes,
+    InjectableObjectImpl;
 
 type
 
@@ -29,7 +29,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      * -----------------------------------------------*)
-    TRouter = class(TInterfacedObject, IDependency, IRouter, IRouteMatcher)
+    TRouter = class(TInjectableObject, IRouter, IRouteMatcher)
     private
         routeList : IRouteList;
 
