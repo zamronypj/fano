@@ -114,6 +114,40 @@ type
            const boundary : string
         );
 
+        (*!-------------------------------------------------------------
+         * extract name from Content-Disposition
+         *--------------------------------------------------------------
+         * @param start starting index for extracting name
+         * @param header header part
+         * @return name
+         *--------------------------------------------------------------
+         * If we have header contains following line
+         *
+         * Content-Disposition: form-data; name="file2"; filename="a.html"
+         * Content-Type: text/html
+         *
+         * start will contains value 32, start index of 'name="' substring
+         * from pos() function
+         * then this method will return string file2
+         *--------------------------------------------------------------*)
+        function extractName(const start: integer; const header : string) : string;
+
+        (*!-------------------------------------------------------------
+         * extract variable name from Content-Disposition
+         *--------------------------------------------------------------
+         * @param header header part
+         * @return name
+         * @throws EInvalidRequest if name is not found
+         *--------------------------------------------------------------
+         * If we have header contains following line
+         *
+         * Content-Disposition: form-data; name="file2"; filename="a.html"
+         * Content-Type: text/html
+         *
+         * then this method will return string file2 or raise exception
+         * if name is not found
+         *--------------------------------------------------------------*)
+        function extractVariableName(const headerPart : string) : string;
     public
 
         (*!----------------------------------------
@@ -159,6 +193,7 @@ uses
 resourcestring
 
     sErrInvalidBoundary = 'Invalid multipart/form-data boundary';
+    sErrInvalidMultipartFormDataName = 'Invalid multipart/form-data name';
 
     (*!----------------------------------------
      * constructor
@@ -214,6 +249,62 @@ resourcestring
         );
     end;
 
+    (*!-------------------------------------------------------------
+     * extract name from Content-Disposition
+     *--------------------------------------------------------------
+     * @param start starting index for extracting name
+     * @param header header part
+     * @return name
+     *--------------------------------------------------------------
+     * If we have header contains following line
+     *
+     * Content-Disposition: form-data; name="file2"; filename="a.html"
+     * Content-Type: text/html
+     *
+     * start will contains value 32, start index of 'name="' substring
+     * from pos() function
+     * then this method will return string file2
+     *--------------------------------------------------------------*)
+    function TMultipartFormDataParser.extractName(const start: integer; const header : string) : string;
+    var i, len:integer;
+    begin
+        len := length(header);
+        i := start;
+        result := '';
+        while ((header[i] <> '"') and i<len) do
+        begin
+            result:= result + header[i];
+        end;
+    end;
+
+    (*!-------------------------------------------------------------
+     * extract variable name from Content-Disposition
+     *--------------------------------------------------------------
+     * @param header header part
+     * @return name
+     * @throws EInvalidRequest if name is not found
+     *--------------------------------------------------------------
+     * If we have header contains following line
+     *
+     * Content-Disposition: form-data; name="file2"; filename="a.html"
+     * Content-Type: text/html
+     *
+     * then this method will return string file2 or raise exception
+     * if name is not found
+     *--------------------------------------------------------------*)
+    function TMultipartFormDataParser.extractVariableName(const headerPart : string) : string;
+    var posName : integer;
+    begin
+        posName := pos('name="', headerPart);
+        if (posName = 0) then
+        begin
+            //name must be exists, if not, something is very wrong
+            raise EInvalidRequest.create(sErrInvalidMultipartFormDataName);
+        end;
+        //6= length of 'name="'
+        result := extractName(posName + 6, headerPart);
+    end;
+
     (*!----------------------------------------
      * parse data in string store parsed data in body request parameter
      * and uploaded files (if any).
@@ -241,36 +332,47 @@ resourcestring
         const uploadedFiles : IUploadedFileCollection
     );
     var splittedData : TStringArray;
-        header, delimiter, varName : string;
-        posFilename, posName : integer;
+        headerPart, dataPart, delimiter, varName : string;
+        originalFilename, contentType : string;
+        posFilename, posContentType : integer;
     begin
         delimiter := #10#10;
         //split header and data.
         //header will be in splittedData[0] and data splittedData[1]
         splittedData := actualData.split([ delimiter ]);
+        headerPart := splittedData[0];
+        dataPart := splittedData[1];
+
         //for multipart/form-data, 'Content-Disposition' always 'form-data'
         //so we can just simply read 'name'
-        posFilename := pos('filename="', splittedData[0]);
+        varName := extractVariableName(headerPart);
+
+        posFilename := pos('filename="', headerPart);
         if (posFilename > 0) then
         begin
             //if we get here it means we handle a file upload
-            posName := pos('name="', splittedData[0]);
-            if (posName > 0) then
+            //10= length of 'filename="'
+            originalFilename := extractName(posFilename + 10, headerPart);
+
+            //extract contentType (if any)
+            contentType := 'application/octet-stream';
+            posContentType = pos('Content-Type:', headerPart);
+            if (posContentType > 0) then
             begin
-                //6= length of 'name="'
-                varName := copy(splittedData[0], posName + 6, length(splittedData[0]));
-                uploadedFiles.add(copy(splittedData[0], posName + 6));
+                contentType := copy(headerPart, posContentType + 13, length(headerPart));
+                contentType := trim(contentType.split([';'])[0]);
             end;
+
+            uploadedFiles.add(
+                varName,
+                dataPart,
+                contentType,
+                originalFilename
+            );
         end else
         begin
-            //we handle ordinary form input
-            posName := pos('name="', splittedData[0]);
-            if (posName > 0) then
-            begin
-                //6= length of 'name="'
-                varName := copy(splittedData[0], posName + 6, length())
-                body.add(copy(splittedData[0], posName + 6))
-            end;
+            //if we get here it means we handle ordinary input
+            body.add(varName, dataPart);
         end;
     end;
 
