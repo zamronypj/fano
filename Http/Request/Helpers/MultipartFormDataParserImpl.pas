@@ -356,7 +356,7 @@ resourcestring
 
             //extract contentType (if any)
             contentType := 'application/octet-stream';
-            posContentType = pos('Content-Type:', headerPart);
+            posContentType = pos('content-type:', lowerCase(headerPart));
             if (posContentType > 0) then
             begin
                 contentType := copy(headerPart, posContentType + 13, length(headerPart));
