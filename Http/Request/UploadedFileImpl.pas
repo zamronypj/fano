@@ -113,7 +113,8 @@ implementation
 
 uses
 
-    sysutils,
+    Classes,
+    SysUtils,
     EInvalidUploadedFileImpl;
 
 resourcestring
