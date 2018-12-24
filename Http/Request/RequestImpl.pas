@@ -456,7 +456,7 @@ uses
      *------------------------------------------------*)
     function TRequest.getUploadedFile(const key: string) : IUploadedFile;
     begin
-        result := uploadedFiles.find(key);
+        result := uploadedFiles.getUploadedFile(key);
     end;
 
     (*!------------------------------------------------
