@@ -69,7 +69,7 @@ implementation
         keys := TStringList.create();
     end;
 
-    destructor TViewParameters.destroy();
+    destructor TNullViewParameters.destroy();
     begin
         inherited destroy();
         keys.free();
@@ -83,7 +83,7 @@ implementation
      * Note: caller MUST not modify or destroy TStrings
      * instance and should read only
      *-----------------------------------------------*)
-    function TViewParameters.vars() : TStrings;
+    function TNullViewParameters.vars() : TStrings;
     begin
         result := keys;
     end;
@@ -94,7 +94,7 @@ implementation
      * @param varName name of variable
      * @return value of variable
      *-----------------------------------------------*)
-    function TViewParameters.getVar(const varName : shortstring) : string;
+    function TNullViewParameters.getVar(const varName : shortstring) : string;
     begin
         //intentionally does nothing and always return empty string
         result := '';
@@ -107,7 +107,7 @@ implementation
      * @param valueData value to be store
      * @return current class instance
      *-----------------------------------------------*)
-    function TViewParameters.setVar(
+    function TNullViewParameters.setVar(
         const varName : shortstring;
         const valueData :string
     ) : IViewParameters;
