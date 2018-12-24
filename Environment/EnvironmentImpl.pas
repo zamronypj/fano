@@ -137,7 +137,8 @@ implementation
 
 uses
     dos,
-    sysutils;
+    sysutils,
+    EInvalidRequestImpl;
 
 resourcestring
 
