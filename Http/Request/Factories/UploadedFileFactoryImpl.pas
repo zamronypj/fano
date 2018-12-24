@@ -15,6 +15,7 @@ interface
 uses
 
     DependencyIntf,
+    UploadedFileIntf,
     UploadedFileFactoryIntf,
     InjectableObjectImpl;
 
