@@ -13,6 +13,11 @@ interface
 {$MODE OBJFPC}
 {$H+}
 
+uses
+
+    InjectableObjectImpl,
+    UploadedFileIntf;
+
 type
 
     (*!------------------------------------------------
