@@ -432,7 +432,7 @@ resourcestring
         const uploadedFiles : IUploadedFileCollectionWriter;
         const contentLength : integer;
         const boundary : string
-    ) : IMultipartFormDataParser;
+    );
     const BUFFER_SIZE = 8 * 1024;
     var totalRead, accumulatedRead : integer;
         accumulatedBuffer, buffer, actualData : string;
