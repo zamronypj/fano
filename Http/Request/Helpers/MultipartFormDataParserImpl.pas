@@ -336,7 +336,7 @@ resourcestring
         const uploadedFiles : IUploadedFileCollection
     );
     var splittedData : TStringArray;
-        headerPart, dataPart, delimiter, varName : string;
+        lowerHeaderPart, headerPart, dataPart, delimiter, varName : string;
         originalFilename, contentType : string;
         posFilename, posContentType : integer;
     begin
@@ -345,6 +345,7 @@ resourcestring
         //header will be in splittedData[0] and data splittedData[1]
         splittedData := actualData.split([ delimiter ]);
         headerPart := splittedData[0];
+        lowerHeaderPart := lowerCase(headerPart);
         dataPart := splittedData[1];
 
         //for multipart/form-data, 'Content-Disposition' always 'form-data'
@@ -360,7 +361,7 @@ resourcestring
 
             //extract contentType (if any)
             contentType := 'application/octet-stream';
-            posContentType = pos('content-type:', lowerCase(headerPart));
+            posContentType = pos('content-type:', lowerHeaderPart);
             if (posContentType > 0) then
             begin
                 contentType := copy(headerPart, posContentType + 13, length(headerPart));
