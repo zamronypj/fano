@@ -179,7 +179,8 @@ uses
 
     sysutils,
     UrlHelpersImpl,
-    EInvalidRequestImpl;
+    EInvalidRequestImpl,
+    UploadedFileCollectionImpl;
 
     constructor TRequest.create(
         const env : ICGIEnvironment;
