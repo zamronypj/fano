@@ -192,6 +192,7 @@ uses
 
     sysutils,
     iostream,
+    KeyValueTypes,
     EInvalidRequestImpl;
 
 resourcestring
