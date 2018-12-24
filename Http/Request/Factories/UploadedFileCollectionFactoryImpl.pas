@@ -37,6 +37,7 @@ implementation
 uses
 
     UploadedFileCollectionImpl,
+    UploadedFileFactoryImpl,
     HashListImpl;
 
     function TUploadedFileCollectionFactory.build(
@@ -48,6 +49,9 @@ uses
 
     function TUploadedFileCollectionFactory.createCollection() : IUploadedFileCollection;
     begin
-        result := TUploadedFileCollection.create(THashList.create());
+        result := TUploadedFileCollection.create(
+            THashList.create(),
+            TUploadedFileFactory.create()
+        );
     end;
 end.
