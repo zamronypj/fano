@@ -174,7 +174,7 @@ type
      * multiple file upload, we will keep them
      * in array
      *--------------------------------------*)
-    function add(
+    function TUploadedFileCollection.add(
         const key : shortstring;
         const content : string;
         const contentType : string;
