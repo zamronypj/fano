@@ -341,6 +341,7 @@ resourcestring
         headerPart, dataPart, delimiter, varName : string;
         originalFilename, contentType : string;
         posFilename, posContentType : integer;
+        param : PKeyValue;
     begin
         delimiter := #10#10;
         //split header and data.
@@ -378,7 +379,10 @@ resourcestring
         end else
         begin
             //if we get here it means we handle ordinary input
-            body.add(varName, dataPart);
+            new(param);
+            param^.key := varName;
+            param^.value := dataPart;
+            body.add(varName, param);
         end;
     end;
 
