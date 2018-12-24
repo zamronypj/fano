@@ -19,6 +19,7 @@ uses
     ListIntf,
     DependencyContainerIntf,
     MultipartFormDataParserIntf,
+    EnvironmentIntf,
     UploadedFileCollectionIntf,
     UploadedFileCollectionFactoryIntf;
 
