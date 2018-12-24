@@ -33,7 +33,8 @@ implementation
 uses
     RequestImpl,
     HashListImpl,
-    MultipartFormDataParserImpl;
+    MultipartFormDataParserImpl,
+    UploadedFileCollectionFactoryImpl;
 
     function TRequestFactory.build(const env : ICGIEnvironment) : IRequest;
     begin
@@ -42,7 +43,9 @@ uses
             THashList.create(),
             THashList.create(),
             THashList.create(),
-            TMultipartFormDataParser.create()
+            TMultipartFormDataParser.create(
+                TUploadedFileCollectionWriterFactory.create()
+            )
         );
     end;
 end.
