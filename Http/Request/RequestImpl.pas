@@ -19,6 +19,7 @@ uses
     ListIntf,
     MultipartFormDataParserIntf,
     KeyValueTypes,
+    UploadedFileIntf,
     UploadedFileCollectionIntf;
 
 type
