@@ -20,7 +20,8 @@ uses
     MultipartFormDataParserIntf,
     KeyValueTypes,
     UploadedFileIntf,
-    UploadedFileCollectionIntf;
+    UploadedFileCollectionIntf,
+    UploadedFileCollectionWriterIntf;
 
 type
 
