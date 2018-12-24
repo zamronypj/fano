@@ -69,7 +69,7 @@ uses
         result := TUploadedFile.create(
             content,
             contentType,
-            originalFilename
+            origFilename
         );
     end;
 end.
