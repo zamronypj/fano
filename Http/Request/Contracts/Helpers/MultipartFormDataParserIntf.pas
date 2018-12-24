@@ -15,6 +15,7 @@ interface
 
 uses
 
+    KeyValueTypes,
     ListIntf,
     EnvironmentIntf,
     UploadedFileCollectionWriterIntf;
