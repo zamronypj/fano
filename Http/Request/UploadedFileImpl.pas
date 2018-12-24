@@ -119,7 +119,7 @@ uses
 
 resourcestring
 
-    sErrDuplicateTemporaryUploaedFile = 'Duplicate temporary uploaded file %s';
+    sErrDuplicateTemporaryUploadedFile = 'Duplicate temporary uploaded file %s';
     sErrInvalidUploadedFile = 'Invalid uploaded file. You can move uploaded file only once';
 
     function makeRandomStr(const prefix : string; const suffix : string) : string;
