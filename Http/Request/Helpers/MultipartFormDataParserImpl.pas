@@ -275,7 +275,7 @@ resourcestring
         len := length(header);
         i := start;
         result := '';
-        while ((header[i] <> '"') and i<len) do
+        while (header[i] <> '"') and (i<len) do
         begin
             result:= result + header[i];
         end;
