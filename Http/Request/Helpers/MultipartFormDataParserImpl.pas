@@ -17,7 +17,9 @@ uses
 
     classes,
     DependencyContainerIntf,
-    MultipartFormDataParserIntf;
+    MultipartFormDataParserIntf,
+    UploadedFileCollectionIntf,
+    UploadedFileCollectionFactoryIntf;
 
 type
 
