@@ -17,7 +17,7 @@ uses
 
     ListIntf,
     EnvironmentIntf,
-    UploadedFileCollectionIntf;
+    UploadedFileCollectionWriterIntf;
 
 type
 
@@ -39,13 +39,13 @@ type
          * @param env CGI environment variable
          * @param body instance of IList that will store
          *             parsed body parameter
-         * @param uploadedFiles instance of uploaded file collection
+         * @param uploadedFiles instance of uploaded file collection writer
          * @return current instance
          *------------------------------------------*)
         function parse(
             const env : ICGIEnvironment;
             const body : IList;
-            out uploadedFiles : IUploadedFileCollection
+            out uploadedFiles : IUploadedFileCollectionWriter
         ) : IMultipartFormDataParser;
     end;
 
