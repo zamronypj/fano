@@ -15,7 +15,7 @@ interface
 uses
 
     DependencyIntf,
-    DependencyContainerInt,
+    DependencyContainerIntf,
     UploadedFileCollectionFactoryIntf,
     FactoryImpl;
 
