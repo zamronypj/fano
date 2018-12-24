@@ -34,7 +34,8 @@ uses
     RequestImpl,
     HashListImpl,
     MultipartFormDataParserImpl,
-    UploadedFileCollectionFactoryImpl;
+    UploadedFileCollectionFactoryImpl,
+    UploadedFileCollectionWriterFactoryImpl;
 
     function TRequestFactory.build(const env : ICGIEnvironment) : IRequest;
     begin
