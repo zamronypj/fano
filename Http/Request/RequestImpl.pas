@@ -314,6 +314,10 @@ uses
             multipartFormDataParser.parse(env, body, uploadedFiles);
         end else
         begin
+            //read STDIN
+            contentLength := env.intContentLength();
+            bodyStr := readStdIn(contentLength);
+
             //if POST but different contentType save it as it is
             //with its contentType as key
             new(param);
