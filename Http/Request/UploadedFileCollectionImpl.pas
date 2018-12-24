@@ -120,7 +120,7 @@ type
         begin
             item := listInst.get(i);
             setLength(item^.key,0);
-            item^.uploadedFile := nil;
+            item^.uploadedFiles := nil;
             dispose(item);
             listInst.delete(i);
         end;
@@ -145,7 +145,8 @@ type
     var item : PUploadedFileRec;
     begin
         item := uploadedFiles.find(key);
-        result := item^.uploadedFile;
+        //TODO: array is used so we can support multiple parameters with same name
+        result := item^.uploadedFiles[0];
     end;
 
     (*!------------------------------------------------
@@ -157,7 +158,7 @@ type
     var item : PUploadedFileRec;
     begin
         item := uploadedFiles.get(indx);
-        result := item^.uploadedFile;
+        result := item^.uploadedFiles[0];
     end;
 
     (*!-------------------------------------
