@@ -21,7 +21,7 @@ uses
     MultipartFormDataParserIntf,
     EnvironmentIntf,
     UploadedFileCollectionWriterIntf,
-    UploadedFileCollectionFactoryWriterIntf;
+    UploadedFileCollectionWriterFactoryIntf;
 
 type
 
