@@ -15,7 +15,8 @@ interface
 
 uses
 
-    classes,
+    Classes,
+    ListIntf,
     DependencyContainerIntf,
     MultipartFormDataParserIntf,
     UploadedFileCollectionIntf,
