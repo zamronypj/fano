@@ -201,7 +201,7 @@ resourcestring
     );
     begin
         tmpFile := createTmpFile(content, 'fano-', origFilename);
-        tmpFileSize := fileSize(tmpFile);
+        tmpFileSize := length(tmpFile);
         tmpMimeType := contentType;
         clientFilename := origFilename;
     end;
