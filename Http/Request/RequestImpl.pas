@@ -37,6 +37,7 @@ type
         cookieParams : IList;
         bodyParams : IList;
         uploadedFiles: IUploadedFileCollection;
+        uploadedFilesWriter: IUploadedFileCollectionWriter;
         multipartFormDataParser : IMultipartFormDataParser;
 
         function readStdIn(const contentLength : integer) : string;
@@ -197,6 +198,7 @@ uses
         bodyParams := body;
         multipartFormDataParser := multipartFormDataParserInst;
         uploadedFiles := nil;
+        uploadedFilesWriter := nil;
         initParamsFromEnvironment(
             webEnvironment,
             queryParams,
@@ -217,6 +219,7 @@ uses
         cookieParams := nil;
         bodyParams := nil;
         uploadedFiles := nil;
+        uploadedFilesWriter := nil;
         multipartFormDataParser := nil;
     end;
 
@@ -311,7 +314,8 @@ uses
         end
         else if (contentType = 'multipart/form-data') then
         begin
-            multipartFormDataParser.parse(env, body, uploadedFiles);
+            multipartFormDataParser.parse(env, body, uploadedFilesWriter);
+            uploadedFiles := uploadedFilesWriter as IUploadedFileCollection;
         end else
         begin
             //read STDIN
