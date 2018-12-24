@@ -20,8 +20,8 @@ uses
     DependencyContainerIntf,
     MultipartFormDataParserIntf,
     EnvironmentIntf,
-    UploadedFileCollectionIntf,
-    UploadedFileCollectionFactoryIntf;
+    UploadedFileCollectionWriterIntf,
+    UploadedFileCollectionFactoryWriterIntf;
 
 type
 
@@ -33,7 +33,7 @@ type
      *-----------------------------------------------*)
     TMultipartFormDataParser = class(TInterfacedObject, IMultipartFormDataParser)
     private
-        uploadedFilesFactory : IUploadedFileCollectionFactory;
+        uploadedFilesFactory : IUploadedFileCollectionWriterFactory;
 
         (*!----------------------------------------------
          * extract boundary from multipart/form-data content type
@@ -70,7 +70,7 @@ type
         procedure parseData(
             const actualData : string;
             const body : IList;
-            const uploadedFiles : IUploadedFileCollection
+            const uploadedFiles : IUploadedFileCollectionWriter
         );
 
         (*!----------------------------------------
@@ -113,7 +113,7 @@ type
         procedure readAndParseInputStream(
            const inputStream : TStream;
            const body : IList;
-           const uploadedFiles : IUploadedFileCollection;
+           const uploadedFiles : IUploadedFileCollectionWriter;
            const contentLength : integer;
            const boundary : string
         );
@@ -160,7 +160,7 @@ type
          * @param factory factory instance to build uploaded file
          *        collection instance
          *------------------------------------------*)
-        constructor create(const factory : IUploadedFileCollectionFactory);
+        constructor create(const factory : IUploadedFileCollectionWriterFactory);
 
         (*!----------------------------------------
          * destructor
@@ -182,7 +182,7 @@ type
         function parse(
             const env : ICGIEnvironment;
             const body : IList;
-            out uploadedFiles : IUploadedFileCollection
+            out uploadedFiles : IUploadedFileCollectionWriter
         ) : IMultipartFormDataParser;
     end;
 
@@ -205,7 +205,9 @@ resourcestring
      * @param factory factory instance to build uploaded file
      *        collection instance
      *------------------------------------------*)
-    constructor TMultipartFormDataParser.create(const factory : IUploadedFileCollectionFactory);
+    constructor TMultipartFormDataParser.create(
+        const factory : IUploadedFileCollectionWriterFactory
+    );
     begin
         uploadedFilesFactory := factory;
     end;
@@ -333,7 +335,7 @@ resourcestring
     procedure TMultipartFormDataParser.parseData(
         const actualData : string;
         const body : IList;
-        const uploadedFiles : IUploadedFileCollection
+        const uploadedFiles : IUploadedFileCollectionWriter
     );
     var splittedData : TStringArray;
         headerPart, dataPart, delimiter, varName : string;
@@ -422,7 +424,7 @@ resourcestring
     procedure TMultipartFormDataParser.readAndParseInputStream(
         const inputStream : TStream;
         const body : IList;
-        const uploadedFiles : IUploadedFileCollection;
+        const uploadedFiles : IUploadedFileCollectionWriter;
         const contentLength : integer;
         const boundary : string
     ) : IMultipartFormDataParser;
@@ -494,14 +496,14 @@ resourcestring
     function TMultipartFormDataParser.parse(
         const env : ICGIEnvironment;
         const body : IList;
-        out uploadedFiles : IUploadedFileCollection
+        out uploadedFiles : IUploadedFileCollectionWriter
     ) : IMultipartFormDataParser;
     var inputStream : TIOStream;
         boundary : string;
     begin
         boundary := getBoundary(env.contentType());
         inputStream := TIOStream.create(iosInput);
-        uploadedFiles := uploadedFilesFactory.createCollection();
+        uploadedFiles := uploadedFilesFactory.createCollectionWriter();
         try
             readAndParseInputStream(
                 inputStream,
