@@ -18,7 +18,8 @@ uses
     RequestIntf,
     ListIntf,
     MultipartFormDataParserIntf,
-    KeyValueTypes;
+    KeyValueTypes,
+    UploadedFileCollectionIntf;
 
 type
 
@@ -179,8 +180,7 @@ uses
 
     sysutils,
     UrlHelpersImpl,
-    EInvalidRequestImpl,
-    UploadedFileCollectionImpl;
+    EInvalidRequestImpl;
 
     constructor TRequest.create(
         const env : ICGIEnvironment;
