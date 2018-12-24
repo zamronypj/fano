@@ -37,6 +37,7 @@ implementation
 uses
 
     UploadedFileCollectionImpl,
+    UploadedFileFactoryImpl,
     HashListImpl;
 
     function TUploadedFileCollectionWriterFactory.build(
@@ -48,6 +49,9 @@ uses
 
     function TUploadedFileCollectionWriterFactory.createCollectionWriter() : IUploadedFileCollectionWriter;
     begin
-        result := TUploadedFileCollection.create(THashList.create());
+        result := TUploadedFileCollection.create(
+            THashList.create(),
+            TUploadedFileFactory.create()
+        );
     end;
 end.
