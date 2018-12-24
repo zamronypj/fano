@@ -175,7 +175,7 @@ resourcestring
     var srcStream, dstStream : TFileStream;
     begin
         srcStream := TFileStream.create(srcFilename, fmOpenRead);
-        dstStream := TFileStream.create(dst, fmCreate);
+        dstStream := TFileStream.create(dstFilename, fmCreate);
         try
             dstStream.copyFrom(srcStream, srcStream.size);
         finally
