@@ -464,7 +464,7 @@ uses
      *-------------------------------------------------
      * @return IUploadedFileCollection
      *------------------------------------------------*)
-    function getUploadedFiles() : IUploadedFileCollection;
+    function TRequest.getUploadedFiles() : IUploadedFileCollection;
     begin
         result := uploadedFiles;
     end;
