@@ -23,7 +23,12 @@ NullTemplateParserFactoryImpl,
 NullTemplateParserImpl,
 
 TemplateFileViewImpl,
+
+ViewParametersImpl,
 ViewParametersFactoryImpl,
+NullViewParametersImpl,
+NullViewParametersFactoryImpl,
+
 ViewImpl,
 CompositeViewImpl,
 NullViewImpl,

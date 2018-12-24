@@ -6,7 +6,11 @@ TSimpleTemplateParser = SimpleTemplateParserImpl.TSimpleTemplateParser;
 TTemplateParser = TemplateParserImpl.TTemplateParser;
 TNullTemplateParser = NullTemplateParserImpl.TNullTemplateParser;
 
+TViewParameters = ViewParametersImpl.TViewParameters;
 TViewParametersFactory = ViewParametersFactoryImpl.TViewParametersFactory;
+TNullViewParameters = NullViewParametersImpl.TNullViewParameters;
+TNullViewParametersFactory = NullViewParametersFactoryImpl.TNullViewParametersFactory;
+
 TTemplateFileView = TemplateFileViewImpl.TTemplateFileView;
 
 TView = ViewImpl.TView;
