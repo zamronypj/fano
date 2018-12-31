@@ -252,7 +252,7 @@ resourcestring
         result := copy(
             contentType,
             boundaryPos,
-            length(contentType) - boundaryPos
+            length(contentType) - boundaryPos + 1
         );
     end;
 
