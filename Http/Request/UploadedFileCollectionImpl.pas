@@ -144,9 +144,13 @@ type
     function TUploadedFileCollection.getUploadedFile(const key : shortstring) : IUploadedFile;
     var item : PUploadedFileRec;
     begin
+        result := nil;
         item := uploadedFiles.find(key);
-        //TODO: array is used so we can support multiple parameters with same name
-        result := item^.uploadedFiles[0];
+        if (item <> nil) then
+        begin
+          //TODO: array is used so we can support multiple parameters with same name
+          result := item^.uploadedFiles[0];
+        end;
     end;
 
     (*!------------------------------------------------

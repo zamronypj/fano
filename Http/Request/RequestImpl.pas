@@ -305,7 +305,7 @@ uses
          * max upload size of request
          *----------------------------------------*)
 
-        contentType := env.contentType();
+        contentType := lowerCase(env.contentType());
         if (contentType = 'application/x-www-form-urlencoded') then
         begin
             //read STDIN
@@ -313,7 +313,7 @@ uses
             bodyStr := readStdIn(contentLength);
             initParamsFromString(bodyStr, body);
         end
-        else if (contentType = 'multipart/form-data') then
+        else if (pos('multipart/form-data', contentType) > 0) then
         begin
             multipartFormDataParser.parse(env, body, uploadedFilesWriter);
             uploadedFiles := uploadedFilesWriter as IUploadedFileCollection;
