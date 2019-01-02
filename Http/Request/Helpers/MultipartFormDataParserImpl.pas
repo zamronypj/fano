@@ -30,6 +30,7 @@ type
      * parse multipart/form-data request
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+     * @link https://tools.ietf.org/html/rfc7578
      *-----------------------------------------------*)
     TMultipartFormDataParser = class(TInterfacedObject, IMultipartFormDataParser)
     private
@@ -108,7 +109,8 @@ type
          * Instead of read all standard input and collecting
          * them as one big string and then parse them,
          * we will read std input and parse data as soon as we
-         * found matching boundary
+         * found matching boundary. Streaming read is needed because
+         * form upload may contain big file data
          *------------------------------------------*)
         procedure readAndParseInputStream(
            const inputStream : TStream;
@@ -332,6 +334,8 @@ resourcestring
      * Content-Type: image/jpeg
      * \n\n
      * [binary data]
+     *------------------------------------------
+     * @link https://tools.ietf.org/html/rfc7578
      *------------------------------------------*)
     procedure TMultipartFormDataParser.parseData(
         const actualData : string;
@@ -424,7 +428,76 @@ resourcestring
      * Instead of read all standard input and collecting
      * them as one big string and then parse them,
      * we will read std input and parse data as soon as we
-     * found matching boundary
+     * found matching boundary. Streaming read is needed because
+     * form upload may contain big file data
+     *------------------------------------------*)
+    procedure TMultipartFormDataParser.readAndParseInputStream(
+        const inputStream : TStream;
+        const body : IList;
+        const uploadedFiles : IUploadedFileCollectionWriter;
+        const contentLength : integer;
+        const boundary : string
+    );
+    const BUFFER_SIZE = 8 * 1024;
+    var totalRead, accumulatedRead : integer;
+        accumulatedBuffer, buffer, actualData : string;
+        boundaryPos, boundaryLen : integer;
+        lastData : boolean;
+    begin
+        setLength(buffer, BUFFER_SIZE);
+        totalRead := 0;
+        lastData := false;
+        repeat
+            totalRead := inputStream.read(buffer[1], BUFFER_SIZE);
+            if ((totalRead < BUFFER_SIZE) or (totalRead = inputStream.size)) then
+            begin
+                //this must be last data
+                setLength(buffer, totalRead);
+                lastData := true;
+            end;
+            parseInputData(buffer);
+        until lastData;
+    end;
+
+    (*!----------------------------------------
+     * Read POST data in standard input and parse
+     * it and store parsed data in body request parameter
+     * and uploaded files (if any).
+     *------------------------------------------
+     * @param inputStream std input stream
+     * @param body instance of IList that will store
+     *             parsed body parameter
+     * @param uploadedFiles instance of uploaded file collection
+     * @param contentLength content length of request payload
+     * @param boundary boundary of multipart/form-data
+     *-------------------------------------------
+     * Example of POST data with boundary of 'xxx12345678' s
+     *
+     * --xxx12345678
+     * Content-Disposition: form-data; name="text"
+     * \r\n
+     * text default
+     * --xxx12345678
+     * Content-Disposition: form-data; name="file1"; filename="a.txt"
+     * Content-Type: text/plain
+     * \r\n
+     * Content of a.txt.
+     *
+     * --xxx12345678
+     * Content-Disposition: form-data; name="file2"; filename="a.html"
+     * Content-Type: text/html
+     * \r\n
+     * <!DOCTYPE html><title>Content of a.html.</title>
+     *
+     * --xxx12345678--
+     * @link : https://stackoverflow.com/questions/4238809/example-of-multipart-form-data
+     * @link : https://tools.ietf.org/html/rfc7578
+     *------------------------------------------
+     * Instead of read all standard input and collecting
+     * them as one big string and then parse them,
+     * we will read std input and parse data as soon as we
+     * found matching boundary. Streaming read is needed because
+     * form upload may contain big file data
      *------------------------------------------*)
     procedure TMultipartFormDataParser.readAndParseInputStream(
         const inputStream : TStream;
@@ -449,7 +522,7 @@ resourcestring
         isLastBoundary := false;
         repeat
             totalRead := inputStream.read(buffer[1], BUFFER_SIZE);
-            if (totalRead < BUFFER_SIZE) then
+            if ((totalRead < BUFFER_SIZE) or (totalRead = inputStream.size)) then
             begin
                 //this must be last data
                 setLength(buffer, totalRead);
