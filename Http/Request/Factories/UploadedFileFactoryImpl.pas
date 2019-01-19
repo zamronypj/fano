@@ -11,6 +11,7 @@ unit UploadedFileFactoryImpl;
 interface
 
 {$MODE OBJFPC}
+{$H+}
 
 uses
 

@@ -30,7 +30,6 @@ type
      * parse multipart/form-data request
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
-     * @link https://tools.ietf.org/html/rfc7578
      *-----------------------------------------------*)
     TMultipartFormDataParser = class(TInterfacedObject, IMultipartFormDataParser)
     private
@@ -50,6 +49,7 @@ type
          * 'multipart/form-data; boundary=xxx12345678'
          *
          * this method will return string 'xxx12345678'
+         *
          *-----------------------------------------------*)
         function getBoundary(const contentType : string) : string;
 
@@ -70,6 +70,20 @@ type
          *------------------------------------------*)
         procedure parseData(
             const actualData : string;
+            const body : IList;
+            const uploadedFiles : IUploadedFileCollectionWriter
+        );
+
+        procedure parseAsWhole(
+            const accumulatedBuffer : string;
+            const boundary : string;
+            const body : IList;
+            const uploadedFiles : IUploadedFileCollectionWriter
+        );
+
+        procedure parseAsPart(
+            const accumulatedBuffer : string;
+            const boundary : string;
             const body : IList;
             const uploadedFiles : IUploadedFileCollectionWriter
         );
@@ -109,8 +123,7 @@ type
          * Instead of read all standard input and collecting
          * them as one big string and then parse them,
          * we will read std input and parse data as soon as we
-         * found matching boundary. Streaming read is needed because
-         * form upload may contain big file data
+         * found matching boundary
          *------------------------------------------*)
         procedure readAndParseInputStream(
            const inputStream : TStream;
@@ -283,6 +296,7 @@ resourcestring
         while (header[i] <> '"') and (i<len) do
         begin
             result:= result + header[i];
+            inc(i);
         end;
     end;
 
@@ -334,31 +348,28 @@ resourcestring
      * Content-Type: image/jpeg
      * \n\n
      * [binary data]
-     *------------------------------------------
-     * @link https://tools.ietf.org/html/rfc7578
      *------------------------------------------*)
     procedure TMultipartFormDataParser.parseData(
         const actualData : string;
         const body : IList;
         const uploadedFiles : IUploadedFileCollectionWriter
     );
+    const DELIMITER = #13#10#13#10;
     var splittedData : TStringArray;
-        headerPart, dataPart, delimiter, varName : string;
+        headerPart, dataPart, varName : string;
         originalFilename, contentType : string;
         posFilename, posContentType : integer;
         param : PKeyValue;
     begin
-        delimiter := #10#10;
         //split header and data.
         //header will be in splittedData[0] and data splittedData[1]
-        splittedData := actualData.split([ delimiter ]);
+        splittedData := actualData.split([ DELIMITER ]);
         headerPart := splittedData[0];
         dataPart := splittedData[1];
 
         //for multipart/form-data, 'Content-Disposition' always 'form-data'
         //so we can just simply read 'name'
         varName := extractVariableName(headerPart);
-
         posFilename := pos('filename="', headerPart);
         if (posFilename > 0) then
         begin
@@ -371,6 +382,7 @@ resourcestring
             posContentType := pos('content-type:', lowerCase(headerPart));
             if (posContentType > 0) then
             begin
+                //13=length of 'content-type:'
                 contentType := copy(headerPart, posContentType + 13, length(headerPart));
                 contentType := trim(contentType.split([';'])[0]);
             end;
@@ -395,68 +407,83 @@ resourcestring
      * Read POST data in standard input and parse
      * it and store parsed data in body request parameter
      * and uploaded files (if any).
+     * This is will be called when request payload is small enough
+     * < less than BUFFER_SIZE so accumulatedBuffer will store
+     * all payload data
      *------------------------------------------
-     * @param inputStream std input stream
-     * @param body instance of IList that will store
-     *             parsed body parameter
-     * @param uploadedFiles instance of uploaded file collection
-     * @param contentLength content length of request payload
+     * @param accumulatedBuffer whole multipart/form-data payload
      * @param boundary boundary of multipart/form-data
-     *-------------------------------------------
-     * Example of POST data with boundary of 'xxx12345678' s
-     *
-     * --xxx12345678
-     * Content-Disposition: form-data; name="text"
-     * \r\n
-     * text default
-     * --xxx12345678
-     * Content-Disposition: form-data; name="file1"; filename="a.txt"
-     * Content-Type: text/plain
-     * \r\n
-     * Content of a.txt.
-     *
-     * --xxx12345678
-     * Content-Disposition: form-data; name="file2"; filename="a.html"
-     * Content-Type: text/html
-     * \r\n
-     * <!DOCTYPE html><title>Content of a.html.</title>
-     *
-     * --xxx12345678--
-     * @link : https://stackoverflow.com/questions/4238809/example-of-multipart-form-data
-     * @link : https://tools.ietf.org/html/rfc7578
-     *------------------------------------------
-     * Instead of read all standard input and collecting
-     * them as one big string and then parse them,
-     * we will read std input and parse data as soon as we
-     * found matching boundary. Streaming read is needed because
-     * form upload may contain big file data
      *------------------------------------------*)
-    procedure TMultipartFormDataParser.readAndParseInputStream(
-        const inputStream : TStream;
+    procedure TMultipartFormDataParser.parseAsWhole(
+        const accumulatedBuffer : string;
+        const boundary : string;
         const body : IList;
-        const uploadedFiles : IUploadedFileCollectionWriter;
-        const contentLength : integer;
-        const boundary : string
+        const uploadedFiles : IUploadedFileCollectionWriter
     );
-    const BUFFER_SIZE = 8 * 1024;
-    var totalRead, accumulatedRead : integer;
-        accumulatedBuffer, buffer, actualData : string;
-        boundaryPos, boundaryLen : integer;
-        lastData : boolean;
+    var lastBoundaryPos, boundaryPos, boundaryLen, lenToRemove : integer;
+        beginBoundary, isLastBoundary : boolean;
+        buffer, actualData : string;
     begin
-        setLength(buffer, BUFFER_SIZE);
-        totalRead := 0;
-        lastData := false;
+        buffer := accumulatedBuffer;
+        boundaryLen := length('--' + boundary);
+        beginBoundary := false;
+        lenToRemove := 0;
         repeat
-            totalRead := inputStream.read(buffer[1], BUFFER_SIZE);
-            if ((totalRead < BUFFER_SIZE) or (totalRead = inputStream.size)) then
+            boundaryPos := pos('--' + boundary, buffer);
+            //check if this is last boundary
+            //-- at last is requirement of RFC 7578 Section 4.1
+            lastBoundaryPos := pos('--' + boundary + '--', buffer);
+            isLastBoundary := boundaryPos = (lastBoundaryPos);
+
+            if (boundaryPos > 0) then
             begin
-                //this must be last data
-                setLength(buffer, totalRead);
-                lastData := true;
+                //boundary is found, test further if this boundary that mark
+                //beginning of data or end of data
+                if (beginBoundary) then
+                begin
+                    //if we get here then this marks end of data
+                    //actual data will be from start of string until begining of boundary
+                    actualData := copy(buffer, 1, boundaryPos - 2);
+                    parseData(actualData, body, uploadedFiles);
+
+                    lenToRemove := boundaryPos + boundaryLen + 1;
+                    if (isLastBoundary) then
+                    begin
+                        //+2 because last boundary have -- appended
+                        lenToRemove := lenToRemove + 2;
+                    end;
+                    //remove processed string + boundary from accumulatedBuffer
+                    delete(buffer, 1, lenToRemove);
+                end else
+                begin
+                    //if we get here then this marks beginning of data
+                    beginBoundary := true;
+                    //remove boundary from accumulatedBuffer so they will not be matched
+                    //in next iteration
+                    delete(buffer, boundaryPos, boundaryLen + 2);
+                end;
             end;
-            parseInputData(buffer);
-        until lastData;
+        until isLastBoundary;
+    end;
+
+    (*!----------------------------------------
+     * Read POST data in standard input and parse
+     * it and store parsed data in body request parameter
+     * and uploaded files (if any).
+     * This is will be called when request payload is small enough
+     * < less than BUFFER_SIZE so accumulatedBuffer will store
+     * all payload data
+     *------------------------------------------
+     * @param accumulatedBuffer whole multipart/form-data payload
+     * @param boundary boundary of multipart/form-data
+     *------------------------------------------*)
+    procedure TMultipartFormDataParser.parseAsPart(
+        const accumulatedBuffer : string;
+        const boundary : string;
+        const body : IList;
+        const uploadedFiles : IUploadedFileCollectionWriter
+    );
+    begin
     end;
 
     (*!----------------------------------------
@@ -497,7 +524,6 @@ resourcestring
      * them as one big string and then parse them,
      * we will read std input and parse data as soon as we
      * found matching boundary. Streaming read is needed because
-     * form upload may contain big file data
      *------------------------------------------*)
     procedure TMultipartFormDataParser.readAndParseInputStream(
         const inputStream : TStream;
@@ -508,56 +534,34 @@ resourcestring
     );
     const BUFFER_SIZE = 8 * 1024;
     var totalRead, accumulatedRead : integer;
-        accumulatedBuffer, buffer, actualData : string;
-        boundaryPos, boundaryLen : integer;
-        matchingBoundary, isLastBoundary : boolean;
+        accumulatedBuffer, buffer : string;
     begin
         setLength(buffer, BUFFER_SIZE);
         accumulatedBuffer := '';
         totalRead := 0;
         accumulatedRead := 0;
-        matchingBoundary := false;
-        //-- character is requirement in RFC 7578 Section 4.1
-        boundaryLen := length('--' + boundary);
-        isLastBoundary := false;
         repeat
             totalRead := inputStream.read(buffer[1], BUFFER_SIZE);
-            if ((totalRead < BUFFER_SIZE) or (totalRead = inputStream.size)) then
+            if (totalRead < BUFFER_SIZE) then
             begin
                 //this must be last data
                 setLength(buffer, totalRead);
             end;
             accumulatedRead := accumulatedRead + totalRead;
             accumulatedBuffer := accumulatedBuffer + buffer;
-            boundaryPos := pos('--' + boundary, accumulatedBuffer);
-            if (boundaryPos > 0) then
+
+            if (accumulatedRead = contentLength) then
             begin
-                //boundary is found, test further if this boundary that mark
-                //beginning of data or end of data
-                if (matchingBoundary) then
-                begin
-                    //if we get here then this marks end of data
-                    //actual data will be from start of string until begining of boundary
-                    actualData := copy(accumulatedBuffer, 1, boundaryPos);
-                    parseData(actualData, body, uploadedFiles);
-
-                    //remove processed string + boundary from accumulatedBuffer
-                    delete(accumulatedBuffer, 1, boundaryPos + boundaryLen);
-                end else
-                begin
-                    //if we get here then this marks beginning of data
-                    matchingBoundary := true;
-                    //remove boundary from accumulatedBuffer so they will not be matched
-                    //in next iteration
-                    delete(accumulatedBuffer, boundaryPos, boundaryLen);
-                end;
-
-                //check if this is last boundary
-                //-- at last is requirement of RFC 7578 Section 4.1
-                isLastBoundary := (pos('--' + boundary + '--', accumulatedBuffer) > 0);
-
+                //if we get here then we read whole payload
+                parseAsWhole(accumulatedBuffer, boundary, body, uploadedFiles);
+            end else
+            begin
+                //if we get here then we read partial payload
+                parseAsPart(accumulatedBuffer, boundary, body, uploadedFiles);
             end;
-        until isLastBoundary or (totalRead <= 0) or (accumulatedRead >= contentLength);
+        until (totalRead < BUFFER_SIZE) or
+            (totalRead = inputStream.size) or
+            (accumulatedRead >= contentLength);
     end;
 
     (*!----------------------------------------
