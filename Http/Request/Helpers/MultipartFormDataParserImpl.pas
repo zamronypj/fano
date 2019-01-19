@@ -81,13 +81,6 @@ type
             const uploadedFiles : IUploadedFileCollectionWriter
         );
 
-        procedure parseAsPart(
-            const accumulatedBuffer : string;
-            const boundary : string;
-            const body : IList;
-            const uploadedFiles : IUploadedFileCollectionWriter
-        );
-
         (*!----------------------------------------
          * Read POST data in standard input and parse
          * it and store parsed data in body request parameter
@@ -470,26 +463,6 @@ resourcestring
      * Read POST data in standard input and parse
      * it and store parsed data in body request parameter
      * and uploaded files (if any).
-     * This is will be called when request payload is small enough
-     * < less than BUFFER_SIZE so accumulatedBuffer will store
-     * all payload data
-     *------------------------------------------
-     * @param accumulatedBuffer whole multipart/form-data payload
-     * @param boundary boundary of multipart/form-data
-     *------------------------------------------*)
-    procedure TMultipartFormDataParser.parseAsPart(
-        const accumulatedBuffer : string;
-        const boundary : string;
-        const body : IList;
-        const uploadedFiles : IUploadedFileCollectionWriter
-    );
-    begin
-    end;
-
-    (*!----------------------------------------
-     * Read POST data in standard input and parse
-     * it and store parsed data in body request parameter
-     * and uploaded files (if any).
      *------------------------------------------
      * @param inputStream std input stream
      * @param body instance of IList that will store
@@ -554,14 +527,8 @@ resourcestring
             begin
                 //if we get here then we read whole payload
                 parseAsWhole(accumulatedBuffer, boundary, body, uploadedFiles);
-            end else
-            begin
-                //if we get here then we read partial payload
-                parseAsPart(accumulatedBuffer, boundary, body, uploadedFiles);
             end;
-        until (totalRead < BUFFER_SIZE) or
-            (totalRead = inputStream.size) or
-            (accumulatedRead >= contentLength);
+        until (totalRead < BUFFER_SIZE) or (accumulatedRead >= contentLength);
     end;
 
     (*!----------------------------------------
