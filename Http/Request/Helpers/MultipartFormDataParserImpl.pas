@@ -506,29 +506,23 @@ resourcestring
         const boundary : string
     );
     const BUFFER_SIZE = 8 * 1024;
-    var totalRead, accumulatedRead : integer;
-        accumulatedBuffer, buffer : string;
+    var buffer : string;
+        totalRead : int64;
+        buff : TStringStream;
     begin
         setLength(buffer, BUFFER_SIZE);
-        accumulatedBuffer := '';
-        totalRead := 0;
-        accumulatedRead := 0;
-        repeat
-            totalRead := inputStream.read(buffer[1], BUFFER_SIZE);
-            if (totalRead < BUFFER_SIZE) then
-            begin
-                //this must be last data
-                setLength(buffer, totalRead);
-            end;
-            accumulatedRead := accumulatedRead + totalRead;
-            accumulatedBuffer := accumulatedBuffer + buffer;
-
-            if (accumulatedRead = contentLength) then
-            begin
-                //if we get here then we read whole payload
-                parseAsWhole(accumulatedBuffer, boundary, body, uploadedFiles);
-            end;
-        until (totalRead < BUFFER_SIZE) or (accumulatedRead >= contentLength);
+        buff := TStringStream.create('');
+        try
+           repeat
+               totalRead := inputStream.read(buffer[1], BUFFER_SIZE);
+               buff.write(buffer[1], totalRead);
+           until (buff.size >= contentLength);
+           //if we get here then we read whole payload
+           parseAsWhole(buff.dataString, boundary, body, uploadedFiles);
+        finally
+            setLength(buffer, 0);
+            freeAndNil(buff);
+        end;
     end;
 
     (*!----------------------------------------
