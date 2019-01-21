@@ -413,7 +413,8 @@ resourcestring
         const body : IList;
         const uploadedFiles : IUploadedFileCollectionWriter
     );
-    var lastBoundaryPos, boundaryPos, boundaryLen, lenToRemove : integer;
+    var lastBoundaryPos, boundaryPos, lenToRemove : int64;
+        boundaryLen : integer;
         beginBoundary, isLastBoundary : boolean;
         buffer, actualData : string;
     begin
