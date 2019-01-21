@@ -75,7 +75,7 @@ type
         );
 
         procedure parseAsWhole(
-            const accumulatedBuffer : string;
+            const multipartData : string;
             const boundary : string;
             const body : IList;
             const uploadedFiles : IUploadedFileCollectionWriter
@@ -347,7 +347,6 @@ resourcestring
         const body : IList;
         const uploadedFiles : IUploadedFileCollectionWriter
     );
-    const DELIMITER = #13#10#13#10;
     var splittedData : TStringArray;
         headerPart, dataPart, varName : string;
         originalFilename, contentType : string;
@@ -356,7 +355,7 @@ resourcestring
     begin
         //split header and data.
         //header will be in splittedData[0] and data splittedData[1]
-        splittedData := actualData.split([ DELIMITER ]);
+        splittedData := actualData.split([ #13#10#13#10 ]);
         headerPart := splittedData[0];
         dataPart := splittedData[1];
 
@@ -368,7 +367,9 @@ resourcestring
         begin
             //if we get here it means we handle a file upload
             //10= length of 'filename="'
-            originalFilename := extractName(posFilename + 10, headerPart);
+            //ExtractFilename is required to strip any directory information
+            //See Section 2.3 of RFC 2183
+            originalFilename := extractFilename(extractName(posFilename + 10, headerPart));
 
             //extract contentType (if any)
             contentType := 'application/octet-stream';
@@ -380,12 +381,17 @@ resourcestring
                 contentType := trim(contentType.split([';'])[0]);
             end;
 
-            uploadedFiles.add(
-                varName,
-                dataPart,
-                contentType,
-                originalFilename
-            );
+            if (length(dataPart) > 0)then
+            begin
+                //if we get here then, form upload contain file input and
+                //at least a file is uploaded
+                uploadedFiles.add(
+                    varName,
+                    dataPart,
+                    contentType,
+                    originalFilename
+                );
+            end;
         end else
         begin
             //if we get here it means we handle ordinary input
@@ -396,71 +402,32 @@ resourcestring
         end;
     end;
 
-    (*!----------------------------------------
-     * Read POST data in standard input and parse
-     * it and store parsed data in body request parameter
-     * and uploaded files (if any).
-     * This is will be called when request payload is small enough
-     * < less than BUFFER_SIZE so accumulatedBuffer will store
-     * all payload data
-     *------------------------------------------
-     * @param accumulatedBuffer whole multipart/form-data payload
-     * @param boundary boundary of multipart/form-data
-     *------------------------------------------*)
     procedure TMultipartFormDataParser.parseAsWhole(
-        const accumulatedBuffer : string;
+        const multipartData : string;
         const boundary : string;
         const body : IList;
         const uploadedFiles : IUploadedFileCollectionWriter
     );
-    var lastBoundaryPos, boundaryPos, lenToRemove : int64;
-        boundaryLen : integer;
-        beginBoundary, isLastBoundary : boolean;
-        buffer, actualData : string;
+    var buffer : TStringArray;
+        indx, len : integer;
     begin
-        buffer := accumulatedBuffer;
-        //+2 because -- + boundary
-        boundaryLen := length(boundary) + 2;
-        beginBoundary := false;
-        lenToRemove := 0;
-        repeat
-            boundaryPos := pos('--' + boundary, buffer);
-            //check if this is last boundary
-            //-- at last is requirement of RFC 7578 Section 4.1
-            lastBoundaryPos := pos('--' + boundary + '--', buffer);
-            isLastBoundary := (boundaryPos = lastBoundaryPos);
+        buffer := multipartData.split(
+            ['--' + boundary ],
+            TStringSplitOptions.ExcludeEmpty
+        );
 
-            if (boundaryPos > 0) then
-            begin
-                //boundary is found, test further if this boundary that mark
-                //beginning of data or end of data
-                if (beginBoundary) then
-                begin
-                    //if we get here then this marks end of data
-                    //actual data will be from start of string until begining of boundary
-                    //-3 because <crlf>
-                    actualData := copy(buffer, 1, boundaryPos - 3);
-                    parseData(actualData, body, uploadedFiles);
-                    //+2 because crlf (--<boundary><crlf>)
-                    lenToRemove := boundaryPos + boundaryLen + 2;
-                    if (isLastBoundary) then
-                    begin
-                        //+2 because last boundary have -- appended
-                        lenToRemove := lenToRemove + 2;
-                    end;
-                    //remove processed string + boundary from accumulatedBuffer
-                    delete(buffer, 1, lenToRemove);
-                    beginBoundary := false;
-                end else
-                begin
-                    //if we get here then this marks beginning of data
-                    beginBoundary := true;
-                    //remove boundary from accumulatedBuffer so they will not be matched
-                    //in next iteration. +2 because CRLF
-                    delete(buffer, boundaryPos, boundaryLen + 2);
-                end;
-            end;
-        until isLastBoundary;
+        //RFC 7578 requires last boundary format --<boundary>-- so
+        //last buffer will contain -- because we split with --<boundary>
+        //as delimiter, we will ignore last array element
+        len := length(buffer);
+        for indx := 0 to len-2 do
+        begin
+            //delete first CRLF
+            delete(buffer[indx], 1, 2);
+            //delete Last CRLF
+            delete(buffer[indx], length(buffer[indx])-1, 2);
+            parseData(buffer[indx], body, uploadedFiles);
+        end;
     end;
 
     (*!----------------------------------------
