@@ -419,7 +419,8 @@ resourcestring
         buffer, actualData : string;
     begin
         buffer := accumulatedBuffer;
-        boundaryLen := length('--' + boundary);
+        //+2 because -- + boundary
+        boundaryLen := length(boundary) + 2;
         beginBoundary := false;
         lenToRemove := 0;
         repeat
@@ -437,10 +438,11 @@ resourcestring
                 begin
                     //if we get here then this marks end of data
                     //actual data will be from start of string until begining of boundary
-                    actualData := copy(buffer, 1, boundaryPos - 2);
+                    //-3 because <crlf>
+                    actualData := copy(buffer, 1, boundaryPos - 3);
                     parseData(actualData, body, uploadedFiles);
-
-                    lenToRemove := boundaryPos + boundaryLen + 1;
+                    //+2 because crlf (--<boundary><crlf>)
+                    lenToRemove := boundaryPos + boundaryLen + 2;
                     if (isLastBoundary) then
                     begin
                         //+2 because last boundary have -- appended
@@ -448,12 +450,13 @@ resourcestring
                     end;
                     //remove processed string + boundary from accumulatedBuffer
                     delete(buffer, 1, lenToRemove);
+                    beginBoundary := false;
                 end else
                 begin
                     //if we get here then this marks beginning of data
                     beginBoundary := true;
                     //remove boundary from accumulatedBuffer so they will not be matched
-                    //in next iteration
+                    //in next iteration. +2 because CRLF
                     delete(buffer, boundaryPos, boundaryLen + 2);
                 end;
             end;
