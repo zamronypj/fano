@@ -427,7 +427,7 @@ resourcestring
             //check if this is last boundary
             //-- at last is requirement of RFC 7578 Section 4.1
             lastBoundaryPos := pos('--' + boundary + '--', buffer);
-            isLastBoundary := boundaryPos = (lastBoundaryPos);
+            isLastBoundary := (boundaryPos = lastBoundaryPos);
 
             if (boundaryPos > 0) then
             begin
