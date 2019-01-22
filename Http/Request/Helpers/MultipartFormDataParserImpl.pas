@@ -359,6 +359,7 @@ resourcestring
         headerPart := splittedData[0];
         dataPart := splittedData[1];
 
+
         //for multipart/form-data, 'Content-Disposition' always 'form-data'
         //so we can just simply read 'name'
         varName := extractVariableName(headerPart);
@@ -431,7 +432,7 @@ resourcestring
     end;
 
     (*!----------------------------------------
-     * Read POST data in standard input and parse
+     * Read POST data from standard input and parse
      * it and store parsed data in body request parameter
      * and uploaded files (if any).
      *------------------------------------------
@@ -463,11 +464,6 @@ resourcestring
      * --xxx12345678--
      * @link : https://stackoverflow.com/questions/4238809/example-of-multipart-form-data
      * @link : https://tools.ietf.org/html/rfc7578
-     *------------------------------------------
-     * Instead of read all standard input and collecting
-     * them as one big string and then parse them,
-     * we will read std input and parse data as soon as we
-     * found matching boundary. Streaming read is needed because
      *------------------------------------------*)
     procedure TMultipartFormDataParser.readAndParseInputStream(
         const inputStream : TStream;
@@ -477,21 +473,21 @@ resourcestring
         const boundary : string
     );
     const BUFFER_SIZE = 8 * 1024;
-    var buffer : string;
+    var tmpBuffer : pointer;
         totalRead : int64;
         buff : TStringStream;
     begin
-        setLength(buffer, BUFFER_SIZE);
+        getmem(tmpBuffer, BUFFER_SIZE);
         buff := TStringStream.create('');
         try
            repeat
-               totalRead := inputStream.read(buffer[1], BUFFER_SIZE);
-               buff.write(buffer[1], totalRead);
+               totalRead := inputStream.read(tmpBuffer^, BUFFER_SIZE);
+               buff.write(tmpBuffer^, totalRead);
            until (buff.size >= contentLength);
            //if we get here then we read whole payload
            parseAsWhole(buff.dataString, boundary, body, uploadedFiles);
         finally
-            setLength(buffer, 0);
+            freemem(tmpBuffer, BUFFER_SIZE);
             freeAndNil(buff);
         end;
     end;
@@ -513,9 +509,7 @@ resourcestring
         out uploadedFiles : IUploadedFileCollectionWriter
     ) : IMultipartFormDataParser;
     var inputStream : TIOStream;
-        boundary : string;
     begin
-        boundary := getBoundary(env.contentType());
         inputStream := TIOStream.create(iosInput);
         uploadedFiles := uploadedFilesFactory.createCollectionWriter();
         try
@@ -524,7 +518,7 @@ resourcestring
                 body,
                 uploadedFiles,
                 env.intContentLength(),
-                boundary
+                getBoundary(env.contentType())
             );
             result := self;
         finally
