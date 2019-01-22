@@ -74,7 +74,7 @@ type
             const uploadedFiles : IUploadedFileCollectionWriter
         );
 
-        procedure parseAsWhole(
+        procedure splitDataByBoundaryAndParse(
             const multipartData : string;
             const boundary : string;
             const body : IList;
@@ -403,16 +403,27 @@ resourcestring
         end;
     end;
 
-    procedure TMultipartFormDataParser.parseAsWhole(
+
+    (*!----------------------------------------
+     * split raw POST data by boundary and parse
+     * them
+     *------------------------------------------
+     * @param multipartData raw POST data from client browser
+     * @param boundary multipart/form-data boundary id string
+     * @param body instance of IList that will store
+     *             parsed body parameter
+     * @param uploadedFiles instance of uploaded file collection
+     *------------------------------------------*)
+    procedure TMultipartFormDataParser.splitDataByBoundaryAndParse(
         const multipartData : string;
         const boundary : string;
         const body : IList;
         const uploadedFiles : IUploadedFileCollectionWriter
     );
-    var buffer : TStringArray;
+    var payloads : TStringArray;
         indx, len : integer;
     begin
-        buffer := multipartData.split(
+        payloads := multipartData.split(
             ['--' + boundary ],
             TStringSplitOptions.ExcludeEmpty
         );
@@ -420,14 +431,14 @@ resourcestring
         //RFC 7578 requires last boundary format --<boundary>-- so
         //last buffer will contain -- because we split with --<boundary>
         //as delimiter, we will ignore last array element
-        len := length(buffer);
+        len := length(payloads);
         for indx := 0 to len-2 do
         begin
             //delete first CRLF
-            delete(buffer[indx], 1, 2);
+            delete(payloads[indx], 1, 2);
             //delete Last CRLF
-            delete(buffer[indx], length(buffer[indx])-1, 2);
-            parseData(buffer[indx], body, uploadedFiles);
+            delete(payloads[indx], length(payloads[indx])-1, 2);
+            parseData(payloads[indx], body, uploadedFiles);
         end;
     end;
 
@@ -485,7 +496,7 @@ resourcestring
                buff.write(tmpBuffer^, totalRead);
            until (buff.size >= contentLength);
            //if we get here then we read whole payload
-           parseAsWhole(buff.dataString, boundary, body, uploadedFiles);
+           splitDataByBoundaryAndParse(buff.dataString, boundary, body, uploadedFiles);
         finally
             freemem(tmpBuffer, BUFFER_SIZE);
             freeAndNil(buff);
