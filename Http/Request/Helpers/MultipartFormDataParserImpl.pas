@@ -82,6 +82,23 @@ type
         );
 
         (*!----------------------------------------
+         * add data payload to file upload (if any)
+         *------------------------------------------
+         * @param headerPart header data of file upload
+         * @param dataPart file upload data
+         * @param varName name of file upload
+         * @param originalFilename original filename as send by browser (may be empty)
+         * @param uploadedFiles instance of uploaded file collection
+         *------------------------------------------*)
+        procedure addFileUpload(
+            const headerPart : string;
+            const dataPart : string;
+            const varName : string;
+            const originalFilename : string;
+            const uploadedFiles : IUploadedFileCollectionWriter
+        );
+
+        (*!----------------------------------------
          * Read POST data in standard input and parse
          * it and store parsed data in body request parameter
          * and uploaded files (if any).
@@ -322,6 +339,48 @@ resourcestring
     end;
 
     (*!----------------------------------------
+     * add data payload to file upload (if any)
+     *------------------------------------------
+     * @param headerPart header data of file upload
+     * @param dataPart file upload data
+     * @param varName name of file upload
+     * @param originalFilename original filename as send by browser (may be empty)
+     * @param uploadedFiles instance of uploaded file collection
+     *------------------------------------------*)
+    procedure TMultipartFormDataParser.addFileUpload(
+        const headerPart : string;
+        const dataPart : string;
+        const varName : string;
+        const originalFilename : string;
+        const uploadedFiles : IUploadedFileCollectionWriter
+    );
+    var posContentType : int64;
+        contentType : string;
+    begin
+        //extract contentType (if any)
+        contentType := 'application/octet-stream';
+        posContentType := pos('content-type:', lowerCase(headerPart));
+        if (posContentType > 0) then
+        begin
+            //13=length of 'content-type:'
+            contentType := copy(headerPart, posContentType + 13, length(headerPart));
+            contentType := trim(contentType.split([';'])[0]);
+        end;
+
+        if (length(dataPart) > 0)then
+        begin
+            //if we get here then, form upload contain file input and
+            //at least a file is uploaded
+            uploadedFiles.add(
+                varName,
+                dataPart,
+                contentType,
+                originalFilename
+            );
+        end;
+    end;
+
+    (*!----------------------------------------
      * parse data in string store parsed data in body request parameter
      * and uploaded files (if any).
      *------------------------------------------
@@ -347,9 +406,8 @@ resourcestring
         const body : IList;
         const uploadedFiles : IUploadedFileCollectionWriter
     );
-    var headerPart, dataPart, varName : string;
-        originalFilename, contentType : string;
-        crlfSeparatorPos, posFilename, posContentType : integer;
+    var headerPart, dataPart, varName, originalFilename : string;
+        crlfSeparatorPos, posFilename : integer;
         param : PKeyValue;
     begin
         //split header and data.
@@ -374,28 +432,7 @@ resourcestring
             //ExtractFilename is required to strip any directory information
             //See Section 2.3 of RFC 2183
             originalFilename := extractFilename(extractName(posFilename + 10, headerPart));
-
-            //extract contentType (if any)
-            contentType := 'application/octet-stream';
-            posContentType := pos('content-type:', lowerCase(headerPart));
-            if (posContentType > 0) then
-            begin
-                //13=length of 'content-type:'
-                contentType := copy(headerPart, posContentType + 13, length(headerPart));
-                contentType := trim(contentType.split([';'])[0]);
-            end;
-
-            if (length(dataPart) > 0)then
-            begin
-                //if we get here then, form upload contain file input and
-                //at least a file is uploaded
-                uploadedFiles.add(
-                    varName,
-                    dataPart,
-                    contentType,
-                    originalFilename
-                );
-            end;
+            addFileUpload(headerPart, dataPart, varName, originalFilename, uploadedFiles);
         end else
         begin
             //if we get here it means we handle ordinary input
@@ -405,7 +442,6 @@ resourcestring
             body.add(varName, param);
         end;
     end;
-
 
     (*!----------------------------------------
      * split raw POST data by boundary and parse
