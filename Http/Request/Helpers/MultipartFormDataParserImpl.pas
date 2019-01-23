@@ -347,18 +347,21 @@ resourcestring
         const body : IList;
         const uploadedFiles : IUploadedFileCollectionWriter
     );
-    var splittedData : TStringArray;
-        headerPart, dataPart, varName : string;
+    var headerPart, dataPart, varName : string;
         originalFilename, contentType : string;
-        posFilename, posContentType : integer;
+        crlfSeparatorPos, posFilename, posContentType : integer;
         param : PKeyValue;
     begin
         //split header and data.
-        //header will be in splittedData[0] and data splittedData[1]
-        splittedData := actualData.split([ #13#10#13#10 ]);
-        headerPart := splittedData[0];
-        dataPart := splittedData[1];
-
+        //need to copy actualData because delete() replace string in place
+        //which will trigger compiler error because we mark it as const
+        dataPart := actualData;
+        crlfSeparatorPos := pos(#13#10#13#10, dataPart);
+        //copy header part and its crlf
+        headerPart := copy(dataPart, 1, crlfSeparatorPos + 2);
+        //remove header part including crlf that separate header and data
+        //so dataPart now consist of solely data payload
+        delete(dataPart, 1, crlfSeparatorPos + 2);
 
         //for multipart/form-data, 'Content-Disposition' always 'form-data'
         //so we can just simply read 'name'
