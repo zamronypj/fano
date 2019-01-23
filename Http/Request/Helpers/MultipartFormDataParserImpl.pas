@@ -419,7 +419,7 @@ resourcestring
         headerPart := copy(dataPart, 1, crlfSeparatorPos + 2);
         //remove header part including crlf that separate header and data
         //so dataPart now consist of solely data payload
-        delete(dataPart, 1, crlfSeparatorPos + 2);
+        delete(dataPart, 1, crlfSeparatorPos + 2 + 1);
 
         //for multipart/form-data, 'Content-Disposition' always 'form-data'
         //so we can just simply read 'name'
