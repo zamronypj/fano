@@ -488,18 +488,22 @@ resourcestring
     );
     const BUFFER_SIZE = 8 * 1024;
     var tmpBuffer : pointer;
-        totalRead : int64;
+        totalRead, readCount : int64;
         buff : TStringStream;
     begin
         getmem(tmpBuffer, BUFFER_SIZE);
         buff := TStringStream.create('');
         try
-           repeat
-               totalRead := inputStream.read(tmpBuffer^, BUFFER_SIZE);
-               buff.write(tmpBuffer^, totalRead);
-           until (buff.size >= contentLength);
-           //if we get here then we read whole payload
-           splitDataByBoundaryAndParse(buff.dataString, boundary, body, uploadedFiles);
+            //preallocated so we can avoid allocate/deallocate inside loop
+            buff.size := contentLength;
+            readCount := 0;
+            repeat
+                totalRead := inputStream.read(tmpBuffer^, BUFFER_SIZE);
+                buff.write(tmpBuffer^, totalRead);
+                inc(readCount, totalRead);
+            until (readCount >= contentLength);
+            //if we get here then we read whole payload
+            splitDataByBoundaryAndParse(buff.dataString, boundary, body, uploadedFiles);
         finally
             freemem(tmpBuffer, BUFFER_SIZE);
             freeAndNil(buff);
