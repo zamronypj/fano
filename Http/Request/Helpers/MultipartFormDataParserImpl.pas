@@ -122,7 +122,7 @@ type
            const inputStream : TStream;
            const body : IList;
            const uploadedFiles : IUploadedFileCollectionWriter;
-           const contentLength : integer;
+           const contentLength : int64;
            const boundary : string
         );
 
@@ -480,7 +480,7 @@ resourcestring
         const inputStream : TStream;
         const body : IList;
         const uploadedFiles : IUploadedFileCollectionWriter;
-        const contentLength : integer;
+        const contentLength : int64;
         const boundary : string
     );
     const BUFFER_SIZE = 8 * 1024;
