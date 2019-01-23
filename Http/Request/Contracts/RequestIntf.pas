@@ -85,10 +85,10 @@ type
          * get request uploaded file by name
          *-------------------------------------------------
          * @param string key name of key
-         * @return instance of IUploadedFile or nil if is not
+         * @return instance of IUploadedFileArray or nil if is not
          *         exists
          *------------------------------------------------*)
-        function getUploadedFile(const key: string) : IUploadedFile;
+        function getUploadedFile(const key: string) : IUploadedFileArray;
 
         (*!------------------------------------------------
          * get all uploaded files

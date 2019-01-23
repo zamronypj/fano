@@ -53,16 +53,16 @@ type
         (*!------------------------------------------------
          * get IUploadedFile instance by name
          *-------------------------------------------------
-         * @return IUploadedFile instance
+         * @return IUploadedFileArray instance
          *------------------------------------------------*)
-        function getUploadedFile(const key : shortstring) : IUploadedFile;
+        function getUploadedFile(const key : shortstring) : IUploadedFileArray;
 
         (*!------------------------------------------------
          * get IUploadedFile instance by index
          *-------------------------------------------------
-         * @return IUploadedFile instance
+         * @return IUploadedFileArray instance
          *------------------------------------------------*)
-        function getUploadedFile(const indx : integer) : IUploadedFile;
+        function getUploadedFile(const indx : integer) : IUploadedFileArray;
 
         (*!-------------------------------------
          * Add content as IUploadedFile
@@ -88,11 +88,18 @@ uses
 
 type
 
-    TUploadedFileArr = array of IUploadedFile;
     TUploadedFileRec = record
+        //variable name
         key : shortstring;
+
+        //this will store the actual number of uploaded file data
         uploadedFilesCount : integer;
-        uploadedFiles : TUploadedFileArr;
+
+        //array is used so we can support multiple
+        //uploaded file with same name.
+        //Number of element in array may be different than uploadedFilesCount
+        //because they may be pre-allocated to avoid too many SetLength() call
+        uploadedFiles : IUploadedFileArray;
     end;
     PUploadedFileRec = ^TUploadedFileRec;
 
@@ -119,7 +126,7 @@ type
         for i:=listInst.count()-1 downto 0 do
         begin
             item := listInst.get(i);
-            setLength(item^.key,0);
+            setLength(item^.key, 0);
             item^.uploadedFiles := nil;
             dispose(item);
             listInst.delete(i);
@@ -139,17 +146,19 @@ type
     (*!------------------------------------------------
      * get IUploadedFile instance by name
      *-------------------------------------------------
-     * @return IUploadedFile instance
+     * @return IUploadedFileArray instance
      *------------------------------------------------*)
-    function TUploadedFileCollection.getUploadedFile(const key : shortstring) : IUploadedFile;
+    function TUploadedFileCollection.getUploadedFile(const key : shortstring) : IUploadedFileArray;
     var item : PUploadedFileRec;
     begin
         result := nil;
         item := uploadedFiles.find(key);
         if (item <> nil) then
         begin
-          //TODO: array is used so we can support multiple parameters with same name
-          result := item^.uploadedFiles[0];
+            //uploadedFiles is pre allocated so it may or may not bigger than
+            //actual element which is stored uploadedFilesCount so we need to copy
+            //to ensure that we return correct array
+            result := copy(item^.uploadedFiles, 0, item^.uploadedFilesCount);
         end;
     end;
 
@@ -158,11 +167,14 @@ type
      *-------------------------------------------------
      * @return IUploadedFile instance
      *------------------------------------------------*)
-    function TUploadedFileCollection.getUploadedFile(const indx : integer) : IUploadedFile;
+    function TUploadedFileCollection.getUploadedFile(const indx : integer) : IUploadedFileArray;
     var item : PUploadedFileRec;
     begin
         item := uploadedFiles.get(indx);
-        result := item^.uploadedFiles[0];
+        //uploadedFiles is pre allocated so it may or may not bigger than
+        //actual element which is stored uploadedFilesCount so we need to copy
+        //to ensure that we return correct array
+        result := copy(item^.uploadedFiles, 0, item^.uploadedFilesCount);
     end;
 
     (*!-------------------------------------

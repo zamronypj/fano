@@ -11,12 +11,14 @@ unit UploadedFileCollectionIntf;
 interface
 
 {$MODE OBJFPC}
+{$H+}
 
 uses
 
     UploadedFileIntf;
 
 type
+    IUploadedFileArray = array of IUploadedFile;
 
     (*!------------------------------------------------
      * interface for any class having capability as
@@ -39,14 +41,14 @@ type
          *-------------------------------------------------
          * @return IUploadedFile instance
          *------------------------------------------------*)
-        function getUploadedFile(const key : shortstring) : IUploadedFile;
+        function getUploadedFile(const key : shortstring) : IUploadedFileArray;
 
         (*!------------------------------------------------
          * get IUploadedFile instance by index
          *-------------------------------------------------
          * @return IUploadedFile instance
          *------------------------------------------------*)
-        function getUploadedFile(const indx : integer) : IUploadedFile;
+        function getUploadedFile(const indx : integer) : IUploadedFileArray;
 
     end;
 
