@@ -58,7 +58,7 @@ implementation
 
 uses
 
-    sockets;
+    ssockets;
 
     constructor TFcgiWebApplication.create(
         const appInst : IWebApplication;
@@ -77,7 +77,7 @@ uses
     end;
 
     function TFcgiWebApplication.processRecord(const fcgiRec : PFCGI_Header) : IRunnable;
-    var requestId    : word;
+    var requestId : word;
     begin
         env := readFastCGItoEnv(fcgiRec)
         dispatcher.dispatchRequest(env);
