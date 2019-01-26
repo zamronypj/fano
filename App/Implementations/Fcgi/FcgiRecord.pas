@@ -10,9 +10,8 @@ unit FcgiRecord;
 
 interface
 
-uses
-
-    fastcgi;
+{$MODE OBJFPC}
+{$H+}
 
 type
 
@@ -28,11 +27,30 @@ type
 
         fPaddingLength : byte;
         fReserved : byte;
+
+        fContentData : string;
+        fPaddingData : shortstring;
+
+        function setContentData(const data : string) : IFcgiRecord;
+        function packPayload() : string;
     public
         constructor create();
-        destructor destroy(); override;
     end;
 
 implementation
+
+uses
+
+    fastcgi;
+
+    constructor TFcgiRecord.create();
+    begin
+        fVersion := FCGI_VERSION_1;
+        fType := FCGI_UNKNOWN_TYPE;
+        fRequestId := FCGI_NULL_REQUEST_ID;
+        fReserved := 0;
+        fContentLength := 0;
+        fPaddingLength := 0;
+    end;
 
 end.
