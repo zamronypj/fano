@@ -23,3 +23,6 @@ NullLoggerFactoryImpl,
 
 StringFileReaderImpl,
 StringFileReaderFactoryImpl,
+
+StreamAdapterImpl,
+EInvalidStreamImpl,

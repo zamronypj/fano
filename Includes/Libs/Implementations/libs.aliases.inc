@@ -7,3 +7,6 @@ TNullLoggerFactory = NullLoggerFactoryImpl.TNullLoggerFactory;
 
 TStringFileReader = StringFileReaderImpl.TStringFileReader;
 TStringFileReaderFactory = StringFileReaderFactoryImpl.TStringFileReaderFactory;
+
+TStreamAdapter = StreamAdapterImpl.TStreamAdapter;
+EInvalidStream = EInvalidStreamImpl.EInvalidStream;

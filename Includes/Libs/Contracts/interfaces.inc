@@ -15,3 +15,4 @@
 OutputBufferIntf,
 LoggerIntf,
 FileReaderIntf,
+StreamAdapterIntf,
