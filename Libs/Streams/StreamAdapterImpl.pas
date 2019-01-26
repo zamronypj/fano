@@ -109,7 +109,7 @@ resourcestring
      * Note: because we use reference counting,
      * we need stream also be destroyed
      *-----------------------------------------------*)
-    destructor TStreamAdapter.destroy(); override;
+    destructor TStreamAdapter.destroy();
     begin
         inherited destroy();
         actualStream.free();
