@@ -47,6 +47,17 @@ type
          * @return total bytes actually written
          *-----------------------------------------------*)
         function write(const buffer; const sizeToWrite : int64) : int64;
+
+        (*!------------------------------------
+         * seek
+         *-------------------------------------
+         * @param offset in bytes to seek start from beginning
+         * @return actual offset
+         *-------------------------------------
+         * if offset >= stream size then it is capped
+         * to stream size-1
+         *-------------------------------------*)
+        function seek(const offset : int64) : int64;
     end;
 
 implementation
