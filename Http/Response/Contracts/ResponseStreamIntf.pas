@@ -34,7 +34,7 @@ type
          * @param buffer string to write
          * @return number of bytes actually written
          *-------------------------------------*)
-        function write(const buffer : string) : int64;
+        function write(const buffer : string) : int64; overload;
     end;
 
 implementation
