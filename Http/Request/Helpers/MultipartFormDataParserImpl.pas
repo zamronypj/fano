@@ -33,6 +33,7 @@ type
      *-----------------------------------------------*)
     TMultipartFormDataParser = class(TInterfacedObject, IMultipartFormDataParser)
     private
+        stdInReader : IStdInReader;
         uploadedFilesFactory : IUploadedFileCollectionWriterFactory;
 
         (*!----------------------------------------------
@@ -103,10 +104,11 @@ type
          * it and store parsed data in body request parameter
          * and uploaded files (if any).
          *------------------------------------------
-         * @param env CGI environment variable
          * @param body instance of IList that will store
          *             parsed body parameter
          * @param uploadedFiles instance of uploaded file collection
+         * @param contentLength length of POST data in bytes
+         * @param boundary multipart/form-data boundary
          * @return current instance
          *-------------------------------------------
          * Example of POST data with boundary of 'xxx12345678' s
@@ -136,7 +138,6 @@ type
          * found matching boundary
          *------------------------------------------*)
         procedure readAndParseInputStream(
-           const inputStream : TStream;
            const body : IList;
            const uploadedFiles : IUploadedFileCollectionWriter;
            const contentLength : int64;
@@ -184,8 +185,12 @@ type
          *------------------------------------------
          * @param factory factory instance to build uploaded file
          *        collection instance
+         * @param stdInReader class for read STDIN to string
          *------------------------------------------*)
-        constructor create(const factory : IUploadedFileCollectionWriterFactory);
+        constructor create(
+            const factory : IUploadedFileCollectionWriterFactory;
+            const stdInputReader : IStdInReader
+        );
 
         (*!----------------------------------------
          * destructor
@@ -230,12 +235,15 @@ resourcestring
      *------------------------------------------
      * @param factory factory instance to build uploaded file
      *        collection instance
+     * @param stdInReader class for read STDIN to string
      *------------------------------------------*)
     constructor TMultipartFormDataParser.create(
-        const factory : IUploadedFileCollectionWriterFactory
+        const factory : IUploadedFileCollectionWriterFactory;
+        const stdInputReader : IStdInReader
     );
     begin
         uploadedFilesFactory := factory;
+        stdInReader := stdInputReader;
     end;
 
     (*!----------------------------------------
@@ -516,35 +524,15 @@ resourcestring
      * @link : https://tools.ietf.org/html/rfc7578
      *------------------------------------------*)
     procedure TMultipartFormDataParser.readAndParseInputStream(
-        const inputStream : TStream;
         const body : IList;
         const uploadedFiles : IUploadedFileCollectionWriter;
         const contentLength : int64;
         const boundary : string
     );
-    const BUFFER_SIZE = 8 * 1024;
-    var tmpBuffer : pointer;
-        totalRead, readCount : int64;
-        buff : TStringStream;
+    var postData : string;
     begin
-        getmem(tmpBuffer, BUFFER_SIZE);
-        buff := TStringStream.create('');
-        try
-            //preallocated so we can avoid allocate/deallocate inside loop
-            buff.size := contentLength;
-            readCount := 0;
-            while (readCount < contentLength) do
-            begin
-                totalRead := inputStream.read(tmpBuffer^, BUFFER_SIZE);
-                buff.write(tmpBuffer^, totalRead);
-                inc(readCount, totalRead);
-            end;
-            //if we get here then we read whole payload
-            splitDataByBoundaryAndParse(buff.dataString, boundary, body, uploadedFiles);
-        finally
-            freemem(tmpBuffer, BUFFER_SIZE);
-            freeAndNil(buff);
-        end;
+        postData := stdInReader.readStdIn(contentLength);
+        splitDataByBoundaryAndParse(postData, boundary, body, uploadedFiles);
     end;
 
     (*!----------------------------------------
@@ -563,21 +551,14 @@ resourcestring
         const body : IList;
         out uploadedFiles : IUploadedFileCollectionWriter
     ) : IMultipartFormDataParser;
-    var inputStream : TIOStream;
     begin
-        inputStream := TIOStream.create(iosInput);
         uploadedFiles := uploadedFilesFactory.createCollectionWriter();
-        try
-            readAndParseInputStream(
-                inputStream,
-                body,
-                uploadedFiles,
-                env.intContentLength(),
-                getBoundary(env.contentType())
-            );
-            result := self;
-        finally
-            freeAndNil(inputStream);
-        end;
+        readAndParseInputStream(
+            body,
+            uploadedFiles,
+            env.intContentLength(),
+            getBoundary(env.contentType())
+        );
+        result := self;
     end;
 end.

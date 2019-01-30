@@ -21,7 +21,8 @@ uses
     KeyValueTypes,
     UploadedFileIntf,
     UploadedFileCollectionIntf,
-    UploadedFileCollectionWriterIntf;
+    UploadedFileCollectionWriterIntf,
+    StdInReaderIntf;
 
 const
 
@@ -45,6 +46,7 @@ type
         uploadedFiles: IUploadedFileCollection;
         uploadedFilesWriter: IUploadedFileCollectionWriter;
         multipartFormDataParser : IMultipartFormDataParser;
+        stdInReader : IStdInReader;
 
         (*!------------------------------------------------
          * maximum POST data size in bytes
@@ -114,6 +116,7 @@ type
             const cookies : IList;
             const body : IList;
             const multipartFormDataParserInst : IMultipartFormDataParser;
+            const stdInputReader : IStdInReader;
             const maxPostSize : int64 = DEFAULT_MAX_POST_SIZE;
             const maxUploadSize : int64 = DEFAULT_MAX_UPLOAD_SIZE
         );
@@ -213,6 +216,7 @@ resourcestring
         const cookies : IList;
         const body : IList;
         const multipartFormDataParserInst : IMultipartFormDataParser;
+        const stdInputReader : IStdInReader;
         const maxPostSize : int64 = DEFAULT_MAX_POST_SIZE;
         const maxUploadSize : int64 = DEFAULT_MAX_UPLOAD_SIZE
     );
@@ -222,6 +226,7 @@ resourcestring
         cookieParams := cookies;
         bodyParams := body;
         multipartFormDataParser := multipartFormDataParserInst;
+        stdInReader := stdInputReader;
         uploadedFiles := nil;
         uploadedFilesWriter := nil;
 
@@ -305,21 +310,6 @@ resourcestring
         initParamsFromString(env.httpCookie(), cookies);
     end;
 
-    function TRequest.readStdIn(const contentLength : int64) : string;
-    var ctr : int64;
-        ch : char;
-    begin
-        //read STDIN
-        ctr := 0;
-        setLength(result, contentLength);
-        while (ctr < contentLength) do
-        begin
-            read(ch);
-            result[ctr+1] := ch;
-            inc(ctr);
-        end;
-    end;
-
     procedure TRequest.raiseExceptionIfPostDataTooBig(const contentLength : int64);
     begin
         if (contentLength > maximumPostSize) then
@@ -329,7 +319,7 @@ resourcestring
             or close STDIN file handle eventhough not using it. Otherwise in
             Apache we will get AH00574 error. Here we just read it and discard
             -----------------------------------------------------}
-            readStdIn(contentLength);
+            stdInReader.readStdIn(contentLength);
             raise EInvalidRequest.createFmt(
                 sErrExceedMaxPostSize,
                 [ contentLength, maximumPostSize ]
@@ -352,7 +342,7 @@ resourcestring
         if (contentType = 'application/x-www-form-urlencoded') then
         begin
             //read STDIN
-            bodyStr := readStdIn(contentLength);
+            bodyStr := stdInReader.readStdIn(contentLength);
             initParamsFromString(bodyStr, body);
         end
         else if (pos('multipart/form-data', contentType) > 0) then
@@ -362,7 +352,7 @@ resourcestring
         end else
         begin
             //read STDIN
-            bodyStr := readStdIn(contentLength);
+            bodyStr := stdInReader.readStdIn(contentLength);
 
             //if POST but different contentType save it as it is
             //with its contentType as key
@@ -377,10 +367,8 @@ resourcestring
         const env : ICGIEnvironment;
         const body : IList
     );
-    var method : string;
     begin
-        method := env.requestMethod();
-        if (method = 'POST') then
+        if (env.requestMethod() = 'POST') then
         begin
             initPostBodyParamsFromStdInput(env, body);
         end;
