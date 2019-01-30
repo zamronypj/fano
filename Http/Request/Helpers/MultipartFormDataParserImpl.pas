@@ -533,11 +533,12 @@ resourcestring
             //preallocated so we can avoid allocate/deallocate inside loop
             buff.size := contentLength;
             readCount := 0;
-            repeat
+            while (readCount < contentLength) do
+            begin
                 totalRead := inputStream.read(tmpBuffer^, BUFFER_SIZE);
                 buff.write(tmpBuffer^, totalRead);
                 inc(readCount, totalRead);
-            until (readCount >= contentLength);
+            end;
             //if we get here then we read whole payload
             splitDataByBoundaryAndParse(buff.dataString, boundary, body, uploadedFiles);
         finally
