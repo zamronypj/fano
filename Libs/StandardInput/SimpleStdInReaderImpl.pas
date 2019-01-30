@@ -16,6 +16,7 @@ interface
 uses
 
     sysutils,
+    InjectableObjectImpl,
     StdInReaderIntf;
 
 type
