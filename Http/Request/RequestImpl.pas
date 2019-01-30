@@ -23,6 +23,11 @@ uses
     UploadedFileCollectionIntf,
     UploadedFileCollectionWriterIntf;
 
+const
+
+    DEFAULT_MAX_POST_SIZE = 8 * 1024 * 1024;
+    DEFAULT_MAX_UPLOAD_SIZE = 2 * 1024 * 1024;
+
 type
 
     (*!------------------------------------------------
@@ -41,7 +46,18 @@ type
         uploadedFilesWriter: IUploadedFileCollectionWriter;
         multipartFormDataParser : IMultipartFormDataParser;
 
-        function readStdIn(const contentLength : integer) : string;
+        (*!------------------------------------------------
+         * maximum POST data size in bytes
+         *-------------------------------------------------*)
+        maximumPostSize : int64;
+
+        (*!------------------------------------------------
+         * maximum single uploaded file size in bytes
+         *-------------------------------------------------*)
+        maximumUploadedFileSize : int64;
+
+        function readStdIn(const contentLength : int64) : string;
+        procedure raiseExceptionIfPostDataTooBig(const contentLength : int64);
 
         procedure clearParams(const params : IList);
 
@@ -97,7 +113,9 @@ type
             const query : IList;
             const cookies : IList;
             const body : IList;
-            const multipartFormDataParserInst : IMultipartFormDataParser
+            const multipartFormDataParserInst : IMultipartFormDataParser;
+            const maxPostSize : int64 = DEFAULT_MAX_POST_SIZE;
+            const maxUploadSize : int64 = DEFAULT_MAX_UPLOAD_SIZE
         );
         destructor destroy(); override;
 
@@ -185,12 +203,18 @@ uses
     UrlHelpersImpl,
     EInvalidRequestImpl;
 
+resourcestring
+
+    sErrExceedMaxPostSize = 'POST size (%d) exceeds maximum allowable POST size (%d)';
+
     constructor TRequest.create(
         const env : ICGIEnvironment;
         const query : IList;
         const cookies : IList;
         const body : IList;
-        const multipartFormDataParserInst : IMultipartFormDataParser
+        const multipartFormDataParserInst : IMultipartFormDataParser;
+        const maxPostSize : int64 = DEFAULT_MAX_POST_SIZE;
+        const maxUploadSize : int64 = DEFAULT_MAX_UPLOAD_SIZE
     );
     begin
         webEnvironment := env;
@@ -200,6 +224,10 @@ uses
         multipartFormDataParser := multipartFormDataParserInst;
         uploadedFiles := nil;
         uploadedFilesWriter := nil;
+
+        maximumPostSize := maxPostSize;
+        maximumUploadedFileSize := maxUploadSize;
+
         initParamsFromEnvironment(
             webEnvironment,
             queryParams,
@@ -277,8 +305,8 @@ uses
         initParamsFromString(env.httpCookie(), cookies);
     end;
 
-    function TRequest.readStdIn(const contentLength : integer) : string;
-    var ctr : integer;
+    function TRequest.readStdIn(const contentLength : int64) : string;
+    var ctr : int64;
         ch : char;
     begin
         //read STDIN
@@ -292,24 +320,38 @@ uses
         end;
     end;
 
+    procedure TRequest.raiseExceptionIfPostDataTooBig(const contentLength : int64);
+    begin
+        if (contentLength > maximumPostSize) then
+        begin
+            {---------------------------------------------------
+            we abort, but Apache requires app to read ALL POST data
+            or close STDIN file handle eventhough not using it. Otherwise in
+            Apache we will get AH00574 error. Here we just read it and discard
+            -----------------------------------------------------}
+            readStdIn(contentLength);
+            raise EInvalidRequest.createFmt(
+                sErrExceedMaxPostSize,
+                [ contentLength, maximumPostSize ]
+            );
+        end;
+    end;
+
     procedure TRequest.initPostBodyParamsFromStdInput(
         const env : ICGIEnvironment;
         const body : IList
     );
-    var contentLength : integer;
+    var contentLength : int64;
         contentType, bodyStr : string;
         param : PKeyValue;
     begin
-        (*!---------------------------------------
-         * TODO: implement limit max POST size and
-         * max upload size of request
-         *----------------------------------------*)
+        contentLength := env.intContentLength();
+        raiseExceptionIfPostDataTooBig(contentLength);
 
         contentType := lowerCase(env.contentType());
         if (contentType = 'application/x-www-form-urlencoded') then
         begin
             //read STDIN
-            contentLength := env.intContentLength();
             bodyStr := readStdIn(contentLength);
             initParamsFromString(bodyStr, body);
         end
@@ -320,7 +362,6 @@ uses
         end else
         begin
             //read STDIN
-            contentLength := env.intContentLength();
             bodyStr := readStdIn(contentLength);
 
             //if POST but different contentType save it as it is
