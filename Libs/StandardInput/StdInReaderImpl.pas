@@ -36,12 +36,13 @@ implementation
 uses
 
     classes,
-    iostream,
+    iostream;
 
     function TStdInReader.readStdIn(const contentLength : int64) : string;
     const BUFFER_SIZE = 8 * 1024;
     var tmpBuffer : pointer;
         totalRead, readCount : int64;
+        inputStream : TIOStream;
         buff : TStringStream;
     begin
         getmem(tmpBuffer, BUFFER_SIZE);
