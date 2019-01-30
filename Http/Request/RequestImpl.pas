@@ -58,7 +58,6 @@ type
          *-------------------------------------------------*)
         maximumUploadedFileSize : int64;
 
-        function readStdIn(const contentLength : int64) : string;
         procedure raiseExceptionIfPostDataTooBig(const contentLength : int64);
 
         procedure clearParams(const params : IList);
