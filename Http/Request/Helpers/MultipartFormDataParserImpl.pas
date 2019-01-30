@@ -21,7 +21,8 @@ uses
     MultipartFormDataParserIntf,
     EnvironmentIntf,
     UploadedFileCollectionWriterIntf,
-    UploadedFileCollectionWriterFactoryIntf;
+    UploadedFileCollectionWriterFactoryIntf,
+    StdInReaderIntf;
 
 type
 
@@ -253,6 +254,7 @@ resourcestring
     begin
         inherited destroy();
         uploadedFilesFactory := nil;
+        stdInReader := nil;
     end;
 
     (*!----------------------------------------------

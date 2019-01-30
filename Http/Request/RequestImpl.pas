@@ -254,6 +254,7 @@ resourcestring
         uploadedFiles := nil;
         uploadedFilesWriter := nil;
         multipartFormDataParser := nil;
+        stdInReader := nil;
     end;
 
     procedure TRequest.clearParams(const params : IList);
