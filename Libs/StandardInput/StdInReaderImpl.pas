@@ -33,6 +33,11 @@ type
 
 implementation
 
+uses
+
+    classes,
+    iostream,
+
     function TStdInReader.readStdIn(const contentLength : int64) : string;
     const BUFFER_SIZE = 8 * 1024;
     var tmpBuffer : pointer;

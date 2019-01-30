@@ -222,7 +222,6 @@ implementation
 uses
 
     sysutils,
-    iostream,
     KeyValueTypes,
     EInvalidRequestImpl;
 
