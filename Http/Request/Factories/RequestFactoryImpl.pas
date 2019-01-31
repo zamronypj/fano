@@ -35,7 +35,10 @@ uses
     HashListImpl,
     MultipartFormDataParserImpl,
     UploadedFileCollectionFactoryImpl,
-    UploadedFileCollectionWriterFactoryImpl;
+    UploadedFileCollectionWriterFactoryImpl,
+    StdInReaderIntf,
+    StdInReaderImpl,
+    SimpleStdInReaderImpl;
 
     function TRequestFactory.build(const env : ICGIEnvironment) : IRequest;
     begin
@@ -46,7 +49,8 @@ uses
             THashList.create(),
             TMultipartFormDataParser.create(
                 TUploadedFileCollectionWriterFactory.create()
-            )
+            ),
+            TStdInReader.create()
         );
     end;
 end.

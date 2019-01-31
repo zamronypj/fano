@@ -10,3 +10,6 @@ TStringFileReaderFactory = StringFileReaderFactoryImpl.TStringFileReaderFactory;
 
 TStreamAdapter = StreamAdapterImpl.TStreamAdapter;
 EInvalidStream = EInvalidStreamImpl.EInvalidStream;
+
+TStdInReader = StdInReaderImpl.TStdInReader;
+TSimpleStdInReader = SimpleStdInReaderImpl.TSimpleStdInReader;
