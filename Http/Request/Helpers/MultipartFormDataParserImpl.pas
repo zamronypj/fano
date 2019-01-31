@@ -21,8 +21,7 @@ uses
     MultipartFormDataParserIntf,
     EnvironmentIntf,
     UploadedFileCollectionWriterIntf,
-    UploadedFileCollectionWriterFactoryIntf,
-    StdInReaderIntf;
+    UploadedFileCollectionWriterFactoryIntf;
 
 type
 
@@ -34,7 +33,6 @@ type
      *-----------------------------------------------*)
     TMultipartFormDataParser = class(TInterfacedObject, IMultipartFormDataParser)
     private
-        stdInReader : IStdInReader;
         uploadedFilesFactory : IUploadedFileCollectionWriterFactory;
 
         (*!----------------------------------------------
@@ -100,51 +98,6 @@ type
             const uploadedFiles : IUploadedFileCollectionWriter
         );
 
-        (*!----------------------------------------
-         * Read POST data in standard input and parse
-         * it and store parsed data in body request parameter
-         * and uploaded files (if any).
-         *------------------------------------------
-         * @param body instance of IList that will store
-         *             parsed body parameter
-         * @param uploadedFiles instance of uploaded file collection
-         * @param contentLength length of POST data in bytes
-         * @param boundary multipart/form-data boundary
-         * @return current instance
-         *-------------------------------------------
-         * Example of POST data with boundary of 'xxx12345678' s
-         *
-         * --xxx12345678
-         * Content-Disposition: form-data; name="text"
-         * \r\n
-         * text default
-         * --xxx12345678
-         * Content-Disposition: form-data; name="file1"; filename="a.txt"
-         * Content-Type: text/plain
-         * \r\n
-         * Content of a.txt.
-         *
-         * --xxx12345678
-         * Content-Disposition: form-data; name="file2"; filename="a.html"
-         * Content-Type: text/html
-         * \r\n
-         * <!DOCTYPE html><title>Content of a.html.</title>
-         *
-         * --xxx12345678--
-         * @link : https://stackoverflow.com/questions/4238809/example-of-multipart-form-data
-         *------------------------------------------
-         * Instead of read all standard input and collecting
-         * them as one big string and then parse them,
-         * we will read std input and parse data as soon as we
-         * found matching boundary
-         *------------------------------------------*)
-        procedure readAndParseInputStream(
-           const body : IList;
-           const uploadedFiles : IUploadedFileCollectionWriter;
-           const contentLength : int64;
-           const boundary : string
-        );
-
         (*!-------------------------------------------------------------
          * extract name from Content-Disposition
          *--------------------------------------------------------------
@@ -186,11 +139,9 @@ type
          *------------------------------------------
          * @param factory factory instance to build uploaded file
          *        collection instance
-         * @param stdInReader class for read STDIN to string
          *------------------------------------------*)
         constructor create(
-            const factory : IUploadedFileCollectionWriterFactory;
-            const stdInputReader : IStdInReader
+            const factory : IUploadedFileCollectionWriterFactory
         );
 
         (*!----------------------------------------
@@ -199,19 +150,42 @@ type
         destructor destroy(); override;
 
         (*!----------------------------------------
-         * Read POST data in standard input and parse
+         * Read POST data and parse
          * it and store parsed data in body request parameter
          * and uploaded files (if any). If not file upload
          * then TNullUploadedFileCollection instance is return
          *------------------------------------------
-         * @param env CGI environment variable
+         * @param contentType Content-Type request header
+         * @param postData POST data from web server
          * @param body instance of IList that will store
          *             parsed body parameter
          * @param uploadedFiles instance of uploaded file collection
          * @return current instance
+         *-------------------------------------------
+         * Example of POST data with boundary of 'xxx12345678' s
+         *
+         * --xxx12345678
+         * Content-Disposition: form-data; name="text"
+         * \r\n
+         * text default
+         * --xxx12345678
+         * Content-Disposition: form-data; name="file1"; filename="a.txt"
+         * Content-Type: text/plain
+         * \r\n
+         * Content of a.txt.
+         *
+         * --xxx12345678
+         * Content-Disposition: form-data; name="file2"; filename="a.html"
+         * Content-Type: text/html
+         * \r\n
+         * <!DOCTYPE html><title>Content of a.html.</title>
+         *
+         * --xxx12345678--
+         * @link : https://stackoverflow.com/questions/4238809/example-of-multipart-form-data
          *------------------------------------------*)
         function parse(
-            const env : ICGIEnvironment;
+            const contentType : string;
+            const postData : string;
             const body : IList;
             out uploadedFiles : IUploadedFileCollectionWriter
         ) : IMultipartFormDataParser;
@@ -235,15 +209,12 @@ resourcestring
      *------------------------------------------
      * @param factory factory instance to build uploaded file
      *        collection instance
-     * @param stdInReader class for read STDIN to string
      *------------------------------------------*)
     constructor TMultipartFormDataParser.create(
-        const factory : IUploadedFileCollectionWriterFactory;
-        const stdInputReader : IStdInReader
+        const factory : IUploadedFileCollectionWriterFactory
     );
     begin
         uploadedFilesFactory := factory;
-        stdInReader := stdInputReader;
     end;
 
     (*!----------------------------------------
@@ -253,7 +224,6 @@ resourcestring
     begin
         inherited destroy();
         uploadedFilesFactory := nil;
-        stdInReader := nil;
     end;
 
     (*!----------------------------------------------
@@ -491,17 +461,16 @@ resourcestring
     end;
 
     (*!----------------------------------------
-     * Read POST data from standard input and parse
+     * Read POST data in standard input and parse
      * it and store parsed data in body request parameter
      * and uploaded files (if any).
      *------------------------------------------
-     * @param inputStream std input stream
+     * @param env CGI environment variable
      * @param body instance of IList that will store
      *             parsed body parameter
      * @param uploadedFiles instance of uploaded file collection
-     * @param contentLength content length of request payload
-     * @param boundary boundary of multipart/form-data
-     *-------------------------------------------
+     * @return current instance
+     *------------------------------------------
      * Example of POST data with boundary of 'xxx12345678' s
      *
      * --xxx12345678
@@ -524,41 +493,19 @@ resourcestring
      * @link : https://stackoverflow.com/questions/4238809/example-of-multipart-form-data
      * @link : https://tools.ietf.org/html/rfc7578
      *------------------------------------------*)
-    procedure TMultipartFormDataParser.readAndParseInputStream(
-        const body : IList;
-        const uploadedFiles : IUploadedFileCollectionWriter;
-        const contentLength : int64;
-        const boundary : string
-    );
-    var postData : string;
-    begin
-        postData := stdInReader.readStdIn(contentLength);
-        splitDataByBoundaryAndParse(postData, boundary, body, uploadedFiles);
-    end;
-
-    (*!----------------------------------------
-     * Read POST data in standard input and parse
-     * it and store parsed data in body request parameter
-     * and uploaded files (if any).
-     *------------------------------------------
-     * @param env CGI environment variable
-     * @param body instance of IList that will store
-     *             parsed body parameter
-     * @param uploadedFiles instance of uploaded file collection
-     * @return current instance
-     *------------------------------------------*)
     function TMultipartFormDataParser.parse(
-        const env : ICGIEnvironment;
+        const contentType : string;
+        const postData : string;
         const body : IList;
         out uploadedFiles : IUploadedFileCollectionWriter
     ) : IMultipartFormDataParser;
     begin
         uploadedFiles := uploadedFilesFactory.createCollectionWriter();
-        readAndParseInputStream(
+        splitDataByBoundaryAndParse(
+            postData,
+            getBoundary(contentType),
             body,
-            uploadedFiles,
-            env.intContentLength(),
-            getBoundary(env.contentType())
+            uploadedFiles
         );
         result := self;
     end;

@@ -6,27 +6,51 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit RequestFactoryIntf;
+unit RequestFactoryImpl;
 
 interface
 
-uses
+{$MODE OBJFPC}
 
+uses
     EnvironmentIntf,
-    RequestIntf;
+    RequestIntf,
+    RequestFactoryIntf;
 
 type
-
     (*!------------------------------------------------
-     * interface for any class having capability
-     * to build request instance
+     * factory class for TRequest
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
-     *--------------------------------------------------*)
-    IRequestFactory = interface
-        ['{C4015735-B800-4F0B-BF35-C7900D5135E7}']
+     *-----------------------------------------------*)
+    TRequestFactory = class(TInterfacedObject, IRequestFactory)
+    public
         function build(const env : ICGIEnvironment) : IRequest;
     end;
 
 implementation
+
+uses
+    RequestImpl,
+    HashListImpl,
+    MultipartFormDataParserImpl,
+    UploadedFileCollectionFactoryImpl,
+    UploadedFileCollectionWriterFactoryImpl,
+    StdInReaderIntf,
+    StdInReaderImpl,
+    SimpleStdInReaderImpl;
+
+    function TRequestFactory.build(const env : ICGIEnvironment) : IRequest;
+    begin
+        result := TRequest.create(
+            env,
+            THashList.create(),
+            THashList.create(),
+            THashList.create(),
+            TMultipartFormDataParser.create(
+                TUploadedFileCollectionWriterFactory.create()
+            ),
+            TStdInReader.create()
+        );
+    end;
 end.

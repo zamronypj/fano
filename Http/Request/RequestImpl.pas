@@ -314,12 +314,6 @@ resourcestring
     begin
         if (contentLength > maximumPostSize) then
         begin
-            {---------------------------------------------------
-            we abort, but Apache requires app to read ALL POST data
-            or close STDIN file handle eventhough not using it. Otherwise in
-            Apache we will get AH00574 error. Here we just read it and discard
-            -----------------------------------------------------}
-            stdInReader.readStdIn(contentLength);
             raise EInvalidRequest.createFmt(
                 sErrExceedMaxPostSize,
                 [ contentLength, maximumPostSize ]
@@ -336,24 +330,27 @@ resourcestring
         param : PKeyValue;
     begin
         contentLength := env.intContentLength();
+        //read STDIN
+        bodyStr := stdInReader.readStdIn(contentLength);
+        {---------------------------------------------------
+        exception can be be thrown AFTER we read all STDIN.
+        Apache requires app to read ALL POST data or close STDIN file
+        handle eventhough not using it. Otherwise in Apache
+        we will get AH00574 error. Here we read and discard
+        -----------------------------------------------------}
         raiseExceptionIfPostDataTooBig(contentLength);
 
         contentType := lowerCase(env.contentType());
         if (contentType = 'application/x-www-form-urlencoded') then
         begin
-            //read STDIN
-            bodyStr := stdInReader.readStdIn(contentLength);
             initParamsFromString(bodyStr, body);
         end
         else if (pos('multipart/form-data', contentType) > 0) then
         begin
-            multipartFormDataParser.parse(env, body, uploadedFilesWriter);
+            multipartFormDataParser.parse(contentType, bodyStr, body, uploadedFilesWriter);
             uploadedFiles := uploadedFilesWriter as IUploadedFileCollection;
         end else
         begin
-            //read STDIN
-            bodyStr := stdInReader.readStdIn(contentLength);
-
             //if POST but different contentType save it as it is
             //with its contentType as key
             new(param);
