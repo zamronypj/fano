@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit GetImpl;
+unit HttpGetImpl;
 
 interface
 
@@ -15,8 +15,9 @@ interface
 
 uses
 
-    InjectableObjectImpl,
-    HttpClientIntf;
+    HttpMethodImpl,
+    ResponseIntf,
+    SerializeableIntf;
 
 type
 
@@ -25,7 +26,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    THttpGet = class(TInjectableObject, IHttpClient)
+    THttpGet = class(THttpMethod)
     private
         (*!------------------------------------------------
          * build URL with query string appended
@@ -45,7 +46,7 @@ type
          *-----------------------------------------------
          * @param url url to send request
          * @param data data related to this request
-         * @return current instance
+         * @return response from server
          *-----------------------------------------------*)
         function send(
             const url : string;
@@ -108,10 +109,14 @@ uses
         hCurl:= curl_easy_init();
         if assigned(hCurl) then
         begin
-            fullUrl := buildUrlWithQueryParams(url, data);
-            curl_easy_setopt(hCurl,CURLOPT_URL, [ fullUrl ]);
-            curl_easy_perform(hCurl);
-            curl_easy_cleanup(hCurl);
+            try
+              fullUrl := buildUrlWithQueryParams(url, data);
+              curl_easy_setopt(hCurl,CURLOPT_URL, [ fullUrl ]);
+              executeCurl(hCurl);
+            finally
+              //wrap with finally to make sure cleanup is done properly
+              curl_easy_cleanup(hCurl);
+            end;
         end;
         result := self;
     end;

@@ -15,8 +15,9 @@ interface
 
 uses
 
-    InjectableObjectImpl,
-    HttpClientIntf;
+    HttpMethodImpl,
+    ResponseIntf,
+    SerializeableIntf;
 
 type
 
@@ -25,7 +26,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    THttpPost = class(TInjectableObject, IHttpClient)
+    THttpPost = class(THttpMethod)
     public
 
         (*!------------------------------------------------
@@ -33,7 +34,7 @@ type
          *-----------------------------------------------
          * @param url url to send request
          * @param context object instance related to this message
-         * @return current instance
+         * @return response from server
          *-----------------------------------------------*)
         function send(
             const url : string;
@@ -43,6 +44,10 @@ type
     end;
 
 implementation
+
+uses
+
+    libcurl;
 
     (*!------------------------------------------------
      * send HTTP request
@@ -61,14 +66,18 @@ implementation
         hCurl:= curl_easy_init();
         if assigned(hCurl) then
         begin
-            curl_easy_setopt(hCurl,CURLOPT_URL, [url]);
-            if (data <> nil) then
-            begin
-                params := data.serialize();
-                curl_easy_setopt(hCurl,CURLOPT_POSTFIELDS, [ params ]);
+            try
+                curl_easy_setopt(hCurl,CURLOPT_URL, [url]);
+                if (data <> nil) then
+                begin
+                    params := data.serialize();
+                    curl_easy_setopt(hCurl,CURLOPT_POSTFIELDS, [ params ]);
+                end;
+                executeCurl(hCurl);
+            finally
+                //wrap with finally to make sure cleanup is done properly
+                curl_easy_cleanup(hCurl);
             end;
-            curl_easy_perform(hCurl);
-            curl_easy_cleanup(hCurl);
         end;
         result := self;
     end;

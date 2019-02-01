@@ -13,6 +13,11 @@ interface
 {$MODE OBJFPC}
 {$H+}
 
+uses
+
+    SerializeableIntf,
+    ResponseIntf;
+
 type
 
     (*!------------------------------------------------
