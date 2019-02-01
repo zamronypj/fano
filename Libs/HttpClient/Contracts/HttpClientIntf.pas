@@ -28,12 +28,12 @@ type
          * send HTTP request
          *-----------------------------------------------
          * @param url url to send request
-         * @param context object instance related to this message
-         * @return current logger instance
+         * @param data data related to this request
+         * @return current instance
          *-----------------------------------------------*)
         function send(
             const url : string;
-            const context : ISerializeable = nil
+            const data : ISerializeable = nil
         ) : IResponse;
 
     end;
