@@ -51,7 +51,7 @@ type
         function send(
             const url : string;
             const data : ISerializeable = nil
-        ) : IResponse;
+        ) : IResponse; override;
 
     end;
 

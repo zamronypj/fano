@@ -39,7 +39,7 @@ type
         function send(
             const url : string;
             const context : ISerializeable = nil
-        ) : IResponse;
+        ) : IResponse; override;
 
     end;
 

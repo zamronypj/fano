@@ -89,7 +89,7 @@ uses
     * @param hCurl curl handle
     * @return errCode curl error code
     *-----------------------------------------------*)
-    function THttpMethod.execute(const hCurl : pCurl) : CurlCode;
+    function THttpMethod.executeCurl(const hCurl : pCurl) : CurlCode;
     begin
         result := curl_easy_perform(hCurl);
         raiseExceptionIfError(result);
