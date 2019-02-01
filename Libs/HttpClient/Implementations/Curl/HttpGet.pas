@@ -6,23 +6,27 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit HttpClientIntf;
+unit GetImpl;
 
 interface
 
 {$MODE OBJFPC}
 {$H+}
 
+uses
+
+    InjectableObjectImpl,
+    HttpClientIntf;
+
 type
 
     (*!------------------------------------------------
-     * interface for any class having capability to send
-     * HTTP request to a server
+     * class that send HTTP GET to server
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    IHttpClient = interface
-        ['{944E1D4F-08BA-446C-A662-9C1EC27DEF74}']
+    THttpGet = class(TInjectableObject, IHttpClient)
+    public
 
         (*!------------------------------------------------
          * send HTTP request
