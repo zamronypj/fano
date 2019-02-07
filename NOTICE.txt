@@ -1,5 +1,6 @@
 This library contains:
 
+
 Mongo Delphi Driver
 https://github.com/fabriciocolombo/mongo4delphi
 
@@ -23,7 +24,16 @@ https://github.com/fabriciocolombo/mongo4delphi
 {                                                                           }
 {***************************************************************************}
 
-Delphi-Redis
+
+
+Modified Delphi-Redis
+Copyright Zamrony P. Juhara
+- Remove unnecessary files
+- Code formatting
+
+
+
+Original Delphi-Redis
 https://bitbucket.org/Gloegg/delphi-redis
 
 Copyright Nils Achterholt (Gloegg)
