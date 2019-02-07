@@ -79,3 +79,7 @@ all your applications that depends on Fano will be affected. If newer version of
 - Elasticsearch database support
 - Improve data validation and sanitation
 - Unit test
+
+## Copyright Notice
+
+[See NOTICE.txt](NOTICE.txt)
