@@ -28,6 +28,7 @@ Other available sample application:
 - [Fano Image](https://github.com/fanoframework/fano-app-img), sample web application that generate PNG image on the fly.
 - [Fano Mvc](https://github.com/fanoframework/fano-mvc), sample MVC web application that load data from model and display it in view.
 - [Fano Db](https://github.com/fanoframework/fano-app-db), sample MVC web application that load data from MySQL and display it in view.
+- [Fano Upload](https://github.com/fanoframework/fano-upload), sample web application that allow user to upload file to server.
 
 ### Install from Fano Command Line tool
 
