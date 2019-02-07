@@ -15,6 +15,7 @@ interface
 
 uses
 
+    Classes,
     StreamAdapterIntf;
 
 type
@@ -26,26 +27,27 @@ type
      *-----------------------------------------------*)
     TStreamAdapter = class(TInterfacedObject, IStreamAdapter)
     private
+        isOwned : boolean;
+    protected
         actualStream : TStream;
     public
-        (*!------------------------------------------------
+        (*!------------------------------------
          * constructor
-         *-----------------------------------------------
-         * @param stream instance of stream
-         *-----------------------------------------------
-         * Note: because we use reference counting,
-         * stream will be owned by adapter, so when
-         * adapter destroy() is called, the stream also
-         * be destroyed
-         *-----------------------------------------------*)
-        constructor create(const stream : TStream);
+         *-------------------------------------
+         * @param stream instance of actual stream
+         * @param owned true if streamInst is owned, meaning, its
+         *        memory will be deallocated when destructor
+         *        is called
+         *-------------------------------------*)
+        constructor create(const stream : TStream; const owned : boolean = true);
 
-        (*!------------------------------------------------
+        (*!------------------------------------
          * destructor
-         *-----------------------------------------------
-         * Note: because we use reference counting,
-         * we need stream also be destroyed
-         *-----------------------------------------------*)
+         *-------------------------------------
+         * if isOwned true, stream memory
+         * will be deallocated when destructor
+         * is called
+         *-------------------------------------*)
         destructor destroy(); override;
 
         (*!------------------------------------------------
@@ -72,6 +74,17 @@ type
          * @return total bytes actually written
          *-----------------------------------------------*)
         function write(const buffer; const sizeToWrite : int64) : int64;
+
+        (*!------------------------------------
+         * seek
+         *-------------------------------------
+         * @param offset in bytes to seek start from beginning
+         * @return actual offset
+         *-------------------------------------
+         * if offset >= stream size then it is capped
+         * to stream size-1
+         *-------------------------------------*)
+        function seek(const offset : int64) : int64;
     end;
 
 implementation
@@ -94,9 +107,10 @@ resourcestring
      * adapter destroy() is called, the stream also
      * be destroyed
      *-----------------------------------------------*)
-    constructor TStreamAdapter.create(const stream : TStream);
+    constructor TStreamAdapter.create(const stream : TStream; const owned : boolean = true);
     begin
         actualStream := stream;
+        isOwned := owned;
         if (actualStream = nil) then
         begin
             raise EInvalidStream.create(SErrInvalidStream);
@@ -112,7 +126,10 @@ resourcestring
     destructor TStreamAdapter.destroy();
     begin
         inherited destroy();
-        actualStream.free();
+        if (isOwned) then
+        begin
+            actualStream.free();
+        end;
     end;
 
 
@@ -148,5 +165,19 @@ resourcestring
     function TStreamAdapter.write(const buffer; const sizeToWrite : int64) : int64;
     begin
         result := actualStream.write(buffer, sizeToWrite);
+    end;
+
+    (*!------------------------------------
+     * seek
+     *-------------------------------------
+     * @param offset in bytes to seek start from beginning
+     * @return actual offset
+     *-------------------------------------
+     * if offset >= stream size then it is capped
+     * to stream size-1
+     *-------------------------------------*)
+    function TStreamAdapter.seek(const offset : int64) : int64;
+    begin
+        result := actualStream.seek(offset, soFromBeginning);
     end;
 end.

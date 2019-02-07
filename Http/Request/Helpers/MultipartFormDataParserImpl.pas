@@ -98,51 +98,6 @@ type
             const uploadedFiles : IUploadedFileCollectionWriter
         );
 
-        (*!----------------------------------------
-         * Read POST data in standard input and parse
-         * it and store parsed data in body request parameter
-         * and uploaded files (if any).
-         *------------------------------------------
-         * @param env CGI environment variable
-         * @param body instance of IList that will store
-         *             parsed body parameter
-         * @param uploadedFiles instance of uploaded file collection
-         * @return current instance
-         *-------------------------------------------
-         * Example of POST data with boundary of 'xxx12345678' s
-         *
-         * --xxx12345678
-         * Content-Disposition: form-data; name="text"
-         * \r\n
-         * text default
-         * --xxx12345678
-         * Content-Disposition: form-data; name="file1"; filename="a.txt"
-         * Content-Type: text/plain
-         * \r\n
-         * Content of a.txt.
-         *
-         * --xxx12345678
-         * Content-Disposition: form-data; name="file2"; filename="a.html"
-         * Content-Type: text/html
-         * \r\n
-         * <!DOCTYPE html><title>Content of a.html.</title>
-         *
-         * --xxx12345678--
-         * @link : https://stackoverflow.com/questions/4238809/example-of-multipart-form-data
-         *------------------------------------------
-         * Instead of read all standard input and collecting
-         * them as one big string and then parse them,
-         * we will read std input and parse data as soon as we
-         * found matching boundary
-         *------------------------------------------*)
-        procedure readAndParseInputStream(
-           const inputStream : TStream;
-           const body : IList;
-           const uploadedFiles : IUploadedFileCollectionWriter;
-           const contentLength : int64;
-           const boundary : string
-        );
-
         (*!-------------------------------------------------------------
          * extract name from Content-Disposition
          *--------------------------------------------------------------
@@ -185,7 +140,9 @@ type
          * @param factory factory instance to build uploaded file
          *        collection instance
          *------------------------------------------*)
-        constructor create(const factory : IUploadedFileCollectionWriterFactory);
+        constructor create(
+            const factory : IUploadedFileCollectionWriterFactory
+        );
 
         (*!----------------------------------------
          * destructor
@@ -193,19 +150,42 @@ type
         destructor destroy(); override;
 
         (*!----------------------------------------
-         * Read POST data in standard input and parse
+         * Read POST data and parse
          * it and store parsed data in body request parameter
          * and uploaded files (if any). If not file upload
          * then TNullUploadedFileCollection instance is return
          *------------------------------------------
-         * @param env CGI environment variable
+         * @param contentType Content-Type request header
+         * @param postData POST data from web server
          * @param body instance of IList that will store
          *             parsed body parameter
          * @param uploadedFiles instance of uploaded file collection
          * @return current instance
+         *-------------------------------------------
+         * Example of POST data with boundary of 'xxx12345678' s
+         *
+         * --xxx12345678
+         * Content-Disposition: form-data; name="text"
+         * \r\n
+         * text default
+         * --xxx12345678
+         * Content-Disposition: form-data; name="file1"; filename="a.txt"
+         * Content-Type: text/plain
+         * \r\n
+         * Content of a.txt.
+         *
+         * --xxx12345678
+         * Content-Disposition: form-data; name="file2"; filename="a.html"
+         * Content-Type: text/html
+         * \r\n
+         * <!DOCTYPE html><title>Content of a.html.</title>
+         *
+         * --xxx12345678--
+         * @link : https://stackoverflow.com/questions/4238809/example-of-multipart-form-data
          *------------------------------------------*)
         function parse(
-            const env : ICGIEnvironment;
+            const contentType : string;
+            const postData : string;
             const body : IList;
             out uploadedFiles : IUploadedFileCollectionWriter
         ) : IMultipartFormDataParser;
@@ -216,7 +196,6 @@ implementation
 uses
 
     sysutils,
-    iostream,
     KeyValueTypes,
     EInvalidRequestImpl;
 
@@ -482,17 +461,16 @@ resourcestring
     end;
 
     (*!----------------------------------------
-     * Read POST data from standard input and parse
+     * Read POST data in standard input and parse
      * it and store parsed data in body request parameter
      * and uploaded files (if any).
      *------------------------------------------
-     * @param inputStream std input stream
+     * @param env CGI environment variable
      * @param body instance of IList that will store
      *             parsed body parameter
      * @param uploadedFiles instance of uploaded file collection
-     * @param contentLength content length of request payload
-     * @param boundary boundary of multipart/form-data
-     *-------------------------------------------
+     * @return current instance
+     *------------------------------------------
      * Example of POST data with boundary of 'xxx12345678' s
      *
      * --xxx12345678
@@ -515,68 +493,20 @@ resourcestring
      * @link : https://stackoverflow.com/questions/4238809/example-of-multipart-form-data
      * @link : https://tools.ietf.org/html/rfc7578
      *------------------------------------------*)
-    procedure TMultipartFormDataParser.readAndParseInputStream(
-        const inputStream : TStream;
-        const body : IList;
-        const uploadedFiles : IUploadedFileCollectionWriter;
-        const contentLength : int64;
-        const boundary : string
-    );
-    const BUFFER_SIZE = 8 * 1024;
-    var tmpBuffer : pointer;
-        totalRead, readCount : int64;
-        buff : TStringStream;
-    begin
-        getmem(tmpBuffer, BUFFER_SIZE);
-        buff := TStringStream.create('');
-        try
-            //preallocated so we can avoid allocate/deallocate inside loop
-            buff.size := contentLength;
-            readCount := 0;
-            repeat
-                totalRead := inputStream.read(tmpBuffer^, BUFFER_SIZE);
-                buff.write(tmpBuffer^, totalRead);
-                inc(readCount, totalRead);
-            until (readCount >= contentLength);
-            //if we get here then we read whole payload
-            splitDataByBoundaryAndParse(buff.dataString, boundary, body, uploadedFiles);
-        finally
-            freemem(tmpBuffer, BUFFER_SIZE);
-            freeAndNil(buff);
-        end;
-    end;
-
-    (*!----------------------------------------
-     * Read POST data in standard input and parse
-     * it and store parsed data in body request parameter
-     * and uploaded files (if any).
-     *------------------------------------------
-     * @param env CGI environment variable
-     * @param body instance of IList that will store
-     *             parsed body parameter
-     * @param uploadedFiles instance of uploaded file collection
-     * @return current instance
-     *------------------------------------------*)
     function TMultipartFormDataParser.parse(
-        const env : ICGIEnvironment;
+        const contentType : string;
+        const postData : string;
         const body : IList;
         out uploadedFiles : IUploadedFileCollectionWriter
     ) : IMultipartFormDataParser;
-    var inputStream : TIOStream;
     begin
-        inputStream := TIOStream.create(iosInput);
         uploadedFiles := uploadedFilesFactory.createCollectionWriter();
-        try
-            readAndParseInputStream(
-                inputStream,
-                body,
-                uploadedFiles,
-                env.intContentLength(),
-                getBoundary(env.contentType())
-            );
-            result := self;
-        finally
-            freeAndNil(inputStream);
-        end;
+        splitDataByBoundaryAndParse(
+            postData,
+            getBoundary(contentType),
+            body,
+            uploadedFiles
+        );
+        result := self;
     end;
 end.

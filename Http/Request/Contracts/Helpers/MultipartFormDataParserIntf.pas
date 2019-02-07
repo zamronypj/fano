@@ -31,19 +31,21 @@ type
         ['{F0C5A45D-B8F0-4CF6-86FD-84C60C17E67E}']
 
         (*!----------------------------------------
-         * Read POST data in standard input and parse
+         * Read POST data and parse
          * it and store parsed data in body request parameter
          * and uploaded files (if any). If not file upload
          * then TNullUploadedFileCollection instance is return
          *------------------------------------------
-         * @param env CGI environment variable
+         * @param contentType Content-Type request header
+         * @param postData POST data from web server
          * @param body instance of IList that will store
          *             parsed body parameter
-         * @param uploadedFiles instance of uploaded file collection writer
+         * @param uploadedFiles instance of uploaded file collection
          * @return current instance
          *------------------------------------------*)
         function parse(
-            const env : ICGIEnvironment;
+            const contentType : string;
+            const postData : string;
             const body : IList;
             out uploadedFiles : IUploadedFileCollectionWriter
         ) : IMultipartFormDataParser;

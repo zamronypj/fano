@@ -26,3 +26,6 @@ StringFileReaderFactoryImpl,
 
 StreamAdapterImpl,
 EInvalidStreamImpl,
+
+StdInReaderImpl,
+SimpleStdInReaderImpl,
