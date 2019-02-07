@@ -14,15 +14,13 @@ It depends on an application to bootstrap.
 
 ### Install from Fano Command Line tool
 
-[Fano Cli](https://github.com/fanoframework/fano-cli) is command line tool intended
-for [scaffolding web application](https://fanoframework.github.io/scaffolding-with-fano-cli/) using Fano, creating controllers, views, models, etc. It is recommended way to setup web application skeleton with Fano Framework.
+[Fano Cli](https://github.com/fanoframework/fano-cli) is command line tool intended for
+[scaffolding web application](https://fanoframework.github.io/scaffolding-with-fano-cli/), creating controllers, views, models, etc. It is recommended way to setup web application skeleton with Fano Framework.
 
     $ fanocli --create-project=my-cool-app
     $ cd my-cool-app
     $ fanocli --create-mvc=Hello
     $ ./build.sh
-
-While you can create project structure, initialize Fano repository, create controller, view and model, the tools is still in development.
 
 ### Install from sample application
 
