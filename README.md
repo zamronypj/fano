@@ -74,8 +74,8 @@ all your applications that depends on Fano will be affected. If newer version of
 - Run application with built-in web server
 - Run application as Apache module
 - Improve route matching performance
-- MongoDb database support
-- Redis database support
+- MongoDb database support (in progress)
+- Redis database support (in progress)
 - Elasticsearch database support
 - Improve data validation and sanitation
 - Unit test
