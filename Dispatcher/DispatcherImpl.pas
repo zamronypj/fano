@@ -18,15 +18,10 @@ uses
     EnvironmentIntf,
     ResponseIntf,
     ResponseFactoryIntf,
-    RequestIntf,
     RequestFactoryIntf,
-    RequestHandlerIntf,
-    RouteHandlerIntf,
     RouteMatcherIntf,
-    MiddlewareChainIntf,
     MiddlewareCollectionIntf,
     MiddlewareChainFactoryIntf,
-    MiddlewareCollectionAwareIntf,
     InjectableObjectImpl;
 
 type
@@ -63,7 +58,10 @@ implementation
 uses
 
     sysutils,
+    RouteHandlerIntf,
     MiddlewareIntf,
+    MiddlewareCollectionAwareIntf,
+    MiddlewareChainIntf,
     UrlHelpersImpl;
 
     constructor TDispatcher.create(

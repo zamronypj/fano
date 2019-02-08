@@ -17,10 +17,7 @@ uses
     EnvironmentIntf,
     ResponseIntf,
     ResponseFactoryIntf,
-    RequestIntf,
     RequestFactoryIntf,
-    RequestHandlerIntf,
-    RouteHandlerIntf,
     RouteMatcherIntf,
     InjectableObjectImpl;
 
@@ -52,6 +49,7 @@ implementation
 
 uses
     sysutils,
+    RouteHandlerIntf,
     UrlHelpersImpl;
 
     constructor TSimpleDispatcher.create(
