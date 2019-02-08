@@ -66,7 +66,7 @@ type
          * if serviceName is registered with add(), then this method
          * will always return same instance. If serviceName is
          * registered using factory(), this method will return
-         * different instance everytim get() is called.s
+         * different instance everytime get() is called
          *---------------------------------------------------------*)
         function get(const serviceName : shortstring) : IDependency;
     end;
