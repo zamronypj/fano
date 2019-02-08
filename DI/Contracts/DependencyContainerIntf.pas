@@ -38,20 +38,20 @@ type
          * single instance
          *---------------------------------------------------------
          * @param serviceName name of service
-         * @param service factory instance
+         * @param serviceFactory factory instance
          * @return current dependency container instance
          *---------------------------------------------------------*)
-        function add(const serviceName : shortstring; const service : IDependencyFactory) : IDependencyContainer;
+        function add(const serviceName : shortstring; const serviceFactory : IDependencyFactory) : IDependencyContainer;
 
         (*!--------------------------------------------------------
          * Add factory instance to service registration as
          * multiple instance
          *---------------------------------------------------------
          * @param serviceName name of service
-         * @param service factory instance
+         * @param serviceFactory factory instance
          * @return current dependency container instance
          *---------------------------------------------------------*)
-        function factory(const serviceName : shortstring; const service : IDependencyFactory) : IDependencyContainer;
+        function factory(const serviceName : shortstring; const serviceFactory : IDependencyFactory) : IDependencyContainer;
 
         (*!--------------------------------------------------------
          * get instance from service registration using its name.

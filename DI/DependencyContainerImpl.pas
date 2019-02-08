@@ -29,14 +29,34 @@ type
     TDependencyContainer = class(TInterfacedObject, IDependencyContainer)
     private
         dependencyList : IDependencyList;
+
+        (*!--------------------------------------------------------
+         * Add factory instance to service registration as
+         * single instance or multiple instance
+         *---------------------------------------------------------
+         * @param serviceName name of service
+         * @param serviceFactory factory instance
+         * @param singleInstance true if single instance otherwise false
+         * @return current dependency container instance
+         *---------------------------------------------------------*)
         function addDependency(
             const serviceName : shortstring;
             const service : IDependencyFactory;
             const singleInstance : boolean
         ) : IDependencyContainer;
+
         procedure cleanUpDependencies();
     public
+        (*!--------------------------------------------------------
+         * constructor
+         *---------------------------------------------------------
+         * @param dependencies instance of list that will store dependencies
+         *---------------------------------------------------------*)
         constructor create(const dependencies :IDependencyList);
+
+        (*!--------------------------------------------------------
+         * destructor
+         *---------------------------------------------------------*)
         destructor destroy(); override;
 
         (*!--------------------------------------------------------
@@ -44,18 +64,20 @@ type
          * single instance
          *---------------------------------------------------------
          * @param serviceName name of service
+         * @param serviceFactory factory instance
          * @return current dependency container instance
          *---------------------------------------------------------*)
-        function add(const serviceName : shortstring; const service : IDependencyFactory) : IDependencyContainer;
+        function add(const serviceName : shortstring; const serviceFactory : IDependencyFactory) : IDependencyContainer;
 
         (*!--------------------------------------------------------
          * Add factory instance to service registration as
          * multiple instance
          *---------------------------------------------------------
          * @param serviceName name of service
+         * @param serviceFactory factory instance
          * @return current dependency container instance
          *---------------------------------------------------------*)
-        function factory(const serviceName : shortstring; const service : IDependencyFactory) : IDependencyContainer;
+        function factory(const serviceName : shortstring; const serviceFactory : IDependencyFactory) : IDependencyContainer;
 
         (*!--------------------------------------------------------
          * get instance from service registration using its name.
@@ -124,13 +146,13 @@ type
      * single instance or multiple instance
      *---------------------------------------------------------
      * @param serviceName name of service
-     * @param service factory instance
+     * @param serviceFactory factory instance
      * @param singleInstance true if single instance otherwise false
      * @return current dependency container instance
      *---------------------------------------------------------*)
     function TDependencyContainer.addDependency(
         const serviceName : shortstring;
-        const service : IDependencyFactory;
+        const serviceFactory : IDependencyFactory;
         const singleInstance : boolean
     ) : IDependencyContainer;
     var depRec : PDependencyRec;
@@ -142,7 +164,7 @@ type
            dependencyList.add(serviceName, depRec);
         end;
 
-        depRec^.factory := service;
+        depRec^.factory := serviceFactory;
         depRec^.instance := nil;
         depRec^.singleInstance := singleInstance;
         result := self;
@@ -156,9 +178,12 @@ type
      * @param service factory instance
      * @return current dependency container instance
      *---------------------------------------------------------*)
-    function TDependencyContainer.add(const serviceName : shortstring; const service : IDependencyFactory) : IDependencyContainer;
+    function TDependencyContainer.add(
+        const serviceName : shortstring;
+        const serviceFactory : IDependencyFactory
+    ) : IDependencyContainer;
     begin
-        result := addDependency(serviceName, service, true);
+        result := addDependency(serviceName, serviceFactory, true);
     end;
 
     (*!--------------------------------------------------------
@@ -166,12 +191,15 @@ type
      * multiple instance
      *---------------------------------------------------------
      * @param serviceName name of service
-     * @param service factory instance
+     * @param serviceFactory factory instance
      * @return current dependency container instance
      *---------------------------------------------------------*)
-    function TDependencyContainer.factory(const serviceName : shortstring; const service : IDependencyFactory) : IDependencyContainer;
+    function TDependencyContainer.factory(
+        const serviceName : shortstring;
+        const serviceFactory : IDependencyFactory
+    ) : IDependencyContainer;
     begin
-        result := addDependency(serviceName, service, false);
+        result := addDependency(serviceName, serviceFactory, false);
     end;
 
     (*!--------------------------------------------------------
