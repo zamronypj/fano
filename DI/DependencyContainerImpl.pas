@@ -41,7 +41,7 @@ type
          *---------------------------------------------------------*)
         function addDependency(
             const serviceName : shortstring;
-            const service : IDependencyFactory;
+            const serviceFactory : IDependencyFactory;
             const singleInstance : boolean
         ) : IDependencyContainer;
 
