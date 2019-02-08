@@ -17,10 +17,7 @@ uses
     EnvironmentIntf,
     ResponseIntf,
     ResponseFactoryIntf,
-    RequestIntf,
     RequestFactoryIntf,
-    RequestHandlerIntf,
-    RouteHandlerIntf,
     RouteMatcherIntf,
     InjectableObjectImpl;
 
@@ -51,7 +48,9 @@ type
 implementation
 
 uses
-    sysutils;
+    sysutils,
+    RouteHandlerIntf,
+    UrlHelpersImpl;
 
     constructor TSimpleDispatcher.create(
         const routes : IRouteMatcher;
@@ -75,20 +74,19 @@ uses
     function TSimpleDispatcher.dispatchRequest(const env: ICGIEnvironment) : IResponse;
     var routeHandler : IRouteHandler;
         method : string;
-        uriParts : TStringArray;
+        url : string;
     begin
         try
             method := env.requestMethod();
-            //remove any query string parts
-            uriParts := env.requestUri().split('?');
-            routeHandler := routeCollection.match(method, uriParts[0]);
+            //remove any query string parts to avoid messing up pattern matching
+            url := env.requestUri().stripQueryString();
+            routeHandler := routeCollection.match(method, url);
             result := routeHandler.handleRequest(
                 requestFactory.build(env),
                 responseFactory.build(env)
             );
         finally
             routeHandler := nil;
-            uriParts := nil;
         end;
     end;
 end.

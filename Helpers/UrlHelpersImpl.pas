@@ -21,19 +21,55 @@ uses
 type
 
     (*!------------------------------------------------
-     * Type helper for url encode/decode
+     * Type helper for url string
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
-     * @author BenJones
-     * @credit http://forum.lazarus.freepascal.org/index.php?topic=15088.0
      *-----------------------------------------------*)
     TUrlHelper = type helper(TStringHelper) for string
+    public
+
+        (*!------------------------------------------------
+         * url encode
+         *-------------------------------------------------
+         * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+         * @author BenJones
+         * @credit http://forum.lazarus.freepascal.org/index.php?topic=15088.0
+         *-----------------------------------------------*)
         function urlEncode() : string;
+
+        (*!------------------------------------------------
+         * url decode
+         *-------------------------------------------------
+         * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+         * @author BenJones
+         * @credit http://forum.lazarus.freepascal.org/index.php?topic=15088.0
+         *-----------------------------------------------*)
         function urlDecode() : string;
+
+        (*!------------------------------------------------
+         * remove query string part from URL
+         *-------------------------------------------------
+         * @return url without query string
+         *-----------------------------------------------
+         * Example:
+         * url := 'http://fanoframework.github.io?id=1'
+         * strippedUrl := url.stripQueryString();
+         *
+         * strippedUrl will contains
+         * 'http://fanoframework.github.io'
+         *-----------------------------------------------*)
+        function stripQueryString() : string;
     end;
 
 implementation
 
+    (*!------------------------------------------------
+     * url encode
+     *-------------------------------------------------
+     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+     * @author BenJones
+     * @credit http://forum.lazarus.freepascal.org/index.php?topic=15088.0
+     *-----------------------------------------------*)
     function TUrlHelper.urlEncode() : string;
     const safeMask = ['A'..'Z', '0'..'9', 'a'..'z', '*', '@', '.', '_', '-'];
     var x, len : integer;
@@ -61,6 +97,13 @@ implementation
         end;
     end;
 
+    (*!------------------------------------------------
+     * url decode
+     *-------------------------------------------------
+     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+     * @author BenJones
+     * @credit http://forum.lazarus.freepascal.org/index.php?topic=15088.0
+     *-----------------------------------------------*)
     function TUrlHelper.urlDecode() : string;
     var x, len: integer;
         ch: char;
@@ -95,6 +138,33 @@ implementation
             end;
             //Inc counter
             inc(x);
+        end;
+    end;
+
+
+    (*!------------------------------------------------
+     * remove query string part from URL
+     *-------------------------------------------------
+     * @return url without query string
+     *-----------------------------------------------
+     * Example:
+     * url := 'http://abc.io?id=1'
+     * strippedUrl := url.stripQueryString();
+     *
+     * strippedUrl will contains
+     * 'http://abc.io'
+     *-----------------------------------------------*)
+    function TUrlHelper.stripQueryString() : string;
+    var queryStrPos : integer;
+    begin
+        queryStrPos := pos('?', self);
+        if (queryStrPos = 0) then
+        begin
+            //no query string
+            result := self;
+        end else
+        begin
+            result := system.copy(self, 1, queryStrPos - 1);
         end;
     end;
 
