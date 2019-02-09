@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit GetImpl;
+unit HttpMethodImpl;
 
 interface
 
@@ -217,4 +217,8 @@ resourcestring
         raiseExceptionIfError(result);
     end;
 
+initialization
+    curl_global_init(CURL_GLOBAL_DEFAULT);
+finalization
+    curl_global_cleanup();
 end.
