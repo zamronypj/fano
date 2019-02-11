@@ -1,4 +1,5 @@
 TRouteHandler = RouteHandlerImpl.TRouteHandler;
 
-TSimpleRouteCollectionFactory = SimpleRouteCollectionFactoryImpl.TSimpleRouteCollectionFactory;
-TCombineRouteCollectionFactory = CombineRouteCollectionFactoryImpl.TCombineRouteCollectionFactory;
+TRouterFactory = RouterFactoryImpl.TRouterFactory;
+TSimpleRouterFactory = SimpleRouterFactoryImpl.TSimpleRouterFactory;
+TCombineRouterFactory = CombineRouterFactoryImpl.TCombineRouterFactory;

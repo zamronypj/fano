@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit SimpleRouteCollectionFactoryImpl;
+unit SimpleRouterFactoryImpl;
 
 interface
 
@@ -26,7 +26,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TSimpleRouteCollectionFactory = class(TFactory, IDependencyFactory)
+    TSimpleRouterFactory = class(TFactory, IDependencyFactory)
     public
         function build(const container : IDependencyContainer) : IDependency; override;
     end;
@@ -34,14 +34,14 @@ type
 implementation
 
 uses
-    RouteCollectionImpl,
+    RouterImpl,
     SimpleRegexRouteListImpl,
     RegexImpl,
     HashListImpl;
 
-    function TSimpleRouteCollectionFactory.build(const container : IDependencyContainer) : IDependency;
+    function TSimpleRouterFactory.build(const container : IDependencyContainer) : IDependency;
     begin
-        result := TRouteCollection.create(
+        result := TRouter.create(
             TSimpleRegexRouteList.create(
                 TRegex.create(),
                 THashList.create()
