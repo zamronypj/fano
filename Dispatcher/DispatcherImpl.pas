@@ -18,15 +18,10 @@ uses
     EnvironmentIntf,
     ResponseIntf,
     ResponseFactoryIntf,
-    RequestIntf,
     RequestFactoryIntf,
-    RequestHandlerIntf,
-    RouteHandlerIntf,
     RouteMatcherIntf,
-    MiddlewareChainIntf,
     MiddlewareCollectionIntf,
     MiddlewareChainFactoryIntf,
-    MiddlewareCollectionAwareIntf,
     InjectableObjectImpl;
 
 type
@@ -61,8 +56,13 @@ type
 implementation
 
 uses
+
     sysutils,
-    MiddlewareIntf;
+    RouteHandlerIntf,
+    MiddlewareIntf,
+    MiddlewareCollectionAwareIntf,
+    MiddlewareChainIntf,
+    UrlHelpersImpl;
 
     constructor TDispatcher.create(
         const appBeforeMiddlewares : IMiddlewareCollection;
@@ -95,15 +95,15 @@ uses
     function TDispatcher.dispatchRequest(const env: ICGIEnvironment) : IResponse;
     var routeHandler : IRouteHandler;
         method : string;
-        uriParts : TStringArray;
+        url : string;
         middlewareChain : IMiddlewareChain;
         routeMiddlewares : IMiddlewareCollectionAware;
     begin
         try
             method := env.requestMethod();
-            //remove any query string parts
-            uriParts := env.requestUri().split('?');
-            routeHandler := routeCollection.match(method, uriParts[0]);
+            //remove any query string parts to avoid messing up pattern matching
+            url := env.requestUri().stripQueryString();
+            routeHandler := routeCollection.match(method, url);
             routeMiddlewares := routeHandler.getMiddlewares();
             middlewareChain := middlewareChainFactory.build(
                 appBeforeMiddlewareList,
@@ -120,7 +120,6 @@ uses
             routeHandler := nil;
             middlewareChain := nil;
             routeMiddlewares := nil;
-            uriParts := nil;
         end;
     end;
 end.
