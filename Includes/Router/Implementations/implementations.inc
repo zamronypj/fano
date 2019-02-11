@@ -14,6 +14,6 @@
  *-----------------------------------------------*)
 
 RouteHandlerImpl,
-RouteCollectionFactoryImpl,
-SimpleRouteCollectionFactoryImpl,
-CombineRouteCollectionFactoryImpl,
+RouterFactoryImpl,
+SimpleRouterFactoryImpl,
+CombineRouterFactoryImpl,

@@ -16,7 +16,6 @@ uses
 
     RouteHandlerIntf,
     RouterIntf,
-    RouteCollectionIntf,
     RouteMatcherIntf,
     RouteListIntf,
     RouteDataTypes,
