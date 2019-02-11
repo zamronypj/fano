@@ -60,25 +60,16 @@ uses
         const url : string;
         const data : ISerializeable = nil
     ) : IResponse;
-    var hCurl : pCurl;
-        params : string;
+    var params : string;
     begin
-        hCurl:= curl_easy_init();
-        if assigned(hCurl) then
+        raiseExceptionIfCurlNotInitialized();
+        curl_easy_setopt(hCurl, CURLOPT_URL, [url]);
+        if (data <> nil) then
         begin
-            try
-                curl_easy_setopt(hCurl,CURLOPT_URL, [url]);
-                if (data <> nil) then
-                begin
-                    params := data.serialize();
-                    curl_easy_setopt(hCurl,CURLOPT_POSTFIELDS, [ params ]);
-                end;
-                executeCurl(hCurl);
-            finally
-                //wrap with finally to make sure cleanup is done properly
-                curl_easy_cleanup(hCurl);
-            end;
+            params := data.serialize();
+            curl_easy_setopt(hCurl, CURLOPT_POSTFIELDS, [ params ]);
         end;
+        executeCurl(hCurl);
         result := self;
     end;
 

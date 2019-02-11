@@ -103,21 +103,12 @@ uses
         const url : string;
         const data : ISerializeable = nil
     ) : IResponse;
-    var hCurl : pCurl;
-        fullUrl : string;
+    var fullUrl : string;
     begin
-        hCurl:= curl_easy_init();
-        if assigned(hCurl) then
-        begin
-            try
-              fullUrl := buildUrlWithQueryParams(url, data);
-              curl_easy_setopt(hCurl,CURLOPT_URL, [ fullUrl ]);
-              executeCurl(hCurl);
-            finally
-              //wrap with finally to make sure cleanup is done properly
-              curl_easy_cleanup(hCurl);
-            end;
-        end;
+        raiseExceptionIfCurlNotInitialized();
+        fullUrl := buildUrlWithQueryParams(url, data);
+        curl_easy_setopt(hCurl, CURLOPT_URL, [ fullUrl ]);
+        executeCurl(hCurl);
         result := self;
     end;
 
