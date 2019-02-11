@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit CombineRouteCollectionFactoryImpl;
+unit CombineRouterFactoryImpl;
 
 interface
 
@@ -26,7 +26,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TCombineRouteCollectionFactory = class(TFactory, IDependencyFactory)
+    TCombineRouterFactory = class(TFactory, IDependencyFactory)
     public
         function build(const container : IDependencyContainer) : IDependency; override;
     end;
@@ -34,14 +34,14 @@ type
 implementation
 
 uses
-    RouteCollectionImpl,
+    RouterImpl,
     CombineRegexRouteListImpl,
     RegexImpl,
     HashListImpl;
 
-    function TCombineRouteCollectionFactory.build(const container : IDependencyContainer) : IDependency;
+    function TCombineRouterFactory.build(const container : IDependencyContainer) : IDependency;
     begin
-        result := TRouteCollection.create(
+        result := TRouter.create(
             TCombineRegexRouteList.create(
                 TRegex.create(),
                 THashList.create()
