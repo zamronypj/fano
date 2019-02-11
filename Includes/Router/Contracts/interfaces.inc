@@ -14,5 +14,4 @@
 
 RouteMatcherIntf,
 RouterIntf,
-RouteCollectionIntf,
 RouteHandlerIntf,

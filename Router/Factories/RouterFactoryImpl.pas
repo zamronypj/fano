@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit RouteCollectionFactoryImpl;
+unit RouterFactoryImpl;
 
 interface
 
@@ -25,7 +25,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TRouteCollectionFactory = class(TFactory, IDependencyFactory)
+    TRouterFactory = class(TFactory, IDependencyFactory)
     public
         function build(const container : IDependencyContainer) : IDependency; override;
     end;
@@ -33,12 +33,12 @@ type
 implementation
 
 uses
-    RouteCollectionImpl,
+    RouterImpl,
     RouteListImpl;
 
-    function TRouteCollectionFactory.build(const container : IDependencyContainer) : IDependency;
+    function TRouterFactory.build(const container : IDependencyContainer) : IDependency;
     begin
-        result := TRouteCollection.create(TRouteList.create());
+        result := TRouter.create(TRouteList.create());
     end;
 
 end.
