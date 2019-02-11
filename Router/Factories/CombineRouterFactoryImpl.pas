@@ -39,7 +39,7 @@ uses
     RegexImpl,
     HashListImpl;
 
-    function TCombineRouteCollectionFactory.build(const container : IDependencyContainer) : IDependency;
+    function TCombineRouterFactory.build(const container : IDependencyContainer) : IDependency;
     begin
         result := TRouter.create(
             TCombineRegexRouteList.create(
