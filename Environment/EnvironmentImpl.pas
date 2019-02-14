@@ -29,10 +29,13 @@ type
      *--------------------------------------------------*)
     TCGIEnvironment = class(TInjectableObject, ICGIEnvironment)
     public
-        {-----------------------------------------
-         Retrieve an environment variable
-        ------------------------------------------}
-        function env(const key : string) : string;
+        (*!-----------------------------------------
+         * Retrieve an environment variable
+         *------------------------------------------
+         * @param key name of variable
+         * @return variable value
+         *------------------------------------------*)
+        function env(const key : string) : string; virtual;
 
         {-----------------------------------------
          Retrieve GATEWAY_INTERFACE environment variable
@@ -144,9 +147,12 @@ resourcestring
 
     sErrInvalidContentLength = 'Invalid content length';
 
-    {-----------------------------------------
-     Retrieve an environment variable
-    ------------------------------------------}
+    (*!-----------------------------------------
+     * Retrieve an environment variable
+     *------------------------------------------
+     * @param key name of variable
+     * @return variable value
+     *------------------------------------------*)
     function TCGIEnvironment.env(const key : string) : string;
     begin
         result := getenv(key);
@@ -157,7 +163,7 @@ resourcestring
     ------------------------------------------}
     function TCGIEnvironment.gatewayInterface() : string;
     begin
-        result := getenv('GATEWAY_INTERFACE');
+        result := env('GATEWAY_INTERFACE');
     end;
 
     {-----------------------------------------
@@ -165,7 +171,7 @@ resourcestring
     ------------------------------------------}
     function TCGIEnvironment.remoteAddr() : string;
     begin
-        result := getenv('REMOTE_ADDR');
+        result := env('REMOTE_ADDR');
     end;
 
     {-----------------------------------------
@@ -173,7 +179,7 @@ resourcestring
     ------------------------------------------}
     function TCGIEnvironment.remotePort() : string;
     begin
-        result := getenv('REMOTE_PORT');
+        result := env('REMOTE_PORT');
     end;
 
     {-----------------------------------------
@@ -181,7 +187,7 @@ resourcestring
     ------------------------------------------}
     function TCGIEnvironment.serverAddr() : string;
     begin
-        result := getenv('SERVER_ADDR');
+        result := env('SERVER_ADDR');
     end;
 
     {-----------------------------------------
@@ -189,7 +195,7 @@ resourcestring
     ------------------------------------------}
     function TCGIEnvironment.serverPort() : string;
     begin
-        result := getenv('SERVER_PORT');
+        result := env('SERVER_PORT');
     end;
 
     {-----------------------------------------
@@ -197,7 +203,7 @@ resourcestring
     ------------------------------------------}
     function TCGIEnvironment.documentRoot() : string;
     begin
-        result := getenv('DOCUMENT_ROOT');
+        result := env('DOCUMENT_ROOT');
     end;
 
     {-----------------------------------------
@@ -205,7 +211,7 @@ resourcestring
     ------------------------------------------}
     function TCGIEnvironment.requestMethod() : string;
     begin
-        result := getenv('REQUEST_METHOD');
+        result := env('REQUEST_METHOD');
     end;
 
     {-----------------------------------------
@@ -213,7 +219,7 @@ resourcestring
     ------------------------------------------}
     function TCGIEnvironment.requestScheme() : string;
     begin
-        result := getenv('REQUEST_SCHEME');
+        result := env('REQUEST_SCHEME');
     end;
 
     {-----------------------------------------
@@ -221,7 +227,7 @@ resourcestring
     ------------------------------------------}
     function TCGIEnvironment.requestUri() : string;
     begin
-        result := getenv('REQUEST_URI');
+        result := env('REQUEST_URI');
     end;
 
     {-----------------------------------------
@@ -229,7 +235,7 @@ resourcestring
     ------------------------------------------}
     function TCGIEnvironment.queryString() : string;
     begin
-        result := getenv('QUERY_STRING');
+        result := env('QUERY_STRING');
     end;
 
     {-----------------------------------------
@@ -237,7 +243,7 @@ resourcestring
     ------------------------------------------}
     function TCGIEnvironment.serverName() : string;
     begin
-        result := getenv('SERVER_NAME');
+        result := env('SERVER_NAME');
     end;
 
     {-----------------------------------------
@@ -245,7 +251,7 @@ resourcestring
     ------------------------------------------}
     function TCGIEnvironment.contentType() : string;
     begin
-        result := getenv('CONTENT_TYPE');
+        result := env('CONTENT_TYPE');
     end;
 
     {-----------------------------------------
@@ -253,7 +259,7 @@ resourcestring
     ------------------------------------------}
     function TCGIEnvironment.contentLength() : string;
     begin
-        result := getenv('CONTENT_LENGTH');
+        result := env('CONTENT_LENGTH');
     end;
 
     (*-----------------------------------------
@@ -279,7 +285,7 @@ resourcestring
     ------------------------------------------}
     function TCGIEnvironment.httpHost() : string;
     begin
-        result := getenv('HTTP_HOST');
+        result := env('HTTP_HOST');
     end;
 
     {-----------------------------------------
@@ -287,7 +293,7 @@ resourcestring
     ------------------------------------------}
     function TCGIEnvironment.httpUserAgent() : string;
     begin
-        result := getenv('HTTP_USER_AGENT');
+        result := env('HTTP_USER_AGENT');
     end;
 
     {-----------------------------------------
@@ -295,7 +301,7 @@ resourcestring
     ------------------------------------------}
     function TCGIEnvironment.httpAccept() : string;
     begin
-        result := getenv('HTTP_ACCEPT');
+        result := env('HTTP_ACCEPT');
     end;
 
     {-----------------------------------------
@@ -303,7 +309,7 @@ resourcestring
     ------------------------------------------}
     function TCGIEnvironment.httpAcceptLanguage() : string;
     begin
-        result := getenv('HTTP_ACCEPT_LANGUAGE');
+        result := env('HTTP_ACCEPT_LANGUAGE');
     end;
 
     {-----------------------------------------
@@ -311,6 +317,6 @@ resourcestring
     ------------------------------------------}
     function TCGIEnvironment.httpCookie() : string;
     begin
-        result := getenv('HTTP_COOKIE');
+        result := env('HTTP_COOKIE');
     end;
 end.

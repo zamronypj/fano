@@ -15,6 +15,7 @@ uses
 
     AppIntf,
     ErrorHandlerIntf,
+    EnvironmentWriterIntf,
     sysutils,
     fphttpserver;
 
@@ -29,6 +30,7 @@ type
     TFanoHttpServerApplication = class(TInterfacedObject, IWebApplication)
     private
         appInstance : IWebApplication;
+        envWriter : IEnvironmentWriter;
         errorHandler : IErrorHandler;
         httpHost : string;
         httpPort : integer;
@@ -37,8 +39,8 @@ type
 
         procedure handleRequest(
             sender: TObject;
-            var ARequest: TFPHTTPConnectionRequest;
-            var AResponse : TFPHTTPConnectionResponse
+            var aRequest: TFPHTTPConnectionRequest;
+            var aResponse : TFPHTTPConnectionResponse
         );
 
         procedure handleError(sender: TObject; e : Exception);
@@ -48,12 +50,14 @@ type
          * constructor
          *------------------------------------------------
          * @param app other IWebApplication instance
+         * @param env environment writer
          * @param errHandler error handler
          * @param host hostname/IP address
          * @param port TCP port
          *-----------------------------------------------*)
         constructor create(
             const app : IWebApplication;
+            const env : IEnvironmentWriter;
             const errHandler : IErrorHandler;
             const host : string = 'localhost';
             const port : integer = 80
@@ -84,12 +88,14 @@ implementation
      *-----------------------------------------------*)
     constructor TFanoHttpServerApplication.create(
         const app : IWebApplication;
+        const env : IEnvironmentWriter;
         const errorHandler : IErrorHandler;
         const host : string = 'localhost';
         const port : integer = 80
     );
     begin
         appInstance := app;
+        envWriter := env;
         errorHandler := errHandler;
         httpHost := host;
         httpPort := port;
@@ -102,14 +108,24 @@ implementation
     begin
         inherited destroy();
         appInstance := nil;
+        envWriter := nil;
         errorHandler := nil;
     end;
 
     procedure TFanoHttpServerApplication.setupEnvironment(
-        const ARequest: TFPHTTPConnectionRequest
+        const aRequest: TFPHTTPConnectionRequest
     );
     begin
-        //TODO:setup CGI environment
+        //setup CGI environment
+        envWriter.setEnv('REQUEST_METHOD', aRequest.method);
+        envWriter.setEnv('REQUEST_URI', aRequest.url);
+        envWriter.setEnv('CONTENT_TYPE', aRequest.contentType);
+        envWriter.setEnv('CONTENT_LENGTH', inttostr(aRequest.contentLength));
+        envWriter.setEnv('REMOTE_ADDR', aRequest.remoteAddr);
+        envWriter.setEnv('SCRIPT_NAME', aRequest.scriptName);
+        envWriter.setEnv('HTTP_USER_AGENT', aRequest.userAgent);
+        envWriter.setEnv('HTTP_REFERRER', aRequest.referrer);
+        envWriter.setEnv('HTTP_COOKIE', aRequest.cookie);
     end;
 
     procedure TFanoHttpServerApplication.handleRequest(
