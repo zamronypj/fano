@@ -39,6 +39,7 @@ implementation
 uses
 
     FileLoggerImpl,
+    NullErrorHandlerImpl,
     CompositeErrorHandlerImpl,
     LogErrorHandlerImpl;
 
