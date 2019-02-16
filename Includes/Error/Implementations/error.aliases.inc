@@ -5,3 +5,7 @@ TNullErrorHandler = NullErrorHandlerImpl.TNullErrorHandler;
 TTemplateErrorHandler = TemplateErrorHandlerImpl.TTemplateErrorHandler;
 TLogErrorHandler = LogErrorHandlerImpl.TLogErrorHandler;
 TCompositeErrorHandler = CompositeErrorHandlerImpl.TCompositeErrorHandler;
+
+
+TFileLogErrorHandlerFactory = FileLogErrorHandlerFactoryImpl.TFileLogErrorHandlerFactory;
+TProductionErrorHandlerFactory = ProductionErrorHandlerFactoryImpl.TProductionErrorHandlerFactory;
