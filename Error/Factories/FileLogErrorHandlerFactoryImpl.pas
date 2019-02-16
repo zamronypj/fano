@@ -13,12 +13,19 @@ interface
 {$MODE OBJFPC}
 
 uses
+
     DependencyIntf,
     DependencyContainerIntf,
     FactoryImpl;
 
 type
 
+    (*!------------------------------------------------
+     * factory class for error handler that log
+     * exception  to file and output empty error page
+     *
+     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+     *-------------------------------------------------*)
     TFileLogErrorHandlerFactory = class(TFactory, IDependencyFactory)
     private
         logFilename : string;
@@ -32,6 +39,7 @@ implementation
 uses
 
     FileLoggerImpl,
+    CompositeErrorHandlerImpl,
     LogErrorHandlerImpl;
 
     constructor TFileLogErrorHandlerFactory.create(const filename : string);
@@ -41,7 +49,10 @@ uses
 
     function TFileLogErrorHandlerFactory.build(const container : IDependencyContainer) : IDependency;
     begin
-        result := TLogErrorHandler.create(TFileLogger.create(logFilename));
+        result := TCompositeErrorHandler.create(
+            TLogErrorHandler.create(TFileLogger.create(logFilename)),
+            TNullErrorHandler.create()
+        )
     end;
 
 end.
