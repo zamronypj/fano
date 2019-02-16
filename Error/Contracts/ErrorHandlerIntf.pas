@@ -34,6 +34,7 @@ type
          * @param exc exception that is to be handled
          * @param status HTTP error status, default is HTTP error 500
          * @param msg HTTP error message
+         * @return current instance
          *---------------------------------------------------*)
         function handleError(
             const exc : Exception;
