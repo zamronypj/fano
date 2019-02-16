@@ -72,7 +72,7 @@ implementation
     begin
         result := '------Program Exception--------' + LineEnding +
             'HTTP Status : ' + inttostr(httpStatus) + LineEnding +
-            'HTTP Message : ' + inttostr(httpMsg) + LineEnding;
+            'HTTP Message : ' + httpMsg + LineEnding;
         if (e <> nil) then
         begin
             result := result +
