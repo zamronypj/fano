@@ -50,7 +50,7 @@ uses
         const templateFile : string
     );
     begin
-        logFilename := filename;
+        logFilename := logFile;
         templateFilename := templateFile;
     end;
 
