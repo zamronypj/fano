@@ -14,8 +14,8 @@ interface
 {$H+}
 
 uses
+
     sysutils,
-    DependencyIntf,
     ErrorHandlerIntf,
     BaseErrorHandlerImpl;
 
@@ -27,7 +27,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TTemplateErrorHandler = class(TBaseErrorHandler, IErrorHandler, IDependency)
+    TTemplateErrorHandler = class(TBaseErrorHandler)
     private
         templateStr : string;
     public

@@ -1,2 +1,7 @@
 TErrorHandler = ErrorHandlerImpl.TErrorHandler;
 TAjaxErrorHandler = AjaxErrorHandlerImpl.TAjaxErrorHandler;
+THtmlAjaxErrorHandler = HtmlAjaxErrorHandlerImpl.THtmlAjaxErrorHandler;
+TNullErrorHandler = NullErrorHandlerImpl.TNullErrorHandler;
+TTemplateErrorHandler = TemplateErrorHandlerImpl.TTemplateErrorHandler;
+TLogErrorHandler = LogErrorHandlerImpl.TLogErrorHandler;
+TCompositeErrorHandler = CompositeErrorHandlerImpl.TCompositeErrorHandler;
