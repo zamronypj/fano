@@ -81,7 +81,7 @@ implementation
         end;
 
         result := result + 'Stacktrace:' + LineEnding +
-            + LineEnding + BackTraceStrFunc(ExceptAddr) + LineEnding;
+            LineEnding + BackTraceStrFunc(ExceptAddr) + LineEnding;
 
         frames := ExceptFrames;
         for i := 0 to ExceptFrameCount - 1 do
