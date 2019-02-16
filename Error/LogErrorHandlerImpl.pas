@@ -88,7 +88,7 @@ implementation
         begin
             result := result + BackTraceStrFunc(frames[i]) + LineEnding;
         end;
-        result := result + '-----------------------';
+        result := result + '-----------------------' + LineEnding;
     end;
 
     function TLogErrorHandler.handleError(
