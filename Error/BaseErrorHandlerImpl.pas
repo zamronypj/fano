@@ -16,8 +16,8 @@ interface
 uses
 
     sysutils,
-    DependencyIntf,
-    ErrorHandlerIntf;
+    ErrorHandlerIntf,
+    InjectableObjectImpl;
 
 type
 
@@ -27,7 +27,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *---------------------------------------------------*)
-    TBaseErrorHandler = class(TInterfacedObject, IErrorHandler, IDependency)
+    TBaseErrorHandler = class(TInjectableObject, IErrorHandler)
     public
         (*!---------------------------------------------------
          * handle exception

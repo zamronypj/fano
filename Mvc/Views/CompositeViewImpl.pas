@@ -22,7 +22,7 @@ uses
 type
 
     (*!-----------------------------------------------
-     * view that is compose from several views
+     * view that is compose from two views
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *------------------------------------------------*)
@@ -31,10 +31,21 @@ type
         firstView : IView;
         secondView : IView;
     public
+
+        (*!------------------------------------------------
+         * constructor
+         *------------------------------------------------
+         * @param IView firstViewInst first view
+         * @param IView secondViewInst second view
+         *-----------------------------------------------*)
         constructor create(
             const firstViewInst : IView;
             const secondViewInst : IView
         );
+
+        (*!------------------------------------------------
+         * destructor
+         *-----------------------------------------------*)
         destructor destroy(); override;
 
         (*!------------------------------------------------
@@ -52,6 +63,12 @@ type
 
 implementation
 
+    (*!------------------------------------------------
+     * constructor
+     *------------------------------------------------
+     * @param IView firstViewInst first view
+     * @param IView secondViewInst second view
+     *-----------------------------------------------*)
     constructor TCompositeView.create(
         const firstViewInst : IView;
         const secondViewInst : IView
@@ -61,6 +78,9 @@ implementation
         secondView := secondViewInst;
     end;
 
+    (*!------------------------------------------------
+     * destructor
+     *-----------------------------------------------*)
     destructor TCompositeView.destroy();
     begin
         inherited destroy();

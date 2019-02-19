@@ -27,3 +27,10 @@ TemplateErrorHandlerFactoryImpl,
 
 HtmlAjaxErrorHandlerImpl,
 HtmlAjaxErrorHandlerFactoryImpl,
+
+LogErrorHandlerImpl,
+CompositeErrorHandlerImpl,
+
+FileLogErrorHandlerFactoryImpl,
+ProductionErrorHandlerFactoryImpl,
+
