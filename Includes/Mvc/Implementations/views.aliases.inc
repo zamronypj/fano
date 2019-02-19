@@ -11,8 +11,6 @@ TViewParametersFactory = ViewParametersFactoryImpl.TViewParametersFactory;
 TNullViewParameters = NullViewParametersImpl.TNullViewParameters;
 TNullViewParametersFactory = NullViewParametersFactoryImpl.TNullViewParametersFactory;
 
-TTemplateFileView = TemplateFileViewImpl.TTemplateFileView;
-
 TView = ViewImpl.TView;
 TCompositeView = CompositeViewImpl.TCompositeView;
 TNullView = NullViewImpl.TNullView;
