@@ -15,7 +15,6 @@ interface
 
 uses
     sysutils,
-    DependencyIntf,
     ErrorHandlerIntf,
     BaseErrorHandlerImpl;
 
@@ -25,7 +24,7 @@ type
      default error handler to surpress error message
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
-    TNullErrorHandler = class(TBaseErrorHandler, IErrorHandler, IDependency)
+    TNullErrorHandler = class(TBaseErrorHandler)
     public
         function handleError(
             const exc : Exception;
