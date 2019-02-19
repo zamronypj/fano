@@ -52,7 +52,7 @@ implementation
      * @param templateParserInst template variable parser
      * @param templateReaderInst template file reader
      *-----------------------------------------------*)
-    constructor TTemplate.create(
+    constructor TTemplateView.create(
         const tplPath : string;
         const templateParserInst : ITemplateParser;
         const templateReaderInst : IFileReader
