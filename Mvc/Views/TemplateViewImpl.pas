@@ -15,185 +15,53 @@ interface
 
 uses
 
-    HeadersIntf,
-    ResponseIntf,
-    ResponseStreamIntf,
-    ViewParametersIntf,
-    ViewIntf,
-    TemplateFetcherIntf,
+    ViewImpl,
     TemplateParserIntf,
-    OutputBufferIntf,
-    CloneableIntf;
+    FileReaderIntf;
 
 type
 
     (*!------------------------------------------------
-     * View that can render from a HTML template string
+     * View that can render from a HTML template file
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TTemplateView = class(TInterfacedObject, ICloneable, IView, IResponse, ITemplateFetcher)
-    private
-        templateContent : string;
-        outputBuffer : IOutputBuffer;
-        templateParser : ITemplateParser;
-        httpHeaders : IHeaders;
-    protected
-        function readFileToString(const templatePath : string) : string;
+    TTemplateView = class(TView)
     public
+
+        (*!------------------------------------------------
+         * constructor
+         *------------------------------------------------
+         * @param tplPath template filepath
+         * @param templateParserInst template variable parser
+         * @param templateReaderInst template file reader
+         *-----------------------------------------------*)
         constructor create(
-            const hdrs : IHeaders;
-            const outputBufferInst : IOutputBuffer;
+            const tplPath : string;
             const templateParserInst : ITemplateParser;
-            const templateSrc : string
-        ); virtual;
-
-        destructor destroy(); override;
-
-        (*!------------------------------------
-         * get http headers instance
-         *-------------------------------------
-         * @return header instance
-         *-------------------------------------*)
-        function headers() : IHeaders;
-
-        function render(
-            const viewParams : IViewParameters;
-            const response : IResponse
-        ) : IResponse;
-
-        function write() : IResponse;
-
-        function fetch(
-            const templatePath : string;
-            const viewParams : IViewParameters
-        ) : string;
-
-        function clone() : ICloneable;
-
-        (*!------------------------------------
-         * get response body
-         *-------------------------------------
-         * @return response body
-         *-------------------------------------*)
-        function body() : IResponseStream;
+            const templateReaderInst : IFileReader
+        );
     end;
 
 implementation
 
-uses
-    classes,
-    sysutils;
-
+    (*!------------------------------------------------
+     * constructor
+     *------------------------------------------------
+     * @param tplPath template filepath
+     * @param templateParserInst template variable parser
+     * @param templateReaderInst template file reader
+     *-----------------------------------------------*)
     constructor TTemplateView.create(
-        const hdrs : IHeaders;
-        const outputBufferInst : IOutputBuffer;
+        const tplPath : string;
         const templateParserInst : ITemplateParser;
-        const templateSrc : string
+        const templateReaderInst : IFileReader
     );
     begin
-        httpHeaders := hdrs;
-        outputBuffer := outputBufferInst;
-        templateParser := templateParserInst;
-        templateContent := templateSrc;
-    end;
-
-    destructor TTemplateView.destroy();
-    begin
-        inherited destroy();
-        httpHeaders := nil;
-        outputBuffer := nil;
-        templateParser := nil;
-    end;
-
-    (*!------------------------------------
-     * get http headers instance
-     *-------------------------------------
-     * @return header instance
-     *-------------------------------------*)
-    function TTemplateView.headers() : IHeaders;
-    begin
-        result := httpHeaders;
-    end;
-
-    function TTemplateView.render(
-        const viewParams : IViewParameters;
-        const response : IResponse
-    ) : IResponse;
-    begin
-        outputBuffer.beginBuffering();
-        try
-            writeln(templateParser.parse(templateContent, viewParams));
-        finally
-            outputBuffer.endBuffering();
-        end;
-        httpHeaders.setHeader('Content-Length', intToStr(outputBuffer.size()));
-        result := self;
-    end;
-
-    function TTemplateView.write() : IResponse;
-    begin
-        httpHeaders.writeHeaders();
-        writeln(outputBuffer.flush());
-        result := self;
-    end;
-
-    function TTemplateView.readFileToString(const templatePath : string) : string;
-    var fstream : TFileStream;
-        len : longint;
-    begin
-        //open for read and share but deny write
-        //so if multiple processes of our application access same file
-        //at the same time they stil can open and read it
-        fstream := TFileStream.create(templatePath, fmOpenRead or fmShareDenyWrite);
-        try
-            len := fstream.size;
-            setLength(result, len);
-            //pascal string start from index 1
-            fstream.read(result[1], len);
-        finally
-            fstream.free();
-        end;
-    end;
-
-    function TTemplateView.fetch(
-        const templatePath : string;
-        const viewParams : IViewParameters
-    ) : string;
-    var content :string;
-    begin
-        try
-            content := readFileToString(templatePath);
-            result := templateParser.parse(content, viewParams);
-        except
-            on e : Exception do
-            begin
-                writeln('Read ' + e.message);
-            end;
-        end;
-    end;
-
-    function TTemplateView.clone() : ICloneable;
-    var clonedObj : TTemplateView;
-    begin
-        clonedObj := TTemplateView.create(
-            httpHeaders.clone() as IHeaders,
-            outputBuffer,
-            templateParser,
-            templateContent
+        inherited create(
+            templateParserInst,
+            templateReaderInst.readFile(tplPath)
         );
-        //TODO : copy any property
-        result := clonedObj;
     end;
 
-    (*!------------------------------------
-     * get response body
-     *-------------------------------------
-     * @return response body
-     *-------------------------------------*)
-    function TTemplateView.body() : IResponseStream;
-    begin
-        //TODO: implement view response body
-        result := nil;
-    end;
 end.
