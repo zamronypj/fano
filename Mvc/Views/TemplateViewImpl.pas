@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit TemplateImpl;
+unit TemplateViewImpl;
 
 interface
 
@@ -26,7 +26,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TTemplate = class(TView)
+    TTemplateView = class(TView)
     public
 
         (*!------------------------------------------------

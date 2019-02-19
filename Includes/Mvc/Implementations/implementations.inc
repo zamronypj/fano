@@ -29,6 +29,7 @@ NullViewParametersFactoryImpl,
 
 ViewImpl,
 CompositeViewImpl,
+TemplateImpl,
 NullViewImpl,
 NullViewFactoryImpl,
 ViewPartialImpl,
