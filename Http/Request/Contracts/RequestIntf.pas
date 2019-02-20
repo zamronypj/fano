@@ -15,6 +15,7 @@ interface
 
 uses
 
+    AjaxAwareIntf,
     ListIntf,
     UploadedFileIntf,
     UploadedFileCollectionIntf;
@@ -27,7 +28,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    IRequest = interface
+    IRequest = interface(IAjaxAware)
         ['{32913245-599A-4BF4-B25D-7E2EF349F7BB}']
 
         (*!------------------------------------------------
@@ -97,13 +98,6 @@ type
          *         upload
          *------------------------------------------------*)
         function getUploadedFiles() : IUploadedFileCollection;
-
-        (*!------------------------------------------------
-         * test if current request is coming from AJAX request
-         *-------------------------------------------------
-         * @return true if ajax request false otherwise
-         *------------------------------------------------*)
-        function isXhr() : boolean;
     end;
 
 implementation
