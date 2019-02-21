@@ -16,7 +16,7 @@ interface
 uses
 
     SysUtils,
-    RequestIntf,
+    AjaxAwareIntf,
     ErrorHandlerIntf,
     BaseErrorHandlerImpl;
 
@@ -30,19 +30,26 @@ type
      *---------------------------------------------------*)
     THtmlAjaxErrorHandler = class(TBaseErrorHandler)
     private
-        request : IRequest;
+        ajaxDetector : IAjaxAware;
         ajaxErrorHandler : IErrorHandler;
         htmlErrorHandler : IErrorHandler;
+
+        (*!---------------------------------------------------
+         * get error handler based on AJAX or not
+         *----------------------------------------------------
+         * @param IErrorHandler error handler to use
+         *---------------------------------------------------*)
+        function getErrorHandler() : IErrorHandler;
     public
         (*!---------------------------------------------------
          * constructor
          *----------------------------------------------------
-         * @param requestInst request instance
+         * @param ajaxDetectorInst instance class that can detect AJAX
          * @param ajaxErrorHandler error handler for ajax request
          * @param htmlErrorHandler error handler for other request
          *---------------------------------------------------*)
         constructor create(
-            const requestInst : IRequest;
+            const ajaxDetectorInst : IAjaxAware;
             const ajaxErrHandler : IErrorHandler;
             const htmlErrHandler : IErrorHandler
         );
@@ -71,17 +78,17 @@ implementation
     (*!---------------------------------------------------
      * constructor
      *----------------------------------------------------
-     * @param request request instance
+     * @param ajaxDetectorInst instance class that can detect AJAX
      * @param ajaxErrorHandler error handler for ajax request
      * @param htmlErrorHandler error handler for other request
      *---------------------------------------------------*)
     constructor THtmlAjaxErrorHandler.create(
-        const requestInst : IRequest;
+        const ajaxDetectorInst : IAjaxAware;
         const ajaxErrHandler : IErrorHandler;
         const htmlErrHandler : IErrorHandler
     );
     begin
-        request := requestInst;
+        ajaxDetector := ajaxDetectorInst;
         ajaxErrorHandler := ajaxErrHandler;
         htmlErrorHandler := htmlErrHandler;
     end;
@@ -89,9 +96,25 @@ implementation
     destructor THtmlAjaxErrorHandler.destroy();
     begin
         inherited destroy();
-        request := nil;
+        ajaxDetector := nil;
         ajaxErrorHandler := nil;
         htmlErrorHandler := nil;
+    end;
+
+    (*!---------------------------------------------------
+     * get error handler based on AJAX or not
+     *----------------------------------------------------
+     * @param IErrorHandler error handler to use
+     *---------------------------------------------------*)
+    function THtmlAjaxErrorHandler.getErrorHandler() : IErrorHandler;
+    begin
+        if (ajaxDetector.isXhr()) then
+        begin
+            result := ajaxErrorHandler;
+        end else
+        begin
+            result := htmlErrorHandler;
+        end;
     end;
 
     (*!---------------------------------------------------
@@ -106,16 +129,8 @@ implementation
         const status : integer = 500;
         const msg : string  = 'Internal Server Error'
     ) : IErrorHandler;
-    var errHandler : IErrorHandler;
     begin
-        if (request.isXhr()) then
-        begin
-            errHandler := ajaxErrorHandler;
-        end else
-        begin
-            errHandler := htmlErrorHandler;
-        end;
-        errHandler.handleError(exc, status, msg);
+        getErrorHandler().handleError(exc, status, msg);
         result := self;
     end;
 end.
