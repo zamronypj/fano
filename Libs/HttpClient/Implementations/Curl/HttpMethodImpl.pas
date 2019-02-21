@@ -142,7 +142,7 @@ resourcestring
      * @param fStream stream instance that will be used to
      *                store data coming from server
      *-----------------------------------------------*)
-    constructor THttpMethod.create(const fStream : IStreamAdapter);
+    constructor THttpMethod.create(const fStream : IResponseStream);
     begin
         //libcurl only knows raw pointer, so we use raw pointer to hold
         //instance of IStreamAdapter interface. But because typecast interface
@@ -167,7 +167,7 @@ resourcestring
         //instance of IStreamAdapter interface. But because typecast interface
         //to pointer does not do automatic reference counting,
         //we must decrement reference count manually by calling _Release() method
-        IStreamAdapter(pStream)._release();
+        IResponseStream(pStream)._release();
         pStream := nil;
 
         streamInst := nil;
