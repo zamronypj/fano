@@ -56,7 +56,7 @@ uses
     function THttpGetFactory.build(const container : IDependencyContainer) : IDependency;
     begin
         result := THttpGet.create(
-            TResponseStream.create(TStringStream.create(''));
+            TResponseStream.create(TStringStream.create(''))
         );
     end;
 end.
