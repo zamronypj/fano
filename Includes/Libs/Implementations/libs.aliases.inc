@@ -14,4 +14,4 @@ EInvalidStream = EInvalidStreamImpl.EInvalidStream;
 TStdInReader = StdInReaderImpl.TStdInReader;
 TSimpleStdInReader = SimpleStdInReaderImpl.TSimpleStdInReader;
 
-THttpGetClient = HttpGetImpl.THttpGetClient;
+THttpGet = HttpGetImpl.THttpGet;

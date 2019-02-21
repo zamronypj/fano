@@ -17,10 +17,9 @@ uses
 
     libcurl,
     InjectableObjectImpl,
-    HttpClientIntf,
     ResponseIntf,
     SerializeableIntf,
-    StreamAdapterIntf;
+    ResponseStreamIntf;
 
 type
 
@@ -29,7 +28,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    THttpMethod = class(TInjectableObject, IHttpClient)
+    THttpMethod = class(TInjectableObject)
     private
 
         (*!------------------------------------------------
@@ -58,6 +57,12 @@ type
         pStream : pointer;
 
         (*!------------------------------------------------
+         * internal variable that holds stream of data coming
+         * from server
+         *-----------------------------------------------*)
+        streamInst : IResponseStream;
+
+        (*!------------------------------------------------
          * raise exception if curl not initialized
          *-----------------------------------------------*)
         procedure raiseExceptionIfCurlNotInitialized();
@@ -77,7 +82,7 @@ type
          * @param fStream stream instance that will be used to
          *                store data coming from server
          *-----------------------------------------------*)
-        constructor create(const fStream : IStreamAdapter);
+        constructor create(const fStream : IResponseStream);
 
         (*!------------------------------------------------
          * destructor
@@ -110,12 +115,12 @@ resourcestring
      *-----------------------------------------------*)
     function writeToStream(
         dataFromServer : pointer;
-        size : size_t;
-        nmemb: size_t;
+        size : qword;
+        nmemb: qword;
         ptrStream : pointer
-    ) : size_t; cdecl;
+    ) : qword; cdecl;
     begin
-        result := IStreamAdapter(ptrStream).write(ptr^, size * nmemb);
+        result := IResponseStream(ptrStream).write(dataFromServer^, size * nmemb);
     end;
 
     (*!------------------------------------------------
@@ -146,6 +151,8 @@ resourcestring
         pStream := pointer(fStream);
         fStream._addRef();
 
+        streamInst := fStream;
+
         hCurl := initCurl();
     end;
 
@@ -162,6 +169,8 @@ resourcestring
         //we must decrement reference count manually by calling _Release() method
         IStreamAdapter(pStream)._release();
         pStream := nil;
+
+        streamInst := nil;
 
         curl_easy_cleanup(hCurl);
     end;
@@ -189,7 +198,7 @@ resourcestring
         begin
             //operation fail, raise exception
             errMsg := curl_easy_strerror(errCode);
-            raise EHttpClientErrorImpl.create(errMsg);
+            raise EHttpClientError.create(errMsg);
         end;
     end;
 

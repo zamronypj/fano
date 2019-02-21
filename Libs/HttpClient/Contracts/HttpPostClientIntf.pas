@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit HttpClientIntf;
+unit HttpPostClientIntf;
 
 interface
 
@@ -16,7 +16,7 @@ interface
 uses
 
     SerializeableIntf,
-    ResponseIntf;
+    ResponseStreamIntf;
 
 type
 
@@ -39,7 +39,7 @@ type
         function post(
             const url : string;
             const data : ISerializeable = nil
-        ) : IResponse;
+        ) : IResponseStream;
 
     end;
 

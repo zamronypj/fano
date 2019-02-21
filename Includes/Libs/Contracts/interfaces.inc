@@ -18,4 +18,4 @@ FileReaderIntf,
 StreamAdapterIntf,
 StdInReaderIntf,
 
-HttpGetIntf,
+HttpGetClientIntf,

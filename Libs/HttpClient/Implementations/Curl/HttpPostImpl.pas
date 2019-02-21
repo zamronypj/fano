@@ -16,7 +16,7 @@ interface
 uses
 
     HttpMethodImpl,
-    ResponseIntf,
+    ResponseStreamIntf,
     SerializeableIntf;
 
 type

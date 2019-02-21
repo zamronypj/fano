@@ -16,7 +16,8 @@ interface
 uses
 
     HttpMethodImpl,
-    ResponseIntf,
+    HttpGetClientIntf,
+    ResponseStreamIntf,
     SerializeableIntf;
 
 type
@@ -26,7 +27,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    THttpGet = class(THttpMethod)
+    THttpGet = class(THttpMethod, IHttpGetClient)
     private
         (*!------------------------------------------------
          * append query params
@@ -63,7 +64,7 @@ type
         function get(
             const url : string;
             const data : ISerializeable = nil
-        ) : IResponse; override;
+        ) : IResponseStream;
 
     end;
 
@@ -71,7 +72,11 @@ implementation
 
 uses
 
-    libcurl;
+    libcurl,
+    ResponseImpl,
+    HeadersImpl,
+    HashListImpl,
+    ResponseStreamImpl;
 
     (*!------------------------------------------------
      * append query params
@@ -129,17 +134,17 @@ uses
      *-----------------------------------------------
      * @credit: https://github.com/graemeg/freepascal/blob/master/packages/libcurl/examples/testcurl.pp
      *-----------------------------------------------*)
-    function THttpGet.send(
+    function THttpGet.get(
         const url : string;
         const data : ISerializeable = nil
-    ) : IResponse;
-    var fullUrl : string;
+    ) : IResponseStream;
+    var fullUrl : PChar;
     begin
         raiseExceptionIfCurlNotInitialized();
-        fullUrl := buildUrlWithQueryParams(url, data);
+        fullUrl := PChar(buildUrlWithQueryParams(url, data));
         curl_easy_setopt(hCurl, CURLOPT_URL, [ fullUrl ]);
         executeCurl(hCurl);
-        result := self;
+        result := streamInst;
     end;
 
 end.
