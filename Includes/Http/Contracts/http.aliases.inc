@@ -1,3 +1,4 @@
+IAjaxAware = AjaxAwareIntf.IAjaxAware;
 IHeaders = HeadersIntf.IHeaders;
 IRequest = RequestIntf.IRequest;
 IResponse = ResponseIntf.IResponse;
