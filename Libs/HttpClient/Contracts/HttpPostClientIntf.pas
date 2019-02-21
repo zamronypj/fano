@@ -26,8 +26,8 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    IHttpClient = interface
-        ['{944E1D4F-08BA-446C-A662-9C1EC27DEF74}']
+    IHttpPostClient = interface
+        ['{5EF1CEAC-CF87-4EBE-AE19-7701EA150A61}']
 
         (*!------------------------------------------------
          * send HTTP GET request
@@ -36,34 +36,11 @@ type
          * @param data data related to this request
          * @return HTTP response
          *-----------------------------------------------*)
-        function get(
-            const url : string;
-            const data : ISerializeable = nil
-        ) : IResponse;
-
-        (*!------------------------------------------------
-         * send HTTP POST request
-         *-----------------------------------------------
-         * @param url url to send request
-         * @param data data related to this request
-         * @return HTTP current instance
-         *-----------------------------------------------*)
         function post(
             const url : string;
             const data : ISerializeable = nil
         ) : IResponse;
 
-        (*!------------------------------------------------
-         * send HTTP PUT request
-         *-----------------------------------------------
-         * @param url url to send request
-         * @param data data related to this request
-         * @return HTTP current instance
-         *-----------------------------------------------*)
-        function put(
-            const url : string;
-            const data : ISerializeable = nil
-        ) : IResponse;
     end;
 
 implementation
