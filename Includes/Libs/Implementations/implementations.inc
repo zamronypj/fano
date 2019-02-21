@@ -29,3 +29,5 @@ EInvalidStreamImpl,
 
 StdInReaderImpl,
 SimpleStdInReaderImpl,
+
+HttpGetImpl,

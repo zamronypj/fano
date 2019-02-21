@@ -17,3 +17,5 @@ LoggerIntf,
 FileReaderIntf,
 StreamAdapterIntf,
 StdInReaderIntf,
+
+HttpGetIntf,
