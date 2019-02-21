@@ -29,6 +29,18 @@ type
     THttpGet = class(THttpMethod)
     private
         (*!------------------------------------------------
+         * append query params
+         *-----------------------------------------------
+         * @param url url to send request
+         * @param params query string
+         * @return url with query string appended
+         *-----------------------------------------------*)
+        function appendQueryParams(
+            const url : string;
+            const params : string
+        ) : string;
+
+        (*!------------------------------------------------
          * build URL with query string appended
          *-----------------------------------------------
          * @param url url to send request
@@ -48,7 +60,7 @@ type
          * @param data data related to this request
          * @return response from server
          *-----------------------------------------------*)
-        function send(
+        function get(
             const url : string;
             const data : ISerializeable = nil
         ) : IResponse; override;
@@ -60,6 +72,29 @@ implementation
 uses
 
     libcurl;
+
+    (*!------------------------------------------------
+     * append query params
+     *-----------------------------------------------
+     * @param url url to send request
+     * @param params query string
+     * @return url with query string appended
+     *-----------------------------------------------*)
+    function THttpGet.appendQueryParams(
+        const url : string;
+        const params : string
+    ) : string;
+    begin
+        if (pos('?', url) > 0) then
+        begin
+            //if we get here URL already contains query parameters
+            result := url + params;
+        end else
+        begin
+            //if we get here, URL has no query parameters
+            result := url + '?' + params;
+        end;
+    end;
 
     (*!------------------------------------------------
      * build URL with query string appended
@@ -78,14 +113,9 @@ uses
         if (data <> nil) then
         begin
             params := data.serialize();
-            if (pos('?', result) > 0) then
+            if (length(params) > 0) then
             begin
-                //if we get here URL already contains query parameters
-                result := result + params;
-            end else
-            begin
-                //if we get here, URL has no query parameters
-                result := result + '?' + params;
+                result := appendQueryParams(result, params);
             end;
         end;
     end;

@@ -84,18 +84,6 @@ type
          *-----------------------------------------------*)
         destructor destroy(); override;
 
-        (*!------------------------------------------------
-         * send HTTP request
-         *-----------------------------------------------
-         * @param url url to send request
-         * @param data data related to this request
-         * @return current instance
-         *-----------------------------------------------*)
-        function send(
-            const url : string;
-            const data : ISerializeable = nil
-        ) : IResponse; virtual; abstract;
-
     end;
 
 implementation
