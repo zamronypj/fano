@@ -17,7 +17,6 @@ uses
 
     libcurl,
     InjectableObjectImpl,
-    ResponseIntf,
     SerializeableIntf,
     ResponseStreamIntf;
 
