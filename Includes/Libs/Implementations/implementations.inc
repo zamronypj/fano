@@ -31,3 +31,4 @@ StdInReaderImpl,
 SimpleStdInReaderImpl,
 
 HttpGetImpl,
+HttpGetFactoryImpl,
