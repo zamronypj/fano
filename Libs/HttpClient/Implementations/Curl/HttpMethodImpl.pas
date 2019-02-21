@@ -70,10 +70,10 @@ type
         (*!------------------------------------------------
          * execute curl operation and raise exception if fail
          *-----------------------------------------------
-         * @param hCurl curl handle
+         * @param hndCurl curl handle
          * @return errCode curl error code
          *-----------------------------------------------*)
-        function executeCurl(const hCurl : pCurl) : CurlCode;
+        function executeCurl(const hndCurl : pCurl) : CurlCode;
     public
 
         (*!------------------------------------------------
@@ -205,12 +205,12 @@ resourcestring
     (*!------------------------------------------------
      * execute curl operation and raise exception if fail
      *--------------------------------------------------
-     * @param hCurl curl handle
+     * @param hndCurl curl handle
      * @return errCode curl error code
      *---------------------------------------------------*)
-    function THttpMethod.executeCurl(const hCurl : pCurl) : CurlCode;
+    function THttpMethod.executeCurl(const hndCurl : pCurl) : CurlCode;
     begin
-        result := curl_easy_perform(hCurl);
+        result := curl_easy_perform(hndCurl);
         raiseExceptionIfError(result);
     end;
 
