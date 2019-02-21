@@ -35,6 +35,13 @@ type
          * @return number of bytes actually written
          *-------------------------------------*)
         function write(const buffer : string) : int64; overload;
+
+        (*!------------------------------------
+         * read stream to string
+         *-------------------------------------
+         * @return string
+         *-------------------------------------*)
+        function read() : string; overload;
     end;
 
 implementation
