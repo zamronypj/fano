@@ -13,3 +13,6 @@ EInvalidStream = EInvalidStreamImpl.EInvalidStream;
 
 TStdInReader = StdInReaderImpl.TStdInReader;
 TSimpleStdInReader = SimpleStdInReaderImpl.TSimpleStdInReader;
+
+THttpGet = HttpGetImpl.THttpGet;
+THttpGetFactory = HttpGetFactoryImpl.THttpGetFactory;

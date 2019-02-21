@@ -3,3 +3,5 @@ ILogger = LoggerIntf.ILogger;
 IFileReader = FileReaderIntf.IFileReader;
 IStreamAdapter = StreamAdapterIntf.IStreamAdapter;
 IStdInReader = StdInReaderIntf.IStdInReader;
+
+IHttpGetClient = HttpGetClientIntf.IHttpGetClient;
