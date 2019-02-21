@@ -37,6 +37,13 @@ type
          * @return number of bytes actually written
          *-------------------------------------*)
         function write(const buffer : string) : int64; overload;
+
+        (*!------------------------------------
+         * read stream to string
+         *-------------------------------------
+         * @return string
+         *-------------------------------------*)
+        function read() : string; overload;
     end;
 
 implementation
@@ -51,4 +58,17 @@ implementation
     begin
         result := self.write(buffer[1], length(buffer));
     end;
+
+    (*!------------------------------------
+     * read stream to string
+     *-------------------------------------
+     * @return string
+     *-------------------------------------*)
+    function TResponseStream.read() : string;
+    begin
+        self.seek(0);
+        setLength(result, self.size());
+        self.read(result[1], length(result));
+    end;
+
 end.
