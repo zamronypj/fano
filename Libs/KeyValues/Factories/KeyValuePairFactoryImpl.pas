@@ -49,6 +49,6 @@ uses
      *---------------------------------------------------*)
     function TKeyValuePairFactory.build(const container : IDependencyContainer) : IDependency;
     begin
-        result := TKeyValuePairFactory.create();
+        result := TKeyValuePair.create();
     end;
 end.
