@@ -185,22 +185,21 @@ uses
      *-----------------------------------------------*)
     function TKeyValuePair.serializeIfNotEmpty(const itemSize : integer) : string;
     var indx : integer;
-        key : shortstring;
-        val, urlEncodeKey, urlEncodeVal : string;
+        urlEncodeKey, urlEncodeVal : string;
     begin
         result := '';
         for indx := 0 to itemSize-2 do
         begin
             urlEncodeKey := keyValueMap.keys[indx];
             urlEncodeKey := urlEncodeKey.urlEncode();
-            val := keyValueMap.data[indx];
-            urlEncodeVal := val.urlEncode();
+            urlEncodeVal := keyValueMap.data[indx];
+            urlEncodeVal := urlEncodeVal.urlEncode();
             result := result + urlEncodeKey + '=' + urlEncodeVal + '&';
         end;
         urlEncodeKey := keyValueMap.keys[itemSize-1];
         urlEncodeKey := urlEncodeKey.urlEncode();
-        val := keyValueMap.data[itemSize-1];
-        urlEncodeVal := val.urlEncode();
+        urlEncodeVal := keyValueMap.data[itemSize-1];
+        urlEncodeVal := urlEncodeVal.urlEncode();
         result := result + urlEncodeKey + '=' + urlEncodeVal;
     end;
 
