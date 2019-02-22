@@ -23,11 +23,11 @@ type
     IModelParams = interface
         ['{6CB5843D-56E3-4012-AB5B-7A354A0EE5D3}']
 
-        function write(const key : shortstring; const value : string) : IModelParams; overload;
-        function write(const key : shortstring; const value : integer) : IModelParams; overload;
+        function writeString(const key : shortstring; const value : string) : IModelParams; overload;
+        function writeInteger(const key : shortstring; const value : integer) : IModelParams; overload;
 
-        function read(const key : shortstring) : string; overload;
-        function read(const key : shortstring) : integer; overload;
+        function readString(const key : shortstring) : string; overload;
+        function readInteger(const key : shortstring) : integer; overload;
     end;
 
 implementation
