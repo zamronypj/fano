@@ -16,7 +16,8 @@ interface
 uses
 
     KeyValueMapImpl,
-    KeyValuePairIntf;
+    KeyValuePairIntf,
+    SerializeableIntf;
 
 type
 
@@ -26,9 +27,20 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TKeyValuePair = class(TInterfacedObject, IKeyValuePair)
+    TKeyValuePair = class(TInterfacedObject, IKeyValuePair, ISerializeable)
     private
         keyValueMap : TKeyValueMap;
+
+        (*!------------------------------------------------
+         * serialize key value if not empty
+         *-----------------------------------------------
+         * Note :
+         * This turn key0=value0, key1=value=1,.. into
+         * string `key0=value0&key1=value=1&..`
+         *-----------------------------------------------
+         * @return serialized string
+         *-----------------------------------------------*)
+        function serializeIfNotEmpty(const itemSize : integer) : string;
     public
 
         (*!------------------------------------------------
@@ -74,9 +86,24 @@ type
          * @throws EKeyNotFound exception if not set
          *-----------------------------------------------*)
         function unset(const key : shortstring) : IKeyValuePair;
+
+        (*!------------------------------------------------
+         * serialize key value
+         *-----------------------------------------------
+         * Note :
+         * This turn key0=value0, key1=value=1,.. into
+         * string `key0=value0&key1=value=1&..`
+         *-----------------------------------------------
+         * @return serialized string
+         *-----------------------------------------------*)
+        function serialize() : string;
     end;
 
 implementation
+
+uses
+
+    UrlHelpersImpl,
 
     (*!------------------------------------------------
      * constructor
@@ -146,4 +173,53 @@ implementation
         result := self;
     end;
 
+    (*!------------------------------------------------
+     * serialize key value if not empty
+     *-----------------------------------------------
+     * Note :
+     * This turn key0=value0, key1=value=1,.. into
+     * string `key0=value0&key1=value=1&..`
+     *-----------------------------------------------
+     * @return serialized string
+     *-----------------------------------------------*)
+    function TKeyValuePair.serializeIfNotEmpty(const itemSize : integer) : string;
+    var indx : integer;
+        key : shortstring;
+        val, urlEncodeKey, urlEncodeVal : string;
+    begin
+        result := '';
+        for indx := 0 to itemSize-2 do
+        begin
+            key := keyValueMap.keys[indx];
+            val := keyValueMap.data[indx];
+            urlEncodeKey := key.urlEncode();
+            urlEncodeVal := val.urlEncode();
+            result := result + urlEncodeKey + '=' + urlEncodeVal + '&';
+        end;
+        key := keyValueMap.keys[itemSize-1];
+        val := keyValueMap.data[itemSize-1];
+        urlEncodeKey := key.urlEncode();
+        urlEncodeVal := val.urlEncode();
+        result := result + urlEncodeKey + '=' + urlEncodeVal;
+    end;
+
+    (*!------------------------------------------------
+     * serialize key value
+     *-----------------------------------------------
+     * Note :
+     * This turn key0=value0, key1=value=1,.. into
+     * string `key0=value0&key1=value=1&..`
+     *-----------------------------------------------
+     * @return serialized string
+     *-----------------------------------------------*)
+    function TKeyValuePair.serialize() : string;
+    var itemSize : integer;
+    begin
+        result := '';
+        itemSize := keyValueMap.ItemSize;
+        if (itemSize > 0) then
+        begin
+            result := serializeIfNotEmpty(itemSize);
+        end;
+    end;
 end.
