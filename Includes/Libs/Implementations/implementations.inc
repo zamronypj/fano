@@ -32,3 +32,6 @@ SimpleStdInReaderImpl,
 
 HttpGetImpl,
 HttpGetFactoryImpl,
+
+KeyValuePairImpl,
+KeyValuePairFactoryImpl,

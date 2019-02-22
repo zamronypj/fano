@@ -19,3 +19,5 @@ StreamAdapterIntf,
 StdInReaderIntf,
 
 HttpGetClientIntf,
+
+KeyValuePairIntf,

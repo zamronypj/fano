@@ -16,3 +16,6 @@ TSimpleStdInReader = SimpleStdInReaderImpl.TSimpleStdInReader;
 
 THttpGet = HttpGetImpl.THttpGet;
 THttpGetFactory = HttpGetFactoryImpl.THttpGetFactory;
+
+TKeyValuePair = KeyValuePairImpl.TKeyValuePair;
+TKeyValuePairFactory = KeyValuePairFactoryImpl.TKeyValuePairFactory;
