@@ -64,6 +64,7 @@ uses
     var params : string;
     begin
         raiseExceptionIfCurlNotInitialized();
+        streamInst.reset();
         curl_easy_setopt(hCurl, CURLOPT_URL, [ PChar(url) ]);
         if (data <> nil) then
         begin

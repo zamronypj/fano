@@ -141,6 +141,7 @@ uses
     var fullUrl : PChar;
     begin
         raiseExceptionIfCurlNotInitialized();
+        streamInst.reset();
         fullUrl := PChar(buildUrlWithQueryParams(url, data));
         curl_easy_setopt(hCurl, CURLOPT_URL, [ fullUrl ]);
         executeCurl(hCurl);

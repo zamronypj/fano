@@ -58,6 +58,13 @@ type
          * to stream size-1
          *-------------------------------------*)
         function seek(const offset : int64) : int64;
+
+        (*!------------------------------------------------
+         * reset stream
+         *-----------------------------------------------
+         * @return current instance
+         *-----------------------------------------------*)
+        function reset() : IStreamAdapter;
     end;
 
 implementation
