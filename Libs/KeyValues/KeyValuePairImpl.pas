@@ -191,15 +191,15 @@ uses
         result := '';
         for indx := 0 to itemSize-2 do
         begin
-            key := keyValueMap.keys[indx];
+            urlEncodeKey := keyValueMap.keys[indx];
+            urlEncodeKey := urlEncodeKey.urlEncode();
             val := keyValueMap.data[indx];
-            urlEncodeKey := key.urlEncode();
             urlEncodeVal := val.urlEncode();
             result := result + urlEncodeKey + '=' + urlEncodeVal + '&';
         end;
-        key := keyValueMap.keys[itemSize-1];
+        urlEncodeKey := keyValueMap.keys[itemSize-1];
+        urlEncodeKey := urlEncodeKey.urlEncode();
         val := keyValueMap.data[itemSize-1];
-        urlEncodeKey := key.urlEncode();
         urlEncodeVal := val.urlEncode();
         result := result + urlEncodeKey + '=' + urlEncodeVal;
     end;
