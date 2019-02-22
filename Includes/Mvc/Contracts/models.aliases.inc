@@ -1,4 +1,4 @@
-IModelReadOnlyData = ModelReadOnlyDataIntf.IModelReadOnlyData;
-IModelWriteOnlyData = ModelWriteOnlyDataIntf.IModelWriteOnlyData;
+IModelResultSet = ModelResultSetIntf.IModelResultSet;
+IModelParams = ModelParamsIntf.IModelParams;
 IModelReader = ModelReaderIntf.IModelReader;
 IModelWriter = ModelWriterIntf.IModelWriter;

@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit ModelWriteOnlyDataIntf;
+unit ModelParamsIntf;
 
 interface
 
@@ -16,15 +16,18 @@ interface
 type
 
     (*!------------------------------------------------
-     * interface that store model data
+     * interface that store model parameter data
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    IModelWriteOnlyData = interface
+    IModelParams = interface
         ['{6CB5843D-56E3-4012-AB5B-7A354A0EE5D3}']
 
-        function writeString(const key : string; const value : string) : IModelWriteOnlyData;
-        function writeInteger(const key : string; const value : integer) : IModelWriteOnlyData;
+        function write(const key : shortstring; const value : string) : IModelParams; overload;
+        function write(const key : shortstring; const value : integer) : IModelParams; overload;
+
+        function read(const key : shortstring) : string; overload;
+        function read(const key : shortstring) : integer; overload;
     end;
 
 implementation
