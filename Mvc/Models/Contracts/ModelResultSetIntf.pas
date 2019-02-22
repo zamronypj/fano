@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit ModelReadOnlyDataIntf;
+unit ModelResultSetIntf;
 
 interface
 
@@ -20,7 +20,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    IModelReadOnlyData = interface
+    IModelResultSet = interface
         ['{DCC3EA21-DC74-46A2-BF54-54621B736E49}']
 
         (*!------------------------------------------------

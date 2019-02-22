@@ -55,7 +55,7 @@ type
     public
 
         (*!------------------------------------------------
-         * send HTTP request
+         * send HTTP GET request
          *-----------------------------------------------
          * @param url url to send request
          * @param data data related to this request
@@ -126,7 +126,7 @@ uses
     end;
 
     (*!------------------------------------------------
-     * send HTTP request
+     * send HTTP GET request
      *-----------------------------------------------
      * @param url url to send request
      * @param data data related to this request
