@@ -25,7 +25,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TKeyValueMap = specialize TFGMap<shortstring, string>;
+    TKeyValueMap = specialize TFPGMap<shortstring, string>;
 
 implementation
 end.
