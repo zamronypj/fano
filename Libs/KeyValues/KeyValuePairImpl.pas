@@ -17,7 +17,8 @@ uses
 
     KeyValueMapImpl,
     KeyValuePairIntf,
-    SerializeableIntf;
+    SerializeableIntf,
+    InjectableObjectImpl;
 
 type
 
@@ -27,7 +28,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TKeyValuePair = class(TInterfacedObject, IKeyValuePair, ISerializeable)
+    TKeyValuePair = class(TinjectableObject, IKeyValuePair, ISerializeable)
     private
         keyValueMap : TKeyValueMap;
 
