@@ -85,6 +85,13 @@ type
          * to stream size-1
          *-------------------------------------*)
         function seek(const offset : int64) : int64;
+
+        (*!------------------------------------------------
+         * reset stream
+         *-----------------------------------------------
+         * @return current instance
+         *-----------------------------------------------*)
+        function reset() : IStreamAdapter;
     end;
 
 implementation
@@ -179,5 +186,16 @@ resourcestring
     function TStreamAdapter.seek(const offset : int64) : int64;
     begin
         result := actualStream.seek(offset, soFromBeginning);
+    end;
+
+    (*!------------------------------------------------
+     * reset stream
+     *-----------------------------------------------
+     * @return current instance
+     *-----------------------------------------------*)
+    function TStreamAdapter.reset() : IStreamAdapter;
+    begin
+        actualStream.size := 0;
+        result := self;
     end;
 end.

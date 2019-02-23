@@ -16,7 +16,8 @@ interface
 uses
 
     HttpMethodImpl,
-    ResponseIntf,
+    HttpPostClientIntf,
+    ResponseStreamIntf,
     SerializeableIntf;
 
 type
@@ -26,7 +27,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    THttpPost = class(THttpMethod)
+    THttpPost = class(THttpMethod, IHttpPostClient)
     public
 
         (*!------------------------------------------------
@@ -36,10 +37,10 @@ type
          * @param context object instance related to this message
          * @return response from server
          *-----------------------------------------------*)
-        function send(
+        function post(
             const url : string;
             const context : ISerializeable = nil
-        ) : IResponse; override;
+        ) : IResponse;
 
     end;
 
@@ -50,27 +51,28 @@ uses
     libcurl;
 
     (*!------------------------------------------------
-     * send HTTP request
+     * send HTTP POST request
      *-----------------------------------------------
      * @param url url to send request
      * @param data data related to this request
      * @return current instance
      *-----------------------------------------------*)
-    function THttpPost.send(
+    function THttpPost.post(
         const url : string;
         const data : ISerializeable = nil
     ) : IResponse;
     var params : string;
     begin
         raiseExceptionIfCurlNotInitialized();
-        curl_easy_setopt(hCurl, CURLOPT_URL, [url]);
+        streamInst.reset();
+        curl_easy_setopt(hCurl, CURLOPT_URL, [ PChar(url) ]);
         if (data <> nil) then
         begin
             params := data.serialize();
-            curl_easy_setopt(hCurl, CURLOPT_POSTFIELDS, [ params ]);
+            curl_easy_setopt(hCurl, CURLOPT_POSTFIELDS, [ PChar(params) ]);
         end;
         executeCurl(hCurl);
-        result := self;
+        result := streamInst;
     end;
 
 end.

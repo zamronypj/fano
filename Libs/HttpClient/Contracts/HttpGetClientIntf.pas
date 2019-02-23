@@ -6,35 +6,41 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit ModelWriterIntf;
+unit HttpGetClientIntf;
 
 interface
 
 {$MODE OBJFPC}
+{$H+}
 
 uses
 
-    ModelResultSetIntf,
-    ModelParamsIntf;
+    SerializeableIntf,
+    ResponseStreamIntf;
 
 type
 
     (*!------------------------------------------------
-     * interface for model that can write data to storage
+     * interface for any class having capability to send
+     * HTTP request to a server
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    IModelWriter = interface
-        ['{B12E2CDF-EA14-4DAC-83E9-ABB5919AA7D1}']
+    IHttpGetClient = interface
+        ['{A996BF42-7010-4652-B056-E457319DC300}']
 
-        (*!----------------------------------------------
-         * write data to storage
+        (*!------------------------------------------------
+         * send HTTP GET request
          *-----------------------------------------------
-         * @param params parameters related to data being stored
-         * @param data data being stored
-         * @return current instance
+         * @param url url to send request
+         * @param data data related to this request
+         * @return HTTP response
          *-----------------------------------------------*)
-        function write(const params : IModelParams; const data : IModelParams) : IModelWriter;
+        function get(
+            const url : string;
+            const data : ISerializeable = nil
+        ) : IResponseStream;
+
     end;
 
 implementation

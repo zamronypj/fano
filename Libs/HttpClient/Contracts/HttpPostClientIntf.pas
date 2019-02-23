@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit HttpClientIntf;
+unit HttpPostClientIntf;
 
 interface
 
@@ -16,7 +16,7 @@ interface
 uses
 
     SerializeableIntf,
-    ResponseIntf;
+    ResponseStreamIntf;
 
 type
 
@@ -26,20 +26,20 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    IHttpClient = interface
-        ['{944E1D4F-08BA-446C-A662-9C1EC27DEF74}']
+    IHttpPostClient = interface
+        ['{5EF1CEAC-CF87-4EBE-AE19-7701EA150A61}']
 
         (*!------------------------------------------------
-         * send HTTP request
+         * send HTTP GET request
          *-----------------------------------------------
          * @param url url to send request
          * @param data data related to this request
-         * @return current instance
+         * @return HTTP response
          *-----------------------------------------------*)
-        function send(
+        function post(
             const url : string;
             const data : ISerializeable = nil
-        ) : IResponse;
+        ) : IResponseStream;
 
     end;
 

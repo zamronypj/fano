@@ -16,7 +16,8 @@ interface
 uses
 
     HttpMethodImpl,
-    ResponseIntf,
+    HttpGetClientIntf,
+    ResponseStreamIntf,
     SerializeableIntf;
 
 type
@@ -26,8 +27,20 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    THttpGet = class(THttpMethod)
+    THttpGet = class(THttpMethod, IHttpGetClient)
     private
+        (*!------------------------------------------------
+         * append query params
+         *-----------------------------------------------
+         * @param url url to send request
+         * @param params query string
+         * @return url with query string appended
+         *-----------------------------------------------*)
+        function appendQueryParams(
+            const url : string;
+            const params : string
+        ) : string;
+
         (*!------------------------------------------------
          * build URL with query string appended
          *-----------------------------------------------
@@ -42,16 +55,16 @@ type
     public
 
         (*!------------------------------------------------
-         * send HTTP request
+         * send HTTP GET request
          *-----------------------------------------------
          * @param url url to send request
          * @param data data related to this request
          * @return response from server
          *-----------------------------------------------*)
-        function send(
+        function get(
             const url : string;
             const data : ISerializeable = nil
-        ) : IResponse; override;
+        ) : IResponseStream;
 
     end;
 
@@ -59,7 +72,34 @@ implementation
 
 uses
 
-    libcurl;
+    libcurl,
+    ResponseImpl,
+    HeadersImpl,
+    HashListImpl,
+    ResponseStreamImpl;
+
+    (*!------------------------------------------------
+     * append query params
+     *-----------------------------------------------
+     * @param url url to send request
+     * @param params query string
+     * @return url with query string appended
+     *-----------------------------------------------*)
+    function THttpGet.appendQueryParams(
+        const url : string;
+        const params : string
+    ) : string;
+    begin
+        if (pos('?', url) > 0) then
+        begin
+            //if we get here URL already contains query parameters
+            result := url + params;
+        end else
+        begin
+            //if we get here, URL has no query parameters
+            result := url + '?' + params;
+        end;
+    end;
 
     (*!------------------------------------------------
      * build URL with query string appended
@@ -78,20 +118,15 @@ uses
         if (data <> nil) then
         begin
             params := data.serialize();
-            if (pos('?', result) > 0) then
+            if (length(params) > 0) then
             begin
-                //if we get here URL already contains query parameters
-                result := result + params;
-            end else
-            begin
-                //if we get here, URL has no query parameters
-                result := result + '?' + params;
+                result := appendQueryParams(result, params);
             end;
         end;
     end;
 
     (*!------------------------------------------------
-     * send HTTP request
+     * send HTTP GET request
      *-----------------------------------------------
      * @param url url to send request
      * @param data data related to this request
@@ -99,17 +134,18 @@ uses
      *-----------------------------------------------
      * @credit: https://github.com/graemeg/freepascal/blob/master/packages/libcurl/examples/testcurl.pp
      *-----------------------------------------------*)
-    function THttpGet.send(
+    function THttpGet.get(
         const url : string;
         const data : ISerializeable = nil
-    ) : IResponse;
-    var fullUrl : string;
+    ) : IResponseStream;
+    var fullUrl : PChar;
     begin
         raiseExceptionIfCurlNotInitialized();
-        fullUrl := buildUrlWithQueryParams(url, data);
+        streamInst.reset();
+        fullUrl := PChar(buildUrlWithQueryParams(url, data));
         curl_easy_setopt(hCurl, CURLOPT_URL, [ fullUrl ]);
         executeCurl(hCurl);
-        result := self;
+        result := streamInst;
     end;
 
 end.

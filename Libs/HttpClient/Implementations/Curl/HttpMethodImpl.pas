@@ -17,10 +17,8 @@ uses
 
     libcurl,
     InjectableObjectImpl,
-    HttpClientIntf,
-    ResponseIntf,
     SerializeableIntf,
-    StreamAdapterIntf;
+    ResponseStreamIntf;
 
 type
 
@@ -29,7 +27,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    THttpMethod = class(TInjectableObject, IHttpClient)
+    THttpMethod = class(TInjectableObject)
     private
 
         (*!------------------------------------------------
@@ -58,6 +56,12 @@ type
         pStream : pointer;
 
         (*!------------------------------------------------
+         * internal variable that holds stream of data coming
+         * from server
+         *-----------------------------------------------*)
+        streamInst : IResponseStream;
+
+        (*!------------------------------------------------
          * raise exception if curl not initialized
          *-----------------------------------------------*)
         procedure raiseExceptionIfCurlNotInitialized();
@@ -65,10 +69,10 @@ type
         (*!------------------------------------------------
          * execute curl operation and raise exception if fail
          *-----------------------------------------------
-         * @param hCurl curl handle
+         * @param hndCurl curl handle
          * @return errCode curl error code
          *-----------------------------------------------*)
-        function executeCurl(const hCurl : pCurl) : CurlCode;
+        function executeCurl(const hndCurl : pCurl) : CurlCode;
     public
 
         (*!------------------------------------------------
@@ -77,24 +81,12 @@ type
          * @param fStream stream instance that will be used to
          *                store data coming from server
          *-----------------------------------------------*)
-        constructor create(const fStream : IStreamAdapter);
+        constructor create(const fStream : IResponseStream);
 
         (*!------------------------------------------------
          * destructor
          *-----------------------------------------------*)
         destructor destroy(); override;
-
-        (*!------------------------------------------------
-         * send HTTP request
-         *-----------------------------------------------
-         * @param url url to send request
-         * @param data data related to this request
-         * @return current instance
-         *-----------------------------------------------*)
-        function send(
-            const url : string;
-            const data : ISerializeable = nil
-        ) : IResponse; virtual; abstract;
 
     end;
 
@@ -122,12 +114,12 @@ resourcestring
      *-----------------------------------------------*)
     function writeToStream(
         dataFromServer : pointer;
-        size : size_t;
-        nmemb: size_t;
+        size : qword;
+        nmemb: qword;
         ptrStream : pointer
-    ) : size_t; cdecl;
+    ) : qword; cdecl;
     begin
-        result := IStreamAdapter(ptrStream).write(ptr^, size * nmemb);
+        result := IResponseStream(ptrStream).write(dataFromServer^, size * nmemb);
     end;
 
     (*!------------------------------------------------
@@ -149,7 +141,7 @@ resourcestring
      * @param fStream stream instance that will be used to
      *                store data coming from server
      *-----------------------------------------------*)
-    constructor THttpMethod.create(const fStream : IStreamAdapter);
+    constructor THttpMethod.create(const fStream : IResponseStream);
     begin
         //libcurl only knows raw pointer, so we use raw pointer to hold
         //instance of IStreamAdapter interface. But because typecast interface
@@ -157,6 +149,8 @@ resourcestring
         //we must add reference count manually by calling _AddRef() method
         pStream := pointer(fStream);
         fStream._addRef();
+
+        streamInst := fStream;
 
         hCurl := initCurl();
     end;
@@ -172,8 +166,10 @@ resourcestring
         //instance of IStreamAdapter interface. But because typecast interface
         //to pointer does not do automatic reference counting,
         //we must decrement reference count manually by calling _Release() method
-        IStreamAdapter(pStream)._release();
+        IResponseStream(pStream)._release();
         pStream := nil;
+
+        streamInst := nil;
 
         curl_easy_cleanup(hCurl);
     end;
@@ -201,19 +197,19 @@ resourcestring
         begin
             //operation fail, raise exception
             errMsg := curl_easy_strerror(errCode);
-            raise EHttpClientErrorImpl.create(errMsg);
+            raise EHttpClientError.create(errMsg);
         end;
     end;
 
     (*!------------------------------------------------
      * execute curl operation and raise exception if fail
      *--------------------------------------------------
-     * @param hCurl curl handle
+     * @param hndCurl curl handle
      * @return errCode curl error code
      *---------------------------------------------------*)
-    function THttpMethod.executeCurl(const hCurl : pCurl) : CurlCode;
+    function THttpMethod.executeCurl(const hndCurl : pCurl) : CurlCode;
     begin
-        result := curl_easy_perform(hCurl);
+        result := curl_easy_perform(hndCurl);
         raiseExceptionIfError(result);
     end;
 
