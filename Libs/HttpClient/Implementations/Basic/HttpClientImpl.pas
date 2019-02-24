@@ -69,7 +69,7 @@ implementation
         const postClient : IHttpPostClient;
         const putClient : IHttpPutClient;
         const deleteClient : IHttpDeleteClient;
-        const headClient : IHttpHeadClient;
+        const headClient : IHttpHeadClient
     );
     begin
         fGetClient := getClient;
