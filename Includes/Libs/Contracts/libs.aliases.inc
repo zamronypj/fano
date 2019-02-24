@@ -6,7 +6,7 @@ IStdInReader = StdInReaderIntf.IStdInReader;
 
 IHttpGetClient = HttpGetClientIntf.IHttpGetClient;
 IHttpPostClient = HttpPostClientIntf.IHttpPostClient;
-IHttpPutClient = HttpPutClientIntf.IHttPutClient;
+IHttpPutClient = HttpPutClientIntf.IHttpPutClient;
 IHttpDeleteClient = HttpDeleteClientIntf.IHttpDeleteClient;
 IHttpHeadClient = HttpHeadClientIntf.IHttpHeadClient;
 
