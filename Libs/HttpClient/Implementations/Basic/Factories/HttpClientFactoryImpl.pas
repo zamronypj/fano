@@ -60,6 +60,12 @@ implementation
 
 uses
 
+    HttpGetClientIntf,
+    HttpPostClientIntf,
+    HttpPutClientIntf,
+    HttpDeleteClientIntf,
+    HttpHeadClientIntf,
+
     HttpClientImpl;
 
     constructor THttpClientFactory.create(
