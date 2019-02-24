@@ -67,7 +67,7 @@ uses
         streamInst.reset();
         curl_easy_setopt(hCurl, CURLOPT_URL, [ PChar(url) ]);
         curl_easy_setopt(hCurl, CURLOPT_UPLOAD, [ 1 ]);
-        curl_easy_setopt(hnd, CURLOPT_CUSTOMREQUEST, [ PChar('DELETE') ]);
+        curl_easy_setopt(hCurl, CURLOPT_CUSTOMREQUEST, [ PChar('DELETE') ]);
         params := '';
         if (data <> nil) then
         begin
