@@ -17,5 +17,17 @@ TSimpleStdInReader = SimpleStdInReaderImpl.TSimpleStdInReader;
 THttpGet = HttpGetImpl.THttpGet;
 THttpGetFactory = HttpGetFactoryImpl.THttpGetFactory;
 
+THttpPost = HttpPostImpl.THttpPost;
+THttpPostFactory = HttpPostFactoryImpl.THttpPostFactory;
+
+THttpPut = HttpPutImpl.THttpPut;
+THttpPutFactory = HttpPutFactoryImpl.THttpPutFactory;
+
+THttpDelete = HttpDeleteImpl.THttpDelete;
+THttpDeleteFactory = HttpDeleteFactoryImpl.THttpDeleteFactory;
+
+THttpHead = HttpHeadImpl.THttpHead;
+THttpHeadFactory = HttpHeadFactoryImpl.THttpHeadFactory;
+
 TKeyValuePair = KeyValuePairImpl.TKeyValuePair;
 TKeyValuePairFactory = KeyValuePairFactoryImpl.TKeyValuePairFactory;

@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit HttpPostImpl;
+unit HttpDeleteImpl;
 
 interface
 
@@ -16,28 +16,28 @@ interface
 uses
 
     HttpMethodImpl,
-    HttpPostClientIntf,
+    HttpDeleteClientIntf,
     ResponseStreamIntf,
     SerializeableIntf;
 
 type
 
     (*!------------------------------------------------
-     * class that send HTTP POST to server
+     * class that send HTTP Delete to server
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    THttpPost = class(THttpMethod, IHttpPostClient)
+    THttpDelete = class(THttpMethod, IHttpDeleteClient)
     public
 
         (*!------------------------------------------------
-         * send HTTP request
+         * send HTTP DELETE request
          *-----------------------------------------------
          * @param url url to send request
          * @param context object instance related to this message
          * @return response from server
          *-----------------------------------------------*)
-        function post(
+        function delete(
             const url : string;
             const data : ISerializeable = nil
         ) : IResponseStream;
@@ -51,13 +51,13 @@ uses
     libcurl;
 
     (*!------------------------------------------------
-     * send HTTP POST request
+     * send HTTP DELETE request
      *-----------------------------------------------
      * @param url url to send request
      * @param data data related to this request
-     * @return response stream
+     * @return current instance
      *-----------------------------------------------*)
-    function THttpPost.post(
+    function THttpDelete.delete(
         const url : string;
         const data : ISerializeable = nil
     ) : IResponseStream;
@@ -66,11 +66,14 @@ uses
         raiseExceptionIfCurlNotInitialized();
         streamInst.reset();
         curl_easy_setopt(hCurl, CURLOPT_URL, [ PChar(url) ]);
+        curl_easy_setopt(hCurl, CURLOPT_UPLOAD, [ 1 ]);
+        curl_easy_setopt(hnd, CURLOPT_CUSTOMREQUEST, [ PChar('DELETE') ]);
+        params := '';
         if (data <> nil) then
         begin
-            params := data.serialize();
-            curl_easy_setopt(hCurl, CURLOPT_POSTFIELDS, [ PChar(params) ]);
+           params := data.serialize();
         end;
+        curl_easy_setopt(result , CURLOPT_READDATA, [ PChar(params) ]);
         executeCurl(hCurl);
         result := streamInst;
     end;

@@ -33,5 +33,20 @@ SimpleStdInReaderImpl,
 HttpGetImpl,
 HttpGetFactoryImpl,
 
+HttpPostImpl,
+HttpPostFactoryImpl,
+
+HttpPutImpl,
+HttpPutFactoryImpl,
+
+HttpDeleteImpl,
+HttpDeleteFactoryImpl,
+
+HttpHeadImpl,
+HttpHeadFactoryImpl,
+
+HttpClientImpl,
+HttpClientFactoryImpl,
+
 KeyValuePairImpl,
 KeyValuePairFactoryImpl,
