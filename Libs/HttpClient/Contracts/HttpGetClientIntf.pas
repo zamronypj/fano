@@ -22,7 +22,7 @@ type
 
     (*!------------------------------------------------
      * interface for any class having capability to send
-     * HTTP request to a server
+     * HTTP GET request to a server
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)

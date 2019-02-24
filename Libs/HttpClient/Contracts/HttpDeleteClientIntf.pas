@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit HttpPostClientIntf;
+unit HttpDeleteClientIntf;
 
 interface
 
@@ -22,21 +22,21 @@ type
 
     (*!------------------------------------------------
      * interface for any class having capability to send
-     * HTTP POST request to a server
+     * HTTP DELETE request to a server
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    IHttpPostClient = interface
-        ['{5EF1CEAC-CF87-4EBE-AE19-7701EA150A61}']
+    IHttpDeleteClient = interface
+        ['{5D278566-2DD6-4768-B4F7-D417CE16F765}']
 
         (*!------------------------------------------------
-         * send HTTP POST request
+         * send HTTP DELETE request
          *-----------------------------------------------
          * @param url url to send request
          * @param data data related to this request
          * @return HTTP response
          *-----------------------------------------------*)
-        function post(
+        function delete(
             const url : string;
             const data : ISerializeable = nil
         ) : IResponseStream;
