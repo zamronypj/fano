@@ -72,7 +72,7 @@ uses
         begin
            params := data.serialize();
         end;
-        curl_easy_setopt(result , CURLOPT_READDATA, [ PChar(params) ]);
+        curl_easy_setopt(hCurl , CURLOPT_READDATA, [ PChar(params) ]);
         executeCurl(hCurl);
         result := streamInst;
     end;
