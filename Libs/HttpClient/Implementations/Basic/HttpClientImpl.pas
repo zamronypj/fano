@@ -86,7 +86,7 @@ implementation
         fPostClient := nil;
         fPutClient := nil;
         fDeleteClient := nil;
-        fHeadClient := headClient;
+        fHeadClient := nil;
     end;
 
 end.
