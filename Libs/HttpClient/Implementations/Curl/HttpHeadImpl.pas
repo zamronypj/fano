@@ -85,7 +85,7 @@ uses
      * @param params query string
      * @return url with query string appended
      *-----------------------------------------------*)
-    function THttpGet.appendQueryParams(
+    function THttpHead.appendQueryParams(
         const url : string;
         const params : string
     ) : string;
@@ -108,7 +108,7 @@ uses
      * @param data data related to this request
      * @return url with query string appended
      *-----------------------------------------------*)
-    function THttpGet.buildUrlWithQueryParams(
+    function THttpHead.buildUrlWithQueryParams(
         const url : string;
         const data : ISerializeable = nil
     ) : string;
