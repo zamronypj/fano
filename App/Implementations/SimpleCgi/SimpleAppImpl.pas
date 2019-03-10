@@ -44,7 +44,7 @@ type
             const errHandler : IErrorHandler  = nil
         );
 
-        function initDispatcher(const container : IDependencyContainer) : IDispatcher;
+        function initDispatcher(const container : IDependencyContainer) : IDispatcher; override;
 
     end;
 
@@ -55,7 +55,10 @@ uses
     DependencyContainerImpl,
     DependencyListImpl,
     EnvironmentImpl,
-    ErrorHandlerImpl;
+    ErrorHandlerImpl,
+    RouteMatcherIntf,
+    SimpleRouterFactoryImpl,
+    SimpleDispatcherFactoryImpl;
 
     (*!-----------------------------------------------
      * constructor

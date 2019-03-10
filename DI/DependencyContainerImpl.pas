@@ -269,7 +269,7 @@ type
      *---------------------------------------------------------*)
     function TDependencyContainer.has(const serviceName : shortstring) : boolean;
     begin
-        result := (dependencyList.find(serviceName) != nil);
+        result := (dependencyList.find(serviceName) <> nil);
     end;
 
 end.
