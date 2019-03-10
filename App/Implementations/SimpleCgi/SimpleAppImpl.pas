@@ -27,6 +27,8 @@ type
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
     TSimpleWebApplication = class(TFanoWebApplication)
+    protected
+        function initDispatcher(const container : IDependencyContainer) : IDispatcher; override;
     public
         (*!-----------------------------------------------
          * constructor
@@ -43,8 +45,6 @@ type
             const env : ICGIEnvironment = nil;
             const errHandler : IErrorHandler  = nil
         );
-
-        function initDispatcher(const container : IDependencyContainer) : IDispatcher; override;
 
     end;
 
