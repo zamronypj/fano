@@ -58,6 +58,7 @@ type
          *---------------------------------------------------------
          * @param serviceName name of service
          * @return dependency instance
+         * @throws EDependencyNotFoundImpl exception when name is not registered
          *---------------------------------------------------------
          * if serviceName is registered with add(), then this method
          * will always return same instance. If serviceName is
@@ -65,6 +66,19 @@ type
          * different instance everytim get() is called.s
          *---------------------------------------------------------*)
         function get(const serviceName : shortstring) : IDependency;
+
+        (*!--------------------------------------------------------
+         * test if service is already registered or not.
+         *---------------------------------------------------------
+         * @param serviceName name of service
+         * @return boolean true if service is registered otherwise false
+         *---------------------------------------------------------
+         * if serviceName is registered with add(), then this method
+         * will always return same instance. If serviceName is
+         * registered using factory(), this method will return
+         * different instance everytim get() is called.s
+         *---------------------------------------------------------*)
+        function has(const serviceName : shortstring) : boolean;
     end;
 
     {------------------------------------------------
