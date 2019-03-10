@@ -14,3 +14,4 @@
  *-----------------------------------------------*)
 
 TFanoWebApplication = AppImpl.TFanoWebApplication;
+TSimpleWebApplication = SimpleAppImpl.TSimpleWebApplication;
