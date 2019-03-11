@@ -80,7 +80,7 @@ implementation
      *---------------------------------------*)
     destructor TCompositeLogger.destroy();
     begin
-        inherited destory();
+        inherited destroy();
         firstLogger := nil;
         secondLogger := nil;
     end;
