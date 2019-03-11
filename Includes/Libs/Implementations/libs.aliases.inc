@@ -5,6 +5,7 @@ TFileLoggerFactory = FileLoggerFactoryImpl.TFileLoggerFactory;
 TNullLogger = NullLoggerImpl.TNullLogger;
 TNullLoggerFactory = NullLoggerFactoryImpl.TNullLoggerFactory;
 TCompositeLogger = CompositeLoggerImpl.TCompositeLogger;
+TCompositeLoggerFactory = CompositeLoggerFactoryImpl.TCompositeLoggerFactory;
 
 TStringFileReader = StringFileReaderImpl.TStringFileReader;
 TStringFileReaderFactory = StringFileReaderFactoryImpl.TStringFileReaderFactory;

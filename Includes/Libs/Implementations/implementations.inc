@@ -22,6 +22,7 @@ NullLoggerImpl,
 NullLoggerFactoryImpl,
 
 CompositeLoggerImpl,
+CompositeLoggerFactoryImpl,
 
 StringFileReaderImpl,
 StringFileReaderFactoryImpl,
