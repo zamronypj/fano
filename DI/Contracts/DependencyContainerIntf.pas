@@ -63,7 +63,7 @@ type
          * if serviceName is registered with add(), then this method
          * will always return same instance. If serviceName is
          * registered using factory(), this method will return
-         * different instance everytim get() is called.s
+         * different instance everytim get() is called.
          *---------------------------------------------------------*)
         function get(const serviceName : shortstring) : IDependency;
 
@@ -72,11 +72,6 @@ type
          *---------------------------------------------------------
          * @param serviceName name of service
          * @return boolean true if service is registered otherwise false
-         *---------------------------------------------------------
-         * if serviceName is registered with add(), then this method
-         * will always return same instance. If serviceName is
-         * registered using factory(), this method will return
-         * different instance everytim get() is called.s
          *---------------------------------------------------------*)
         function has(const serviceName : shortstring) : boolean;
     end;
