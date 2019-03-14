@@ -16,9 +16,8 @@ interface
 uses
 
     libcurl,
-    InjectableObjectImpl,
-    SerializeableIntf,
-    ResponseStreamIntf;
+    ResponseStreamIntf,
+    HttpCurlImpl;
 
 type
 
@@ -27,8 +26,9 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    THttpMethod = class(TInjectableObject)
+    THttpMethod = class(THttpCurl, IHttpClientHeaders)
     private
+        httpHeader : IHttpClientHeaders;
 
         (*!------------------------------------------------
          * raise exception if curl operation fail
@@ -38,11 +38,11 @@ type
         procedure raiseExceptionIfError(const errCode : CurlCode);
 
         (*!------------------------------------------------
-         * intialize cURL
-         *-----------------------------------------------
-         * @return curl handle
-         *-----------------------------------------------*)
-        function initCurl() : pCurl;
+        * initialize callback
+        *-----------------------------------------------
+        * @return curl handle
+        *-----------------------------------------------*)
+        procedure initCallback(const hndCurl : pCurl);
     protected
         (*!------------------------------------------------
          * internal variable that holds curl handle
@@ -62,32 +62,39 @@ type
         streamInst : IResponseStream;
 
         (*!------------------------------------------------
-         * raise exception if curl not initialized
-         *-----------------------------------------------*)
-        procedure raiseExceptionIfCurlNotInitialized();
-
-        (*!------------------------------------------------
          * execute curl operation and raise exception if fail
          *-----------------------------------------------
          * @param hndCurl curl handle
          * @return errCode curl error code
          *-----------------------------------------------*)
         function executeCurl(const hndCurl : pCurl) : CurlCode;
+
+        (*!------------------------------------------------
+         * raise exception if curl not initialized
+         *-----------------------------------------------*)
+        procedure raiseExceptionIfCurlNotInitialized();
     public
 
         (*!------------------------------------------------
          * constructor
          *-----------------------------------------------
+         * @param curlHandle instance class that can get handle
+         * @param headersInst instance class that can set headers
          * @param fStream stream instance that will be used to
          *                store data coming from server
          *-----------------------------------------------*)
-        constructor create(const fStream : IResponseStream);
+        constructor create(
+            const curlHandle : IHttpClientHandleAware;
+            const headersInst : IHttpClientHeaders;
+            const fStream : IResponseStream
+        );
 
         (*!------------------------------------------------
          * destructor
          *-----------------------------------------------*)
         destructor destroy(); override;
 
+        property headers : IHttpClientHeaders read httpHeader implements IHttpClientHeaders;
     end;
 
 implementation
@@ -99,6 +106,7 @@ uses
 resourcestring
 
     sErrCurlNotInitialized = 'cURL not initialized.';
+
 
     (*!------------------------------------------------
      * internal callback that is called when libcurl needs to
@@ -122,17 +130,15 @@ resourcestring
         result := IResponseStream(ptrStream).write(dataFromServer^, size * nmemb);
     end;
 
-    (*!------------------------------------------------
-     * intialize cURL
+     (*!------------------------------------------------
+     * initialize callback
      *-----------------------------------------------
      * @return curl handle
      *-----------------------------------------------*)
-    function THttpMethod.initCurl() : pCurl;
+    procedure THttpMethod.initCallback(const hndCurl : pCurl);
     begin
-        //initialize curl
-        result := curl_easy_init();
-        curl_easy_setopt(result, CURLOPT_WRITEFUNCTION, [ @writeToStream ]);
-        curl_easy_setopt(result , CURLOPT_WRITEDATA, [ pStream ]);
+        curl_easy_setopt(hndCurl, CURLOPT_WRITEFUNCTION, [ @writeToStream ]);
+        curl_easy_setopt(hndCurl , CURLOPT_WRITEDATA, [ pStream ]);
     end;
 
     (*!------------------------------------------------
@@ -152,7 +158,8 @@ resourcestring
 
         streamInst := fStream;
 
-        hCurl := initCurl();
+        hCurl := curlHandle.handle();
+        initCallback(hCurl);
     end;
 
     (*!------------------------------------------------
@@ -170,19 +177,7 @@ resourcestring
         pStream := nil;
 
         streamInst := nil;
-
-        curl_easy_cleanup(hCurl);
-    end;
-
-    (*!------------------------------------------------
-     * raise exception if curl not initialized
-     *-----------------------------------------------*)
-    procedure THttpMethod.raiseExceptionIfCurlNotInitialized();
-    begin
-        if (not assigned(hCurl)) then
-        begin
-            raise EHttpClientError.create(sErrCurlNotInitialized);
-        end;
+        hCurl := nil;
     end;
 
     (*!------------------------------------------------
@@ -202,6 +197,17 @@ resourcestring
     end;
 
     (*!------------------------------------------------
+     * raise exception if curl not initialized
+     *-----------------------------------------------*)
+    procedure THttpMethod.raiseExceptionIfCurlNotInitialized();
+    begin
+        if (not assigned(hCurl)) then
+        begin
+            raise EHttpClientError.create(sErrCurlNotInitialized);
+        end;
+    end;
+
+    (*!------------------------------------------------
      * execute curl operation and raise exception if fail
      *--------------------------------------------------
      * @param hndCurl curl handle
@@ -212,9 +218,4 @@ resourcestring
         result := curl_easy_perform(hndCurl);
         raiseExceptionIfError(result);
     end;
-
-initialization
-    curl_global_init(CURL_GLOBAL_DEFAULT);
-finalization
-    curl_global_cleanup();
 end.
