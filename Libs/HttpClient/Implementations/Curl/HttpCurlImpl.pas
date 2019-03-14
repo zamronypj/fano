@@ -16,7 +16,8 @@ interface
 uses
 
     libcurl,
-    InjectableObjectImpl;
+    InjectableObjectImpl,
+    HttpClientHandleAwareIntf;
 
 type
 
