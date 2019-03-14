@@ -17,7 +17,8 @@ uses
 
     libcurl,
     ResponseStreamIntf,
-    HttpCurlImpl;
+    HttpClientHeadersIntf,
+    HttpClientHandleAwareIntf;
 
 type
 
