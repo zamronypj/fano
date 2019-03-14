@@ -58,7 +58,7 @@ uses
     begin
         result := THttpPost.create(
             handle,
-            THttpClientHeaders.create(handle)
+            THttpClientHeaders.create(handle),
             TResponseStream.create(TStringStream.create(''))
         );
     end;
