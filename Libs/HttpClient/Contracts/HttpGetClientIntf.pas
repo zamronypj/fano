@@ -16,7 +16,8 @@ interface
 uses
 
     SerializeableIntf,
-    ResponseStreamIntf;
+    ResponseStreamIntf,
+    HttpClientHeadersIntf;
 
 type
 
@@ -26,7 +27,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    IHttpGetClient = interface
+    IHttpGetClient = interface(IHttpClientHeaders)
         ['{A996BF42-7010-4652-B056-E457319DC300}']
 
         (*!------------------------------------------------
