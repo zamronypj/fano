@@ -19,17 +19,29 @@ uses
 
 type
     (*!------------------------------------------------
-     * Base factory class
+     * Base factory class for http client factory
      *-------------------------------------------------
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
     THttpAbstractFactory = class(TFactory)
-    private
-        handleAware : IHttpClientHandleAware;
+    protected
+        handle : IHttpClientHandleAware;
     public
-        property handle : IHttpClientHandleAware read handleAware write handleAware;
+        constructor create(const handleInst : IHttpClientHandleAware);
+        destructor destroy(); override;
     end;
 
 implementation
+
+    constructor THttpAbstractFactory.create(const handleInst : IHttpClientHandleAware);
+    begin
+        handle := handleInst;
+    end;
+
+    destructor THttpAbstractFactory.destroy();
+    begin
+        inherited destroy();
+        handle := nil;
+    end;
 
 end.
