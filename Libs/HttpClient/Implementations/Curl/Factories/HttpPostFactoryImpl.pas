@@ -46,6 +46,7 @@ uses
 
     classes,
     HttpPostImpl,
+    HttpClientHeadersImpl,
     ResponseStreamImpl;
 
     (*!---------------------------------------------------
