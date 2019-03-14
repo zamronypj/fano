@@ -149,7 +149,11 @@ resourcestring
      * @param fStream stream instance that will be used to
      *                store data coming from server
      *-----------------------------------------------*)
-    constructor THttpMethod.create(const fStream : IResponseStream);
+    constructor THttpMethod.create(
+        const curlHandle : IHttpClientHandleAware;
+        const headersInst : IHttpClientHeaders;
+        const fStream : IResponseStream
+    );
     begin
         //libcurl only knows raw pointer, so we use raw pointer to hold
         //instance of IStreamAdapter interface. But because typecast interface
@@ -162,6 +166,7 @@ resourcestring
 
         hCurl := curlHandle.handle();
         initCallback(hCurl);
+        httpHeader := headersInst;
     end;
 
     (*!------------------------------------------------
