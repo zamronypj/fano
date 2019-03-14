@@ -16,7 +16,7 @@ uses
 
     DependencyIntf,
     DependencyContainerIntf,
-    FactoryImpl;
+    HttpAbstractFactoryImpl;
 
 type
     (*!------------------------------------------------
@@ -28,7 +28,7 @@ type
      *-------------------------------------------------
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    THttpDeleteFactory = class(TFactory)
+    THttpDeleteFactory = class(THttpAbstractFactory)
     public
         (*!---------------------------------------------------
          * build class instance
@@ -46,6 +46,7 @@ uses
 
     classes,
     HttpDeleteImpl,
+    HttpClientHeadersImpl,
     ResponseStreamImpl;
 
     (*!---------------------------------------------------
@@ -56,6 +57,8 @@ uses
     function THttpDeleteFactory.build(const container : IDependencyContainer) : IDependency;
     begin
         result := THttpDelete.create(
+            handle,
+            THttpClientHeaders.create(handle),
             TResponseStream.create(TStringStream.create(''))
         );
     end;

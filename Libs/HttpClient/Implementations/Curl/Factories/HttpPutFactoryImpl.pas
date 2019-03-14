@@ -16,7 +16,7 @@ uses
 
     DependencyIntf,
     DependencyContainerIntf,
-    FactoryImpl;
+    HttpAbstractFactoryImpl;
 
 type
     (*!------------------------------------------------
@@ -28,7 +28,7 @@ type
      *-------------------------------------------------
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    THttpPutFactory = class(TFactory)
+    THttpPutFactory = class(THttpAbstractFactory)
     public
         (*!---------------------------------------------------
          * build class instance
@@ -46,6 +46,7 @@ uses
 
     classes,
     HttpPutImpl,
+    HttpClientHeadersImpl,
     ResponseStreamImpl;
 
     (*!---------------------------------------------------
@@ -56,6 +57,8 @@ uses
     function THttpPutFactory.build(const container : IDependencyContainer) : IDependency;
     begin
         result := THttpPut.create(
+            handle,
+            THttpClientHeaders.create(handle),
             TResponseStream.create(TStringStream.create(''))
         );
     end;
