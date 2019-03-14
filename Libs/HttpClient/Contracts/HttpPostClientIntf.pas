@@ -16,8 +16,7 @@ interface
 uses
 
     SerializeableIntf,
-    ResponseStreamIntf,
-    HttpClientHeadersIntf;
+    ResponseStreamIntf;
 
 type
 
@@ -27,7 +26,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    IHttpPostClient = interface(IHttpClientHeaders)
+    IHttpPostClient = interface
         ['{5EF1CEAC-CF87-4EBE-AE19-7701EA150A61}']
 
         (*!------------------------------------------------
