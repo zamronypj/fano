@@ -53,7 +53,14 @@ type
          * @param headerLine string contain header
          * @return current instance
          *-----------------------------------------------*)
-        function header(const headerLine : string) : IHttpClientHeaders;
+        function add(const headerLine : string) : IHttpClientHeaders;
+
+        (*!------------------------------------------------
+         *  apply added header
+         *-----------------------------------------------
+         * @return current instance
+         *-----------------------------------------------*)
+        function apply() : IHttpClientHeaders;
     end;
 
 implementation
