@@ -16,6 +16,7 @@ interface
 uses
 
     libcurl,
+    InjectableObjectImpl,
     ResponseStreamIntf,
     HttpClientHeadersIntf,
     HttpClientHandleAwareIntf;
@@ -27,7 +28,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    THttpMethod = class(THttpCurl, IHttpClientHeaders)
+    THttpMethod = class(TInjectableObject, IHttpClientHeaders)
     private
         httpHeader : IHttpClientHeaders;
 
