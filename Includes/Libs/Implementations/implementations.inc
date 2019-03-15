@@ -34,7 +34,7 @@ StdInReaderImpl,
 SimpleStdInReaderImpl,
 
 HttpCurlImpl,
-HttpCurlFactgoryImpl,
+HttpCurlFactoryImpl,
 
 HttpGetImpl,
 HttpGetFactoryImpl,
