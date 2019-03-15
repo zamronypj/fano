@@ -33,6 +33,9 @@ EInvalidStreamImpl,
 StdInReaderImpl,
 SimpleStdInReaderImpl,
 
+HttpCurlImpl,
+HttpCurlFactgoryImpl,
+
 HttpGetImpl,
 HttpGetFactoryImpl,
 

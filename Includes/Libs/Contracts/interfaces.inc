@@ -18,6 +18,8 @@ FileReaderIntf,
 StreamAdapterIntf,
 StdInReaderIntf,
 
+HttpClientHandleAwareIntf,
+HttpClientHeadersIntf,
 HttpGetClientIntf,
 HttpPostClientIntf,
 HttpPutClientIntf,
