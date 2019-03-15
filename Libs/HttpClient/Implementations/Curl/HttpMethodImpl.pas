@@ -96,7 +96,28 @@ type
          *-----------------------------------------------*)
         destructor destroy(); override;
 
-        property headers : IHttpClientHeaders read httpHeader implements IHttpClientHeaders;
+        (*!------------------------------------------------
+         *  add header
+         *-----------------------------------------------
+         * @param headerLine string contain header
+         * @return current instance
+         *-----------------------------------------------*)
+        function add(const headerLine : string) : IHttpClientHeaders;
+
+        (*!------------------------------------------------
+         *  apply added header
+         *-----------------------------------------------
+         * @return current instance
+         *-----------------------------------------------*)
+        function apply() : IHttpClientHeaders;
+
+        (*!------------------------------------------------
+         *  interface delegation is turn off because
+         *  some how method implementation is not accessible
+         *  to descendant
+         *  @link https://stackoverflow.com/questions/55160258/implementation-through-interface-delegation-not-pass-to-descendant
+         *-----------------------------------------------*)
+        //property headers : IHttpClientHeaders read httpHeader implements IHttpClientHeaders;
     end;
 
 implementation
@@ -185,6 +206,29 @@ resourcestring
 
         streamInst := nil;
         hCurl := nil;
+    end;
+
+    (*!------------------------------------------------
+     *  add header
+     *-----------------------------------------------
+     * @param headerLine string contain header
+     * @return current instance
+     *-----------------------------------------------*)
+    function THttpMethod.add(const headerLine : string) : IHttpClientHeaders;
+    begin
+        httpHeader.add(headerLine);
+        result := self;
+    end;
+
+    (*!------------------------------------------------
+     *  apply added header
+     *-----------------------------------------------
+     * @return current instance
+     *-----------------------------------------------*)
+    function THttpHeader.apply() : IHttpClientHeaders;
+    begin
+        httpHeader.apply();
+        result := self;
     end;
 
     (*!------------------------------------------------
