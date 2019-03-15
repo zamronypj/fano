@@ -225,7 +225,7 @@ resourcestring
      *-----------------------------------------------
      * @return current instance
      *-----------------------------------------------*)
-    function THttpHeader.apply() : IHttpClientHeaders;
+    function THttpMethod.apply() : IHttpClientHeaders;
     begin
         httpHeader.apply();
         result := self;
