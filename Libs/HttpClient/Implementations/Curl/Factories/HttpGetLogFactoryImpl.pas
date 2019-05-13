@@ -53,6 +53,7 @@ uses
     HttpGetImpl,
     ResponseStreamImpl,
     ResponseStreamLogImpl,
+    HttpClientHeadersImpl,
     LoggerIntf;
 
     constructor THttpGetLogFactory.create(const loggerFactoryInst : IDependencyFactory);
