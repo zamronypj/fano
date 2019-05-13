@@ -53,8 +53,7 @@ uses
     classes,
     HttpGetImpl,
     ResponseStreamImpl,
-    ResponseStreamLogImpl,
-    LoggerIntf;
+    ResponseStreamLogImpl;
 
     constructor THttpGetLogFactory.create(const loggerInst : ILogger);
     begin
