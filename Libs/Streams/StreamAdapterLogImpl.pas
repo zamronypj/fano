@@ -175,7 +175,7 @@ uses
     function TStreamAdapterLog.seek(const offset : int64) : int64;
     begin
         result := actualStream.seek(offset);
-        actualLogger.seek('StreamAdapterLog seek');
+        actualLogger.debug('StreamAdapterLog seek ' + intToStr(offset) + ' bytes');
     end;
 
     (*!------------------------------------------------
