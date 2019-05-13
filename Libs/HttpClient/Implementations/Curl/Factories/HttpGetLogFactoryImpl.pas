@@ -16,6 +16,7 @@ uses
 
     DependencyIntf,
     DependencyContainerIntf,
+    LoggerIntf,
     FactoryImpl;
 
 type
@@ -30,9 +31,9 @@ type
      *-----------------------------------------------*)
     THttpGetLogFactory = class(TFactory)
     private
-        loggerFactory : IDependencyFactory;
+        logger : ILogger;
     public
-        constructor create(const loggerFactoryInst : IDependencyFactory);
+        constructor create(const loggerInst : ILogger);
         destructor destroy(); override;
 
         (*!---------------------------------------------------
@@ -55,15 +56,15 @@ uses
     ResponseStreamLogImpl,
     LoggerIntf;
 
-    constructor THttpGetLogFactory.create(const loggerFactoryInst : IDependencyFactory);
+    constructor THttpGetLogFactory.create(const loggerInst : ILogger);
     begin
-        loggerFactory := loggerFactoryInst;
+        logger := loggerInst;
     end;
 
     destructor THttpGetLogFactory.destroy();
     begin
         inherited destroy();
-        loggerFactory := nil;
+        logger := nil;
     end;
 
     (*!---------------------------------------------------
@@ -76,7 +77,7 @@ uses
         result := THttpGet.create(
             TResponseStreamLog.create(
                 TResponseStream.create(TStringStream.create('')),
-                loggerFactory.build(container) as ILogger
+                logger
             )
         );
     end;
