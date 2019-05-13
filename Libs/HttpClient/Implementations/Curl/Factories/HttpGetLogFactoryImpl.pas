@@ -29,7 +29,12 @@ type
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
     THttpGetLogFactory = class(TFactory)
+    private
+        loggerFactory : IFactory;
     public
+        constructor create(const loggerFactoryInst : IFactory);
+        destructor destroy(); override;
+
         (*!---------------------------------------------------
          * build class instance
          *----------------------------------------------------
@@ -50,25 +55,29 @@ uses
     ResponseStreamLogImpl,
     LoggerIntf;
 
+    constructor THttpGetLogFactory.create(const loggerFactoryInst : IFactory);
+    begin
+        loggerFactoryInst := loggerFactoryInst;
+    end;
+
+    destructor THttpGetLogFactory.destroy();
+    begin
+        inherited destroy();
+        loggerFactory := nil;
+    end;
+
     (*!---------------------------------------------------
      * build class instance
      *----------------------------------------------------
      * @param container dependency container instance
      *---------------------------------------------------*)
     function THttpGetLogFactory.build(const container : IDependencyContainer) : IDependency;
-    var logger : ILogger;
     begin
-        if container.has('logger') then
-        begin
-            logger := container.get('logger') as ILogger;
-        end else
-            logger := TNullLogger.create();
-        begin
         end;
         result := THttpGet.create(
             TResponseStreamLog.create(
-                TResponseStream.create(TStringStream.create(''))
-                logger
+                TResponseStream.create(TStringStream.create('')),
+                loggerFactory.build(container) as ILogger
             )
         );
     end;
