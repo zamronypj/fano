@@ -57,8 +57,7 @@ uses
     HttpGetImpl,
     ResponseStreamImpl,
     ResponseStreamLogImpl,
-    HttpClientHeadersImpl,
-    LoggerIntf;
+    HttpClientHeadersImpl;
 
     constructor THttpGetLogFactory.create(
         const handleInst : IHttpClientHandleAware;
