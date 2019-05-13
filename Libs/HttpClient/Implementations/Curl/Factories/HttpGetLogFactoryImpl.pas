@@ -32,7 +32,7 @@ type
     private
         loggerFactory : IDependencyFactory;
     public
-        constructor create(const loggerFactoryInst : IFactory);
+        constructor create(const loggerFactoryInst : IDependencyFactory);
         destructor destroy(); override;
 
         (*!---------------------------------------------------
