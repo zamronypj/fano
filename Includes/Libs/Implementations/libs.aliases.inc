@@ -18,7 +18,7 @@ TSimpleStdInReader = SimpleStdInReaderImpl.TSimpleStdInReader;
 
 THttpCurl = HttpCurlImpl.THttpCurl;
 THttpCurlFactory = HttpCurlFactoryImpl.THttpCurlFactory;
-THttpClientHeaders = HttpClientHeadersImpl.THttpClientHeaders,
+THttpClientHeaders = HttpClientHeadersImpl.THttpClientHeaders;
 
 
 THttpGet = HttpGetImpl.THttpGet;
