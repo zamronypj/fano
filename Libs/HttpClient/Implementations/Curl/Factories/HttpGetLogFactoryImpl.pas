@@ -16,7 +16,7 @@ uses
 
     DependencyIntf,
     DependencyContainerIntf,
-    FactoryImpl;
+    HttpAbstractFactoryImpl;
 
 type
     (*!------------------------------------------------
@@ -28,7 +28,7 @@ type
      *-------------------------------------------------
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    THttpGetLogFactory = class(TFactory)
+    THttpGetLogFactory = class(THttpAbstractFactory)
     private
         loggerFactory : IDependencyFactory;
     public
