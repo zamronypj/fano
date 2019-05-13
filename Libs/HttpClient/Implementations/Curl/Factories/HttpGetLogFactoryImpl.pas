@@ -74,6 +74,8 @@ uses
     function THttpGetLogFactory.build(const container : IDependencyContainer) : IDependency;
     begin
         result := THttpGet.create(
+            handle,
+            THttpClientHeaders.create(handle),
             TResponseStreamLog.create(
                 TResponseStream.create(TStringStream.create('')),
                 loggerFactory.build(container) as ILogger
