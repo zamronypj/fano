@@ -57,7 +57,7 @@ uses
 
     constructor THttpGetLogFactory.create(const loggerFactoryInst : IDependencyFactory);
     begin
-        loggerFactoryInst := loggerFactoryInst;
+        loggerFactory := loggerFactoryInst;
     end;
 
     destructor THttpGetLogFactory.destroy();
@@ -73,7 +73,6 @@ uses
      *---------------------------------------------------*)
     function THttpGetLogFactory.build(const container : IDependencyContainer) : IDependency;
     begin
-        end;
         result := THttpGet.create(
             TResponseStreamLog.create(
                 TResponseStream.create(TStringStream.create('')),
