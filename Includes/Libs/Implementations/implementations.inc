@@ -36,6 +36,8 @@ SimpleStdInReaderImpl,
 HttpGetImpl,
 HttpGetFactoryImpl,
 
+HttpGetLogFactoryImpl,
+
 HttpPostImpl,
 HttpPostFactoryImpl,
 

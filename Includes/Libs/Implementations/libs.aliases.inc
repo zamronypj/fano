@@ -18,6 +18,7 @@ TSimpleStdInReader = SimpleStdInReaderImpl.TSimpleStdInReader;
 
 THttpGet = HttpGetImpl.THttpGet;
 THttpGetFactory = HttpGetFactoryImpl.THttpGetFactory;
+THttpGetLogFactory = HttpGetLogFactoryImpl.THttpGetLogFactory;
 
 THttpPost = HttpPostImpl.THttpPost;
 THttpPostFactory = HttpPostFactoryImpl.THttpPostFactory;
