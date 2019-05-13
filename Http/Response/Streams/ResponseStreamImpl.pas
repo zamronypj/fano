@@ -56,7 +56,11 @@ implementation
      *-------------------------------------*)
     function TResponseStream.write(const buffer : string) : int64;
     begin
-        result := self.write(buffer[1], length(buffer));
+        result := 0;
+        if (length(buffer) > 0) then
+        begin
+            result := self.write(buffer[1], length(buffer));
+        end;
     end;
 
     (*!------------------------------------
@@ -68,7 +72,10 @@ implementation
     begin
         self.seek(0);
         setLength(result, self.size());
-        self.read(result[1], length(result));
+        if (self.size() > 0) then
+        begin
+            self.read(result[1], length(result));
+        end;
     end;
 
 end.
