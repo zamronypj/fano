@@ -18,6 +18,7 @@ uses
     Classes,
     DependencyIntf,
     ResponseStreamIntf,
+    LoggerIntf,
     StreamAdapterLogImpl;
 
 type
