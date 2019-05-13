@@ -16,6 +16,7 @@ uses
 
     DependencyIntf,
     DependencyContainerIntf,
+    HttpClientHandleAwareIntf,
     HttpAbstractFactoryImpl;
 
 type
@@ -32,7 +33,9 @@ type
     private
         loggerFactory : IDependencyFactory;
     public
-        constructor create(const loggerFactoryInst : IDependencyFactory);
+        constructor create(
+            const handleInst : IHttpClientHandleAware;
+            const loggerFactoryInst : IDependencyFactory);
         destructor destroy(); override;
 
         (*!---------------------------------------------------
@@ -56,8 +59,12 @@ uses
     HttpClientHeadersImpl,
     LoggerIntf;
 
-    constructor THttpGetLogFactory.create(const loggerFactoryInst : IDependencyFactory);
+    constructor THttpGetLogFactory.create(
+        const handleInst : IHttpClientHandleAware;
+        const loggerFactoryInst : IDependencyFactory
+    );
     begin
+        inherited create(handleInst);
         loggerFactory := loggerFactoryInst;
     end;
 
