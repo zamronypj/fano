@@ -177,7 +177,7 @@ resourcestring
     );
     begin
         //libcurl only knows raw pointer, so we use raw pointer to hold
-        //instance of IStreamAdapter interface. But because typecast interface
+        //instance of IResponseStream interface. But because typecast interface
         //to pointer does not do automatic reference counting,
         //we must add reference count manually by calling _AddRef() method
         pStream := pointer(fStream);
@@ -198,7 +198,7 @@ resourcestring
         inherited destroy();
 
         //libcurl only knows raw pointer, so we use raw pointer to hold
-        //instance of IStreamAdapter interface. But because typecast interface
+        //instance of IResponseStream interface. But because typecast interface
         //to pointer does not do automatic reference counting,
         //we must decrement reference count manually by calling _Release() method
         IResponseStream(pStream)._release();
