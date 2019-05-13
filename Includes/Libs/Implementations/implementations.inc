@@ -39,6 +39,8 @@ HttpCurlFactoryImpl,
 HttpGetImpl,
 HttpGetFactoryImpl,
 
+HttpGetLogFactoryImpl,
+
 HttpPostImpl,
 HttpPostFactoryImpl,
 
