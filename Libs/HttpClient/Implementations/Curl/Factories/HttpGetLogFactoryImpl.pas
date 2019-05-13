@@ -17,7 +17,7 @@ uses
     DependencyIntf,
     DependencyContainerIntf,
     HttpClientHandleAwareIntf,
-    HttpAbstractFactoryImpl;
+    HttpAbstractFactoryImpl,
     LoggerIntf;
 
 type
