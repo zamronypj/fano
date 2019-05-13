@@ -98,7 +98,7 @@ uses
     function TResponseStreamLog.write(const buffer : string) : int64;
     begin
         result := actualStream.write(buffer);
-        logger.debug(
+        actualLogger.debug(
             'ResponseStreamLog write string ' + intToStr(result) + ' bytes',
             TStringSerializeable.create(buffer)
         );
@@ -112,7 +112,7 @@ uses
     function TResponseStreamLog.read() : string;
     begin
         result := actualStream.read();
-        logger.debug('ResponseStreamLog read string', TStringSerializeable.create(result));
+        actualLogger.debug('ResponseStreamLog read string', TStringSerializeable.create(result));
     end;
 
 end.
