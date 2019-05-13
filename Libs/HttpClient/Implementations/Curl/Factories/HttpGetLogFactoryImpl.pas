@@ -16,7 +16,6 @@ uses
 
     DependencyIntf,
     DependencyContainerIntf,
-    FactoryIntf,
     FactoryImpl;
 
 type
@@ -31,7 +30,7 @@ type
      *-----------------------------------------------*)
     THttpGetLogFactory = class(TFactory)
     private
-        loggerFactory : IFactory;
+        loggerFactory : IDependencyFactory;
     public
         constructor create(const loggerFactoryInst : IFactory);
         destructor destroy(); override;
@@ -56,7 +55,7 @@ uses
     ResponseStreamLogImpl,
     LoggerIntf;
 
-    constructor THttpGetLogFactory.create(const loggerFactoryInst : IFactory);
+    constructor THttpGetLogFactory.create(const loggerFactoryInst : IDependencyFactory);
     begin
         loggerFactoryInst := loggerFactoryInst;
     end;
