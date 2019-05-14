@@ -5,3 +5,9 @@ IStreamAdapter = StreamAdapterIntf.IStreamAdapter;
 IStdInReader = StdInReaderIntf.IStdInReader;
 
 IHttpGetClient = HttpGetClientIntf.IHttpGetClient;
+IHttpPostClient = HttpPostClientIntf.IHttpPostClient;
+IHttpPutClient = HttpPutClientIntf.IHttpPutClient;
+IHttpDeleteClient = HttpDeleteClientIntf.IHttpDeleteClient;
+IHttpHeadClient = HttpHeadClientIntf.IHttpHeadClient;
+
+IKeyValuePair = KeyValuePairIntf.IKeyValuePair;

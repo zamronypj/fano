@@ -7,11 +7,11 @@
  *}
 
 (*! ---------------------------------------------
- * implementation units for app
+ * implementation units for Serializeable
  * that is included in fano.pas unit
  *
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
  *-----------------------------------------------*)
 
- AppImpl,
- SimpleAppImpl,
+NullSerializeableImpl,
+StringSerializeableImpl,

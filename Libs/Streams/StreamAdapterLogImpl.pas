@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit StreamAdapterImpl;
+unit StreamAdapterLogImpl;
 
 interface
 
@@ -16,37 +16,33 @@ interface
 uses
 
     Classes,
-    StreamAdapterIntf;
+    StreamAdapterIntf,
+    LoggerIntf;
 
 type
 
     (*!------------------------------------------------
-     * adapter class that implements IStreamAdapter
+     * adapter class that implements IStreamAdapter and
+     * write log each call
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TStreamAdapter = class(TInterfacedObject, IStreamAdapter)
+    TStreamAdapterLog = class(TInterfacedObject, IStreamAdapter)
     private
-        isOwned : boolean;
+        actualStream : IStreamAdapter;
     protected
-        actualStream : TStream;
+        actualLogger : ILogger;
     public
         (*!------------------------------------
          * constructor
          *-------------------------------------
-         * @param stream instance of actual stream
-         * @param owned true if streamInst is owned, meaning, its
-         *        memory will be deallocated when destructor
-         *        is called
+         * @param stream instance of actual IStreamAdapter interface
+         * @param logger instance of ILogger interface
          *-------------------------------------*)
-        constructor create(const stream : TStream; const owned : boolean = true);
+        constructor create(const stream : IStreamAdapter; const logger : ILogger);
 
         (*!------------------------------------
          * destructor
-         *-------------------------------------
-         * if isOwned true, stream memory
-         * will be deallocated when destructor
-         * is called
          *-------------------------------------*)
         destructor destroy(); override;
 
@@ -98,11 +94,7 @@ implementation
 
 uses
 
-    EInvalidStreamImpl;
-
-resourcestring
-
-    SErrInvalidStream = 'Stream can not be nil';
+    SysUtils;
 
     (*!------------------------------------------------
      * constructor
@@ -114,14 +106,10 @@ resourcestring
      * adapter destroy() is called, the stream also
      * be destroyed
      *-----------------------------------------------*)
-    constructor TStreamAdapter.create(const stream : TStream; const owned : boolean = true);
+    constructor TStreamAdapterLog.create(const stream : IStreamAdapter; const logger : ILogger);
     begin
         actualStream := stream;
-        isOwned := owned;
-        if (actualStream = nil) then
-        begin
-            raise EInvalidStream.create(SErrInvalidStream);
-        end;
+        actualLogger := logger;
     end;
 
     (*!------------------------------------------------
@@ -130,13 +118,11 @@ resourcestring
      * Note: because we use reference counting,
      * we need stream also be destroyed
      *-----------------------------------------------*)
-    destructor TStreamAdapter.destroy();
+    destructor TStreamAdapterLog.destroy();
     begin
         inherited destroy();
-        if (isOwned) then
-        begin
-            actualStream.free();
-        end;
+        actualStream := nil;
+        actualLogger := nil;
     end;
 
 
@@ -145,9 +131,10 @@ resourcestring
      *-----------------------------------------------
      * @return stream size in bytes
      *-----------------------------------------------*)
-    function TStreamAdapter.size() : int64;
+    function TStreamAdapterLog.size() : int64;
     begin
-        result := actualStream.size;
+        result := actualStream.size();
+        actualLogger.debug('StreamAdapterLog size ' + intToStr(result) + ' bytes');
     end;
 
     (*!------------------------------------------------
@@ -157,9 +144,10 @@ resourcestring
      * @param sizeToRead, total size in bytes to read
      * @return total bytes actually read
      *-----------------------------------------------*)
-    function TStreamAdapter.read(var buffer; const sizeToRead : int64) : int64;
+    function TStreamAdapterLog.read(var buffer; const sizeToRead : int64) : int64;
     begin
         result := actualStream.read(buffer, sizeToRead);
+        actualLogger.debug('StreamAdapterLog read ' + intToStr(sizeToRead) + ' bytes');
     end;
 
     (*!------------------------------------------------
@@ -169,9 +157,10 @@ resourcestring
      * @param sizeToWrite, total size in bytes to write
      * @return total bytes actually written
      *-----------------------------------------------*)
-    function TStreamAdapter.write(const buffer; const sizeToWrite : int64) : int64;
+    function TStreamAdapterLog.write(const buffer; const sizeToWrite : int64) : int64;
     begin
         result := actualStream.write(buffer, sizeToWrite);
+        actualLogger.debug('StreamAdapterLog write ' + intToStr(sizeToWrite) + ' bytes');
     end;
 
     (*!------------------------------------
@@ -183,9 +172,10 @@ resourcestring
      * if offset >= stream size then it is capped
      * to stream size-1
      *-------------------------------------*)
-    function TStreamAdapter.seek(const offset : int64) : int64;
+    function TStreamAdapterLog.seek(const offset : int64) : int64;
     begin
-        result := actualStream.seek(offset, soFromBeginning);
+        result := actualStream.seek(offset);
+        actualLogger.debug('StreamAdapterLog seek ' + intToStr(offset) + ' bytes');
     end;
 
     (*!------------------------------------------------
@@ -193,9 +183,10 @@ resourcestring
      *-----------------------------------------------
      * @return current instance
      *-----------------------------------------------*)
-    function TStreamAdapter.reset() : IStreamAdapter;
+    function TStreamAdapterLog.reset() : IStreamAdapter;
     begin
-        actualStream.size := 0;
+        actualStream.reset();
+        actualLogger.debug('StreamAdapterLog reset');
         result := self;
     end;
 end.

@@ -91,6 +91,14 @@ type
          * different instance everytime get() is called
          *---------------------------------------------------------*)
         function get(const serviceName : shortstring) : IDependency;
+
+        (*!--------------------------------------------------------
+         * test if service is already registered or not.
+         *---------------------------------------------------------
+         * @param serviceName name of service
+         * @return boolean true if service is registered otherwise false
+         *---------------------------------------------------------*)
+        function has(const serviceName : shortstring) : boolean;
     end;
 
 implementation
@@ -241,6 +249,22 @@ type
         begin
             result := depRec^.factory.build(self);
         end;
+    end;
+
+    (*!--------------------------------------------------------
+     * test if service is already registered or not.
+     *---------------------------------------------------------
+     * @param serviceName name of service
+     * @return boolean true if service is registered otherwise false
+     *---------------------------------------------------------
+     * if serviceName is registered with add(), then this method
+     * will always return same instance. If serviceName is
+     * registered using factory(), this method will return
+     * different instance everytim get() is called.s
+     *---------------------------------------------------------*)
+    function TDependencyContainer.has(const serviceName : shortstring) : boolean;
+    begin
+        result := (dependencyList.find(serviceName) <> nil);
     end;
 
 end.

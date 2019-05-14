@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit NullLoggerImpl;
+unit CompositeLoggerImpl;
 
 interface
 
@@ -22,12 +22,29 @@ uses
 type
 
     (*!------------------------------------------------
-     * logger class that does nothing
+     * logger class that is composed from two other loggers
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TNullLogger = class(TAbstractLogger)
+    TCompositeLogger = class(TAbstractLogger)
+    private
+        firstLogger : ILogger;
+        secondLogger : ILogger;
     public
+
+        (*!--------------------------------------
+         * constructor
+         * --------------------------------------
+         * @param aLogger1 first logger
+         * @param aLogger2 second logger
+         *---------------------------------------*)
+        constructor create(const aLogger1 : ILogger; const aLogger2 : ILogger);
+
+        (*!--------------------------------------
+         * destructor
+         *---------------------------------------*)
+        destructor destroy(); override;
+
         (*!--------------------------------------
          * log message
          * --------------------------------------
@@ -47,6 +64,28 @@ type
 implementation
 
     (*!--------------------------------------
+     * constructor
+     * --------------------------------------
+     * @param aLogger1 first logger
+     * @param aLogger2 second logger
+     *---------------------------------------*)
+    constructor TCompositeLogger.create(const aLogger1 : ILogger; const aLogger2 : ILogger);
+    begin
+        firstLogger  := aLogger1;
+        secondLogger := aLogger2;
+    end;
+
+    (*!--------------------------------------
+     * destructor
+     *---------------------------------------*)
+    destructor TCompositeLogger.destroy();
+    begin
+        inherited destroy();
+        firstLogger := nil;
+        secondLogger := nil;
+    end;
+
+    (*!--------------------------------------
      * log message
      * --------------------------------------
      * @param level type of log
@@ -55,13 +94,14 @@ implementation
      *               (if any)
      * @return current instance
      *---------------------------------------*)
-    function TNullLogger.log(
+    function TCompositeLogger.log(
         const level : string;
         const msg : string;
         const context : ISerializeable = nil
     ) : ILogger;
     begin
-        //intentionally do nothing
+        firstLogger.log(level, msg, context);
+        secondLogger.log(level, msg, context);
         result := self;
     end;
 

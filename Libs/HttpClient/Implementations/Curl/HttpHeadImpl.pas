@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit HttpGetImpl;
+unit HttpHeadImpl;
 
 interface
 
@@ -16,18 +16,18 @@ interface
 uses
 
     HttpMethodImpl,
-    HttpGetClientIntf,
+    HttpHeadClientIntf,
     ResponseStreamIntf,
     SerializeableIntf;
 
 type
 
     (*!------------------------------------------------
-     * class that send HTTP GET to server
+     * class that send HTTP HEAD to server
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    THttpGet = class(THttpMethod, IHttpGetClient)
+    THttpHead = class(THttpMethod, IHttpHeadClient)
     private
         (*!------------------------------------------------
          * append query params
@@ -55,13 +55,13 @@ type
     public
 
         (*!------------------------------------------------
-         * send HTTP GET request
+         * send HTTP HEAD request
          *-----------------------------------------------
          * @param url url to send request
          * @param data data related to this request
          * @return response from server
          *-----------------------------------------------*)
-        function get(
+        function head(
             const url : string;
             const data : ISerializeable = nil
         ) : IResponseStream;
@@ -85,7 +85,7 @@ uses
      * @param params query string
      * @return url with query string appended
      *-----------------------------------------------*)
-    function THttpGet.appendQueryParams(
+    function THttpHead.appendQueryParams(
         const url : string;
         const params : string
     ) : string;
@@ -108,7 +108,7 @@ uses
      * @param data data related to this request
      * @return url with query string appended
      *-----------------------------------------------*)
-    function THttpGet.buildUrlWithQueryParams(
+    function THttpHead.buildUrlWithQueryParams(
         const url : string;
         const data : ISerializeable = nil
     ) : string;
@@ -134,7 +134,7 @@ uses
      *-----------------------------------------------
      * @credit: https://github.com/graemeg/freepascal/blob/master/packages/libcurl/examples/testcurl.pp
      *-----------------------------------------------*)
-    function THttpGet.get(
+    function THttpHead.head(
         const url : string;
         const data : ISerializeable = nil
     ) : IResponseStream;
@@ -144,6 +144,7 @@ uses
         streamInst.reset();
         fullUrl := PChar(buildUrlWithQueryParams(url, data));
         curl_easy_setopt(hCurl, CURLOPT_URL, [ fullUrl ]);
+        curl_easy_setopt(hCurl, CURLOPT_NOBODY, [ 1 ]);
         executeCurl(hCurl);
         result := streamInst;
     end;

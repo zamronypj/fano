@@ -21,6 +21,9 @@ FileLoggerFactoryImpl,
 NullLoggerImpl,
 NullLoggerFactoryImpl,
 
+CompositeLoggerImpl,
+CompositeLoggerFactoryImpl,
+
 StringFileReaderImpl,
 StringFileReaderFactoryImpl,
 
@@ -32,3 +35,23 @@ SimpleStdInReaderImpl,
 
 HttpGetImpl,
 HttpGetFactoryImpl,
+
+HttpGetLogFactoryImpl,
+
+HttpPostImpl,
+HttpPostFactoryImpl,
+
+HttpPutImpl,
+HttpPutFactoryImpl,
+
+HttpDeleteImpl,
+HttpDeleteFactoryImpl,
+
+HttpHeadImpl,
+HttpHeadFactoryImpl,
+
+HttpClientImpl,
+HttpClientFactoryImpl,
+
+KeyValuePairImpl,
+KeyValuePairFactoryImpl,

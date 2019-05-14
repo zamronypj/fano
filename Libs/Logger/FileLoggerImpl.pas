@@ -42,7 +42,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TFileLogger = class(TAbstractLogger, IDependency, ILogger)
+    TFileLogger = class(TAbstractLogger)
     private
         outputFile : TextFile;
         isOpen : boolean;
