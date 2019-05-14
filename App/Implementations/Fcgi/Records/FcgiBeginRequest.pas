@@ -15,18 +15,22 @@ interface
 
 type
 
+    (*!-----------------------------------------------
+     * Begin Request record (FCGI_BEGIN_REQUEST)
+     *
+     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+     *-----------------------------------------------*)
     TFcgiBeginRequest = class(TFcgiRecord)
     private
         fRole : byte;
         fFlags : byte;
         fReserved1 : shortstring;
     public
-        constructor create();
         constructor create(
             const role : byte;
             const flag: byte;
             const reserved1 : shortstring
-        ); overload;
+        );
     end;
 
 implementation
@@ -36,9 +40,9 @@ uses
     fastcgi;
 
     constructor TFcgiBeginRequest.create(
-        const role : byte;
-        const flag: byte;
-        const reserved1 : shortstring
+        const role : byte = FCGI_UNKNOWN_ROLE;
+        const flag: byte = 0;
+        const reserved1 : shortstring = ''
     );
     begin
         inherited create();
@@ -47,10 +51,5 @@ uses
         fFlags := flag;
         fReserved1 := reserved1;
         setContentData(packPayload());
-    end;
-
-    constructor TFcgiBeginRequest.create();
-    begin
-        create(FCGI_UNKNOWN_ROLE, 0, '');
     end;
 end.

@@ -15,6 +15,11 @@ interface
 
 type
 
+    (*!-----------------------------------------------
+     * Base FastCGI record
+     *
+     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+     *-----------------------------------------------*)
     TFcgiRecord = class(TInterfacedObject, IFcgiRecord)
     private
     protected
@@ -32,7 +37,7 @@ type
         fPaddingData : shortstring;
 
         function setContentData(const data : string) : IFcgiRecord;
-        function packPayload() : string;
+        function packPayload() : string; virtual;
     public
         constructor create();
     end;
@@ -53,4 +58,16 @@ uses
         fPaddingLength := 0;
     end;
 
+    function TFcgiRecord.setContentData(const data : string) : IFcgiRecord;
+    begin
+        fContentData := data;
+        fContentLength := length(data);
+        $extraLength = $this->contentLength % 8;
+        result := self;
+    end;
+
+    function TFcgiRecord.packPayload() : string;
+    begin
+        result := '';
+    end;
 end.
