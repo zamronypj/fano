@@ -18,8 +18,8 @@ uses
 type
 
     (*!------------------------------------------------
-     * Exception that is raised when view parameters
-     * can not find specified key
+     * Exception that is raised when FCGI Record does not
+     * contain valid header
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
