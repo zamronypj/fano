@@ -36,7 +36,7 @@ type
         fContentData : string;
         fPaddingData : shortstring;
 
-        function setContentData(const data : string) : IFcgiRecord;
+        function setContentData(const buffer : pointer; const bufferSize : int64) : IFcgiRecord;
         function packPayload() : string; virtual;
     public
         constructor create();
