@@ -62,7 +62,7 @@ uses
     begin
         fContentData := data;
         fContentLength := length(data);
-        $extraLength = $this->contentLength % 8;
+        extraLength = fCntentLength % 8;
         result := self;
     end;
 
