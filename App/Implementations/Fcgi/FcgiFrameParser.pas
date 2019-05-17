@@ -226,7 +226,8 @@ uses
         end;
 
         offset := FCGI_HEADER_LEN + result.getContentLength() + result.getPaddingLength();
-        //TODO remove parsed header+payload from buffer
+        //TODO remove parsed header+payload from buffer i.e advanced to next
+        //FastCGI header+payload in stream
         move(buffer^, buffer^, offset);
     end;
 
