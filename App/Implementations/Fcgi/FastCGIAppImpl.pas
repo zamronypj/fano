@@ -30,12 +30,8 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TFastCGIWebApplication = class(TInterfacedObject, IWebApplication, IRunnable, IDataAvailListener)
+    TFastCGIWebApplication = class(TFanoWebApplication, IDataAvailListener)
     private
-        dependencyContainer : IDependencyContainer;
-        dispatcher : IDispatcher;
-        environment : ICGIEnvironment;
-        errorHandler : IErrorHandler;
         workerServer : RunnableWithDataNotifIntf;
         fcgiParser : IFcgiFrameParser;
     public
@@ -51,7 +47,6 @@ type
          *-----------------------------------------------*)
         constructor create(
             const container : IDependencyContainer;
-            const env : ICGIEnvironment;
             const errHandler : IErrorHandler;
             const dispatcherInst : IDispatcher;
             const server : IRunnableWithDataNotif;
@@ -77,15 +72,14 @@ implementation
      *-----------------------------------------------*)
     constructor TFastCGIWebApplication.create(
         const container : IDependencyContainer;
-        const env : ICGIEnvironment;
         const errHandler : IErrorHandler;
         const dispatcherInst : IDispatcher;
         const server : IRunnableWithDataNotif;
         const parser : IFcgiFrameParser
     );
     begin
+        inherited create()
         dependencyContainer := container;
-        environment :=env;
         errorHandler := errHandler;
         dispatcher := dispatcherInst;
         workerServer := server;
@@ -102,19 +96,66 @@ implementation
         workerServer := nil;
     end;
 
+    (*!-----------------------------------------------
+     * initialize application dependencies
+     *------------------------------------------------
+     * @param container dependency container
+     * @return true if application dependency succesfully
+     * constructed
+     *-----------------------------------------------
+     * TODO: need to think about how to initialize when
+     * application is run as daemon. Current implementation
+     * is we put this in run() method which maybe not right
+     * place.
+     *-----------------------------------------------*)
+    function TFastCGIWebApplication.initialize(const container : IDependencyContainer) : boolean;
+    begin
+        inherited initialize(container);
+        workerServer.setDataAvailListener(self);
+        result := true;
+    end;
+
     function TFastCGIWebApplication.run() : IRunnable;
     begin
-        workerServer.setDataAvailListener(self).run();
+        if (initialize(dependencyContainer)) then
+        begin
+            workerServer.run();
+        end;
         result := self;
     end;
 
     function TFastCGIWebApplication.handleData(const stream : IStreamAdapter; const context : TObject) : boolean;
     var arecord : IFcgiRecord;
+        response : IResponse;
     begin
         if (fcgiParser.hasFrame(stream)) then
         begin
             arecord := fcgiParser.parseFrame(stream);
-            //TODO: handle record and output appropriate response
+            if (arecord.ready()) then
+            begin
+                try
+                    environment := arecord.getEnvironment();
+                    execute();
+                except
+                      on e : ERouteHandlerNotFound do
+                      begin
+                          errorHandler.handleError(e, 404, sHttp404Message);
+                          reset();
+                      end;
+
+                      on e : EMethodNotAllowed do
+                      begin
+                          errorHandler.handleError(e, 405, sHttp405Message);
+                          reset();
+                      end;
+
+                      on e : Exception do
+                      begin
+                          errorHandler.handleError(e);
+                          reset();
+                      end;
+                end;
+            end;
         end;
         result := true;
     end;

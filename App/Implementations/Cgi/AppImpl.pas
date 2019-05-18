@@ -27,7 +27,7 @@ type
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
     TFanoWebApplication = class(TInterfacedObject, IWebApplication, IRunnable)
-    private
+    protected
         dependencyContainer : IDependencyContainer;
         dispatcher : IDispatcher;
         environment : ICGIEnvironment;
@@ -60,7 +60,6 @@ type
          * @param container dependency container
          *-----------------------------------------------*)
         procedure buildDispatcher(const container : IDependencyContainer);
-    protected
 
         (*!-----------------------------------------------
          * Build application dependencies
