@@ -14,21 +14,14 @@ interface
 
 
 uses
-    {$IFDEF unix}
-    cthreads,
-    {$ENDIF}
-    Classes,
-    SysUtils,
-    Sockets,
-    fpAsync,
-    fpSock,
-
     RunnableIntf,
     DependencyContainerIntf,
     AppIntf,
     DispatcherIntf,
     EnvironmentIntf,
-    ErrorHandlerIntf;
+    ErrorHandlerIntf,
+    DataAvailListenerIntf,
+    RunnableWithDataNotifIntf;
 
 type
 
@@ -37,13 +30,14 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TFastCGIWebApplication = class(TInterfacedObject, IWebApplication, IRunnable)
+    TFastCGIWebApplication = class(TInterfacedObject, IWebApplication, IRunnable, IDataAvailListener)
     private
         dependencyContainer : IDependencyContainer;
         dispatcher : IDispatcher;
         environment : ICGIEnvironment;
         errorHandler : IErrorHandler;
-
+        workerServer : RunnableWithDataNotifIntf;
+        fcgiParser : IFcgiFrameParser;
     public
         (*!-----------------------------------------------
          * constructor
@@ -59,10 +53,14 @@ type
             const container : IDependencyContainer;
             const env : ICGIEnvironment;
             const errHandler : IErrorHandler;
-            const dispatcherInst : IDispatcher
+            const dispatcherInst : IDispatcher;
+            const server : IRunnableWithDataNotif;
+            const parser : IFcgiFrameParser
         );
         destructor destroy(); override;
         function run() : IRunnable;
+
+        function handleData(const stream : IStreamAdapter; const context : TObject) : boolean;
     end;
 
 implementation
@@ -81,13 +79,17 @@ implementation
         const container : IDependencyContainer;
         const env : ICGIEnvironment;
         const errHandler : IErrorHandler;
-        const dispatcherInst : IDispatcher
+        const dispatcherInst : IDispatcher;
+        const server : IRunnableWithDataNotif;
+        const parser : IFcgiFrameParser
     );
     begin
         dependencyContainer := container;
         environment :=env;
         errorHandler := errHandler;
         dispatcher := dispatcherInst;
+        workerServer := server;
+        fcgiParser := parser;
     end;
 
     destructor TFastCGIWebApplication.destroy();
@@ -97,25 +99,24 @@ implementation
         environment := nil;
         errorHandler := nil;
         dispatcher := nil;
+        workerServer := nil;
     end;
 
     function TFastCGIWebApplication.run() : IRunnable;
-    var ServerEventLoop: TEventLoop;
     begin
+        workerServer.setDataAvailListener(self).run();
         result := self;
-        ServerEventLoop := TEventLoop.Create();
-        try
-            with TTestServer.Create(nil) do
-            begin
-                EventLoop := ServerEventLoop;
-                Port := 12000;
-                WriteLn('Serving...');
-                Active := true;
-                EventLoop.Run;
-            end;
-        finally
-          ServerEventLoop.Free;
+    end;
+
+    function TFastCGIWebApplication.handleData(const stream : IStreamAdapter; const context : TObject) : boolean;
+    var arecord : IFcgiRecord;
+    begin
+        if (fcgiParser.hasFrame(stream)) then
+        begin
+            arecord := fcgiParser.parseFrame(stream);
+            //TODO: handle record and output appropriate response
         end;
+        result := true;
     end;
 
 end.
