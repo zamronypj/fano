@@ -52,7 +52,7 @@ type
          * @return true if application dependency succesfully
          * constructed
          *-----------------------------------------------*)
-        function initialize(const container : IDependencyContainer) : boolean;
+        function initialize(const container : IDependencyContainer) : boolean; virtual;
 
         (*!-----------------------------------------------
          * Build application route dispatcher

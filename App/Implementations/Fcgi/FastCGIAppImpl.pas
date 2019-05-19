@@ -34,6 +34,8 @@ type
     private
         workerServer : RunnableWithDataNotifIntf;
         fcgiParser : IFcgiFrameParser;
+    protected
+        function initialize(const container : IDependencyContainer) : boolean; override;
     public
         (*!-----------------------------------------------
          * constructor
