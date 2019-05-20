@@ -22,7 +22,18 @@ type
      *-----------------------------------------------*)
     TFcgiStdErr = class(TFcgiRecord)
     public
-        constructor create(const content : string = '');
+        constructor create(
+            const requestId : word;
+            const content : string = ''
+        );
+
+        (*!------------------------------------------------
+        * write record data to stream
+        *-----------------------------------------------
+        * @param stream, stream instance where to write
+        * @return number of bytes actually written
+        *-----------------------------------------------*)
+        function write(const stream : IStreamAdapter) : integer; override;
     end;
 
 implementation
@@ -31,10 +42,23 @@ uses
 
     fastcgi;
 
-    constructor TFcgiStdErr.create(const content : string = '');
+    constructor TFcgiStdErr.create(
+        const requestId : word;
+        const content : string = ''
+    );
     begin
-        inherited create();
-        fType := FCGI_STDERR;
+        inherited create(FCGI_STDERR, requestId);
         setContentData(content);
+    end;
+
+    (*!------------------------------------------------
+    * write record data to stream
+    *-----------------------------------------------
+    * @param stream, stream instance where to write
+    * @return number of bytes actually written
+    *-----------------------------------------------*)
+    function TFcgiStdErr.write(const stream : IStreamAdapter) : integer;
+    begin
+
     end;
 end.

@@ -27,6 +27,7 @@ type
         fReserved1 : shortstring;
     public
         constructor create(
+            const requestId : word;
             const role : byte;
             const flag: byte;
             const reserved1 : shortstring
@@ -48,13 +49,13 @@ uses
     fastcgi;
 
     constructor TFcgiBeginRequest.create(
+        const requestId : word;
         const role : byte = FCGI_UNKNOWN_ROLE;
         const flag: byte = 0;
         const reserved1 : shortstring = ''
     );
     begin
-        inherited create();
-        fType := FCGI_BEGIN_REQUEST;
+        inherited create(FCGI_BEGIN_REQUEST, requestId);
         fRole := role;
         fFlags := flag;
         fReserved1 := reserved1;

@@ -24,7 +24,18 @@ type
     private
         keyValues : IKeyValuePair;
     public
-        constructor create(const aKeyValues : IKeyValuePair);
+        constructor create(
+            const requestId : word;
+            const aKeyValues : IKeyValuePair
+        );
+
+        (*!------------------------------------------------
+        * write record data to stream
+        *-----------------------------------------------
+        * @param stream, stream instance where to write
+        * @return number of bytes actually written
+        *-----------------------------------------------*)
+        function write(const stream : IStreamAdapter) : integer; override;
     end;
 
 implementation
@@ -33,10 +44,22 @@ uses
 
     fastcgi;
 
-    constructor TFcgiParams.create(const aKeyValues : IKeyValuePair);
+    constructor TFcgiParams.create(
+        const requestId : word;
+        const aKeyValues : IKeyValuePair
+    );
     begin
-        inherited create();
-        fType := FCGI_PARAMS;
+        inherited create(FCGI_PARAMS, requestId);
         keyValues := aKeyValues;
+    end;
+
+    (*!------------------------------------------------
+    * write record data to stream
+    *-----------------------------------------------
+    * @param stream, stream instance where to write
+    * @return number of bytes actually written
+    *-----------------------------------------------*)
+    function TFcgiParams.write(const stream : IStreamAdapter) : integer; override;
+    begin
     end;
 end.

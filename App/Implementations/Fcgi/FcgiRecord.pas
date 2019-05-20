@@ -38,7 +38,10 @@ type
         function setContentData(const buffer : pointer; const bufferSize : int64) : IFcgiRecord;
         function packPayload() : string; virtual;
     public
-        constructor create();
+        constructor create(
+            const aType : byte = FCGI_UNKNOWN_TYPE;
+            const aRequestId : word = FCGI_NULL_REQUEST_ID
+        );
 
         (*!------------------------------------------------
         * get current record type
@@ -62,11 +65,14 @@ uses
 
     fastcgi;
 
-    constructor TFcgiRecord.create();
+    constructor TFcgiRecord.create(
+        const aType : byte = FCGI_UNKNOWN_TYPE;
+        const requestId : word = FCGI_NULL_REQUEST_ID
+    );
     begin
         fVersion := FCGI_VERSION_1;
-        fType := FCGI_UNKNOWN_TYPE;
-        fRequestId := FCGI_NULL_REQUEST_ID;
+        fType := aType;
+        fRequestId := requestId;
         fReserved := 0;
         fContentLength := 0;
         fPaddingLength := 0;
