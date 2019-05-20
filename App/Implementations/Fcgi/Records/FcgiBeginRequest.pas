@@ -31,6 +31,14 @@ type
             const flag: byte;
             const reserved1 : shortstring
         );
+
+        (*!------------------------------------------------
+        * write record data to stream
+        *-----------------------------------------------
+        * @param stream, stream instance where to write
+        * @return number of bytes actually written
+        *-----------------------------------------------*)
+        function write(const stream : IStreamAdapter) : integer; override;
     end;
 
 implementation
@@ -51,5 +59,16 @@ uses
         fFlags := flag;
         fReserved1 := reserved1;
         setContentData(packPayload());
+    end;
+
+    (*!------------------------------------------------
+    * write record data to stream
+    *-----------------------------------------------
+    * @param stream, stream instance where to write
+    * @return number of bytes actually written
+    *-----------------------------------------------*)
+    function TFcgiBeginRequest.write(const stream : IStreamAdapter) : integer;
+    begin
+
     end;
 end.

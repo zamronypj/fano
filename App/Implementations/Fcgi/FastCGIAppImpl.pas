@@ -14,14 +14,17 @@ interface
 
 
 uses
+
     RunnableIntf,
     DependencyContainerIntf,
-    AppIntf,
+    AppImpl,
     DispatcherIntf,
     EnvironmentIntf,
     ErrorHandlerIntf,
+    OutputBufferIntf,
     DataAvailListenerIntf,
-    RunnableWithDataNotifIntf;
+    RunnableWithDataNotifIntf,
+    FcgiProcessorIntf;
 
 type
 
@@ -33,7 +36,10 @@ type
     TFastCGIWebApplication = class(TFanoWebApplication, IDataAvailListener)
     private
         workerServer : RunnableWithDataNotifIntf;
-        fcgiParser : IFcgiFrameParser;
+        fcgiProcessor : IFcgiFrameParser;
+        fOutputBuffer : IOutputBuffer;
+
+        procedure executeRequest(const env : ICGIEnvironment);
     public
         (*!-----------------------------------------------
          * constructor
@@ -50,7 +56,8 @@ type
             const errHandler : IErrorHandler;
             const dispatcherInst : IDispatcher;
             const server : IRunnableWithDataNotif;
-            const parser : IFcgiFrameParser
+            const aFcgiProcessor : IFcgiProcessor;
+            const outputBuffer : IOutputBuffer
         );
         destructor destroy(); override;
         function run() : IRunnable;
@@ -75,7 +82,7 @@ implementation
         const errHandler : IErrorHandler;
         const dispatcherInst : IDispatcher;
         const server : IRunnableWithDataNotif;
-        const parser : IFcgiFrameParser
+        const aFcgiProcessor : IFcgiProcessor
     );
     begin
         inherited create()
@@ -83,7 +90,8 @@ implementation
         errorHandler := errHandler;
         dispatcher := dispatcherInst;
         workerServer := server;
-        fcgiParser := parser;
+        fcgiProcessor := aFcgiProcessor;
+        fOutputBuffer := outputBuffer;
     end;
 
     destructor TFastCGIWebApplication.destroy();
@@ -94,6 +102,8 @@ implementation
         errorHandler := nil;
         dispatcher := nil;
         workerServer := nil;
+        fcgiProcessor := nil;
+        fOutputBuffer := nil;
     end;
 
     (*!-----------------------------------------------
@@ -124,37 +134,39 @@ implementation
         result := self;
     end;
 
-    function TFastCGIWebApplication.handleData(const stream : IStreamAdapter; const context : TObject) : boolean;
-    var arecord : IFcgiRecord;
-        response : IResponse;
+    procedure TFastCGIWebApplication.executeRequest(const env : ICGIEnvironment);
     begin
-        if (fcgiParser.hasFrame(stream)) then
+        try
+            environment := env;
+            execute();
+        except
+              on e : ERouteHandlerNotFound do
+              begin
+                  errorHandler.handleError(e, 404, sHttp404Message);
+              end;
+
+              on e : EMethodNotAllowed do
+              begin
+                  errorHandler.handleError(e, 405, sHttp405Message);
+              end;
+
+              on e : Exception do
+              begin
+                  errorHandler.handleError(e);
+              end;
+        end;
+    end;
+
+    function TFastCGIWebApplication.handleData(const stream : IStreamAdapter; const context : TObject) : boolean;
+    begin
+        if (fcgiProcessor.process(stream)) then
         begin
-            arecord := fcgiParser.parseFrame(stream);
-            if (arecord.ready()) then
-            begin
-                try
-                    environment := arecord.getEnvironment();
-                    execute();
-                except
-                      on e : ERouteHandlerNotFound do
-                      begin
-                          errorHandler.handleError(e, 404, sHttp404Message);
-                          reset();
-                      end;
-
-                      on e : EMethodNotAllowed do
-                      begin
-                          errorHandler.handleError(e, 405, sHttp405Message);
-                          reset();
-                      end;
-
-                      on e : Exception do
-                      begin
-                          errorHandler.handleError(e);
-                          reset();
-                      end;
-                end;
+            fOutputBuffer.beginBuffering();
+            try
+                executeRequest(fcgiProcessor.getEnvironment());
+            finally
+                fOutputBuffer.endBuffering();
+                fcgiProcessor.write(stream, fOutputBuffer.flush());
             end;
         end;
         result := true;

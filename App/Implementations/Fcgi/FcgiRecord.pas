@@ -21,7 +21,6 @@ type
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
     TFcgiRecord = class(TInterfacedObject, IFcgiRecord)
-    private
     protected
         fVersion : byte;
         fType : byte;
@@ -40,6 +39,21 @@ type
         function packPayload() : string; virtual;
     public
         constructor create();
+
+        (*!------------------------------------------------
+        * get current record type
+        *-----------------------------------------------
+        * @return type of record
+        *-----------------------------------------------*)
+        function getType() : byte;
+
+        (*!------------------------------------------------
+        * write record data to stream
+        *-----------------------------------------------
+        * @param stream, stream instance where to write
+        * @return number of bytes actually written
+        *-----------------------------------------------*)
+        function write(const stream : IStreamAdapter) : integer; virtual; abstract;
     end;
 
 implementation
@@ -58,16 +72,33 @@ uses
         fPaddingLength := 0;
     end;
 
-    function TFcgiRecord.setContentData(const data : string) : IFcgiRecord;
+    (*!------------------------------------------------
+    * get current record type
+    *-----------------------------------------------
+    * @return type of record
+    *-----------------------------------------------*)
+    function TFcgiRecord.getType() : byte;
     begin
-        fContentData := data;
-        fContentLength := length(data);
-        extraLength = fCntentLength % 8;
-        result := self;
+        result := fType;
     end;
 
-    function TFcgiRecord.packPayload() : string;
+    (*!------------------------------------------------
+    * get request id
+    *-----------------------------------------------
+    * @return request id
+    *-----------------------------------------------*)
+    function TFcgiRecord.getRequestId() : word;
     begin
-        result := '';
+        result := fRequestId;
+    end;
+
+    (*!------------------------------------------------
+    * get content length
+    *-----------------------------------------------
+    * @return content length
+    *-----------------------------------------------*)
+    function TFcgiRecord.getContentLength() : word;
+    begin
+        result := fContentLength;
     end;
 end.
