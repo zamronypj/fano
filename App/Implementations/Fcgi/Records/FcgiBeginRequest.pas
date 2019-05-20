@@ -24,14 +24,8 @@ type
     private
         fRole : byte;
         fFlags : byte;
-        fReserved1 : shortstring;
     public
-        constructor create(
-            const requestId : word;
-            const role : byte;
-            const flag: byte;
-            const reserved1 : shortstring
-        );
+        constructor create(const requestId : word; const role : byte; const flag: byte);
 
         (*!------------------------------------------------
         * write record data to stream
@@ -50,16 +44,13 @@ uses
 
     constructor TFcgiBeginRequest.create(
         const requestId : word;
-        const role : byte = FCGI_UNKNOWN_ROLE;
-        const flag: byte = 0;
-        const reserved1 : shortstring = ''
+        const role : byte = FCGI_RESPONDER;
+        const flag: byte = 0
     );
     begin
         inherited create(FCGI_BEGIN_REQUEST, requestId);
         fRole := role;
         fFlags := flag;
-        fReserved1 := reserved1;
-        setContentData(packPayload());
     end;
 
     (*!------------------------------------------------
@@ -69,7 +60,19 @@ uses
     * @return number of bytes actually written
     *-----------------------------------------------*)
     function TFcgiBeginRequest.write(const stream : IStreamAdapter) : integer;
+    var beginRequestRec : FCGI_BeginRequestRecord;
+        bytesToWrite : integer;
     begin
-
+        fillChar(beginRequestRec, sizeOf(FCGI_BeginRequestRecord), 0);
+        beginRequestRec.header.version:= fVersion;
+        beginRequestRec.header.reqtype:= fType;
+        beginRequestRec.header.contentLength:= NtoBE(fContentLength);
+        beginRequestRec.header.paddingLength:= fPaddingLength;
+        beginRequestRec.header.requestId:= NToBE(fRequestId);
+        beginRequestRec.body.role := fRole;
+        beginRequestRec.body.flags := fFlags;
+        bytesToWrite := getRecordSize();
+        stream.writeBuffer(beginRequestRec, bytesToWrite);
+        result := bytesToWrite;
     end;
 end.

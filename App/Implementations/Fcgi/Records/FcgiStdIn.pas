@@ -13,6 +13,10 @@ interface
 {$MODE OBJFPC}
 {$H+}
 
+uses
+
+    FcgiStreamRecord;
+
 type
 
     (*!-----------------------------------------------
@@ -20,21 +24,9 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TFcgiStdIn = class(TFcgiRecord)
+    TFcgiStdIn = class(TFcgiStreamRecord)
     public
-        constructor create(
-            const requestId : word;
-            const content : string = ''
-        );
-
-        (*!------------------------------------------------
-        * write record data to stream
-        *-----------------------------------------------
-        * @param stream, stream instance where to write
-        * @return number of bytes actually written
-        *-----------------------------------------------*)
-        function write(const stream : IStreamAdapter) : integer; override;
-
+        constructor create(const requestId : word; const content : string = '');
     end;
 
 implementation
@@ -43,23 +35,9 @@ uses
 
     fastcgi;
 
-    constructor TFcgiStdIn.create(
-        const requestId : word;
-        const content : string = ''
-    );
+    constructor TFcgiStdIn.create(const requestId : word; const content : string = '');
     begin
-        inherited create(FCGI_STDIN, requestId);
-        fContentData := content;
+        inherited create(FCGI_STDIN, requestId, content);
     end;
 
-    (*!------------------------------------------------
-    * write record data to stream
-    *-----------------------------------------------
-    * @param stream, stream instance where to write
-    * @return number of bytes actually written
-    *-----------------------------------------------*)
-    function TFcgiStdIn.write(const stream : IStreamAdapter) : integer;
-    begin
-
-    end;
 end.

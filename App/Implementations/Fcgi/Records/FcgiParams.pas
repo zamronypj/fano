@@ -60,6 +60,31 @@ uses
     * @return number of bytes actually written
     *-----------------------------------------------*)
     function TFcgiParams.write(const stream : IStreamAdapter) : integer; override;
+    var i, totalKeys : integer;
+        akey : shortstring;
+        avalue : string;
+        lenKey : integer;
+        lenValue : integer;
+        paramRec : PFCGI_ContentRecord;
     begin
+        totalKeys := keyValues.count();
+        for i := 0 to totalKeys - 1 do
+        begin
+            akey := keyValues.getKey(i);
+            lenKey := length(akey);
+            avalue := keyValues.getValue(akey);
+            lenValue := length(avalue);
+            if (lenKey > 127) then
+            begin
+            end else
+            begin
+            end;
+
+            if (lenValue > 127) then
+            begin
+            end else
+            begin
+            end;
+        end;
     end;
 end.

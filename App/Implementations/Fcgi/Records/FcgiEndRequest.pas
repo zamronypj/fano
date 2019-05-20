@@ -65,7 +65,7 @@ uses
     *-----------------------------------------------*)
     function TFcgiEndRequest.write(const stream : IStreamAdapter) : integer;
     var endRequestRec : FCGI_EndRequestRecord;
-        bytesToWrite, bytesWritten : integer;
+        bytesToWrite : integer;
     begin
         fillChar(endRequestRec, sizeOf(FCGI_EndRequestRecord), 0);
         endRequestRec.header.version:= fVersion;
@@ -73,12 +73,13 @@ uses
         endRequestRec.header.contentLength:= NtoBE(fContentLength);
         endRequestRec.header.paddingLength:= fPaddingLength;
         endRequestRec.header.requestId:= NToBE(fRequestId);
-        endRequestRec.body.protocolStatus := FCGI_REQUEST_COMPLETE;
+        endRequestRec.body.protocolStatus := fProtocolStatus;
         endRequestRec.body.appStatusB0 := appStatus and $ff;
         endRequestRec.body.appStatusB1 := (appStatus shr 8) and $ff;
         endRequestRec.body.appStatusB2 := (appStatus shr 16) and $ff;
         endRequestRec.body.appStatusB3 := (appStatus shr 24) and $ff;
         bytesToWrite := getRecordSize();
         stream.writeBuffer(endRequestRec, bytesToWrite);
+        result := bytesToWrite;
     end;
 end.
