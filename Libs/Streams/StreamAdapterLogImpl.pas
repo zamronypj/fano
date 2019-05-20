@@ -71,6 +71,22 @@ type
          *-----------------------------------------------*)
         function write(const buffer; const sizeToWrite : int64) : int64;
 
+        (*!------------------------------------------------
+         * read from stream to buffer until all data is read
+         *-----------------------------------------------
+         * @param buffer, buffer to store data read
+         * @param sizeToRead, total size in bytes to read
+         *-----------------------------------------------*)
+        procedure readBuffer(var buffer; const sizeToRead : int64);
+
+        (*!------------------------------------------------
+         * write from buffer to stream until all data is written
+         *-----------------------------------------------
+         * @param buffer, buffer contains data to write
+         * @param sizeToWrite, total size in bytes to write
+         *-----------------------------------------------*)
+        procedure writeBuffer(const buffer; const sizeToWrite : int64);
+
         (*!------------------------------------
          * seek
          *-------------------------------------
@@ -161,6 +177,32 @@ uses
     begin
         result := actualStream.write(buffer, sizeToWrite);
         actualLogger.debug('StreamAdapterLog write ' + intToStr(sizeToWrite) + ' bytes');
+    end;
+
+    (*!------------------------------------------------
+     * read from stream to buffer
+     *-----------------------------------------------
+     * @param buffer, buffer to store data read
+     * @param sizeToRead, total size in bytes to read
+     * @return total bytes actually read
+     *-----------------------------------------------*)
+    procedure TStreamAdapterLog.read(var buffer; const sizeToRead : int64) : int64;
+    begin
+        actualStream.readBuffer(buffer, sizeToRead);
+        actualLogger.debug('StreamAdapterLog read buffer ' + intToStr(sizeToRead) + ' bytes');
+    end;
+
+    (*!------------------------------------------------
+     * write from buffer to stream
+     *-----------------------------------------------
+     * @param buffer, buffer contains data to write
+     * @param sizeToWrite, total size in bytes to write
+     * @return total bytes actually written
+     *-----------------------------------------------*)
+    procedure TStreamAdapterLog.writeBuffer(const buffer; const sizeToWrite : int64);
+    begin
+        actualStream.writeBuffer(buffer, sizeToWrite);
+        actualLogger.debug('StreamAdapterLog write buffer ' + intToStr(sizeToWrite) + ' bytes');
     end;
 
     (*!------------------------------------

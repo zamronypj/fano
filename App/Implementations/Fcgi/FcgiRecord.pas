@@ -35,8 +35,12 @@ type
         fContentData : string;
         fPaddingData : shortstring;
 
-        function setContentData(const buffer : pointer; const bufferSize : int64) : IFcgiRecord;
-        function packPayload() : string; virtual;
+        (*!------------------------------------------------
+        * calculate total record data size
+        *-----------------------------------------------
+        * @return number of bytes of current record
+        *-----------------------------------------------*)
+        function getRecordSize() : integer;
     public
         constructor create(
             const aType : byte = FCGI_UNKNOWN_TYPE;
@@ -106,5 +110,15 @@ uses
     function TFcgiRecord.getContentLength() : word;
     begin
         result := fContentLength;
+    end;
+
+    (*!------------------------------------------------
+    * calculate total record data size
+    *-----------------------------------------------
+    * @return number of bytes of current record
+    *-----------------------------------------------*)
+    function TFcgiRecord.getRecordSize() : integer;
+    begin
+        result := FCGI_HEADER_LEN + fContentLength + fPaddingLength;
     end;
 end.
