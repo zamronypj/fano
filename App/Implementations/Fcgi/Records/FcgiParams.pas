@@ -6,7 +6,7 @@
  * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
  *}
 
-unit FcgiBeginRequest;
+unit FcgiParams;
 
 interface
 
@@ -16,16 +16,18 @@ interface
 type
 
     (*!-----------------------------------------------
-     * Begin Request record (FCGI_BEGIN_REQUEST)
+     * Params record (FCGI_PARAMS)
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TFcgiBeginRequest = class(TFcgiRecord)
+    TFcgiParams = class(TFcgiRecord)
     private
-        fRole : byte;
-        fFlags : byte;
+        keyValues : IKeyValuePair;
     public
-        constructor create(const requestId : word; const role : byte; const flag: byte);
+        constructor create(
+            const requestId : word;
+            const aKeyValues : IKeyValuePair
+        );
 
         (*!------------------------------------------------
         * write record data to stream
@@ -42,15 +44,13 @@ uses
 
     fastcgi;
 
-    constructor TFcgiBeginRequest.create(
+    constructor TFcgiParams.create(
         const requestId : word;
-        const role : byte = FCGI_RESPONDER;
-        const flag: byte = 0
+        const aKeyValues : IKeyValuePair
     );
     begin
-        inherited create(FCGI_BEGIN_REQUEST, requestId);
-        fRole := role;
-        fFlags := flag;
+        inherited create(FCGI_PARAMS, requestId);
+        keyValues := aKeyValues;
     end;
 
     (*!------------------------------------------------
@@ -59,20 +59,32 @@ uses
     * @param stream, stream instance where to write
     * @return number of bytes actually written
     *-----------------------------------------------*)
-    function TFcgiBeginRequest.write(const stream : IStreamAdapter) : integer;
-    var beginRequestRec : FCGI_BeginRequestRecord;
-        bytesToWrite : integer;
+    function TFcgiParams.write(const stream : IStreamAdapter) : integer; override;
+    var i, totalKeys : integer;
+        akey : shortstring;
+        avalue : string;
+        lenKey : integer;
+        lenValue : integer;
+        paramRec : PFCGI_ContentRecord;
     begin
-        fillChar(beginRequestRec, sizeOf(FCGI_BeginRequestRecord), 0);
-        beginRequestRec.header.version:= fVersion;
-        beginRequestRec.header.reqtype:= fType;
-        beginRequestRec.header.contentLength:= NtoBE(fContentLength);
-        beginRequestRec.header.paddingLength:= fPaddingLength;
-        beginRequestRec.header.requestId:= NToBE(fRequestId);
-        beginRequestRec.body.role := fRole;
-        beginRequestRec.body.flags := fFlags;
-        bytesToWrite := getRecordSize();
-        stream.writeBuffer(beginRequestRec, bytesToWrite);
-        result := bytesToWrite;
+        totalKeys := keyValues.count();
+        for i := 0 to totalKeys - 1 do
+        begin
+            akey := keyValues.getKey(i);
+            lenKey := length(akey);
+            avalue := keyValues.getValue(akey);
+            lenValue := length(avalue);
+            if (lenKey > 127) then
+            begin
+            end else
+            begin
+            end;
+
+            if (lenValue > 127) then
+            begin
+            end else
+            begin
+            end;
+        end;
     end;
 end.

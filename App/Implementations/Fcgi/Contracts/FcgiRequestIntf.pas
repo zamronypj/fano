@@ -6,38 +6,32 @@
  * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
  *}
 
-unit FcgiStdOut;
+unit FcgiRequestIntf;
 
 interface
 
 {$MODE OBJFPC}
 {$H+}
 
-uses
-
-    FcgiStreamRecord;
-
 type
 
     (*!-----------------------------------------------
-     * Standard input binary stream (FCGI_STDIN)
+     * Interface for any class having capability to hold
+     * FastCGI request
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TFcgiStdOut = class(TFcgiStreamRecord)
-    public
-        constructor create(const requestId : word; const content : string = '');
+    IFcgiRequest = interface
+        ['{32C2BC0A-AF97-4EA0-A205-71F1FF05BFD5}']
+
+        (*!------------------------------------------------
+        * get current request id
+        *-----------------------------------------------
+        * @return id of current request
+        *-----------------------------------------------*)
+        function id() : word;
     end;
 
 implementation
-
-uses
-
-    fastcgi;
-
-    constructor TFcgiStdOut.create(const requestId : word; const content : string = '');
-    begin
-        inherited create(FCGI_STDOUT, requestId, content);
-    end;
 
 end.

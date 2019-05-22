@@ -6,7 +6,7 @@
  * @license   https://github.com/zamronypj/fano/blob/master/LICENSE (GPL 3.0)
  *}
 
-unit FcgiStdOut;
+unit FcgiData;
 
 interface
 
@@ -20,11 +20,11 @@ uses
 type
 
     (*!-----------------------------------------------
-     * Standard input binary stream (FCGI_STDIN)
+     * data binary stream record (FCGI_DATA)
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TFcgiStdOut = class(TFcgiStreamRecord)
+    TFcgiData = class(TFcgiStreamRecord)
     public
         constructor create(const requestId : word; const content : string = '');
     end;
@@ -35,9 +35,9 @@ uses
 
     fastcgi;
 
-    constructor TFcgiStdOut.create(const requestId : word; const content : string = '');
+    constructor TFcgiData.create(const requestId : word; const content : string = '');
     begin
-        inherited create(FCGI_STDOUT, requestId, content);
+        inherited create(FCGI_DATA, requestId, content);
     end;
 
 end.
