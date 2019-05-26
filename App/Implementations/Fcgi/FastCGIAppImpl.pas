@@ -97,6 +97,7 @@ implementation
     destructor TFastCGIWebApplication.destroy();
     begin
         inherited destroy();
+        dispatcher := nil;
         workerServer := nil;
         fcgiProcessor := nil;
         fOutputBuffer := nil;
@@ -108,11 +109,6 @@ implementation
      * @param container dependency container
      * @return true if application dependency succesfully
      * constructed
-     *-----------------------------------------------
-     * TODO: need to think about how to initialize when
-     * application is run as daemon. Current implementation
-     * is we put this in run() method which maybe not right
-     * place.
      *-----------------------------------------------*)
     function TFastCGIWebApplication.initialize(const container : IDependencyContainer) : boolean;
     begin
@@ -121,15 +117,28 @@ implementation
         result := true;
     end;
 
+    (*!-----------------------------------------------
+     * run application
+     *------------------------------------------------
+     * @return current instance.
+     *-----------------------------------------------
+     * Note that run keeps run until application is terminated
+     *-----------------------------------------------*)
     function TFastCGIWebApplication.run() : IRunnable;
     begin
         if (initialize(dependencyContainer)) then
         begin
+            //execute run loop until terminated
             workerServer.run();
         end;
         result := self;
     end;
 
+    (*!-----------------------------------------------
+     * execute request
+     *------------------------------------------------
+     * @param env, CGI environment
+     *-----------------------------------------------*)
     procedure TFastCGIWebApplication.executeRequest(const env : ICGIEnvironment);
     begin
         try
@@ -153,15 +162,25 @@ implementation
         end;
     end;
 
+    (*!-----------------------------------------------
+     * called when socket contain data available to be
+     * processed
+     *------------------------------------------------
+     * @param stream, socket stream
+     * @param context, additional related data related,
+     *        mostly contain sender (if any)
+     *-----------------------------------------------*)
     function TFastCGIWebApplication.handleData(const stream : IStreamAdapter; const context : TObject) : boolean;
     begin
         if (fcgiProcessor.process(stream)) then
         begin
+            //buffer STDOUT, so any write()/writeln() will be buffered to stream
             fOutputBuffer.beginBuffering();
             try
                 executeRequest(fcgiProcessor.getEnvironment());
             finally
                 fOutputBuffer.endBuffering();
+                //write response back to web server (i.e FastCGI client)
                 fcgiProcessor.write(stream, fOutputBuffer.flush());
             end;
         end;
