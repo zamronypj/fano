@@ -55,6 +55,20 @@ type
         function getType() : byte;
 
         (*!------------------------------------------------
+        * get request id
+        *-----------------------------------------------
+        * @return request id
+        *-----------------------------------------------*)
+        function getRequestId() : word;
+
+        (*!------------------------------------------------
+        * get content length
+        *-----------------------------------------------
+        * @return content length
+        *-----------------------------------------------*)
+        function getContentLength() : word;
+
+        (*!------------------------------------------------
         * write record data to stream
         *-----------------------------------------------
         * @param stream, stream instance where to write

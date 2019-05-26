@@ -13,6 +13,10 @@ interface
 {$MODE OBJFPC}
 {$H+}
 
+uses
+
+    EnvironmentIntf;
+
 type
 
     (*!-----------------------------------------------
@@ -30,14 +34,23 @@ type
         * @return true if all data from web server is ready to
         * be handle by application (i.e, environment, STDIN already parsed)
         *-----------------------------------------------*)
-        function process(const stream : IStreamAdapter;) : boolean;
+        function process(const stream : IStreamAdapter) : boolean;
 
         (*!------------------------------------------------
         * get current environment
         *-----------------------------------------------
         * @return environment
         *-----------------------------------------------*)
-        function process(const stream : IStreamAdapter;) : boolean;
+        function getEnvironment() : ICGIEnvironment;
+
+        (*!------------------------------------------------
+        * write string to FCGI_STDOUT stream and
+        * mark it end of request
+        *-----------------------------------------------
+        * @return current instance
+        *-----------------------------------------------*)
+        function write(const stream : IStreamAdapter; const str : string)  : IFcgiProcessor;
+
     end;
 
 implementation

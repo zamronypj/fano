@@ -33,7 +33,7 @@ type
         fHostName : string;
         fPort : word;
         server : TInetServer;
-        fDataListener := IDataAvailListener;
+        fDataListener : IDataAvailListener;
 
         procedure DoConnect(Sender: TObject; Data: TSocketStream);
     public
