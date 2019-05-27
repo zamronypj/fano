@@ -25,3 +25,7 @@ HttpDeleteClientIntf,
 HttpHeadClientIntf,
 
 KeyValuePairIntf,
+
+FcgiRecordIntf,
+FcgiFrameParserIntf,
+FcgiProcessorIntf,

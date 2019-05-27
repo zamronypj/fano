@@ -34,3 +34,6 @@ THttpHeadFactory = HttpHeadFactoryImpl.THttpHeadFactory;
 
 TKeyValuePair = KeyValuePairImpl.TKeyValuePair;
 TKeyValuePairFactory = KeyValuePairFactoryImpl.TKeyValuePairFactory;
+
+TFcgiFrameParser = FcgiFrameParserImpl.TFcgiFrameParser;
+TFcgiProcessor = FcgiProcessorImpl.TFcgiProcessor;

@@ -55,3 +55,6 @@ HttpClientFactoryImpl,
 
 KeyValuePairImpl,
 KeyValuePairFactoryImpl,
+
+FcgiFrameParserImpl,
+FcgiProcessorImpl,
