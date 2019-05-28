@@ -13,6 +13,12 @@ interface
 {$MODE OBJFPC}
 {$H+}
 
+uses
+
+    KeyValuePairIntf,
+    StreamAdapterIntf,
+    FcgiRecord;
+
 type
 
     (*!-----------------------------------------------
@@ -20,14 +26,22 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TFcgiParams = class(TFcgiRecord)
+    TFcgiParams = class(TFcgiRecord, IKeyValuePair)
     private
-        keyValues : IKeyValuePair;
+        fKeyValues : IKeyValuePair;
     public
-        constructor create(
-            const requestId : word;
-            const aKeyValues : IKeyValuePair
-        );
+        (*!------------------------------------------------
+         * constructor
+         *-----------------------------------------------
+         * @param requestId, id of request
+         * @return aKeyValues, instance IKeyValuePair which will store key value
+         *-----------------------------------------------*)
+        constructor create(const requestId : word; const aKeyValues : IKeyValuePair);
+
+        (*!------------------------------------------------
+         * destructor
+         *-----------------------------------------------*)
+        destructor destroy(); override;
 
         (*!------------------------------------------------
         * write record data to stream
@@ -36,6 +50,8 @@ type
         * @return number of bytes actually written
         *-----------------------------------------------*)
         function write(const stream : IStreamAdapter) : integer; override;
+
+        property keyValues : IKeyValuePair read fKeyValues implements IKeyValuePair;
     end;
 
 implementation
@@ -44,13 +60,28 @@ uses
 
     fastcgi;
 
+    (*!------------------------------------------------
+     * constructor
+     *-----------------------------------------------
+     * @param requestId, id of request
+     * @return aKeyValues, instance IKeyValuePair which will store key value
+     *-----------------------------------------------*)
     constructor TFcgiParams.create(
         const requestId : word;
         const aKeyValues : IKeyValuePair
     );
     begin
         inherited create(FCGI_PARAMS, requestId);
-        keyValues := aKeyValues;
+        fKeyValues := aKeyValues;
+    end;
+
+    (*!------------------------------------------------
+     * destructor
+     *-----------------------------------------------*)
+    destructor TFcgiParams.destroy();
+    begin
+        inherited destroy();
+        fKeyValues := nil;
     end;
 
     (*!------------------------------------------------
