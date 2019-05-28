@@ -68,6 +68,19 @@ type
 
 implementation
 
+uses
+
+    SysUtils,
+    ERouteHandlerNotFoundImpl,
+    EMethodNotAllowedImpl,
+
+resourcestring
+
+    //TODO refactor as this is duplicate with AppImpl.pas
+    sHttp404Message = 'Not Found';
+    sHttp405Message = 'Method Not Allowed';
+    sErrInvalidDispatcher = 'Dispatcher instance is invalid';
+
     (*!-----------------------------------------------
      * constructor
      *------------------------------------------------
