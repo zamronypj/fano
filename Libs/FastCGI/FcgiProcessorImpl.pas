@@ -147,7 +147,11 @@ uses
             if (arecord.getType() = FCGI_PARAMS) and (arecord.getContentLength() = 0) then
             begin
                 fcgiParamsComplete := true;
-                fcgiEnvironment[fcgiRequestId] := TFcgiEnvironment.create(arecord as IKeyValuePair);
+
+                //TODO: need to rethink when FCGI_PARAMS record sent multiple
+                //times. Need wrapper class that implements IKeyValuePair and wraps
+                //multiple FcgiParams records as one big IKeyValuePair
+                fcgiEnvironments[fcgiRequestId] := TFcgiEnvironment.create(arecord as IKeyValuePair);
             end;
 
             //if we received FCGI_STDIN with empty data, it means web server complete
