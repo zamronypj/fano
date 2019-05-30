@@ -15,7 +15,8 @@ interface
 
 uses
 
-    EnvironmentIntf;
+    EnvironmentIntf,
+    StreamAdapterIntf;
 
 type
 
