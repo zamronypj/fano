@@ -87,12 +87,12 @@ implementation
 
     constructor TFcgiRecord.create(
         const aType : byte = FCGI_UNKNOWN_TYPE;
-        const requestId : word = FCGI_NULL_REQUEST_ID
+        const aRequestId : word = FCGI_NULL_REQUEST_ID
     );
     begin
         fVersion := FCGI_VERSION_1;
         fType := aType;
-        fRequestId := requestId;
+        fRequestId := aRequestId;
         fReserved := 0;
         fContentLength := 0;
         fPaddingLength := 0;
