@@ -25,7 +25,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    IFcgiProcessor = interface(IRequest)
+    IFcgiProcessor = interface
         ['{D702F184-8CA5-48AC-AC71-6E5C4EE02382}']
 
         (*!------------------------------------------------
