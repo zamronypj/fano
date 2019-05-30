@@ -79,7 +79,6 @@ resourcestring
     //TODO refactor as this is duplicate with AppImpl.pas
     sHttp404Message = 'Not Found';
     sHttp405Message = 'Method Not Allowed';
-    sErrInvalidDispatcher = 'Dispatcher instance is invalid';
 
     (*!-----------------------------------------------
      * constructor
@@ -189,6 +188,7 @@ resourcestring
             //buffer STDOUT, so any write()/writeln() will be buffered to stream
             fOutputBuffer.beginBuffering();
             try
+                //when we get here, CGI environment and any POST data are ready
                 executeRequest(fcgiProcessor.getEnvironment());
             finally
                 fOutputBuffer.endBuffering();
