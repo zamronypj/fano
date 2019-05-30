@@ -15,7 +15,8 @@ interface
 
 uses
 
-    FcgiRecordIntf;
+    FcgiRecordIntf,
+    FcgiRecordFactory;
 
 type
 

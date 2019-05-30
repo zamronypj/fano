@@ -15,7 +15,8 @@ interface
 
 uses
 
-    FcgiRecordIntf;
+    FcgiRecordIntf,
+    FcgiRecordFactory;
 
 type
 
@@ -39,6 +40,7 @@ implementation
 uses
 
     fastcgi,
+    KeyValuePairIntf,
     KeyValueMapImpl,
     FcgiParams;
 
