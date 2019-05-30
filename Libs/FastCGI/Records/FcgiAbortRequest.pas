@@ -26,15 +26,8 @@ type
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
     TFcgiAbortRequest = class(TFcgiRecord)
-    private
-        fProtocolStatus : byte;
-        fAppStatus : cardinal;
     public
-        constructor create(
-            const requestId : word;
-            const protocolStatus : byte = FCGI_REQUEST_COMPLETE;
-            const appStatus : cardinal = 0
-        );
+        constructor create(const requestId : word);
 
         (*!------------------------------------------------
         * write record data to stream
