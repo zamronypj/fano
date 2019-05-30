@@ -13,6 +13,12 @@ interface
 {$MODE OBJFPC}
 {$H+}
 
+uses
+
+    fastcgi,
+    StreamAdapterIntf,
+    FcgiRecordIntf;
+
 type
 
     (*!-----------------------------------------------
@@ -78,10 +84,6 @@ type
     end;
 
 implementation
-
-uses
-
-    fastcgi;
 
     constructor TFcgiRecord.create(
         const aType : byte = FCGI_UNKNOWN_TYPE;
