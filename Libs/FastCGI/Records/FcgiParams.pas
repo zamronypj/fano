@@ -90,7 +90,7 @@ uses
     * @param stream, stream instance where to write
     * @return number of bytes actually written
     *-----------------------------------------------*)
-    function TFcgiParams.write(const stream : IStreamAdapter) : integer; override;
+    function TFcgiParams.write(const stream : IStreamAdapter) : integer;
     var i, totalKeys : integer;
         akey : shortstring;
         avalue : string;
