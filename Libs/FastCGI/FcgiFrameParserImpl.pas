@@ -29,8 +29,6 @@ type
      *-----------------------------------------------*)
     TFcgiFrameParser = class (TInjectableObject, IFcgiFrameParser)
     private
-        fSocketStream : IStreamAdapter;
-
         procedure raiseExceptionIfBufferNil(const buffer : pointer);
         procedure raiseExceptionIfInvalidBufferSize(const bufferSize : int64);
         procedure raiseExceptionIfInvalidBuffer(const buffer : pointer;  const bufferSize : int64);
@@ -38,18 +36,6 @@ type
         function isValidRecordType(const reqType : byte) : boolean;
         procedure raiseExceptionIfInvalidRecordType(const reqType : byte);
     public
-
-        (*!------------------------------------------------
-         * constructor
-         *-----------------------------------------------
-         * @param socketStream, stream from socket connection
-         *-----------------------------------------------*)
-        constructor create(const socketStream : IStreamAdapter);
-
-        (*!------------------------------------------------
-         * destructor
-         *-----------------------------------------------*)
-        destructor destroy(); override;
 
         (*!------------------------------------------------
         * test if buffer contain FastCGI frame package
@@ -80,26 +66,8 @@ uses
     fastcgi,
     EInvalidFcgiBufferImpl,
     EInvalidFcgiRecordTypeImpl,
-    EInvalidFcgiHeaderLenImpl;
-
-    (*!------------------------------------------------
-     * constructor
-     *-----------------------------------------------
-     * @param socketStream, stream from socket connection
-     *-----------------------------------------------*)
-    constructor TFcgiFrameParser.create(const socketStream : IStreamAdapter);
-    begin
-        fSocketStream := socketStream;
-    end;
-
-    (*!------------------------------------------------
-     * destructor
-     *-----------------------------------------------*)
-    destructor TFcgiFrameParser.destroy();
-    begin
-        inherited destroy();
-        fSocketStream := nil;
-    end;
+    EInvalidFcgiHeaderLenImpl,
+    FcgiBeginRequestFactory;
 
     procedure TFcgiFrameParser.raiseExceptionIfBufferNil(const buffer : pointer);
     begin
@@ -175,13 +143,13 @@ uses
      * @return IFcgiRecord instance
      * @throws EInvalidFcgiHeaderLen exception when header size not valid
      *-----------------------------------------------*)
-    function TFcgiFrameParser.parseFrame(const buffer : pointer; const bufferSize : int64) : IFcgiRecord;
+    function TFcgiFrameParser.parseFrame(const buffer : pointer; const bufferSize : int64; out totRead : int64) : IFcgiRecord;
     var header : PFCGI_Header;
     begin
         raiseExceptionIfInvalidBuffer(buffer, bufferSize);
         header := buffer;
         raiseExceptionIfInvalidRecordType(header^.reqtype);
-
+        result := nil;
         case header^.reqtype of
             FCGI_BEGIN_REQUEST :
                 begin
@@ -195,6 +163,10 @@ uses
                 begin
                     result := (TFcgiEndRequestFactory.create(buffer, bufferSize)).build();
                 end;
+            FCGI_PARAMS :
+                begin
+                    result := (TFcgiParamsFactory.create(buffer, bufferSize)).build();
+                end;
             FCGI_STDIN :
                 begin
                     result := (TFcgiStdInFactory.create(buffer, bufferSize)).build();
@@ -205,7 +177,7 @@ uses
                 end;
             FCGI_STDERR :
                 begin
-                    result := (TFcgiStdInFactory.create(buffer, bufferSize)).build();
+                    result := (TFcgiStdErrFactory.create(buffer, bufferSize)).build();
                 end;
             FCGI_DATA :
                 begin
@@ -224,11 +196,6 @@ uses
                     result := (TFcgiUnknownFactory.create(buffer, bufferSize)).build();
                 end;
         end;
-
-        offset := FCGI_HEADER_LEN + result.getContentLength() + result.getPaddingLength();
-        //TODO remove parsed header+payload from buffer i.e advanced to next
-        //FastCGI header+payload in stream
-        move(buffer^, buffer^, offset);
     end;
 
 end.

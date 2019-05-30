@@ -39,7 +39,11 @@ type
         //store FCGI_PARAMS stream completeness
         fcgiParamsComplete : boolean;
 
+        tmpBuffer : TMemoryStream;
+
         procedure clearEnvironments();
+        function processBuffer(const buffer; const bufferSize : int64; out totRead : int64) : boolean;
+        function discardReadData(const tmp : TStream; const bytesToDiscard : int64) : TStream
     public
         (*!-----------------------------------------------
          * constructor
@@ -55,7 +59,7 @@ type
         * @return true if all data from web server is ready to
         * be handle by application (i.e, environment, STDIN already parsed)
         *-----------------------------------------------*)
-        function process(const stream : IStreamAdapter;) : boolean;
+        function process(const stream : IStreamAdapter) : boolean;
 
         (*!------------------------------------------------
         * get current environment
@@ -93,6 +97,7 @@ uses
         fcgiRequestId := 0;
         fcgiStdInComplete := false;
         fcgiParamsComplete := false;
+        tmpBuffer := TMemoryStream.create();
     end;
 
     (*!-----------------------------------------------
@@ -103,6 +108,7 @@ uses
         inherited destroy();
         fcgiParser := nil;
         clearEnvironments();
+        freeAndNil(tmpBuffer);
     end;
 
     (*!-----------------------------------------------
@@ -122,19 +128,21 @@ uses
     (*!-----------------------------------------------
      * parse stream for FCGI records
      *------------------------------------------------
-     * @param stream socket stream
+     * @param buffer, buffer where data from socket is stored
+     * @param bufferSize, size of buffer where data from socket is stored
      * @return boolean true when FCGI_PARAMS and FCGI_STDIN
      *         stream is complete otherwise false
      *-----------------------------------------------*)
-    function TFcgiProcessor.process(const stream : IStreamAdapter) : boolean;
+    function TFcgiProcessor.processBuffer(const buffer; const bufferSize : int64; out totRead : int64) : boolean;
     var arecord : IFcgiRecord;
         complete : boolean;
     begin
         complete := false;
-        if (fcgiParser.hasFrame(stream)) then
+        totRead := 0;
+        if (fcgiParser.hasFrame(buffer, bufferSize)) then
         begin
-            arecord := fcgiParser.parseFrame(stream);
-
+            arecord := fcgiParser.parseFrame(buffer, bufferSize);
+            totRead := arecord.getRecordSize();
             //if we received FCGI_PARAMS with empty data, it means web server complete
             //sending FCGI_PARAMS request data.
             if (arecord.getType() = FCGI_BEGIN_REQUEST) then
@@ -173,6 +181,48 @@ uses
         end;
 
         result := complete;
+    end;
+
+    function TFcgiProcessor.discardReadData(const tmp : TStream; const bytesToDiscard : int64) : TStream
+    var tmpReadBuffer : TMemoryStream;
+        sizeToCopy : int64;
+    begin
+        //discard read buffer
+        tmpReadBuffer := TMemoryStream.create();
+        try
+            tmp.seek(bytesToDiscard, soFromBeginning);
+            tmpReadBuffer.copyFrom(tmp, tmp.size - bytesToDiscard);
+        finally
+            tmp.free();
+            result := tmpReadBuffer;
+        end;
+    end;
+
+    (*!-----------------------------------------------
+     * parse stream for FCGI records
+     *------------------------------------------------
+     * @param stream socket stream
+     * @return boolean true when FCGI_PARAMS and FCGI_STDIN
+     *         stream is complete otherwise false
+     *-----------------------------------------------*)
+    function TFcgiProcessor.process(const stream : IStreamAdapter) : boolean;
+    var tmp : pointer;
+        tmpSize, totRead : int64;
+        tmpReadBuffer : TMemoryStream;
+    begin
+        tmpSize := stream.size();
+        getMem(tmp, tmpSize);
+        try
+            stream.readBuffer(tmp^, tmpSize);
+            tmpBuffer.writeBuffer(tmp^, tmpSize);
+            result := processBuffer(tmpBuffer.memory, tmpBuffer.size, totRead);
+            if (totRead > 0) then
+            begin
+                tmpBuffer := discardReadData(tmpBuffer, totRead);
+            end;
+        finally
+            freeMem(tmp, tmpSize);
+        end;
     end;
 
     (*!------------------------------------------------
