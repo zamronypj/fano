@@ -66,7 +66,7 @@ uses
         abortRequestRec.paddingLength:= fPaddingLength;
         abortRequestRec.requestId:= NToBE(fRequestId);
         bytesToWrite := getRecordSize();
-        stream.writeBuffer(endRequestRec, bytesToWrite);
+        stream.writeBuffer(abortRequestRec, bytesToWrite);
         result := bytesToWrite;
     end;
 end.
