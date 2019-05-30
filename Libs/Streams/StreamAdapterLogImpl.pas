@@ -186,7 +186,7 @@ uses
      * @param sizeToRead, total size in bytes to read
      * @return total bytes actually read
      *-----------------------------------------------*)
-    procedure TStreamAdapterLog.read(var buffer; const sizeToRead : int64) : int64;
+    procedure TStreamAdapterLog.readBuffer(var buffer; const sizeToRead : int64);
     begin
         actualStream.readBuffer(buffer, sizeToRead);
         actualLogger.debug('StreamAdapterLog read buffer ' + intToStr(sizeToRead) + ' bytes');
