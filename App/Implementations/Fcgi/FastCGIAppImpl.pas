@@ -72,7 +72,7 @@ uses
 
     SysUtils,
     ERouteHandlerNotFoundImpl,
-    EMethodNotAllowedImpl,
+    EMethodNotAllowedImpl;
 
 resourcestring
 
