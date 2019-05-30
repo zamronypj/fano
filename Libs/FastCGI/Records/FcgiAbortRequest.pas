@@ -15,7 +15,8 @@ interface
 
 uses
 
-    FcgiRecord;
+    FcgiRecord,
+    StreamAdapterIntf;
 
 type
 

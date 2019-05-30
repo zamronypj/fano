@@ -15,12 +15,14 @@ interface
 
 uses
 
+    fastcgi,
+    StreamAdapterIntf,
     FcgiRecord;
 
 type
 
     (*!-----------------------------------------------
-     * End Request record (FCGI_BEGIN_REQUEST)
+     * End Request record (FCGI_END_REQUEST)
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
@@ -46,9 +48,6 @@ type
 
 implementation
 
-uses
-
-    fastcgi;
 
     constructor TFcgiEndRequest.create(
         const requestId : word;
