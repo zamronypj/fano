@@ -143,7 +143,7 @@ uses
      * @return IFcgiRecord instance
      * @throws EInvalidFcgiHeaderLen exception when header size not valid
      *-----------------------------------------------*)
-    function TFcgiFrameParser.parseFrame(const buffer : pointer; const bufferSize : int64; out totRead : int64) : IFcgiRecord;
+    function TFcgiFrameParser.parseFrame(const buffer : pointer; const bufferSize : int64) : IFcgiRecord;
     var header : PFCGI_Header;
     begin
         raiseExceptionIfInvalidBuffer(buffer, bufferSize);
