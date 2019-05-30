@@ -13,6 +13,10 @@ interface
 {$MODE OBJFPC}
 {$H+}
 
+uses
+
+    StreamAdapterIntf;
+
 type
 
     (*!-----------------------------------------------
