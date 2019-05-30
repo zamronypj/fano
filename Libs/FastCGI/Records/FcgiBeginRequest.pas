@@ -15,6 +15,7 @@ interface
 
 uses
 
+    fastcgi,
     StreamAdapterIntf,
     FcgiRecord;
 
@@ -30,7 +31,11 @@ type
         fRole : byte;
         fFlags : byte;
     public
-        constructor create(const requestId : word; const role : byte; const flag: byte);
+        constructor create(
+            const requestId : word;
+            const role : byte = FCGI_RESPONDER;
+            const flag: byte = 0
+        );
 
         (*!------------------------------------------------
         * write record data to stream
@@ -43,9 +48,6 @@ type
 
 implementation
 
-uses
-
-    fastcgi;
 
     constructor TFcgiBeginRequest.create(
         const requestId : word;
