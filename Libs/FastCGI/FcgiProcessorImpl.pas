@@ -82,6 +82,7 @@ implementation
 uses
 
     fastcgi,
+    classes,
     KeyValuePairIntf;
 
     (*!-----------------------------------------------
