@@ -28,9 +28,13 @@ type
      *-----------------------------------------------*)
     TOutputBuffer = class(TInterfacedObject, IOutputBuffer, IDependency)
     private
-        originalStdOutput, streamStdOutput: TextFile;
         stream : TStringStream;
         isBuffering : boolean;
+    protected
+        originalStdOutput, streamStdOutput: TextFile;
+
+        procedure redirectOutput(); virtual;
+        procedure restoreOutput(); virtual;
     public
         constructor create();
         destructor destroy(); override;
@@ -75,8 +79,22 @@ uses
     destructor TOutputBuffer.destroy();
     begin
         inherited destroy();
-        isBuffering := false;
+        //make sure to call endBuffering just in case
+        endBuffering();
         stream.free();
+    end;
+
+    procedure TOutputBuffer.redirectOutput();
+    begin
+        //save original standard output, we can restore it
+        originalStdOutput := Output;
+        Output := streamStdOutput;
+    end;
+
+    procedure TOutputBuffer.restoreOutput();
+    begin
+        //restore original standard output
+        Output := originalStdOutput;
     end;
 
     {------------------------------------------------
@@ -90,9 +108,7 @@ uses
             stream.size := 0;
             AssignStream(streamStdOutput, stream);
             Rewrite(streamStdOutput);
-            //save original standard output, we can restore it
-            originalStdOutput := Output;
-            Output := streamStdOutput;
+            redirectOutput();
         end;
         result := self;
     end;
@@ -105,8 +121,7 @@ uses
         if (isBuffering) then
         begin
             isBuffering := false;
-            //restore original standard output
-            Output := originalStdOutput;
+            restoreOutput();
             stream.position := 0;
             closeFile(streamStdOutput);
         end;
