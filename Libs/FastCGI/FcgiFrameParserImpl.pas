@@ -204,7 +204,7 @@ uses
                 end;
             FCGI_UNKNOWN_TYPE :
                 begin
-                    result := (TFcgiUnknownFactory.create(buffer, bufferSize)).build();
+                    result := (TFcgiUnknownTypeFactory.create(buffer, bufferSize)).build();
                 end;
         end;
     end;
