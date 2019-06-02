@@ -124,16 +124,16 @@ uses
     *-----------------------------------------------*)
     function TFcgiStreamRecord.write(const stream : IStreamAdapter) : integer;
     var len : integer;
-        indx, contenLen, bytesToWrite : word;
+        indx, contentLen, bytesToWrite : word;
         contentRec : PFCGI_ContentRecord;
         padding : byte;
     begin
         len := length(fContentData);
         indx := 0;
-        contenLen := 0;
+        contentLen := 0;
         repeat
-            contenLen := getLengthToWrite(len, indx);
-            padding := getPaddingToWrite(contenLen);
+            contentLen := getLengthToWrite(len, indx);
+            padding := getPaddingToWrite(contentLen);
             bytesToWrite := FCGI_HEADER_LEN + contentLen + padding;
             getMem(contentRec, bytesToWrite);
             try
