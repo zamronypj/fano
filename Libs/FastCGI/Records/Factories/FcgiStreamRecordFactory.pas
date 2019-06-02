@@ -16,8 +16,7 @@ interface
 uses
 
     FcgiRecordIntf,
-    FcgiRecordFactory,
-    FcgiStreamRecord;
+    FcgiRecordFactory;
 
 type
 
@@ -28,7 +27,7 @@ type
      *-----------------------------------------------*)
     TFcgiStreamRecordFactory = class(TFcgiRecordFactory)
     protected
-        function getStreamRecordType() : TFcgiStreamRecordClass; virtual; abstract;
+        function createStreamRecordType(const reqId : word; const content : string) : IFcgiRecord; virtual; abstract;
     public
         (*!------------------------------------------------
          * build fastcgi record from stream
@@ -54,14 +53,12 @@ uses
     function TFcgiStreamRecordFactory.build() : IFcgiRecord;
     var rec : PFCGI_ContentRecord;
         content : TStringStream;
-        streamRecordType : TFcgiStreamRecordClass;
     begin
         content := TStringStream.create('');
         try
             rec := tmpBuffer;
             content.writeBuffer(rec^.contentData, rec^.header.contentLength);
-            streamRecordType := getStreamRecordType();
-            result := streamRecordType.create(rec^.header.requestID, content.dataString);
+            result := createStreamRecordType(rec^.header.requestID, content.dataString);
         finally
             content.free();
         end;

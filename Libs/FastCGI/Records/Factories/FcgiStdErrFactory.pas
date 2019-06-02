@@ -15,7 +15,7 @@ interface
 
 uses
 
-    FcgiStreamRecord,
+    FcgiRecordIntf,
     FcgiStreamRecordFactory;
 
 type
@@ -27,7 +27,12 @@ type
      *-----------------------------------------------*)
     TFcgiStdErrFactory = class(TFcgiStreamRecordFactory)
     protected
-        function getStreamRecordType() : TFcgiStreamRecordClass; override;
+        (*!------------------------------------------------
+         * get stream record type
+         *-----------------------------------------------
+         * @return IFcgiRecord instance
+         *-----------------------------------------------*)
+        function createStreamRecordType(const reqId : word; const content : string) : IFcgiRecord; override;
     end;
 
 implementation
@@ -40,10 +45,10 @@ uses
     (*!------------------------------------------------
      * get stream record type
      *-----------------------------------------------
-     * @return TFcgiStreamRecord type descendant
+     * @return IFcgiRecord instance
      *-----------------------------------------------*)
-    function TFcgiStdErrFactory.getStreamRecordType() : TFcgiStreamRecordClass;
+    function TFcgiStdErrFactory.createStreamRecordType(const reqId : word; const content : string) : IFcgiRecord; override;
     begin
-        result := TFcgiStdErr;
+        result := TFcgiStdErr.create(reqId, content);
     end;
 end.
