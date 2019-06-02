@@ -29,7 +29,7 @@ type
     private
         fUnknownType : byte;
     public
-        constructor create(const requestId : word);
+        constructor create(const requestId : word; const unknownType : byte);
 
         (*!------------------------------------------------
         * write record data to stream
