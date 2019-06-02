@@ -48,7 +48,7 @@ uses
      *-----------------------------------------------
      * @return IFcgiRecord instance
      *-----------------------------------------------*)
-    function TFcgiStdInFactory.createStreamRecordType(const reqId : word; const content : string) : IFcgiRecord; override;
+    function TFcgiStdInFactory.createStreamRecordType(const reqId : word; const content : string) : IFcgiRecord;
     begin
         result := TFcgiStdIn.create(reqId, content);
     end;
