@@ -15,7 +15,7 @@ interface
 
 uses
 
-    FcgiRequestIntf,
+    FcgiRequestIntf;
 
 type
 
