@@ -14,7 +14,7 @@ interface
 
 uses
 
-    classes,
+    Classes,
     EnvironmentIntf,
     StreamAdapterIntf,
     FcgiProcessorIntf,
