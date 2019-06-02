@@ -84,6 +84,7 @@ uses
 
     fastcgi,
     sysutils,
+    FCgiEnvironmentImpl,
     FcgiRecordIntf,
     KeyValuePairIntf;
 
