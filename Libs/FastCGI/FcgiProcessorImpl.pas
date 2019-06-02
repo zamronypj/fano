@@ -44,7 +44,7 @@ type
 
         procedure clearEnvironments();
         function processBuffer(const buffer; const bufferSize : int64; out totRead : int64) : boolean;
-        function discardReadData(const tmp : TStream; const bytesToDiscard : int64) : TStream
+        function discardReadData(const tmp : TStream; const bytesToDiscard : int64) : TStream;
     public
         (*!-----------------------------------------------
          * constructor
