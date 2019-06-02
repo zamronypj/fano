@@ -59,9 +59,9 @@ uses
         content := TStringStream.create('');
         try
             rec := tmpBuffer;
-            content.writeBuffer(rec^.contentData, rec^.contentLength);
+            content.writeBuffer(rec^.contentData, rec^.header.contentLength);
             streamRecordType := getStreamRecordType();
-            result := streamRecordType.create(rec^.requestID, content.dataString);
+            result := streamRecordType.create(rec^.header.requestID, content.dataString);
         finally
             content.free();
         end;
