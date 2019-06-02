@@ -29,8 +29,7 @@ type
         ['{C8C08F35-663E-49ED-93CA-32E8345187E4}']
 
         (*!------------------------------------------------
-        * test if buffer contain FastCGI frame package
-        * i.e FastCGI header + payload
+        * handle if data is available
         *-----------------------------------------------
         * @param stream, stream that store data
         * @param context, additional data related to stream

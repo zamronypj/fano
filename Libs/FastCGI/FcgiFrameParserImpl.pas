@@ -67,9 +67,18 @@ uses
     EInvalidFcgiBufferImpl,
     EInvalidFcgiRecordTypeImpl,
     EInvalidFcgiHeaderLenImpl,
+
     FcgiBeginRequestFactory,
     FcgiAbortRequestFactory,
-    FcgiParamsFactory;
+    FcgiEndRequestFactory,
+    FcgiParamsFactory,
+    FcgiStdInFactory,
+    FcgiStdOutFactory,
+    FcgiStdErrFactory,
+    FcgiDataFactory,
+    FcgiGetValuesFactory,
+    FcgiGetValuesResultFactory,
+    FcgiUnknownFactory;
 
     procedure TFcgiFrameParser.raiseExceptionIfBufferNil(const buffer : pointer);
     begin

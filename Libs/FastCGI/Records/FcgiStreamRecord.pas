@@ -60,6 +60,8 @@ type
         function write(const stream : IStreamAdapter) : integer; override;
     end;
 
+    TFcgiStreamRecordClass = class of TFcgiStreamRecord;
+
 implementation
 
 uses

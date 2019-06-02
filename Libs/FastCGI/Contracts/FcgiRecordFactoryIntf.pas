@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit FcgiRecordFactory;
+unit FcgiRecordFactoryIntf;
 
 interface
 
@@ -15,23 +15,18 @@ interface
 
 uses
 
-    FcgiRecordIntf,
-    FcgiRecordFactoryIntf;
+    FcgiRecordIntf;
 
 type
 
     (*!-----------------------------------------------
-     * Base fastcgi record factory
+     * Interface for any class having capability to create
+     * FastCGI record
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TFcgiRecordFactory = class(TInterfacedObject, IFcgiRecordFactory)
-    protected
-        tmpBuffer : pointer;
-        tmpSize : int64;
-        fRequestId : word;
-    public
-        constructor create(const buffer : pointer; const size : int64);
+    IFcgiRecordFactory = interface
+        ['{5B1B7CED-8804-4837-B0DE-D88C02BE66A2}']
 
         (*!------------------------------------------------
          * build fastcgi record from stream
@@ -39,7 +34,7 @@ type
          * @param stream, stream instance where to write
          * @return number of bytes actually written
          *-----------------------------------------------*)
-        function build() : IFcgiRecord; virtual; abstract;
+        function build() : IFcgiRecord;
 
         (*!------------------------------------------------
          * set request id
@@ -51,20 +46,4 @@ type
 
 implementation
 
-    constructor TFcgiRecordFactory.create(const buffer : pointer; const size : int64);
-    begin
-        tmpBuffer := buffer;
-        tmpSize := size;
-    end;
-
-    (*!------------------------------------------------
-     * set request id
-     *-----------------------------------------------
-     * @return request id
-     *-----------------------------------------------*)
-    function setRequestId(const reqId : word) : IFcgiRecordFactory;
-    begin
-        fRequestId := reqId;
-        result := self;
-    end;
 end.
