@@ -70,7 +70,7 @@ uses
         rec.header.requestId:= NToBE(fRequestId);
         rec.body._type := fUnknownType;
         bytesToWrite := getRecordSize();
-        stream.writeBuffer(endRequestRec, bytesToWrite);
+        stream.writeBuffer(rec, bytesToWrite);
         result := bytesToWrite;
     end;
 end.
