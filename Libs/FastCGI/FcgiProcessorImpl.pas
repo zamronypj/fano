@@ -84,6 +84,7 @@ uses
 
     fastcgi,
     sysutils,
+    FcgiRecordIntf,
     KeyValuePairIntf;
 
     (*!-----------------------------------------------
@@ -145,8 +146,7 @@ uses
         begin
             arecord := fcgiParser.parseFrame(buffer, bufferSize);
             totRead := arecord.getRecordSize();
-            //if we received FCGI_PARAMS with empty data, it means web server complete
-            //sending FCGI_PARAMS request data.
+            //if we received FCGI_BEGIN_REQUEST, save requestId
             if (arecord.getType() = FCGI_BEGIN_REQUEST) then
             begin
                 fcgiRequestId := arecord.getRequestId();
