@@ -52,7 +52,7 @@ implementation
     constructor TFcgiEndRequest.create(
         const requestId : word;
         const protocolStatus : byte = FCGI_REQUEST_COMPLETE;
-        const appStatus : cardinal = 0;
+        const appStatus : cardinal = 0
     );
     begin
         inherited create(FCGI_END_REQUEST, requestId);
