@@ -78,7 +78,7 @@ uses
     FcgiDataFactory,
     FcgiGetValuesFactory,
     FcgiGetValuesResultFactory,
-    FcgiUnknownFactory;
+    FcgiUnknownTypeFactory;
 
     procedure TFcgiFrameParser.raiseExceptionIfBufferNil(const buffer : pointer);
     begin
