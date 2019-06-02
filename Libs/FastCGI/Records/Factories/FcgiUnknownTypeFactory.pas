@@ -40,6 +40,7 @@ implementation
 uses
 
     fastcgi,
+    fastcgiex,
     FcgiUnknownType;
 
 
@@ -49,7 +50,7 @@ uses
      * @return instance IFcgiRecord of corresponding fastcgi record
      *-----------------------------------------------*)
     function TFcgiUnknownTypeFactory.build() : IFcgiRecord;
-    var rec : PCGI_UnknownTypeRecord;
+    var rec : PFCGI_UnknownTypeRecord;
     begin
         rec := tmpBuffer;
         result := TFcgiUnknownType.create(

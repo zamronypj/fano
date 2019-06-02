@@ -16,6 +16,7 @@ uses
 type
 
     PFCGI_EndRequestRecord = ^FCGI_EndRequestRecord;
+    PFCGI_UnknownTypeRecord = ^FCGI_UnknownTypeRecord;
 
 implementation
 
