@@ -77,10 +77,10 @@ implementation
         endRequestRec.header.paddingLength:= fPaddingLength;
         endRequestRec.header.requestId:= NToBE(fRequestId);
         endRequestRec.body.protocolStatus := fProtocolStatus;
-        endRequestRec.body.appStatusB0 := appStatus and $ff;
-        endRequestRec.body.appStatusB1 := (appStatus shr 8) and $ff;
-        endRequestRec.body.appStatusB2 := (appStatus shr 16) and $ff;
-        endRequestRec.body.appStatusB3 := (appStatus shr 24) and $ff;
+        endRequestRec.body.appStatusB0 := fAppStatus and $ff;
+        endRequestRec.body.appStatusB1 := (fAppStatus shr 8) and $ff;
+        endRequestRec.body.appStatusB2 := (fAppStatus shr 16) and $ff;
+        endRequestRec.body.appStatusB3 := (fAppStatus shr 24) and $ff;
         bytesToWrite := getRecordSize();
         stream.writeBuffer(endRequestRec, bytesToWrite);
         result := bytesToWrite;
