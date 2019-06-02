@@ -41,12 +41,6 @@ type
         fContentData : string;
         fPaddingData : shortstring;
 
-        (*!------------------------------------------------
-        * calculate total record data size
-        *-----------------------------------------------
-        * @return number of bytes of current record
-        *-----------------------------------------------*)
-        function getRecordSize() : integer;
     public
         constructor create(
             const aType : byte = FCGI_UNKNOWN_TYPE;
@@ -54,32 +48,39 @@ type
         );
 
         (*!------------------------------------------------
-        * get current record type
-        *-----------------------------------------------
-        * @return type of record
-        *-----------------------------------------------*)
+         * get current record type
+         *-----------------------------------------------
+         * @return type of record
+         *-----------------------------------------------*)
         function getType() : byte;
 
         (*!------------------------------------------------
-        * get request id
-        *-----------------------------------------------
-        * @return request id
-        *-----------------------------------------------*)
+         * get request id
+         *-----------------------------------------------
+         * @return request id
+         *-----------------------------------------------*)
         function getRequestId() : word;
 
         (*!------------------------------------------------
-        * get content length
-        *-----------------------------------------------
-        * @return content length
-        *-----------------------------------------------*)
+         * get content length
+         *-----------------------------------------------
+         * @return content length
+         *-----------------------------------------------*)
         function getContentLength() : word;
 
         (*!------------------------------------------------
-        * write record data to stream
-        *-----------------------------------------------
-        * @param stream, stream instance where to write
-        * @return number of bytes actually written
-        *-----------------------------------------------*)
+         * calculate total record data size
+         *-----------------------------------------------
+         * @return number of bytes of current record
+         *-----------------------------------------------*)
+        function getRecordSize() : integer;
+
+        (*!------------------------------------------------
+         * write record data to stream
+         *-----------------------------------------------
+         * @param stream, stream instance where to write
+         * @return number of bytes actually written
+         *-----------------------------------------------*)
         function write(const stream : IStreamAdapter) : integer; virtual; abstract;
     end;
 

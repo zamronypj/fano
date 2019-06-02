@@ -29,32 +29,39 @@ type
         ['{93576A1E-23AB-4DC0-AFA7-DAEDB067F8C1}']
 
         (*!------------------------------------------------
-        * get current record type
-        *-----------------------------------------------
-        * @return type of record
-        *-----------------------------------------------*)
+         * get current record type
+         *-----------------------------------------------
+         * @return type of record
+          *-----------------------------------------------*)
         function getType() : byte;
 
         (*!------------------------------------------------
-        * get request id
-        *-----------------------------------------------
-        * @return request id
-        *-----------------------------------------------*)
+         * get request id
+         *-----------------------------------------------
+         * @return request id
+         *-----------------------------------------------*)
         function getRequestId() : word;
 
         (*!------------------------------------------------
-        * get content length
-        *-----------------------------------------------
-        * @return content length
-        *-----------------------------------------------*)
+         * get content length
+         *-----------------------------------------------
+         * @return content length
+         *-----------------------------------------------*)
         function getContentLength() : word;
 
         (*!------------------------------------------------
-        * write record data to stream
-        *-----------------------------------------------
-        * @param stream, stream instance where to write
-        * @return number of bytes actually written
-        *-----------------------------------------------*)
+         * calculate total record data size
+         *-----------------------------------------------
+         * @return number of bytes of current record
+         *-----------------------------------------------*)
+        function getRecordSize() : integer;
+
+        (*!------------------------------------------------
+         * write record data to stream
+         *-----------------------------------------------
+         * @param stream, stream instance where to write
+         * @return number of bytes actually written
+         *-----------------------------------------------*)
         function write(const stream : IStreamAdapter) : integer;
     end;
 
