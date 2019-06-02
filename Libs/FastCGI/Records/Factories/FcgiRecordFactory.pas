@@ -62,7 +62,7 @@ implementation
      *-----------------------------------------------
      * @return request id
      *-----------------------------------------------*)
-    function setRequestId(const reqId : word) : IFcgiRecordFactory;
+    function TFcgiRecordFactory.setRequestId(const reqId : word) : IFcgiRecordFactory;
     begin
         fRequestId := reqId;
         result := self;
