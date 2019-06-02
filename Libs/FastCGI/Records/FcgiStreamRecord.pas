@@ -133,7 +133,7 @@ uses
         contenLen := 0;
         repeat
             contenLen := getLengthToWrite(len, indx);
-            padding : getPaddingToWrite(contenLen);
+            padding := getPaddingToWrite(contenLen);
             bytesToWrite := FCGI_HEADER_LEN + contentLen + padding;
             getMem(contentRec, bytesToWrite);
             try
