@@ -149,6 +149,7 @@ uses
             //if we received FCGI_BEGIN_REQUEST, save requestId
             if (arecord.getType() = FCGI_BEGIN_REQUEST) then
             begin
+                //TODO : need to fix to support multiplexing multiple request
                 fcgiRequestId := arecord.getRequestId();
             end;
 
