@@ -14,6 +14,7 @@ interface
 
 uses
 
+    classes,
     EnvironmentIntf,
     StreamAdapterIntf,
     FcgiProcessorIntf,
@@ -82,7 +83,6 @@ implementation
 uses
 
     fastcgi,
-    classes,
     KeyValuePairIntf;
 
     (*!-----------------------------------------------
