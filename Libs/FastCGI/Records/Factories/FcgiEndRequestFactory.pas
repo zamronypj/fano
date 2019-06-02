@@ -40,6 +40,7 @@ implementation
 uses
 
     fastcgi,
+    fastcgiex,
     FcgiEndRequest;
 
 
