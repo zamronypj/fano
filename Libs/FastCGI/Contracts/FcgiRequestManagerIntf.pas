@@ -13,11 +13,15 @@ interface
 {$MODE OBJFPC}
 {$H+}
 
+uses
+
+    FcgiRequestIntf,
+
 type
 
     (*!-----------------------------------------------
      * Interface for any class having capability to manage
-     * FastCGI requests
+     * FastCGI requests multiplexing
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)

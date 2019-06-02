@@ -27,5 +27,8 @@ HttpHeadClientIntf,
 KeyValuePairIntf,
 
 FcgiRecordIntf,
+FcgiRequestIntf,
 FcgiFrameParserIntf,
 FcgiProcessorIntf,
+FcgiRecordFactoryIntf,
+FcgiRequestManagerIntf,

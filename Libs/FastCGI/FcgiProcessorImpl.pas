@@ -44,7 +44,7 @@ type
 
         procedure clearEnvironments();
         function processBuffer(const buffer : pointer; const bufferSize : int64; out totRead : int64) : boolean;
-        function discardReadData(const tmp : TStream; const bytesToDiscard : int64) : TStream;
+        function discardReadData(const tmp : TMemoryStream; const bytesToDiscard : int64) : TMemoryStream;
     public
         (*!-----------------------------------------------
          * constructor
@@ -84,9 +84,11 @@ uses
 
     fastcgi,
     sysutils,
-    FCgiEnvironmentImpl,
+    FcgiEnvironmentImpl,
     FcgiRecordIntf,
-    KeyValuePairIntf;
+    KeyValuePairIntf,
+    FcgiStdOut,
+    FcgiEndRequest;
 
     (*!-----------------------------------------------
      * constructor
@@ -187,9 +189,8 @@ uses
         result := complete;
     end;
 
-    function TFcgiProcessor.discardReadData(const tmp : TStream; const bytesToDiscard : int64) : TStream
+    function TFcgiProcessor.discardReadData(const tmp : TMemoryStream; const bytesToDiscard : int64) : TMemoryStream;
     var tmpReadBuffer : TMemoryStream;
-        sizeToCopy : int64;
     begin
         //discard read buffer
         tmpReadBuffer := TMemoryStream.create();
@@ -212,7 +213,6 @@ uses
     function TFcgiProcessor.process(const stream : IStreamAdapter) : boolean;
     var tmp : pointer;
         tmpSize, totRead : int64;
-        tmpReadBuffer : TMemoryStream;
     begin
         tmpSize := stream.size();
         getMem(tmp, tmpSize);
