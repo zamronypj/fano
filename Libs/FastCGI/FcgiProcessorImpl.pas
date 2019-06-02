@@ -43,7 +43,7 @@ type
         tmpBuffer : TMemoryStream;
 
         procedure clearEnvironments();
-        function processBuffer(const buffer; const bufferSize : int64; out totRead : int64) : boolean;
+        function processBuffer(const buffer : pointer; const bufferSize : int64; out totRead : int64) : boolean;
         function discardReadData(const tmp : TStream; const bytesToDiscard : int64) : TStream;
     public
         (*!-----------------------------------------------
@@ -136,7 +136,7 @@ uses
      * @return boolean true when FCGI_PARAMS and FCGI_STDIN
      *         stream is complete otherwise false
      *-----------------------------------------------*)
-    function TFcgiProcessor.processBuffer(const buffer; const bufferSize : int64; out totRead : int64) : boolean;
+    function TFcgiProcessor.processBuffer(const buffer : pointer; const bufferSize : int64; out totRead : int64) : boolean;
     var arecord : IFcgiRecord;
         complete : boolean;
     begin
