@@ -1,4 +1,5 @@
 TOutputBufferFactory = OutputBufferFactoryImpl.TOutputBufferFactory;
+TStdErrBufferFactory = StdErrBufferFactoryImpl.TStdErrBufferFactory;
 
 TFileLogger = FileLoggerImpl.TFileLogger;
 TFileLoggerFactory = FileLoggerFactoryImpl.TFileLoggerFactory;

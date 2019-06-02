@@ -14,6 +14,7 @@
  *-----------------------------------------------*)
 
 OutputBufferFactoryImpl,
+StdErrBufferFactoryImpl,
 
 FileLoggerImpl,
 FileLoggerFactoryImpl,
