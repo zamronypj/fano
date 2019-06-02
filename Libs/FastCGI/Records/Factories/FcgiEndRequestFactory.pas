@@ -54,7 +54,7 @@ uses
         appStatus : cardinal;
     begin
         rec := tmpBuffer;
-        appStatus = ((rec^.body.appStatusB3 shl 24) and $ff) or
+        appStatus := ((rec^.body.appStatusB3 shl 24) and $ff) or
                     ((rec^.body.appStatusB2 shl 16) and $ff) or
                     ((rec^.body.appStatusB1 shl 8) and $ff) or
                     (rec^.body.appStatusB0 and $ff);

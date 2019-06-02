@@ -9,10 +9,6 @@ unit fastcgiex;
 
 interface
 
-{$MODE OBJFPC}
-{$H+}
-
-
 uses
 
     fastcgi;
