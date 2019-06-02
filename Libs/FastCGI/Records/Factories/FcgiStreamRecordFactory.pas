@@ -42,7 +42,8 @@ implementation
 
 uses
 
-    fastcgi;
+    fastcgi,
+    classes;
 
 
     (*!------------------------------------------------
