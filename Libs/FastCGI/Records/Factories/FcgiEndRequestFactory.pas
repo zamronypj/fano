@@ -49,7 +49,7 @@ uses
      * @return instance IFcgiRecord of corresponding fastcgi record
      *-----------------------------------------------*)
     function TFcgiEndRequestFactory.build() : IFcgiRecord;
-    var rec : PCGI_EndRequestRecord;
+    var rec : PFCGI_EndRequestRecord;
         appStatus : cardinal;
     begin
         rec := tmpBuffer;
