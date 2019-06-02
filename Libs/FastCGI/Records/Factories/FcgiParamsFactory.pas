@@ -41,7 +41,7 @@ uses
 
     fastcgi,
     KeyValuePairIntf,
-    KeyValueMapImpl,
+    KeyValuePairImpl,
     FcgiParams;
 
 
