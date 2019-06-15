@@ -380,7 +380,7 @@ resourcestring
     begin
         initQueryParamsFromEnvironment(env, query);
         initCookieParamsFromEnvironment(env, cookies);
-        initBodyParamsFromStdInput(env, bodyParams);
+        initBodyParamsFromStdInput(env, body);
     end;
 
     (*!------------------------------------------------
