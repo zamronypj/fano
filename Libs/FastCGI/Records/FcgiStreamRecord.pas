@@ -137,6 +137,7 @@ uses
             bytesToWrite := FCGI_HEADER_LEN + contentLen + padding;
             getMem(contentRec, bytesToWrite);
             try
+                fillChar(contentRec^, bytesToWrite, 0);
                 contentRec^.header.version := fVersion;
                 contentRec^.header.reqtype := fType;
                 contentRec^.header.paddingLength := padding;

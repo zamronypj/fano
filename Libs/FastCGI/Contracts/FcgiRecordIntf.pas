@@ -15,7 +15,8 @@ interface
 
 uses
 
-    StreamAdapterIntf;
+    StreamAdapterIntf,
+    StreamAdapterAwareIntf;
 
 type
 
@@ -25,7 +26,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    IFcgiRecord = interface
+    IFcgiRecord = interface(IStreamAdapterAware)
         ['{93576A1E-23AB-4DC0-AFA7-DAEDB067F8C1}']
 
         (*!------------------------------------------------

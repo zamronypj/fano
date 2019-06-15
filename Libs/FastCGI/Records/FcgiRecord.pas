@@ -69,6 +69,13 @@ type
         function getContentLength() : word;
 
         (*!------------------------------------------------
+         * get content of record data
+         *-----------------------------------------------
+         * @return data as stream
+         *-----------------------------------------------*)
+        function getContent() : IStreamAdapter;
+
+        (*!------------------------------------------------
          * calculate total record data size
          *-----------------------------------------------
          * @return number of bytes of current record
