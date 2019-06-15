@@ -87,6 +87,13 @@ type
          *-----------------------------------------------*)
         procedure writeBuffer(const buffer; const sizeToWrite : int64);
 
+        (*!------------------------------------------------
+         * write from other stream
+         *-----------------------------------------------
+         * @param stream, stream contains data to write
+         *-----------------------------------------------*)
+        procedure writeStream(const stream : IStreamAdapter);
+
         (*!------------------------------------
          * seek
          *-------------------------------------
@@ -203,6 +210,17 @@ uses
     begin
         actualStream.writeBuffer(buffer, sizeToWrite);
         actualLogger.debug('StreamAdapterLog write buffer ' + intToStr(sizeToWrite) + ' bytes');
+    end;
+
+    (*!------------------------------------------------
+     * write from other stream
+     *-----------------------------------------------
+     * @param stream, stream contains data to write
+     *-----------------------------------------------*)
+    procedure TStreamAdapterLog.writeStream(const stream : IStreamAdapter);
+    begin
+        actualStream.writeStream(stream);
+        actualLogger.debug('StreamAdapterLog write stream ' + intToStr(stream.size()) + ' bytes');
     end;
 
     (*!------------------------------------

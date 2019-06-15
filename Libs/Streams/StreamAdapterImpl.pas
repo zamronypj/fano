@@ -91,6 +91,13 @@ type
          *-----------------------------------------------*)
         procedure writeBuffer(const buffer; const sizeToWrite : int64);
 
+        (*!------------------------------------------------
+         * write from other stream
+         *-----------------------------------------------
+         * @param stream, stream contains data to write
+         *-----------------------------------------------*)
+        procedure writeStream(const stream : IStreamAdapter);
+
         (*!------------------------------------
          * seek
          *-------------------------------------
@@ -114,6 +121,7 @@ implementation
 
 uses
 
+    math,
     EInvalidStreamImpl;
 
 resourcestring
@@ -210,6 +218,36 @@ resourcestring
     procedure TStreamAdapter.writeBuffer(const buffer; const sizeToWrite : int64);
     begin
         actualStream.writeBuffer(buffer, sizeToWrite);
+    end;
+
+    (*!------------------------------------------------
+     * write from other stream
+     *-----------------------------------------------
+     * @param stream, stream contains data to write
+     *-----------------------------------------------*)
+    procedure TStreamAdapter.writeStream(const stream : IStreamAdapter);
+    const MAX_BUFF_SIZE = 4096;
+    var buff : pointer;
+        bytesToWrite, buffSize : int64;
+    begin
+        bytesToWrite := stream.size();
+        if (bytesToWrite = 0) then
+        begin
+            exit();
+        end;
+
+        buffSize := min(MAX_BUFF_SIZE, bytesToWrite);
+
+        getMem(buff, buffSize);
+        try
+            repeat
+                stream.readBuffer(buff^, buffSize);
+                writeBuffer(buff^, buffSize);
+                buffSize := min(MAX_BUFF_SIZE, bytesToWrite - buffSize);
+            until buffSize = 0;
+        finally
+            freeMem(buff);
+        end;
     end;
 
     (*!------------------------------------

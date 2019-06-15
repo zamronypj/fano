@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit StreamAdapterAwareIntf;
+unit StreamAdapterFactoryIntf;
 
 interface
 
@@ -21,19 +21,19 @@ type
 
     (*!-----------------------------------------------
      * Interface for any class having capability to
-     * return stream adapter instance
+     * create stream adapter instance
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    IStreamAdapterAware = interface
-        ['{7C2EA47A-9746-4EB6-B66E-B21FB8BB9529}']
+    IStreamAdapterFactory = interface
+        ['{48866E39-920B-4179-B080-19D4AB0F7700}']
 
         (*!------------------------------------------------
-         * get stream
+         * create stream
          *-----------------------------------------------
          * @return stream
          *-----------------------------------------------*)
-        function data() : IStreamAdapter;
+        function build() : IStreamAdapter;
     end;
 
 implementation

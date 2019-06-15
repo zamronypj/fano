@@ -64,6 +64,13 @@ type
          *-----------------------------------------------*)
         procedure writeBuffer(const buffer; const sizeToWrite : int64);
 
+        (*!------------------------------------------------
+         * write from other stream
+         *-----------------------------------------------
+         * @param stream, stream contains data to write
+         *-----------------------------------------------*)
+        procedure writeStream(const stream : IStreamAdapter);
+
         (*!------------------------------------
          * seek
          *-------------------------------------
@@ -81,6 +88,7 @@ type
          * @return current instance
          *-----------------------------------------------*)
         function reset() : IStreamAdapter;
+
     end;
 
 implementation
