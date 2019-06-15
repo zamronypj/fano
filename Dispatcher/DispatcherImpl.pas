@@ -22,7 +22,8 @@ uses
     RouteMatcherIntf,
     MiddlewareCollectionIntf,
     MiddlewareChainFactoryIntf,
-    InjectableObjectImpl;
+    InjectableObjectImpl,
+    BaseDispatcherImpl;
 
 type
 
@@ -54,12 +55,10 @@ implementation
 
 uses
 
-    sysutils,
     RouteHandlerIntf,
     MiddlewareIntf,
     MiddlewareCollectionAwareIntf,
-    MiddlewareChainIntf,
-    UrlHelpersImpl;
+    MiddlewareChainIntf;
 
     constructor TDispatcher.create(
         const appBeforeMiddlewares : IMiddlewareCollection;
