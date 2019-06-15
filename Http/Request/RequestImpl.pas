@@ -64,7 +64,7 @@ type
 
         procedure initParamsFromString(
             const data : string;
-            const hashInst : IList
+            const body : IList
         );
 
         procedure initPostBodyParamsFromStdInput(
@@ -272,7 +272,7 @@ resourcestring
 
     procedure TRequest.initParamsFromString(
         const data : string;
-        const hashInst : IList
+        const body : IList
     );
     var arrOfQryStr, keyvalue : TStringArray;
         i, len, lenKeyValue : integer;
@@ -289,7 +289,7 @@ resourcestring
                 new(param);
                 param^.key := keyvalue[0];
                 param^.value := (keyvalue[1]).urlDecode();
-                hashInst.add(param^.key, param);
+                body.add(param^.key, param);
             end;
         end;
     end;
