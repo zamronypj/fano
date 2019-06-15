@@ -73,14 +73,13 @@ uses
 
     function TSimpleDispatcher.dispatchRequest(const env: ICGIEnvironment) : IResponse;
     var routeHandler : IRouteHandler;
-        method : string;
-        url : string;
     begin
         try
-            method := env.requestMethod();
-            //remove any query string parts to avoid messing up pattern matching
-            url := env.requestUri().stripQueryString();
-            routeHandler := routeCollection.match(method, url);
+            routeHandler := routeCollection.match(
+                env.requestMethod(),
+                //remove any query string parts to avoid messing up pattern matching
+                env.requestUri().stripQueryString()
+            );
             result := routeHandler.handleRequest(
                 requestFactory.build(env),
                 responseFactory.build(env)

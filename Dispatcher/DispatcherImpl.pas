@@ -94,16 +94,15 @@ uses
 
     function TDispatcher.dispatchRequest(const env: ICGIEnvironment) : IResponse;
     var routeHandler : IRouteHandler;
-        method : string;
-        url : string;
         middlewareChain : IMiddlewareChain;
         routeMiddlewares : IMiddlewareCollectionAware;
     begin
         try
-            method := env.requestMethod();
-            //remove any query string parts to avoid messing up pattern matching
-            url := env.requestUri().stripQueryString();
-            routeHandler := routeCollection.match(method, url);
+            routeHandler := routeCollection.match(
+                env.requestMethod(),
+                //remove any query string parts to avoid messing up pattern matching
+                env.requestUri().stripQueryString()
+            );
             routeMiddlewares := routeHandler.getMiddlewares();
             middlewareChain := middlewareChainFactory.build(
                 appBeforeMiddlewareList,
