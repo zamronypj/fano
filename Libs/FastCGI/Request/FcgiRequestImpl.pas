@@ -36,6 +36,10 @@ type
          * @param request, IRequest implementation
          *-----------------------------------------------*)
         constructor create(const id : word; const request : IRequest);
+
+        (*!-----------------------------------------------
+         * destructor
+         *-----------------------------------------------*)
         destructor destroy(); override;
 
         (*!------------------------------------------------

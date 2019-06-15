@@ -16,7 +16,8 @@ uses
 
     EnvironmentIntf,
     RequestIntf,
-    RequestFactoryIntf;
+    RequestFactoryIntf,
+    FcgiProcessorIntf;
 
 type
     (*!------------------------------------------------
@@ -25,7 +26,11 @@ type
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
     TFcgiRequestFactory = class(TInterfacedObject, IRequestFactory)
+    private
+        fcgiProcessor : IFcgiProcessor;
     public
+        constructor create(const afcgiProc : IFcgiProcessor);
+        destructor destroy; override;
         function build(const env : ICGIEnvironment) : IRequest;
     end;
 
@@ -40,9 +45,21 @@ uses
     StdInReaderIntf,
     StdInFromStringImpl;
 
-    function TFcgiRequestFactory.build(const env : ICGIEnvironment) : IRequest;
+    constructor create(const afcgiProc : IFcgiProcessor);
     begin
-        result := TRequest.create(
+        fcgiProcessor := afcgiProc;
+    end;
+
+    destructor TFcgiRequestFactory.destroy();
+    begin
+        inherited destroy();
+        fcgiProcessor := nil;
+    end;
+
+    function TFcgiRequestFactory.build(const env : ICGIEnvironment) : IRequest;
+    var arequest : IRequest;
+    begin
+        arequest := TRequest.create(
             env,
             THashList.create(),
             THashList.create(),
@@ -52,5 +69,6 @@ uses
             ),
             TStdInReaderFromString.create(fcgiProcessor.getStdIn())
         );
+        result := TFcgiRequest.create(fcgiProcessor.getRequestId(), arequest);
     end;
 end.
