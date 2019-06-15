@@ -22,7 +22,8 @@ uses
     RouteMatcherIntf,
     MiddlewareCollectionIntf,
     MiddlewareChainFactoryIntf,
-    InjectableObjectImpl;
+    InjectableObjectImpl,
+    BaseDispatcherImpl;
 
 type
 
@@ -32,11 +33,8 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *---------------------------------------------------*)
-    TDispatcher = class(TInjectableObject, IDispatcher)
+    TDispatcher = class(TBaseDispatcher)
     private
-        routeCollection : IRouteMatcher;
-        responseFactory : IResponseFactory;
-        requestFactory : IRequestFactory;
         appBeforeMiddlewareList : IMiddlewareCollection;
         appAfterMiddlewareList : IMiddlewareCollection;
         middlewareChainFactory : IMiddlewareChainFactory;
@@ -50,19 +48,17 @@ type
             const reqFactory : IRequestFactory
         );
         destructor destroy(); override;
-        function dispatchRequest(const env: ICGIEnvironment) : IResponse;
+        function dispatchRequest(const env: ICGIEnvironment) : IResponse; override;
     end;
 
 implementation
 
 uses
 
-    sysutils,
     RouteHandlerIntf,
     MiddlewareIntf,
     MiddlewareCollectionAwareIntf,
-    MiddlewareChainIntf,
-    UrlHelpersImpl;
+    MiddlewareChainIntf;
 
     constructor TDispatcher.create(
         const appBeforeMiddlewares : IMiddlewareCollection;
@@ -73,12 +69,10 @@ uses
         const reqFactory : IRequestFactory
     );
     begin
+        inherited create(routes, respFactory, reqFactory);
         appBeforeMiddlewareList := appBeforeMiddlewares;
         appAfterMiddlewareList := appAfterMiddlewares;
         middlewareChainFactory := chainFactory;
-        routeCollection := routes;
-        responseFactory := respFactory;
-        requestFactory := reqFactory;
     end;
 
     destructor TDispatcher.destroy();
@@ -87,23 +81,15 @@ uses
         appBeforeMiddlewareList := nil;
         appAfterMiddlewareList := nil;
         middlewareChainFactory := nil;
-        routeCollection := nil;
-        responseFactory := nil;
-        requestFactory := nil;
     end;
 
     function TDispatcher.dispatchRequest(const env: ICGIEnvironment) : IResponse;
     var routeHandler : IRouteHandler;
-        method : string;
-        url : string;
         middlewareChain : IMiddlewareChain;
         routeMiddlewares : IMiddlewareCollectionAware;
     begin
         try
-            method := env.requestMethod();
-            //remove any query string parts to avoid messing up pattern matching
-            url := env.requestUri().stripQueryString();
-            routeHandler := routeCollection.match(method, url);
+            routeHandler := getRouteHandler(env);
             routeMiddlewares := routeHandler.getMiddlewares();
             middlewareChain := middlewareChainFactory.build(
                 appBeforeMiddlewareList,

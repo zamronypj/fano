@@ -5,7 +5,7 @@
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
-unit OutputBufferFactoryImpl;
+unit StdErrBufferFactoryImpl;
 
 interface
 
@@ -24,7 +24,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TOutputBufferFactory = class(TFactory, IDependencyFactory)
+    TStdErrBufferFactory = class(TFactory, IDependencyFactory)
     public
         function build(const container : IDependencyContainer) : IDependency; override;
     end;
@@ -33,11 +33,11 @@ implementation
 
 uses
 
-    OutputBufferImpl;
+    StdErrBufferImpl;
 
-    function TOutputBufferFactory.build(const container : IDependencyContainer) : IDependency;
+    function TStdErrBufferFactory.build(const container : IDependencyContainer) : IDependency;
     begin
-        result := TOutputBuffer.create();
+        result := TStdErrBuffer.create();
     end;
 
 end.
