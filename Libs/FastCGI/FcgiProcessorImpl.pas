@@ -70,6 +70,12 @@ type
          *-----------------------------------------------*)
         function getEnvironment() : ICGIEnvironment;
 
+        (*!------------------------------------------------
+         * get request id that is complete
+         *-----------------------------------------------
+         * @return request id
+         *-----------------------------------------------*)
+        function getRequestId() : word;
     end;
 
 implementation
@@ -82,6 +88,7 @@ uses
     FcgiEnvironmentImpl,
     FcgiRecordIntf,
     KeyValuePairIntf,
+    EnvironmentFactoryIntf,
     EInvalidFcgiRequestIdImpl;
 
     (*!-----------------------------------------------
@@ -190,10 +197,22 @@ uses
      * @return environment
      *-----------------------------------------------*)
     function TFcgiProcessor.getEnvironment() : ICGIEnvironment;
+    var paramStream : IStreamAdapter;
+        factory : ICGIEnvironmentFactory;
     begin
-        //TODO throws exception when fcgiEnvironment is nil
-        result := fcgiEnvironments[fcgiRequestId];
+        paramStream := fcgiRequestMgr.getParamsStream(fcgiRequestId);
+        factory := TFCGIEnvironmentFactory.create(paramStream);
+        result := factory.build();
     end;
 
+    (*!------------------------------------------------
+     * get request id that is complete
+     *-----------------------------------------------
+     * @return request id
+     *-----------------------------------------------*)
+    function TFcgiProcessor.getRequestId() : word;
+    begin
+        result := fcgiRequestId;
+    end;
 
 end.

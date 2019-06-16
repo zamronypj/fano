@@ -17,6 +17,8 @@ uses
     DependencyIntf,
     DependencyContainerIntf,
     StreamAdapterIntf,
+    EnvironmentIntf,
+    EnvironmentFactoryIntf,
     FactoryImpl;
 
 type
@@ -26,19 +28,22 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *--------------------------------------------------*)
-    TFCGIEnvironmentFactory = class(TFactory, IDependencyFactory)
+    TFCGIEnvironmentFactory = class(TFactory, IDependencyFactory, ICGIEnvironmentFactory)
     private
-        fcgiParamStream : IStreamAdapter;
+        fParamStream : IStreamAdapter;
     public
         constructor create(const paramStream : IStreamAdapter);
         destructor destroy(); override;
         function build(const container : IDependencyContainer) : IDependency; override;
+        function build() : ICGIEnvironment;
     end;
 
 implementation
 
 uses
 
+    classes,
+    FcgiParamKeyValuePairImpl,
     FcgiEnvironmentImpl;
 
     constructor TFCGIEnvironmentFactory.create(const paramStream : IStreamAdapter);
@@ -54,8 +59,13 @@ uses
 
     function TFCGIEnvironmentFactory.build(const container : IDependencyContainer) : IDependency;
     begin
-        result := TFCGIEnvironment.create(
+        result := build() as IDependency;
+    end;
 
+    function TFCGIEnvironmentFactory.build() : ICGIEnvironment;
+    begin
+        result := TFCGIEnvironment.create(
+            TFcgiParamKeyValuePair.create(fParamStream)
         );
     end;
 

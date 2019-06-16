@@ -44,6 +44,12 @@ type
          *-----------------------------------------------*)
         function getEnvironment() : ICGIEnvironment;
 
+        (*!------------------------------------------------
+         * get request id that is complete
+         *-----------------------------------------------
+         * @return request id
+         *-----------------------------------------------*)
+        function getRequestId() : word;
     end;
 
 implementation
