@@ -36,7 +36,11 @@ type
          * @param requestId, id of request
          * @return aKeyValues, instance IKeyValuePair which will store key value
          *-----------------------------------------------*)
-        constructor create(const requestId : word; const aKeyValues : IKeyValuePair);
+        constructor create(
+            const stream : IStreamAdapter;
+            const requestId : word;
+            const aKeyValues : IKeyValuePair
+        );
 
         (*!------------------------------------------------
          * destructor
@@ -68,11 +72,12 @@ uses
      * @return aKeyValues, instance IKeyValuePair which will store key value
      *-----------------------------------------------*)
     constructor TFcgiParams.create(
+        const stream : IStreamAdapter;
         const requestId : word;
         const aKeyValues : IKeyValuePair
     );
     begin
-        inherited create(FCGI_PARAMS, requestId);
+        inherited create(stream, FCGI_PARAMS, requestId);
         fKeyValues := aKeyValues;
     end;
 

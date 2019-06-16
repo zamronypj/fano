@@ -16,6 +16,7 @@ uses
 
     DependencyIntf,
     DependencyContainerIntf,
+    StreamAdapterIntf,
     FactoryImpl;
 
 type
@@ -27,9 +28,9 @@ type
      *--------------------------------------------------*)
     TFCGIEnvironmentFactory = class(TFactory, IDependencyFactory)
     private
-        fParamsRecords : array of IFcgiRecord;
+        fcgiParamStream : IStreamAdapter;
     public
-        constructor create(const params : array of IFcgiRecord);
+        constructor create(const paramStream : IStreamAdapter);
         destructor destroy(); override;
         function build(const container : IDependencyContainer) : IDependency; override;
     end;
@@ -40,15 +41,15 @@ uses
 
     FcgiEnvironmentImpl;
 
-    constructor TFCGIEnvironmentFactory.create(const params : array of IFcgiRecord);
+    constructor TFCGIEnvironmentFactory.create(const paramStream : IStreamAdapter);
     begin
-        fParamsRecords := params;
+        fParamStream := paramStream;
     end;
 
     destructor TFCGIEnvironmentFactory.destroy();
     begin
         inherited destroy();
-        setLength(fParamsRecords, 0);
+        fParamStream := nil;
     end;
 
     function TFCGIEnvironmentFactory.build(const container : IDependencyContainer) : IDependency;

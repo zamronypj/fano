@@ -15,7 +15,8 @@ interface
 
 uses
 
-    FcgiRequestIntf;
+    FcgiRecordIntf,
+    StreamAdapterIntf;
 
 type
 
@@ -29,33 +30,53 @@ type
         ['{08E7C3A3-1E4D-4166-BA91-0BCFA03923C7}']
 
         (*!------------------------------------------------
-        * test if request identified by id exist
-        *-----------------------------------------------
-        * @param id, request id to check
-        * @return true if request identified by id exist
-        *-----------------------------------------------*)
-        function has(const id : word) : boolean;
+         * test if request identified by id exist
+         *-----------------------------------------------
+         * @param requestId, request id to check
+         * @return true if request identified by id exist
+         *-----------------------------------------------*)
+        function has(const requestId : word) : boolean;
 
         (*!------------------------------------------------
-        * get request by id
-        *-----------------------------------------------
-        * @return request instance identified by id
-        *-----------------------------------------------*)
-        function get(const id : word) : IFcgiRequest;
+         * test if web server is done sending request
+         * to us identified by id
+         *-----------------------------------------------
+         * @param requestId, request id to check
+         * @return true if request identified by id is complete
+         *-----------------------------------------------*)
+        function complete(const requestId : word) : boolean;
 
         (*!------------------------------------------------
-        * add request
-        *-----------------------------------------------
-        * @return id of current request
-        *-----------------------------------------------*)
-        function add(const req : IFcgiRequest) : IFcgiRequestManager;
+         * get data from all FCGI_STDIN identified by request id
+         *-----------------------------------------------
+         * @param requestId, request id
+         * @return stream instance of all FCGI_STDIN records
+         *-----------------------------------------------*)
+        function getStdInStream(const requestId : word) : IStreamAdapter;
 
         (*!------------------------------------------------
-        * remove request
-        *-----------------------------------------------
-        * @return true of request is removed
-        *-----------------------------------------------*)
-        function remove(const id : word) : boolean;
+         * get data from all FCGI_PARAMS identified by request id
+         *-----------------------------------------------
+         * @param requestId, request id
+         * @return stream instance of all FCGI_STDIN records
+         *-----------------------------------------------*)
+        function getParamsStream(const requestId : word) : IStreamAdapter;
+
+        (*!------------------------------------------------
+         * add FastCGI record to manager
+         *-----------------------------------------------
+         * @param rec, FastCGI record to add
+         * @return id of current request
+         *-----------------------------------------------*)
+        function add(const rec : IFcgiRecord) : IFcgiRequestManager;
+
+        (*!------------------------------------------------
+         * remove request
+         *-----------------------------------------------
+         * @param requestId, request id to be removed
+         * @return true of request is removed
+         *-----------------------------------------------*)
+        function remove(const requestId : word) : boolean;
     end;
 
 implementation

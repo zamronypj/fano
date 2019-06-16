@@ -21,13 +21,13 @@ uses
 type
 
     (*!-----------------------------------------------
-     * Get Values record (FCGI_GET_VALUES)
+     * Get Values Record (FCGI_GET_VALUES)
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
     TFcgiGetValues = class(TFcgiRecord)
     public
-        constructor create(const requestId : word);
+        constructor create(const stream : IStreamAdapter; const requestId : word);
 
         (*!------------------------------------------------
         * write record data to stream
@@ -44,9 +44,9 @@ uses
 
     fastcgi;
 
-    constructor TFcgiGetValues.create(const requestId : word);
+    constructor TFcgiGetValues.create(const stream : IStreamAdapter; const requestId : word);
     begin
-        inherited create(FCGI_GET_VALUES, requestId);
+        inherited create(stream, FCGI_GET_VALUES, requestId);
     end;
 
     (*!------------------------------------------------
@@ -56,17 +56,17 @@ uses
     * @return number of bytes actually written
     *-----------------------------------------------*)
     function TFcgiGetValues.write(const stream : IStreamAdapter) : integer;
-    var rec : FCGI_Header;
+    var headerRec : FCGI_Header;
         bytesToWrite : integer;
     begin
-        fillChar(rec, sizeOf(FCGI_Header), 0);
-        rec.version:= fVersion;
-        rec.reqtype:= fType;
-        rec.contentLength:= NtoBE(fContentLength);
-        rec.paddingLength:= fPaddingLength;
-        rec.requestId:= NToBE(fRequestId);
+        fillChar(headerRec, sizeOf(FCGI_Header), 0);
+        headerRec.version:= fVersion;
+        headerRec.reqtype:= fType;
+        headerRec.contentLength:= NtoBE(fContentLength);
+        headerRec.paddingLength:= fPaddingLength;
+        headerRec.requestId:= NToBE(fRequestId);
         bytesToWrite := getRecordSize();
-        stream.writeBuffer(rec, bytesToWrite);
+        stream.writeBuffer(headerRec, bytesToWrite);
         result := bytesToWrite;
     end;
 end.

@@ -32,6 +32,7 @@ type
         fFlags : byte;
     public
         constructor create(
+            const stream : IStreamAdapter;
             const requestId : word;
             const role : byte = FCGI_RESPONDER;
             const flag: byte = 0
@@ -50,12 +51,13 @@ implementation
 
 
     constructor TFcgiBeginRequest.create(
+        const stream : IStreamAdapter;
         const requestId : word;
         const role : byte = FCGI_RESPONDER;
         const flag: byte = 0
     );
     begin
-        inherited create(FCGI_BEGIN_REQUEST, requestId);
+        inherited create(stream, FCGI_BEGIN_REQUEST, requestId);
         fRole := role;
         fFlags := flag;
     end;
@@ -73,9 +75,9 @@ implementation
         fillChar(beginRequestRec, sizeOf(FCGI_BeginRequestRecord), 0);
         beginRequestRec.header.version:= fVersion;
         beginRequestRec.header.reqtype:= fType;
+        beginRequestRec.header.requestId:= NToBE(fRequestId);
         beginRequestRec.header.contentLength:= NtoBE(fContentLength);
         beginRequestRec.header.paddingLength:= fPaddingLength;
-        beginRequestRec.header.requestId:= NToBE(fRequestId);
         beginRequestRec.body.role := fRole;
         beginRequestRec.body.flags := fFlags;
         bytesToWrite := getRecordSize();

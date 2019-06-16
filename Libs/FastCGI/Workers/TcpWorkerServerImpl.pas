@@ -5,40 +5,41 @@
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
-
-unit FcgiStdOut;
+unit TcpWorkerServerImpl;
 
 interface
 
 {$MODE OBJFPC}
 {$H+}
 
-uses
 
-    StreamAdapterIntf,
-    FcgiStreamRecord;
+uses
+    Classes,
+    SysUtils,
+    Sockets,
+    SSockets,
+    BaseWorkerServerImpl;
 
 type
 
     (*!-----------------------------------------------
-     * Standard output binary stream (FCGI_STDOUT)
+     * FastCGI web application worker server implementation
+     * using TCP/IP
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TFcgiStdOut = class(TFcgiStreamRecord)
+    TTcpWorkerServer = class(TBaseWorkerServer)
     public
-        constructor create(const stream : IStreamAdapter; const requestId : word);
+        constructor create(const hostname: string; const port: word);
     end;
 
 implementation
 
-uses
-
-    fastcgi;
-
-    constructor TFcgiStdOut.create(const stream : IStreamAdapter; const requestId : word);
+    constructor TTcpWorkerServer.create(const hostname: string; const port: word);
     begin
-        inherited create(stream, FCGI_STDOUT, requestId);
+        inherited create();
+        fServer := TInetServer.create(fHostName, fPort);
+        fServer.OnConnect := @DoConnect;
     end;
 
 end.

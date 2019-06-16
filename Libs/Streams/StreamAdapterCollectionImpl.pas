@@ -18,6 +18,7 @@ uses
     fgl,
     StreamAdapterIntf,
     StreamAdapterFactoryIntf,
+    StreamAdapterCollectionIntf,
     StreamAdapterAwareIntf;
 
 type
@@ -30,12 +31,11 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TStreamAdapterCollection = class(TInterfacedObject, IStreamAdapterAware)
+    TStreamAdapterCollection = class(TInterfacedObject, IStreamAdapterCollection, IStreamAdapterAware)
     private
         fStreamFactory : IStreamAdapterFactory;
         streamCollection : TStreamAdapterList;
         procedure clearCollection(const coll : TStreamAdapterList);
-    protected
     public
         (*!------------------------------------
          * constructor
@@ -54,6 +54,13 @@ type
          * @return combined stream
          *-----------------------------------------------*)
         function data() : IStreamAdapter;
+
+        (*!------------------------------------------------
+         * add stream
+         *-----------------------------------------------
+         * @return current stream collection
+         *-----------------------------------------------*)
+        function add(const stream : IStreamAdapter) : IStreamAdapterCollection;
     end;
 
 implementation
@@ -108,5 +115,15 @@ implementation
         begin
             result.writeStream(streamCollection[i]);
         end;
+    end;
+
+    (*!------------------------------------------------
+     * add stream
+     *-----------------------------------------------
+     * @return current stream collection
+     *-----------------------------------------------*)
+    function TStreamAdapterCollection.add(const stream : IStreamAdapter) : IStreamAdapterCollection;
+    begin
+        streamCollection.add(stream);
     end;
 end.

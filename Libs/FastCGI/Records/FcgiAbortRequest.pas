@@ -27,7 +27,7 @@ type
      *-----------------------------------------------*)
     TFcgiAbortRequest = class(TFcgiRecord)
     public
-        constructor create(const requestId : word);
+        constructor create(const stream : IStreamAdapter; const requestId : word);
 
         (*!------------------------------------------------
         * write record data to stream
@@ -44,9 +44,9 @@ uses
 
     fastcgi;
 
-    constructor TFcgiAbortRequest.create(const requestId : word);
+    constructor TFcgiAbortRequest.create(const stream : IStreamAdapter; const requestId : word);
     begin
-        inherited create(FCGI_ABORT_REQUEST, requestId);
+        inherited create(stream, FCGI_ABORT_REQUEST, requestId);
     end;
 
     (*!------------------------------------------------
@@ -62,9 +62,9 @@ uses
         fillChar(abortRequestRec, sizeOf(FCGI_Header), 0);
         abortRequestRec.version:= fVersion;
         abortRequestRec.reqtype:= fType;
+        abortRequestRec.requestId:= NToBE(fRequestId);
         abortRequestRec.contentLength:= NtoBE(fContentLength);
         abortRequestRec.paddingLength:= fPaddingLength;
-        abortRequestRec.requestId:= NToBE(fRequestId);
         bytesToWrite := getRecordSize();
         stream.writeBuffer(abortRequestRec, bytesToWrite);
         result := bytesToWrite;

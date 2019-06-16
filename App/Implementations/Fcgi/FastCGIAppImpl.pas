@@ -23,6 +23,7 @@ uses
     OutputBufferIntf,
     DataAvailListenerIntf,
     RunnableWithDataNotifIntf,
+    StdOutIntf,
     FcgiProcessorIntf;
 
 type
@@ -37,6 +38,7 @@ type
         workerServer : RunnableWithDataNotifIntf;
         fcgiProcessor : IFcgiFrameParser;
         fOutputBuffer : IOutputBuffer;
+        fStdOutWriter : IStdOut;
     protected
         function initialize(const container : IDependencyContainer) : boolean; override;
 
@@ -58,7 +60,8 @@ type
             const dispatcherInst : IDispatcher;
             const server : IRunnableWithDataNotif;
             const aFcgiProcessor : IFcgiProcessor;
-            const outputBuffer : IOutputBuffer
+            const outputBuffer : IOutputBuffer;
+            const stdOutWriter : IStdOut
         );
         destructor destroy(); override;
         function run() : IRunnable;
@@ -95,7 +98,9 @@ resourcestring
         const errHandler : IErrorHandler;
         const dispatcherInst : IDispatcher;
         const server : IRunnableWithDataNotif;
-        const aFcgiProcessor : IFcgiProcessor
+        const aFcgiProcessor : IFcgiProcessor;
+        const outputBuffer : IOutputBuffer;
+        const stdOutWriter : IStdOut
     );
     begin
         inherited create(container, nil, errHandler);
@@ -103,6 +108,7 @@ resourcestring
         workerServer := server;
         fcgiProcessor := aFcgiProcessor;
         fOutputBuffer := outputBuffer;
+        fStdOutWriter := stdOutWriter;
     end;
 
     destructor TFastCGIWebApplication.destroy();
@@ -112,6 +118,7 @@ resourcestring
         workerServer := nil;
         fcgiProcessor := nil;
         fOutputBuffer := nil;
+        fStdOutWriter := nil;
     end;
 
     (*!-----------------------------------------------
@@ -193,7 +200,7 @@ resourcestring
             finally
                 fOutputBuffer.endBuffering();
                 //write response back to web server (i.e FastCGI client)
-                fcgiProcessor.write(stream, fOutputBuffer.flush());
+                fStdOutWriter.setStream(stream).write(fOutputBuffer.flush());
             end;
         end;
         result := true;

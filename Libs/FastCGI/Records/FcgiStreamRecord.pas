@@ -28,7 +28,7 @@ type
     TFcgiStreamRecord = class(TFcgiRecord)
     private
         (*!------------------------------------------------
-        * calculate numuber of bytes to write per record
+        * calculate number of bytes to write per record
         *-----------------------------------------------
         * @param len, current data length
         * @param excess, current data length excess
@@ -45,11 +45,6 @@ type
         *-----------------------------------------------*)
         function getPaddingToWrite(const len: word) : byte;
     public
-        constructor create(
-            const aType : byte;
-            const requestId : word;
-            const content : string = ''
-        );
 
         (*!------------------------------------------------
         * write record data to stream
@@ -68,51 +63,23 @@ uses
 
     fastcgi;
 
-    constructor TFcgiStreamRecord.create(
-        const aType : byte;
-        const requestId : word;
-        const content : string = ''
-    );
-    begin
-        inherited create(aType, requestId);
-        fContentData := content;
-    end;
-
     (*!------------------------------------------------
-    * calculate numuber of bytes to write per record
-    *-----------------------------------------------
-    * @param len, current data length
-    * @param excess, current data length excess
-    * @return number of bytes actually written
-    *-----------------------------------------------*)
-    function TFcgiStreamRecord.getLengthToWrite(const len: integer; const excess : word) : word;
-    const MAX_LENGTH = $EFFF;
-    begin
-        if (len - excess) > MAX_LENGTH then
-        begin
-            result := MAX_LENGTH;
-        end else
-        begin
-            result := len - excess;
-        end;
-    end;
-
-    (*!------------------------------------------------
-    * calculate numuber of bytes to write per record
-    *-----------------------------------------------
-    * @param len, current data length
-    * @param excess, current data length excess
-    * @return number of bytes actually written
-    *-----------------------------------------------*)
+     * calculate number of bytes of padding to write
+     *-----------------------------------------------
+     * @param len, current data length
+     * @return number of bytes required for padding
+     *-----------------------------------------------*)
     function TFcgiStreamRecord.getPaddingToWrite(const len: word) : byte;
-    const MAX_LENGTH = $EFFF;
+    var excessSize : byte;
     begin
-        if ((len mod FCGI_HEADER_LEN) = 0) then
+        excessSize := len mod FCGI_HEADER_LEN;
+        if (excessSize = 0) then
         begin
+            //no padding needed
             result := 0;
         end else
         begin
-            result := FCGI_HEADER_LEN - (len mod FCGI_HEADER_LEN);
+            result := FCGI_HEADER_LEN - excessSize;
         end;
     end;
 
@@ -123,32 +90,18 @@ uses
     * @return number of bytes actually written
     *-----------------------------------------------*)
     function TFcgiStreamRecord.write(const stream : IStreamAdapter) : integer;
-    var len : integer;
-        indx, contentLen, bytesToWrite : word;
-        contentRec : PFCGI_ContentRecord;
+    var headerRec : FCGI_Header;
         padding : byte;
     begin
-        len := length(fContentData);
-        indx := 0;
-        contentLen := 0;
-        repeat
-            contentLen := getLengthToWrite(len, indx);
-            padding := getPaddingToWrite(contentLen);
-            bytesToWrite := FCGI_HEADER_LEN + contentLen + padding;
-            getMem(contentRec, bytesToWrite);
-            try
-                fillChar(contentRec^, bytesToWrite, 0);
-                contentRec^.header.version := fVersion;
-                contentRec^.header.reqtype := fType;
-                contentRec^.header.paddingLength := padding;
-                contentRec^.header.contentLength := NtoBE(contentLen);
-                contentRec^.header.requestId := NToBE(fRequestID);
-                move(fContentData[indx + 1], contentRec^.ContentData, contentLen);
-                stream.writeBuffer(contentRec, bytesToWrite);
-                inc(indx, contentLen);
-            finally
-                freeMem(contentRec, bytesToWrite);
-            end;
-        until (indx = len);
+        headerRec.version := fVersion;
+        headerRec.reqtype := fType;
+        headerRec.requestId := NToBE(fRequestID);
+        headerRec.contentLength := NtoBE(fContentLength);
+        headerRec.paddingLength := getPaddingToWrite(fContentLength);
+        headerRec.reserved := 0;
+        stream.writeBuffer(headerRec, sizeof(FCGI_Header));
+        stream.writeStream(fContentData);
+        stream.writeBuffer(padding, headerRec.paddingLength);
+        result := getRecordSize();
     end;
 end.

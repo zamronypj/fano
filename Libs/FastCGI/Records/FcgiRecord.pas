@@ -38,14 +38,17 @@ type
         fPaddingLength : byte;
         fReserved : byte;
 
-        fContentData : string;
+        fContentData : IStreamAdapter;
         fPaddingData : shortstring;
 
     public
         constructor create(
+            const stream : IStreamAdapter;
             const aType : byte = FCGI_UNKNOWN_TYPE;
             const aRequestId : word = FCGI_NULL_REQUEST_ID
         );
+
+        destructor destroy(); override;
 
         (*!------------------------------------------------
          * get current record type
@@ -73,7 +76,7 @@ type
          *-----------------------------------------------
          * @return data as stream
          *-----------------------------------------------*)
-        function getContent() : IStreamAdapter;
+        function data() : IStreamAdapter;
 
         (*!------------------------------------------------
          * calculate total record data size
@@ -94,6 +97,7 @@ type
 implementation
 
     constructor TFcgiRecord.create(
+        const stream : IStreamAdapter;
         const aType : byte = FCGI_UNKNOWN_TYPE;
         const aRequestId : word = FCGI_NULL_REQUEST_ID
     );
@@ -104,36 +108,53 @@ implementation
         fReserved := 0;
         fContentLength := 0;
         fPaddingLength := 0;
+        fContentData := stream;
+    end;
+
+    destructor TFcgiRecord.destroy();
+    begin
+        inherited destroy();
+        fContentData := nil;
     end;
 
     (*!------------------------------------------------
-    * get current record type
-    *-----------------------------------------------
-    * @return type of record
-    *-----------------------------------------------*)
+     * get current record type
+     *-----------------------------------------------
+     * @return type of record
+     *-----------------------------------------------*)
     function TFcgiRecord.getType() : byte;
     begin
         result := fType;
     end;
 
     (*!------------------------------------------------
-    * get request id
-    *-----------------------------------------------
-    * @return request id
-    *-----------------------------------------------*)
+     * get request id
+     *-----------------------------------------------
+     * @return request id
+     *-----------------------------------------------*)
     function TFcgiRecord.getRequestId() : word;
     begin
         result := fRequestId;
     end;
 
     (*!------------------------------------------------
-    * get content length
-    *-----------------------------------------------
-    * @return content length
-    *-----------------------------------------------*)
+     * get content length
+     *-----------------------------------------------
+     * @return content length
+     *-----------------------------------------------*)
     function TFcgiRecord.getContentLength() : word;
     begin
         result := fContentLength;
+    end;
+
+    (*!------------------------------------------------
+     * get content record data
+     *-----------------------------------------------
+     * @return stream
+     *-----------------------------------------------*)
+    function TFcgiRecord.data() : IStreamAdapter;
+    begin
+        result := fContentData;
     end;
 
     (*!------------------------------------------------

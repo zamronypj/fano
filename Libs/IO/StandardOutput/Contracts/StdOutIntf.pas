@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit FcgiRecordFactoryIntf;
+unit StdOutIntf;
 
 interface
 
@@ -15,37 +15,43 @@ interface
 
 uses
 
-    FcgiRecordIntf;
+    StreamAdapterIntf;
 
 type
 
-    (*!-----------------------------------------------
-     * Interface for any class having capability to create
-     * FastCGI record
+    (*!------------------------------------------------
+     * interface for any classes having capability to
+     * write string to standard output, e.g., system STDOUT,
+     * FastCGI FCGI_STDOUT, etc.
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    IFcgiRecordFactory = interface
-        ['{5B1B7CED-8804-4837-B0DE-D88C02BE66A2}']
+    IStdOut = interface
+        ['{CC7A9DCF-B0F2-46B9-89D2-9B7BD5075F73}']
 
         (*!------------------------------------------------
-         * build fastcgi record instance
-         *-----------------------------------------------*)
-        function build() : IFcgiRecord;
-
-        (*!------------------------------------------------
-         * set request id
+         * set stream to write to if any
          *-----------------------------------------------
+         * @param stream, stream to write to
          * @return current instance
          *-----------------------------------------------*)
-        function setRequestId(const reqId : word) : IFcgiRecordFactory;
+        function setStream(const astream : IStreamAdapter) : IStdOut;
 
         (*!------------------------------------------------
-         * set content
+         * write string to stdout
          *-----------------------------------------------
+         * @param str, string to write
          * @return current instance
          *-----------------------------------------------*)
-        function setContent(const content : string) : IFcgiRecordFactory;
+        function write(const str : string) : IStdOut;
+
+        (*!------------------------------------------------
+         * write string with newline to stdout
+         *-----------------------------------------------
+         * @param str, string to write
+         * @return current instance
+         *-----------------------------------------------*)
+        function writeln(const str : string) : IStdOut;
     end;
 
 implementation

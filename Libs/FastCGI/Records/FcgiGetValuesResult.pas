@@ -27,7 +27,7 @@ type
      *-----------------------------------------------*)
     TFcgiGetValuesResult = class(TFcgiRecord)
     public
-        constructor create(const requestId : word);
+        constructor create(const stream : IStreamAdapter; const requestId : word);
 
         (*!------------------------------------------------
         * write record data to stream
@@ -44,9 +44,9 @@ uses
 
     fastcgi;
 
-    constructor TFcgiGetValuesResult.create(const requestId : word);
+    constructor TFcgiGetValuesResult.create(const stream : IStreamAdapter; const requestId : word);
     begin
-        inherited create(FCGI_GET_VALUES_RESULT, requestId);
+        inherited create(stream, FCGI_GET_VALUES_RESULT, requestId);
     end;
 
     (*!------------------------------------------------
@@ -56,17 +56,17 @@ uses
     * @return number of bytes actually written
     *-----------------------------------------------*)
     function TFcgiGetValuesResult.write(const stream : IStreamAdapter) : integer;
-    var rec : FCGI_Header;
+    var headerRec : FCGI_Header;
         bytesToWrite : integer;
     begin
-        fillChar(rec, sizeOf(FCGI_Header), 0);
-        rec.version:= fVersion;
-        rec.reqtype:= fType;
-        rec.contentLength:= NtoBE(fContentLength);
-        rec.paddingLength:= fPaddingLength;
-        rec.requestId:= NToBE(fRequestId);
+        fillChar(headerRec, sizeOf(FCGI_Header), 0);
+        headerRec.version:= fVersion;
+        headerRec.reqtype:= fType;
+        headerRec.contentLength:= NtoBE(fContentLength);
+        headerRec.paddingLength:= fPaddingLength;
+        headerRec.requestId:= NToBE(fRequestId);
         bytesToWrite := getRecordSize();
-        stream.writeBuffer(rec, bytesToWrite);
+        stream.writeBuffer(headerRec, bytesToWrite);
         result := bytesToWrite;
     end;
 end.

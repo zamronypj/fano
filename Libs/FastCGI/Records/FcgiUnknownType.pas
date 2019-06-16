@@ -29,7 +29,11 @@ type
     private
         fUnknownType : byte;
     public
-        constructor create(const requestId : word; const unknownType : byte);
+        constructor create(
+            const stream : IStreamAdapter;
+            const requestId : word;
+            const unknownType : byte
+        );
 
         (*!------------------------------------------------
         * write record data to stream
@@ -46,9 +50,13 @@ uses
 
     fastcgi;
 
-    constructor TFcgiUnknownType.create(const requestId : word; const unknownType : byte);
+    constructor TFcgiUnknownType.create(
+        const stream : IStreamAdapter;
+        const requestId : word;
+        const unknownType : byte
+    );
     begin
-        inherited create(FCGI_UNKNOWN_TYPE, requestId);
+        inherited create(stream, FCGI_UNKNOWN_TYPE, requestId);
         fUnknownType := unknownType;
     end;
 

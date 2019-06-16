@@ -18,6 +18,7 @@ uses
     EnvironmentIntf,
     StreamAdapterIntf,
     FcgiProcessorIntf,
+    FcgiRequestManagerIntf,
     FcgiFrameParserIntf;
 
 type
@@ -31,18 +32,13 @@ type
     TFcgiProcessor = class(TInterfacedObject, IFcgiProcessor)
     private
         fcgiParser : IFcgiFrameParser;
-        fcgiEnvironments : array of ICGIEnvironment;
+        fcgiRequestMgr : IFcgiRequestManager;
 
+        //store request id that is complete
         fcgiRequestId : word;
-
-        //store FCGI_STDIN stream completeness
-        fcgiStdInComplete : boolean;
-        //store FCGI_PARAMS stream completeness
-        fcgiParamsComplete : boolean;
 
         tmpBuffer : TMemoryStream;
 
-        procedure clearEnvironments();
         function processBuffer(const buffer : pointer; const bufferSize : int64; out totRead : int64) : boolean;
         function discardReadData(const tmp : TMemoryStream; const bytesToDiscard : int64) : TMemoryStream;
     public
@@ -50,32 +46,30 @@ type
          * constructor
          *------------------------------------------------
          * @param parser FastCGI frame parser
+         * @param requestMgr, instance of request manager
          *-----------------------------------------------*)
-        constructor create(const parser : IFcgiFrameParser);
+        constructor create(
+            const parser : IFcgiFrameParser;
+            const requestMgr : IFcgiRequestManager
+        );
+
         destructor destroy(); override;
 
         (*!------------------------------------------------
-        * process request stream
-        *-----------------------------------------------
-        * @return true if all data from web server is ready to
-        * be handle by application (i.e, environment, STDIN already parsed)
-        *-----------------------------------------------*)
+         * process request stream
+         *-----------------------------------------------
+         * @return true if all data from web server is ready to
+         * be handle by application (i.e, environment, STDIN already parsed)
+         *-----------------------------------------------*)
         function process(const stream : IStreamAdapter) : boolean;
 
         (*!------------------------------------------------
-        * get current environment
-        *-----------------------------------------------
-        * @return environment
-        *-----------------------------------------------*)
+         * get current environment
+         *-----------------------------------------------
+         * @return environment
+         *-----------------------------------------------*)
         function getEnvironment() : ICGIEnvironment;
 
-        (*!------------------------------------------------
-        * write string to FCGI_STDOUT stream and
-        * mark it end of request
-        *-----------------------------------------------
-        * @return current instance
-        *-----------------------------------------------*)
-        function write(const stream : IStreamAdapter; const str : string)  : IFcgiProcessor;
     end;
 
 implementation
@@ -84,25 +78,27 @@ uses
 
     fastcgi,
     sysutils,
+    math,
     FcgiEnvironmentImpl,
     FcgiRecordIntf,
     KeyValuePairIntf,
-    FcgiStdOut,
-    FcgiEndRequest;
+    EInvalidFcgiRequestIdImpl;
 
     (*!-----------------------------------------------
      * constructor
      *------------------------------------------------
      * @param parser FastCGI frame parser
+     * @param requestMgr, instance of request manager
      *-----------------------------------------------*)
-    constructor TFcgiProcessor.create(const parser : IFcgiFrameParser);
+    constructor TFcgiProcessor.create(
+        const parser : IFcgiFrameParser;
+        const requestMgr : IFcgiRequestManager
+    );
     begin
         inherited create();
         fcgiParser := parser;
-        setLength(fcgiEnvironments, 10);
+        fcgiRequestMgr := requestMgr;
         fcgiRequestId := 0;
-        fcgiStdInComplete := false;
-        fcgiParamsComplete := false;
         tmpBuffer := TMemoryStream.create();
     end;
 
@@ -113,22 +109,8 @@ uses
     begin
         inherited destroy();
         fcgiParser := nil;
-        clearEnvironments();
+        fcgiRequestMgr := nil;
         freeAndNil(tmpBuffer);
-    end;
-
-    (*!-----------------------------------------------
-     * clear all CGI environments
-     *-----------------------------------------------*)
-    procedure TFcgiProcessor.clearEnvironments();
-    var i : integer;
-    begin
-        for i := 0 to length(fcgiEnvironments)-1 do
-        begin
-            fcgiEnvironments[i] := nil;
-        end;
-        setLength(fcgiEnvironments, 0);
-        fcgiEnvironments := nil;
     end;
 
     (*!-----------------------------------------------
@@ -149,40 +131,13 @@ uses
         begin
             arecord := fcgiParser.parseFrame(buffer, bufferSize);
             totRead := arecord.getRecordSize();
-            //if we received FCGI_BEGIN_REQUEST, save requestId
-            if (arecord.getType() = FCGI_BEGIN_REQUEST) then
-            begin
-                //TODO : need to fix to support multiplexing multiple request
-                fcgiRequestId := arecord.getRequestId();
-            end;
-
-            //if we received FCGI_PARAMS with empty data, it means web server complete
-            //sending FCGI_PARAMS request data.
-            if (arecord.getType() = FCGI_PARAMS) and (arecord.getContentLength() = 0) then
-            begin
-                fcgiParamsComplete := true;
-
-                //TODO: need to rethink when FCGI_PARAMS record sent multiple
-                //times. Need wrapper class that implements IKeyValuePair and wraps
-                //multiple FcgiParams records as one big IKeyValuePair
-                fcgiEnvironments[fcgiRequestId] := TFcgiEnvironment.create(arecord as IKeyValuePair);
-            end;
-
-            //if we received FCGI_STDIN with empty data, it means web server complete
-            //sending FCGI_STDIN request data.
-            if (arecord.getType() = FCGI_STDIN) and (arecord.getContentLength() = 0) then
-            begin
-                fcgiStdInComplete := true;
-                //TODO: read POST data to Request
-            end;
-
-            complete := fcgiParamsComplete and fcgiStdInComplete;
-
+            complete := fcgiRequestMgr.add(arecord).complete(arecord.getRequestId());
             if (complete) then
             begin
-                //request is complete, reset status for next loop
-                fcgiParamsComplete := false;
-                fcgiStdInComplete := false;
+                //request is complete, keep track request id that is complete
+                fcgiRequestId := arecord.getRequestId();
+                //TODO : initialize CGI environment for this request
+                //TODO : initialize POST-ed for this request
             end;
         end;
 
@@ -230,30 +185,15 @@ uses
     end;
 
     (*!------------------------------------------------
-    * get current environment
-    *-----------------------------------------------
-    * @return environment
-    *-----------------------------------------------*)
+     * get current environment
+     *-----------------------------------------------
+     * @return environment
+     *-----------------------------------------------*)
     function TFcgiProcessor.getEnvironment() : ICGIEnvironment;
     begin
         //TODO throws exception when fcgiEnvironment is nil
         result := fcgiEnvironments[fcgiRequestId];
     end;
 
-    (*!------------------------------------------------
-    * write string to FCGI_STDOUT stream and
-    * mark it end of request
-    *-----------------------------------------------
-    * @return current instance
-    *-----------------------------------------------*)
-    function TFcgiProcessor.write(const stream : IStreamAdapter; const str : string)  : IFcgiProcessor;
-    var arecord : IFcgiRecord;
-    begin
-        arecord := TFcgiStdOut.create(fcgiRequestId, str);
-        arecord.write(stream);
-
-        arecord := TFcgiEndRequest.create(fcgiRequestId);
-        arecord.write(stream);
-    end;
 
 end.

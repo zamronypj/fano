@@ -5,7 +5,7 @@
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
-unit WorkerServerImpl;
+unit BaseWorkerServerImpl;
 
 interface
 
@@ -24,20 +24,18 @@ uses
 type
 
     (*!-----------------------------------------------
-     * FastCGI web application worker server implementation
+     * Base FastCGI web application worker server implementation
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TWorkerServer = class(TInjectableObject, IRunnableWithDataNotif)
-    private
-        fHostName : string;
-        fPort : word;
-        server : TInetServer;
+    TBaseWorkerServer = class(TInjectableObject, IRunnableWithDataNotif)
+    protected
         fDataListener : IDataAvailListener;
+        fServer : TSocketServer;
 
         procedure DoConnect(Sender: TObject; Data: TSocketStream);
     public
-        constructor create(const hostname: string; const port: word);
+        constructor create();
         destructor destroy(); override;
 
         (*!------------------------------------------------
@@ -52,19 +50,16 @@ type
 
 implementation
 
-    constructor TWorkerServer.create(const hostname: string; const port: word);
+    constructor TBaseWorkerServer.create();
     begin
-        fHostName := hostname;
-        fPort := port;
-        server := TInetServer.create(fHostName, fPort);
-        server.OnConnect := @DoConnect;
         fDataListener := nil;
+        fServer := nil;
     end;
 
-    destructor TWorkerServer.destroy();
+    destructor TBaseWorkerServer.destroy();
     begin
         inherited destroy();
-        FreeAndNil(server);
+        freeAndNil(fServer);
         fDataListener := nil;
     end;
 
@@ -75,12 +70,12 @@ implementation
     * @param dataListener, class that wish to be notified
     * @return true current instance
     *-----------------------------------------------*)
-    function TWorkerServer.setDataAvailListener(const dataListener : IDataAvailListener) : IRunnableWithDataNotif;
+    function TBaseWorkerServer.setDataAvailListener(const dataListener : IDataAvailListener) : IRunnableWithDataNotif;
     begin
         fDataListener := dataListener;
     end;
 
-    procedure TWorkerServer.DoConnect(Sender: TObject; Data: TSocketStream);
+    procedure TBaseWorkerServer.DoConnect(Sender: TObject; Data: TSocketStream);
     begin
         if (assigned(fDataListener)) then
         begin
@@ -88,9 +83,9 @@ implementation
         end;
     end;
 
-    function TWorkerServer.run() : IRunnable;
+    function TBaseWorkerServer.run() : IRunnable;
     begin
-        server.startAccepting();
+        fServer.startAccepting();
         result := self;
     end;
 end.

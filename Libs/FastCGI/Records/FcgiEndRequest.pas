@@ -32,6 +32,7 @@ type
         fAppStatus : cardinal;
     public
         constructor create(
+            const stream : IStreamAdapter;
             const requestId : word;
             const protocolStatus : byte = FCGI_REQUEST_COMPLETE;
             const appStatus : cardinal = 0
@@ -50,12 +51,13 @@ implementation
 
 
     constructor TFcgiEndRequest.create(
+        const stream : IStreamAdapter;
         const requestId : word;
         const protocolStatus : byte = FCGI_REQUEST_COMPLETE;
         const appStatus : cardinal = 0
     );
     begin
-        inherited create(FCGI_END_REQUEST, requestId);
+        inherited create(stream, FCGI_END_REQUEST, requestId);
         fProtocolStatus := protocolStatus;
         fAppStatus := appStatus;
     end;

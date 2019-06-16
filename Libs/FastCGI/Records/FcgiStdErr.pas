@@ -15,6 +15,7 @@ interface
 
 uses
 
+    StreamAdapterIntf,
     FcgiStreamRecord;
 
 type
@@ -26,10 +27,7 @@ type
      *-----------------------------------------------*)
     TFcgiStdErr = class(TFcgiStreamRecord)
     public
-        constructor create(
-            const requestId : word;
-            const content : string = ''
-        );
+        constructor create(const stream : IStreamAdapter; const requestId : word);
     end;
 
 implementation
@@ -38,8 +36,8 @@ uses
 
     fastcgi;
 
-    constructor TFcgiStdErr.create(const requestId : word; const content : string = '');
+    constructor TFcgiStdErr.create(const stream : IStreamAdapter; const requestId : word);
     begin
-        inherited create(FCGI_STDERR, requestId, content);
+        inherited create(stream, FCGI_STDERR, requestId);
     end;
 end.
