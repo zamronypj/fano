@@ -41,7 +41,9 @@ uses
 
     fastcgi,
     fastcgiex,
-    FcgiEndRequest;
+    classes,
+    FcgiEndRequest,
+    StreamAdapterImpl;
 
 
     (*!------------------------------------------------
@@ -59,6 +61,7 @@ uses
                     ((rec^.body.appStatusB1 shl 8) and $ff) or
                     (rec^.body.appStatusB0 and $ff);
         result := TFcgiEndRequest.create(
+            TStreamAdapter.create(TMemoryStream.create()),
             rec^.header.requestID,
             rec^.body.protocolStatus,
             appStatus
