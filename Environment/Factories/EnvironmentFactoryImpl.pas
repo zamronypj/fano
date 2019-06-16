@@ -16,6 +16,7 @@ uses
 
     DependencyIntf,
     DependencyContainerIntf,
+    EnvironmentFactoryIntf,
     FactoryImpl;
 
 type
