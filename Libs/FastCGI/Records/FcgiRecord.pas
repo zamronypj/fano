@@ -208,8 +208,8 @@ implementation
      * @return number of bytes actually written
      *-----------------------------------------------*)
     function TFcgiRecord.writeRecord(const stream : IStreamAdapter; const data : pointer; const size:integer) : integer;
-    const zeroByte = 0;
     var headerRec : FCGI_Header;
+        zeroByte : byte;
     begin
         fContentLength := size;
         fPaddingLength := getPaddingToWrite(fContentLength);
@@ -220,7 +220,8 @@ implementation
         headerRec.contentLength := NtoBE(fContentLength);
         headerRec.requestId := NToBE(fRequestID);
         stream.writeBuffer(headerRec, sizeof(FCGI_Header));
-        stream.writeBuffer(data, size);
+        stream.writeBuffer(data^, size);
+        zeroByte := 0;
         stream.writeBuffer(zeroByte, fPaddingLength);
     end;
 end.
