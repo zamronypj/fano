@@ -29,6 +29,7 @@ type
     TFcgiParams = class(TFcgiRecord, IKeyValuePair)
     private
         fKeyValues : IKeyValuePair;
+
     public
         (*!------------------------------------------------
          * constructor
@@ -88,29 +89,6 @@ uses
     begin
         inherited destroy();
         fKeyValues := nil;
-    end;
-
-    (*!------------------------------------------------
-     * write record data to stream
-     *-----------------------------------------------
-     * @param stream, stream instance where to write
-     * @return number of bytes actually written
-     *-----------------------------------------------*)
-    function TFcgiParams.writeRecord(const stream : IStreamAdapter; const data : pointer; const size:integer) : integer;
-    const zeroByte = 0;
-    var headerRec : FCGI_Header;
-    begin
-        fContentLength := size;
-        fPaddingLength := getPaddingToWrite(fContentLength);
-        fillChar(headerRec, sizeof(FCGI_Header), zeroByte);
-        headerRec.version := fVersion;
-        headerRec.reqtype := fType;
-        headerRec.paddingLength := fPaddingLength;
-        headerRec.contentLength := NtoBE(fContentLength);
-        headerRec.requestId := NToBE(fRequestID);
-        stream.writeBuffer(headerRec, sizeof(FCGI_Header));
-        stream.writeBuffer(data, size);
-        stream.writeBuffer(zeroByte, fPaddingLength);
     end;
 
     (*!------------------------------------------------
