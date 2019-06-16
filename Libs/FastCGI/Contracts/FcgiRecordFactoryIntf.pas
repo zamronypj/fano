@@ -39,13 +39,6 @@ type
          * @return current instance
          *-----------------------------------------------*)
         function setRequestId(const reqId : word) : IFcgiRecordFactory;
-
-        (*!------------------------------------------------
-         * set content
-         *-----------------------------------------------
-         * @return current instance
-         *-----------------------------------------------*)
-        function setContent(const content : string) : IFcgiRecordFactory;
     end;
 
 implementation
