@@ -91,30 +91,11 @@ uses
     end;
 
     (*!------------------------------------------------
-    * calculate numuber of bytes to write per record
-    *-----------------------------------------------
-    * @param len, current data length
-    * @param excess, current data length excess
-    * @return number of bytes actually written
-    *-----------------------------------------------*)
-    function TFcgiParams.getPaddingToWrite(const len: word) : byte;
-    const MAX_LENGTH = $EFFF;
-    begin
-        if ((len mod FCGI_HEADER_LEN) = 0) then
-        begin
-            result := 0;
-        end else
-        begin
-            result := FCGI_HEADER_LEN - (len mod FCGI_HEADER_LEN);
-        end;
-    end;
-
-    (*!------------------------------------------------
-    * write record data to stream
-    *-----------------------------------------------
-    * @param stream, stream instance where to write
-    * @return number of bytes actually written
-    *-----------------------------------------------*)
+     * write record data to stream
+     *-----------------------------------------------
+     * @param stream, stream instance where to write
+     * @return number of bytes actually written
+     *-----------------------------------------------*)
     function TFcgiParams.writeRecord(const stream : IStreamAdapter; const data : pointer; const size:integer) : integer;
     const zeroByte = 0;
     var headerRec : FCGI_Header;

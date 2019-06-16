@@ -41,6 +41,15 @@ type
         fContentData : IStreamAdapter;
         fPaddingData : shortstring;
 
+        (*!------------------------------------------------
+         * calculate number of bytes to write per record
+         *-----------------------------------------------
+         * @param len, current data length
+         * @param excess, current data length excess
+         * @return number of bytes actually written
+         *-----------------------------------------------*)
+        function getPaddingToWrite(const len: word) : byte;
+
     public
         constructor create(
             const stream : IStreamAdapter;
@@ -165,5 +174,23 @@ implementation
     function TFcgiRecord.getRecordSize() : integer;
     begin
         result := FCGI_HEADER_LEN + fContentLength + fPaddingLength;
+    end;
+
+    (*!------------------------------------------------
+     * calculate number of bytes to write per record
+     *-----------------------------------------------
+     * @param len, current data length
+     * @param excess, current data length excess
+     * @return number of bytes actually written
+     *-----------------------------------------------*)
+    function TFcgiRecord.getPaddingToWrite(const len: word) : byte;
+    begin
+        if ((len mod FCGI_HEADER_LEN) = 0) then
+        begin
+            result := 0;
+        end else
+        begin
+            result := FCGI_HEADER_LEN - (len mod FCGI_HEADER_LEN);
+        end;
     end;
 end.
