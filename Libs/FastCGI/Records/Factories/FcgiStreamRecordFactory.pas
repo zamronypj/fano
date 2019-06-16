@@ -27,7 +27,7 @@ type
      *-----------------------------------------------*)
     TFcgiStreamRecordFactory = class(TFcgiRecordFactory)
     protected
-        function createStreamRecordType(const reqId : word; const content : string) : IFcgiRecord; virtual; abstract;
+        function createStreamRecordType(const astream : IStreamAdapter; const reqId : word) : IFcgiRecord; virtual; abstract;
     public
         (*!------------------------------------------------
          * build fastcgi record from stream

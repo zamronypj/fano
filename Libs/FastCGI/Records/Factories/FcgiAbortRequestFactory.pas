@@ -40,6 +40,8 @@ implementation
 uses
 
     fastcgi,
+    classes,
+    StreamAdapterImpl,
     FcgiAbortRequest;
 
 
@@ -52,6 +54,9 @@ uses
     var rec : PFCGI_Header;
     begin
         rec := tmpBuffer;
-        result := TFcgiAbortRequest.create(rec^.requestID);
+        result := TFcgiAbortRequest.create(
+            TStreamAdapter.create(TMemoryStream.create()),
+            rec^.requestID
+        );
     end;
 end.

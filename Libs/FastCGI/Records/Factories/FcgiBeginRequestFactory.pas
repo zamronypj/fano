@@ -40,7 +40,9 @@ implementation
 uses
 
     fastcgi,
-    FcgiBeginRequest;
+    classes,
+    FcgiBeginRequest,
+    StreamAdapterImpl;
 
 
     (*!------------------------------------------------
@@ -53,6 +55,7 @@ uses
     begin
         rec := tmpBuffer;
         result := TFcgiBeginRequest.create(
+            TStreamAdapter.create(TMemoryStream.create()),
             rec^.header.requestID,
             rec^.body.role,
             rec^.body.flags
