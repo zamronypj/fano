@@ -234,7 +234,7 @@ implementation
         //write header part
         dstStream.writeBuffer(fHeader, sizeof(FCGI_Header));
         //write data part
-        dstStream.writeStream(fContentData);
+        dstStream.writeStream(fContentData, fContentData.size());
         //write padding part if any
         if (fHeader.paddingLength > 0) then
         begin
