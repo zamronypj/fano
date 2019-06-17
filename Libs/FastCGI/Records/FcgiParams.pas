@@ -133,7 +133,7 @@ uses
         const aKeyValues : IKeyValuePair
     );
     begin
-        inherited createFromStream(srcStream, dstStream);
+        inherited createFromStream(srcStream, dataStream);
         fKeyValues := aKeyValues;
     end;
 
