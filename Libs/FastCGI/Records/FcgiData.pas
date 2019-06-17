@@ -16,7 +16,7 @@ interface
 uses
 
     StreamAdapterIntf,
-    FcgiStreamRecord;
+    FcgiRecord;
 
 type
 
@@ -25,7 +25,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TFcgiData = class(TFcgiStreamRecord)
+    TFcgiData = class(TFcgiRecord)
     public
         constructor create(const dataStream : IStreamAdapter; const requestId : word);
     end;
