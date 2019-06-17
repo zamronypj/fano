@@ -329,7 +329,7 @@ resourcestring
      *-----------------------------------------------*)
     function TStreamAdapter.reset() : IStreamAdapter;
     begin
-        actualStream.size := 0
+        actualStream.size := 0;
         seek(0);
         result := self;
     end;
