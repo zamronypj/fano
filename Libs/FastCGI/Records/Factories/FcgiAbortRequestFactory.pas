@@ -39,11 +39,7 @@ implementation
 
 uses
 
-    fastcgi,
-    classes,
-    StreamAdapterImpl,
     FcgiAbortRequest;
-
 
     (*!------------------------------------------------
      * build fastcgi record from stream
@@ -51,12 +47,7 @@ uses
      * @return instance IFcgiRecord of corresponding fastcgi record
      *-----------------------------------------------*)
     function TFcgiAbortRequestFactory.build() : IFcgiRecord;
-    var rec : PFCGI_Header;
     begin
-        rec := tmpBuffer;
-        result := TFcgiAbortRequest.create(
-            TStreamAdapter.create(TMemoryStream.create()),
-            rec^.requestID
-        );
+        result := TFcgiAbortRequest.create(initStreamFromBuffer(tmpBuffer^, tmpSize));
     end;
 end.

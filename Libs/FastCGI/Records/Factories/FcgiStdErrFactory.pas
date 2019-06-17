@@ -16,7 +16,7 @@ interface
 uses
 
     FcgiRecordIntf,
-    FcgiStreamRecordFactory;
+    FcgiRecordFactory;
 
 type
 
@@ -25,30 +25,32 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TFcgiStdErrFactory = class(TFcgiStreamRecordFactory)
-    protected
+    TFcgiStdErrFactory = class(TFcgiRecordFactory)
+    public
         (*!------------------------------------------------
-         * get stream record type
+         * build fastcgi record from stream
          *-----------------------------------------------
-         * @return IFcgiRecord instance
+         * @return instance IFcgiRecord of corresponding fastcgi record
          *-----------------------------------------------*)
-        function createStreamRecordType(const reqId : word; const content : string) : IFcgiRecord; override;
+        function build() : IFcgiRecord; override;
     end;
 
 implementation
 
 uses
 
-    fastcgi,
     FcgiStdErr;
 
     (*!------------------------------------------------
-     * get stream record type
+     * build fastcgi record from stream
      *-----------------------------------------------
-     * @return IFcgiRecord instance
+     * @return instance IFcgiRecord of corresponding fastcgi record
      *-----------------------------------------------*)
-    function TFcgiStdErrFactory.createStreamRecordType(const reqId : word; const content : string) : IFcgiRecord;
+    function TFcgiStdErrFactory.build() : IFcgiRecord;
     begin
-        result := TFcgiStdErr.create(reqId, content);
+        result := TFcgiStdErr.create(
+            initStreamFromBuffer(tmpBuffer^, tmpSize),
+            initEmptyStream()
+        );
     end;
 end.

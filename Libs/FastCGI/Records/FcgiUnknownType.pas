@@ -35,6 +35,8 @@ type
             const unknownType : byte
         );
 
+        constructor createFromStream(const stream : IStreamAdapter);
+
         (*!------------------------------------------------
         * write record data to stream
         *-----------------------------------------------
@@ -57,7 +59,23 @@ uses
     );
     begin
         inherited create(stream, FCGI_UNKNOWN_TYPE, requestId);
-        fUnknownType := unknownType;
+        if (stream.size() > 0) then
+        begin
+            //stream contain data, read from it instead
+            initFromStream(stream);
+        end else
+        begin
+            fUnknownType := unknownType;
+        end;
+    end;
+
+    procedure TFcgiUnknownType.initFromStream(const stream : IStreamAdapter);
+    var reqBody : FCGI_UnknownTypeBody;
+    begin
+        //skip header as parent class already read it
+        stream.seek(sizeof(FCGI_Header));
+        stream.readBuffer(reqBody, sizeof(FCGI_UnknownTypeBody));
+        fUnknownType := reqBody._type;
     end;
 
     (*!------------------------------------------------

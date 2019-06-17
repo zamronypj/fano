@@ -28,6 +28,20 @@ type
     TStreamAdapter = class(TInterfacedObject, IStreamAdapter)
     private
         isOwned : boolean;
+
+        (*!------------------------------------------------
+         * copy from source stream and store to destination stream
+         *-----------------------------------------------
+         * @param srcStream, source stream
+         * @param dstStream, destination stream
+         * @param bytesToCopy, number of bytes to copy
+         *-----------------------------------------------*)
+        procedure copyStream(
+            const srcStream : IStreamAdapter;
+            const dstStream : IStreamAdapter;
+            const bytesToCopy : int64
+        );
+
     protected
         actualStream : TStream;
     public
@@ -92,11 +106,20 @@ type
         procedure writeBuffer(const buffer; const sizeToWrite : int64);
 
         (*!------------------------------------------------
-         * write from other stream
+         * read from current stream and store to destination stream
          *-----------------------------------------------
-         * @param stream, stream contains data to write
+         * @param dstStream, destination stream
+         * @param bytesToRead, number of bytes to read
          *-----------------------------------------------*)
-        procedure writeStream(const stream : IStreamAdapter);
+        procedure readStream(const dstStream : IStreamAdapter; const bytesToRead : int64);
+
+        (*!------------------------------------------------
+         * write data from source stream to current stream
+         *-----------------------------------------------
+         * @param srcStream, source stream
+         * @param bytesToWrite, number of bytes to write
+         *-----------------------------------------------*)
+        procedure writeStream(const srcStream : IStreamAdapter; const bytesToWrite : int64);
 
         (*!------------------------------------
          * seek
@@ -221,33 +244,60 @@ resourcestring
     end;
 
     (*!------------------------------------------------
-     * write from other stream
+     * copy from source stream and store to destination stream
      *-----------------------------------------------
-     * @param stream, stream contains data to write
+     * @param srcStream, source stream
+     * @param dstStream, destination stream
+     * @param bytesToCopy, number of bytes to copy
      *-----------------------------------------------*)
-    procedure TStreamAdapter.writeStream(const stream : IStreamAdapter);
+    procedure TStreamAdapter.copyStream(
+        const srcStream : IStreamAdapter;
+        const dstStream : IStreamAdapter;
+        const bytesToCopy : int64
+    );
     const MAX_BUFF_SIZE = 4096;
     var buff : pointer;
-        bytesToWrite, buffSize : int64;
+        buffSize : int64;
     begin
-        bytesToWrite := stream.size();
-        if (bytesToWrite = 0) then
+        if (bytesToCopy = 0) then
         begin
             exit();
         end;
 
-        buffSize := min(MAX_BUFF_SIZE, bytesToWrite);
+        buffSize := min(MAX_BUFF_SIZE, bytesToCopy);
 
         getMem(buff, buffSize);
         try
             repeat
-                stream.readBuffer(buff^, buffSize);
-                writeBuffer(buff^, buffSize);
-                buffSize := min(MAX_BUFF_SIZE, bytesToWrite - buffSize);
+                srcStream.readBuffer(buff^, buffSize);
+                dstStream.writeBuffer(buff^, buffSize);
+                buffSize := min(MAX_BUFF_SIZE, bytesToCopy - buffSize);
             until buffSize = 0;
         finally
             freeMem(buff);
         end;
+    end;
+
+    (*!------------------------------------------------
+     * read from current stream and store to destination stream
+     *-----------------------------------------------
+     * @param dstStream, destination stream
+     * @param bytesToRead, number of bytes to read
+     *-----------------------------------------------*)
+    procedure TStreamAdapter.readStream(const dstStream : IStreamAdapter; const bytesToRead : int64);
+    begin
+        copyStream(self, dstStream, bytesToRead);
+    end;
+
+    (*!------------------------------------------------
+     * write data from source stream to current stream
+     *-----------------------------------------------
+     * @param srcStream, source stream
+     * @param bytesToWrite, number of bytes to write
+     *-----------------------------------------------*)
+    procedure TStreamAdapter.writeStream(const srcStream : IStreamAdapter; const bytesToWrite : int64);
+    begin
+        copyStream(srcStream, self, bytesToWrite);
     end;
 
     (*!------------------------------------

@@ -88,11 +88,20 @@ type
         procedure writeBuffer(const buffer; const sizeToWrite : int64);
 
         (*!------------------------------------------------
-         * write from other stream
+         * read from current stream and store to destination stream
          *-----------------------------------------------
-         * @param stream, stream contains data to write
+         * @param dstStream, destination stream
+         * @param bytesToRead, number of bytes to read
          *-----------------------------------------------*)
-        procedure writeStream(const stream : IStreamAdapter);
+        procedure readStream(const dstStream : IStreamAdapter; const bytesToRead : int64);
+
+        (*!------------------------------------------------
+         * write data from source stream to current stream
+         *-----------------------------------------------
+         * @param srcStream, source stream
+         * @param bytesToWrite, number of bytes to write
+         *-----------------------------------------------*)
+        procedure writeStream(const srcStream : IStreamAdapter; const bytesToWrite : int64);
 
         (*!------------------------------------
          * seek
@@ -213,14 +222,27 @@ uses
     end;
 
     (*!------------------------------------------------
-     * write from other stream
+     * read from current stream and store to destination stream
      *-----------------------------------------------
-     * @param stream, stream contains data to write
+     * @param dstStream, destination stream
+     * @param bytesToRead, number of bytes to read
      *-----------------------------------------------*)
-    procedure TStreamAdapterLog.writeStream(const stream : IStreamAdapter);
+    procedure TStreamAdapterLog.readStream(const dstStream : IStreamAdapter; const bytesToRead : int64);
     begin
-        actualStream.writeStream(stream);
-        actualLogger.debug('StreamAdapterLog write stream ' + intToStr(stream.size()) + ' bytes');
+        actualStream.readStream(dstStream);
+        actualLogger.debug('StreamAdapterLog read stream ' + intToStr(bytesToRead) + ' bytes');
+    end;
+
+    (*!------------------------------------------------
+     * write data from source stream to current stream
+     *-----------------------------------------------
+     * @param srcStream, source stream
+     * @param bytesToWrite, number of bytes to write
+     *-----------------------------------------------*)
+    procedure TStreamAdapterLog.writeStream(const srcStream : IStreamAdapter; const bytesToWrite : int64);
+    begin
+        actualStream.writeStream(srcStream);
+        actualLogger.debug('StreamAdapterLog write stream ' + intToStr(bytesToWrite) + ' bytes');
     end;
 
     (*!------------------------------------

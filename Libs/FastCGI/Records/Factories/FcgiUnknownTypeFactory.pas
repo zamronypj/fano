@@ -39,10 +39,7 @@ implementation
 
 uses
 
-    fastcgi,
-    fastcgiex,
     FcgiUnknownType;
-
 
     (*!------------------------------------------------
      * build fastcgi record from stream
@@ -50,12 +47,10 @@ uses
      * @return instance IFcgiRecord of corresponding fastcgi record
      *-----------------------------------------------*)
     function TFcgiUnknownTypeFactory.build() : IFcgiRecord;
-    var rec : PFCGI_UnknownTypeRecord;
     begin
-        rec := tmpBuffer;
         result := TFcgiUnknownType.create(
-            rec^.header.requestID,
-            rec^.body._type
+            initStreamFromBuffer(tmpBuffer^, tmpSize),
+            initEmptyStream()
         );
     end;
 end.

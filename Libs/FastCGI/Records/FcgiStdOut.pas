@@ -16,7 +16,7 @@ interface
 uses
 
     StreamAdapterIntf,
-    FcgiStreamRecord;
+    FcgiRecord;
 
 type
 
@@ -25,9 +25,10 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TFcgiStdOut = class(TFcgiStreamRecord)
+    TFcgiStdOut = class(TFcgiRecord)
     public
         constructor create(const stream : IStreamAdapter; const requestId : word);
+        constructor create(const requestId : word; const str : string);
     end;
 
 implementation
@@ -38,7 +39,11 @@ uses
 
     constructor TFcgiStdOut.create(const stream : IStreamAdapter; const requestId : word);
     begin
-        inherited create(stream, FCGI_STDOUT, requestId);
+        inherited create(stream, FCGI_VERSION_1, FCGI_STDOUT, requestId);
     end;
 
+    constructor TFcgiStdOut.create(const requestId : word; const str : string);
+    begin
+        create(TStreamAdapter.create(TStringStream.create(str)), requestId);
+    end;
 end.

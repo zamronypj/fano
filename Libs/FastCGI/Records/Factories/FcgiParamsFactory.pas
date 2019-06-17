@@ -39,11 +39,8 @@ implementation
 
 uses
 
-    fastcgi,
-    KeyValuePairIntf,
     KeyValuePairImpl,
     FcgiParams;
-
 
     (*!------------------------------------------------
      * build fastcgi record from stream
@@ -51,12 +48,11 @@ uses
      * @return instance IFcgiRecord of corresponding fastcgi record
      *-----------------------------------------------*)
     function TFcgiParamsFactory.build() : IFcgiRecord;
-    var rec : PFCGI_Header;
-        keyvalue : IKeyValuePair;
     begin
-        rec := tmpBuffer;
-        keyvalue := TKeyValuePair.create();
-        //TODO: read name-value pair from tmpBuffer and store it to keyvalue
-        result := TFcgiParams.create(rec^.requestID, keyvalue);
+        result := TFcgiParams.create(
+            initStreamFromBuffer(tmpBuffer^, tmpSize),
+            0,
+            TKeyValuePair.create()
+        );
     end;
 end.

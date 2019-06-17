@@ -102,7 +102,7 @@ uses
     function TFcgiStdOutWriter.writeEnd(const stream : IStreamAdapter) : IFcgiProcessor;
     var arecord : IFcgiRecord;
     begin
-        arecord := TFcgiEndRequest.create(TNullStreamAdapter.create(), fcgiRequestId);
+        arecord := TFcgiEndRequest.create(fcgiRequestId);
         arecord.write(stream);
     end;
 
@@ -136,10 +136,7 @@ uses
         for i := 0 to totChunk-1 do
         begin
             acount := min(MAX_STR_PER_RECORD, len);
-            arecord := TFcgiStdOut.create(
-                TStreamAdapter.create(TStringStream.create(midStr(str, astart, acount))),
-                fcgiRequestId
-            );
+            arecord := TFcgiStdOut.create(fcgiRequestId, midStr(str, astart, acount));
             arecord.write(stream);
             inc(astart, acount);
         end;
@@ -149,24 +146,24 @@ uses
     end;
 
     (*!------------------------------------------------
-        * write string to FCGI_STDOUT stream and
-        * mark it end of request (if markEnd is true)
-        *-----------------------------------------------
-        * @param str, string to write
-        * @return current instance
-        *-----------------------------------------------*)
+     * write string to FCGI_STDOUT stream and
+     * mark it end of request (if markEnd is true)
+     *-----------------------------------------------
+     * @param str, string to write
+     * @return current instance
+     *-----------------------------------------------*)
     function TFcgiStdOutWriter.write(const str : string) : IStdOut;
     begin
         result := writeStream(fStream, str);
     end;
 
     (*!------------------------------------------------
-        * write string with newline to FCGI_STDOUT stream and
-        * mark it end of request (if markEnd is true)
-        *-----------------------------------------------
-        * @param str, string to write
-        * @return current instance
-        *-----------------------------------------------*)
+     * write string with newline to FCGI_STDOUT stream and
+     * mark it end of request (if markEnd is true)
+     *-----------------------------------------------
+     * @param str, string to write
+     * @return current instance
+     *-----------------------------------------------*)
     function TFcgiStdOutWriter.writeln(const str : string) : IStdOut;
     begin
         result := writeStream(fStream, str + LineEnding);

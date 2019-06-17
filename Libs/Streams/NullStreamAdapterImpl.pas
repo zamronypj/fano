@@ -159,11 +159,23 @@ implementation
     end;
 
     (*!------------------------------------------------
-     * write from other stream
+     * read from current stream and store to destination stream
      *-----------------------------------------------
-     * @param stream, stream contains data to write
+     * @param dstStream, destination stream
+     * @param bytesToRead, number of bytes to read
      *-----------------------------------------------*)
-    procedure TNullStreamAdapter.writeStream(const stream : IStreamAdapter);
+    procedure TNullStreamAdapter.readStream(const dstStream : IStreamAdapter; const bytesToRead : int64);
+    begin
+        //intentionally does nothing
+    end;
+
+    (*!------------------------------------------------
+     * write data from source stream to current stream
+     *-----------------------------------------------
+     * @param srcStream, source stream
+     * @param bytesToWrite, number of bytes to write
+     *-----------------------------------------------*)
+    procedure TNullStreamAdapter.writeStream(const srcStream : IStreamAdapter; const bytesToWrite : int64);
     begin
         //intentionally does nothing
     end;

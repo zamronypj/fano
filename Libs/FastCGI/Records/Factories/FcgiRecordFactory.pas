@@ -16,7 +16,8 @@ interface
 uses
 
     FcgiRecordIntf,
-    FcgiRecordFactoryIntf;
+    FcgiRecordFactoryIntf,
+    StreamAdapterIntf;
 
 type
 
@@ -30,6 +31,9 @@ type
         tmpBuffer : pointer;
         tmpSize : int64;
         fRequestId : word;
+
+        function initEmptyStream() : IStreamAdapter;
+        function initStreamFromBuffer(const buffer : pointer; const size : int64) : IStreamAdapter;
     public
         constructor create(const buffer : pointer; const size : int64);
 
@@ -51,10 +55,28 @@ type
 
 implementation
 
+uses
+
+    classes,
+    StreamAdapterImpl;
+
     constructor TFcgiRecordFactory.create(const buffer : pointer; const size : int64);
     begin
         tmpBuffer := buffer;
         tmpSize := size;
+    end;
+
+    function TFcgiRecordFactory.initEmptyStream() : IStreamAdapter;
+    begin
+        result := TStreamAdapter.create(TMemoryStream.create());
+    end;
+
+    function TFcgiRecordFactory.initStreamFromBuffer(const buffer : pointer; const size : int64) : IStreamAdapter;
+    var stream :IStreamAdapter;
+    begin
+        stream := initEmptyStream();
+        stream.writeBuffer(tmpBuffer^, tmpSize);
+        result := stream;
     end;
 
     (*!------------------------------------------------

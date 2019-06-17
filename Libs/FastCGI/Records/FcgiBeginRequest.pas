@@ -32,11 +32,22 @@ type
         fFlags : byte;
     public
         constructor create(
+            const aVersion : byte;
+            const aType : byte;
+            const aRequestId : word;
+            const dataStream : IStreamAdapter;
+            const role : byte;
+            const flag: byte
+        );
+
+        constructor create(
             const stream : IStreamAdapter;
             const requestId : word;
             const role : byte = FCGI_RESPONDER;
             const flag: byte = 0
         );
+
+        constructor createFromStream(const srcStream : IStreamAdapter);
 
         (*!------------------------------------------------
         * write record data to stream
@@ -58,8 +69,30 @@ implementation
     );
     begin
         inherited create(stream, FCGI_BEGIN_REQUEST, requestId);
-        fRole := role;
-        fFlags := flag;
+        if (stream.size() > 0) then
+        begin
+            //stream contain data, read from it instead
+            initFromStream(stream);
+        end else
+        begin
+            fRole := role;
+            fFlags := flag;
+        end;
+        fContentData.seek(0);
+    end;
+
+    constructor TFcgiBeginRequest.createFromStream(
+        const srcStream : IStreamAdapter;
+        const dstStream : IStreamAdapter
+    );
+    var reqBody : FCGI_BeginRequestBody;
+    begin
+        inherited createFromStream(srcStream, dstStream);
+        //skip header as parent class already read it
+        stream.seek(sizeof(FCGI_Header));
+        stream.readBuffer(reqBody, sizeof(FCGI_BeginRequestBody));
+        fRole := recBody.role;
+        fFlags := recBody.flags;
     end;
 
     (*!------------------------------------------------

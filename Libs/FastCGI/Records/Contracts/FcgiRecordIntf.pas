@@ -58,12 +58,12 @@ type
         function getRecordSize() : integer;
 
         (*!------------------------------------------------
-         * write record data to stream
+         * write record data to destination stream
          *-----------------------------------------------
-         * @param stream, stream instance where to write
+         * @param dstStream, stream instance where to write
          * @return number of bytes actually written
          *-----------------------------------------------*)
-        function write(const stream : IStreamAdapter) : integer;
+        function write(const dstStream : IStreamAdapter) : integer;
     end;
 
 implementation

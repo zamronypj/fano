@@ -39,10 +39,7 @@ implementation
 
 uses
 
-    fastcgi,
-    classes,
-    FcgiBeginRequest,
-    StreamAdapterImpl;
+    FcgiBeginRequest;
 
 
     (*!------------------------------------------------
@@ -51,14 +48,10 @@ uses
      * @return instance IFcgiRecord of corresponding fastcgi record
      *-----------------------------------------------*)
     function TFcgiBeginRequestFactory.build() : IFcgiRecord;
-    var rec : PFCGI_BeginRequestRecord;
     begin
-        rec := tmpBuffer;
-        result := TFcgiBeginRequest.create(
-            TStreamAdapter.create(TMemoryStream.create()),
-            rec^.header.requestID,
-            rec^.body.role,
-            rec^.body.flags
+        result := TFcgiBeginRequest.createFromStream(
+            initStreamFromBuffer(tmpBuffer^, tmpSize),
+            initEmptyStream()
         );
     end;
 end.

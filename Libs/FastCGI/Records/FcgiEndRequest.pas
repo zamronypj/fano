@@ -32,7 +32,7 @@ type
         fAppStatus : cardinal;
     public
         constructor create(
-            const stream : IStreamAdapter;
+            const dataStream : IStreamAdapter;
             const requestId : word;
             const protocolStatus : byte = FCGI_REQUEST_COMPLETE;
             const appStatus : cardinal = 0
@@ -49,7 +49,6 @@ type
 
 implementation
 
-
     constructor TFcgiEndRequest.create(
         const stream : IStreamAdapter;
         const requestId : word;
@@ -60,6 +59,19 @@ implementation
         inherited create(stream, FCGI_END_REQUEST, requestId);
         fProtocolStatus := protocolStatus;
         fAppStatus := appStatus;
+    end;
+
+    constructor TFcgiEndRequest.createFromStream(const stream : IStreamAdapter);
+    var reqBody : FCGI_EndRequestBody;
+    begin
+        //skip header as parent class already read it
+        stream.seek(sizeof(FCGI_Header));
+        stream.readBuffer(reqBody, sizeof(FCGI_EndRequestBody));
+        fProtocolStatus := recBody.protocolStatus;
+        fAppStatus := ((recBody.appStatusB3 shl 24) and $ff) or
+                    ((recBody.appStatusB2 shl 16) and $ff) or
+                    ((recBody.appStatusB1 shl 8) and $ff) or
+                    (recBody.appStatusB0 and $ff);
     end;
 
     (*!------------------------------------------------

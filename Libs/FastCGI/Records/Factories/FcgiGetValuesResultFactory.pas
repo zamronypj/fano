@@ -39,7 +39,6 @@ implementation
 
 uses
 
-    fastcgi,
     FcgiGetValuesResult;
 
 
@@ -49,9 +48,7 @@ uses
      * @return instance IFcgiRecord of corresponding fastcgi record
      *-----------------------------------------------*)
     function TFcgiGetValuesResultFactory.build() : IFcgiRecord;
-    var rec : PFCGI_Header;
     begin
-        rec := tmpBuffer;
-        result := TFcgiGetValuesResult.create(rec^.requestID);
+        result := TFcgiGetValuesresult.create(initStreamFromBuffer(tmpBuffer^, tmpSize));
     end;
 end.

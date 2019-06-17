@@ -39,12 +39,7 @@ implementation
 
 uses
 
-    fastcgi,
-    fastcgiex,
-    classes,
-    FcgiEndRequest,
-    StreamAdapterImpl;
-
+    FcgiEndRequest;
 
     (*!------------------------------------------------
      * build fastcgi record from stream
@@ -52,19 +47,7 @@ uses
      * @return instance IFcgiRecord of corresponding fastcgi record
      *-----------------------------------------------*)
     function TFcgiEndRequestFactory.build() : IFcgiRecord;
-    var rec : PFCGI_EndRequestRecord;
-        appStatus : cardinal;
     begin
-        rec := tmpBuffer;
-        appStatus := ((rec^.body.appStatusB3 shl 24) and $ff) or
-                    ((rec^.body.appStatusB2 shl 16) and $ff) or
-                    ((rec^.body.appStatusB1 shl 8) and $ff) or
-                    (rec^.body.appStatusB0 and $ff);
-        result := TFcgiEndRequest.create(
-            TStreamAdapter.create(TMemoryStream.create()),
-            rec^.header.requestID,
-            rec^.body.protocolStatus,
-            appStatus
-        );
+        result := TFcgiEndRequest.create(initStreamFromBuffer(tmpBuffer^, tmpSize));
     end;
 end.
