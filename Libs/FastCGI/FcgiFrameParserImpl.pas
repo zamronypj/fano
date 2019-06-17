@@ -133,8 +133,7 @@ uses
                   (reqType = FCGI_DATA) or
                   (reqType = FCGI_GET_VALUES) or
                   (reqType = FCGI_GET_VALUES_RESULT) or
-                  (reqType = FCGI_UNKNOWN_TYPE) or
-                  (reqType = FCGI_MAXTYPE);
+                  (reqType = FCGI_UNKNOWN_TYPE);
     end;
 
     procedure TFcgiFrameParser.raiseExceptionIfInvalidRecordType(const reqType : byte);
@@ -156,55 +155,57 @@ uses
      *-----------------------------------------------*)
     function TFcgiFrameParser.parseFrame(const buffer : pointer; const bufferSize : int64) : IFcgiRecord;
     var header : PFCGI_Header;
+        fcgiRecordSize : integer;
     begin
         raiseExceptionIfInvalidBuffer(buffer, bufferSize);
         header := buffer;
         raiseExceptionIfInvalidRecordType(header^.reqtype);
         result := nil;
+        fcgiRecordSize := FCGI_HEADER_LEN + BEtoN(header^.contentLength) + header^.paddingLength);
         case header^.reqtype of
             FCGI_BEGIN_REQUEST :
                 begin
-                    result := (TFcgiBeginRequestFactory.create(buffer, bufferSize)).build();
+                    result := (TFcgiBeginRequestFactory.create(buffer, fcgiRecordSize)).build();
                 end;
             FCGI_ABORT_REQUEST :
                 begin
-                    result := (TFcgiAbortRequestFactory.create(buffer, bufferSize)).build();
+                    result := (TFcgiAbortRequestFactory.create(buffer, fcgiRecordSize)).build();
                 end;
             FCGI_END_REQUEST :
                 begin
-                    result := (TFcgiEndRequestFactory.create(buffer, bufferSize)).build();
+                    result := (TFcgiEndRequestFactory.create(buffer, fcgiRecordSize)).build();
                 end;
             FCGI_PARAMS :
                 begin
-                    result := (TFcgiParamsFactory.create(buffer, bufferSize)).build();
+                    result := (TFcgiParamsFactory.create(buffer, fcgiRecordSize)).build();
                 end;
             FCGI_STDIN :
                 begin
-                    result := (TFcgiStdInFactory.create(buffer, bufferSize)).build();
+                    result := (TFcgiStdInFactory.create(buffer, fcgiRecordSize)).build();
                 end;
             FCGI_STDOUT :
                 begin
-                    result := (TFcgiStdOutFactory.create(buffer, bufferSize)).build();
+                    result := (TFcgiStdOutFactory.create(buffer, fcgiRecordSize)).build();
                 end;
             FCGI_STDERR :
                 begin
-                    result := (TFcgiStdErrFactory.create(buffer, bufferSize)).build();
+                    result := (TFcgiStdErrFactory.create(buffer, fcgiRecordSize)).build();
                 end;
             FCGI_DATA :
                 begin
-                    result := (TFcgiDataFactory.create(buffer, bufferSize)).build();
+                    result := (TFcgiDataFactory.create(buffer, fcgiRecordSize)).build();
                 end;
             FCGI_GET_VALUES :
                 begin
-                    result := (TFcgiGetValuesFactory.create(buffer, bufferSize)).build();
+                    result := (TFcgiGetValuesFactory.create(buffer, fcgiRecordSize)).build();
                 end;
             FCGI_GET_VALUES_RESULT :
                 begin
-                    result := (TFcgiGetValuesResultFactory.create(buffer, bufferSize)).build();
+                    result := (TFcgiGetValuesResultFactory.create(buffer, fcgiRecordSize)).build();
                 end;
             FCGI_UNKNOWN_TYPE :
                 begin
-                    result := (TFcgiUnknownTypeFactory.create(buffer, bufferSize)).build();
+                    result := (TFcgiUnknownTypeFactory.create(buffer, fcgiRecordSize)).build();
                 end;
         end;
     end;
