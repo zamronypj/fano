@@ -232,14 +232,14 @@ implementation
         fHeader.paddingLength := getPaddingLength(contentLength);
 
         //write header part
-        stream.writeBuffer(fHeader, sizeof(FCGI_Header));
+        dstStream.writeBuffer(fHeader, sizeof(FCGI_Header));
         //write data part
-        stream.writeStream(fContentData);
+        dstStream.writeStream(fContentData);
         //write padding part if any
         if (fHeader.paddingLength > 0) then
         begin
             padding := 0;
-            stream.writeBuffer(padding, fHeader.paddingLength);
+            dstStream.writeBuffer(padding, fHeader.paddingLength);
         end;
 
         result := getRecordSize();
