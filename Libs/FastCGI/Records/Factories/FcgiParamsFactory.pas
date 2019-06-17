@@ -49,9 +49,9 @@ uses
      *-----------------------------------------------*)
     function TFcgiParamsFactory.build() : IFcgiRecord;
     begin
-        result := TFcgiParams.create(
+        result := TFcgiParams.createFromStream(
             initStreamFromBuffer(tmpBuffer^, tmpSize),
-            0,
+            initEmptyStream(),
             TKeyValuePair.create()
         );
     end;

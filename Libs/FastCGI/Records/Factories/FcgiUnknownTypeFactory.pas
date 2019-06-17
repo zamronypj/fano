@@ -48,7 +48,7 @@ uses
      *-----------------------------------------------*)
     function TFcgiUnknownTypeFactory.build() : IFcgiRecord;
     begin
-        result := TFcgiUnknownType.create(
+        result := TFcgiUnknownType.createFromStream(
             initStreamFromBuffer(tmpBuffer^, tmpSize),
             initEmptyStream()
         );

@@ -36,6 +36,7 @@ type
         * @param dstStream, stream instance where to write
         *-----------------------------------------------*)
         procedure buildKeyValueStream(const dstStream : IStreamAdapter);
+
     public
         constructor create(
             const aVersion : byte;
@@ -54,6 +55,19 @@ type
         constructor create(
             const dataStream : IStreamAdapter;
             const requestId : word;
+            const aKeyValues : IKeyValuePair
+        );
+
+        (*!------------------------------------------------
+         * constructor that initialize key values from source stream
+         *-----------------------------------------------
+         * @param srcStream, source stream
+         * @param dataStream, data stream
+         * @return aKeyValues, instance IKeyValuePair which will store key value
+         *-----------------------------------------------*)
+        constructor createFromStream(
+            const srcStream : IStreamAdapter;
+            const dataStream : IStreamAdapter;
             const aKeyValues : IKeyValuePair
         );
 
@@ -113,6 +127,16 @@ uses
         create(FCGI_VERSION_1, FCGI_PARAMS, requestId, dataStream, aKeyValues);
     end;
 
+    constructor TFcgiParams.createFromStream(
+        const srcStream : IStreamAdapter;
+        const dataStream : IStreamAdapter;
+        const aKeyValues : IKeyValuePair
+    );
+    begin
+        inherited createFromStream(srcStream, dstStream);
+        fKeyValues := aKeyValues;
+    end;
+
     (*!------------------------------------------------
      * destructor
      *-----------------------------------------------*)
@@ -135,7 +159,7 @@ uses
     end;
 
     (*!------------------------------------------------
-    * build key value data andd write it to destination stream
+    * build key value data and write it to destination stream
     *-----------------------------------------------
     * @param dstStream, stream instance where to write
     * @return number of bytes actually written

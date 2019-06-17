@@ -48,7 +48,7 @@ uses
      *-----------------------------------------------*)
     function TFcgiStdErrFactory.build() : IFcgiRecord;
     begin
-        result := TFcgiStdErr.create(
+        result := TFcgiStdErr.createFromStream(
             initStreamFromBuffer(tmpBuffer^, tmpSize),
             initEmptyStream()
         );
