@@ -48,6 +48,9 @@ uses
      *-----------------------------------------------*)
     function TFcgiEndRequestFactory.build() : IFcgiRecord;
     begin
-        result := TFcgiEndRequest.create(initStreamFromBuffer(tmpBuffer, tmpSize));
+        result := TFcgiEndRequest.createFromStream(
+            initStreamFromBuffer(tmpBuffer, tmpSize),
+            initEmptyStream()
+        );
     end;
 end.

@@ -28,7 +28,6 @@ type
     TFcgiAbortRequest = class(TFcgiRecord)
     public
         constructor create(const dataStream : IStreamAdapter; const requestId : word);
-
     end;
 
 implementation

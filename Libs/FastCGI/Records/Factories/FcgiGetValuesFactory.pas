@@ -48,6 +48,9 @@ uses
      *-----------------------------------------------*)
     function TFcgiGetValuesFactory.build() : IFcgiRecord;
     begin
-        result := TFcgiGetValues.create(initStreamFromBuffer(tmpBuffer, tmpSize));
+        result := TFcgiGetValues.createFromStream(
+            initStreamFromBuffer(tmpBuffer, tmpSize),
+            initEmptyStream()
+        );
     end;
 end.

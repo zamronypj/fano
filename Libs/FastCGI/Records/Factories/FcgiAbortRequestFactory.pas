@@ -48,6 +48,9 @@ uses
      *-----------------------------------------------*)
     function TFcgiAbortRequestFactory.build() : IFcgiRecord;
     begin
-        result := TFcgiAbortRequest.create(initStreamFromBuffer(tmpBuffer, tmpSize));
+        result := TFcgiAbortRequest.createFromStream(
+            initStreamFromBuffer(tmpBuffer, tmpSize),
+            initEmptyStream()
+        );
     end;
 end.
