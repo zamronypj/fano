@@ -55,6 +55,7 @@ uses
         const dataStream : IStreamAdapter;
         const unknownType : byte
     );
+    var reqBody : FCGI_UnknownTypeBody;
     begin
         inherited create(aVersion, aType, aRequestId, dataStream);
         fillDword(reqBody, sizeof(FCGI_UnknownTypeBody), 0);
