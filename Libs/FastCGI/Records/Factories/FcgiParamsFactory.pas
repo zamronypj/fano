@@ -50,7 +50,7 @@ uses
     function TFcgiParamsFactory.build() : IFcgiRecord;
     begin
         result := TFcgiParams.createFromStream(
-            initStreamFromBuffer(tmpBuffer^, tmpSize),
+            initStreamFromBuffer(tmpBuffer, tmpSize),
             initEmptyStream(),
             TKeyValuePair.create()
         );

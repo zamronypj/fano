@@ -50,7 +50,7 @@ uses
     function TFcgiBeginRequestFactory.build() : IFcgiRecord;
     begin
         result := TFcgiBeginRequest.createFromStream(
-            initStreamFromBuffer(tmpBuffer^, tmpSize),
+            initStreamFromBuffer(tmpBuffer, tmpSize),
             initEmptyStream()
         );
     end;

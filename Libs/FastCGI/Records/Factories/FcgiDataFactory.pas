@@ -48,6 +48,6 @@ uses
      *-----------------------------------------------*)
     function TFcgiDataFactory.build() : IFcgiRecord;
     begin
-        result := TFcgiData.create(initStreamFromBuffer(tmpBuffer^, tmpSize));
+        result := TFcgiData.create(initStreamFromBuffer(tmpBuffer, tmpSize));
     end;
 end.
