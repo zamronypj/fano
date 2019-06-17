@@ -164,7 +164,7 @@ uses
     * @param dstStream, stream instance where to write
     * @return number of bytes actually written
     *-----------------------------------------------*)
-    function TFcgiParams.buildKeyValueStream(const dstStream : IStreamAdapter) : integer;
+    procedure TFcgiParams.buildKeyValueStream(const dstStream : IStreamAdapter);
     var i, totalKeys : integer;
         akey : shortstring;
         avalue : string;
