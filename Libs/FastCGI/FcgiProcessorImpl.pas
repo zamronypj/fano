@@ -40,7 +40,7 @@ type
         tmpBuffer : TMemoryStream;
 
         function processBuffer(const buffer : pointer; const bufferSize : int64; out totRead : int64) : boolean;
-        function discardProcessedData(const tmp : TStream; const bytesToDiscard : int64) : TStream;
+        function discardProcessedData(const tmp : TStream; const bytesToDiscard : int64) : TMemoryStream;
     public
         (*!-----------------------------------------------
          * constructor
@@ -157,7 +157,7 @@ uses
         result := complete;
     end;
 
-    function TFcgiProcessor.discardProcessedData(const tmp : TStream; const bytesToDiscard : int64) : TStream;
+    function TFcgiProcessor.discardProcessedData(const tmp : TStream; const bytesToDiscard : int64) : TMemoryStream;
     var tmpReadBuffer : TMemoryStream;
     begin
         //discard processed buffer
