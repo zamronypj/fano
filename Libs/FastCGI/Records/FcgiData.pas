@@ -27,7 +27,7 @@ type
      *-----------------------------------------------*)
     TFcgiData = class(TFcgiStreamRecord)
     public
-        constructor create(const stream : IStreamAdapter; const requestId : word);
+        constructor create(const dataStream : IStreamAdapter; const requestId : word);
     end;
 
 implementation
@@ -36,9 +36,9 @@ uses
 
     fastcgi;
 
-    constructor TFcgiData.create(const stream : IStreamAdapter; const requestId : word);
+    constructor TFcgiData.create(const dataStream : IStreamAdapter; const requestId : word);
     begin
-        inherited create(stream, FCGI_DATA, requestId);
+        inherited create(FCGI_VERSION_1, FCGI_DATA, requestId, dataStream);
     end;
 
 end.

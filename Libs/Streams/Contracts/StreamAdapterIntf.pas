@@ -108,6 +108,13 @@ type
          *-----------------------------------------------*)
         function reset() : IStreamAdapter;
 
+        (*!------------------------------------------------
+         * resize stream
+         *-----------------------------------------------
+         * @param newSize, stream new size in bytes
+         * @return current instance
+         *-----------------------------------------------*)
+        function resize(const newSize : int64) : IStreamAdapter;
     end;
 
 implementation

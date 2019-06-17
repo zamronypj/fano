@@ -30,7 +30,21 @@ type
     private
         fKeyValues : IKeyValuePair;
 
+        (*!------------------------------------------------
+        * build key value data and write it to destination stream
+        *-----------------------------------------------
+        * @param dstStream, stream instance where to write
+        *-----------------------------------------------*)
+        procedure buildKeyValueStream(const dstStream : IStreamAdapter);
     public
+        constructor create(
+            const aVersion : byte;
+            const aType : byte;
+            const aRequestId : word;
+            const dataStream : IStreamAdapter;
+            const aKeyValues : IKeyValuePair
+        );
+
         (*!------------------------------------------------
          * constructor
          *-----------------------------------------------
@@ -38,7 +52,7 @@ type
          * @return aKeyValues, instance IKeyValuePair which will store key value
          *-----------------------------------------------*)
         constructor create(
-            const stream : IStreamAdapter;
+            const dataStream : IStreamAdapter;
             const requestId : word;
             const aKeyValues : IKeyValuePair
         );
@@ -49,12 +63,12 @@ type
         destructor destroy(); override;
 
         (*!------------------------------------------------
-        * write record data to stream
+        * write record data to destination stream
         *-----------------------------------------------
         * @param stream, stream instance where to write
         * @return number of bytes actually written
         *-----------------------------------------------*)
-        function write(const stream : IStreamAdapter) : integer; override;
+        function write(const dstStream : IStreamAdapter) : integer; override;
 
         property keyValues : IKeyValuePair read fKeyValues implements IKeyValuePair;
     end;
@@ -73,13 +87,30 @@ uses
      * @return aKeyValues, instance IKeyValuePair which will store key value
      *-----------------------------------------------*)
     constructor TFcgiParams.create(
+        const aVersion : byte;
+        const aType : byte;
+        const aRequestId : word;
+        const dataStream : IStreamAdapter;
+        const aKeyValues : IKeyValuePair
+    );
+    begin
+        inherited create(aVersion, aType, aRequestId, dataStream);
+        fKeyValues := aKeyValues;
+    end;
+
+    (*!------------------------------------------------
+     * constructor
+     *-----------------------------------------------
+     * @param requestId, id of request
+     * @return aKeyValues, instance IKeyValuePair which will store key value
+     *-----------------------------------------------*)
+    constructor TFcgiParams.create(
         const stream : IStreamAdapter;
         const requestId : word;
         const aKeyValues : IKeyValuePair
     );
     begin
-        inherited create(stream, FCGI_PARAMS, requestId);
-        fKeyValues := aKeyValues;
+        create(FCGI_VERSION_1, FCGI_PARAMS, requestId, dataStream, aKeyValues);
     end;
 
     (*!------------------------------------------------
@@ -92,59 +123,64 @@ uses
     end;
 
     (*!------------------------------------------------
-    * write record data to stream
+    * write record data to destination stream
     *-----------------------------------------------
-    * @param stream, stream instance where to write
+    * @param dstStream, stream instance where to write
     * @return number of bytes actually written
     *-----------------------------------------------*)
-    function TFcgiParams.write(const stream : IStreamAdapter) : integer;
+    function TFcgiParams.write(const dstStream : IStreamAdapter) : integer;
+    begin
+        buildKeyValueStream(fContentData);
+        result := inherited write(dstStream);
+    end;
+
+    (*!------------------------------------------------
+    * build key value data andd write it to destination stream
+    *-----------------------------------------------
+    * @param dstStream, stream instance where to write
+    * @return number of bytes actually written
+    *-----------------------------------------------*)
+    function TFcgiParams.buildKeyValueStream(const dstStream : IStreamAdapter) : integer;
     var i, totalKeys : integer;
         akey : shortstring;
         avalue : string;
         lenKey : integer;
         lenValue : integer;
-        tmp : TMemoryStream;
     begin
-        tmp := TMemoryStream.create();
-        try
-            totalKeys := keyValues.count();
-            for i := 0 to totalKeys - 1 do
+        dstStream.reset();
+        totalKeys := keyValues.count();
+        for i := 0 to totalKeys - 1 do
+        begin
+            akey := keyValues.getKey(i);
+            lenKey := length(akey);
+            avalue := keyValues.getValue(akey);
+            lenValue := length(avalue);
+            if (lenKey > 127) then
             begin
-                akey := keyValues.getKey(i);
-                lenKey := length(akey);
-                avalue := keyValues.getValue(akey);
-                lenValue := length(avalue);
-                if (lenKey > 127) then
-                begin
-                    //encode length as four byte data
-                    //with high-order bit = 1 to mark 4 bytes encoding
-                    lenKey := lenKey or $80000000;
-                    tmp.writeBuffer(lenKey, 4);
-                end else
-                begin
-                    //encode length as one byte data
-                    tmp.writeBuffer(lenKey, 1);
-                end;
-
-                if (lenValue > 127) then
-                begin
-                    //encode length as four byte data
-                    //with high-order bit = 1 to mark 4 bytes encoding
-                    lenValue := lenValue or $80000000;
-                    tmp.writeBuffer(lenValue, 4);
-                end else
-                begin
-                    //encode length as four byte data
-                    tmp.writeBuffer(lenValue, 4);
-                end;
-
-                tmp.writeBuffer(akey[1], length(akey));
-                tmp.writeBuffer(avalue[1], length(avalue));
+                //encode length as four byte data
+                //with high-order bit = 1 to mark 4 bytes encoding
+                lenKey := lenKey or $80000000;
+                dstStream.writeBuffer(lenKey, 4);
+            end else
+            begin
+                //encode length as one byte data
+                dstStream.writeBuffer(lenKey, 1);
             end;
 
-            writeRecord(stream, tmp.memory, tmp.size);
-        finally
-            tmp.free();
+            if (lenValue > 127) then
+            begin
+                //encode length as four byte data
+                //with high-order bit = 1 to mark 4 bytes encoding
+                lenValue := lenValue or $80000000;
+                dstStream.writeBuffer(lenValue, 4);
+            end else
+            begin
+                //encode length as four byte data
+                dstStream.writeBuffer(lenValue, 4);
+            end;
+
+            dstStream.writeBuffer(akey[1], length(akey));
+            dstStream.writeBuffer(avalue[1], length(avalue));
         end;
     end;
 end.

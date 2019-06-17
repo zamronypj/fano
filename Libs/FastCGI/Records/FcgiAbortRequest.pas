@@ -27,15 +27,8 @@ type
      *-----------------------------------------------*)
     TFcgiAbortRequest = class(TFcgiRecord)
     public
-        constructor create(const stream : IStreamAdapter; const requestId : word);
+        constructor create(const dataStream : IStreamAdapter; const requestId : word);
 
-        (*!------------------------------------------------
-        * write record data to stream
-        *-----------------------------------------------
-        * @param stream, stream instance where to write
-        * @return number of bytes actually written
-        *-----------------------------------------------*)
-        function write(const stream : IStreamAdapter) : integer; override;
     end;
 
 implementation
@@ -44,29 +37,9 @@ uses
 
     fastcgi;
 
-    constructor TFcgiAbortRequest.create(const stream : IStreamAdapter; const requestId : word);
+    constructor TFcgiAbortRequest.create(const dataStream : IStreamAdapter; const requestId : word);
     begin
-        inherited create(stream, FCGI_ABORT_REQUEST, requestId);
+        inherited create(FCGI_VERSION_1, FCGI_ABORT_REQUEST, requestId, dataStream);
     end;
 
-    (*!------------------------------------------------
-    * write record data to stream
-    *-----------------------------------------------
-    * @param stream, stream instance where to write
-    * @return number of bytes actually written
-    *-----------------------------------------------*)
-    function TFcgiAbortRequest.write(const stream : IStreamAdapter) : integer;
-    var abortRequestRec : FCGI_Header;
-        bytesToWrite : integer;
-    begin
-        fillChar(abortRequestRec, sizeOf(FCGI_Header), 0);
-        abortRequestRec.version:= fVersion;
-        abortRequestRec.reqtype:= fType;
-        abortRequestRec.requestId:= NToBE(fRequestId);
-        abortRequestRec.contentLength:= NtoBE(fContentLength);
-        abortRequestRec.paddingLength:= fPaddingLength;
-        bytesToWrite := getRecordSize();
-        stream.writeBuffer(abortRequestRec, bytesToWrite);
-        result := bytesToWrite;
-    end;
 end.

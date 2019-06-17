@@ -138,6 +138,14 @@ type
          * @return current instance
          *-----------------------------------------------*)
         function reset() : IStreamAdapter;
+
+        (*!------------------------------------------------
+         * resize stream
+         *-----------------------------------------------
+         * @param newSize, stream new size in bytes
+         * @return current instance
+         *-----------------------------------------------*)
+        function resize(const newSize : int64) : IStreamAdapter;
     end;
 
 implementation
@@ -321,7 +329,20 @@ resourcestring
      *-----------------------------------------------*)
     function TStreamAdapter.reset() : IStreamAdapter;
     begin
-        actualStream.size := 0;
+        actualStream.size := 0
+        seek(0);
+        result := self;
+    end;
+
+    (*!------------------------------------------------
+     * resize stream
+     *-----------------------------------------------
+     * @param newSize, stream new size in bytes
+     * @return current instance
+     *-----------------------------------------------*)
+    function TStreamAdapter.resize(const newSize : int64) : IStreamAdapter;
+    begin
+        actualStream.size := newSize;
         result := self;
     end;
 end.

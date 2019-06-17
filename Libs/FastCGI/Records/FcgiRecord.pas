@@ -28,9 +28,7 @@ type
      *-----------------------------------------------*)
     TFcgiRecord = class(TInterfacedObject, IFcgiRecord)
     protected
-        fVersion : byte;
-        fType : byte;
-        //two bytes with big endian order
+        fHeader : FCGI_Header;
         fRequestId : word;
         fContentData : IStreamAdapter;
 
@@ -92,12 +90,12 @@ type
         function getRecordSize() : integer;
 
         (*!------------------------------------------------
-         * write record data to stream
+         * write record data to destination stream
          *-----------------------------------------------
          * @param stream, stream instance where to write
          * @return number of bytes actually written
          *-----------------------------------------------*)
-        function write(const stream : IStreamAdapter) : integer;
+        function write(const dstStream : IStreamAdapter) : integer; virtual;
     end;
 
 implementation
@@ -109,8 +107,11 @@ implementation
         const dataStream : IStreamAdapter
     );
     begin
-        fVersion := aVersion;
-        fType := aType;
+        fillDword(fHeader, sizeOf(FCGI_Header), 0);
+        fHeader.version := aVersion;
+        fHeader.reqtype := aType;
+        //FastCGI specification required Big-Endian
+        fHeader.requestID := NToBE(aRequestId);
         fRequestId := aRequestId;
         fContentData := dataStream;
     end;
@@ -119,17 +120,23 @@ implementation
         const srcStream : IStreamAdapter;
         const dataStream : IStreamAdapter
     );
-    var header : FCGI_Header;
-        contentLength : word;
+    var contentLength : word;
     begin
-        stream.readBuffer(header, sizeof(FCGI_Header));
-        fVersion := header.version;
-        fType := header.reqtype;
-        fRequestId := BEtoN(header.requestID);
-        contentLength := BEtoN(header.contentLength);
         fContentData := dataStream;
+        srcStream.readBuffer(fHeader, sizeof(FCGI_Header));
+
+        //FastCGI specification required requestID and contentLength
+        //in big-endian format, need to convert it to native endian
+        fRequestId := BEtoN(fHeader.requestID);
+        contentLength := BEtoN(fHeader.contentLength);
+
+        fContentData.resize(contentLength);
+        fContentData.seek(0);
+
         srcStream.readStream(fContentData, contentLength);
         srcStream.seek(header.paddingLength, FROM_CURRENT);
+
+        fContentData.seek(0);
     end;
 
     destructor TFcgiRecord.destroy();
@@ -145,7 +152,7 @@ implementation
      *-----------------------------------------------*)
     function TFcgiRecord.getType() : byte;
     begin
-        result := fType;
+        result := fHeader.reqtype;
     end;
 
     (*!------------------------------------------------
@@ -217,28 +224,22 @@ implementation
      * @return number of bytes actually written
      *-----------------------------------------------*)
     function TFcgiRecord.write(const dstStream : IStreamAdapter) : integer;
-    var headerRec : FCGI_Header;
-        contentLength : word;
+    var contentLength : word;
         padding : byte;
     begin
         contentlength := getContentLength();
-
-        headerRec.version := fVersion;
-        headerRec.reqtype := fType;
-        headerRec.requestId := NToBE(fRequestID);
-        headerRec.contentLength := NtoBE(contentlength);
-        headerRec.paddingLength := getPaddingLength(contentLength);
-        headerRec.reserved := 0;
+        fHeader.contentLength := NtoBE(contentlength);
+        fHeader.paddingLength := getPaddingLength(contentLength);
 
         //write header part
-        stream.writeBuffer(headerRec, sizeof(FCGI_Header));
+        stream.writeBuffer(fHeader, sizeof(FCGI_Header));
         //write data part
         stream.writeStream(fContentData);
         //write padding part if any
-        if (headerRec.paddingLength > 0) then
+        if (fHeader.paddingLength > 0) then
         begin
             padding := 0;
-            stream.writeBuffer(padding, headerRec.paddingLength);
+            stream.writeBuffer(padding, fHeader.paddingLength);
         end;
 
         result := getRecordSize();
