@@ -40,7 +40,7 @@ type
         tmpBuffer : TMemoryStream;
 
         function processBuffer(const buffer : pointer; const bufferSize : int64; out totRead : int64) : boolean;
-        function discardReadData(const tmp : TMemoryStream; const bytesToDiscard : int64) : TMemoryStream;
+        function discardProcessedData(const tmp : TStream; const bytesToDiscard : int64) : TStream;
     public
         (*!-----------------------------------------------
          * constructor
@@ -69,6 +69,13 @@ type
          * @return environment
          *-----------------------------------------------*)
         function getEnvironment() : ICGIEnvironment;
+
+        (*!------------------------------------------------
+         * get current FCGI_STDIN complete stream
+         *-----------------------------------------------
+         * @return stream
+         *-----------------------------------------------*)
+        function getStdInStream() : IStreamAdapter;
 
         (*!------------------------------------------------
          * get request id that is complete
@@ -141,9 +148,8 @@ uses
             complete := fcgiRequestMgr.add(arecord).complete(arecord.getRequestId());
             if (complete) then
             begin
-                //request is complete, keep track request id that is complete
+                //request is complete, keep track last request id that is complete
                 fcgiRequestId := arecord.getRequestId();
-                //TODO : initialize CGI environment for this request
                 //TODO : initialize POST-ed for this request
             end;
         end;
@@ -151,10 +157,10 @@ uses
         result := complete;
     end;
 
-    function TFcgiProcessor.discardReadData(const tmp : TMemoryStream; const bytesToDiscard : int64) : TMemoryStream;
+    function TFcgiProcessor.discardProcessedData(const tmp : TStream; const bytesToDiscard : int64) : TStream;
     var tmpReadBuffer : TMemoryStream;
     begin
-        //discard read buffer
+        //discard processed buffer
         tmpReadBuffer := TMemoryStream.create();
         try
             tmp.seek(bytesToDiscard, soFromBeginning);
@@ -181,10 +187,11 @@ uses
         try
             stream.readBuffer(tmp^, tmpSize);
             tmpBuffer.writeBuffer(tmp^, tmpSize);
+            totRead := 0;
             result := processBuffer(tmpBuffer.memory, tmpBuffer.size, totRead);
             if (totRead > 0) then
             begin
-                tmpBuffer := discardReadData(tmpBuffer, totRead);
+                tmpBuffer := discardProcessedData(tmpBuffer, totRead);
             end;
         finally
             freeMem(tmp, tmpSize);
@@ -197,12 +204,18 @@ uses
      * @return environment
      *-----------------------------------------------*)
     function TFcgiProcessor.getEnvironment() : ICGIEnvironment;
-    var paramStream : IStreamAdapter;
-        factory : ICGIEnvironmentFactory;
     begin
-        paramStream := fcgiRequestMgr.getParamsStream(fcgiRequestId);
-        factory := TFCGIEnvironmentFactory.create(paramStream);
-        result := factory.build();
+        result := fcgiRequestMgr.getEnvironment(fcgiRequestId);
+    end;
+
+    (*!------------------------------------------------
+     * get current FCGI_STDIN complete stream
+     *-----------------------------------------------
+     * @return stream
+     *-----------------------------------------------*)
+    function TFcgiProcessor.getStdInStream() : IStreamAdapter;
+    begin
+        result := fcgiRequestMgr.getStdInStream(fcgiRequestId);
     end;
 
     (*!------------------------------------------------

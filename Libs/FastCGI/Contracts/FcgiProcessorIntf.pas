@@ -45,6 +45,13 @@ type
         function getEnvironment() : ICGIEnvironment;
 
         (*!------------------------------------------------
+         * get current FCGI_STDIN complete stream
+         *-----------------------------------------------
+         * @return stream
+         *-----------------------------------------------*)
+        function getStdInStream() : IStreamAdapter;
+
+        (*!------------------------------------------------
          * get request id that is complete
          *-----------------------------------------------
          * @return request id

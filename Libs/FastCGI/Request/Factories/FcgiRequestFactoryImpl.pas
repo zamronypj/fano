@@ -43,7 +43,7 @@ uses
     UploadedFileCollectionFactoryImpl,
     UploadedFileCollectionWriterFactoryImpl,
     StdInReaderIntf,
-    StdInFromStringImpl;
+    StdInFromStreamImpl;
 
     constructor create(const afcgiProc : IFcgiProcessor);
     begin
@@ -67,7 +67,7 @@ uses
             TMultipartFormDataParser.create(
                 TUploadedFileCollectionWriterFactory.create()
             ),
-            TStdInReaderFromString.create(fcgiProcessor.getStdIn())
+            TStdInReaderFromStream.create(fcgiProcessor.getStdIn())
         );
         result := TFcgiRequest.create(fcgiProcessor.getRequestId(), arequest);
     end;

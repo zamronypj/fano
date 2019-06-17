@@ -16,6 +16,7 @@ interface
 uses
 
     FcgiRecordIntf,
+    EnvironmentIntf,
     StreamAdapterIntf;
 
 type
@@ -55,12 +56,12 @@ type
         function getStdInStream(const requestId : word) : IStreamAdapter;
 
         (*!------------------------------------------------
-         * get data from all FCGI_PARAMS identified by request id
+         * get CGI Environment for request identified by request id
          *-----------------------------------------------
          * @param requestId, request id
-         * @return stream instance of all FCGI_STDIN records
+         * @return CGI environment or nil if environment not ready
          *-----------------------------------------------*)
-        function getParamsStream(const requestId : word) : IStreamAdapter;
+        function getEnvironment(const requestId : word) : ICGIEnvironment;
 
         (*!------------------------------------------------
          * add FastCGI record to manager

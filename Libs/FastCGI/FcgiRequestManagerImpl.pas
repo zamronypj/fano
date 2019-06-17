@@ -15,6 +15,7 @@ interface
 
 uses
 
+    EnvironmentIntf,
     FcgiRecordIntf,
     StreamAdapterIntf;
 
@@ -27,6 +28,9 @@ type
         //store FCGI_PARAMS stream completeness
         fcgiParamsComplete : boolean;
         fcgiRecords : array of IFcgiRecord;
+
+        stdInStream : IStreamAdapter;
+        env : ICGIEnvironment;
     end;
 
     TRequestRecordArr = array of TRequestRecord;
@@ -61,8 +65,27 @@ type
          * @return true if request identified by id is complete
          *-----------------------------------------------*)
         procedure markCompleteness(const rec : IFcgiRecord);
+
+        (*!------------------------------------------------
+         * initialize get CGI Environment for request identified by request id
+         *-----------------------------------------------
+         * @param requestId, request id
+         * @return CGI environment
+         *-----------------------------------------------*)
+        function initEnvironment(const requestId : word) : ICGIEnvironment;
+
     public
+
+        (*!------------------------------------------------
+         * constructor
+         *-----------------------------------------------
+         * @param initialCapacity, initial pre allocated array
+         *-----------------------------------------------*)
         constructor create(const initialCapacity : integer = 32);
+
+        (*!------------------------------------------------
+         * destructor
+         *-----------------------------------------------*)
         destructor destroy(); override;
 
         (*!------------------------------------------------
@@ -91,12 +114,12 @@ type
         function getStdInStream(const requestId : word) : IStreamAdapter;
 
         (*!------------------------------------------------
-         * get data from all FCGI_PARAMS identified by request id
+         * get CGI Environment for request identified by request id
          *-----------------------------------------------
          * @param requestId, request id
-         * @return stream instance of all FCGI_STDIN records
+         * @return CGI environment or nil if environment not ready
          *-----------------------------------------------*)
-        function getParamsStream(const requestId : word) : IStreamAdapter;
+        function getEnvironment(const requestId : word) : ICGIEnvironment;
 
         (*!------------------------------------------------
          * add FastCGI record to manager
@@ -122,12 +145,20 @@ uses
     fastcgi,
     StreamAdapterCollectionImpl;
 
+    (*!------------------------------------------------
+     * constructor
+     *-----------------------------------------------
+     * @param initialCapacity, initial pre allocated array
+     *-----------------------------------------------*)
     constructor TFcgiRequestManager.create(const initialCapacity : integer = 32);
     begin
         setLength(fRecords, initialCapacity);
         initRecords();
     end;
 
+    (*!------------------------------------------------
+     * destructor
+     *-----------------------------------------------*)
     destructor TFcgiRequestManager.destroy();
     begin
         inherited destroy();
@@ -149,6 +180,8 @@ uses
         fRecords[requestId].used := false;
         fRecords[requestId].fcgiStdInComplete := false;
         fRecords[requestId].fcgiParamsComplete := false;
+        fRecords[requestId].env := nil;
+        fRecords[requestId].stdInStream := nil;
         setLength(fRecords[requestId].fcgiRecords, 0);
     end;
 
@@ -224,18 +257,34 @@ uses
      *-----------------------------------------------*)
     function TFcgiRequestManager.getStdInStream(const requestId : word) : IStreamAdapter;
     begin
-        result := getStreamByType(requestId, FCGI_STDIN);
+        result := fRecords[requestId].stdInStream;
     end;
 
     (*!------------------------------------------------
-     * get data from all FCGI_PARAMS identified by request id
+     * initialize CGI Environment for request identified by request id
      *-----------------------------------------------
      * @param requestId, request id
-     * @return stream instance of all FCGI_STDIN records
+     * @return CGI environment
      *-----------------------------------------------*)
-    function TFcgiRequestManager.getParamsStream(const requestId : word) : IStreamAdapter;
+    function TFcgiRequestManager.initEnvironment(const requestId : word) : ICGIEnvironment;
+    var paramStream : IStreamAdapter;
+        factory : ICGIEnvironmentFactory;
     begin
-        result := getStreamByType(requestId, FCGI_PARAMS);
+        //get all FCGI_PARAMS records stream as one big stream
+        paramStream := getStreamByType(requestId, FCGI_PARAMS);
+        factory := TFCGIEnvironmentFactory.create(paramStream);
+        result := factory.build();
+    end;
+
+    (*!------------------------------------------------
+     * get CGI Environment for request identified by request id
+     *-----------------------------------------------
+     * @param requestId, request id
+     * @return CGI environment or nil if environment not ready
+     *-----------------------------------------------*)
+    function TFcgiRequestManager.getEnvironment(const requestId : word) : ICGIEnvironment;
+    begin
+        result := fRecords[requestId].env;
     end;
 
     (*!------------------------------------------------
@@ -267,6 +316,12 @@ uses
         if (recType = FCGI_STDIN) and (rec.getContentLength() = 0) then
         begin
             fRecords[requestId].fcgiStdInComplete := true;
+        end;
+
+        if (complete(requestId)) then
+        begin
+            fRecords[requestId].env := initEnvironment(requestId);
+            fRecords[requestId].stdInStream := getStreamByType(requestId, FCGI_STDIN);
         end;
     end;
 
@@ -325,6 +380,7 @@ uses
     var i : integer;
     begin
         fRecords[requestId].used := false;
+        fRecords[requestId].env := nil;
         for i := length(fRecords[requestId].fcgiRecords) - 1 downto 0 do
         begin
             fRecords[requestId].fcgiRecords[i] := nil;
