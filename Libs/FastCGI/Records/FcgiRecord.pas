@@ -134,7 +134,7 @@ implementation
         fContentData.seek(0);
 
         srcStream.readStream(fContentData, contentLength);
-        srcStream.seek(header.paddingLength, FROM_CURRENT);
+        srcStream.seek(fHeader.paddingLength, FROM_CURRENT);
 
         fContentData.seek(0);
     end;
