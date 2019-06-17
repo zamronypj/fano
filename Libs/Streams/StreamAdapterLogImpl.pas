@@ -237,7 +237,7 @@ uses
      *-----------------------------------------------*)
     procedure TStreamAdapterLog.readStream(const dstStream : IStreamAdapter; const bytesToRead : int64);
     begin
-        actualStream.readStream(dstStream);
+        actualStream.readStream(dstStream, bytesToRead);
         actualLogger.debug('StreamAdapterLog read stream ' + intToStr(bytesToRead) + ' bytes');
     end;
 
@@ -249,7 +249,7 @@ uses
      *-----------------------------------------------*)
     procedure TStreamAdapterLog.writeStream(const srcStream : IStreamAdapter; const bytesToWrite : int64);
     begin
-        actualStream.writeStream(srcStream);
+        actualStream.writeStream(srcStream, bytesToWrite);
         actualLogger.debug('StreamAdapterLog write stream ' + intToStr(bytesToWrite) + ' bytes');
     end;
 
