@@ -161,7 +161,7 @@ uses
         header := buffer;
         raiseExceptionIfInvalidRecordType(header^.reqtype);
         result := nil;
-        fcgiRecordSize := FCGI_HEADER_LEN + BEtoN(header^.contentLength) + header^.paddingLength);
+        fcgiRecordSize := FCGI_HEADER_LEN + BEtoN(header^.contentLength) + header^.paddingLength;
         case header^.reqtype of
             FCGI_BEGIN_REQUEST :
                 begin
