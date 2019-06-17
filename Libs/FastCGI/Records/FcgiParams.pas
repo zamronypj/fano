@@ -119,7 +119,7 @@ uses
      * @return aKeyValues, instance IKeyValuePair which will store key value
      *-----------------------------------------------*)
     constructor TFcgiParams.create(
-        const stream : IStreamAdapter;
+        const dataStream : IStreamAdapter;
         const requestId : word;
         const aKeyValues : IKeyValuePair
     );
