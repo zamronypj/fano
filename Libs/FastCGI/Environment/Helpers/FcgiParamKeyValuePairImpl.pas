@@ -50,8 +50,8 @@ implementation
         if (lenByte and $80 = $80) then
         begin
             //4 byte encoding
-            aStream.seek(-1, FROM_CURRENT);
-            aStream.read(lenInt, 4);
+            astream.seek(-1, FROM_CURRENT);
+            astream.read(lenInt, 4);
             result := lenInt and $7FFFFFFF;
             dec(bytesToRead, 4);
         end else
@@ -69,7 +69,7 @@ implementation
     ) : string;
     begin
         setLength(result, len);
-        aStream.readBuffer(result[1], len);
+        astream.readBuffer(result[1], len);
         dec(bytesToRead, len);
     end;
 
@@ -84,12 +84,12 @@ implementation
             //read key length
             lenKey := readLength(aStream, bytesToRead);
             //read value length
-            lenValue := readLength(fParamStream, bytesToRead);
+            lenValue := readLength(aStream, bytesToRead);
 
             //read key
-            akey := readValue(fParamStream, lenKey, bytesToRead);
+            akey := readValue(aStream, lenKey, bytesToRead);
             //read value
-            avalue := readValue(fParamStream, lenValue, bytesToRead);
+            avalue := readValue(aStream, lenValue, bytesToRead);
 
             setValue(akey, avalue);
         end;
