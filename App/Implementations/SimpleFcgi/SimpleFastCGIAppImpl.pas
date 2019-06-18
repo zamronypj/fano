@@ -12,7 +12,7 @@ interface
 {$MODE OBJFPC}
 
 uses
-    AppImpl,
+    FastCGIAppImpl,
     DependencyContainerIntf,
     DispatcherIntf,
     EnvironmentIntf,
