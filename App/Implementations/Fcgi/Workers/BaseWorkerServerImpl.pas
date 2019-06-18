@@ -54,6 +54,10 @@ type
 
 implementation
 
+uses
+
+    StreamAdapterImpl;
+
     constructor TBaseWorkerServer.create();
     begin
         fDataListener := nil;
