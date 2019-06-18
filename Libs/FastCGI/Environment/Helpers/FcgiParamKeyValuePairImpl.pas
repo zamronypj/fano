@@ -50,7 +50,7 @@ implementation
         if (lenByte and $80 = $80) then
         begin
             //4 byte encoding
-            aStream.seek(-1, soFromCurrent);
+            aStream.seek(-1, FROM_CURRENT);
             aStream.read(lenInt, 4);
             result := lenInt and $7FFFFFFF;
             dec(bytesToRead, 4);
