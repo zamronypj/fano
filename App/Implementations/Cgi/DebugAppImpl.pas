@@ -37,7 +37,7 @@ type
     public
         constructor create(const app : IWebApplication);
         destructor destroy(); override;
-        function run() : IRunnable; override;
+        function run() : IRunnable;
     end;
 
 implementation
