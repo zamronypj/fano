@@ -25,7 +25,8 @@ uses
     RunnableWithDataNotifIntf,
     StdOutIntf,
     FcgiFrameParserIntf,
-    FcgiProcessorIntf;
+    FcgiProcessorIntf,
+    StreamAdapterIntf;
 
 type
 
