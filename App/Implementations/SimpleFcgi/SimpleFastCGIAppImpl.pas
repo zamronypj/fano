@@ -69,7 +69,8 @@ uses
     FcgiFrameParserImpl,
     FcgiRequestManagerImpl,
     OutputBufferImpl,
-    FcgiStdOutWriterImpl;
+    FcgiStdOutWriterImpl,
+    TcpWorkerServerImpl;
 
     (*!-----------------------------------------------
      * constructor
