@@ -152,7 +152,8 @@ uses
     StreamAdapterAwareIntf,
     StreamAdapterCollectionIntf,
     EnvironmentFactoryIntf,
-    FcgiEnvironmentFactoryImpl;
+    FcgiEnvironmentFactoryImpl,
+    EInvalidFcgiRequestIdImpl;
 
     (*!------------------------------------------------
      * constructor
@@ -312,6 +313,8 @@ uses
         requestId : word;
     begin
         recType := rec.getType();
+        requestId := rec.getRequestId();
+
         if (recType = FCGI_BEGIN_REQUEST) then
         begin
             fRecords[requestId].fcgiStdInComplete := false;
