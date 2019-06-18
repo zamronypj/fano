@@ -251,7 +251,7 @@ uses
         for i := 0 to len - 1 do
         begin
             rec := fRecords[requestId].fcgiRecords[i];
-            if (assigned(rec) and rec.getType() = atype) then
+            if assigned(rec) and (rec.getType() = atype) then
             begin
                 //add its stream to collection
                 coll.add(rec.data());
