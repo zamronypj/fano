@@ -15,8 +15,8 @@ interface
 
 uses
 
-    StreamAdapterIntf,
-    StreamAdapterFactoryIntf;
+    StreamAdapterCollectionIntf,
+    StreamAdapterCollectionFactoryIntf;
 
 type
 
