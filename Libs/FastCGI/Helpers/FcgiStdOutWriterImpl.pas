@@ -39,6 +39,19 @@ type
          *-----------------------------------------------*)
         function writeEnd(const requestId : word; const stream : IStreamAdapter) : IStdOut;
 
+        (*!------------------------------------------------
+         * write string to FCGI_STDOUT stream and
+         * mark it end of request (if markEnd is true)
+         *-----------------------------------------------
+         * @param stream, stream to write
+         * @param str, string to write
+         * @param markEnd, if true, add FCGI_END_REQUEST
+         * @return current instance
+         *-----------------------------------------------
+         * very long string may be splitted into several
+         * FCGI_STDOUT records
+         *-----------------------------------------------*)
+        function writeStream(const stream : IStreamAdapter; const str : string) : IStdOut;
     public
 
         constructor create(
