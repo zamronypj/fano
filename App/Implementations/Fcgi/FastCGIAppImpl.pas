@@ -65,7 +65,7 @@ type
             const stdOutWriter : IStdOut
         );
         destructor destroy(); override;
-        function run() : IRunnable;
+        function run() : IRunnable; override;
 
         function handleData(const stream : IStreamAdapter; const context : TObject) : boolean;
     end;

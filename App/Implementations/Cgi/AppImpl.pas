@@ -98,7 +98,7 @@ type
             const errHandler : IErrorHandler
         );
         destructor destroy(); override;
-        function run() : IRunnable;
+        function run() : IRunnable; virtual;
     end;
 
 implementation
