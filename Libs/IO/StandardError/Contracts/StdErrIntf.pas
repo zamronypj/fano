@@ -26,7 +26,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    IStdError = interface(IStdOut)
+    IStdErr = interface(IStdOut)
         ['{7BFD7E4B-5078-4EA7-B816-5D4531B5AEF1}']
     end;
 
