@@ -92,6 +92,7 @@ uses
         appErr : IErrorHandler;
         appDispatcher : IDispatcher;
         appServer : IRunnableWithDataNotif;
+        fcgiProc : TFcgiProcessor;
         appFcgiProcessor : IFcgiProcessor;
         appOutputBuffer : IOutputBuffer;
         appStdOutWriter : IStdOut;
@@ -110,13 +111,13 @@ uses
 
         appServer := TTcpWorkerServer.create(hostname, port);
 
-        appFcgiProcessor := TFcgiProcessor.create(
+        fcgiProc := TFcgiProcessor.create(
             TFcgiFrameParser.create(),
             TFcgiRequestManager.create()
         );
 
         appOutputBuffer := TOutputBuffer.create();
-        appStdOutWriter := TFcgiStdOutWriter.create();
+        appStdOutWriter := TFcgiStdOutWriter.create(fcgiProc);
 
         if (not appContainer.has('router')) then
         begin

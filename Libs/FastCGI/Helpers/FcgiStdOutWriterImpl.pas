@@ -15,7 +15,8 @@ interface
 uses
 
     StreamAdapterIntf,
-    StdOutIntf;
+    StdOutIntf,
+    RequestIdAwareIntf;
 
 type
 
@@ -28,6 +29,7 @@ type
     TFcgiStdOutWriter = class(TInterfacedObject, IStdOut)
     private
         fStream : IStreamAdapter;
+        fRequestIdAware : IRequestIdAware;
 
         (*!------------------------------------------------
          * mark end of request
@@ -35,11 +37,14 @@ type
          * @param stream, stream to write
          * @return current instance
          *-----------------------------------------------*)
-        function writeEnd(const stream : IStreamAdapter) : IStdOut;
+        function writeEnd(const requestId : word; const stream : IStreamAdapter) : IStdOut;
 
     public
 
-        constructor create(const astream : IStreamAdapter = nil);
+        constructor create(
+            const requestIdAware : IRequestIdAware;
+            const astream : IStreamAdapter = nil
+        );
         destructor destroy(); override;
 
         function setStream(const astream : IStreamAdapter) : IStdOut;
@@ -76,8 +81,12 @@ uses
     StreamAdapterImpl,
     NullStreamAdapterImpl;
 
-    constructor TFcgiStdOutWriter.create(const astream : IStreamAdapter = nil);
+    constructor TFcgiStdOutWriter.create(
+        const requestIdAware : IRequestIdAware;
+        const astream : IStreamAdapter = nil
+    );
     begin
+        fRequestIdAware := requestIdAware;
         fStream := astream;
     end;
 
@@ -99,10 +108,10 @@ uses
      * @param stream, stream to write
      * @return current instance
      *-----------------------------------------------*)
-    function TFcgiStdOutWriter.writeEnd(const stream : IStreamAdapter) : IStdOut;
+    function TFcgiStdOutWriter.writeEnd(const requestId : word; const stream : IStreamAdapter) : IStdOut;
     var arecord : IFcgiRecord;
     begin
-        arecord := TFcgiEndRequest.create(fcgiRequestId);
+        arecord := TFcgiEndRequest.create(requestId);
         arecord.write(stream);
         result := self;
     end;
@@ -123,7 +132,10 @@ uses
     const MAX_STR_PER_RECORD = 32 * 1024;
     var arecord : IFcgiRecord;
         i, totChunk, excess, len, astart, acount : integer;
+        requestId : word;
     begin
+        //get request id associated with current complete request
+        requestId := fRequestIdAware.getRequestId();
         //split string into several shorter strings
         len := length(str);
         totChunk := len div MAX_STR_PER_RECORD;
@@ -137,12 +149,12 @@ uses
         for i := 0 to totChunk-1 do
         begin
             acount := min(MAX_STR_PER_RECORD, len);
-            arecord := TFcgiStdOut.create(fcgiRequestId, midStr(str, astart, acount));
+            arecord := TFcgiStdOut.create(requestId, midStr(str, astart, acount));
             arecord.write(stream);
             inc(astart, acount);
         end;
 
-        writeEnd(stream);
+        writeEnd(requestId, stream);
         result:= self;
     end;
 
