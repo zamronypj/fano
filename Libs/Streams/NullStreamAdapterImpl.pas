@@ -229,7 +229,7 @@ implementation
      * @param newSize, stream new size in bytes
      * @return current instance
      *-----------------------------------------------*)
-    function TStreamAdapterLog.resize(const newSize : int64) : IStreamAdapter;
+    function TNullStreamAdapter.resize(const newSize : int64) : IStreamAdapter;
     begin
         //intentionally does nothing
         result := self;
