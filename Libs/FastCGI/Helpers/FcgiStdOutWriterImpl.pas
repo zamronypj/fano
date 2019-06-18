@@ -16,7 +16,7 @@ uses
 
     StreamAdapterIntf,
     StdOutIntf,
-    RequestIdAwareIntf;
+    FcgiRequestIdAwareIntf;
 
 type
 
@@ -29,7 +29,7 @@ type
     TFcgiStdOutWriter = class(TInterfacedObject, IStdOut)
     private
         fStream : IStreamAdapter;
-        fRequestIdAware : IRequestIdAware;
+        fRequestIdAware : IFcgiRequestIdAware;
 
         (*!------------------------------------------------
          * mark end of request
@@ -55,7 +55,7 @@ type
     public
 
         constructor create(
-            const requestIdAware : IRequestIdAware;
+            const requestIdAware : IFcgiRequestIdAware;
             const astream : IStreamAdapter = nil
         );
         destructor destroy(); override;
@@ -97,7 +97,7 @@ uses
     NullStreamAdapterImpl;
 
     constructor TFcgiStdOutWriter.create(
-        const requestIdAware : IRequestIdAware;
+        const requestIdAware : IFcgiRequestIdAware;
         const astream : IStreamAdapter = nil
     );
     begin
