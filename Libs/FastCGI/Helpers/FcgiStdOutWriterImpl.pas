@@ -99,11 +99,12 @@ uses
      * @param stream, stream to write
      * @return current instance
      *-----------------------------------------------*)
-    function TFcgiStdOutWriter.writeEnd(const stream : IStreamAdapter) : IFcgiProcessor;
+    function TFcgiStdOutWriter.writeEnd(const stream : IStreamAdapter) : IStdOut;
     var arecord : IFcgiRecord;
     begin
         arecord := TFcgiEndRequest.create(fcgiRequestId);
         arecord.write(stream);
+        result := self;
     end;
 
     (*!------------------------------------------------
