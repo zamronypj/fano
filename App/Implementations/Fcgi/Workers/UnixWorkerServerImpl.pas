@@ -37,7 +37,7 @@ implementation
     constructor TUnixWorkerServer.create(const socketFilename: string);
     begin
         inherited create();
-        fServer := TUnixServer.create(fsocketFilename);
+        fServer := TUnixServer.create(socketFilename);
         fServer.OnConnect := @DoConnect;
     end;
 
