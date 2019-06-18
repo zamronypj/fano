@@ -29,7 +29,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TFcgiProcessor = class(TInterfacedObject, IFcgiProcessor)
+    TFcgiProcessor = class(TInterfacedObject, IFcgiProcessor, IRequestIdAware)
     private
         fcgiParser : IFcgiFrameParser;
         fcgiRequestMgr : IFcgiRequestManager;

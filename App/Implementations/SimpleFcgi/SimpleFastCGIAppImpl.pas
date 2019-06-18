@@ -70,7 +70,8 @@ uses
     FcgiRequestManagerImpl,
     OutputBufferImpl,
     FcgiStdOutWriterImpl,
-    TcpWorkerServerImpl;
+    TcpWorkerServerImpl,
+    StreamAdapterCollectionFactoryImpl;
 
     (*!-----------------------------------------------
      * constructor
@@ -114,7 +115,7 @@ uses
 
         fcgiProc := TFcgiProcessor.create(
             TFcgiFrameParser.create(),
-            TFcgiRequestManager.create()
+            TFcgiRequestManager.create(TStreamAdapterCollectionFactory.create())
         );
         appFcgiProcessor := fcgiProc;
         appOutputBuffer := TOutputBuffer.create();
