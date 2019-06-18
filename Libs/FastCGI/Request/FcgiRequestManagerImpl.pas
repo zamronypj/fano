@@ -17,7 +17,8 @@ uses
 
     EnvironmentIntf,
     FcgiRecordIntf,
-    StreamAdapterIntf;
+    StreamAdapterIntf,
+    FcgiRequestManagerIntf;
 
 type
 
