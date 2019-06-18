@@ -125,5 +125,6 @@ implementation
     function TStreamAdapterCollection.add(const stream : IStreamAdapter) : IStreamAdapterCollection;
     begin
         streamCollection.add(stream);
+        result := self;
     end;
 end.
