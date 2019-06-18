@@ -45,13 +45,11 @@ type
        * default service provider
        *-----------------------------------------------*)
       constructor create(
+          const hostname : string;
+          const port : word;
           const container : IDependencyContainer = nil;
           const errHandler : IErrorHandler = nil;
-          const dispatcherInst : IDispatcher = nil;
-          const server : IRunnableWithDataNotif = nil;
-          const aFcgiProcessor : IFcgiProcessor nil;
-          const outputBuffer : IOutputBuffer = nil;
-          const stdOutWriter : IStdOut = nil
+          const dispatcherInst : IDispatcher = nil
       );
 
     end;
