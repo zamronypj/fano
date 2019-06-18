@@ -16,7 +16,10 @@ OutputBufferIntf,
 LoggerIntf,
 FileReaderIntf,
 StreamAdapterIntf,
+
 StdInReaderIntf,
+StdOutIntf,
+StdErrIntf,
 
 HttpGetClientIntf,
 HttpPostClientIntf,
@@ -25,6 +28,8 @@ HttpDeleteClientIntf,
 HttpHeadClientIntf,
 
 KeyValuePairIntf,
+
+RunnableWithDataNotifIntf,
 
 FcgiRecordIntf,
 FcgiRecordFactoryIntf,

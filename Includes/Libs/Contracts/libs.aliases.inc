@@ -3,6 +3,8 @@ ILogger = LoggerIntf.ILogger;
 IFileReader = FileReaderIntf.IFileReader;
 IStreamAdapter = StreamAdapterIntf.IStreamAdapter;
 IStdInReader = StdInReaderIntf.IStdInReader;
+IStdOut = StdOutIntf.IStdOut;
+IStdErr = StdErrIntf.IStdErr;
 
 IHttpGetClient = HttpGetClientIntf.IHttpGetClient;
 IHttpPostClient = HttpPostClientIntf.IHttpPostClient;
@@ -11,6 +13,8 @@ IHttpDeleteClient = HttpDeleteClientIntf.IHttpDeleteClient;
 IHttpHeadClient = HttpHeadClientIntf.IHttpHeadClient;
 
 IKeyValuePair = KeyValuePairIntf.IKeyValuePair;
+
+IRunnableWithDataNotif = RunnableWithDataNotifIntf.IRunnableWithDataNotif;
 
 IFcgiRecord = FcgiRecordIntf.IFcgiRecord;
 IFcgiRecordFactory = FcgiRecordFactoryIntf.IFcgiRecordFactory;
