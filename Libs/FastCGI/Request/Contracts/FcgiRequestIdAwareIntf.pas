@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit RequestIdAwareIntf;
+unit FcgiRequestIdAwareIntf;
 
 interface
 
@@ -21,7 +21,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    IRequestIdAware = interface
+    IFcgiRequestIdAware = interface
         ['{9718C418-55F4-4435-B575-965389D836A4}']
 
         (*!------------------------------------------------

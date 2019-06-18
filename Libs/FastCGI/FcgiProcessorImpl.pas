@@ -19,6 +19,7 @@ uses
     StreamAdapterIntf,
     FcgiProcessorIntf,
     FcgiRequestManagerIntf,
+    FcgiRequestIdAwareIntf,
     FcgiFrameParserIntf;
 
 type
@@ -29,7 +30,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TFcgiProcessor = class(TInterfacedObject, IFcgiProcessor, IRequestIdAware)
+    TFcgiProcessor = class(TInterfacedObject, IFcgiProcessor, IFcgiRequestIdAware)
     private
         fcgiParser : IFcgiFrameParser;
         fcgiRequestMgr : IFcgiRequestManager;
