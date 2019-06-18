@@ -38,7 +38,7 @@ implementation
     constructor TTcpWorkerServer.create(const hostname: string; const port: word);
     begin
         inherited create();
-        fServer := TInetServer.create(fHostName, fPort);
+        fServer := TInetServer.create(hostName, port);
         fServer.OnConnect := @DoConnect;
     end;
 
