@@ -47,7 +47,7 @@ uses
      *-----------------------------------------------
      * @return created stream
      *-----------------------------------------------*)
-    function TStreamAdapterCollectionFactory.build() : IStreamAdapter;
+    function TStreamAdapterCollectionFactory.build() : IStreamAdapterCollection;
     begin
         result := TStreamAdapterCollection.create(
             TMemStreamAdapterFactory.create()
