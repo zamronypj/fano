@@ -1,2 +1,7 @@
+TMiddlewareCollection = MiddlewareCollectionImpl.TMiddlewareCollection;
+TNullMiddlewareCollection = NullMiddlewareCollectionImpl.TNullMiddlewareCollection;
+
+TMiddlewareCollectionAware = MiddlewareCollectionAwareImpl.TMiddlewareCollectionAware;
+
 TMiddlewareCollectionAwareFactory = MiddlewareCollectionAwareFactoryImpl.TMiddlewareCollectionAwareFactory;
 TNullMiddlewareCollectionAwareFactory = NullMiddlewareCollectionAwareFactoryImpl.TNullMiddlewareCollectionAwareFactory;
