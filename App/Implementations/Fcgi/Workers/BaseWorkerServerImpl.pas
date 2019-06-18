@@ -18,6 +18,7 @@ uses
     SysUtils,
     Sockets,
     SSockets,
+    InjectableObjectImpl,
     DataAvailListenerIntf,
     RunnableWithDataNotifIntf;
 
