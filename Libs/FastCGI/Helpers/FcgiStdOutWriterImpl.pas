@@ -89,6 +89,7 @@ uses
     fastcgi,
     classes,
     math,
+    sysutils,
     FcgiRecordIntf,
     FcgiStdOut,
     FcgiEndRequest,
