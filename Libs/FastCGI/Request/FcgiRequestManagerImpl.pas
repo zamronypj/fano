@@ -18,7 +18,8 @@ uses
     EnvironmentIntf,
     FcgiRecordIntf,
     StreamAdapterIntf,
-    FcgiRequestManagerIntf;
+    FcgiRequestManagerIntf,
+    FcgiStreamAdapterCollectionFactoryIntf;
 
 type
 
@@ -45,6 +46,7 @@ type
     TFcgiRequestManager = class(TInterfacedObject, IFcgiRequestManager)
     private
         fRecords : TRequestRecordArr;
+        fStreamCollectionFactory : IStreamAdapterCollectionFactory;
 
         procedure initRecords();
         procedure initSingleRecord(const requestId : word);
@@ -82,7 +84,10 @@ type
          *-----------------------------------------------
          * @param initialCapacity, initial pre allocated array
          *-----------------------------------------------*)
-        constructor create(const initialCapacity : integer = 32);
+        constructor create(
+            const streamCollectionFactory : IStreamAdapterCollectionFactory;
+            const initialCapacity : integer = 32
+        );
 
         (*!------------------------------------------------
          * destructor
@@ -144,16 +149,19 @@ implementation
 uses
 
     fastcgi,
-    StreamAdapterCollectionIntf,
-    StreamAdapterCollectionImpl;
+    StreamAdapterCollectionIntf;
 
     (*!------------------------------------------------
      * constructor
      *-----------------------------------------------
      * @param initialCapacity, initial pre allocated array
      *-----------------------------------------------*)
-    constructor TFcgiRequestManager.create(const initialCapacity : integer = 32);
+    constructor TFcgiRequestManager.create(
+        const streamCollectionFactory : IStreamAdapterCollectionFactory;
+        const initialCapacity : integer = 32
+    );
     begin
+        fStreamCollectionFactory := streamCollectionFactory;
         setLength(fRecords, initialCapacity);
         initRecords();
     end;
@@ -166,6 +174,7 @@ uses
         inherited destroy();
         clearRecords();
         setLength(fRecords, 0);
+        fStreamCollectionFactory := nil;
     end;
 
     procedure TFcgiRequestManager.initRecords();
