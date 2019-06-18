@@ -21,4 +21,4 @@ IFcgiRecordFactory = FcgiRecordFactoryIntf.IFcgiRecordFactory;
 IFcgiRequest = FcgiRequestIntf.IFcgiRequest;
 IFcgiRequestManager = FcgiRequestManagerIntf.IFcgiRequestManager;
 IFcgiFrameParser = FcgiFrameParserIntf.IFcgiFrameParser;
-IFcgiProcessor = FcgiFrameProcessorIntf.IFcgiProcessor;
+IFcgiProcessor = FcgiProcessorIntf.IFcgiProcessor;
