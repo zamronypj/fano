@@ -150,7 +150,9 @@ uses
 
     fastcgi,
     StreamAdapterAwareIntf,
-    StreamAdapterCollectionIntf;
+    StreamAdapterCollectionIntf,
+    EnvironmentFactoryIntf,
+    FCGIEnvironmentFactoryImpl;
 
     (*!------------------------------------------------
      * constructor
