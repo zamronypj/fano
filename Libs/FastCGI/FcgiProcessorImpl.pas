@@ -38,8 +38,12 @@ type
         //store request id that is complete
         fcgiRequestId : word;
 
-        tmpBuffer : TMemoryStream;
+        fTmpBuffer : TMemoryStream;
 
+        procedure copySocketStreamToTmpStream(
+            const stream : IStreamAdapter;
+            const tmpBuffer : TMemoryStream
+        );
         function processBuffer(const buffer : pointer; const bufferSize : int64; out totRead : int64) : boolean;
         function discardProcessedData(const tmp : TStream; const bytesToDiscard : int64) : TMemoryStream;
     public
@@ -114,7 +118,7 @@ uses
         fcgiParser := parser;
         fcgiRequestMgr := requestMgr;
         fcgiRequestId := 0;
-        tmpBuffer := TMemoryStream.create();
+        fTmpBuffer := TMemoryStream.create();
     end;
 
     (*!-----------------------------------------------
@@ -125,7 +129,7 @@ uses
         inherited destroy();
         fcgiParser := nil;
         fcgiRequestMgr := nil;
-        freeAndNil(tmpBuffer);
+        freeAndNil(fTmpBuffer);
     end;
 
     (*!-----------------------------------------------
@@ -172,6 +176,32 @@ uses
         end;
     end;
 
+    procedure TFcgiProcessor.copySocketStreamToTmpStream(
+        const stream : IStreamAdapter;
+        const tmpBuffer : TMemoryStream
+    );
+    const MAX_TMP_SIZE = 4096;
+    var tmp : pointer;
+        bytesRead : int64;
+    begin
+        //stream will come from socket connection,
+        //so we do not know its size, just allocate big enough
+        //and read bit by bit until exhausted
+        getMem(tmp, MAX_TMP_SIZE);
+        try
+            repeat
+                bytesRead := stream.read(tmp^, MAX_TMP_SIZE);
+                if bytesRead > 0 then
+                begin
+                    tmpBuffer.writeBuffer(tmp^, bytesRead);
+                end
+            until bytesRead <= 0;
+            //bytesRead < 0 means socket read error
+        finally
+            freeMem(tmp, MAX_TMP_SIZE);
+        end;
+    end;
+
     (*!-----------------------------------------------
      * parse stream for FCGI records
      *------------------------------------------------
@@ -180,22 +210,16 @@ uses
      *         stream is complete otherwise false
      *-----------------------------------------------*)
     function TFcgiProcessor.process(const stream : IStreamAdapter) : boolean;
-    var tmp : pointer;
-        tmpSize, totRead : int64;
+    var totProcessed : int64;
     begin
-        tmpSize := stream.size();
-        getMem(tmp, tmpSize);
-        try
-            stream.readBuffer(tmp^, tmpSize);
-            tmpBuffer.writeBuffer(tmp^, tmpSize);
-            totRead := 0;
-            result := processBuffer(tmpBuffer.memory, tmpBuffer.size, totRead);
-            if (totRead > 0) then
-            begin
-                tmpBuffer := discardProcessedData(tmpBuffer, totRead);
-            end;
-        finally
-            freeMem(tmp, tmpSize);
+        copySocketStreamToTmpStream(stream, fTmpBuffer);
+        totProcessed := 0;
+        result := processBuffer(fTmpBuffer.memory, fTmpBuffer.size, totProcessed);
+        if (totProcessed > 0) then
+        begin
+            //TODO: maybe it is better to just advanced stream position
+            //instead of discard which require copy?
+            fTmpBuffer := discardProcessedData(fTmpBuffer, totProcessed);
         end;
     end;
 
