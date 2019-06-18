@@ -35,7 +35,7 @@ type
      *-----------------------------------------------*)
     TFastCGIWebApplication = class(TFanoWebApplication, IDataAvailListener)
     private
-        workerServer : RunnableWithDataNotifIntf;
+        workerServer : IRunnableWithDataNotif;
         fcgiProcessor : IFcgiFrameParser;
         fOutputBuffer : IOutputBuffer;
         fStdOutWriter : IStdOut;
