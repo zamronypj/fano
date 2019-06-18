@@ -20,6 +20,7 @@ uses
     SSockets,
     InjectableObjectImpl,
     DataAvailListenerIntf,
+    RunnableIntf,
     RunnableWithDataNotifIntf;
 
 type
