@@ -47,6 +47,8 @@ type
         * @return true current instance
         *-----------------------------------------------*)
         function setDataAvailListener(const dataListener : IDataAvailListener) : IRunnableWithDataNotif;
+
+        function run() : IRunnable;
     end;
 
 implementation
