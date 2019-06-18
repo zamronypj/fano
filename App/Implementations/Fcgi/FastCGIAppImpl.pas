@@ -24,6 +24,7 @@ uses
     DataAvailListenerIntf,
     RunnableWithDataNotifIntf,
     StdOutIntf,
+    FcgiFrameParserIntf,
     FcgiProcessorIntf;
 
 type
