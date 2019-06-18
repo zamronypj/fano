@@ -358,7 +358,7 @@ uses
         begin
             //something is very wrong, requestId must not exists when
             //begin request
-            raise EInvalidFcgiRequestId.createFmt('Invalid request id %d', [requesId]);
+            raise EInvalidFcgiRequestId.createFmt('Invalid request id %d', [requestId]);
         end;
 
         if (has(requestId)) then
