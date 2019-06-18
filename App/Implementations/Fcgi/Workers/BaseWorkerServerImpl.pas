@@ -81,6 +81,7 @@ uses
     function TBaseWorkerServer.setDataAvailListener(const dataListener : IDataAvailListener) : IRunnableWithDataNotif;
     begin
         fDataListener := dataListener;
+        result := self;
     end;
 
     procedure TBaseWorkerServer.DoConnect(Sender: TObject; Data: TSocketStream);
@@ -94,6 +95,6 @@ uses
     function TBaseWorkerServer.run() : IRunnable;
     begin
         fServer.startAccepting();
-        result := self;
+        result := self as IRunnable;
     end;
 end.
