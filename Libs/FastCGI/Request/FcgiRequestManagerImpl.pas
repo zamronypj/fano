@@ -152,7 +152,7 @@ uses
     StreamAdapterAwareIntf,
     StreamAdapterCollectionIntf,
     EnvironmentFactoryIntf,
-    FCGIEnvironmentFactoryImpl;
+    FcgiEnvironmentFactoryImpl;
 
     (*!------------------------------------------------
      * constructor
