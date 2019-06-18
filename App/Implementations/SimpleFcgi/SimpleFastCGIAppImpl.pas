@@ -115,7 +115,7 @@ uses
             TFcgiFrameParser.create(),
             TFcgiRequestManager.create()
         );
-
+        appFcgiProcessor := fcgiProc;
         appOutputBuffer := TOutputBuffer.create();
         appStdOutWriter := TFcgiStdOutWriter.create(fcgiProc);
 

@@ -111,7 +111,10 @@ uses
     function TFcgiStdOutWriter.writeEnd(const requestId : word; const stream : IStreamAdapter) : IStdOut;
     var arecord : IFcgiRecord;
     begin
-        arecord := TFcgiEndRequest.create(requestId);
+        arecord := TFcgiEndRequest.create(
+            TStreamAdapter.create(TMemoryStream.create()),
+            requestId
+        );
         arecord.write(stream);
         result := self;
     end;
@@ -149,7 +152,10 @@ uses
         for i := 0 to totChunk-1 do
         begin
             acount := min(MAX_STR_PER_RECORD, len);
-            arecord := TFcgiStdOut.create(requestId, midStr(str, astart, acount));
+            arecord := TFcgiStdOut.create(
+                TStreamAdapter.create(TStringStream.create(midStr(str, astart, acount))),
+                requestId,
+            );
             arecord.write(stream);
             inc(astart, acount);
         end;
