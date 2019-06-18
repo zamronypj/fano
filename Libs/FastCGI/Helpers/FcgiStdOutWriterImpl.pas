@@ -169,7 +169,7 @@ uses
             acount := min(MAX_STR_PER_RECORD, len);
             arecord := TFcgiStdOut.create(
                 TStreamAdapter.create(TStringStream.create(midStr(str, astart, acount))),
-                requestId,
+                requestId
             );
             arecord.write(stream);
             inc(astart, acount);
