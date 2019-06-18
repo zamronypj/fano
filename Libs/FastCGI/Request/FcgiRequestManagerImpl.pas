@@ -385,6 +385,7 @@ uses
         end;
 
         markCompleteness(rec);
+        result := self;
     end;
 
     (*!------------------------------------------------
