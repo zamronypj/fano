@@ -24,7 +24,6 @@ uses
     DataAvailListenerIntf,
     RunnableWithDataNotifIntf,
     StdOutIntf,
-    FcgiFrameParserIntf,
     FcgiProcessorIntf,
     StreamAdapterIntf;
 
@@ -38,7 +37,7 @@ type
     TFastCGIWebApplication = class(TFanoWebApplication, IDataAvailListener)
     private
         workerServer : IRunnableWithDataNotif;
-        fcgiProcessor : IFcgiFrameParser;
+        fcgiProcessor : IFcgiProcessor;
         fOutputBuffer : IOutputBuffer;
         fStdOutWriter : IStdOut;
     protected
