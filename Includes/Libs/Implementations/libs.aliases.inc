@@ -49,7 +49,7 @@ TFcgiStdErr = FcgiStdErr.TFcgiStdErr;
 TFcgiUnknownType = FcgiUnknownType.TFcgiUnknownType;
 
 TFcgiAbortRequestFactory = FcgiAbortRequestFactory.TFcgiAbortRequestFactory;
-TFcgiBeginRequestFactory = FcgiBeginRequestFactory.FcgiBeginRequestFactory;
+TFcgiBeginRequestFactory = FcgiBeginRequestFactory.TFcgiBeginRequestFactory;
 TFcgiDataFactory = FcgiDataFactory.TFcgiDataFactory;
 TFcgiEndRequestFactory = FcgiEndRequestFactory.TFcgiEndRequestFactory;
 TFcgiGetValuesFactory = FcgiGetValuesFactory.TFcgiGetValuesFactory;
