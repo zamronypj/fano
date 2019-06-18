@@ -15,7 +15,7 @@ interface
 uses
 
     StreamAdapterIntf,
-    KeyValuePairImpl,
+    KeyValuePairImpl;
 
 type
     (*!------------------------------------------------
@@ -34,10 +34,6 @@ type
     end;
 
 implementation
-
-uses
-
-    classes;
 
     constructor TFcgiParamKeyValuePair.create(const paramStream : IStreamAdapter);
     begin
