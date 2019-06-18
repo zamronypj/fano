@@ -112,7 +112,7 @@ type
          * if offset >= stream size then it is capped
          * to stream size-1
          *-------------------------------------*)
-        function seek(const offset : int64; const origin : word = soFromBeginning) : int64;
+        function seek(const offset : int64; const origin : word = FROM_BEGINNING) : int64;
 
         (*!------------------------------------------------
          * reset stream
@@ -262,7 +262,7 @@ uses
      * if offset >= stream size then it is capped
      * to stream size-1
      *-------------------------------------*)
-    function TStreamAdapterLog.seek(const offset : int64; const origin : word = soFromBeginning) : int64;
+    function TStreamAdapterLog.seek(const offset : int64; const origin : word = FROM_BEGINNING) : int64;
     begin
         result := actualStream.seek(offset, origin);
         actualLogger.debug('StreamAdapterLog seek ' + intToStr(offset) + ' bytes');

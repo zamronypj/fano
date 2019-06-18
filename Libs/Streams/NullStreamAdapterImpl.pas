@@ -93,7 +93,7 @@ type
          * if offset >= stream size then it is capped
          * to stream size-1
          *-------------------------------------*)
-        function seek(const offset : int64) : int64;
+        function seek(const offset : int64; const origin : word = FROM_CURRENT) : int64;
 
         (*!------------------------------------------------
          * reset stream
