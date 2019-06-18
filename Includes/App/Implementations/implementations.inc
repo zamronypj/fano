@@ -13,5 +13,13 @@
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
  *-----------------------------------------------*)
 
- AppImpl,
- SimpleAppImpl,
+AppImpl,
+SimpleAppImpl,
+
+TcpWorkerServerImpl,
+
+{$IFDEF unix}
+UnixWorkerServerImpl,
+{$ENDIF}
+
+FastCGIAppImpl,

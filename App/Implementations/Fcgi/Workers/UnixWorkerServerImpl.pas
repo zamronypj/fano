@@ -12,7 +12,6 @@ interface
 {$MODE OBJFPC}
 {$H+}
 
-
 uses
     Classes,
     SysUtils,

@@ -12,6 +12,9 @@ IHttpHeadClient = HttpHeadClientIntf.IHttpHeadClient;
 
 IKeyValuePair = KeyValuePairIntf.IKeyValuePair;
 
-IFcgiFrameParser = FcgiFrameParserIntf.IFcgiFrameParser;
 IFcgiRecord = FcgiRecordIntf.IFcgiRecord;
+IFcgiRecordFactory = FcgiRecordFactoryIntf.IFcgiRecordFactory;
 IFcgiRequest = FcgiRequestIntf.IFcgiRequest;
+IFcgiRequestManager = FcgiRequestManagerIntf.IFcgiRequestManager;
+IFcgiFrameParser = FcgiFrameParserIntf.IFcgiFrameParser;
+IFcgiProcessor = FcgiFrameProcessorIntf.IFcgiProcessor;
