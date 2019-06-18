@@ -18,8 +18,8 @@ uses
     EnvironmentIntf,
     FcgiRecordIntf,
     StreamAdapterIntf,
-    FcgiRequestManagerIntf,
-    FcgiStreamAdapterCollectionFactoryIntf;
+    StreamAdapterCollectionFactoryIntf,
+    FcgiRequestManagerIntf;
 
 type
 
@@ -149,6 +149,7 @@ implementation
 uses
 
     fastcgi,
+    StreamAdapterAwareIntf,
     StreamAdapterCollectionIntf;
 
     (*!------------------------------------------------
@@ -257,7 +258,7 @@ uses
             end;
         end;
 
-        result := coll as IStreamAdapter;
+        result := (coll as IStreamAdapterAware).data();
     end;
 
     (*!------------------------------------------------
