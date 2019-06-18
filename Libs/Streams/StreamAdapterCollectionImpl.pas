@@ -91,12 +91,10 @@ implementation
      *-----------------------------------------------*)
     procedure TStreamAdapterCollection.clearCollection(const coll : TStreamAdapterList);
     var i : integer;
-        stream : IStreamAdapter;
     begin
         for i:= coll.count-1 downto 0 do
         begin
-            stream := coll[i];
-            stream := nil;
+            coll[i] := nil;
             coll.delete(i);
         end;
     end;
@@ -108,12 +106,14 @@ implementation
      *-----------------------------------------------*)
     function TStreamAdapterCollection.data() : IStreamAdapter;
     var i, len : integer;
+        stream : IStreamAdapter;
     begin
         result := fStreamFactory.build();
         len := streamCollection.count;
         for i:= 0 to len-1 do
         begin
-            result.writeStream(streamCollection[i]);
+            stream := streamCollection[i];
+            result.writeStream(stream, stream.size());
         end;
     end;
 
