@@ -59,7 +59,7 @@ type
          * @param atype, record type
          * @return stream instance of all records identified by type
          *-----------------------------------------------*)
-        function getStreamByType(const requestId : word; const atyp: byte) : IStreamAdapter;
+        function getStreamByType(const requestId : word; const atype: byte) : IStreamAdapter;
 
         (*!------------------------------------------------
          * mark request completeness
@@ -241,7 +241,7 @@ uses
      * @param atype, record type
      * @return stream instance of all records identified by type
      *-----------------------------------------------*)
-    function TFcgiRequestManager.getStreamByType(const requestId : word; const atyp: byte) : IStreamAdapter;
+    function TFcgiRequestManager.getStreamByType(const requestId : word; const atype: byte) : IStreamAdapter;
     var coll : IStreamAdapterCollection;
         i, len : integer;
         rec : IFcgiRecord;
