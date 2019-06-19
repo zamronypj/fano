@@ -203,7 +203,7 @@ uses
                 inc(buf, bytesRead);
                 inc(result, bytesRead);
             end;
-        until (remainingBytes = 0) or (bytesRead <= 0);
+        until (amountToRead = 0) or (bytesRead <= 0);
     end;
 
     (*!-----------------------------------------------
