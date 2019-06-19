@@ -40,7 +40,7 @@ type
 
         fTmpBuffer : TMemoryStream;
 
-        function readBytes(buf : pointer; amountToRead : integer) : integer;
+        function readBytes(const stream : IStreamAdapter; buf : pointer; amountToRead : integer) : integer;
         function readRecord(const stream : IStreamAdapter; out bufPtr : pointer; out bufSize : integer) : boolean;
         function processBuffer(const buffer : pointer; const bufferSize : int64; out totRead : int64) : boolean;
         function discardProcessedData(const tmp : TStream; const bytesToDiscard : int64) : TMemoryStream;
@@ -191,7 +191,11 @@ uses
             ((readBytes(tmp, bufSize - headerSize) + totBytes) = bufSize);
     end;
 
-    function TFcgiProcessor.readBytes(buf : pointer; amountToRead : integer) : integer;
+    function TFcgiProcessor.readBytes(
+        const stream : IStreamAdapter;
+        buf : pointer;
+        amountToRead : integer
+    ) : integer;
     var bytesRead : int64;
     begin
         result := 0;
