@@ -40,10 +40,8 @@ type
 
         fTmpBuffer : TMemoryStream;
 
-        procedure copySocketStreamToTmpStream(
-            const stream : IStreamAdapter;
-            const tmpBuffer : TMemoryStream
-        );
+        function readBytes(buf : pointer; amountToRead : integer) : integer;
+        function readRecord(const stream : IStreamAdapter; out ptr : pointer; out bufSize : integer) : boolean;
         function processBuffer(const buffer : pointer; const bufferSize : int64; out totRead : int64) : boolean;
         function discardProcessedData(const tmp : TStream; const bytesToDiscard : int64) : TMemoryStream;
     public
@@ -96,12 +94,12 @@ uses
 
     fastcgi,
     sysutils,
-    math,
     FcgiEnvironmentImpl,
     FcgiRecordIntf,
     KeyValuePairIntf,
     EnvironmentFactoryIntf,
-    EInvalidFcgiRequestIdImpl;
+    EInvalidFcgiRequestIdImpl,
+    EInvalidFcgiHeaderLenImpl;
 
     (*!-----------------------------------------------
      * constructor
@@ -162,44 +160,50 @@ uses
         result := complete;
     end;
 
-    function TFcgiProcessor.discardProcessedData(const tmp : TStream; const bytesToDiscard : int64) : TMemoryStream;
-    var tmpReadBuffer : TMemoryStream;
+    function TFcgiProcessor.readRecord(
+        const stream : IStreamAdapter;
+        out bufPtr : pointer;
+        out bufSize : integer
+    ) : boolean;
+    var tmp : pointer;
+        header : FCGI_HEADER;
+        totBytes, headerSize : integer;
     begin
-        //discard processed buffer
-        tmpReadBuffer := TMemoryStream.create();
-        try
-            tmp.seek(bytesToDiscard, soFromBeginning);
-            tmpReadBuffer.copyFrom(tmp, tmp.size - bytesToDiscard);
-        finally
-            tmp.free();
-            result := tmpReadBuffer;
+        bufPtr := nil;
+        bufSize := 0;
+        headerSize := sizeof(FCGI_HEADER);
+        totBytes := readBytes(@header, headerSize);
+
+        if (totBytes <> headerSize) then
+        begin
+            raise EInvlidFcgiHeaderLen.createFmt('Invalid header length %d', [totBytes]);
         end;
+
+        bufSize := FCGI_HEADER_LEN + BEtoN(header.contentLength) + header.paddingLength;
+        getMem(bufPtr, bufSize);
+        //copy header and advance position to skip header part
+        tmp := bufPtr;
+        PFCGI_HEADER(tmp)^ := header;
+        inc(tmp, headerSize);
+
+        //read content and padding
+        result := (bufPtr <> nil) and
+            ((readBytes(tmp, bufSize - headerSize) + totBytes) = bufSize);
     end;
 
-    procedure TFcgiProcessor.copySocketStreamToTmpStream(
-        const stream : IStreamAdapter;
-        const tmpBuffer : TMemoryStream
-    );
-    const MAX_TMP_SIZE = 4096;
-    var tmp : pointer;
-        bytesRead : int64;
+    function TFcgiProcessor.readBytes(buf : pointer; amountToRead : integer) : integer;
+    var bytesRead : int64;
     begin
-        //stream will come from socket connection,
-        //so we do not know its size, just allocate big enough
-        //and read bit by bit until exhausted
-        getMem(tmp, MAX_TMP_SIZE);
-        try
-            repeat
-                bytesRead := stream.read(tmp^, MAX_TMP_SIZE);
-                if bytesRead > 0 then
-                begin
-                    tmpBuffer.writeBuffer(tmp^, bytesRead);
-                end
-            until bytesRead <= 0;
-            //bytesRead < 0 means socket read error
-        finally
-            freeMem(tmp, MAX_TMP_SIZE);
-        end;
+        result := 0;
+        repeat
+            bytesRead := stream.read(pHeader^, amountToRead);
+            if (bytesRead > 0) then
+            begin
+                dec(amountToRead, bytesRead);
+                inc(buf, bytesRead);
+                inc(result, bytesRead);
+            end;
+        until (remainingBytes = 0) or (bytesRead <= 0);
     end;
 
     (*!-----------------------------------------------
@@ -210,16 +214,14 @@ uses
      *         stream is complete otherwise false
      *-----------------------------------------------*)
     function TFcgiProcessor.process(const stream : IStreamAdapter) : boolean;
-    var totProcessed : int64;
+    var bufPtr : pointer;
+        bufSize : integer;
     begin
-        copySocketStreamToTmpStream(stream, fTmpBuffer);
-        totProcessed := 0;
-        result := processBuffer(fTmpBuffer.memory, fTmpBuffer.size, totProcessed);
-        if (totProcessed > 0) then
+        result := false;
+        if (readRecord(stream, bufPtr, bufSize)) then
         begin
-            //TODO: maybe it is better to just advanced stream position
-            //instead of discard which require copy?
-            fTmpBuffer := discardProcessedData(fTmpBuffer, totProcessed);
+            result := processBuffer(bufPtr, bufSize);
+            freeMem(bufPtr, bufSize);
         end;
     end;
 
