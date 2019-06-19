@@ -215,12 +215,12 @@ uses
      *-----------------------------------------------*)
     function TFcgiProcessor.process(const stream : IStreamAdapter) : boolean;
     var bufPtr : pointer;
-        bufSize : integer;
+        bufSize, totalProcessed : integer;
     begin
         result := false;
         if (readRecord(stream, bufPtr, bufSize)) then
         begin
-            result := processBuffer(bufPtr, bufSize);
+            result := processBuffer(bufPtr, bufSize, totalProcessed);
             freeMem(bufPtr, bufSize);
         end;
     end;
