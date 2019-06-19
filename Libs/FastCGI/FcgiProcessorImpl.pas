@@ -215,7 +215,8 @@ uses
      *-----------------------------------------------*)
     function TFcgiProcessor.process(const stream : IStreamAdapter) : boolean;
     var bufPtr : pointer;
-        bufSize, totalProcessed : integer;
+        bufSize  : integer;
+        totalProcessed : int64;
     begin
         result := false;
         if (readRecord(stream, bufPtr, bufSize)) then
