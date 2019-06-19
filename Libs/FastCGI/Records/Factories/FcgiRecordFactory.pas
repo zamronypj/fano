@@ -75,7 +75,7 @@ uses
     var stream :IStreamAdapter;
     begin
         stream := initEmptyStream();
-        stream.writeBuffer(tmpBuffer^, tmpSize);
+        stream.writeBuffer(buffer^, size);
         result := stream;
     end;
 
