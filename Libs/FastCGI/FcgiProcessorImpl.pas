@@ -176,7 +176,7 @@ uses
 
         if (totBytes <> headerSize) then
         begin
-            raise EInvlidFcgiHeaderLen.createFmt('Invalid header length %d', [totBytes]);
+            raise EInvalidFcgiHeaderLen.createFmt('Invalid header length %d', [totBytes]);
         end;
 
         bufSize := FCGI_HEADER_LEN + BEtoN(header.contentLength) + header.paddingLength;
