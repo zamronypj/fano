@@ -41,7 +41,7 @@ type
         fTmpBuffer : TMemoryStream;
 
         function readBytes(buf : pointer; amountToRead : integer) : integer;
-        function readRecord(const stream : IStreamAdapter; out ptr : pointer; out bufSize : integer) : boolean;
+        function readRecord(const stream : IStreamAdapter; out bufPtr : pointer; out bufSize : integer) : boolean;
         function processBuffer(const buffer : pointer; const bufferSize : int64; out totRead : int64) : boolean;
         function discardProcessedData(const tmp : TStream; const bytesToDiscard : int64) : TMemoryStream;
     public
