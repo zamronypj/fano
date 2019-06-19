@@ -196,7 +196,7 @@ uses
     begin
         result := 0;
         repeat
-            bytesRead := stream.read(pHeader^, amountToRead);
+            bytesRead := stream.read(buf^, amountToRead);
             if (bytesRead > 0) then
             begin
                 dec(amountToRead, bytesRead);
