@@ -38,8 +38,6 @@ type
         //store request id that is complete
         fcgiRequestId : word;
 
-        fTmpBuffer : TMemoryStream;
-
         function readBytes(const stream : IStreamAdapter; buf : pointer; amountToRead : integer) : integer;
         function readRecord(const stream : IStreamAdapter; out bufPtr : pointer; out bufSize : integer) : boolean;
         function processBuffer(const buffer : pointer; const bufferSize : int64; out totRead : int64) : boolean;
@@ -116,7 +114,6 @@ uses
         fcgiParser := parser;
         fcgiRequestMgr := requestMgr;
         fcgiRequestId := 0;
-        fTmpBuffer := TMemoryStream.create();
     end;
 
     (*!-----------------------------------------------
@@ -127,7 +124,6 @@ uses
         inherited destroy();
         fcgiParser := nil;
         fcgiRequestMgr := nil;
-        freeAndNil(fTmpBuffer);
     end;
 
     (*!-----------------------------------------------
@@ -172,7 +168,7 @@ uses
         bufPtr := nil;
         bufSize := 0;
         headerSize := sizeof(FCGI_HEADER);
-        totBytes := readBytes(@header, headerSize);
+        totBytes := readBytes(stream, @header, headerSize);
 
         if (totBytes <> headerSize) then
         begin
@@ -186,9 +182,9 @@ uses
         PFCGI_HEADER(tmp)^ := header;
         inc(tmp, headerSize);
 
+        totBytes := readBytes(stream, tmp, bufSize - headerSize) + totBytes;
         //read content and padding
-        result := (bufPtr <> nil) and
-            ((readBytes(tmp, bufSize - headerSize) + totBytes) = bufSize);
+        result := (bufPtr <> nil) and (totBytes = bufSize);
     end;
 
     function TFcgiProcessor.readBytes(
