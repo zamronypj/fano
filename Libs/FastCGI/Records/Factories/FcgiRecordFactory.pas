@@ -76,6 +76,7 @@ uses
     begin
         stream := initEmptyStream();
         stream.writeBuffer(buffer^, size);
+        stream.seek(0);
         result := stream;
     end;
 
