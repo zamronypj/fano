@@ -50,7 +50,7 @@ uses
     function TFcgiGetValuesResultFactory.build() : IFcgiRecord;
     begin
         result := TFcgiGetValuesresult.createFromStream(
-            initStreamFromBuffer(tmpBuffer, tmpSize),
+            initStreamFromBuffer(fBuffer, fBufferSize),
             initEmptyStream()
         );
     end;

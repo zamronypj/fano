@@ -49,7 +49,7 @@ uses
     function TFcgiUnknownTypeFactory.build() : IFcgiRecord;
     begin
         result := TFcgiUnknownType.createFromStream(
-            initStreamFromBuffer(tmpBuffer, tmpSize),
+            initStreamFromBuffer(fBuffer, fBufferSize),
             initEmptyStream()
         );
     end;

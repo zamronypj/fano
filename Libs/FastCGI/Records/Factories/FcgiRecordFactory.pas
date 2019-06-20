@@ -29,8 +29,8 @@ type
      *-----------------------------------------------*)
     TFcgiRecordFactory = class(TInterfacedObject, IFcgiRecordFactory)
     protected
-        tmpBuffer : pointer;
-        tmpSize : ptrUint;
+        fBuffer : pointer;
+        fBufferSize : ptrUint;
         fRequestId : word;
         fDeallocator : IMemoryDeallocator;
 
@@ -38,6 +38,7 @@ type
         function initStreamFromBuffer(const buffer : pointer; const size : ptrUint) : IStreamAdapter;
     public
         constructor create();
+        destructor destroy(); override;
 
         function setDeallocator(const deallocator : IMemoryDeallocator) : IFcgiRecordFactory;
         function setBuffer(const buffer : pointer; const size : ptrUint) : IFcgiRecordFactory;
@@ -68,18 +69,27 @@ uses
 
     constructor TFcgiRecordFactory.create();
     begin
+        inherited create();
         setBuffer(nil, 0);
+        fDeallocator := nil;
+    end;
+
+    destructor TFcgiRecordFactory.destroy();
+    begin
+        inherited destroy();
+        fDeallocator.deallocate(tmpBuffer, tmpSize)
     end;
 
     function TFcgiRecordFactory.setDeallocator(const deallocator : IMemoryDeallocator) : IFcgiRecordFactory;
     begin
+        fDeallocator := deallocator;
         result := self;
     end;
 
     function TFcgiRecordFactory.setBuffer(const buffer : pointer; const size : ptrUint) : IFcgiRecordFactory;
     begin
-        tmpBuffer := buffer;
-        tmpSize := size;
+        fBuffer := buffer;
+        fBufferSize := size;
         result := self;
     end;
 

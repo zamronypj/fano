@@ -49,7 +49,7 @@ uses
     function TFcgiStdErrFactory.build() : IFcgiRecord;
     begin
         result := TFcgiStdErr.createFromStream(
-            initStreamFromBuffer(tmpBuffer, tmpSize),
+            initStreamFromBuffer(fBuffer, fBufferSize),
             initEmptyStream()
         );
     end;

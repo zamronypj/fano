@@ -49,7 +49,7 @@ uses
     function TFcgiGetValuesFactory.build() : IFcgiRecord;
     begin
         result := TFcgiGetValues.createFromStream(
-            initStreamFromBuffer(tmpBuffer, tmpSize),
+            initStreamFromBuffer(fBuffer, fBufferSize),
             initEmptyStream()
         );
     end;
