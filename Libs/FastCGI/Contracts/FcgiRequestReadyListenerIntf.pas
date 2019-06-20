@@ -16,7 +16,8 @@ interface
 uses
 
     EnvironmentIntf,
-    StreamAdapterIntf;
+    StreamAdapterIntf,
+    FcgiRequestReadyListenerIntf;
 
 type
 
