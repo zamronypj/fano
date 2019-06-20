@@ -16,8 +16,7 @@ interface
 uses
 
     EnvironmentIntf,
-    StreamAdapterIntf,
-    FcgiRequestReadyListenerIntf;
+    StreamAdapterIntf;
 
 type
 
@@ -27,7 +26,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    FcgiRequestReadyListener = interface
+    IFcgiRequestReadyListener = interface
         ['{020E86BA-AA7A-4809-97B1-37AF63D429E3}']
 
         (*!------------------------------------------------
