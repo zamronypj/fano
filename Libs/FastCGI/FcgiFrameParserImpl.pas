@@ -302,11 +302,13 @@ uses
      *-----------------------------------------------*)
     function TFcgiFrameParser.parseFrame(const buffer : pointer; const bufferSize : ptrUint) : IFcgiRecord;
     var header : PFCGI_Header;
+        factory : IFcgiRecordFactory;
     begin
         raiseExceptionIfInvalidBuffer(buffer, bufferSize);
         header := buffer;
         raiseExceptionIfInvalidRecordType(header^.reqtype);
-        result := fRecordFactories[header^.reqtype].setBuffer(buffer, bufferSize).build();
+        factory := fRecordFactories[header^.reqtype];
+        result := factory.setDeallocator(self).setBuffer(buffer, bufferSize).build();
     end;
 
 end.

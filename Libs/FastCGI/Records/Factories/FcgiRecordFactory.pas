@@ -17,6 +17,7 @@ uses
 
     FcgiRecordIntf,
     FcgiRecordFactoryIntf,
+    MemoryDeallocatorIntf,
     StreamAdapterIntf;
 
 type
@@ -31,12 +32,14 @@ type
         tmpBuffer : pointer;
         tmpSize : ptrUint;
         fRequestId : word;
+        fDeallocator : IMemoryDeallocator;
 
         function initEmptyStream() : IStreamAdapter;
         function initStreamFromBuffer(const buffer : pointer; const size : ptrUint) : IStreamAdapter;
     public
         constructor create();
 
+        function setDeallocator(const deallocator : IMemoryDeallocator) : IFcgiRecordFactory;
         function setBuffer(const buffer : pointer; const size : ptrUint) : IFcgiRecordFactory;
 
         (*!------------------------------------------------
@@ -60,11 +63,17 @@ implementation
 uses
 
     classes,
-    StreamAdapterImpl;
+    StreamAdapterImpl,
+    MappedMemoryStreamImpl;
 
     constructor TFcgiRecordFactory.create();
     begin
         setBuffer(nil, 0);
+    end;
+
+    function TFcgiRecordFactory.setDeallocator(const deallocator : IMemoryDeallocator) : IFcgiRecordFactory;
+    begin
+        result := self;
     end;
 
     function TFcgiRecordFactory.setBuffer(const buffer : pointer; const size : ptrUint) : IFcgiRecordFactory;
@@ -80,12 +89,11 @@ uses
     end;
 
     function TFcgiRecordFactory.initStreamFromBuffer(const buffer : pointer; const size : ptrUint) : IStreamAdapter;
-    var stream :IStreamAdapter;
     begin
-        stream := initEmptyStream();
-        stream.writeBuffer(buffer^, size);
-        stream.seek(0);
-        result := stream;
+        result := TStreamAdapter.create(
+            TMappedMemoryStream.create(buffer, size),
+            fDeallocator
+        );
     end;
 
     (*!------------------------------------------------
