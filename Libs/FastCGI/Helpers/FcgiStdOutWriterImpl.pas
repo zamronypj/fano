@@ -151,6 +151,8 @@ uses
     var arecord : IFcgiRecord;
         i, totChunk, excess, len, astart, acount : integer;
         requestId : word;
+        chunkedStr : string;
+        dataStream : IStreamAdapter;
     begin
         //get request id associated with current complete request
         requestId := fRequestIdAware.getRequestId();
@@ -167,10 +169,9 @@ uses
         for i := 0 to totChunk-1 do
         begin
             acount := min(MAX_STR_PER_RECORD, len);
-            arecord := TFcgiStdOut.create(
-                TStreamAdapter.create(TStringStream.create(midStr(str, astart, acount))),
-                requestId
-            );
+            chunkedStr := midStr(str, astart, acount);
+            dataStream := TStreamAdapter.create(TStringStream.create(chunkedStr));
+            arecord := TFcgiStdOut.create(dataStream, requestId);
             arecord.write(stream);
             inc(astart, acount);
         end;
