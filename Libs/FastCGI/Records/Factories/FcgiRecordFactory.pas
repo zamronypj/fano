@@ -77,7 +77,8 @@ uses
     destructor TFcgiRecordFactory.destroy();
     begin
         inherited destroy();
-        fDeallocator.deallocate(tmpBuffer, tmpSize)
+        fDeallocator.deallocate(fBuffer, fBufferSize);
+        setBuffer(nil, 0);
     end;
 
     function TFcgiRecordFactory.setDeallocator(const deallocator : IMemoryDeallocator) : IFcgiRecordFactory;
