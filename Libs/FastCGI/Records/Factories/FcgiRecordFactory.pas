@@ -29,13 +29,15 @@ type
     TFcgiRecordFactory = class(TInterfacedObject, IFcgiRecordFactory)
     protected
         tmpBuffer : pointer;
-        tmpSize : int64;
+        tmpSize : ptrUint;
         fRequestId : word;
 
         function initEmptyStream() : IStreamAdapter;
-        function initStreamFromBuffer(const buffer : pointer; const size : int64) : IStreamAdapter;
+        function initStreamFromBuffer(const buffer : pointer; const size : ptrUint) : IStreamAdapter;
     public
-        constructor create(const buffer : pointer; const size : int64);
+        constructor create(const buffer : pointer; const size : ptrUint);
+
+        function setBuffer(const buffer : pointer; const size : ptrUint) : IFcgiRecordFactory;
 
         (*!------------------------------------------------
          * build fastcgi record from stream
@@ -60,10 +62,16 @@ uses
     classes,
     StreamAdapterImpl;
 
-    constructor TFcgiRecordFactory.create(const buffer : pointer; const size : int64);
+    constructor TFcgiRecordFactory.create();
+    begin
+        setBuffer(nil, 0);
+    end;
+
+    function TFcgiRecordFactory.setBuffer(const buffer : pointer; const size : ptrUint) : IFcgiRecordFactory;
     begin
         tmpBuffer := buffer;
         tmpSize := size;
+        result := self;
     end;
 
     function TFcgiRecordFactory.initEmptyStream() : IStreamAdapter;

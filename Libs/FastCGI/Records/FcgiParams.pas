@@ -135,6 +135,7 @@ uses
     begin
         inherited createFromStream(srcStream, dataStream);
         fKeyValues := aKeyValues;
+        writeln('params');
     end;
 
     (*!------------------------------------------------

@@ -20,6 +20,7 @@ uses
     FcgiProcessorIntf,
     FcgiRequestManagerIntf,
     FcgiRequestIdAwareIntf,
+    FcgiRequestReadyListenerIntf,
     FcgiFrameParserIntf;
 
 type
@@ -34,12 +35,8 @@ type
     private
         fcgiParser : IFcgiFrameParser;
         fcgiRequestMgr : IFcgiRequestManager;
+        fcgiRequestReadyListener : IFcgiRequestReadyListener;
 
-        //store request id that is complete
-        fcgiRequestId : word;
-
-        function readBytes(const stream : IStreamAdapter; buf : pointer; amountToRead : integer) : integer;
-        function readRecord(const stream : IStreamAdapter; out bufPtr : pointer; out bufSize : integer) : boolean;
         function processBuffer(const buffer : pointer; const bufferSize : int64; out totRead : int64) : boolean;
     public
         (*!-----------------------------------------------
@@ -61,28 +58,14 @@ type
          * @return true if all data from web server is ready to
          * be handle by application (i.e, environment, STDIN already parsed)
          *-----------------------------------------------*)
-        function process(const stream : IStreamAdapter) : boolean;
+        procedure process(const stream : IStreamAdapter);
 
         (*!------------------------------------------------
-         * get current environment
+         * set listener to be notified weh request is ready
          *-----------------------------------------------
-         * @return environment
+         * @return current instance
          *-----------------------------------------------*)
-        function getEnvironment() : ICGIEnvironment;
-
-        (*!------------------------------------------------
-         * get current FCGI_STDIN complete stream
-         *-----------------------------------------------
-         * @return stream
-         *-----------------------------------------------*)
-        function getStdInStream() : IStreamAdapter;
-
-        (*!------------------------------------------------
-         * get request id that is complete
-         *-----------------------------------------------
-         * @return request id
-         *-----------------------------------------------*)
-        function getRequestId() : word;
+        function setReadyListener(const listener : IFcgiRequestReadyListener) : IFcgiProcessor;
     end;
 
 implementation
@@ -112,7 +95,7 @@ uses
         inherited create();
         fcgiParser := parser;
         fcgiRequestMgr := requestMgr;
-        fcgiRequestId := 0;
+        fcgiRequestReadyListener := nil;
     end;
 
     (*!-----------------------------------------------
@@ -123,6 +106,7 @@ uses
         inherited destroy();
         fcgiParser := nil;
         fcgiRequestMgr := nil;
+        fcgiRequestReadyListener := nil;
     end;
 
     (*!-----------------------------------------------
@@ -133,126 +117,63 @@ uses
      * @return boolean true when FCGI_PARAMS and FCGI_STDIN
      *         stream is complete otherwise false
      *-----------------------------------------------*)
-    function TFcgiProcessor.processBuffer(const buffer : pointer; const bufferSize : int64; out totRead : int64) : boolean;
-    var arecord : IFcgiRecord;
-        complete : boolean;
+    function TFcgiProcessor.processBuffer(const buffer : pointer; const bufferSize : int64) : boolean;
+    var afcgiRec : IFcgiRecord;
+        requestId : word;
+        handled : boolean;
     begin
-        complete := false;
-        totRead := 0;
+        result := false;
         if (fcgiParser.hasFrame(buffer, bufferSize)) then
         begin
-            arecord := fcgiParser.parseFrame(buffer, bufferSize);
-            totRead := arecord.getRecordSize();
-            complete := fcgiRequestMgr.add(arecord).complete(arecord.getRequestId());
-            if (complete) then
+            afcgiRec := fcgiParser.parseFrame(buffer, bufferSize);
+            fcgiRequestMgr.add(afcgiRec);
+            requestId := afcgiRec.getRequestId();
+            if fcgiRequestMgr.complete(requestId) then
             begin
-                //request is complete, keep track last request id that is complete
-                fcgiRequestId := arecord.getRequestId();
-                //TODO : initialize POST-ed for this request
+                if assigned(fcgiRequestReadyListener) then
+                begin
+                    handled := fcgiRequestReadyListener.ready(
+                        fcgiRequestMgr.getEnvironment(requestId),
+                        fcgiRequestMgr.getStdInStream(requestId)
+                    );
+                    if handled then
+                    begin
+                        fcgiRequestMgr.remove(requestId);
+                    end;
+                end;
             end;
         end;
-
-        result := complete;
-    end;
-
-    function TFcgiProcessor.readRecord(
-        const stream : IStreamAdapter;
-        out bufPtr : pointer;
-        out bufSize : integer
-    ) : boolean;
-    var tmp : pointer;
-        header : FCGI_HEADER;
-        totBytes, headerSize : integer;
-    begin
-        bufPtr := nil;
-        bufSize := 0;
-        headerSize := sizeof(FCGI_HEADER);
-        totBytes := readBytes(stream, @header, headerSize);
-
-        if (totBytes <> headerSize) then
-        begin
-            raise EInvalidFcgiHeaderLen.createFmt('Invalid header length %d', [totBytes]);
-        end;
-
-        bufSize := FCGI_HEADER_LEN + BEtoN(header.contentLength) + header.paddingLength;
-        getMem(bufPtr, bufSize);
-        //copy header and advance position to skip header part
-        tmp := bufPtr;
-        PFCGI_HEADER(tmp)^ := header;
-        inc(tmp, headerSize);
-
-        totBytes := readBytes(stream, tmp, bufSize - headerSize) + totBytes;
-        //read content and padding
-        result := (bufPtr <> nil) and (totBytes = bufSize);
-    end;
-
-    function TFcgiProcessor.readBytes(
-        const stream : IStreamAdapter;
-        buf : pointer;
-        amountToRead : integer
-    ) : integer;
-    var bytesRead : int64;
-    begin
-        result := 0;
-        repeat
-            bytesRead := stream.read(buf^, amountToRead);
-            if (bytesRead > 0) then
-            begin
-                dec(amountToRead, bytesRead);
-                inc(buf, bytesRead);
-                inc(result, bytesRead);
-            end;
-        until (amountToRead = 0) or (bytesRead <= 0);
     end;
 
     (*!-----------------------------------------------
-     * parse stream for FCGI records
+     * process stream and parse for FCGI records until stream
+     * is exhausted
      *------------------------------------------------
      * @param stream socket stream
-     * @return boolean true when FCGI_PARAMS and FCGI_STDIN
-     *         stream is complete otherwise false
      *-----------------------------------------------*)
-    function TFcgiProcessor.process(const stream : IStreamAdapter) : boolean;
+    procedure TFcgiProcessor.process(const stream : IStreamAdapter);
     var bufPtr : pointer;
         bufSize  : integer;
-        totalProcessed : int64;
+        streamEmpty : boolean;
     begin
-        result := false;
-        if (readRecord(stream, bufPtr, bufSize)) then
-        begin
-            result := processBuffer(bufPtr, bufSize, totalProcessed);
-            freeMem(bufPtr, bufSize);
-        end;
+        repeat
+            streamEmpty := fcgiParser.readRecord(stream, bufPtr, bufSize);
+            if (bufPtr <> nil) and (bufSize > 0) then
+            begin
+                processBuffer(bufPtr, bufSize);
+            end;
+        until streamEmpty;
     end;
 
     (*!------------------------------------------------
-     * get current environment
+     * set listener to be notified weh request is ready
      *-----------------------------------------------
-     * @return environment
+     * @return current instance
      *-----------------------------------------------*)
-    function TFcgiProcessor.getEnvironment() : ICGIEnvironment;
+    function setReadyListener(const listener : IFcgiRequestReadyListener) : IFcgiProcessor;
     begin
-        result := fcgiRequestMgr.getEnvironment(fcgiRequestId);
-    end;
-
-    (*!------------------------------------------------
-     * get current FCGI_STDIN complete stream
-     *-----------------------------------------------
-     * @return stream
-     *-----------------------------------------------*)
-    function TFcgiProcessor.getStdInStream() : IStreamAdapter;
-    begin
-        result := fcgiRequestMgr.getStdInStream(fcgiRequestId);
-    end;
-
-    (*!------------------------------------------------
-     * get request id that is complete
-     *-----------------------------------------------
-     * @return request id
-     *-----------------------------------------------*)
-    function TFcgiProcessor.getRequestId() : word;
-    begin
-        result := fcgiRequestId;
+        fcgiRequestReadyListener := listener;
+        result := self;
     end;
 
 end.

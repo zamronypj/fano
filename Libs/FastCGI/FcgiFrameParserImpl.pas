@@ -18,7 +18,9 @@ uses
     InjectableObjectImpl,
     FcgiRecordIntf,
     FcgiFrameParserIntf,
-    StreamAdapterIntf;
+    StreamAdapterIntf,
+    MemoryAllocatorIntf,
+    MemoryDeallocatorIntf;
 
 type
 
@@ -27,15 +29,39 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TFcgiFrameParser = class (TInjectableObject, IFcgiFrameParser)
+    TFcgiFrameParser = class (TInjectableObject, IFcgiFrameParser, IMemoryAllocator, IMemoryDeallocator)
     private
+        fRecordFactories : array of IFcgiRecordFactory;
+
         procedure raiseExceptionIfBufferNil(const buffer : pointer);
         procedure raiseExceptionIfInvalidBufferSize(const bufferSize : int64);
         procedure raiseExceptionIfInvalidBuffer(const buffer : pointer;  const bufferSize : int64);
 
         function isValidRecordType(const reqType : byte) : boolean;
         procedure raiseExceptionIfInvalidRecordType(const reqType : byte);
+
+        function readBytes(
+            const stream : IStreamAdapter;
+            buf : pointer;
+            amountToRead : integer;
+            out streamEmpty : boolean
+        ) : integer;
     public
+        constructor create(const factories : array of IFcgiRecordFactory);
+        destructor destroy(); override;
+
+        (*!------------------------------------------------
+         * read stream and return found record in memory buffer
+         *-----------------------------------------------
+         * @param bufPtr, memory buffer to store FastCGI record
+         * @param bufSize, memory buffer size
+         * @return true if stream is exhausted
+         *-----------------------------------------------*)
+        function readRecord(
+            const stream : IStreamAdapter;
+            out bufPtr : pointer;
+            out bufSize : ptrUint
+        ) : boolean;
 
         (*!------------------------------------------------
         * test if buffer contain FastCGI frame package
@@ -44,7 +70,7 @@ type
         * @param buffer, pointer to current buffer
         * @return true if buffer contain valid frame
         *-----------------------------------------------*)
-        function hasFrame(const buffer : pointer;  const bufferSize : int64) : boolean;
+        function hasFrame(const buffer : pointer; const bufferSize : ptrUint) : boolean;
 
         (*!------------------------------------------------
          * parse current buffer and create its corresponding
@@ -56,7 +82,23 @@ type
          * @throws EInvalidFcgiBuffer exception when buffer is nil
          * @throws EInvalidFcgiHeaderLen exception when header size not valid
          *-----------------------------------------------*)
-        function parseFrame(const buffer : pointer;  const bufferSize : int64) : IFcgiRecord;
+        function parseFrame(const buffer : pointer; const bufferSize : ptrUint) : IFcgiRecord;
+
+        (*!------------------------------------------------
+         * allocate memory
+         *-----------------------------------------------
+         * @param requestedSize, number of bytes to allocate
+         * @return pointer of allocated memory
+         *-----------------------------------------------*)
+        function allocate(const requestedSize : PtrUint) : pointer;
+
+        (*!------------------------------------------------
+         * deallocate memory
+         *-----------------------------------------------
+         * @param ptr, pointer of memory to be allocated
+         * @param requestedSize, number of bytes to deallocate
+         *-----------------------------------------------*)
+        procedure deallocate(const ptr : pointer; const requestedSize : PtrUint);
     end;
 
 implementation
@@ -66,19 +108,25 @@ uses
     fastcgi,
     EInvalidFcgiBufferImpl,
     EInvalidFcgiRecordTypeImpl,
-    EInvalidFcgiHeaderLenImpl,
+    EInvalidFcgiHeaderLenImpl;
 
-    FcgiBeginRequestFactory,
-    FcgiAbortRequestFactory,
-    FcgiEndRequestFactory,
-    FcgiParamsFactory,
-    FcgiStdInFactory,
-    FcgiStdOutFactory,
-    FcgiStdErrFactory,
-    FcgiDataFactory,
-    FcgiGetValuesFactory,
-    FcgiGetValuesResultFactory,
-    FcgiUnknownTypeFactory;
+    constructor TFcgiFrameParser.create(const factories : array of IFcgiRecordFactory);
+    begin
+        inherited create();
+        fRecordFactories := factories;
+    end;
+
+    destructor TFcgiFrameParser.destroy();
+    var i : integer;
+    begin
+        inherited destroy();
+        for i:= length(fRecordFactories) -1 downto 0 do
+        begin
+            fRecordFactories[i] := nil;
+        end;
+        setLength(fRecordFactories, 0);
+        fRecordFactories := nil;
+    end;
 
     procedure TFcgiFrameParser.raiseExceptionIfBufferNil(const buffer : pointer);
     begin
@@ -103,6 +151,104 @@ uses
     end;
 
     (*!------------------------------------------------
+     * allocate memory
+     *-----------------------------------------------
+     * @param requestedSize, number of bytes to allocate
+     * @return pointer of allocated memory
+     *-----------------------------------------------*)
+    function TFcgiFrameParser.allocate(const requestedSize : PtrUint) : pointer;
+    begin
+        result := getMem(requestedSize);
+    end;
+
+    (*!------------------------------------------------
+     * deallocate memory
+     *-----------------------------------------------
+     * @param ptr, pointer of memory to be allocated
+     * @param requestedSize, number of bytes to deallocate
+     *-----------------------------------------------*)
+    procedure TFcgiFrameParser.deallocate(const ptr : pointer; const requestedSize : PtrUint);
+    begin
+        freeMem(ptr, requestedSize);
+    end;
+
+    (*!------------------------------------------------
+     * read stream and return found record in memory buffer
+     *-----------------------------------------------
+     * @param bufPtr, memory buffer to store FastCGI record
+     * @param bufSize, memory buffer size
+     * @return true if stream is exhausted
+     *-----------------------------------------------*)
+    function TFcgiFrameParser.readRecord(
+        const stream : IStreamAdapter;
+        out bufPtr : pointer;
+        out bufSize : ptrUint
+    ) : boolean;
+    var tmp : pointer;
+        header : FCGI_HEADER;
+        totBytes, headerSize : integer;
+        streamEmpty : boolean;
+    begin
+        result:= false;
+        bufPtr := nil;
+        bufSize := 0;
+        headerSize := sizeof(FCGI_HEADER);
+        totBytes := readBytes(stream, @header, headerSize, streamEmpty);
+
+        if (streamEmpty) then
+        begin
+            result := true;
+            exit;
+        end;
+
+        if (totBytes <> headerSize) then
+        begin
+            raise EInvalidFcgiHeaderLen.createFmt('Invalid header length %d', [totBytes]);
+        end;
+
+        bufSize := FCGI_HEADER_LEN + BEtoN(header.contentLength) + header.paddingLength;
+        bufPtr := allocate(bufSize);
+        //copy header and advance position to skip header part
+        tmp := bufPtr;
+        PFCGI_HEADER(tmp)^ := header;
+        inc(tmp, headerSize);
+
+        //read content and padding
+        totBytes := readBytes(stream, tmp, bufSize - headerSize, streamEmpty) + totBytes;
+        result := streamEmpty;
+    end;
+
+    function TFcgiFrameParser.readBytes(
+        const stream : IStreamAdapter;
+        buf : pointer;
+        amountToRead : integer;
+        out streamEmpty : boolean
+    ) : integer;
+    var bytesRead : int64;
+    begin
+        result := 0;
+        streamEmpty := false;
+
+        if amountToRead <= 0 then
+        begin
+            exit;
+        end;
+
+        repeat
+            bytesRead := stream.read(buf^, amountToRead);
+            if (bytesRead > 0) then
+            begin
+                dec(amountToRead, bytesRead);
+                inc(buf, bytesRead);
+                inc(result, bytesRead);
+            end else
+            begin
+                streamEmpty := true;
+            end;;
+        until (amountToRead = 0) or streamEmpty;
+    end;
+
+    (*!------------------------------------------------
      * test if buffer contain FastCGI frame package
      * i.e FastCGI header + payload
      *-----------------------------------------------
@@ -110,7 +256,7 @@ uses
      * @param bufferSize, size of buffer
      * @return true if buffer contain valid frame
      *-----------------------------------------------*)
-    function TFcgiFrameParser.hasFrame(const buffer : pointer; const bufferSize : int64) : boolean;
+    function TFcgiFrameParser.hasFrame(const buffer : pointer; const bufferSize : ptrUint) : boolean;
     var header : PFCGI_Header;
         contentLength :word;
     begin
@@ -153,61 +299,13 @@ uses
      * @return IFcgiRecord instance
      * @throws EInvalidFcgiHeaderLen exception when header size not valid
      *-----------------------------------------------*)
-    function TFcgiFrameParser.parseFrame(const buffer : pointer; const bufferSize : int64) : IFcgiRecord;
+    function TFcgiFrameParser.parseFrame(const buffer : pointer; const bufferSize : ptrUint) : IFcgiRecord;
     var header : PFCGI_Header;
-        fcgiRecordSize : integer;
     begin
         raiseExceptionIfInvalidBuffer(buffer, bufferSize);
         header := buffer;
         raiseExceptionIfInvalidRecordType(header^.reqtype);
-        result := nil;
-        fcgiRecordSize := FCGI_HEADER_LEN + BEtoN(header^.contentLength) + header^.paddingLength;
-        case header^.reqtype of
-            FCGI_BEGIN_REQUEST :
-                begin
-                    result := (TFcgiBeginRequestFactory.create(buffer, fcgiRecordSize)).build();
-                end;
-            FCGI_ABORT_REQUEST :
-                begin
-                    result := (TFcgiAbortRequestFactory.create(buffer, fcgiRecordSize)).build();
-                end;
-            FCGI_END_REQUEST :
-                begin
-                    result := (TFcgiEndRequestFactory.create(buffer, fcgiRecordSize)).build();
-                end;
-            FCGI_PARAMS :
-                begin
-                    result := (TFcgiParamsFactory.create(buffer, fcgiRecordSize)).build();
-                end;
-            FCGI_STDIN :
-                begin
-                    result := (TFcgiStdInFactory.create(buffer, fcgiRecordSize)).build();
-                end;
-            FCGI_STDOUT :
-                begin
-                    result := (TFcgiStdOutFactory.create(buffer, fcgiRecordSize)).build();
-                end;
-            FCGI_STDERR :
-                begin
-                    result := (TFcgiStdErrFactory.create(buffer, fcgiRecordSize)).build();
-                end;
-            FCGI_DATA :
-                begin
-                    result := (TFcgiDataFactory.create(buffer, fcgiRecordSize)).build();
-                end;
-            FCGI_GET_VALUES :
-                begin
-                    result := (TFcgiGetValuesFactory.create(buffer, fcgiRecordSize)).build();
-                end;
-            FCGI_GET_VALUES_RESULT :
-                begin
-                    result := (TFcgiGetValuesResultFactory.create(buffer, fcgiRecordSize)).build();
-                end;
-            FCGI_UNKNOWN_TYPE :
-                begin
-                    result := (TFcgiUnknownTypeFactory.create(buffer, fcgiRecordSize)).build();
-                end;
-        end;
+        result := fRecordFactories[header^.reqtype].setBuffer(buffer, bufferSize).build();
     end;
 
 end.

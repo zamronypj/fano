@@ -15,8 +15,8 @@ interface
 
 uses
 
-    EnvironmentIntf,
-    StreamAdapterIntf;
+    StreamAdapterIntf,
+    FcgiRequestReadyListenerIntf;
 
 type
 
@@ -31,25 +31,15 @@ type
 
         (*!------------------------------------------------
          * process request stream
-         *-----------------------------------------------
-         * @return true if all data from web server is ready to
-         * be handle by application (i.e, environment, STDIN already parsed)
          *-----------------------------------------------*)
-        function process(const stream : IStreamAdapter) : boolean;
+        procedure process(const stream : IStreamAdapter);
 
         (*!------------------------------------------------
-         * get current environment
+         * set listener to be notified weh request is ready
          *-----------------------------------------------
-         * @return environment
+         * @return current instance
          *-----------------------------------------------*)
-        function getEnvironment() : ICGIEnvironment;
-
-        (*!------------------------------------------------
-         * get current FCGI_STDIN complete stream
-         *-----------------------------------------------
-         * @return stream
-         *-----------------------------------------------*)
-        function getStdInStream() : IStreamAdapter;
+        function setReadyListener(const listener : IFcgiRequestReadyListener) : IFcgiProcessor;
     end;
 
 implementation

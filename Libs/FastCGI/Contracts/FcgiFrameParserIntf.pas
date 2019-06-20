@@ -29,6 +29,19 @@ type
         ['{06B79D63-55E3-4B6E-BFD9-65CE6ED72636}']
 
         (*!------------------------------------------------
+         * read stream and return found record in memory buffer
+         *-----------------------------------------------
+         * @param bufPtr, memory buffer to store FastCGI record
+         * @param bufSize, memory buffer size
+         * @return true if stream is exhausted
+         *-----------------------------------------------*)
+        function readRecord(
+            const stream : IStreamAdapter;
+            out bufPtr : pointer;
+            out bufSize : integer
+        ) : boolean;
+
+        (*!------------------------------------------------
         * test if buffer contain FastCGI frame package
         * i.e FastCGI header + payload
         *-----------------------------------------------

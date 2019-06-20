@@ -25,6 +25,7 @@ uses
     RunnableWithDataNotifIntf,
     StdOutIntf,
     FcgiProcessorIntf,
+    FcgiRequestReadyListenerIntf,
     StreamAdapterIntf;
 
 type
@@ -34,7 +35,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TFastCGIWebApplication = class(TFanoWebApplication, IDataAvailListener)
+    TFastCGIWebApplication = class(TFanoWebApplication, IDataAvailListener, IFcgiRequestReadyListener)
     private
         workerServer : IRunnableWithDataNotif;
         fcgiProcessor : IFcgiProcessor;
@@ -67,7 +68,28 @@ type
         destructor destroy(); override;
         function run() : IRunnable; override;
 
+        (*!------------------------------------------------
+         * called when socket stream contains data
+         *-----------------------------------------------
+         * @param stream, stream of socket
+         * @param context, sender i.e, TSocketServer instance
+         * @return true request is handled
+         *-----------------------------------------------*)
         function handleData(const stream : IStreamAdapter; const context : TObject) : boolean;
+
+        (*!------------------------------------------------
+         * FastCGI request is ready
+         *-----------------------------------------------
+         * @param socketStream, original socket stream
+         * @param env, CGI environment
+         * @param stdInStream, stream contains POST-ed data
+         * @return true request is handled
+         *-----------------------------------------------*)
+        function ready(
+            const socketStream : IStreamAdapter;
+            const env : ICGIEnvironment;
+            const stdInStream : IStreamAdapter
+        ) : boolean;
     end;
 
 implementation
@@ -110,6 +132,7 @@ resourcestring
         fcgiProcessor := aFcgiProcessor;
         fOutputBuffer := outputBuffer;
         fStdOutWriter := stdOutWriter;
+        fcgiProcessor.setReadyListener(self);
     end;
 
     destructor TFastCGIWebApplication.destroy();
@@ -191,20 +214,34 @@ resourcestring
      *-----------------------------------------------*)
     function TFastCGIWebApplication.handleData(const stream : IStreamAdapter; const context : TObject) : boolean;
     begin
-        if (fcgiProcessor.process(stream)) then
-        begin
-            //buffer STDOUT, so any write()/writeln() will be buffered to stream
-            fOutputBuffer.beginBuffering();
-            try
-                //when we get here, CGI environment and any POST data are ready
-                executeRequest(fcgiProcessor.getEnvironment());
-            finally
-                fOutputBuffer.endBuffering();
-                //write response back to web server (i.e FastCGI client)
-                fStdOutWriter.setStream(stream).write(fOutputBuffer.flush());
-            end;
-        end;
+        fcgiProcessor.process(stream);
         result := true;
     end;
 
+    (*!------------------------------------------------
+     * FastCGI request is ready
+     *-----------------------------------------------
+     * @param socketStream, original socket stream
+     * @param env, CGI environment
+     * @param stdInStream, stream contains POST-ed data
+     * @return true request is handled
+     *-----------------------------------------------*)
+    function TFastCGIWebApplication.ready(
+        const socketStream : IStreamAdapter;
+        const env : ICGIEnvironment;
+        const stdInStream : IStreamAdapter
+    ) : boolean;
+    begin
+        //buffer STDOUT, so any write()/writeln() will be buffered to stream
+        fOutputBuffer.beginBuffering();
+        try
+            //when we get here, CGI environment and any POST data are ready
+            executeRequest(env);
+        finally
+            fOutputBuffer.endBuffering();
+            //write response back to web server (i.e FastCGI client)
+            fStdOutWriter.setStream(socketStream).write(fOutputBuffer.flush());
+        end;
+
+    end;
 end.

@@ -28,6 +28,8 @@ type
     IFcgiRecordFactory = interface
         ['{5B1B7CED-8804-4837-B0DE-D88C02BE66A2}']
 
+        function setBuffer(const buffer : pointer; const size : ptrUint) : IFcgiRecordFactory;
+
         (*!------------------------------------------------
          * build fastcgi record instance
          *-----------------------------------------------*)
