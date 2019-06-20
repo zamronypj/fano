@@ -55,7 +55,9 @@ uses
     FcgiDataFactory,
     FcgiGetValuesFactory,
     FcgiGetValuesResultFactory,
-    FcgiUnknownTypeFactory;
+    FcgiUnknownTypeFactory,
+
+    FcgiFrameParserImpl;
 
     (*!------------------------------------------------
      * build frame parser instance
