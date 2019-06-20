@@ -35,7 +35,7 @@ type
         function initEmptyStream() : IStreamAdapter;
         function initStreamFromBuffer(const buffer : pointer; const size : ptrUint) : IStreamAdapter;
     public
-        constructor create(const buffer : pointer; const size : ptrUint);
+        constructor create();
 
         function setBuffer(const buffer : pointer; const size : ptrUint) : IFcgiRecordFactory;
 
