@@ -101,10 +101,7 @@ uses
 
     function TFcgiRecordFactory.initStreamFromBuffer(const buffer : pointer; const size : ptrUint) : IStreamAdapter;
     begin
-        result := TStreamAdapter.create(
-            TMappedMemoryStream.create(buffer, size),
-            fDeallocator
-        );
+        result := TStreamAdapter.create(TMappedMemoryStream.create(buffer, size, fDeallocator));
     end;
 
     (*!------------------------------------------------
