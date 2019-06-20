@@ -21,23 +21,28 @@ uses
     FcgiRequestManagerIntf,
     FcgiRequestIdAwareIntf,
     FcgiRequestReadyListenerIntf,
+    FcgiRequestIdAwareIntf,
+    FcgiStdInStreamAwareIntf,
     FcgiFrameParserIntf;
 
 type
 
     (*!-----------------------------------------------
      * FastCGI frame processor that parse FastCGI frame
-     * and build CGI environment and write response
+     * and build CGI environment
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TFcgiProcessor = class(TInterfacedObject, IFcgiProcessor, IFcgiRequestIdAware)
+    TFcgiProcessor = class(TInterfacedObject, IFcgiProcessor, IFcgiRequestIdAware, IFcgiStdInStreamAware)
     private
         fcgiParser : IFcgiFrameParser;
         fcgiRequestMgr : IFcgiRequestManager;
         fcgiRequestReadyListener : IFcgiRequestReadyListener;
 
-        function processBuffer(const buffer : pointer; const bufferSize : int64; out totRead : int64) : boolean;
+        //store request id that is ready to be served
+        fCompleteRequestId : word;
+
+        procedure processBuffer(const buffer : pointer; const bufferSize : ptrUint);
     public
         (*!-----------------------------------------------
          * constructor
@@ -66,14 +71,24 @@ type
          * @return current instance
          *-----------------------------------------------*)
         function setReadyListener(const listener : IFcgiRequestReadyListener) : IFcgiProcessor;
+
+        (*!------------------------------------------------
+         * get request id
+         *-----------------------------------------------
+         * @return request id
+         *-----------------------------------------------*)
+        function getRequestId() : word;
+
+        (*!------------------------------------------------
+        * get FastCGI StdIn stream for complete request
+        *-----------------------------------------------*)
+        function getStdIn() : IStreamAdapter;
     end;
 
 implementation
 
 uses
 
-    fastcgi,
-    sysutils,
     FcgiEnvironmentImpl,
     FcgiRecordIntf,
     KeyValuePairIntf,
@@ -117,12 +132,11 @@ uses
      * @return boolean true when FCGI_PARAMS and FCGI_STDIN
      *         stream is complete otherwise false
      *-----------------------------------------------*)
-    function TFcgiProcessor.processBuffer(const buffer : pointer; const bufferSize : int64) : boolean;
+    procedure TFcgiProcessor.processBuffer(const buffer : pointer; const bufferSize : ptrUint);
     var afcgiRec : IFcgiRecord;
         requestId : word;
         handled : boolean;
     begin
-        result := false;
         if (fcgiParser.hasFrame(buffer, bufferSize)) then
         begin
             afcgiRec := fcgiParser.parseFrame(buffer, bufferSize);
@@ -130,6 +144,8 @@ uses
             requestId := afcgiRec.getRequestId();
             if fcgiRequestMgr.complete(requestId) then
             begin
+                fCompleteRequestId := requestId;
+
                 if assigned(fcgiRequestReadyListener) then
                 begin
                     handled := fcgiRequestReadyListener.ready(
@@ -153,7 +169,7 @@ uses
      *-----------------------------------------------*)
     procedure TFcgiProcessor.process(const stream : IStreamAdapter);
     var bufPtr : pointer;
-        bufSize  : integer;
+        bufSize  : ptrUint;
         streamEmpty : boolean;
     begin
         repeat
@@ -170,10 +186,27 @@ uses
      *-----------------------------------------------
      * @return current instance
      *-----------------------------------------------*)
-    function setReadyListener(const listener : IFcgiRequestReadyListener) : IFcgiProcessor;
+    function TFcgiProcessor.setReadyListener(const listener : IFcgiRequestReadyListener) : IFcgiProcessor;
     begin
         fcgiRequestReadyListener := listener;
         result := self;
     end;
 
+    (*!------------------------------------------------
+     * get request id
+     *-----------------------------------------------
+     * @return request id
+     *-----------------------------------------------*)
+    function TFcgiProcessor.getRequestId() : word;
+    begin
+        result := fCompleteRequestId;
+    end;
+
+    (*!------------------------------------------------
+     * get FastCGI StdIn stream for complete request
+     *-----------------------------------------------*)
+    function TFcgiProcessor.getStdIn() : IStreamAdapter;
+    begin
+        result := fcgiRequestMgr.getStdInStream(fCompleteRequestId);
+    end;
 end.

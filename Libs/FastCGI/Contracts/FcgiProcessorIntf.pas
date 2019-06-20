@@ -35,6 +35,11 @@ type
         procedure process(const stream : IStreamAdapter);
 
         (*!------------------------------------------------
+         * get FastCGI StdIn stream for complete request
+         *-----------------------------------------------*)
+        function getStdIn() : IStreamAdapter;
+
+        (*!------------------------------------------------
          * set listener to be notified weh request is ready
          *-----------------------------------------------
          * @return current instance

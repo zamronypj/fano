@@ -17,7 +17,8 @@ uses
     EnvironmentIntf,
     RequestIntf,
     RequestFactoryIntf,
-    FcgiProcessorIntf;
+    FcgiRequestIdAwareIntf,
+    FcgiStdInStreamAwareIntf;
 
 type
     (*!------------------------------------------------
@@ -27,9 +28,13 @@ type
      *-----------------------------------------------*)
     TFcgiRequestFactory = class(TInterfacedObject, IRequestFactory)
     private
-        fcgiProcessor : IFcgiProcessor;
+        fRequestIdAware : IFcgiRequestIdAware;
+        fStdInAware : IFcgiStdInStreamAware;
     public
-        constructor create(const afcgiProc : IFcgiProcessor);
+        constructor create(
+            const requestIdAware : IFcgiRequestIdAware;
+            const stdInAware : IFcgiStdInStreamAware;
+        );
         destructor destroy; override;
         function build(const env : ICGIEnvironment) : IRequest;
     end;
@@ -45,15 +50,20 @@ uses
     StdInReaderIntf,
     StdInFromStreamImpl;
 
-    constructor create(const afcgiProc : IFcgiProcessor);
+    constructor TFcgiRequestFactory.create(
+        const requestIdAware : IFcgiRequestIdAware;
+        const stdInAware : IFcgiStdInStreamAware;
+    );
     begin
-        fcgiProcessor := afcgiProc;
+        fRequestIdAware := requestIdAware;
+        fStdInAware := stdInStreamAware;
     end;
 
     destructor TFcgiRequestFactory.destroy();
     begin
         inherited destroy();
-        fcgiProcessor := nil;
+        fRequestIdAware := nil;
+        fStdInAware := nil;
     end;
 
     function TFcgiRequestFactory.build(const env : ICGIEnvironment) : IRequest;
@@ -67,8 +77,8 @@ uses
             TMultipartFormDataParser.create(
                 TUploadedFileCollectionWriterFactory.create()
             ),
-            TStdInReaderFromStream.create(fcgiProcessor.getStdIn())
+            TStdInReaderFromStream.create(fStdInAware.getStdIn())
         );
-        result := TFcgiRequest.create(fcgiProcessor.getRequestId(), arequest);
+        result := TFcgiRequest.create(fRequestIdAware.getRequestId(), arequest);
     end;
 end.
