@@ -17,6 +17,7 @@ uses
 
     InjectableObjectImpl,
     FcgiRecordIntf,
+    FcgiRecordFactoryIntf,
     FcgiFrameParserIntf,
     StreamAdapterIntf,
     MemoryAllocatorIntf,
