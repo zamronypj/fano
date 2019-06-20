@@ -79,7 +79,7 @@ uses
         result := TStreamAdapter.create(TMemoryStream.create());
     end;
 
-    function TFcgiRecordFactory.initStreamFromBuffer(const buffer : pointer; const size : int64) : IStreamAdapter;
+    function TFcgiRecordFactory.initStreamFromBuffer(const buffer : pointer; const size : ptrUint) : IStreamAdapter;
     var stream :IStreamAdapter;
     begin
         stream := initEmptyStream();
