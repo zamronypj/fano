@@ -21,7 +21,6 @@ uses
     FcgiRequestManagerIntf,
     FcgiRequestIdAwareIntf,
     FcgiRequestReadyListenerIntf,
-    FcgiRequestIdAwareIntf,
     FcgiStdInStreamAwareIntf,
     FcgiFrameParserIntf;
 
