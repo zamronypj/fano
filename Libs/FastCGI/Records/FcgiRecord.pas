@@ -107,6 +107,7 @@ implementation
         const dataStream : IStreamAdapter
     );
     begin
+        inherited create();
         fillDword(fHeader, sizeOf(FCGI_Header), 0);
         fHeader.version := aVersion;
         fHeader.reqtype := aType;
