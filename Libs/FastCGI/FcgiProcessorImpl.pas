@@ -41,7 +41,7 @@ type
         //store request id that is ready to be served
         fCompleteRequestId : word;
 
-        procedure processBuffer(const buffer : pointer; const bufferSize : ptrUint);
+        procedure processBuffer(const stream : IStreamAdapter; const buffer : pointer; const bufferSize : ptrUint);
     public
         (*!-----------------------------------------------
          * constructor
@@ -131,7 +131,7 @@ uses
      * @return boolean true when FCGI_PARAMS and FCGI_STDIN
      *         stream is complete otherwise false
      *-----------------------------------------------*)
-    procedure TFcgiProcessor.processBuffer(const buffer : pointer; const bufferSize : ptrUint);
+    procedure TFcgiProcessor.processBuffer(const stream : IStreamAdapter; const buffer : pointer; const bufferSize : ptrUint);
     var afcgiRec : IFcgiRecord;
         requestId : word;
         handled : boolean;
@@ -148,6 +148,7 @@ uses
                 if assigned(fcgiRequestReadyListener) then
                 begin
                     handled := fcgiRequestReadyListener.ready(
+                        stream,
                         fcgiRequestMgr.getEnvironment(requestId),
                         fcgiRequestMgr.getStdInStream(requestId)
                     );
@@ -175,7 +176,7 @@ uses
             streamEmpty := fcgiParser.readRecord(stream, bufPtr, bufSize);
             if (bufPtr <> nil) and (bufSize > 0) then
             begin
-                processBuffer(bufPtr, bufSize);
+                processBuffer(stream, bufPtr, bufSize);
             end;
         until streamEmpty;
     end;
