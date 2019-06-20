@@ -109,10 +109,12 @@ implementation
         stream : IStreamAdapter;
     begin
         result := fStreamFactory.build();
+        result.seek(0);
         len := streamCollection.count;
         for i:= 0 to len-1 do
         begin
             stream := streamCollection[i];
+            stream.seek(0);
             result.writeStream(stream, stream.size());
         end;
     end;
