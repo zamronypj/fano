@@ -242,6 +242,6 @@ resourcestring
             //write response back to web server (i.e FastCGI client)
             fStdOutWriter.setStream(socketStream).write(fOutputBuffer.flush());
         end;
-
+        result := true;
     end;
 end.
