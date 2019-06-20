@@ -43,6 +43,8 @@ type
         function setRequestId(const reqId : word) : IFcgiRecordFactory;
     end;
 
+    TFcgiRecordFactoryArray = array of IFcgiRecordFactory;
+
 implementation
 
 end.

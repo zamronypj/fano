@@ -32,7 +32,7 @@ type
      *-----------------------------------------------*)
     TFcgiFrameParser = class (TInjectableObject, IFcgiFrameParser, IMemoryAllocator, IMemoryDeallocator)
     private
-        fRecordFactories : array of IFcgiRecordFactory;
+        fRecordFactories : TFcgiRecordFactoryArray;
 
         procedure raiseExceptionIfBufferNil(const buffer : pointer);
         procedure raiseExceptionIfInvalidBufferSize(const bufferSize : int64);
@@ -48,7 +48,7 @@ type
             out streamEmpty : boolean
         ) : integer;
     public
-        constructor create(const factories : array of IFcgiRecordFactory);
+        constructor create(const factories : TFcgiRecordFactoryArray);
         destructor destroy(); override;
 
         (*!------------------------------------------------
@@ -111,7 +111,7 @@ uses
     EInvalidFcgiRecordTypeImpl,
     EInvalidFcgiHeaderLenImpl;
 
-    constructor TFcgiFrameParser.create(const factories : array of IFcgiRecordFactory);
+    constructor TFcgiFrameParser.create(const factories : TFcgiRecordFactoryArray);
     begin
         inherited create();
         fRecordFactories := factories;

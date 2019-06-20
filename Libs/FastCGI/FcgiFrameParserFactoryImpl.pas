@@ -55,7 +55,7 @@ uses
      * build fastCGI frame parser
      *-----------------------------------------------*)
     function TFcgiFrameParserFactory.build() : IFcgiFrameParser;
-    var factories : array of IFcgiRecordFactory;
+    var factories : TFcgiRecordFactoryArray;
     begin
         setLength(factories, FCGI_MAXTYPE + 1);
 
