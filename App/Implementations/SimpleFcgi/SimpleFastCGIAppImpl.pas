@@ -58,6 +58,8 @@ implementation
 
 uses
 
+    FcgiFrameParserFactoryIntf,
+    FcgiFrameParserFactoryImpl,
     DependencyContainerImpl,
     DependencyListImpl,
     EnvironmentImpl,
@@ -98,6 +100,7 @@ uses
         appFcgiProcessor : IFcgiProcessor;
         appOutputBuffer : IOutputBuffer;
         appStdOutWriter : IStdOut;
+        aParserFactory : IFcgiFrameParserFactory;
     begin
         appContainer := container;
         if (appContainer = nil) then
@@ -112,9 +115,9 @@ uses
         end;
 
         appServer := TTcpWorkerServer.create(hostname, port);
-
+        aParserFactory := TFcgiFrameParserFactory.create();
         fcgiProc := TFcgiProcessor.create(
-            TFcgiFrameParser.create(),
+            aParserFactory.build(),
             TFcgiRequestManager.create(TStreamAdapterCollectionFactory.create())
         );
         appFcgiProcessor := fcgiProc;

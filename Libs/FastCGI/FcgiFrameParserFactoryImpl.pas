@@ -25,9 +25,14 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TFcgiFrameParserFactory = class (TInjectableObject)
+    TFcgiFrameParserFactory = class (TInjectableObject, IFcgiFrameParserFactory)
     private
     public
+        (*!------------------------------------------------
+         * build frame parser instance
+         *-----------------------------------------------
+         * @return frame parser instance
+         *-----------------------------------------------*)
         function build() : IFcgiFrameParser;
     end;
 
@@ -52,7 +57,9 @@ uses
     FcgiUnknownTypeFactory;
 
     (*!------------------------------------------------
-     * build fastCGI frame parser
+     * build frame parser instance
+     *-----------------------------------------------
+     * @return frame parser instance
      *-----------------------------------------------*)
     function TFcgiFrameParserFactory.build() : IFcgiFrameParser;
     var factories : TFcgiRecordFactoryArray;
