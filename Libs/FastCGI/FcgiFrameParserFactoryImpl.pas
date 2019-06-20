@@ -16,7 +16,8 @@ interface
 uses
 
     InjectableObjectImpl,
-    FcgiFrameParserIntf;
+    FcgiFrameParserIntf,
+    FcgiFrameParserFactoryIntf;
 
 type
 
