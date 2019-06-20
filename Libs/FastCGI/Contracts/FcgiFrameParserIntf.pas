@@ -15,7 +15,8 @@ interface
 
 uses
 
-    FcgiRecordIntf;
+    FcgiRecordIntf,
+    StreamAdapterIntf;
 
 type
 
@@ -38,7 +39,7 @@ type
         function readRecord(
             const stream : IStreamAdapter;
             out bufPtr : pointer;
-            out bufSize : integer
+            out bufSize : ptrUint
         ) : boolean;
 
         (*!------------------------------------------------
@@ -48,7 +49,7 @@ type
         * @param buffer, pointer to current buffer
         * @return true if buffer contain valid frame
         *-----------------------------------------------*)
-        function hasFrame(const buffer : pointer;  const bufferSize : int64) : boolean;
+        function hasFrame(const buffer : pointer;  const bufferSize : ptrUint) : boolean;
 
         (*!------------------------------------------------
          * parse current buffer and create its corresponding
@@ -60,7 +61,7 @@ type
          * @throws EInvalidFcgiBuffer exception when buffer is nil
          * @throws EInvalidFcgiHeaderLen exception when header size not valid
          *-----------------------------------------------*)
-        function parseFrame(const buffer : pointer;  const bufferSize : int64) : IFcgiRecord;
+        function parseFrame(const buffer : pointer;  const bufferSize : ptrUint) : IFcgiRecord;
     end;
 
 implementation
