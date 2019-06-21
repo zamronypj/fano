@@ -88,7 +88,7 @@ uses
     begin
         if (assigned(fDataListener)) then
         begin
-            fDataListener.handleData(TStreamAdapter.create(data), sender);
+            fDataListener.handleData(TStreamAdapter.create(data, false), sender);
         end;
     end;
 
