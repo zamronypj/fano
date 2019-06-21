@@ -108,11 +108,16 @@ implementation
     );
     begin
         inherited create();
-        fillDword(fHeader, sizeOf(FCGI_Header), 0);
+        //fillDword(fHeader, sizeOf(FCGI_Header), 0);
+
         fHeader.version := aVersion;
         fHeader.reqtype := aType;
         //FastCGI specification required Big-Endian
         fHeader.requestID := NToBE(aRequestId);
+        fHeader.contentLength := 0;
+        fHeader.paddingLength := 0;
+        fHeader.reserved :=0;
+
         fRequestId := aRequestId;
         fContentData := dataStream;
     end;
