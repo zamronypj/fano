@@ -399,6 +399,7 @@ uses
     begin
         fRecords[requestId].used := false;
         fRecords[requestId].env := nil;
+        fRecords[requestId].stdInStream := nil;
         for i := length(fRecords[requestId].fcgiRecords) - 1 downto 0 do
         begin
             fRecords[requestId].fcgiRecords[i] := nil;
