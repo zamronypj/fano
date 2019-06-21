@@ -66,8 +66,8 @@ implementation
         endRequestRec.appStatusB1 := (appStatus shr 8) and $ff;
         endRequestRec.appStatusB2 := (appStatus shr 16) and $ff;
         endRequestRec.appStatusB3 := (appStatus shr 24) and $ff;
-        fContentData.seek(0);
         fContentData.writeBuffer(endRequestRec, bytesToWrite);
+        fContentData.seek(0);
     end;
 
     constructor TFcgiEndRequest.create(
