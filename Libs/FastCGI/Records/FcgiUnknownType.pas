@@ -58,7 +58,7 @@ uses
     var reqBody : FCGI_UnknownTypeBody;
     begin
         inherited create(aVersion, aType, aRequestId, dataStream);
-        fillDword(reqBody, sizeof(FCGI_UnknownTypeBody), 0);
+        fillchar(reqBody, sizeof(FCGI_UnknownTypeBody), 0);
         reqBody._type := unknownType;
         fContentData.seek(0);
         fContentData.writeBuffer(reqBody, sizeof(FCGI_UnknownTypeBody));
