@@ -395,12 +395,13 @@ uses
      * @return true of request is removed
      *-----------------------------------------------*)
     function TFcgiRequestManager.remove(const requestId : word) : boolean;
-    var i : integer;
+    var i, len : integer;
     begin
         fRecords[requestId].used := false;
         fRecords[requestId].env := nil;
         fRecords[requestId].stdInStream := nil;
-        for i := length(fRecords[requestId].fcgiRecords) - 1 downto 0 do
+        len := length(fRecords[requestId].fcgiRecords);
+        for i := 0 to len - 1 do
         begin
             fRecords[requestId].fcgiRecords[i] := nil;
         end;
