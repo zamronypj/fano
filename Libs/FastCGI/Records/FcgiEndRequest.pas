@@ -60,7 +60,7 @@ implementation
     begin
         inherited create(aVersion, aType, aRequestId, dataStream);
         bytesToWrite := sizeOf(FCGI_EndRequestBody);
-        fillDword(endRequestRec, bytesToWrite, 0);
+        fillchar(endRequestRec, bytesToWrite, 0);
         endRequestRec.protocolStatus := protocolStatus;
         endRequestRec.appStatusB0 := appStatus and $ff;
         endRequestRec.appStatusB1 := (appStatus shr 8) and $ff;
