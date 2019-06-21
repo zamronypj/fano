@@ -32,6 +32,16 @@ type
         fRequestIdAware : IFcgiRequestIdAware;
 
         (*!------------------------------------------------
+         * write string to FCGI_STDOUT
+         *-----------------------------------------------
+         * @param str, string to output
+         * @param requestId, FastCGI record request Id
+         * @param stream, stream to write
+         * @return current instance
+         *-----------------------------------------------*)
+        function writeStdOut(const str : string; const requestId : word; const stream : IStreamAdapter) : IStdOut;
+
+        (*!------------------------------------------------
          * mark end of request
          *-----------------------------------------------
          * @param stream, stream to write
@@ -118,6 +128,25 @@ uses
     end;
 
     (*!------------------------------------------------
+     * write string to FCGI_STDOUT
+     *-----------------------------------------------
+     * @param str, string to output
+     * @param requestId, FastCGI record request Id
+     * @param stream, stream to write
+     * @return current instance
+     *-----------------------------------------------*)
+    function TFcgiStdOutWriter.writeStdOut(const str : string; const requestId : word; const stream : IStreamAdapter) : IStdOut;
+    var arecord : IFcgiRecord;
+    begin
+        arecord := TFcgiStdOut.create(
+            TStreamAdapter.create(TStringStream.create(str)),
+            requestId
+        );
+        arecord.write(stream);
+        result := self;
+    end;
+
+    (*!------------------------------------------------
      * mark end of request
      *-----------------------------------------------
      * @param stream, stream to write
@@ -148,11 +177,8 @@ uses
      *-----------------------------------------------*)
     function TFcgiStdOutWriter.writeStream(const stream : IStreamAdapter; const str : string) : IStdOut;
     const MAX_STR_PER_RECORD = 32 * 1024;
-    var arecord : IFcgiRecord;
-        i, totChunk, excess, len, astart, acount : integer;
+    var i, totChunk, excess, len, astart, acount : integer;
         requestId : word;
-        chunkedStr : string;
-        dataStream : IStreamAdapter;
     begin
         //get request id associated with current complete request
         requestId := fRequestIdAware.getRequestId();
@@ -169,10 +195,7 @@ uses
         for i := 0 to totChunk-1 do
         begin
             acount := min(MAX_STR_PER_RECORD, len);
-            chunkedStr := midStr(str, astart, acount);
-            dataStream := TStreamAdapter.create(TStringStream.create(chunkedStr));
-            arecord := TFcgiStdOut.create(dataStream, requestId);
-            arecord.write(stream);
+            writeStdOut(midStr(str, astart, acount), requestId, stream);
             inc(astart, acount);
         end;
 
