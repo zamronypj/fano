@@ -377,7 +377,7 @@ uses
             begin
                 //increase slot to include requestId in index + 10 additional slot
                 //to avoid to many setLength call
-                setLength(fRecords, requestId - totalRecord + 10);
+                setLength(fRecords, requestId + 1 + 10);
             end;
             fRecords[requestId].used := true;
             setLength(fRecords[requestId].fcgiRecords,1);
