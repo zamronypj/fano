@@ -58,10 +58,16 @@ uses
     var reqBody : FCGI_UnknownTypeBody;
     begin
         inherited create(aVersion, aType, aRequestId, dataStream);
-        fillchar(reqBody, sizeof(FCGI_UnknownTypeBody), 0);
         reqBody._type := unknownType;
-        fContentData.seek(0);
+        reqBody.reserved[0] := 0;
+        reqBody.reserved[1] := 0;
+        reqBody.reserved[2] := 0;
+        reqBody.reserved[3] := 0;
+        reqBody.reserved[4] := 0;
+        reqBody.reserved[5] := 0;
+        reqBody.reserved[6] := 0;
         fContentData.writeBuffer(reqBody, sizeof(FCGI_UnknownTypeBody));
+        fContentData.seek(0);
     end;
 
     constructor TFcgiUnknownType.create(

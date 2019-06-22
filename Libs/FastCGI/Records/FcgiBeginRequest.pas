@@ -68,6 +68,7 @@ implementation
         beginRequestRec.reserved[3] := 0;
         beginRequestRec.reserved[4] := 0;
         fContentData.writeBuffer(beginRequestRec, bytesToWrite);
+        fContentData.seek(0);
     end;
 
     constructor TFcgiBeginRequest.create(
