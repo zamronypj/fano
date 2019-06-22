@@ -90,7 +90,10 @@ uses
     begin
         if (assigned(fDataListener)) then
         begin
-            fDataListener.handleData(TStreamAdapter.create(data, false), sender, self);
+            if fDataListener.handleData(TStreamAdapter.create(data, false), sender, self) then
+            begin
+                freeAndNil(data);
+            end;
         end;
     end;
 
@@ -102,10 +105,6 @@ uses
 
     function TBaseWorkerServer.close() : boolean;
     begin
-        if assigned(fServer) then
-        begin
-            fServer.close();
-        end;
         result := true;
     end;
 
