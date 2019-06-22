@@ -226,7 +226,7 @@ resourcestring
         const streamCloser : ICloseable
     ) : boolean;
     begin
-        fcgiProcessor.process(stream);
+        fcgiProcessor.process(stream, streamCloser);
         result := true;
     end;
 
