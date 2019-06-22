@@ -15,6 +15,7 @@ interface
 uses
 
     RunnableIntf,
+    CloseableIntf,
     DependencyContainerIntf,
     AppImpl,
     DispatcherIntf,
