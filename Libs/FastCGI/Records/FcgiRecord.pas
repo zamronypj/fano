@@ -150,7 +150,7 @@ implementation
         writeln(
             'Destroy Type=',
             fHeader.reqtype,
-            ' Content Length='
+            ' Content Length=',
             BEtoN(fHeader.contentLength)
         );
         inherited destroy();
