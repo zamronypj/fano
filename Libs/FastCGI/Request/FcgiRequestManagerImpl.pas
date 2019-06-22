@@ -213,8 +213,6 @@ uses
         fRecords[indx].stdInStream := nil;
         for j := fRecords[indx].fcgiRecords.count - 1 downto 0 do
         begin
-            arec := fRecords[indx].fcgiRecords[j];
-            arec := nil;
             fRecords[indx].fcgiRecords.delete(j);
         end;
         fRecords[indx].fcgiRecords.free();
