@@ -395,7 +395,7 @@ uses
      * @return true of request is removed
      *-----------------------------------------------*)
     function TFcgiRequestManager.remove(const requestId : word) : boolean;
-    var i, len : integer;
+    //var i, len : integer;
     begin
         fRecords[requestId].used := false;
         fRecords[requestId].env := nil;
