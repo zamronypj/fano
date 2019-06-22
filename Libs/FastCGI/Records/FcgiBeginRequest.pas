@@ -97,6 +97,6 @@ implementation
 
     function TFcgiBeginRequest.role() : byte;
     begin
-        result
+        result := fRole;
     end;
 end.
