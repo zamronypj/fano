@@ -24,7 +24,7 @@ uses
 
 type
 
-    TFcgiRecordList = specialize TFPGInterfacedList<IFcgiRecord> ;
+    TFcgiRecordList = specialize TFPGInterfacedObjectList<IFcgiRecord>;
     TRequestRecord = record
         used : boolean;
         //store FCGI_STDIN stream completeness
