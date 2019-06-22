@@ -401,7 +401,7 @@ uses
         fRecords[requestId].env := nil;
         fRecords[requestId].stdInStream := nil;
         len := length(fRecords[requestId].fcgiRecords);
-        for i := 0 to len - 1 do
+        for i := len -1 downto 0 do
         begin
            fRecords[requestId].fcgiRecords[i] := nil;
         end;
