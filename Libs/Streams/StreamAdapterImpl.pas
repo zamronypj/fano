@@ -152,6 +152,7 @@ implementation
 
 uses
 
+    sysutils,
     math,
     EInvalidStreamImpl;
 
@@ -190,7 +191,7 @@ resourcestring
         inherited destroy();
         if (isOwned) then
         begin
-            actualStream.free();
+            freeAndNil(actualStream);
         end;
     end;
 
