@@ -19,17 +19,19 @@ uses
     FcgiRecordIntf,
     StreamAdapterIntf,
     StreamAdapterCollectionFactoryIntf,
-    FcgiRequestManagerIntf;
+    FcgiRequestManagerIntf,
+    fgl;
 
 type
 
+    TFcgiRecordList = specialize TFPGInterfacedList<IFcgiRecord> ;
     TRequestRecord = record
         used : boolean;
         //store FCGI_STDIN stream completeness
         fcgiStdInComplete : boolean;
         //store FCGI_PARAMS stream completeness
         fcgiParamsComplete : boolean;
-        fcgiRecords : array of IFcgiRecord;
+        fcgiRecords : TFcgiRecordList;
 
         stdInStream : IStreamAdapter;
         env : ICGIEnvironment;
@@ -195,21 +197,35 @@ uses
         fRecords[requestId].used := false;
         fRecords[requestId].fcgiStdInComplete := false;
         fRecords[requestId].fcgiParamsComplete := false;
-        fRecords[requestId].env := nil;
-        fRecords[requestId].stdInStream := nil;
-        setLength(fRecords[requestId].fcgiRecords, 0);
+        if (assigned(fRecords[requestId].env)) then
+        begin
+            clearFastCgiRecords(requestId);
+        end;
+        fRecords[requestId].fcgiRecords := TFcgiRecordList.create();
+    end;
+
+    procedure TFcgiRequestManager.clearFastCgiRecords(const indx : integer);
+    var j: integer;
+        arec : IFcgiRecord;
+    begin
+        fRecords[indx].env := nil;
+        fRecords[indx].stdInStream := nil;
+        for j := fRecords[indx].fcgiRecords.count - 1 downto 0 do
+        begin
+            arec := fRecords[indx].fcgiRecords[j];
+            arec := nil;
+            fRecords[indx].fcgiRecords.delete(j);
+        end;
+        fRecords[indx].fcgiRecords.free();
+        fRecords[indx].fcgiRecords := nil;
     end;
 
     procedure TFcgiRequestManager.clearRecords();
-    var i, j: integer;
+    var i: integer;
     begin
         for i := length(fRecords) - 1 downto 0 do
         begin
-            for j := length(fRecords[i].fcgiRecords) - 1 downto 0 do
-            begin
-                fRecords[i].fcgiRecords[j] := nil;
-            end;
-            setLength(fRecords[i].fcgiRecords, 0);
+            clearFastCgiRecords(i);
         end;
     end;
 
@@ -250,7 +266,7 @@ uses
         rec : IFcgiRecord;
     begin
         coll := fStreamCollectionFactory.build();
-        len := length(fRecords[requestId].fcgiRecords);
+        len := fRecords[requestId].fcgiRecords.count;
         for i := 0 to len - 1 do
         begin
             rec := fRecords[requestId].fcgiRecords[i];
@@ -363,25 +379,19 @@ uses
 
         if (has(requestId)) then
         begin
-            totalRecord := length(fRecords[requestId].fcgiRecords);
-            setLength(fRecords[requestId].fcgiRecords, totalRecord + 1);
-            fRecords[requestId].fcgiRecords[totalRecord] := rec;
+            fRecords[requestId].fcgiRecords.add(rec);
         end else
         begin
             totalRecord := length(fRecords);
-            if (requestId < totalRecord) then
-            begin
-                //reuse slot
-                initSingleRecord(requestId);
-            end else
+            if (requestId >= totalRecord) then
             begin
                 //increase slot to include requestId in index + 10 additional slot
                 //to avoid to many setLength call
                 setLength(fRecords, requestId + 1 + 10);
             end;
+            initSingleRecord(requestId);
             fRecords[requestId].used := true;
-            setLength(fRecords[requestId].fcgiRecords,1);
-            fRecords[requestId].fcgiRecords[0] := rec;
+            fRecords[requestId].fcgiRecords.add(rec);
         end;
 
         markCompleteness(rec);
@@ -395,31 +405,8 @@ uses
      * @return true of request is removed
      *-----------------------------------------------*)
     function TFcgiRequestManager.remove(const requestId : word) : boolean;
-    var i, len : integer;
-        arec: IFcgiRecord;
     begin
-        fRecords[requestId].used := false;
-        fRecords[requestId].env := nil;
-        fRecords[requestId].stdInStream := nil;
-        len := length(fRecords[requestId].fcgiRecords);
-        for i := 0 to len-1 do
-        begin
-            arec := fRecords[requestId].fcgiRecords[i];
-            writeln(
-                'aaa Id=',
-                arec.getRequestId(),
-                ' Type=',
-                arec.getType(),
-                ' Content Length=',
-                arec.getContentLength()
-            );
-        end;
-
-        for i := len -1 downto 0 do
-        begin
-           fRecords[requestId].fcgiRecords[i] := nil;
-        end;
-        setLength(fRecords[requestId].fcgiRecords, 0);
+        initSingleRecord(requestId);
         result := true;
     end;
 
