@@ -270,7 +270,7 @@ uses
      *-----------------------------------------------*)
     function TFcgiRequestManager.keepConnection(const requestId : word) : boolean;
     begin
-        result := fRecords[requestId].keepOpen;
+        result := fRecords[requestId].keepConnection;
     end;
 
     (*!------------------------------------------------
