@@ -73,9 +73,14 @@ type
          *-----------------------------------------------
          * @param stream, stream of socket
          * @param context, sender i.e, TSocketServer instance
-         * @return true request is handled
+         * @param streamCloser, instance that can close stream if required
+         * @return true if data is handled
          *-----------------------------------------------*)
-        function handleData(const stream : IStreamAdapter; const context : TObject) : boolean;
+        function handleData(
+            const stream : IStreamAdapter;
+            const context : TObject;
+            const streamCloser : ICloseable
+        ) : boolean;
 
         (*!------------------------------------------------
          * FastCGI request is ready
@@ -211,8 +216,14 @@ resourcestring
      * @param stream, socket stream
      * @param context, additional related data related,
      *        mostly contain sender (if any)
+     * @param streamCloser, instance that can close stream if required
+     * @return true if data is handled
      *-----------------------------------------------*)
-    function TFastCGIWebApplication.handleData(const stream : IStreamAdapter; const context : TObject) : boolean;
+    function TFastCGIWebApplication.handleData(
+        const stream : IStreamAdapter;
+        const context : TObject;
+        const streamCloser : ICloseable
+    ) : boolean;
     begin
         fcgiProcessor.process(stream);
         result := true;

@@ -15,6 +15,7 @@ interface
 
 uses
 
+    CloseableIntf,
     StreamAdapterIntf;
 
 type
@@ -33,9 +34,14 @@ type
         *-----------------------------------------------
         * @param stream, stream that store data
         * @param context, additional data related to stream
+        * @param streamCloser, instance that can close stream if required
         * @return true if data is handled
         *-----------------------------------------------*)
-        function handleData(const stream : IStreamAdapter; const context : TObject) : boolean;
+        function handleData(
+            const stream : IStreamAdapter;
+            const context : TObject;
+            const streamCloser : ICloseable
+        ) : boolean;
 
     end;
 

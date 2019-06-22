@@ -17,6 +17,7 @@ uses
 
     fastcgi,
     StreamAdapterIntf,
+    FcgiBeginRequestIntf,
     FcgiRecord;
 
 type
@@ -26,7 +27,10 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TFcgiBeginRequest = class(TFcgiRecord)
+    TFcgiBeginRequest = class(TFcgiRecord, IFcgiBeginRequest)
+    private
+        fFlag : byte;
+        fRole : byte;
     public
         constructor create(
             const aVersion : byte;
@@ -43,6 +47,9 @@ type
             const role : byte = FCGI_RESPONDER;
             const flag: byte = 0
         );
+
+        function keepConnection() : boolean;
+        function role() : byte;
     end;
 
 implementation
@@ -69,6 +76,8 @@ implementation
         beginRequestRec.reserved[4] := 0;
         fContentData.writeBuffer(beginRequestRec, bytesToWrite);
         fContentData.seek(0);
+        fFlag := flag;
+        fRole : role;
     end;
 
     constructor TFcgiBeginRequest.create(
@@ -79,5 +88,15 @@ implementation
     );
     begin
         create(FCGI_VERSION_1, FCGI_BEGIN_REQUEST, requestId, dataStream, role, flag);
+    end;
+
+    function TFcgiBeginRequest.keepConnection() : boolean;
+    begin
+        result := ((fFlag and FCGI_KEEP_CONN) = FCGI_KEEP_CONN);
+    end;
+
+    function TFcgiBeginRequest.role() : byte;
+    begin
+        result
     end;
 end.

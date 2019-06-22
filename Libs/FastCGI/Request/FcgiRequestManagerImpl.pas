@@ -27,6 +27,7 @@ type
     TFcgiRecordList = specialize TFPGInterfacedObjectList<IFcgiRecord>;
     TRequestRecord = record
         used : boolean;
+        keepConnection : boolean;
         //store FCGI_STDIN stream completeness
         fcgiStdInComplete : boolean;
         //store FCGI_PARAMS stream completeness
@@ -115,6 +116,14 @@ type
         function complete(const requestId : word) : boolean;
 
         (*!------------------------------------------------
+         * test if web server ask to keep connection open
+         *-----------------------------------------------
+         * @param requestId, request id to check
+         * @return true if request identified by id need to be keep open
+         *-----------------------------------------------*)
+        function keepConnection(const requestId : word) : boolean;
+
+        (*!------------------------------------------------
          * get data from all FCGI_STDIN identified by request id
          *-----------------------------------------------
          * @param requestId, request id
@@ -155,6 +164,7 @@ uses
     StreamAdapterAwareIntf,
     StreamAdapterCollectionIntf,
     EnvironmentFactoryIntf,
+    FcgiBeginRequestIntf,
     FcgiEnvironmentFactoryImpl,
     EInvalidFcgiRequestIdImpl;
 
@@ -196,6 +206,7 @@ uses
     procedure TFcgiRequestManager.initSingleRecord(const requestId : word);
     begin
         fRecords[requestId].used := false;
+        fRecords[requestId].keepConnection := false;
         fRecords[requestId].fcgiStdInComplete := false;
         fRecords[requestId].fcgiParamsComplete := false;
         if (assigned(fRecords[requestId].env)) then
@@ -249,6 +260,17 @@ uses
     begin
         result := fRecords[requestId].fcgiStdInComplete and
             fRecords[requestId].fcgiParamsComplete;
+    end;
+
+    (*!------------------------------------------------
+     * test if web server ask to keep connection open
+     *-----------------------------------------------
+     * @param requestId, request id to check
+     * @return true if request identified by id need to be keep open
+     *-----------------------------------------------*)
+    function TFcgiRequestManager.keepConnection(const requestId : word) : boolean;
+    begin
+        result := fRecords[requestId].keepOpen;
     end;
 
     (*!------------------------------------------------
@@ -366,15 +388,22 @@ uses
     var requestId : word;
         totalRecord : integer;
         hasRequest : boolean;
+        beginReq :IFcgiBeginRequest;
     begin
         requestId := rec.getRequestId();
         hasRequest := has(requestId);
         //if we received FCGI_BEGIN_REQUEST, do some test
-        if (rec.getType() = FCGI_BEGIN_REQUEST) and hasRequest then
+        if rec.getType() = FCGI_BEGIN_REQUEST then
         begin
-            //something is very wrong, requestId must not exists when
-            //begin request
-            raise EInvalidFcgiRequestId.createFmt('Invalid request id %d', [requestId]);
+            if hasRequest then
+            begin
+                //something is very wrong, requestId must not exists when
+                //begin request
+                raise EInvalidFcgiRequestId.createFmt('Invalid request id %d', [requestId]);
+            end;
+
+            beginReq := rec as IFcgiBeginRequest;
+            fRecords[requestId].keepConnection := beginReq.keepConnection();
         end;
 
         if not hasRequest then

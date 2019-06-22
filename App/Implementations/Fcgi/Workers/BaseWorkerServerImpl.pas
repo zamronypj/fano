@@ -21,7 +21,8 @@ uses
     InjectableObjectImpl,
     DataAvailListenerIntf,
     RunnableIntf,
-    RunnableWithDataNotifIntf;
+    RunnableWithDataNotifIntf,
+    CloseableIntf;
 
 type
 
@@ -30,7 +31,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TBaseWorkerServer = class(TInjectableObject, IRunnableWithDataNotif)
+    TBaseWorkerServer = class(TInjectableObject, IRunnableWithDataNotif, ICloseable)
     protected
         fDataListener : IDataAvailListener;
         fServer : TSocketServer;
@@ -50,6 +51,7 @@ type
         function setDataAvailListener(const dataListener : IDataAvailListener) : IRunnableWithDataNotif;
 
         function run() : IRunnable;
+        function close() : boolean;
     end;
 
 implementation
@@ -88,7 +90,7 @@ uses
     begin
         if (assigned(fDataListener)) then
         begin
-            fDataListener.handleData(TStreamAdapter.create(data, false), sender);
+            fDataListener.handleData(TStreamAdapter.create(data, false), sender, self);
         end;
     end;
 
@@ -97,4 +99,14 @@ uses
         fServer.startAccepting();
         result := self as IRunnable;
     end;
+
+    function TBaseWorkerServer.close() : boolean;
+    begin
+        if assigned(fServer) then
+        begin
+            fServer.close();
+        end;
+        result := true;
+    end;
+
 end.

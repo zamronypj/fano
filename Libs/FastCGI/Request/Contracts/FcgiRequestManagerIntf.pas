@@ -48,6 +48,14 @@ type
         function complete(const requestId : word) : boolean;
 
         (*!------------------------------------------------
+         * test if web server ask to keep connection open
+         *-----------------------------------------------
+         * @param requestId, request id to check
+         * @return true if request identified by id need to be keep open
+         *-----------------------------------------------*)
+        function keepConnection(const requestId : word) : boolean;
+
+        (*!------------------------------------------------
          * get data from all FCGI_STDIN identified by request id
          *-----------------------------------------------
          * @param requestId, request id

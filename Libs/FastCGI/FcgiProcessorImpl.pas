@@ -41,7 +41,12 @@ type
         //store request id that is ready to be served
         fCompleteRequestId : word;
 
-        procedure processBuffer(const stream : IStreamAdapter; const buffer : pointer; const bufferSize : ptrUint);
+        procedure processBuffer(
+            const stream : IStreamAdapter;
+            const streamCloser : ICloseable;
+            const buffer : pointer;
+            const bufferSize : ptrUint
+        );
     public
         (*!-----------------------------------------------
          * constructor
@@ -54,15 +59,22 @@ type
             const requestMgr : IFcgiRequestManager
         );
 
+        (*!-----------------------------------------------
+         * destructor
+         *-----------------------------------------------*)
         destructor destroy(); override;
 
-        (*!------------------------------------------------
-         * process request stream
-         *-----------------------------------------------
-         * @return true if all data from web server is ready to
-         * be handle by application (i.e, environment, STDIN already parsed)
+        (*!-----------------------------------------------
+         * process stream and parse for FCGI records until stream
+         * is exhausted
+         *------------------------------------------------
+         * @param stream socket stream
+         * @param streamClose, instance which can close stream
          *-----------------------------------------------*)
-        procedure process(const stream : IStreamAdapter);
+        procedure process(
+            const stream : IStreamAdapter;
+            const streamCloser : ICloseable;
+        );
 
         (*!------------------------------------------------
          * set listener to be notified weh request is ready
@@ -126,12 +138,19 @@ uses
     (*!-----------------------------------------------
      * parse stream for FCGI records
      *------------------------------------------------
+     * @param stream socket stream
+     * @param streamClose, instance which can close stream
      * @param buffer, buffer where data from socket is stored
      * @param bufferSize, size of buffer where data from socket is stored
      * @return boolean true when FCGI_PARAMS and FCGI_STDIN
      *         stream is complete otherwise false
      *-----------------------------------------------*)
-    procedure TFcgiProcessor.processBuffer(const stream : IStreamAdapter; const buffer : pointer; const bufferSize : ptrUint);
+    procedure TFcgiProcessor.processBuffer(
+        const stream : IStreamAdapter;
+        const streamCloser : ICloseable;
+        const buffer : pointer;
+        const bufferSize : ptrUint
+    );
     var afcgiRec : IFcgiRecord;
         requestId : word;
         handled : boolean;
@@ -152,9 +171,13 @@ uses
                          fcgiRequestMgr.getEnvironment(requestId),
                          fcgiRequestMgr.getStdInStream(requestId)
                     );
-                    handled := true;
                     if handled then
                     begin
+                        if not fcgiRequestMgr.keepConnection(requestId) then
+                        begin
+                            streamCloser.close();
+                        end;
+
                         fcgiRequestMgr.remove(requestId);
                     end;
                 end;
@@ -167,8 +190,9 @@ uses
      * is exhausted
      *------------------------------------------------
      * @param stream socket stream
+     * @param streamClose, instance which can close stream
      *-----------------------------------------------*)
-    procedure TFcgiProcessor.process(const stream : IStreamAdapter);
+    procedure TFcgiProcessor.process(const stream : IStreamAdapter; const streamCloser : ICloseable);
     var bufPtr : pointer;
         bufSize  : ptrUint;
         streamEmpty : boolean;
@@ -177,7 +201,7 @@ uses
             streamEmpty := fcgiParser.readRecord(stream, bufPtr, bufSize);
             if (bufPtr <> nil) and (bufSize > 0) then
             begin
-                processBuffer(stream, bufPtr, bufSize);
+                processBuffer(stream, streamCloser, bufPtr, bufSize);
             end;
         until streamEmpty;
     end;
