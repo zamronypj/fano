@@ -400,11 +400,11 @@ uses
         fRecords[requestId].used := false;
         fRecords[requestId].env := nil;
         fRecords[requestId].stdInStream := nil;
-        len := length(fRecords[requestId].fcgiRecords);
-        for i := 0 to len - 1 do
-        begin
-            fRecords[requestId].fcgiRecords[i] := nil;
-        end;
+//        len := length(fRecords[requestId].fcgiRecords);
+//        for i := 0 to len - 1 do
+//        begin
+//            fRecords[requestId].fcgiRecords[i] := nil;
+//        end;
         setLength(fRecords[requestId].fcgiRecords, 0);
         result := true;
     end;
