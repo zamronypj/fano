@@ -365,20 +365,19 @@ uses
     function TFcgiRequestManager.add(const rec : IFcgiRecord) : IFcgiRequestManager;
     var requestId : word;
         totalRecord : integer;
+        hasRequest : boolean;
     begin
         requestId := rec.getRequestId();
+        hasRequest := has(requestId);
         //if we received FCGI_BEGIN_REQUEST, do some test
-        if (rec.getType() = FCGI_BEGIN_REQUEST) and has(requestId) then
+        if (rec.getType() = FCGI_BEGIN_REQUEST) and hasRequest then
         begin
             //something is very wrong, requestId must not exists when
             //begin request
             raise EInvalidFcgiRequestId.createFmt('Invalid request id %d', [requestId]);
         end;
 
-        if (has(requestId)) then
-        begin
-            fRecords[requestId].fcgiRecords.add(rec);
-        end else
+        if not hasRequest then
         begin
             totalRecord := length(fRecords);
             if (requestId >= totalRecord) then
@@ -389,8 +388,8 @@ uses
             end;
             initSingleRecord(requestId);
             fRecords[requestId].used := true;
-            fRecords[requestId].fcgiRecords.add(rec);
         end;
+        fRecords[requestId].fcgiRecords.add(rec);
 
         markCompleteness(rec);
         result := self;
