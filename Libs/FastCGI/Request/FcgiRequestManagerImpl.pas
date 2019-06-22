@@ -207,7 +207,6 @@ uses
 
     procedure TFcgiRequestManager.clearFastCgiRecords(const indx : integer);
     var j: integer;
-        arec : IFcgiRecord;
     begin
         fRecords[indx].env := nil;
         fRecords[indx].stdInStream := nil;
