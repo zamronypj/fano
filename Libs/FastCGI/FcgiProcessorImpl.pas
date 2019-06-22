@@ -147,11 +147,11 @@ uses
 
                 if assigned(fcgiRequestReadyListener) then
                 begin
-                    // handled := fcgiRequestReadyListener.ready(
-                    //     stream,
-                    //     fcgiRequestMgr.getEnvironment(requestId),
-                    //     fcgiRequestMgr.getStdInStream(requestId)
-                    // );
+                    handled := fcgiRequestReadyListener.ready(
+                         stream,
+                         fcgiRequestMgr.getEnvironment(requestId),
+                         fcgiRequestMgr.getStdInStream(requestId)
+                    );
                     handled := true;
                     if handled then
                     begin
