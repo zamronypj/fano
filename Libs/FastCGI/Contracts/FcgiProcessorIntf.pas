@@ -16,6 +16,7 @@ interface
 uses
 
     StreamAdapterIntf,
+    CloseableIntf,
     FcgiRequestReadyListenerIntf;
 
 type
@@ -32,7 +33,7 @@ type
         (*!------------------------------------------------
          * process request stream
          *-----------------------------------------------*)
-        procedure process(const stream : IStreamAdapter);
+        procedure process(const stream : IStreamAdapter; const streamCloser : ICloseable);
 
         (*!------------------------------------------------
          * get FastCGI StdIn stream for complete request
