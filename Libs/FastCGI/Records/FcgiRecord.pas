@@ -147,12 +147,6 @@ implementation
 
     destructor TFcgiRecord.destroy();
     begin
-        writeln(
-            'Destroy Type=',
-            fHeader.reqtype,
-            ' Content Length=',
-            BEtoN(fHeader.contentLength)
-        );
         inherited destroy();
         fContentData := nil;
     end;

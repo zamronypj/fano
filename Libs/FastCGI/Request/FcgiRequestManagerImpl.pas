@@ -396,11 +396,25 @@ uses
      *-----------------------------------------------*)
     function TFcgiRequestManager.remove(const requestId : word) : boolean;
     var i, len : integer;
+        arec: IFcgiRecord;
     begin
         fRecords[requestId].used := false;
         fRecords[requestId].env := nil;
         fRecords[requestId].stdInStream := nil;
         len := length(fRecords[requestId].fcgiRecords);
+        for i := 0 to len-1 do
+        begin
+            arec := fRecords[requestId].fcgiRecords[i];
+            writeln(
+                'aaa Id=',
+                arec.getRequestId(),
+                ' Type=',
+                arec.getType(),
+                ' Content Length=',
+                arec.getContentLength()
+            );
+        end;
+
         for i := len -1 downto 0 do
         begin
            fRecords[requestId].fcgiRecords[i] := nil;
