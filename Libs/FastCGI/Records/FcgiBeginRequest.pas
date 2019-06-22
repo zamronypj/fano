@@ -60,9 +60,13 @@ implementation
     begin
         inherited create(aVersion, aType, aRequestId, dataStream);
         bytesToWrite := sizeOf(FCGI_BeginRequestBody);
-        fillchar(beginRequestRec, bytesToWrite, 0);
         beginRequestRec.role := role;
         beginRequestRec.flags := flag;
+        beginRequestRec.reserved[0] := 0;
+        beginRequestRec.reserved[1] := 0;
+        beginRequestRec.reserved[2] := 0;
+        beginRequestRec.reserved[3] := 0;
+        beginRequestRec.reserved[4] := 0;
         fContentData.writeBuffer(beginRequestRec, bytesToWrite);
     end;
 
