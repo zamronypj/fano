@@ -52,6 +52,7 @@ type
 
         procedure initRecords();
         procedure initSingleRecord(const requestId : word);
+        procedure clearFastCgiRecords(const indx : integer);
         procedure clearRecords();
 
         (*!------------------------------------------------
