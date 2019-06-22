@@ -77,7 +77,7 @@ implementation
         fContentData.writeBuffer(beginRequestRec, bytesToWrite);
         fContentData.seek(0);
         fFlag := flag;
-        fRole : role;
+        fRole := role;
     end;
 
     constructor TFcgiBeginRequest.create(
