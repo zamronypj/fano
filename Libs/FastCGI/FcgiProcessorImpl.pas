@@ -74,7 +74,7 @@ type
          *-----------------------------------------------*)
         procedure process(
             const stream : IStreamAdapter;
-            const streamCloser : ICloseable;
+            const streamCloser : ICloseable
         );
 
         (*!------------------------------------------------
