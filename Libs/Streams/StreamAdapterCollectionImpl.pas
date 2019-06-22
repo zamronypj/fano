@@ -94,7 +94,6 @@ implementation
     begin
         for i:= coll.count-1 downto 0 do
         begin
-            coll[i] := nil;
             coll.delete(i);
         end;
     end;
