@@ -35,7 +35,6 @@ type
     TBaseWorkerServer = class(TInjectableObject, IRunnableWithDataNotif, ICloseable)
     private
         fDataListener : IDataAvailListener;
-        fCurrentStream : TSocketStream;
     protected
         fServer : TSocketServer;
 
@@ -74,14 +73,12 @@ uses
     begin
         fDataListener := nil;
         fServer := nil;
-        fCurrentStream := nil;
     end;
 
     destructor TBaseWorkerServer.destroy();
     begin
         inherited destroy();
         freeAndNil(fServer);
-        freeAndNil(fCurrentStream);
         fDataListener := nil;
     end;
 
@@ -100,12 +97,11 @@ uses
 
     procedure TBaseWorkerServer.DoConnect(Sender: TObject; Data: TSocketStream);
     begin
-        fCurrentStream := data;
         if (assigned(fDataListener)) then
         begin
             fDataListener.handleData(TStreamAdapter.create(data, false), sender, self);
         end;
-        freeAndNil(fCurrentStream);
+        freeAndNil(data);
     end;
 
     (*!------------------------------------------------
