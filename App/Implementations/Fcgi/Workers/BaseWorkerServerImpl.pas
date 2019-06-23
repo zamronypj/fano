@@ -14,6 +14,7 @@ interface
 
 
 uses
+
     Classes,
     SysUtils,
     Sockets,
@@ -32,8 +33,10 @@ type
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
     TBaseWorkerServer = class(TInjectableObject, IRunnableWithDataNotif, ICloseable)
-    protected
+    private
         fDataListener : IDataAvailListener;
+        fCurrentStream : TSocketStream;
+    protected
         fServer : TSocketServer;
 
         procedure DoConnect(Sender: TObject; Data: TSocketStream);
@@ -42,15 +45,22 @@ type
         destructor destroy(); override;
 
         (*!------------------------------------------------
-        * set instance of class that will be notified when
-        * data is available
-        *-----------------------------------------------
-        * @param dataListener, class that wish to be notified
-        * @return true current instance
-        *-----------------------------------------------*)
+         * set instance of class that will be notified when
+         * data is available
+         *-----------------------------------------------
+         * @param dataListener, class that wish to be notified
+         * @return true current instance
+         *-----------------------------------------------*)
         function setDataAvailListener(const dataListener : IDataAvailListener) : IRunnableWithDataNotif;
 
+        (*!------------------------------------------------
+         * Run socket server until terminated
+         *-----------------------------------------------
+         * @return current instance
+         *-----------------------------------------------*)
         function run() : IRunnable;
+
+
         function close() : boolean;
     end;
 
@@ -64,12 +74,14 @@ uses
     begin
         fDataListener := nil;
         fServer := nil;
+        fCurrentStream := nil;
     end;
 
     destructor TBaseWorkerServer.destroy();
     begin
         inherited destroy();
         freeAndNil(fServer);
+        freeAndNil(fCurrentStream);
         fDataListener := nil;
     end;
 
@@ -88,15 +100,18 @@ uses
 
     procedure TBaseWorkerServer.DoConnect(Sender: TObject; Data: TSocketStream);
     begin
+        fCurrentStream := data;
         if (assigned(fDataListener)) then
         begin
-            if fDataListener.handleData(TStreamAdapter.create(data, false), sender, self) then
-            begin
-                freeAndNil(data);
-            end;
+            fDataListener.handleData(TStreamAdapter.create(data, false), sender, self);
         end;
     end;
 
+    (*!------------------------------------------------
+     * Run socket server until terminated
+     *-----------------------------------------------
+     * @return current instance
+     *-----------------------------------------------*)
     function TBaseWorkerServer.run() : IRunnable;
     begin
         fServer.startAccepting();
@@ -105,6 +120,10 @@ uses
 
     function TBaseWorkerServer.close() : boolean;
     begin
+        if Assigned(fCurrentStream) then
+        begin
+            freeAndNil(fCurrentStream);
+        end;
         result := true;
     end;
 

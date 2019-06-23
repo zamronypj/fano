@@ -29,11 +29,22 @@ type
      *-----------------------------------------------*)
     TUnixWorkerServer = class(TBaseWorkerServer)
     public
+
+        (*!------------------------------------------------
+         * constructor
+         *-----------------------------------------------
+         * @param socketFilename, socket file to use
+         *-----------------------------------------------*)
         constructor create(const socketFilename: string);
     end;
 
 implementation
 
+    (*!------------------------------------------------
+     * constructor
+     *-----------------------------------------------
+     * @param socketFilename, socket file to use
+     *-----------------------------------------------*)
     constructor TUnixWorkerServer.create(const socketFilename: string);
     begin
         inherited create();

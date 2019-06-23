@@ -30,15 +30,28 @@ type
      *-----------------------------------------------*)
     TTcpWorkerServer = class(TBaseWorkerServer)
     public
-        constructor create(const hostname: string; const port: word);
+
+        (*!------------------------------------------------
+         * constructor
+         *-----------------------------------------------
+         * @param host, hostname/IP address where server listen
+         * @param port, TCP port where server listen
+         *-----------------------------------------------*)
+        constructor create(const host: string; const port: word);
     end;
 
 implementation
 
-    constructor TTcpWorkerServer.create(const hostname: string; const port: word);
+    (*!------------------------------------------------
+     * constructor
+     *-----------------------------------------------
+     * @param host, hostname/IP address where server listen
+     * @param port, TCP port where server listen
+     *-----------------------------------------------*)
+    constructor TTcpWorkerServer.create(const host: string; const port: word);
     begin
         inherited create();
-        fServer := TInetServer.create(hostName, port);
+        fServer := TInetServer.create(host, port);
         fServer.OnConnect := @DoConnect;
     end;
 
