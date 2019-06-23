@@ -236,7 +236,15 @@ uses
         end;
 
         repeat
-            bytesRead := stream.read(buf^, amountToRead);
+            try
+                bytesRead := stream.read(buf^, amountToRead);
+            except
+                on e : ESocketError do
+                begin
+                    streamEmpty := true;
+                end;
+            end;
+
             if (bytesRead > 0) then
             begin
                 dec(amountToRead, bytesRead);
