@@ -107,6 +107,7 @@ implementation
 uses
 
     fastcgi,
+    ssockets,
     EInvalidFcgiBufferImpl,
     EInvalidFcgiRecordTypeImpl,
     EInvalidFcgiHeaderLenImpl;
