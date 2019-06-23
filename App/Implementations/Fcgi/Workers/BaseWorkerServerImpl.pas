@@ -105,6 +105,7 @@ uses
         begin
             fDataListener.handleData(TStreamAdapter.create(data, false), sender, self);
         end;
+        freeAndNil(fCurrentStream);
     end;
 
     (*!------------------------------------------------
@@ -120,10 +121,6 @@ uses
 
     function TBaseWorkerServer.close() : boolean;
     begin
-        if Assigned(fCurrentStream) then
-        begin
-            freeAndNil(fCurrentStream);
-        end;
         result := true;
     end;
 

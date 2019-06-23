@@ -107,7 +107,6 @@ implementation
 uses
 
     fastcgi,
-    ssockets,
     EInvalidFcgiBufferImpl,
     EInvalidFcgiRecordTypeImpl,
     EInvalidFcgiHeaderLenImpl;
@@ -237,15 +236,7 @@ uses
         end;
 
         repeat
-            try
-                bytesRead := stream.read(buf^, amountToRead);
-            except
-                on e : ESocketError do
-                begin
-                    streamEmpty := true;
-                end;
-            end;
-
+            bytesRead := stream.read(buf^, amountToRead);
             if (bytesRead > 0) then
             begin
                 dec(amountToRead, bytesRead);
@@ -254,7 +245,7 @@ uses
             end else
             begin
                 streamEmpty := true;
-            end;;
+            end;
         until (amountToRead = 0) or streamEmpty;
     end;
 
