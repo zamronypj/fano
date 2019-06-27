@@ -58,6 +58,22 @@ type
          * @throws EKeyNotFound exception if not set
          *-----------------------------------------------*)
         function unset(const key : shortstring) : IKeyValuePair;
+
+        (*!------------------------------------------------
+         * get number of keys
+         *-----------------------------------------------
+         * @return number of keys
+         *-----------------------------------------------*)
+        function count() : integer;
+
+        (*!------------------------------------------------
+         * get key by index
+         *-----------------------------------------------
+         * @param index index to use
+         * @return key name
+         * @throws EKeyNotFound exception if not set
+         *-----------------------------------------------*)
+        function getKey(const indx : integer) : shortstring;
     end;
 
 implementation

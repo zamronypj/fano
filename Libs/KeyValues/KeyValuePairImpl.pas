@@ -89,6 +89,22 @@ type
         function unset(const key : shortstring) : IKeyValuePair;
 
         (*!------------------------------------------------
+         * get number of keys
+         *-----------------------------------------------
+         * @return number of keys
+         *-----------------------------------------------*)
+        function count() : integer;
+
+        (*!------------------------------------------------
+         * get key by index
+         *-----------------------------------------------
+         * @param index index to use
+         * @return key name
+         * @throws EKeyNotFound exception if not set
+         *-----------------------------------------------*)
+        function getKey(const indx : integer) : shortstring;
+
+        (*!------------------------------------------------
          * serialize key value
          *-----------------------------------------------
          * Note :
@@ -172,6 +188,28 @@ uses
     begin
         keyValueMap.remove(key);
         result := self;
+    end;
+
+    (*!------------------------------------------------
+     * get number of keys
+     *-----------------------------------------------
+     * @return number of keys
+     *-----------------------------------------------*)
+    function TKeyValuePair.count() : integer;
+    begin
+        result := keyValueMap.count;
+    end;
+
+    (*!------------------------------------------------
+     * get key by index
+     *-----------------------------------------------
+     * @param index index to use
+     * @return key name
+     * @throws EKeyNotFound exception if not set
+     *-----------------------------------------------*)
+    function TKeyValuePair.getKey(const indx : integer) : shortstring;
+    begin
+        result := keyValueMap.keys[indx];
     end;
 
     (*!------------------------------------------------

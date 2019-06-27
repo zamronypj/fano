@@ -12,6 +12,7 @@ interface
 {$MODE OBJFPC}
 
 uses
+
     RunnableIntf,
     DependencyContainerIntf,
     AppIntf,
@@ -27,7 +28,7 @@ type
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
     TFanoWebApplication = class(TInterfacedObject, IWebApplication, IRunnable)
-    private
+    protected
         dependencyContainer : IDependencyContainer;
         dispatcher : IDispatcher;
         environment : ICGIEnvironment;
@@ -52,7 +53,7 @@ type
          * @return true if application dependency succesfully
          * constructed
          *-----------------------------------------------*)
-        function initialize(const container : IDependencyContainer) : boolean;
+        function initialize(const container : IDependencyContainer) : boolean; virtual;
 
         (*!-----------------------------------------------
          * Build application route dispatcher
@@ -60,7 +61,6 @@ type
          * @param container dependency container
          *-----------------------------------------------*)
         procedure buildDispatcher(const container : IDependencyContainer);
-    protected
 
         (*!-----------------------------------------------
          * Build application dependencies
@@ -98,13 +98,14 @@ type
             const errHandler : IErrorHandler
         );
         destructor destroy(); override;
-        function run() : IRunnable;
+        function run() : IRunnable; virtual;
     end;
 
 implementation
 
 uses
-    sysutils,
+
+    SysUtils,
     ResponseIntf,
 
     ///exception-related units

@@ -15,3 +15,16 @@
 
 TFanoWebApplication = AppImpl.TFanoWebApplication;
 TSimpleWebApplication = SimpleAppImpl.TSimpleWebApplication;
+
+{----------------Begin FastCGI related-----------------------------}
+
+TTcpWorkerServer = TcpWorkerServerImpl.TTcpWorkerServer;
+
+{$IFDEF unix}
+TUnixWorkerServer = UnixWorkerServerImpl.TUnixWorkerServer;
+{$ENDIF}
+
+TFastCGIWebApplication = FastCGIAppImpl.TFastCGIWebApplication;
+TSimpleFastCGIWebApplication = SimpleFastCGIAppImpl.TSimpleFastCGIWebApplication;
+
+{----------------End FastCGI related-----------------------------}
