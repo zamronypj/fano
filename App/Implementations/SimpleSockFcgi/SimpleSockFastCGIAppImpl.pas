@@ -5,7 +5,7 @@
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
-unit SimpleFastCGIAppImpl;
+unit SimpleSockFastCGIAppImpl;
 
 interface
 
@@ -23,22 +23,19 @@ type
     (*!-----------------------------------------------
      * Base abstract class that implements IWebApplication
      * and provide basic default for easier setup for
-     * FastCGI web application as daemon using TCP
-     *------------------------------------------------------
+     * FastCGI web application using
+     * webserver bound socket FCGI_LISTENSOCK_FILENO.
+     *-----------------------------------------------------
      * This is base class you need for FastCGI web application
-     * that is run as daemon with Apache and mod_proxy_fcgi module
-     * or nginx
+     * that is invoked by web server such as Apache with mod_fcgid module
      *------------------------------------------------------
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TSimpleFastCGIWebApplication = class(TBaseSimpleFastCGIWebApplication)
+    TSimpleSockFastCGIWebApplication = class(TBaseSimpleFastCGIWebApplication)
     public
-
       (*!-----------------------------------------------
        * constructor
        *------------------------------------------------
-       * @param hostname hostname where daemon lister
-       * @param port port where daemon lister
        * @param container dependency container
        * @param errHandler error handler
        * @param dispatcher, dspatcher instance instance
@@ -47,8 +44,6 @@ type
        * default service provider
        *-----------------------------------------------*)
       constructor create(
-          const hostname : string;
-          const port : word;
           const container : IDependencyContainer = nil;
           const errHandler : IErrorHandler = nil;
           const dispatcherInst : IDispatcher = nil
@@ -60,13 +55,11 @@ implementation
 
 uses
 
-    TcpWorkerServerImpl;
+    ListenSockWorkerServerImpl;
 
     (*!-----------------------------------------------
      * constructor
      *------------------------------------------------
-     * @param hostname hostname where daemon lister
-     * @param port port where daemon lister
      * @param container dependency container
      * @param errHandler error handler
      * @param dispatcher, dspatcher instance instance
@@ -74,16 +67,14 @@ uses
      * This is provided to simplify thing by providing
      * default service provider
      *-----------------------------------------------*)
-    constructor TSimpleFastCGIWebApplication.create(
-        const hostname : string;
-        const port : word;
+    constructor TSimpleSockFastCGIWebApplication.create(
         const container : IDependencyContainer = nil;
         const errHandler : IErrorHandler = nil;
         const dispatcherInst : IDispatcher = nil
     );
     begin
         inherited create(
-            TTcpWorkerServer.create(hostname, port),
+            TListenSockWorkerServer.create(),
             container,
             errHandler,
             dispatcherInst
