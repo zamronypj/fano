@@ -26,17 +26,27 @@ type
      * bind and listen on its own
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+     * @credit https://github.com/graemeg/freepascal/blob/master/packages/fcl-net/src/ssockets.pp
      *-----------------------------------------------*)
     TBoundSocketServer = class(TSocketServer)
+    private
+        fAccepting : boolean;
     protected
         procedure bind(); override;
         function accept(): longint; override;
         function getConnection() : TSocketStream; override;
     public
         procedure listen();
+        procedure startAccepting();
+        procedure stopAccepting(doAbort : boolean = false);
     end;
 
 implementation
+
+{$IFDEF UNIX}
+uses
+    baseunix;
+{$ENDIF}
 
 resourcestring
 
@@ -65,6 +75,46 @@ resourcestring
         end;
     end;
 
+    function TBoundSocketServer.accept(): longint;
+    var r : longint;
+    begin
+        {$IFDEF UNIX}
+            r := ESysEINTR;
+            while (r = ESysEINTR) do
+            begin
+                result := sockets.fpAccept(socket, nil, nil);
+                r := SocketError;
+            end;
+        {$ELSE}
+            result := sockets.fpAccept(socket, nil, nil);
+            r := SocketError;
+        {$ENDIF}
+
+        {$IFDEF UNIX}
+            if (result <0 ) then
+            begin
+                if r = ESysEWOULDBLOCK then
+                begin
+                    raise ESocketError.Create(seAcceptWouldBlock,[socket]);
+                end;
+            end;
+        {$ENDIF}
+
+        if (result < 0) or not fAccepting then
+        begin
+            if (result >= 0) then
+            begin
+                closeSocket(result);
+            end;
+
+            // Do not raise an error if we've stopped accepting.
+            if fAccepting then
+            begin
+                raise ESocketError.Create(seAcceptFailed,[Socket,SocketError]);
+            end;
+        end;
+    end;
+
     procedure TBoundSocketServer.listen();
     begin
         //socket is assumed already bound and listening, so do nothing here
@@ -80,7 +130,7 @@ resourcestring
             raise ESocketError.Create(seAcceptFailed,[Socket,SocketError]);
         end;
 
-        if FAccepting and DoConnectQuery(newSocket) then
+        if fAccepting and DoConnectQuery(newSocket) then
         begin
             result := SockToStream(newSocket);
         end else
@@ -92,5 +142,17 @@ resourcestring
     function TBoundSocketServer.SockToStream(aSocket : longint) : TSocketStream;
     begin
         result := TSocketStream.create(aSocket);
+    end;
+
+    procedure TBoundSocketServer.startAccepting();
+    begin
+        fAccepting := true;
+        inherited startAccepting();
+    end;
+
+    procedure TBoundSocketServer.stopAccepting(doAbort : boolean = false);
+    begin
+        inherited stopAccepting(doAbort);
+        fAccepting := false;
     end;
 end.
