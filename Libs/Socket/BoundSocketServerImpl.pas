@@ -35,7 +35,7 @@ type
         procedure bind(); override;
         function accept(): longint; override;
         function getConnection() : TSocketStream; override;
-        function SockToStream(aSocket : longint) : TSocketStream;
+        function SockToStream(aSocket : longint) : TSocketStream; override;
     public
         procedure listen();
         procedure startAccepting();
