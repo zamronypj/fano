@@ -71,7 +71,7 @@ uses
      * This is provided to simplify thing by providing
      * default service provider
      *-----------------------------------------------*)
-    constructor TSimpleFastCGIWebApplication.create(
+    constructor TSimpleUnixFastCGIWebApplication.create(
         const socketFilename : string;
         const container : IDependencyContainer = nil;
         const errHandler : IErrorHandler = nil;
