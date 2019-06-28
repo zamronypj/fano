@@ -31,7 +31,7 @@ type
     protected
         procedure bind(); override;
     public
-        procedure listen(); override;
+        procedure listen();
     end;
 
 implementation
