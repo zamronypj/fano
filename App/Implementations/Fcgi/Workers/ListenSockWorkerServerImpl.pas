@@ -49,7 +49,7 @@ uses
     constructor TListenSockWorkerServer.create();
     begin
         inherited create();
-        fServer := TBoundSocketServer.create(FCGI_LISTENSOCK_FILENO);
+        fServer := TBoundSocketServer.create(FCGI_LISTENSOCK_FILENO, nil);
         fServer.OnConnect := @DoConnect;
     end;
 
