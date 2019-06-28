@@ -86,6 +86,7 @@ uses
      * default service provider
      *-----------------------------------------------*)
     constructor TBaseSimpleFastCGIWebApplication.create(
+        const workerServer : IRunnableWithDataNotif;
         const container : IDependencyContainer = nil;
         const errHandler : IErrorHandler = nil;
         const dispatcherInst : IDispatcher = nil
