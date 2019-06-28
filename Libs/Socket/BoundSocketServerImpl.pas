@@ -62,21 +62,6 @@ resourcestring
     end;
 
     function TBoundSocketServer.accept(): longint;
-    begin
-        result := sockets.fpAccept(socket, nil, nil);
-        If result < 0 then
-        begin
-            if SocketError = ESysEWOULDBLOCK then
-            begin
-                raise ESocketError.Create(seAcceptWouldBlock,[socket]);
-            end else
-            begin
-                raise ESocketError.Create(seAcceptFailed,[ socket, socketError ]);
-            end
-        end;
-    end;
-
-    function TBoundSocketServer.accept(): longint;
     var r : longint;
     begin
         {$IFDEF UNIX}
