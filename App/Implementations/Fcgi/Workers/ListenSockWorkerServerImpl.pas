@@ -39,13 +39,17 @@ type
 
 implementation
 
+uses
+
+    fastcgi;
+
     (*!------------------------------------------------
      * constructor
      *-----------------------------------------------*)
     constructor TListenSockWorkerServer.create();
     begin
         inherited create();
-        fServer := TBoundSocketServer.create();
+        fServer := TBoundSocketServer.create(FCGI_LISTENSOCK_FILENO);
         fServer.OnConnect := @DoConnect;
     end;
 
