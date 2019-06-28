@@ -5,7 +5,7 @@
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
-unit SimpleFastCGIAppImpl;
+unit SimpleUnixFastCGIAppImpl;
 
 interface
 
@@ -23,7 +23,7 @@ type
     (*!-----------------------------------------------
      * Base abstract class that implements IWebApplication
      * and provide basic default for easier setup for
-     * FastCGI web application as daemon using TCP
+     * FastCGI web application as daemon using Unix Domain socket
      *------------------------------------------------------
      * This is base class you need for FastCGI web application
      * that is run as daemon with Apache and mod_proxy_fcgi module
@@ -31,14 +31,13 @@ type
      *------------------------------------------------------
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TSimpleFastCGIWebApplication = class(TBaseSimpleFastCGIWebApplication)
+    TSimpleUnixFastCGIWebApplication = class(TBaseSimpleFastCGIWebApplication)
     public
 
       (*!-----------------------------------------------
        * constructor
        *------------------------------------------------
-       * @param hostname hostname where daemon lister
-       * @param port port where daemon lister
+       * @param socketFilename socket file where to listen
        * @param container dependency container
        * @param errHandler error handler
        * @param dispatcher, dspatcher instance instance
@@ -47,8 +46,7 @@ type
        * default service provider
        *-----------------------------------------------*)
       constructor create(
-          const hostname : string;
-          const port : word;
+          const socketFilename : string;
           const container : IDependencyContainer = nil;
           const errHandler : IErrorHandler = nil;
           const dispatcherInst : IDispatcher = nil
@@ -60,13 +58,12 @@ implementation
 
 uses
 
-    TcpWorkerServerImpl;
+    UnixWorkerServerImpl;
 
     (*!-----------------------------------------------
      * constructor
      *------------------------------------------------
-     * @param hostname hostname where daemon lister
-     * @param port port where daemon lister
+     * @param socketFilename socket file where to listen
      * @param container dependency container
      * @param errHandler error handler
      * @param dispatcher, dspatcher instance instance
@@ -74,16 +71,15 @@ uses
      * This is provided to simplify thing by providing
      * default service provider
      *-----------------------------------------------*)
-    constructor TSimpleFastCGIWebApplication.create(
-        const hostname : string;
-        const port : word;
+    constructor TSimpleUnixFastCGIWebApplication.create(
+        const socketFilename : string;
         const container : IDependencyContainer = nil;
         const errHandler : IErrorHandler = nil;
         const dispatcherInst : IDispatcher = nil
     );
     begin
         inherited create(
-            TTcpWorkerServer.create(hostname, port),
+            TUnixWorkerServer.create(socketFilename),
             container,
             errHandler,
             dispatcherInst

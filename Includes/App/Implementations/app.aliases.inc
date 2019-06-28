@@ -24,7 +24,15 @@ TTcpWorkerServer = TcpWorkerServerImpl.TTcpWorkerServer;
 TUnixWorkerServer = UnixWorkerServerImpl.TUnixWorkerServer;
 {$ENDIF}
 
+TListenSockWorkerServer = ListenSockWorkerServerImpl.TListenSockWorkerServer;
+
 TFastCGIWebApplication = FastCGIAppImpl.TFastCGIWebApplication;
 TSimpleFastCGIWebApplication = SimpleFastCGIAppImpl.TSimpleFastCGIWebApplication;
+
+{$IFDEF unix}
+TSimpleUnixFastCGIWebApplication = SimpleUnixFastCGIAppImpl.TSimpleUnixFastCGIWebApplication;
+{$ENDIF}
+
+TSimpleSockFastCGIWebApplication = SimpleSockFastCGIAppImpl.TSimpleSockFastCGIWebApplication;
 
 {----------------End FastCGI related-----------------------------}

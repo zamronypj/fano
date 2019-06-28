@@ -24,6 +24,15 @@ TcpWorkerServerImpl,
 UnixWorkerServerImpl,
 {$ENDIF}
 
+ListenSockWorkerServerImpl,
+
 FastCGIAppImpl,
 SimpleFastCGIAppImpl,
+
+{$IFDEF unix}
+SimpleUnixFastCGIAppImpl,
+{$ENDIF}
+
+SimpleSockFastCGIAppImpl,
+
 {---------------- End FastCGI related-----------------------------}
