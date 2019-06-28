@@ -149,7 +149,7 @@ uses
         );
     end;
 
-    function TSimpleFastCGIWebApplication.initDispatcher(const container : IDependencyContainer) : IDispatcher;
+    function TBaseSimpleFastCGIWebApplication.initDispatcher(const container : IDependencyContainer) : IDispatcher;
     begin
         result := container.get('dispatcher') as IDispatcher;
     end;
