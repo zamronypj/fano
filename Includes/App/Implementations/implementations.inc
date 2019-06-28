@@ -24,7 +24,7 @@ TcpWorkerServerImpl,
 UnixWorkerServerImpl,
 {$ENDIF}
 
-BoundWorkerServerImpl,
+ListenSockWorkerServerImpl,
 
 FastCGIAppImpl,
 SimpleFastCGIAppImpl,

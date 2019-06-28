@@ -24,7 +24,7 @@ TTcpWorkerServer = TcpWorkerServerImpl.TTcpWorkerServer;
 TUnixWorkerServer = UnixWorkerServerImpl.TUnixWorkerServer;
 {$ENDIF}
 
-TBoundWorkerServer = BoundWorkerServerImpl.TBoundWorkerServer;
+TListenSockWorkerServer = ListenSockWorkerServerImpl.TListenSockWorkerServer;
 
 TFastCGIWebApplication = FastCGIAppImpl.TFastCGIWebApplication;
 TSimpleFastCGIWebApplication = SimpleFastCGIAppImpl.TSimpleFastCGIWebApplication;
