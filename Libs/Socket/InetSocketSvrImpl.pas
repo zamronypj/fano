@@ -31,8 +31,20 @@ type
     private
         fHost : string;
         fPort : word;
+        FInetAddr : TInetSockAddr;
     protected
+        (*!-----------------------------------------------
+         * bind socket to an Inet socket address
+         *-----------------------------------------------*)
         procedure bind(); override;
+
+        (*!-----------------------------------------------
+         * get stream fron socket
+         *-------------------------------------------------
+         * @param clientSocket, socket handle
+         * @return stream of socket
+         *-----------------------------------------------*)
+        function getSockStream(clientSocket : longint) : IStreamAdapter; override;
     public
 
         (*!-----------------------------------------------
@@ -51,7 +63,9 @@ uses
 
     SysUtils,
     BaseUnix,
-    ESockCreateImpl;
+    Unix,
+    ESockCreateImpl,
+    ESockBindImpl;
 
 resourcestring
 
@@ -80,20 +94,39 @@ resourcestring
     end;
 
 
+    (*!-----------------------------------------------
+     * bind socket to an socket address
+     s*-----------------------------------------------*)
     procedure TInetSocketSvr.bind();
-    var
-        addrLen  : longint;
-        inetAddr : TInetSockAddr;
     begin
-        inetAddr.sin_family := AF_INET;
-        inetAddr.sin_port := ShortHostToNet(FPort);
-        inetAddr.sin_addr.s_addr := LongWord(StrToNetAddr(FHost));
-        addrLen := sizeof(inetAddr);
-        if fpBind(fListenSocket, @inetAddr, addrLen) <> 0 then
+        FInetAddr.sin_family := AF_INET;
+        FInetAddr.sin_port := ShortHostToNet(FPort);
+        FInetAddr.sin_addr.s_addr := LongWord(StrToNetAddr(FHost));
+        if fpBind(fListenSocket, @FInetAddr, sizeof(FInetAddr)) <> 0 then
         begin
             raise ESockBind.createFmt(rsBindFailed, [ FHost, FPort, socketError() ]);
         end;
-        fSocketAddr := @inetAddr;
-        fSocketAddrLen := addrLen;
+    end;
+
+    (*!-----------------------------------------------
+     * accept connection
+     *-------------------------------------------------
+     * @param listenSocket, socket handle created with fpSocket()
+     * @return client socket which data can be read
+     *-----------------------------------------------*)
+    function TInetSocketSvr.accept(listenSocket : longint) : longint;
+    begin
+        result := fpAccept(listenSocket, @FInetAddr, sizeof(FInetAddr));
+    end;
+
+    (*!-----------------------------------------------
+     * get stream fron socket
+     *-------------------------------------------------
+     * @param clientSocket, socket handle
+     * @return stream of socket
+     *-----------------------------------------------*)
+    function TInetSocketSvr.getSockStream(clientSocket : longint) : IStreamAdapter;
+    begin
+
     end;
 end.

@@ -30,9 +30,34 @@ type
     TUnixSocketSvr = class(TSocketSvr)
     private
         fSocketFile : string;
+        FUnixAddr : TUnixSockAddr;
+        fSocketAddrLen : TSockLen;
     protected
+        (*!-----------------------------------------------
+         * bind socket to an Unix socket address
+         *-----------------------------------------------*)
         procedure bind(); override;
+
+        (*!-----------------------------------------------
+         * run shutdown sequence
+         *-----------------------------------------------*)
         procedure shutdown(); override;
+
+        (*!-----------------------------------------------
+         * accept connection
+         *-------------------------------------------------
+         * @param listenSocket, socket handle created with fpSocket()
+         * @return client socket which data can be read
+         *-----------------------------------------------*)
+        function accept(listenSocket : longint) : longint; override;
+
+        (*!-----------------------------------------------
+         * get stream fron socket
+         *-------------------------------------------------
+         * @param clientSocket, socket handle
+         * @return stream of socket
+         *-----------------------------------------------*)
+        function getSockStream(clientSocket : longint) : IStreamAdapter; override;
     public
 
         (*!-----------------------------------------------
@@ -51,7 +76,8 @@ uses
     SysUtils,
     BaseUnix,
     Unix,
-    ESockCreateImpl;
+    ESockCreateImpl,
+    ESockBindImpl;
 
 resourcestring
 
@@ -78,21 +104,35 @@ resourcestring
         end;
     end;
 
-
+    (*!-----------------------------------------------
+     * bind socket to an Inet socket address
+     *-----------------------------------------------*)
     procedure TUnixSocketSvr.bind();
     var
         addrLen  : longint;
-        unixAddr : TUnixSockAddr;
     begin
         str2UnixSockAddr(fSocketFile, FUnixAddr, addrLen);
-        if fpBind(fListenSocket, @UnixAddr, addrLen) <> 0 then
+        if fpBind(fListenSocket, @FUnixAddr, addrLen) <> 0 then
         begin
             raise ESockBind.createFmt(rsBindFailed, [ FSocketFile, socketError() ]);
         end;
-        fSocketAddr : @UnixAddr;
         fSocketAddrLen := addrLen;
     end;
 
+    (*!-----------------------------------------------
+     * accept connection
+     *-------------------------------------------------
+     * @param listenSocket, socket handle created with fpSocket()
+     * @return client socket which data can be read
+     *-----------------------------------------------*)
+    function TUnixSocketSvr.accept(listenSocket : longint) : longint;
+    begin
+        result := fpAccept(listenSocket, @FUnixAddr, fSocketAddrLen);
+    end;
+
+    (*!-----------------------------------------------
+     * run shutdown sequence
+     *-----------------------------------------------*)
     procedure TUnixSocketSvr.shutdown();
     begin
         inherited shutdown();
@@ -100,6 +140,17 @@ resourcestring
         begin
             deleteFile(fSocketFile);
         end;
+    end;
+
+    (*!-----------------------------------------------
+     * get stream fron socket
+     *-------------------------------------------------
+     * @param clientSocket, socket handle
+     * @return stream of socket
+     *-----------------------------------------------*)
+    function TUnixSocketSvr.getSockStream(clientSocket : longint) : IStreamAdapter;
+    begin
+
     end;
 
 end.

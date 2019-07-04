@@ -16,7 +16,10 @@ interface
 uses
 
     Sockets,
-    RunnableIntf;
+    RunnableIntf,
+    RunnableWithDataNotifIntf,
+    DataAvailListenerIntf,
+    StreamAdapterIntf;
 
 type
 
@@ -27,17 +30,39 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TSocketSvr = class(TInterfacedObject, IRunnable)
-    protected
-        fSocketAddr : PSockAddr;
-        fSocketAddrLen : PSockLen;
+    TSocketSvr = class(TInterfacedObject, IRunnable, IRunnableWithDataNotif)
+    private
 
+        (*!-----------------------------------------------
+         * called when client connection is established
+         *-------------------------------------------------
+         * @param clientSocket, socket handle where data can be read
+         *-----------------------------------------------*)
+        procedure doConnect(clientSocket : longint);
+
+    protected
+        fDataAvailListener : IDataAvailListener;
         fListenSocket : longint;
         fQueueSize : longint;
 
+        (*!-----------------------------------------------
+         * bind socket to an socket address
+         *-----------------------------------------------*)
         procedure bind(); virtual; abstract;
+
+        (*!-----------------------------------------------
+         * begin listen socket
+         *-----------------------------------------------*)
         procedure listen();
-        procedure runLoop();
+
+        (*!-----------------------------------------------
+         * handle incoming connection until terminated
+         *-----------------------------------------------*)
+        procedure handleConnection();
+
+        (*!-----------------------------------------------
+         * run shutdown sequence
+         *-----------------------------------------------*)
         procedure shutdown(); virtual;
 
         (*!-----------------------------------------------
@@ -46,8 +71,15 @@ type
          * @param listenSocket, socket handle created with fpSocket()
          * @return client socket which data can be read
          *-----------------------------------------------*)
-        function accept(listenSocket : longint) : longint;
+        function accept(listenSocket : longint) : longint; virtual; abstract;
 
+        (*!-----------------------------------------------
+         * get stream fron socket
+         *-------------------------------------------------
+         * @param clientSocket, socket handle
+         * @return stream of socket
+         *-----------------------------------------------*)
+        function getSockStream(clientSocket : longint) : IStreamAdapter; virtual; abstract;
     public
 
         (*!-----------------------------------------------
@@ -66,8 +98,19 @@ type
          *-----------------------------------------------*)
         destructor destroy(); override;
 
-        procedure run();
+        (*!-----------------------------------------------
+         * run socket server until terminated
+         *-----------------------------------------------*)
+        function run() : IRunnable;
 
+        (*!------------------------------------------------
+         * set instance of class that will be notified when
+         * data is available
+         *-----------------------------------------------
+         * @param dataListener, class that wish to be notified
+         * @return true current instance
+         *-----------------------------------------------*)
+        function setDataAvailListener(const dataListener : IDataAvailListener) : IRunnableWithDataNotif;
     end;
 
 implementation
@@ -97,6 +140,7 @@ var
     begin
         fListenSocket := listenSocket;
         fQueueSize := queueSize;
+        fDataAvailListener := nil;
     end;
 
     (*!-----------------------------------------------
@@ -108,6 +152,9 @@ var
         inherited destroy();
     end;
 
+    (*!-----------------------------------------------
+     * begin listen socket
+     *-----------------------------------------------*)
     procedure TSocketSvr.listen();
     begin
         if fpListen(fListenSocket, fQueueSize) <> 0 then
@@ -117,17 +164,9 @@ var
     end;
 
     (*!-----------------------------------------------
-     * accept connection
-     *-------------------------------------------------
-     * @param listenSocket, socket handle created with fpSocket()
-     * @return client socket which data can be read
+     * handle incoming connection until terminated
      *-----------------------------------------------*)
-    function TSocketSvr.accept(listenSocket : longint) : longint;
-    begin
-        result := fpAccept(listenSocket, @fSocketAddr, fSocketAddrLen);
-    end;
-
-    procedure TSocketSvr.runLoop();
+    procedure TSocketSvr.handleConnection();
     var readfds : TFDSet;
         maxHandle : longint;
         terminated : boolean;
@@ -187,24 +226,68 @@ var
         until terminated;
     end;
 
+    (*!-----------------------------------------------
+     * called when client connection is allowed
+     *-------------------------------------------------
+     * @param clientSocket, socket handle where data can be read
+     *-----------------------------------------------*)
+    procedure TSocketSvr.doConnect(clientSocket : longint);
+    begin
+        if (assigned(fDataAvailListener)) then
+        begin
+            fDataAvailListener.handleData(getSockStream(clientSocket), nil, nil);
+        end;
+    end;
+
+    (*!------------------------------------------------
+     * set instance of class that will be notified when
+     * data is available
+     *-----------------------------------------------
+     * @param dataListener, class that wish to be notified
+     * @return true current instance
+    *-----------------------------------------------*)
+    function TSocketSvr.setDataAvailListener(const dataListener : IDataAvailListener) : IRunnableWithDataNotif;
+    begin
+        fDataAvailListener := dataListener;
+        result := self;
+    end;
+
     procedure TSocketSvr.shutdown();
     begin
         closeSocket(fListenSocket);
+        fDataAvailListener := nil;
     end;
 
-    procedure TSocketSvr.run();
+    function TSocketSvr.run() : IRunnable;
     begin
         bind();
         listen();
-        runLoop();
+        handleConnection();
+        result := self;
     end;
 
+
+    (*!-----------------------------------------------
+     * signal handler that will be called when
+     * SIGTERM, SIGINT and SIGQUIT is received
+     *-------------------------------------------------
+     * @param sig, signal id i.e, SIGTERM, SIGINT or SIGQUIT
+     * @param info, information about signal
+     * @param ctx, contex about signal
+     *-------------------------------------------------
+     * Signal handler must be ordinary procedure
+     *-----------------------------------------------*)
     procedure doTerminate(sig : longint; info : PSigInfo; ctx : PSigContext); cdecl;
     begin
         //write one byte to mark termination
         write(terminatePipeOut, '.');
     end;
 
+    (*!-----------------------------------------------
+     * install signal handler
+     *-------------------------------------------------
+     * @param aSig, signal id i.e, SIGTERM, SIGINT or SIGQUIT
+     *-----------------------------------------------*)
     procedure installTerminateSignalHandler(aSig : longint);
     var oldAct, newAct : SigactionRec;
     begin
