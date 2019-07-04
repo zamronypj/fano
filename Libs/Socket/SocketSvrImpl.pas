@@ -15,7 +15,8 @@ interface
 
 uses
 
-    Sockets;
+    Sockets,
+    RunnableIntf;
 
 type
 
@@ -26,7 +27,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TSocketSvr = class
+    TSocketSvr = class(TInterfacedObject, IRunnable)
     protected
         fSocketAddr : PSockAddr;
         fSocketAddrLen : PSockLen;
@@ -37,7 +38,7 @@ type
         procedure bind(); virtual; abstract;
         procedure listen();
         procedure runLoop();
-        procedure shutdown();
+        procedure shutdown(); virtual;
 
         (*!-----------------------------------------------
          * accept connection
@@ -86,15 +87,21 @@ var
     //pipe handle that we use to monitor if we get SIGTERM/SIGINT signal
     terminatePipeIn, terminatePipeOut : longInt;
 
-    constructor TSocketSvr.create(
-        listenSocket : longint;
-        queueSize : integer = 5
-    );
+    (*!-----------------------------------------------
+     * constructor
+     *-------------------------------------------------
+     * @param listenSocket, socket handle created with fpSocket()
+     * @param queueSize, number of queue when listen, 5 = default of Berkeley Socket
+     *-----------------------------------------------*)
+    constructor TSocketSvr.create(listenSocket : longint; queueSize : integer = 5);
     begin
         fListenSocket := listenSocket;
         fQueueSize := queueSize;
     end;
 
+    (*!-----------------------------------------------
+     * destructor
+     *-----------------------------------------------*)
     destructor TSocketSvr.destroy();
     begin
         shutdown();
@@ -189,7 +196,6 @@ var
     begin
         bind();
         listen();
-        fAccepting := true;
         runLoop();
     end;
 
@@ -204,7 +210,7 @@ var
     begin
         fillChar(newAct, sizeOf(SigactionRec), #0);
         fillChar(oldAct, sizeOf(Sigactionrec), #0);
-        newAct.sa_handler := @doShutDown;
+        newAct.sa_handler := @doTerminate;
         fpSigaction(aSig, @newAct, @oldAct);
     end;
 
