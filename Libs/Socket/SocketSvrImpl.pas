@@ -125,6 +125,7 @@ var
         maxHandle : longint;
         terminated : boolean;
         clientSocket : longint;
+        ch : char;
     begin
         repeat
 
@@ -156,17 +157,27 @@ var
             if fpSelect(maxHandle + 1, @fds, nil, nil, nil) > 0 then
             begin
                 //we have something, check further
+                if fpFD_ISSET(terminatePipeIn, fds) > 0 then
+                begin
+                    //we get termination signal, just read until no more
+                    //bytes and quit
+                    fpRead(terminatePipeIn, @ch, 1);
+                    terminated := true;
+                end else
                 if fpFD_ISSET(fListenSocket, fds) > 0 then
                 begin
                     //we have something with listening socket. It means there is
                     //new connection coming, accept it
                     clientSocket := accept(fListenSocket);
-                    //create stream from client socket and notify event handler for
-                    //data availability
 
+                    //ask if we allow this connection
+                    if doCanConnect(clientSocket) then
+                    begin
+                        //allow this connection, tell that data is available
+                        doConnect(clientSocket);
+                    end;
                 end;
             end;
-
         until terminated;
     end;
 
