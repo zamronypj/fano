@@ -37,6 +37,7 @@ type
         procedure bind(); virtual; abstract;
         procedure listen();
         procedure runLoop();
+        procedure shutdown();
 
         (*!-----------------------------------------------
          * accept connection
@@ -96,10 +97,9 @@ var
 
     destructor TSocketSvr.destroy();
     begin
-        closeSocket(fListenSocket);
+        shutdown();
         inherited destroy();
     end;
-
 
     procedure TSocketSvr.listen();
     begin
@@ -132,7 +132,6 @@ var
             //initialize struct and reset all file descriptors
             readfds := default(TFDSet);
             fpFD_ZERO(readfds);
-
 
             //add fListenSocket to set of read file descriptor we need to monitor
             //so we know if there something happen with listening socket
@@ -181,13 +180,17 @@ var
         until terminated;
     end;
 
+    procedure TSocketSvr.shutdown();
+    begin
+        closeSocket(fListenSocket);
+    end;
+
     procedure TSocketSvr.run();
     begin
         bind();
         listen();
         fAccepting := true;
         runLoop();
-        shutdown();
     end;
 
     procedure doTerminate(sig : longint; info : PSigInfo; ctx : PSigContext); cdecl;
