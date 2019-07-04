@@ -27,7 +27,10 @@ type
      * Socket server implementation which support graceful
      * shutdown when receive SIGTERM/SIGINT signal and also
      * allow for keeping client connection open if required
-     *
+     *----------------------------------------------------
+     * We implement our own socket server because TSocketServer
+     * from fcl-net not suitable for handling graceful shutdown
+     *-------------------------------------------------
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
     TSocketSvr = class(TInterfacedObject, IRunnable, IRunnableWithDataNotif)
@@ -40,6 +43,15 @@ type
          *-----------------------------------------------*)
         procedure doConnect(clientSocket : longint);
 
+        (*!-----------------------------------------------
+         * initialize file descriptor set for listening
+         * socket and also termination pipe
+         *-------------------------------------------------
+         * @param listenSocket, socket handle
+         * @param pipeIn, pipe input handle
+         * @return file descriptor set
+         *-----------------------------------------------*)
+        function initFileDescSet(listenSocket : longint; pipeIn : longint) : TFDSet;
     protected
         fDataAvailListener : IDataAvailListener;
         fListenSocket : longint;
@@ -164,6 +176,28 @@ var
     end;
 
     (*!-----------------------------------------------
+     * initialize file descriptor set for listening
+     * socket and also termination pipe
+     *-------------------------------------------------
+     * @param listenSocket, socket handle
+     * @param pipeIn, pipe input handle
+     * @return file descriptor set
+     *-----------------------------------------------*)
+    function TSocketSvr.initFileDescSet(listenSocket : longint; pipeIn : longint) : TFDSet;
+    begin
+        //initialize struct and reset all file descriptors
+        result := default(TFDSet);
+        fpFD_ZERO(result);
+
+        //add listenSocket to set of read file descriptor we need to monitor
+        //so we know if there something happen with listening socket
+        fpFD_SET(listenSocket, result);
+
+        //also add terminatePipeIn so we get notified if we get signal to terminate
+        fpFD_SET(pipeIn, result);
+    end;
+
+    (*!-----------------------------------------------
      * handle incoming connection until terminated
      *-----------------------------------------------*)
     procedure TSocketSvr.handleConnection();
@@ -174,17 +208,7 @@ var
         ch : char;
     begin
         repeat
-
-            //initialize struct and reset all file descriptors
-            readfds := default(TFDSet);
-            fpFD_ZERO(readfds);
-
-            //add fListenSocket to set of read file descriptor we need to monitor
-            //so we know if there something happen with listening socket
-            fpFD_SET(fListenSocket, readfds);
-
-            //also add terminatePipeIn so we get notified if we get signal to terminate
-            fpFD_SET(terminatePipeIn, fds);
+            readfds := initFileDescSet(fListenSocket, terminatePipeIn);
 
             //find file descriptor with biggest value
             maxHandle := 0;
@@ -199,28 +223,24 @@ var
             end;
 
             //wait indefinitely until something happen in fListenSocket or terminatePipeIn
-            if fpSelect(maxHandle + 1, @fds, nil, nil, nil) > 0 then
+            if fpSelect(maxHandle + 1, @readfds, nil, nil, nil) > 0 then
             begin
                 //we have something, check further
-                if fpFD_ISSET(terminatePipeIn, fds) > 0 then
+                if fpFD_ISSET(terminatePipeIn, readfds) > 0 then
                 begin
                     //we get termination signal, just read until no more
                     //bytes and quit
                     fpRead(terminatePipeIn, @ch, 1);
                     terminated := true;
                 end else
-                if fpFD_ISSET(fListenSocket, fds) > 0 then
+                if fpFD_ISSET(fListenSocket, readfds) > 0 then
                 begin
                     //we have something with listening socket. It means there is
                     //new connection coming, accept it
                     clientSocket := accept(fListenSocket);
 
-                    //ask if we allow this connection
-                    if doCanConnect(clientSocket) then
-                    begin
-                        //allow this connection, tell that data is available
-                        doConnect(clientSocket);
-                    end;
+                    //allow this connection, tell that data is available
+                    doConnect(clientSocket);
                 end;
             end;
         until terminated;
