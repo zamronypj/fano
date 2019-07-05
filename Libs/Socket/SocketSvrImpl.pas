@@ -52,6 +52,16 @@ type
          * @return file descriptor set
          *-----------------------------------------------*)
         function initFileDescSet(listenSocket : longint; pipeIn : longint) : TFDSet;
+
+        (*!-----------------------------------------------
+         * find file descriptor with biggest value
+         *-------------------------------------------------
+         * @param listenSocket, socket handle
+         * @param pipeIn, pipe input handle
+         * @return highest handle
+         *-----------------------------------------------*)
+        function getHighestHandle(listenSocket : longint; pipeIn : longint) : longint;
+
     protected
         fDataAvailListener : IDataAvailListener;
         fListenSocket : longint;
@@ -86,7 +96,7 @@ type
         function accept(listenSocket : longint) : longint; virtual; abstract;
 
         (*!-----------------------------------------------
-         * get stream fron socket
+         * get stream from socket
          *-------------------------------------------------
          * @param clientSocket, socket handle
          * @return stream of socket
@@ -198,11 +208,33 @@ var
     end;
 
     (*!-----------------------------------------------
+     * find file descriptor with biggest value
+     *-------------------------------------------------
+     * @param listenSocket, socket handle
+     * @param pipeIn, pipe input handle
+     * @return highest handle
+     *-----------------------------------------------*)
+    function TSocketSvr.getHighestHandle(listenSocket : longint; pipeIn : longint) : longint;
+    begin
+        //find file descriptor with biggest value
+        result := 0;
+        if (listenSocket > result) then
+        begin
+            result := listenSocket;
+        end;
+
+        if (pipeIn > result) then
+        begin
+            result := pipeIn;
+        end;
+    end;
+
+    (*!-----------------------------------------------
      * handle incoming connection until terminated
      *-----------------------------------------------*)
     procedure TSocketSvr.handleConnection();
     var readfds : TFDSet;
-        maxHandle : longint;
+        highestHandle : longint;
         terminated : boolean;
         clientSocket : longint;
         ch : char;
@@ -211,19 +243,10 @@ var
             readfds := initFileDescSet(fListenSocket, terminatePipeIn);
 
             //find file descriptor with biggest value
-            maxHandle := 0;
-            if (fListenSocket > maxHandle) then
-            begin
-                maxHandle := fListenSocket;
-            end;
-
-            if (terminatePipeIn > maxHandle) then
-            begin
-                maxHandle := terminatePipeIn;
-            end;
+            highestHandle := getHighestHandle(fListenSocket, terminatePipeIn);
 
             //wait indefinitely until something happen in fListenSocket or terminatePipeIn
-            if fpSelect(maxHandle + 1, @readfds, nil, nil, nil) > 0 then
+            if fpSelect(highestHandle + 1, @readfds, nil, nil, nil) > 0 then
             begin
                 //we have something, check further
                 if fpFD_ISSET(terminatePipeIn, readfds) > 0 then
@@ -235,7 +258,7 @@ var
                 end else
                 if fpFD_ISSET(fListenSocket, readfds) > 0 then
                 begin
-                    //we have something with listening socket. It means there is
+                    //we have something with listening socket, it means there is
                     //new connection coming, accept it
                     clientSocket := accept(fListenSocket);
 

@@ -120,7 +120,7 @@ resourcestring
     end;
 
     (*!-----------------------------------------------
-     * get stream fron socket
+     * get stream from socket
      *-------------------------------------------------
      * @param clientSocket, socket handle
      * @return stream of socket
