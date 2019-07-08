@@ -346,7 +346,7 @@ var
     begin
         //write one byte to mark termination
         ch := '.';
-        fpWrite(terminatePipeOut, @ch, 1);
+        fpWrite(terminatePipeOut, ch, 1);
     end;
 
     (*!-----------------------------------------------
