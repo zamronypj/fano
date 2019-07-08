@@ -55,6 +55,7 @@ implementation
 
 uses
 
+    fastcgi,
     BoundSocketSvrImpl;
 
     (*!-----------------------------------------------
@@ -74,7 +75,7 @@ uses
     );
     begin
         inherited create(
-            TBoundSocketSvr.create(),
+            TBoundSocketSvr.create(FCGI_LISTENSOCK_FILENO),
             container,
             errHandler,
             dispatcherInst
