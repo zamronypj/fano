@@ -21,6 +21,8 @@ StdInReaderIntf,
 StdOutIntf,
 StdErrIntf,
 
+HttpClientHandleAwareIntf,
+HttpClientHeadersIntf,
 HttpGetClientIntf,
 HttpPostClientIntf,
 HttpPutClientIntf,

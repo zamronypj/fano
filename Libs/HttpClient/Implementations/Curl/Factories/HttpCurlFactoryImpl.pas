@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit HttpDeleteFactoryImpl;
+unit HttpCurlFactoryImpl;
 
 interface
 
@@ -16,19 +16,19 @@ uses
 
     DependencyIntf,
     DependencyContainerIntf,
-    HttpAbstractFactoryImpl;
+    FactoryImpl;
 
 type
     (*!------------------------------------------------
-     * THttpDelete factory class
+     * THttpCurl factory class
      *------------------------------------------------
-     * This class can serve as factory class for THttpDelete
+     * This class can serve as factory class for THttpCurl
      * and also can be injected into dependency container
-     * directly to build THttpDelete class
+     * directly to build THttpCurl class
      *-------------------------------------------------
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    THttpDeleteFactory = class(THttpAbstractFactory)
+    THttpCurlFactory = class(TFactory)
     public
         (*!---------------------------------------------------
          * build class instance
@@ -44,22 +44,15 @@ implementation
 
 uses
 
-    classes,
-    HttpDeleteImpl,
-    HttpClientHeadersImpl,
-    ResponseStreamImpl;
+    HttpCurlImpl;
 
     (*!---------------------------------------------------
      * build class instance
      *----------------------------------------------------
      * @param container dependency container instance
      *---------------------------------------------------*)
-    function THttpDeleteFactory.build(const container : IDependencyContainer) : IDependency;
+    function THttpCurlFactory.build(const container : IDependencyContainer) : IDependency;
     begin
-        result := THttpDelete.create(
-            handle,
-            THttpClientHeaders.create(handle),
-            TResponseStream.create(TStringStream.create(''))
-        );
+        result := THttpCurl.create();
     end;
 end.

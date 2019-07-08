@@ -6,6 +6,8 @@ IStdInReader = StdInReaderIntf.IStdInReader;
 IStdOut = StdOutIntf.IStdOut;
 IStdErr = StdErrIntf.IStdErr;
 
+IHttpClientHandleAware = HttpClientHandleAwareIntf.IHttpClientHandleAware;
+IHttpClientHeaders = HttpClientHeadersIntf.IHttpClientHeaders;
 IHttpGetClient = HttpGetClientIntf.IHttpGetClient;
 IHttpPostClient = HttpPostClientIntf.IHttpPostClient;
 IHttpPutClient = HttpPutClientIntf.IHttpPutClient;

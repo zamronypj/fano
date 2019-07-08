@@ -16,8 +16,9 @@ uses
 
     DependencyIntf,
     DependencyContainerIntf,
-    LoggerIntf,
-    FactoryImpl;
+    HttpClientHandleAwareIntf,
+    HttpAbstractFactoryImpl,
+    LoggerIntf;
 
 type
     (*!------------------------------------------------
@@ -29,11 +30,13 @@ type
      *-------------------------------------------------
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    THttpGetLogFactory = class(TFactory)
+    THttpGetLogFactory = class(THttpAbstractFactory)
     private
         logger : ILogger;
     public
-        constructor create(const loggerInst : ILogger);
+        constructor create(
+            const handleInst : IHttpClientHandleAware;
+            const loggerInst : ILogger);
         destructor destroy(); override;
 
         (*!---------------------------------------------------
@@ -53,10 +56,15 @@ uses
     classes,
     HttpGetImpl,
     ResponseStreamImpl,
-    ResponseStreamLogImpl;
+    ResponseStreamLogImpl,
+    HttpClientHeadersImpl;
 
-    constructor THttpGetLogFactory.create(const loggerInst : ILogger);
+    constructor THttpGetLogFactory.create(
+        const handleInst : IHttpClientHandleAware;
+        const loggerInst : ILogger
+    );
     begin
+        inherited create(handleInst);
         logger := loggerInst;
     end;
 
@@ -74,6 +82,8 @@ uses
     function THttpGetLogFactory.build(const container : IDependencyContainer) : IDependency;
     begin
         result := THttpGet.create(
+            handle,
+            THttpClientHeaders.create(handle),
             TResponseStreamLog.create(
                 TResponseStream.create(TStringStream.create('')),
                 logger

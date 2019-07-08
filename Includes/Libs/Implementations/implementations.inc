@@ -16,15 +16,6 @@
 OutputBufferFactoryImpl,
 StdErrBufferFactoryImpl,
 
-FileLoggerImpl,
-FileLoggerFactoryImpl,
-
-NullLoggerImpl,
-NullLoggerFactoryImpl,
-
-CompositeLoggerImpl,
-CompositeLoggerFactoryImpl,
-
 StringFileReaderImpl,
 StringFileReaderFactoryImpl,
 
@@ -34,54 +25,9 @@ EInvalidStreamImpl,
 StdInReaderImpl,
 SimpleStdInReaderImpl,
 
-HttpGetImpl,
-HttpGetFactoryImpl,
-
-HttpGetLogFactoryImpl,
-
-HttpPostImpl,
-HttpPostFactoryImpl,
-
-HttpPutImpl,
-HttpPutFactoryImpl,
-
-HttpDeleteImpl,
-HttpDeleteFactoryImpl,
-
-HttpHeadImpl,
-HttpHeadFactoryImpl,
-
-HttpClientImpl,
-HttpClientFactoryImpl,
-
 KeyValuePairImpl,
 KeyValuePairFactoryImpl,
 
-{------------ Begin FastCGI-related------------------}
-FcgiAbortRequest,
-FcgiBeginRequest,
-FcgiData,
-FcgiEndRequest,
-FcgiGetValues,
-FcgiGetValuesResult,
-FcgiStdIn,
-FcgiStdOut,
-FcgiStdErr,
-FcgiUnknownType,
-
-FcgiAbortRequestFactory,
-FcgiBeginRequestFactory,
-FcgiDataFactory,
-FcgiEndRequestFactory,
-FcgiGetValuesFactory,
-FcgiGetValuesResultFactory,
-FcgiStdInFactory,
-FcgiStdOutFactory,
-FcgiStdErrFactory,
-FcgiUnknownTypeFactory,
-
-FcgiStdOutWriterImpl,
-FcgiRequestManagerImpl,
-FcgiFrameParserImpl,
-FcgiProcessorImpl,
-{------------ End FastCGI-related------------------}
+{$INCLUDE Logger/implementations.inc}
+{$INCLUDE LibCurl/implementations.inc}
+{$INCLUDE FastCGI/implementations.inc}
