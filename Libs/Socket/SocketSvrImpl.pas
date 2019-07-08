@@ -143,6 +143,7 @@ uses
     Unix,
     ESockListenImpl,
     StreamAdapterImpl,
+    SockStreamImpl,
     CloseableStreamImpl;
 
 resourcestring
