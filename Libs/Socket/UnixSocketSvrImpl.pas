@@ -51,13 +51,6 @@ type
          *-----------------------------------------------*)
         function accept(listenSocket : longint) : longint; override;
 
-        (*!-----------------------------------------------
-         * get stream fron socket
-         *-------------------------------------------------
-         * @param clientSocket, socket handle
-         * @return stream of socket
-         *-----------------------------------------------*)
-        function getSockStream(clientSocket : longint) : IStreamAdapter; override;
     public
 
         (*!-----------------------------------------------
@@ -141,16 +134,4 @@ resourcestring
             deleteFile(fSocketFile);
         end;
     end;
-
-    (*!-----------------------------------------------
-     * get stream fron socket
-     *-------------------------------------------------
-     * @param clientSocket, socket handle
-     * @return stream of socket
-     *-----------------------------------------------*)
-    function TUnixSocketSvr.getSockStream(clientSocket : longint) : IStreamAdapter;
-    begin
-
-    end;
-
 end.

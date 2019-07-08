@@ -101,7 +101,7 @@ type
          * @param clientSocket, socket handle
          * @return stream of socket
          *-----------------------------------------------*)
-        function getSockStream(clientSocket : longint) : IStreamAdapter; virtual; abstract;
+        function getSockStream(clientSocket : longint) : IStreamAdapter; virtual;
     public
 
         (*!-----------------------------------------------
@@ -141,7 +141,9 @@ uses
 
     BaseUnix,
     Unix,
-    ESockListenImpl;
+    ESockListenImpl,
+    StreamAdapterImpl,
+    CloseableStreamImpl;
 
 resourcestring
 
@@ -270,15 +272,32 @@ var
     end;
 
     (*!-----------------------------------------------
+     * get stream from socket
+     *-------------------------------------------------
+     * @param clientSocket, socket handle
+     * @return stream of socket
+     *-----------------------------------------------*)
+    function TSocketSvr.getSockStream(clientSocket : longint) : IStreamAdapter;
+    begin
+        result := TStreamAdapter.create(TSockStream.create(clientSocket));
+    end;
+
+    (*!-----------------------------------------------
      * called when client connection is allowed
      *-------------------------------------------------
      * @param clientSocket, socket handle where data can be read
      *-----------------------------------------------*)
     procedure TSocketSvr.doConnect(clientSocket : longint);
+    var aStream : TCloseableStream;
     begin
         if (assigned(fDataAvailListener)) then
         begin
-            fDataAvailListener.handleData(getSockStream(clientSocket), nil, nil);
+            aStream := TCloseableStream.create(
+                clientSocket,
+                getSockStream(clientSocket)
+            );
+
+            fDataAvailListener.handleData(aStream, self, astream);
         end;
     end;
 

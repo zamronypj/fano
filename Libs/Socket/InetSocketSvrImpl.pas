@@ -39,12 +39,13 @@ type
         procedure bind(); override;
 
         (*!-----------------------------------------------
-         * get stream fron socket
-         *-------------------------------------------------
-         * @param clientSocket, socket handle
-         * @return stream of socket
-         *-----------------------------------------------*)
-        function getSockStream(clientSocket : longint) : IStreamAdapter; override;
+        * accept connection
+        *-------------------------------------------------
+        * @param listenSocket, socket handle created with fpSocket()
+        * @return client socket which data can be read
+        *-----------------------------------------------*)
+        function accept(listenSocket : longint) : longint; override;
+
     public
 
         (*!-----------------------------------------------
@@ -119,14 +120,4 @@ resourcestring
         result := fpAccept(listenSocket, @FInetAddr, sizeof(FInetAddr));
     end;
 
-    (*!-----------------------------------------------
-     * get stream from socket
-     *-------------------------------------------------
-     * @param clientSocket, socket handle
-     * @return stream of socket
-     *-----------------------------------------------*)
-    function TInetSocketSvr.getSockStream(clientSocket : longint) : IStreamAdapter;
-    begin
-
-    end;
 end.
