@@ -72,7 +72,6 @@ uses
     FcgiRequestManagerImpl,
     OutputBufferImpl,
     FcgiStdOutWriterImpl,
-    TcpWorkerServerImpl,
     StreamAdapterCollectionFactoryImpl;
 
     (*!-----------------------------------------------
