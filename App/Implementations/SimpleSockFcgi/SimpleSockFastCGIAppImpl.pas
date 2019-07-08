@@ -74,7 +74,7 @@ uses
     );
     begin
         inherited create(
-            TBoundSockSvr.create(),
+            TBoundSocketSvr.create(),
             container,
             errHandler,
             dispatcherInst
