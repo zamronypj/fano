@@ -32,6 +32,10 @@ type
 
 implementation
 
+uses
+
+    sockets;
+
     function TSockStream.read(var buffer; count: longint): longint;
     begin
         result := fpRecv(Handle, @buffer, bount, 0);
