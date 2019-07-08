@@ -242,6 +242,7 @@ var
         clientSocket : longint;
         ch : char;
     begin
+        terminated := false;
         repeat
             readfds := initFileDescSet(fListenSocket, terminatePipeIn);
 
@@ -343,7 +344,7 @@ var
     procedure doTerminate(sig : longint; info : PSigInfo; ctx : PSigContext); cdecl;
     begin
         //write one byte to mark termination
-        write(terminatePipeOut, '.');
+        fpWrite(terminatePipeOut, '.');
     end;
 
     (*!-----------------------------------------------
@@ -386,7 +387,7 @@ initialization
 
 finalization
 
-    close(terminatePipeIn);
-    close(terminatePipeOut);
+    fpClose(terminatePipeIn);
+    fpClose(terminatePipeOut);
 
 end.
