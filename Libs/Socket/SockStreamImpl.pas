@@ -38,12 +38,12 @@ uses
 
     function TSockStream.read(var buffer; count: longint): longint;
     begin
-        result := fpRecv(Handle, @buffer, bount, 0);
+        result := fpRecv(Handle, @buffer, count, 0);
     end;
 
     function TSockStream.write(const buffer; count: longint): longint;
     begin
-        result := fpSend(Handle, @buffer, bount, 0);
+        result := fpSend(Handle, @buffer, count, 0);
     end;
 
 end.
