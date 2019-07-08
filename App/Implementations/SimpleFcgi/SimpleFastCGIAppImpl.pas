@@ -60,7 +60,7 @@ implementation
 
 uses
 
-    TcpWorkerServerImpl;
+    InetSocketSvrImpl;
 
     (*!-----------------------------------------------
      * constructor
@@ -83,7 +83,7 @@ uses
     );
     begin
         inherited create(
-            TTcpWorkerServer.create(hostname, port),
+            TInetSocketSvr.create(hostname, port),
             container,
             errHandler,
             dispatcherInst

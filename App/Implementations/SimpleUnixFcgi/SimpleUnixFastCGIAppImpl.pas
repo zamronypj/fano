@@ -58,7 +58,7 @@ implementation
 
 uses
 
-    UnixWorkerServerImpl;
+    UnixSocketSvrImpl;
 
     (*!-----------------------------------------------
      * constructor
@@ -79,7 +79,7 @@ uses
     );
     begin
         inherited create(
-            TUnixWorkerServer.create(socketFilename),
+            TUnixSocketSvr.create(socketFilename),
             container,
             errHandler,
             dispatcherInst
