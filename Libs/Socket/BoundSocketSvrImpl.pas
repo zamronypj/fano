@@ -31,6 +31,14 @@ type
     protected
         procedure bind(); override;
         procedure shutdown(); override;
+
+        (*!-----------------------------------------------
+         * accept connection
+         *-------------------------------------------------
+         * @param listenSocket, socket handle created with fpSocket()
+         * @return client socket which data can be read
+         *-----------------------------------------------*)
+        function accept(listenSocket : longint) : longint; override;
     public
         procedure run();
     end;
@@ -46,6 +54,17 @@ implementation
     procedure TBoundSocketSvr.shutdown();
     begin
         //do nothing
+    end;
+
+    (*!-----------------------------------------------
+     * accept connection
+     *-------------------------------------------------
+     * @param listenSocket, socket handle created with fpSocket()
+     * @return client socket which data can be read
+     *-----------------------------------------------*)
+    function TBoundSocketSvr.accept(listenSocket : longint) : longint;
+    begin
+        result := fpAccept(listenSocket, nil, nil);
     end;
 
     procedure TBoundSocketSvr.run();
