@@ -74,7 +74,7 @@ uses
     );
     begin
         inherited create(
-            TListenSockWorkerServer.create(),
+            TBoundSockSvr.create(),
             container,
             errHandler,
             dispatcherInst
