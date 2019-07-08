@@ -342,9 +342,11 @@ var
      * Signal handler must be ordinary procedure
      *-----------------------------------------------*)
     procedure doTerminate(sig : longint; info : PSigInfo; ctx : PSigContext); cdecl;
+    var ch : char;
     begin
         //write one byte to mark termination
-        fpWrite(terminatePipeOut, '.', 1);
+        ch := '.';
+        fpWrite(terminatePipeOut, @ch, 1);
     end;
 
     (*!-----------------------------------------------
