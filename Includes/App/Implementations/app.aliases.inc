@@ -18,13 +18,13 @@ TSimpleWebApplication = SimpleAppImpl.TSimpleWebApplication;
 
 {----------------Begin FastCGI related-----------------------------}
 
-TTcpWorkerServer = TcpWorkerServerImpl.TTcpWorkerServer;
+TInetSocketSvr = InetSocketSvrImpl.TInetSocketSvr;
 
 {$IFDEF unix}
-TUnixWorkerServer = UnixWorkerServerImpl.TUnixWorkerServer;
+TUnixSocketSvr = UnixSocketSvrImpl.TUnixSocketSvr;
 {$ENDIF}
 
-TListenSockWorkerServer = ListenSockWorkerServerImpl.TListenSockWorkerServer;
+TBoundSocketSvr = BoundSocketSvrImpl.TBoundSocketSvr;
 
 TFastCGIWebApplication = FastCGIAppImpl.TFastCGIWebApplication;
 TSimpleFastCGIWebApplication = SimpleFastCGIAppImpl.TSimpleFastCGIWebApplication;

@@ -18,13 +18,13 @@ SimpleAppImpl,
 
 {----------------Begin FastCGI related-----------------------------}
 
-TcpWorkerServerImpl,
+InetSocketSvrImpl,
 
 {$IFDEF unix}
-UnixWorkerServerImpl,
+UnixSocketSvrImpl,
 {$ENDIF}
 
-ListenSockWorkerServerImpl,
+BoundSocketSvrImpl,
 
 FastCGIAppImpl,
 SimpleFastCGIAppImpl,
