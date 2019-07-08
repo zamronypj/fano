@@ -41,6 +41,10 @@ type
 
 implementation
 
+uses
+
+    sockets;
+
     constructor TCloseableStream.create(const ahandle: THandle; const aStream : IStreamAdapter);
     begin
         fHandle := aHandle;
