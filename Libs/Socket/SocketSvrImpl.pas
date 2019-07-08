@@ -344,7 +344,7 @@ var
     procedure doTerminate(sig : longint; info : PSigInfo; ctx : PSigContext); cdecl;
     begin
         //write one byte to mark termination
-        fpWrite(terminatePipeOut, '.');
+        fpWrite(terminatePipeOut, '.', 1);
     end;
 
     (*!-----------------------------------------------
