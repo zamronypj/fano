@@ -19,7 +19,8 @@ uses
     RunnableIntf,
     RunnableWithDataNotifIntf,
     DataAvailListenerIntf,
-    StreamAdapterIntf;
+    StreamAdapterIntf,
+    BaseUnix;
 
 type
 
@@ -139,7 +140,6 @@ implementation
 
 uses
 
-    BaseUnix,
     Unix,
     ESockListenImpl,
     StreamAdapterImpl,
