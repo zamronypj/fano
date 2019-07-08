@@ -101,7 +101,7 @@ resourcestring
     procedure TInetSocketSvr.bind();
     begin
         FInetAddr.sin_family := AF_INET;
-        FInetAddr.sin_port := ShortHostToNet(FPort);
+        FInetAddr.sin_port := htons(FPort);
         FInetAddr.sin_addr.s_addr := LongWord(StrToNetAddr(FHost));
         if fpBind(fListenSocket, @FInetAddr, sizeof(FInetAddr)) <> 0 then
         begin
@@ -116,8 +116,10 @@ resourcestring
      * @return client socket which data can be read
      *-----------------------------------------------*)
     function TInetSocketSvr.accept(listenSocket : longint) : longint;
+    var addrLen : TSockLen;
     begin
-        result := fpAccept(listenSocket, @FInetAddr, sizeof(FInetAddr));
+        addrLen := sizeof(FInetAddr);
+        result := fpAccept(listenSocket, @FInetAddr, @addrLen);
     end;
 
 end.

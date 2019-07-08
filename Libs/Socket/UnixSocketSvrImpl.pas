@@ -119,8 +119,11 @@ resourcestring
      * @return client socket which data can be read
      *-----------------------------------------------*)
     function TUnixSocketSvr.accept(listenSocket : longint) : longint;
+    var addrLen : TSockLen;
     begin
-        result := fpAccept(listenSocket, @FUnixAddr, fSocketAddrLen);
+        addrLen := fSocketAddrLen;
+        result := fpAccept(listenSocket, @FUnixAddr, @addrLen);
+        fSocketAddrLen := addrLen;
     end;
 
     (*!-----------------------------------------------
