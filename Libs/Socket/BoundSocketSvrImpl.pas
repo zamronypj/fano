@@ -51,6 +51,6 @@ implementation
     procedure TBoundSocketSvr.run();
     begin
         //skip running bind() and listen() as our socket already bound and listened
-        runLoop();
+        handleConnection();
     end;
 end.

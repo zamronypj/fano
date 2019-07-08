@@ -98,13 +98,25 @@ resourcestring
     end;
 
     (*!-----------------------------------------------
+     * replacement for str2UnixSockAddr() which marked
+     * as deprecated
+     *-----------------------------------------------*)
+    procedure StrToUnixAddr(const addr : string; var sockAddr : TUnixSockAddr; var len:longint);
+    begin
+        move(addr[1], sockAddr.Path, length(addr));
+        sockAddr.Family := AF_UNIX;
+        sockAddr.Path[length(addr)] := #0;
+        len := length(addr) + 3;
+    end;
+
+    (*!-----------------------------------------------
      * bind socket to an Inet socket address
      *-----------------------------------------------*)
     procedure TUnixSocketSvr.bind();
     var
         addrLen  : longint;
     begin
-        str2UnixSockAddr(fSocketFile, FUnixAddr, addrLen);
+        StrToUnixAddr(fSocketFile, FUnixAddr, addrLen);
         if fpBind(fListenSocket, @FUnixAddr, addrLen) <> 0 then
         begin
             raise ESockBind.createFmt(rsBindFailed, [ FSocketFile, socketError() ]);
