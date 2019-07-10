@@ -242,12 +242,11 @@ var
         clientSocket : longint;
         ch : char;
     begin
+        //find file descriptor with biggest value
+        highestHandle := getHighestHandle(fListenSocket, terminatePipeIn);
         terminated := false;
         repeat
             readfds := initFileDescSet(fListenSocket, terminatePipeIn);
-
-            //find file descriptor with biggest value
-            highestHandle := getHighestHandle(fListenSocket, terminatePipeIn);
 
             //wait indefinitely until something happen in fListenSocket or terminatePipeIn
             if fpSelect(highestHandle + 1, @readfds, nil, nil, nil) > 0 then
