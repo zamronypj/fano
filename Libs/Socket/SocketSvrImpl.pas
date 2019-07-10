@@ -42,7 +42,7 @@ type
          *-------------------------------------------------
          * @param clientSocket, socket handle where data can be read
          *-----------------------------------------------*)
-        procedure doConnect(clientSocket : longint);
+        procedure handleClientConnection(clientSocket : longint);
 
         (*!-----------------------------------------------
          * initialize file descriptor set for listening
@@ -266,7 +266,7 @@ var
                     clientSocket := accept(fListenSocket);
 
                     //allow this connection, tell that data is available
-                    doConnect(clientSocket);
+                    handleClientConnection(clientSocket);
                 end;
             end;
         until terminated;
@@ -288,7 +288,7 @@ var
      *-------------------------------------------------
      * @param clientSocket, socket handle where data can be read
      *-----------------------------------------------*)
-    procedure TSocketSvr.doConnect(clientSocket : longint);
+    procedure TSocketSvr.handleClientConnection(clientSocket : longint);
     var aStream : TCloseableStream;
     begin
         if (assigned(fDataAvailListener)) then
