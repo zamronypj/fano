@@ -63,6 +63,20 @@ type
          *-----------------------------------------------*)
         function getHighestHandle(listenSocket : longint; pipeIn : longint) : longint;
 
+        (*!-----------------------------------------------
+         * handle when one or more file descriptor is ready for I/O
+         *-------------------------------------------------
+         * @param listenSocket, listen socket handle
+         * @param pipeIn, terminate pipe input handle
+         * @param readfds, file descriptor set
+         * @param terminated, set true if we should terminate
+         *-----------------------------------------------*)
+        procedure handleFileDescriptorIOReady(
+            listenSocket : longint;
+            pipeIn : longint;
+            const readfds : TFDSet;
+            var terminated : boolean
+        );
     protected
         fDataAvailListener : IDataAvailListener;
         fListenSocket : longint;
@@ -233,14 +247,48 @@ var
     end;
 
     (*!-----------------------------------------------
+     * handle when one or more file descriptor is ready for I/O
+     *-------------------------------------------------
+     * @param listenSocket, listen socket handle
+     * @param pipeIn, terminate pipe input handle
+     * @param readfds, file descriptor set
+     * @param terminated, set true if we should terminate
+     *-----------------------------------------------*)
+    procedure TSocketSvr.handleFileDescriptorIOReady(
+        listenSocket : longint;
+        pipeIn : longint;
+        const readfds : TFDSet;
+        var terminated : boolean
+    );
+    var clientSocket : longint;
+        ch : char;
+    begin
+        if fpFD_ISSET(pipeIn, readfds) > 0 then
+        begin
+            //we get termination signal, just read until no more
+            //bytes and quit
+            fpRead(pipeIn, @ch, 1);
+            terminated := true;
+        end else
+        if fpFD_ISSET(listenSocket, readfds) > 0 then
+        begin
+            //we have something with listening socket, it means there is
+            //new connection coming, accept it
+            clientSocket := accept(listenSocket);
+
+            //allow this connection, tell that data is available
+            handleClientConnection(clientSocket);
+        end;
+
+    end;
+
+    (*!-----------------------------------------------
      * handle incoming connection until terminated
      *-----------------------------------------------*)
     procedure TSocketSvr.handleConnection();
     var readfds : TFDSet;
         highestHandle : longint;
         terminated : boolean;
-        clientSocket : longint;
-        ch : char;
     begin
         //find file descriptor with biggest value
         highestHandle := getHighestHandle(fListenSocket, terminatePipeIn);
@@ -251,23 +299,8 @@ var
             //wait indefinitely until something happen in fListenSocket or terminatePipeIn
             if fpSelect(highestHandle + 1, @readfds, nil, nil, nil) > 0 then
             begin
-                //we have something, check further
-                if fpFD_ISSET(terminatePipeIn, readfds) > 0 then
-                begin
-                    //we get termination signal, just read until no more
-                    //bytes and quit
-                    fpRead(terminatePipeIn, @ch, 1);
-                    terminated := true;
-                end else
-                if fpFD_ISSET(fListenSocket, readfds) > 0 then
-                begin
-                    //we have something with listening socket, it means there is
-                    //new connection coming, accept it
-                    clientSocket := accept(fListenSocket);
-
-                    //allow this connection, tell that data is available
-                    handleClientConnection(clientSocket);
-                end;
+                //one or more file descriptors is ready for I/O, check further
+                handleFileDescriptorIOReady(fListenSocket, terminatePipeIn, readfds, terminated);
             end;
         until terminated;
     end;
