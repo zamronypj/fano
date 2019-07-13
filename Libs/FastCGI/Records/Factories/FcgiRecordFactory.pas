@@ -77,8 +77,16 @@ uses
     destructor TFcgiRecordFactory.destroy();
     begin
         inherited destroy();
-        fDeallocator.deallocate(fBuffer, fBufferSize);
-        setBuffer(nil, 0);
+        //add check to make sure we working with initialized instance
+        if (assigned(fDeallocator)) then
+        begin
+            fDeallocator.deallocate(fBuffer, fBufferSize);
+        end;
+
+        //remove call to setBuffer(nil, 0) because it somehow cause stack overflow,
+        //when we create record factory but does nothing
+        fBuffer := nil;
+        fBufferSize := 0;
     end;
 
     function TFcgiRecordFactory.setDeallocator(const deallocator : IMemoryDeallocator) : IFcgiRecordFactory;
