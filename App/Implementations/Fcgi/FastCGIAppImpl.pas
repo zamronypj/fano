@@ -172,6 +172,7 @@ resourcestring
         finally
             fcgiProcessor.setReadyListener(nil);
             workerServer.setDataAvailListener(nil);
+            //TODO add better exception handling for ESockBind, ESockListen, ESockCreate
         end;
     end;
 
