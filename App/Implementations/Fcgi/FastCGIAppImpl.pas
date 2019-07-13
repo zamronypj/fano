@@ -46,9 +46,6 @@ type
         (*!-----------------------------------------------
          * attach ourself as listener and run socket server
          *-----------------------------------------------
-         * This is to ensure that reference count of our instance
-         * is properly incremented/decremented so no memory leak
-         *
          * Note that run keeps run until application is terminated
          *-----------------------------------------------*)
         procedure attachListenerAndRunServer();
@@ -161,13 +158,12 @@ resourcestring
     (*!-----------------------------------------------
      * attach ourself as listener and run socket server
      *-----------------------------------------------
-     * This is to ensure that reference count of our instance
-     * is properly incremented/decremented so no memory leak
-     *
      * Note that run keeps run until application is terminated
      *-----------------------------------------------*)
     procedure TFastCGIWebApplication.attachListenerAndRunServer();
     begin
+        //This is to ensure that reference count of our instance
+        //properly incremented/decremented so no memory leak
         fcgiProcessor.setReadyListener(self);
         workerServer.setDataAvailListener(self);
         try
