@@ -109,7 +109,10 @@ uses
 
     SysUtils,
     ERouteHandlerNotFoundImpl,
-    EMethodNotAllowedImpl;
+    EMethodNotAllowedImpl,
+    ESockBindImpl,
+    ESockCreateImpl,
+    ESockListenImpl;
 
 resourcestring
 
@@ -167,12 +170,27 @@ resourcestring
         fcgiProcessor.setReadyListener(self);
         workerServer.setDataAvailListener(self);
         try
-            //execute run loop until terminated
-            workerServer.run();
+            try
+                //execute run loop until terminated
+                workerServer.run();
+            except
+                //TODO add better exception handling for ESockBind, ESockListen, ESockCreate
+                on e : ESockCreate do
+                begin
+                    writeln(e.message);
+                end;
+                on e : ESockBind do
+                begin
+                    writeln(e.message);
+                end;
+                on e : ESockListen do
+                begin
+                    writeln(e.message);
+                end;
+            end;
         finally
             fcgiProcessor.setReadyListener(nil);
             workerServer.setDataAvailListener(nil);
-            //TODO add better exception handling for ESockBind, ESockListen, ESockCreate
         end;
     end;
 
