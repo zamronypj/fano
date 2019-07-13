@@ -42,9 +42,17 @@ type
         fcgiProcessor : IFcgiProcessor;
         fOutputBuffer : IOutputBuffer;
         fStdOutWriter : IStdOut;
-    protected
-        function initialize(const container : IDependencyContainer) : boolean; override;
 
+        (*!-----------------------------------------------
+         * attach ourself as listener and run socket server
+         *-----------------------------------------------
+         * This is to ensure that reference count of our instance
+         * is properly incremented/decremented so no memory leak
+         *
+         * Note that run keeps run until application is terminated
+         *-----------------------------------------------*)
+        procedure attachListenerAndRunServer();
+    protected
         procedure executeRequest(const env : ICGIEnvironment);
     public
         (*!-----------------------------------------------
@@ -138,7 +146,6 @@ resourcestring
         fcgiProcessor := aFcgiProcessor;
         fOutputBuffer := outputBuffer;
         fStdOutWriter := stdOutWriter;
-        fcgiProcessor.setReadyListener(self);
     end;
 
     destructor TFastCGIWebApplication.destroy();
@@ -152,17 +159,24 @@ resourcestring
     end;
 
     (*!-----------------------------------------------
-     * initialize application dependencies
-     *------------------------------------------------
-     * @param container dependency container
-     * @return true if application dependency succesfully
-     * constructed
+     * attach ourself as listener and run socket server
+     *-----------------------------------------------
+     * This is to ensure that reference count of our instance
+     * is properly incremented/decremented so no memory leak
+     *
+     * Note that run keeps run until application is terminated
      *-----------------------------------------------*)
-    function TFastCGIWebApplication.initialize(const container : IDependencyContainer) : boolean;
+    procedure TFastCGIWebApplication.attachListenerAndRunServer();
     begin
-        inherited initialize(container);
+        fcgiProcessor.setReadyListener(self);
         workerServer.setDataAvailListener(self);
-        result := true;
+        try
+            //execute run loop until terminated
+            workerServer.run();
+        finally
+            fcgiProcessor.setReadyListener(nil);
+            workerServer.setDataAvailListener(nil);
+        end;
     end;
 
     (*!-----------------------------------------------
@@ -176,8 +190,7 @@ resourcestring
     begin
         if (initialize(dependencyContainer)) then
         begin
-            //execute run loop until terminated
-            workerServer.run();
+            attachListenerAndRunServer();
         end;
         result := self;
     end;
