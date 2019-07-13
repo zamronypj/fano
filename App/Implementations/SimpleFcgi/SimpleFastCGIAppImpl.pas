@@ -34,25 +34,25 @@ type
     TSimpleFastCGIWebApplication = class(TBaseSimpleFastCGIWebApplication)
     public
 
-      (*!-----------------------------------------------
-       * constructor
-       *------------------------------------------------
-       * @param hostname hostname where daemon lister
-       * @param port port where daemon lister
-       * @param container dependency container
-       * @param errHandler error handler
-       * @param dispatcher, dspatcher instance instance
-       *----------------------------------------------
-       * This is provided to simplify thing by providing
-       * default service provider
-       *-----------------------------------------------*)
-      constructor create(
-          const hostname : string;
-          const port : word;
-          const container : IDependencyContainer = nil;
-          const errHandler : IErrorHandler = nil;
-          const dispatcherInst : IDispatcher = nil
-      );
+        (*!-----------------------------------------------
+         * constructor
+         *------------------------------------------------
+         * @param hostname hostname where daemon lister
+         * @param port port where daemon lister
+         * @param container dependency container
+         * @param errHandler error handler
+         * @param dispatcher, dspatcher instance instance
+         *----------------------------------------------
+         * This is provided to simplify thing by providing
+         * default service provider
+         *-----------------------------------------------*)
+        constructor create(
+            const hostname : string;
+            const port : word;
+            const container : IDependencyContainer = nil;
+            const errHandler : IErrorHandler = nil;
+            const dispatcherInst : IDispatcher = nil
+        );
 
     end;
 

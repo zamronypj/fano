@@ -33,21 +33,21 @@ type
      *-----------------------------------------------*)
     TSimpleSockFastCGIWebApplication = class(TBaseSimpleFastCGIWebApplication)
     public
-      (*!-----------------------------------------------
-       * constructor
-       *------------------------------------------------
-       * @param container dependency container
-       * @param errHandler error handler
-       * @param dispatcher, dspatcher instance instance
-       *----------------------------------------------
-       * This is provided to simplify thing by providing
-       * default service provider
-       *-----------------------------------------------*)
-      constructor create(
-          const container : IDependencyContainer = nil;
-          const errHandler : IErrorHandler = nil;
-          const dispatcherInst : IDispatcher = nil
-      );
+        (*!-----------------------------------------------
+         * constructor
+         *------------------------------------------------
+         * @param container dependency container
+         * @param errHandler error handler
+         * @param dispatcher, dspatcher instance instance
+         *----------------------------------------------
+         * This is provided to simplify thing by providing
+         * default service provider
+         *-----------------------------------------------*)
+        constructor create(
+            const container : IDependencyContainer = nil;
+            const errHandler : IErrorHandler = nil;
+            const dispatcherInst : IDispatcher = nil
+        );
 
     end;
 

@@ -35,22 +35,22 @@ type
     protected
         function initDispatcher(const container : IDependencyContainer) : IDispatcher; override;
     public
-      (*!-----------------------------------------------
-       * constructor
-       *------------------------------------------------
-       * @param container dependency container
-       * @param env CGI environment instance
-       * @param errHandler error handler
-       *----------------------------------------------
-       * This is provided to simplify thing by providing
-       * default service provider
-       *-----------------------------------------------*)
-      constructor create(
-          const workerServer : IRunnableWithDataNotif;
-          const container : IDependencyContainer = nil;
-          const errHandler : IErrorHandler = nil;
-          const dispatcherInst : IDispatcher = nil
-      );
+        (*!-----------------------------------------------
+         * constructor
+         *------------------------------------------------
+         * @param container dependency container
+         * @param env CGI environment instance
+         * @param errHandler error handler
+         *----------------------------------------------
+         * This is provided to simplify thing by providing
+         * default service provider
+         *-----------------------------------------------*)
+        constructor create(
+            const workerServer : IRunnableWithDataNotif;
+            const container : IDependencyContainer = nil;
+            const errHandler : IErrorHandler = nil;
+            const dispatcherInst : IDispatcher = nil
+        );
 
     end;
 
