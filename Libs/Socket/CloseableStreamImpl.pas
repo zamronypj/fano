@@ -54,6 +54,10 @@ uses
     destructor TCloseableStream.destroy();
     begin
         inherited destroy();
+        //we do not call closeSocket(fHandle) here because we want
+        //the listener decide if socket should be close or leave open.
+        //So we can handle, for example, FastCGI protocol requirement that
+        //sometime require that client socket connection keep open.
         fStream := nil;
     end;
 
