@@ -223,7 +223,8 @@ uses
         fRecords[indx].stdInStream := nil;
         for j := fRecords[indx].fcgiRecords.count - 1 downto 0 do
         begin
-            fRecords[indx].fcgiRecords[j] := nil;
+            //no need to set fcgiRecords[j]:= nil because delete(j)
+            //will do that, otherwise we will get access violation
             fRecords[indx].fcgiRecords.delete(j);
         end;
         fRecords[indx].fcgiRecords.free();
