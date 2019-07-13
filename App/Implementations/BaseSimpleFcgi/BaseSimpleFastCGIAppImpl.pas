@@ -58,7 +58,7 @@ implementation
 
 uses
 
-    SysUtil,
+    SysUtils,
     FcgiFrameParserFactoryIntf,
     FcgiFrameParserFactoryImpl,
     DependencyContainerImpl,
