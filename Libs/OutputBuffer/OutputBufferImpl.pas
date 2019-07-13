@@ -79,8 +79,13 @@ uses
     destructor TOutputBuffer.destroy();
     begin
         inherited destroy();
-        //make sure to call endBuffering just in case
-        endBuffering();
+        //calling endBuffering() here somehow cause stack overlow
+        //when beginBuffering() has never been called
+        if (isBuffering) then
+        begin
+            restoreOutput();
+            closeFile(streamStdOutput);
+        end;
         stream.free();
     end;
 
