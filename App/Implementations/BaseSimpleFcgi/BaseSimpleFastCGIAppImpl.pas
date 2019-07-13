@@ -58,6 +58,7 @@ implementation
 
 uses
 
+    SysUtil,
     FcgiFrameParserFactoryIntf,
     FcgiFrameParserFactoryImpl,
     DependencyContainerImpl,
@@ -98,6 +99,7 @@ uses
         appOutputBuffer : IOutputBuffer;
         appStdOutWriter : IStdOut;
         aParserFactory : IFcgiFrameParserFactory;
+        dispatcherId : string;
     begin
         appContainer := container;
         if (appContainer = nil) then
@@ -127,10 +129,11 @@ uses
 
         appDispatcher := dispatcherInst;
 
-        if (appDispatcher = nil) and (not appContainer.has('dispatcher')) then
+        dispatcherId := GUIDToString(IDispatcher);
+        if (appDispatcher = nil) and (not appContainer.has(dispatcherId)) then
         begin
             appContainer.add(
-                'dispatcher',
+                dispatcherId,
                 TSimpleDispatcherFactory.create(
                     appContainer.get('router') as IRouteMatcher
                 )
@@ -150,6 +153,6 @@ uses
 
     function TBaseSimpleFastCGIWebApplication.initDispatcher(const container : IDependencyContainer) : IDispatcher;
     begin
-        result := container.get('dispatcher') as IDispatcher;
+        result := container.get(GUIDToString(IDispatcher)) as IDispatcher;
     end;
 end.
