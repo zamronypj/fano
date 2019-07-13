@@ -209,7 +209,7 @@ uses
         fRecords[requestId].keepConnection := false;
         fRecords[requestId].fcgiStdInComplete := false;
         fRecords[requestId].fcgiParamsComplete := false;
-        if (assigned(fRecords[requestId].env)) then
+        if (assigned(fRecords[requestId].fcgiRecords)) then
         begin
             clearFastCgiRecords(requestId);
         end;

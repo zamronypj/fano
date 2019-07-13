@@ -330,8 +330,11 @@ var
                 clientSocket,
                 getSockStream(clientSocket)
             );
-
-            fDataAvailListener.handleData(aStream, self, astream);
+            try
+                fDataAvailListener.handleData(aStream, self, astream);
+            finally
+                aStream.free();
+            end;
         end;
     end;
 

@@ -308,7 +308,15 @@ uses
         header := buffer;
         raiseExceptionIfInvalidRecordType(header^.reqtype);
         factory := fRecordFactories[header^.reqtype];
-        result := factory.setDeallocator(self).setBuffer(buffer, bufferSize).build();
+        factory.setDeallocator(self);
+        try
+            result := factory.setBuffer(buffer, bufferSize).build();
+        finally
+            //remove reference to ourself, so reference count properly incr/decr
+            //to avoid memory leak
+            factory.setDeallocator(nil);
+            factory := nil;
+        end;
     end;
 
 end.
