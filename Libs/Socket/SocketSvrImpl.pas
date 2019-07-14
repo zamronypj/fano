@@ -90,7 +90,7 @@ type
         (*!-----------------------------------------------
          * begin listen socket
          *-----------------------------------------------*)
-        procedure listen();
+        procedure listen(); virtual;
 
         (*!-----------------------------------------------
          * handle incoming connection until terminated

@@ -33,6 +33,11 @@ type
         procedure shutdown(); override;
 
         (*!-----------------------------------------------
+         * begin listen socket
+         *-----------------------------------------------*)
+        procedure listen(); override;
+
+        (*!-----------------------------------------------
          * accept connection
          *-------------------------------------------------
          * @param listenSocket, socket handle created with fpSocket()
@@ -46,6 +51,12 @@ type
 implementation
 
     procedure TBoundSocketSvr.bind();
+    begin
+        //socket already bound and listen
+        //do nothing
+    end;
+
+    procedure TBoundSocketSvr.listen();
     begin
         //socket already bound and listen
         //do nothing
