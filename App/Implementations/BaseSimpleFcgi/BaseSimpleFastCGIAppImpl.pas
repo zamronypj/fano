@@ -65,6 +65,7 @@ uses
     DependencyListImpl,
     EnvironmentImpl,
     ErrorHandlerImpl,
+    RouterIntf,
     RouteMatcherIntf,
     SimpleRouterFactoryImpl,
     SimpleDispatcherFactoryImpl,
@@ -100,6 +101,7 @@ uses
         appStdOutWriter : IStdOut;
         aParserFactory : IFcgiFrameParserFactory;
         dispatcherId : string;
+        routerId : string;
     begin
         appContainer := container;
         if (appContainer = nil) then
@@ -122,9 +124,11 @@ uses
         appOutputBuffer := TOutputBuffer.create();
         appStdOutWriter := TFcgiStdOutWriter.create(fcgiProc);
 
-        if (not appContainer.has('router')) then
+        routerId := GUIDToString(IRouteMatcher);
+        if (not appContainer.has(routerId)) then
         begin
-            appContainer.add('router', TSimpleRouterFactory.create());
+            appContainer.add(routerId, TSimpleRouterFactory.create());
+            appContainer.alias(GUIDToString(IRouter), routerId);
         end;
 
         appDispatcher := dispatcherInst;
@@ -135,7 +139,7 @@ uses
             appContainer.add(
                 dispatcherId,
                 TSimpleDispatcherFactory.create(
-                    appContainer.get('router') as IRouteMatcher
+                    appContainer.get(routerId) as IRouteMatcher
                 )
             );
         end;
