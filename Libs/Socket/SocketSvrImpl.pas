@@ -138,7 +138,7 @@ type
         (*!-----------------------------------------------
          * run socket server until terminated
          *-----------------------------------------------*)
-        function run() : IRunnable;
+        function run() : IRunnable; virtual;
 
         (*!------------------------------------------------
          * set instance of class that will be notified when

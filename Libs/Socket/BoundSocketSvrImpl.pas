@@ -45,7 +45,7 @@ type
          *-----------------------------------------------*)
         function accept(listenSocket : longint) : longint; override;
     public
-        procedure run();
+        function run() : IRunnable; override;
     end;
 
 implementation
@@ -78,9 +78,10 @@ implementation
         result := fpAccept(listenSocket, nil, nil);
     end;
 
-    procedure TBoundSocketSvr.run();
+    function TBoundSocketSvr.run() : IRunnable;
     begin
         //skip running bind() and listen() as our socket already bound and listened
         handleConnection();
+        result := self;
     end;
 end.
