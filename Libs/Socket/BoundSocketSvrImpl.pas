@@ -15,6 +15,7 @@ interface
 
 uses
 
+    RunnableIntf,
     Sockets,
     SocketSvrImpl;
 
