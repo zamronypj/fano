@@ -22,7 +22,7 @@ type
 
     (*!------------------------------------------------
      * interface for any class having capability to send
-     * HTTP request to a server
+     * HTTP POST request to a server
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
@@ -30,7 +30,7 @@ type
         ['{5EF1CEAC-CF87-4EBE-AE19-7701EA150A61}']
 
         (*!------------------------------------------------
-         * send HTTP GET request
+         * send HTTP POST request
          *-----------------------------------------------
          * @param url url to send request
          * @param data data related to this request

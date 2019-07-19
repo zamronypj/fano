@@ -16,6 +16,8 @@ uses
 
     DependencyIntf,
     DependencyContainerIntf,
+    EnvironmentFactoryIntf,
+    EnvironmentIntf,
     FactoryImpl;
 
 type
@@ -25,9 +27,10 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *--------------------------------------------------*)
-    TCGIEnvironmentFactory = class(TFactory, IDependencyFactory)
+    TCGIEnvironmentFactory = class(TFactory, IDependencyFactory, ICGIEnvironmentFactory)
     public
         function build(const container : IDependencyContainer) : IDependency; override;
+        function build() : ICGIEnvironment;
     end;
 
 implementation
@@ -37,6 +40,11 @@ uses
     EnvironmentImpl;
 
     function TCGIEnvironmentFactory.build(const container : IDependencyContainer) : IDependency;
+    begin
+        result := TCGIEnvironment.create();
+    end;
+
+    function TCGIEnvironmentFactory.build() : ICGIEnvironment;
     begin
         result := TCGIEnvironment.create();
     end;

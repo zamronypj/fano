@@ -39,8 +39,8 @@ type
          *-----------------------------------------------*)
         function post(
             const url : string;
-            const context : ISerializeable = nil
-        ) : IResponse;
+            const data : ISerializeable = nil
+        ) : IResponseStream;
 
     end;
 
@@ -55,12 +55,12 @@ uses
      *-----------------------------------------------
      * @param url url to send request
      * @param data data related to this request
-     * @return current instance
+     * @return response stream
      *-----------------------------------------------*)
     function THttpPost.post(
         const url : string;
         const data : ISerializeable = nil
-    ) : IResponse;
+    ) : IResponseStream;
     var params : string;
     begin
         raiseExceptionIfCurlNotInitialized();

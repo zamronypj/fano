@@ -14,6 +14,7 @@ interface
 {$H+}
 
 uses
+    classes,
     ResponseIntf,
     ResponseStreamIntf,
     HeadersIntf,
@@ -29,7 +30,7 @@ type
     TJsonResponse = class(TInterfacedObject, IResponse, ICloneable)
     private
         httpHeaders : IHeaders;
-        jsonStr : string;
+        jsonStream : TStringStream;
     public
         constructor create(const hdrs : IHeaders; const json : string);
         destructor destroy(); override;
@@ -56,17 +57,19 @@ implementation
 
 uses
 
-    sysutils;
+    sysutils,
+    ResponseStreamImpl;
 
     constructor TJsonResponse.create(const hdrs : IHeaders; const json : string);
     begin
         httpHeaders := hdrs;
-        jsonStr := json;
+        jsonStream := TStringStream.create(json);
     end;
 
     destructor TJsonResponse.destroy();
     begin
         inherited destroy();
+        jsonStream.free();
         httpHeaders := nil;
     end;
 
@@ -83,9 +86,9 @@ uses
     function TJsonResponse.write() : IResponse;
     begin
         httpHeaders.setHeader('Content-Type', 'application/json');
-        httpHeaders.setHeader('Content-Length', intToStr(length(jsonStr)));
+        httpHeaders.setHeader('Content-Length', intToStr(jsonStream.size));
         httpHeaders.writeHeaders();
-        writeln(jsonStr);
+        writeln(jsonStream.dataString);
         result := self;
     end;
 
@@ -94,7 +97,7 @@ uses
     begin
         clonedObj := TJsonResponse.create(
             httpHeaders.clone() as IHeaders,
-            jsonStr
+            jsonStream.dataString
         );
         result := clonedObj;
     end;
@@ -106,7 +109,6 @@ uses
      *-------------------------------------*)
     function TJsonResponse.body() : IResponseStream;
     begin
-        //TODO: implement view response body
-        result := nil;
+        result := TResponseStream.create(jsonStream);
     end;
 end.

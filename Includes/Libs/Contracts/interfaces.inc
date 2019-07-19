@@ -16,6 +16,26 @@ OutputBufferIntf,
 LoggerIntf,
 FileReaderIntf,
 StreamAdapterIntf,
-StdInReaderIntf,
 
+StdInReaderIntf,
+StdOutIntf,
+StdErrIntf,
+
+HttpClientHandleAwareIntf,
+HttpClientHeadersIntf,
 HttpGetClientIntf,
+HttpPostClientIntf,
+HttpPutClientIntf,
+HttpDeleteClientIntf,
+HttpHeadClientIntf,
+
+KeyValuePairIntf,
+
+RunnableWithDataNotifIntf,
+
+FcgiRecordIntf,
+FcgiRecordFactoryIntf,
+FcgiRequestIntf,
+FcgiRequestManagerIntf,
+FcgiFrameParserIntf,
+FcgiProcessorIntf,

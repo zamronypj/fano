@@ -13,5 +13,10 @@
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
  *-----------------------------------------------*)
 
+MiddlewareCollectionImpl,
+NullMiddlewareCollectionImpl,
+
+MiddlewareCollectionAwareImpl,
+
 MiddlewareCollectionAwareFactoryImpl,
 NullMiddlewareCollectionAwareFactoryImpl,

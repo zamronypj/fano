@@ -12,6 +12,7 @@ interface
 {$MODE OBJFPC}
 
 uses
+
     DependencyIntf,
     DependencyContainerIntf,
     FactoryImpl;
@@ -30,6 +31,7 @@ type
 implementation
 
 uses
+
     NullLoggerImpl;
 
     function TNullLoggerFactory.build(const container : IDependencyContainer) : IDependency;
