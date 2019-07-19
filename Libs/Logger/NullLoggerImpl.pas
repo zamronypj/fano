@@ -15,7 +15,6 @@ interface
 
 uses
 
-    DependencyIntf,
     SerializeableIntf,
     LoggerIntf,
     AbstractLoggerImpl;
@@ -27,7 +26,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TNullLogger = class(TAbstractLogger, IDependency, ILogger)
+    TNullLogger = class(TAbstractLogger)
     public
         (*!--------------------------------------
          * log message

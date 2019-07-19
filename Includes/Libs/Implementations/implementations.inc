@@ -14,12 +14,7 @@
  *-----------------------------------------------*)
 
 OutputBufferFactoryImpl,
-
-FileLoggerImpl,
-FileLoggerFactoryImpl,
-
-NullLoggerImpl,
-NullLoggerFactoryImpl,
+StdErrBufferFactoryImpl,
 
 StringFileReaderImpl,
 StringFileReaderFactoryImpl,
@@ -29,3 +24,10 @@ EInvalidStreamImpl,
 
 StdInReaderImpl,
 SimpleStdInReaderImpl,
+
+KeyValuePairImpl,
+KeyValuePairFactoryImpl,
+
+{$INCLUDE Logger/implementations.inc}
+{$INCLUDE LibCurl/implementations.inc}
+{$INCLUDE FastCGI/implementations.inc}

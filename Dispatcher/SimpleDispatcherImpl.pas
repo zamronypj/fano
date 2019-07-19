@@ -13,13 +13,9 @@ interface
 
 uses
 
-    DispatcherIntf,
     EnvironmentIntf,
     ResponseIntf,
-    ResponseFactoryIntf,
-    RequestFactoryIntf,
-    RouteMatcherIntf,
-    InjectableObjectImpl;
+    BaseDispatcherImpl;
 
 type
     (*!------------------------------------------------
@@ -30,63 +26,18 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TSimpleDispatcher = class(TInjectableObject, IDispatcher)
-    private
-        routeCollection : IRouteMatcher;
-        responseFactory : IResponseFactory;
-        requestFactory : IRequestFactory;
+    TSimpleDispatcher = class(TBaseDispatcher)
     public
-        constructor create(
-            const routes : IRouteMatcher;
-            const respFactory : IResponseFactory;
-            const reqFactory : IRequestFactory
-        );
-        destructor destroy(); override;
-        function dispatchRequest(const env: ICGIEnvironment) : IResponse;
+        function dispatchRequest(const env: ICGIEnvironment) : IResponse; override;
     end;
 
 implementation
 
-uses
-    sysutils,
-    RouteHandlerIntf,
-    UrlHelpersImpl;
-
-    constructor TSimpleDispatcher.create(
-        const routes : IRouteMatcher;
-        const respFactory : IResponseFactory;
-        const reqFactory : IRequestFactory
-    );
-    begin
-        routeCollection := routes;
-        responseFactory := respFactory;
-        requestFactory := reqFactory;
-    end;
-
-    destructor TSimpleDispatcher.destroy();
-    begin
-        inherited destroy();
-        routeCollection := nil;
-        responseFactory := nil;
-        requestFactory := nil;
-    end;
-
     function TSimpleDispatcher.dispatchRequest(const env: ICGIEnvironment) : IResponse;
-    var routeHandler : IRouteHandler;
-        method : string;
-        url : string;
     begin
-        try
-            method := env.requestMethod();
-            //remove any query string parts to avoid messing up pattern matching
-            url := env.requestUri().stripQueryString();
-            routeHandler := routeCollection.match(method, url);
-            result := routeHandler.handleRequest(
-                requestFactory.build(env),
-                responseFactory.build(env)
-            );
-        finally
-            routeHandler := nil;
-        end;
+        result := getRouteHandler(env).handleRequest(
+            requestFactory.build(env),
+            responseFactory.build(env)
+        );
     end;
 end.

@@ -17,10 +17,9 @@ uses
 
     libcurl,
     InjectableObjectImpl,
-    HttpClientIntf,
-    ResponseIntf,
-    SerializeableIntf,
-    StreamAdapterIntf;
+    ResponseStreamIntf,
+    HttpClientHeadersIntf,
+    HttpClientHandleAwareIntf;
 
 type
 
@@ -29,8 +28,9 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    THttpMethod = class(TInjectableObject, IHttpClient)
+    THttpMethod = class(TInjectableObject, IHttpClientHeaders)
     private
+        httpHeader : IHttpClientHeaders;
 
         (*!------------------------------------------------
          * raise exception if curl operation fail
@@ -40,11 +40,11 @@ type
         procedure raiseExceptionIfError(const errCode : CurlCode);
 
         (*!------------------------------------------------
-         * intialize cURL
-         *-----------------------------------------------
-         * @return curl handle
-         *-----------------------------------------------*)
-        function initCurl() : pCurl;
+        * initialize callback
+        *-----------------------------------------------
+        * @return curl handle
+        *-----------------------------------------------*)
+        procedure initCallback(const hndCurl : pCurl);
     protected
         (*!------------------------------------------------
          * internal variable that holds curl handle
@@ -58,26 +58,38 @@ type
         pStream : pointer;
 
         (*!------------------------------------------------
-         * raise exception if curl not initialized
+         * internal variable that holds stream of data coming
+         * from server
          *-----------------------------------------------*)
-        procedure raiseExceptionIfCurlNotInitialized();
+        streamInst : IResponseStream;
 
         (*!------------------------------------------------
          * execute curl operation and raise exception if fail
          *-----------------------------------------------
-         * @param hCurl curl handle
+         * @param hndCurl curl handle
          * @return errCode curl error code
          *-----------------------------------------------*)
-        function executeCurl(const hCurl : pCurl) : CurlCode;
+        function executeCurl(const hndCurl : pCurl) : CurlCode;
+
+        (*!------------------------------------------------
+         * raise exception if curl not initialized
+         *-----------------------------------------------*)
+        procedure raiseExceptionIfCurlNotInitialized();
     public
 
         (*!------------------------------------------------
          * constructor
          *-----------------------------------------------
+         * @param curlHandle instance class that can get handle
+         * @param headersInst instance class that can set headers
          * @param fStream stream instance that will be used to
          *                store data coming from server
          *-----------------------------------------------*)
-        constructor create(const fStream : IStreamAdapter);
+        constructor create(
+            const curlHandle : IHttpClientHandleAware;
+            const headersInst : IHttpClientHeaders;
+            const fStream : IResponseStream
+        );
 
         (*!------------------------------------------------
          * destructor
@@ -85,17 +97,27 @@ type
         destructor destroy(); override;
 
         (*!------------------------------------------------
-         * send HTTP request
+         *  add header
          *-----------------------------------------------
-         * @param url url to send request
-         * @param data data related to this request
+         * @param headerLine string contain header
          * @return current instance
          *-----------------------------------------------*)
-        function send(
-            const url : string;
-            const data : ISerializeable = nil
-        ) : IResponse; virtual; abstract;
+        function add(const headerLine : string) : IHttpClientHeaders;
 
+        (*!------------------------------------------------
+         *  apply added header
+         *-----------------------------------------------
+         * @return current instance
+         *-----------------------------------------------*)
+        function apply() : IHttpClientHeaders;
+
+        (*!------------------------------------------------
+         *  interface delegation is turn off because
+         *  some how method implementation is not accessible
+         *  to descendant
+         *  @link https://stackoverflow.com/questions/55160258/implementation-through-interface-delegation-not-pass-to-descendant
+         *-----------------------------------------------*)
+        //property headers : IHttpClientHeaders read httpHeader implements IHttpClientHeaders;
     end;
 
 implementation
@@ -107,6 +129,7 @@ uses
 resourcestring
 
     sErrCurlNotInitialized = 'cURL not initialized.';
+
 
     (*!------------------------------------------------
      * internal callback that is called when libcurl needs to
@@ -122,25 +145,23 @@ resourcestring
      *-----------------------------------------------*)
     function writeToStream(
         dataFromServer : pointer;
-        size : size_t;
-        nmemb: size_t;
+        size : qword;
+        nmemb: qword;
         ptrStream : pointer
-    ) : size_t; cdecl;
+    ) : qword; cdecl;
     begin
-        result := IStreamAdapter(ptrStream).write(ptr^, size * nmemb);
+        result := IResponseStream(ptrStream).write(dataFromServer^, size * nmemb);
     end;
 
-    (*!------------------------------------------------
-     * intialize cURL
+     (*!------------------------------------------------
+     * initialize callback
      *-----------------------------------------------
      * @return curl handle
      *-----------------------------------------------*)
-    function THttpMethod.initCurl() : pCurl;
+    procedure THttpMethod.initCallback(const hndCurl : pCurl);
     begin
-        //initialize curl
-        result := curl_easy_init();
-        curl_easy_setopt(result, CURLOPT_WRITEFUNCTION, [ @writeToStream ]);
-        curl_easy_setopt(result , CURLOPT_WRITEDATA, [ pStream ]);
+        curl_easy_setopt(hndCurl, CURLOPT_WRITEFUNCTION, [ @writeToStream ]);
+        curl_easy_setopt(hndCurl , CURLOPT_WRITEDATA, [ pStream ]);
     end;
 
     (*!------------------------------------------------
@@ -149,16 +170,24 @@ resourcestring
      * @param fStream stream instance that will be used to
      *                store data coming from server
      *-----------------------------------------------*)
-    constructor THttpMethod.create(const fStream : IStreamAdapter);
+    constructor THttpMethod.create(
+        const curlHandle : IHttpClientHandleAware;
+        const headersInst : IHttpClientHeaders;
+        const fStream : IResponseStream
+    );
     begin
         //libcurl only knows raw pointer, so we use raw pointer to hold
-        //instance of IStreamAdapter interface. But because typecast interface
+        //instance of IResponseStream interface. But because typecast interface
         //to pointer does not do automatic reference counting,
         //we must add reference count manually by calling _AddRef() method
         pStream := pointer(fStream);
         fStream._addRef();
 
-        hCurl := initCurl();
+        streamInst := fStream;
+
+        hCurl := curlHandle.handle();
+        initCallback(hCurl);
+        httpHeader := headersInst;
     end;
 
     (*!------------------------------------------------
@@ -169,24 +198,37 @@ resourcestring
         inherited destroy();
 
         //libcurl only knows raw pointer, so we use raw pointer to hold
-        //instance of IStreamAdapter interface. But because typecast interface
+        //instance of IResponseStream interface. But because typecast interface
         //to pointer does not do automatic reference counting,
         //we must decrement reference count manually by calling _Release() method
-        IStreamAdapter(pStream)._release();
+        IResponseStream(pStream)._release();
         pStream := nil;
 
-        curl_easy_cleanup(hCurl);
+        streamInst := nil;
+        hCurl := nil;
     end;
 
     (*!------------------------------------------------
-     * raise exception if curl not initialized
+     *  add header
+     *-----------------------------------------------
+     * @param headerLine string contain header
+     * @return current instance
      *-----------------------------------------------*)
-    procedure THttpMethod.raiseExceptionIfCurlNotInitialized();
+    function THttpMethod.add(const headerLine : string) : IHttpClientHeaders;
     begin
-        if (not assigned(hCurl)) then
-        begin
-            raise EHttpClientError.create(sErrCurlNotInitialized);
-        end;
+        httpHeader.add(headerLine);
+        result := self;
+    end;
+
+    (*!------------------------------------------------
+     *  apply added header
+     *-----------------------------------------------
+     * @return current instance
+     *-----------------------------------------------*)
+    function THttpMethod.apply() : IHttpClientHeaders;
+    begin
+        httpHeader.apply();
+        result := self;
     end;
 
     (*!------------------------------------------------
@@ -201,24 +243,30 @@ resourcestring
         begin
             //operation fail, raise exception
             errMsg := curl_easy_strerror(errCode);
-            raise EHttpClientErrorImpl.create(errMsg);
+            raise EHttpClientError.create(errMsg);
+        end;
+    end;
+
+    (*!------------------------------------------------
+     * raise exception if curl not initialized
+     *-----------------------------------------------*)
+    procedure THttpMethod.raiseExceptionIfCurlNotInitialized();
+    begin
+        if (not assigned(hCurl)) then
+        begin
+            raise EHttpClientError.create(sErrCurlNotInitialized);
         end;
     end;
 
     (*!------------------------------------------------
      * execute curl operation and raise exception if fail
      *--------------------------------------------------
-     * @param hCurl curl handle
+     * @param hndCurl curl handle
      * @return errCode curl error code
      *---------------------------------------------------*)
-    function THttpMethod.executeCurl(const hCurl : pCurl) : CurlCode;
+    function THttpMethod.executeCurl(const hndCurl : pCurl) : CurlCode;
     begin
-        result := curl_easy_perform(hCurl);
+        result := curl_easy_perform(hndCurl);
         raiseExceptionIfError(result);
     end;
-
-initialization
-    curl_global_init(CURL_GLOBAL_DEFAULT);
-finalization
-    curl_global_cleanup();
 end.

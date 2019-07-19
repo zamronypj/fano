@@ -1,9 +1,13 @@
-TOutputBufferFactory = OutputBufferFactoryImpl.TOutputBufferFactory;
+{*!
+ * Fano Web Framework (https://fanoframework.github.io)
+ *
+ * @link      https://github.com/fanoframework/fano
+ * @copyright Copyright (c) 2018 Zamrony P. Juhara
+ * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
+ *}
 
-TFileLogger = FileLoggerImpl.TFileLogger;
-TFileLoggerFactory = FileLoggerFactoryImpl.TFileLoggerFactory;
-TNullLogger = NullLoggerImpl.TNullLogger;
-TNullLoggerFactory = NullLoggerFactoryImpl.TNullLoggerFactory;
+TOutputBufferFactory = OutputBufferFactoryImpl.TOutputBufferFactory;
+TStdErrBufferFactory = StdErrBufferFactoryImpl.TStdErrBufferFactory;
 
 TStringFileReader = StringFileReaderImpl.TStringFileReader;
 TStringFileReaderFactory = StringFileReaderFactoryImpl.TStringFileReaderFactory;
@@ -13,3 +17,10 @@ EInvalidStream = EInvalidStreamImpl.EInvalidStream;
 
 TStdInReader = StdInReaderImpl.TStdInReader;
 TSimpleStdInReader = SimpleStdInReaderImpl.TSimpleStdInReader;
+
+TKeyValuePair = KeyValuePairImpl.TKeyValuePair;
+TKeyValuePairFactory = KeyValuePairFactoryImpl.TKeyValuePairFactory;
+
+{$INCLUDE Logger/libs.aliases.inc}
+{$INCLUDE LibCurl/libs.aliases.inc}
+{$INCLUDE FastCGI/libs.aliases.inc}

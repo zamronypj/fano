@@ -14,8 +14,8 @@ interface
 
 uses
 
-    ModelReadOnlyDataIntf,
-    ModelWriteOnlyDataIntf;
+    ModelResultSetIntf,
+    ModelParamsIntf;
 
 type
 
@@ -34,7 +34,7 @@ type
          * @param data data being stored
          * @return current instance
          *-----------------------------------------------*)
-        function write(const params : IModelReadOnlyData; const data : IModelReadOnlyData) : IModelWriter;
+        function write(const params : IModelParams; const data : IModelParams) : IModelWriter;
     end;
 
 implementation

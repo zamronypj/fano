@@ -28,6 +28,20 @@ type
     TStreamAdapter = class(TInterfacedObject, IStreamAdapter)
     private
         isOwned : boolean;
+
+        (*!------------------------------------------------
+         * copy from source stream and store to destination stream
+         *-----------------------------------------------
+         * @param srcStream, source stream
+         * @param dstStream, destination stream
+         * @param bytesToCopy, number of bytes to copy
+         *-----------------------------------------------*)
+        procedure copyStream(
+            const srcStream : IStreamAdapter;
+            const dstStream : IStreamAdapter;
+            const bytesToCopy : int64
+        );
+
     protected
         actualStream : TStream;
     public
@@ -75,6 +89,38 @@ type
          *-----------------------------------------------*)
         function write(const buffer; const sizeToWrite : int64) : int64;
 
+        (*!------------------------------------------------
+         * read from stream to buffer until all data is read
+         *-----------------------------------------------
+         * @param buffer, buffer to store data read
+         * @param sizeToRead, total size in bytes to read
+         *-----------------------------------------------*)
+        procedure readBuffer(var buffer; const sizeToRead : int64);
+
+        (*!------------------------------------------------
+         * write from buffer to stream until all data is written
+         *-----------------------------------------------
+         * @param buffer, buffer contains data to write
+         * @param sizeToWrite, total size in bytes to write
+         *-----------------------------------------------*)
+        procedure writeBuffer(const buffer; const sizeToWrite : int64);
+
+        (*!------------------------------------------------
+         * read from current stream and store to destination stream
+         *-----------------------------------------------
+         * @param dstStream, destination stream
+         * @param bytesToRead, number of bytes to read
+         *-----------------------------------------------*)
+        procedure readStream(const dstStream : IStreamAdapter; const bytesToRead : int64);
+
+        (*!------------------------------------------------
+         * write data from source stream to current stream
+         *-----------------------------------------------
+         * @param srcStream, source stream
+         * @param bytesToWrite, number of bytes to write
+         *-----------------------------------------------*)
+        procedure writeStream(const srcStream : IStreamAdapter; const bytesToWrite : int64);
+
         (*!------------------------------------
          * seek
          *-------------------------------------
@@ -84,13 +130,30 @@ type
          * if offset >= stream size then it is capped
          * to stream size-1
          *-------------------------------------*)
-        function seek(const offset : int64) : int64;
+        function seek(const offset : int64; const origin : word = FROM_BEGINNING) : int64;
+
+        (*!------------------------------------------------
+         * reset stream
+         *-----------------------------------------------
+         * @return current instance
+         *-----------------------------------------------*)
+        function reset() : IStreamAdapter;
+
+        (*!------------------------------------------------
+         * resize stream
+         *-----------------------------------------------
+         * @param newSize, stream new size in bytes
+         * @return current instance
+         *-----------------------------------------------*)
+        function resize(const newSize : int64) : IStreamAdapter;
     end;
 
 implementation
 
 uses
 
+    sysutils,
+    math,
     EInvalidStreamImpl;
 
 resourcestring
@@ -128,7 +191,7 @@ resourcestring
         inherited destroy();
         if (isOwned) then
         begin
-            actualStream.free();
+            freeAndNil(actualStream);
         end;
     end;
 
@@ -167,6 +230,85 @@ resourcestring
         result := actualStream.write(buffer, sizeToWrite);
     end;
 
+    (*!------------------------------------------------
+     * read from stream to buffer until all data is read
+     *-----------------------------------------------
+     * @param buffer, buffer to store data read
+     * @param sizeToRead, total size in bytes to read
+     *-----------------------------------------------*)
+    procedure TStreamAdapter.readBuffer(var buffer; const sizeToRead : int64);
+    begin
+        actualStream.readBuffer(buffer, sizeToRead);
+    end;
+
+    (*!------------------------------------------------
+     * write from buffer to stream until all data is written
+     *-----------------------------------------------
+     * @param buffer, buffer contains data to write
+     * @param sizeToWrite, total size in bytes to write
+     *-----------------------------------------------*)
+    procedure TStreamAdapter.writeBuffer(const buffer; const sizeToWrite : int64);
+    begin
+        actualStream.writeBuffer(buffer, sizeToWrite);
+    end;
+
+    (*!------------------------------------------------
+     * copy from source stream and store to destination stream
+     *-----------------------------------------------
+     * @param srcStream, source stream
+     * @param dstStream, destination stream
+     * @param bytesToCopy, number of bytes to copy
+     *-----------------------------------------------*)
+    procedure TStreamAdapter.copyStream(
+        const srcStream : IStreamAdapter;
+        const dstStream : IStreamAdapter;
+        const bytesToCopy : int64
+    );
+    const MAX_BUFF_SIZE = 4096;
+    var buff : pointer;
+        buffSize : int64;
+    begin
+        if (bytesToCopy = 0) then
+        begin
+            exit();
+        end;
+
+        buffSize := min(MAX_BUFF_SIZE, bytesToCopy);
+
+        getMem(buff, buffSize);
+        try
+            repeat
+                srcStream.readBuffer(buff^, buffSize);
+                dstStream.writeBuffer(buff^, buffSize);
+                buffSize := min(MAX_BUFF_SIZE, bytesToCopy - buffSize);
+            until buffSize = 0;
+        finally
+            freeMem(buff);
+        end;
+    end;
+
+    (*!------------------------------------------------
+     * read from current stream and store to destination stream
+     *-----------------------------------------------
+     * @param dstStream, destination stream
+     * @param bytesToRead, number of bytes to read
+     *-----------------------------------------------*)
+    procedure TStreamAdapter.readStream(const dstStream : IStreamAdapter; const bytesToRead : int64);
+    begin
+        copyStream(self, dstStream, bytesToRead);
+    end;
+
+    (*!------------------------------------------------
+     * write data from source stream to current stream
+     *-----------------------------------------------
+     * @param srcStream, source stream
+     * @param bytesToWrite, number of bytes to write
+     *-----------------------------------------------*)
+    procedure TStreamAdapter.writeStream(const srcStream : IStreamAdapter; const bytesToWrite : int64);
+    begin
+        copyStream(srcStream, self, bytesToWrite);
+    end;
+
     (*!------------------------------------
      * seek
      *-------------------------------------
@@ -176,8 +318,32 @@ resourcestring
      * if offset >= stream size then it is capped
      * to stream size-1
      *-------------------------------------*)
-    function TStreamAdapter.seek(const offset : int64) : int64;
+    function TStreamAdapter.seek(const offset : int64; const origin : word = FROM_BEGINNING) : int64;
     begin
-        result := actualStream.seek(offset, soFromBeginning);
+        result := actualStream.seek(offset, origin);
+    end;
+
+    (*!------------------------------------------------
+     * reset stream
+     *-----------------------------------------------
+     * @return current instance
+     *-----------------------------------------------*)
+    function TStreamAdapter.reset() : IStreamAdapter;
+    begin
+        actualStream.size := 0;
+        seek(0);
+        result := self;
+    end;
+
+    (*!------------------------------------------------
+     * resize stream
+     *-----------------------------------------------
+     * @param newSize, stream new size in bytes
+     * @return current instance
+     *-----------------------------------------------*)
+    function TStreamAdapter.resize(const newSize : int64) : IStreamAdapter;
+    begin
+        actualStream.size := newSize;
+        result := self;
     end;
 end.
