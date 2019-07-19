@@ -29,9 +29,12 @@ type
      *--------------------------------------------------*)
     TCGIEnvironment = class(TInjectableObject, ICGIEnvironment)
     public
-        {-----------------------------------------
-         Retrieve an environment variable
-        ------------------------------------------}
+        (*!-----------------------------------------
+         * Retrieve an environment variable
+         *------------------------------------------
+         * @param key name of variable
+         * @return variable value
+         *------------------------------------------*)
         function env(const key : string) : string; virtual;
 
         {-----------------------------------------
@@ -144,9 +147,12 @@ resourcestring
 
     sErrInvalidContentLength = 'Invalid content length';
 
-    {-----------------------------------------
-     Retrieve an environment variable
-    ------------------------------------------}
+    (*!-----------------------------------------
+     * Retrieve an environment variable
+     *------------------------------------------
+     * @param key name of variable
+     * @return variable value
+     *------------------------------------------*)
     function TCGIEnvironment.env(const key : string) : string;
     begin
         result := getenv(key);
