@@ -12,6 +12,7 @@ interface
 {$MODE OBJFPC}
 
 uses
+
     DependencyIntf,
     DependencyContainerIntf,
     FactoryImpl;
@@ -31,6 +32,7 @@ type
 implementation
 
 uses
+
     OutputBufferImpl;
 
     function TOutputBufferFactory.build(const container : IDependencyContainer) : IDependency;

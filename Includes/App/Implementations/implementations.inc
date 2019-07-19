@@ -13,5 +13,26 @@
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
  *-----------------------------------------------*)
 
- AppImpl,
- SimpleAppImpl,
+AppImpl,
+SimpleAppImpl,
+
+{----------------Begin FastCGI related-----------------------------}
+
+InetSocketSvrImpl,
+
+{$IFDEF unix}
+UnixSocketSvrImpl,
+{$ENDIF}
+
+BoundSocketSvrImpl,
+
+FastCGIAppImpl,
+SimpleFastCGIAppImpl,
+
+{$IFDEF unix}
+SimpleUnixFastCGIAppImpl,
+{$ENDIF}
+
+SimpleSockFastCGIAppImpl,
+
+{---------------- End FastCGI related-----------------------------}

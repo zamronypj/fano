@@ -19,4 +19,5 @@ InjectableObjectImpl,
 
 EDependencyNotFoundImpl,
 EInvalidFactoryImpl,
+EDependencyAliasImpl,
 FactoryImpl,

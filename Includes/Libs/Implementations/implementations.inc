@@ -14,12 +14,7 @@
  *-----------------------------------------------*)
 
 OutputBufferFactoryImpl,
-
-FileLoggerImpl,
-FileLoggerFactoryImpl,
-
-NullLoggerImpl,
-NullLoggerFactoryImpl,
+StdErrBufferFactoryImpl,
 
 StringFileReaderImpl,
 StringFileReaderFactoryImpl,
@@ -30,23 +25,9 @@ EInvalidStreamImpl,
 StdInReaderImpl,
 SimpleStdInReaderImpl,
 
-HttpGetImpl,
-HttpGetFactoryImpl,
-
-HttpPostImpl,
-HttpPostFactoryImpl,
-
-HttpPutImpl,
-HttpPutFactoryImpl,
-
-HttpDeleteImpl,
-HttpDeleteFactoryImpl,
-
-HttpHeadImpl,
-HttpHeadFactoryImpl,
-
-HttpClientImpl,
-HttpClientFactoryImpl,
-
 KeyValuePairImpl,
 KeyValuePairFactoryImpl,
+
+{$INCLUDE Logger/implementations.inc}
+{$INCLUDE LibCurl/implementations.inc}
+{$INCLUDE FastCGI/implementations.inc}

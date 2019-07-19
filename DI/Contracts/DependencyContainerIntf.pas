@@ -54,6 +54,15 @@ type
         function factory(const serviceName : shortstring; const serviceFactory : IDependencyFactory) : IDependencyContainer;
 
         (*!--------------------------------------------------------
+         * Add alias name to existing service
+         *---------------------------------------------------------
+         * @param aliasName alias name of service
+         * @param serviceName actual name of service
+         * @return current dependency container instance
+         *---------------------------------------------------------*)
+        function alias(const aliasName: shortstring; const serviceName : shortstring) : IDependencyContainer;
+
+        (*!--------------------------------------------------------
          * get instance from service registration using its name.
          *---------------------------------------------------------
          * @param serviceName name of service
@@ -63,7 +72,7 @@ type
          * if serviceName is registered with add(), then this method
          * will always return same instance. If serviceName is
          * registered using factory(), this method will return
-         * different instance everytim get() is called.s
+         * different instance everytim get() is called.
          *---------------------------------------------------------*)
         function get(const serviceName : shortstring) : IDependency;
 
@@ -72,11 +81,6 @@ type
          *---------------------------------------------------------
          * @param serviceName name of service
          * @return boolean true if service is registered otherwise false
-         *---------------------------------------------------------
-         * if serviceName is registered with add(), then this method
-         * will always return same instance. If serviceName is
-         * registered using factory(), this method will return
-         * different instance everytim get() is called.s
          *---------------------------------------------------------*)
         function has(const serviceName : shortstring) : boolean;
     end;

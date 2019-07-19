@@ -42,10 +42,35 @@ type
         function addDependency(
             const serviceName : shortstring;
             const serviceFactory : IDependencyFactory;
-            const singleInstance : boolean
+            const singleInstance : boolean;
+            const aliased : boolean;
+            const actualServiceName : shortstring
         ) : IDependencyContainer;
 
         procedure cleanUpDependencies();
+
+        (*!--------------------------------------------------------
+         * get pointer to dependency record using its name or raise exception.
+         *---------------------------------------------------------
+         * @param serviceName name of service
+         * @return dependency record pointer
+         * @throws EDependencyNotFound
+         *---------------------------------------------------------*)
+        function getDepRecordOrExcept(const serviceName : shortstring) : pointer;
+
+        (*!--------------------------------------------------------
+         * get instance from service registration using its name.
+         *---------------------------------------------------------
+         * @param serviceName name of service
+         * @return dependency instance
+         * @throws EDependencyNotFound
+         *---------------------------------------------------------
+         * if serviceName is registered with add(), then this method
+         * will always return same instance. If serviceName is
+         * registered using factory(), this method will return
+         * different instance everytime get() is called
+         *---------------------------------------------------------*)
+        function getDependency(const serviceName : shortstring) : IDependency;
     public
         (*!--------------------------------------------------------
          * constructor
@@ -80,6 +105,15 @@ type
         function factory(const serviceName : shortstring; const serviceFactory : IDependencyFactory) : IDependencyContainer;
 
         (*!--------------------------------------------------------
+         * Add alias name to existing service
+         *---------------------------------------------------------
+         * @param aliasName alias name of service
+         * @param serviceName actual name of service
+         * @return current dependency container instance
+         *---------------------------------------------------------*)
+        function alias(const aliasName: shortstring; const serviceName : shortstring) : IDependencyContainer;
+
+        (*!--------------------------------------------------------
          * get instance from service registration using its name.
          *---------------------------------------------------------
          * @param serviceName name of service
@@ -97,11 +131,6 @@ type
          *---------------------------------------------------------
          * @param serviceName name of service
          * @return boolean true if service is registered otherwise false
-         *---------------------------------------------------------
-         * if serviceName is registered with add(), then this method
-         * will always return same instance. If serviceName is
-         * registered using factory(), this method will return
-         * different instance everytim get() is called.s
          *---------------------------------------------------------*)
         function has(const serviceName : shortstring) : boolean;
     end;
@@ -111,12 +140,14 @@ implementation
 uses
     sysutils,
     EDependencyNotFoundImpl,
-    EInvalidFactoryImpl;
+    EInvalidFactoryImpl,
+    EDependencyAliasImpl;
 
 resourcestring
 
     sDependencyNotFound = 'Dependency %s not found';
     sInvalidFactory = 'Factory %s is invalid';
+    sUnsupportedMultiLevelAlias = 'Unsupported multiple level alias %s to %s';
 
 type
 
@@ -124,6 +155,11 @@ type
         factory : IDependencyFactory;
         instance : IDependency;
         singleInstance : boolean;
+
+        //if a service is alias to other service name, then
+        //aliased will be true and actualServiceName point to actual service name
+        aliased : boolean;
+        actualServiceName : shortString;
     end;
     PDependencyRec = ^TDependencyRec;
 
@@ -166,7 +202,9 @@ type
     function TDependencyContainer.addDependency(
         const serviceName : shortstring;
         const serviceFactory : IDependencyFactory;
-        const singleInstance : boolean
+        const singleInstance : boolean;
+        const aliased : boolean;
+        const actualServiceName : shortString
     ) : IDependencyContainer;
     var depRec : PDependencyRec;
     begin
@@ -180,6 +218,8 @@ type
         depRec^.factory := serviceFactory;
         depRec^.instance := nil;
         depRec^.singleInstance := singleInstance;
+        depRec^.aliased := aliased;
+        depRec^.actualServiceName := actualServiceName;
         result := self;
     end;
 
@@ -196,7 +236,7 @@ type
         const serviceFactory : IDependencyFactory
     ) : IDependencyContainer;
     begin
-        result := addDependency(serviceName, serviceFactory, true);
+        result := addDependency(serviceName, serviceFactory, true, false, '');
     end;
 
     (*!--------------------------------------------------------
@@ -212,7 +252,46 @@ type
         const serviceFactory : IDependencyFactory
     ) : IDependencyContainer;
     begin
-        result := addDependency(serviceName, serviceFactory, false);
+        result := addDependency(serviceName, serviceFactory, false, false, '');
+    end;
+
+    (*!--------------------------------------------------------
+     * get pointer to dependency record using its name or raise exception.
+     *---------------------------------------------------------
+     * @param serviceName name of service
+     * @return dependency record pointer
+     * @throws EDependencyNotFound
+     *---------------------------------------------------------*)
+    function TDependencyContainer.getDepRecordOrExcept(const serviceName : shortstring) : pointer;
+    begin
+        result := dependencyList.find(serviceName);
+        if (result = nil) then
+        begin
+            raise EDependencyNotFound.createFmt(sDependencyNotFound, [serviceName]);
+        end;
+    end;
+
+    (*!--------------------------------------------------------
+     * Add alias name to existing service
+     *---------------------------------------------------------
+     * @param aliasName alias name of service
+     * @param serviceName actual name of service
+     * @return current dependency container instance
+     *---------------------------------------------------------*)
+    function TDependencyContainer.alias(const aliasName: shortstring; const serviceName : shortstring) : IDependencyContainer;
+    var actualDepRec : PDependencyRec;
+    begin
+        actualDepRec := getDepRecordOrExcept(serviceName);
+
+        if actualDepRec^.aliased then
+        begin
+            //TODO: Should we allow alias to other alias?
+            //Allowing this may cause deep recursion when we need to get actual
+            //instance. Current implementation does not support it
+            raise EDependencyAlias.createFmt(sUnsupportedMultiLevelAlias, [aliasName, serviceName])
+        end;
+
+        result := addDependency(aliasName, nil, false, true, serviceName);
     end;
 
     (*!--------------------------------------------------------
@@ -228,15 +307,10 @@ type
      * registered using factory(), this method will return
      * different instance everytime it is called.
      *---------------------------------------------------------*)
-    function TDependencyContainer.get(const serviceName : shortstring) : IDependency;
+    function TDependencyContainer.getDependency(const serviceName : shortstring) : IDependency;
     var depRec : PDependencyRec;
     begin
-        depRec := dependencyList.find(serviceName);
-
-        if (depRec = nil) then
-        begin
-            raise EDependencyNotFound.createFmt(sDependencyNotFound, [serviceName]);
-        end;
+        depRec := getDepRecordOrExcept(serviceName);
 
         if (depRec^.factory = nil) then
         begin
@@ -254,6 +328,36 @@ type
         begin
             result := depRec^.factory.build(self);
         end;
+    end;
+
+    (*!--------------------------------------------------------
+     * get instance from service registration using its name or alias.
+     *---------------------------------------------------------
+     * @param serviceName name of service
+     * @return dependency instance
+     * @throws EDependencyNotFound
+     * @throws EInvalidFactory
+     *---------------------------------------------------------
+     * if serviceName is registered with add(), then this method
+     * will always return same instance. If serviceName is
+     * registered using factory(), this method will return
+     * different instance everytime it is called.
+     *---------------------------------------------------------*)
+    function TDependencyContainer.get(const serviceName : shortstring) : IDependency;
+    var depRec : PDependencyRec;
+        svcName : shortstring;
+    begin
+        depRec := getDepRecordOrExcept(serviceName);
+
+        if (not depRec^.aliased) then
+        begin
+            svcName := serviceName;
+        end else
+        begin
+            svcName := depRec^.actualServiceName;
+        end;
+
+        result := getDependency(svcName);
     end;
 
     (*!--------------------------------------------------------
