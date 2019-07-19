@@ -20,7 +20,7 @@ uses
 
 type
     (*!------------------------------------------------
-     * base JSON response class
+     * redirect response class
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
@@ -58,9 +58,13 @@ implementation
 uses
 
     sysutils,
-    ResponseStreamImpl;
+    NullResponseStreamImpl;
 
-    constructor TRedirectResponse.create(const hdrs : IHeaders; const json : string);
+    constructor TRedirectResponse.create(
+        const hdrs : IHeaders;
+        const status : word;
+        const url : string
+    );
     begin
         httpHeaders := hdrs;
         fStream := TNullResponseStream.create();
