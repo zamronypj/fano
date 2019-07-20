@@ -29,5 +29,5 @@ TSimpleSockFastCGIWebApplication = SimpleSockFastCGIAppImpl.TSimpleSockFastCGIWe
 {----------------End FastCGI related-----------------------------}
 
 {----------------Begin SCGI related-----------------------------}
-TSimpleScgiWebApplication = SimpleFcgiAppImpl.TSimpleScgiWebApplication;
+TSimpleScgiWebApplication = SimpleScgiAppImpl.TSimpleScgiWebApplication;
 {----------------End SCGI related-----------------------------}
