@@ -56,7 +56,7 @@ uses
             separator1 := posEx(#0, tmpStr, separator0 + 1);
             akey := copy(tmpStr, 1, separator0);
             avalue := copy(tmpStr, separator0 + 1, separator1);
-            tmpStr := delete(tmpStr, 1, separator1);
+            delete(tmpStr, 1, separator1);
             setValue(akey, avalue);
         end;
     end;
