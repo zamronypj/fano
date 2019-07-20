@@ -75,6 +75,7 @@ uses
 
     Classes,
     SysUtils,
+    StreamAdapterImpl,
     NullStreamAdapterImpl,
     KeyValueEnvironmentImpl,
     NullEnvironmentImpl,
