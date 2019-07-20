@@ -101,7 +101,6 @@ implementation
 
 uses
 
-    FcgiEnvironmentImpl,
     FcgiRecordIntf,
     KeyValuePairIntf,
     EnvironmentFactoryIntf,
