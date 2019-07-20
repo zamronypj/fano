@@ -17,7 +17,6 @@ uses
     RunnableIntf,
     CloseableIntf,
     DependencyContainerIntf,
-    AppImpl,
     DispatcherIntf,
     EnvironmentIntf,
     ErrorHandlerIntf,
@@ -27,7 +26,9 @@ uses
     StdOutIntf,
     ProtocolProcessorIntf,
     ReadyListenerIntf,
-    StreamAdapterIntf;
+    StreamAdapterIntf,
+    CoreAppConsts,
+    CoreAppImpl;
 
 type
 
@@ -37,7 +38,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TDaemonWebApplication = class(TFanoWebApplication, IDataAvailListener, IReadyListener)
+    TDaemonWebApplication = class(TCoreWebApplication, IDataAvailListener, IReadyListener)
     private
         workerServer : IRunnableWithDataNotif;
         fProcessor : IProtocolProcessor;
@@ -114,12 +115,6 @@ uses
     ESockBindImpl,
     ESockCreateImpl,
     ESockListenImpl;
-
-resourcestring
-
-    //TODO refactor as this is duplicate with AppImpl.pas
-    sHttp404Message = 'Not Found';
-    sHttp405Message = 'Method Not Allowed';
 
     (*!-----------------------------------------------
      * constructor
