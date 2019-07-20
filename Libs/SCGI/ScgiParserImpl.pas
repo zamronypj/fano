@@ -131,6 +131,8 @@ resourcestring
     var len, bytesRead : integer;
         empty : boolean;
         terminationChar : char;
+        strHeader : string;
+        contentLen : integer;
     begin
         empty := false;
         if (isDigit(ch)) then
@@ -140,8 +142,8 @@ resourcestring
         if (ch = ':') then
         begin
             len := strToInt(fLenStr);
-            setLength(str, len);
-            bytesRead := stream.read(str[1], len);
+            setLength(strHeader, len);
+            bytesRead := stream.read(strHeader[1], len);
             empty := (bytesRead <= 0);
             if (bytesRead < len) then
             begin
@@ -159,11 +161,11 @@ resourcestring
                     );
                 end;
 
-                fEnv := parseEnv(str);
+                fEnv := parseEnv(strHeader);
 
                 contentLen := fEnv.intContentLength();
-                setLength(str, contentLen);
-                bytesRead := stream.read(str[1], contentLen);
+                setLength(strHeader, contentLen);
+                bytesRead := stream.read(strHeader[1], contentLen);
 
                 if (bytesRead < contentLen) then
                 begin
