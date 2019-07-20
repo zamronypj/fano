@@ -37,7 +37,7 @@ type
     private
         fcgiParser : IFcgiFrameParser;
         fcgiRequestMgr : IFcgiRequestManager;
-        fcgiRequestReadyListener : IRequestReadyListener;
+        fcgiRequestReadyListener : IReadyListener;
 
         //store request id that is ready to be served
         fCompleteRequestId : word;
@@ -82,7 +82,7 @@ type
          *-----------------------------------------------
          * @return current instance
          *-----------------------------------------------*)
-        function setReadyListener(const listener : IRequestReadyListener) : IProtocolProcessor;
+        function setReadyListener(const listener : IReadyListener) : IProtocolProcessor;
 
         (*!------------------------------------------------
          * get request id
