@@ -38,4 +38,6 @@ FcgiRecordFactoryIntf,
 FcgiRequestIntf,
 FcgiRequestManagerIntf,
 FcgiFrameParserIntf,
-FcgiProcessorIntf,
+
+ProtocolProcessorIntf,
+ReadyListenerIntf,
