@@ -32,7 +32,7 @@ type
         (*!------------------------------------------------
          * parse stream
          *-----------------------------------------------*)
-        procedure parse(const stream : IStreamAdapter);
+        function parse(const stream : IStreamAdapter) : boolean;
 
         (*!------------------------------------------------
          * get POST data

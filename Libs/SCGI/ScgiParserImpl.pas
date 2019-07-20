@@ -56,9 +56,9 @@ type
         destructor destroy(); override;
 
         (*!------------------------------------------------
-         * process request stream
+         * parse request stream
          *-----------------------------------------------*)
-        procedure parse(const stream : IStreamAdapter);
+        function parse(const stream : IStreamAdapter) : boolean;
 
         (*!------------------------------------------------
          * get StdIn stream for complete request
