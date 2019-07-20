@@ -17,7 +17,7 @@ uses
 
     StreamAdapterIntf,
     CloseableIntf,
-    SCGIParserIntf,
+    ScgiParserIntf,
     ReadyListenerIntf;
 
 type
