@@ -57,8 +57,10 @@ type
 
 implementation
 
-    constructor TScgiProcessor.create();
+    constructor TScgiProcessor.create(const aParser : IScgiParser);
     begin
+        inherited create();
+        fParser := aParser;
         fRequestReadyListener := nil;
         fStdIn := nil;
     end;
@@ -68,16 +70,30 @@ implementation
         inherited destroy();
         fRequestReadyListener := nil;
         fStdIn := nil;
+        fParser := nil;
     end;
 
     (*!------------------------------------------------
      * process request stream
      *-----------------------------------------------*)
     procedure TScgiProcessor.process(const stream : IStreamAdapter; const streamCloser : ICloseable);
+    var handled : boolean;
     begin
         if (fParser.parse(stream)) then
         begin
             fStdIn := fParser.getStdIn();
+            if assigned(fRequestReadyListener) then
+            begin
+                handled := fRequestReadyListener.ready(
+                        stream,
+                        fParser.getEnv(),
+                        fStdIn
+                );
+                if handled then
+                begin
+                    streamCloser.close();
+                end;
+            end;
         end;
     end;
 

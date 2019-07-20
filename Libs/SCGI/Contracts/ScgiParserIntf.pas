@@ -30,26 +30,19 @@ type
         ['{D0607EED-62DE-4D37-B9BB-A83ECD66032E}']
 
         (*!------------------------------------------------
-         * parse current string and extract environment variable
-         * and POST data
-         *-----------------------------------------------
-         * @param buffer, pointer to current buffer
-         * @param bufferSize, size of buffer
-         * @return IFcgiRecord instance
-         * @throws EInvalidFcgiBuffer exception when buffer is nil
-         * @throws EInvalidFcgiHeaderLen exception when header size not valid
+         * parse stream
          *-----------------------------------------------*)
-        function setNetString(const netString : string) : IScgiParser;
+        procedure parse(const stream : IStreamAdapter);
 
         (*!------------------------------------------------
-         * extract environment variable from netstring
+         * get POST data
          *-----------------------------------------------
-         * @return ICGIEnvironment instance
+         * @return IStreamAdapter instance
          *-----------------------------------------------*)
         function getStdIn() : IStreamAdapter;
 
         (*!------------------------------------------------
-         * extract environment variable from netstring
+         * get environment variable from request
          *-----------------------------------------------
          * @return ICGIEnvironment instance
          *-----------------------------------------------*)

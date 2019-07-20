@@ -17,9 +17,7 @@ uses
 
     StreamAdapterIntf,
     ScgiParserIntf,
-    CloseableIntf,
-    EnvironmentIntf,
-    ReadyListenerIntf;
+    EnvironmentIntf;
 
 type
 
@@ -78,18 +76,23 @@ implementation
 
 uses
 
-    SysUtils;
+    SysUtils,
+    NullStreamAdapterImpl,
+    NullEnvironmentImpl;
 
-    constructor TScgiParser.create(const envFactory : ICGIEnvironmentFactory);
+    constructor TScgiParser.create();
     begin
         inherited create();
-        fEnvFactory := envFactory;
+        //initialize with null implementation
+        fStdIn := TNullStreamAdapter.create();
+        fEnv := TNullCGIEnvironment.create();
     end;
 
     destructor TScgiParser.destroy();
     begin
         inherited destroy();
-        fEnvFactory := nil;
+        fStdIn := nil;
+        fEnv := nil;
     end;
 
     function TScgiParser.isDigit(const ch : char) : boolean;
