@@ -19,7 +19,7 @@ uses
     EnvironmentIntf,
     StreamAdapterIntf,
     ProtocolProcessorIntf,
-    RequestReadyListenerIntf,
+    ReadyListenerIntf,
     FcgiRequestManagerIntf,
     FcgiRequestIdAwareIntf,
     FcgiStdInStreamAwareIntf,
