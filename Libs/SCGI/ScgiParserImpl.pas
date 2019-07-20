@@ -189,6 +189,7 @@ resourcestring
     function TScgiParser.parse(const stream : IStreamAdapter) : boolean;
     var streamEmpty : boolean;
         ch : char;
+        bytesRead : integer;
     begin
         fContent := '';
         fLenStr := '';
