@@ -18,7 +18,7 @@ uses
     CloseableIntf,
     EnvironmentIntf,
     StreamAdapterIntf,
-    FcgiProcessorIntf,
+    ProtocolProcessorIntf,
     FcgiRequestManagerIntf,
     FcgiRequestIdAwareIntf,
     FcgiRequestReadyListenerIntf,
@@ -33,7 +33,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TFcgiProcessor = class(TInterfacedObject, IFcgiProcessor, IFcgiRequestIdAware, IFcgiStdInStreamAware)
+    TFcgiProcessor = class(TInterfacedObject, IProtocolProcessor, IFcgiRequestIdAware, IFcgiStdInStreamAware)
     private
         fcgiParser : IFcgiFrameParser;
         fcgiRequestMgr : IFcgiRequestManager;
@@ -82,7 +82,7 @@ type
          *-----------------------------------------------
          * @return current instance
          *-----------------------------------------------*)
-        function setReadyListener(const listener : IFcgiRequestReadyListener) : IFcgiProcessor;
+        function setReadyListener(const listener : IFcgiRequestReadyListener) : IProtocolProcessor;
 
         (*!------------------------------------------------
          * get request id
@@ -211,7 +211,7 @@ uses
      *-----------------------------------------------
      * @return current instance
      *-----------------------------------------------*)
-    function TFcgiProcessor.setReadyListener(const listener : IFcgiRequestReadyListener) : IFcgiProcessor;
+    function TFcgiProcessor.setReadyListener(const listener : IFcgiRequestReadyListener) : IProtocolProcessor;
     begin
         fcgiRequestReadyListener := listener;
         result := self;
