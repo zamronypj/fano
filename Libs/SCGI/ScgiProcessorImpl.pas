@@ -28,6 +28,8 @@ type
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
     TScgiProcessor = class(TInterfacedObject, IProtocolProcessor)
+    private
+
     public
 
         (*!------------------------------------------------
@@ -55,7 +57,10 @@ implementation
      *-----------------------------------------------*)
     procedure TScgiProcessor.process(const stream : IStreamAdapter; const streamCloser : ICloseable);
     begin
+        if (fParser.parse(stream)) then
+        begin
 
+        end;
     end;
 
     (*!------------------------------------------------

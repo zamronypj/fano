@@ -15,6 +15,7 @@ interface
 
 uses
 
+    EnvironmentIntf,
     StreamAdapterIntf;
 
 type
@@ -26,33 +27,11 @@ type
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
     IScgiParser = interface
-        ['{06B79D63-55E3-4B6E-BFD9-65CE6ED72636}']
+        ['{D0607EED-62DE-4D37-B9BB-A83ECD66032E}']
 
         (*!------------------------------------------------
-         * read stream and return found record in memory buffer
-         *-----------------------------------------------
-         * @param bufPtr, memory buffer to store FastCGI record
-         * @param bufSize, memory buffer size
-         * @return true if stream is exhausted
-         *-----------------------------------------------*)
-        function readRecord(
-            const stream : IStreamAdapter;
-            out bufPtr : pointer;
-            out bufSize : ptrUint
-        ) : boolean;
-
-        (*!------------------------------------------------
-        * test if buffer contain FastCGI frame package
-        * i.e FastCGI header + payload
-        *-----------------------------------------------
-        * @param buffer, pointer to current buffer
-        * @return true if buffer contain valid frame
-        *-----------------------------------------------*)
-        function hasFrame(const buffer : pointer;  const bufferSize : ptrUint) : boolean;
-
-        (*!------------------------------------------------
-         * parse current buffer and create its corresponding
-         * FastCGI record instance
+         * parse current string and extract environment variable
+         * and POST data
          *-----------------------------------------------
          * @param buffer, pointer to current buffer
          * @param bufferSize, size of buffer
@@ -60,7 +39,21 @@ type
          * @throws EInvalidFcgiBuffer exception when buffer is nil
          * @throws EInvalidFcgiHeaderLen exception when header size not valid
          *-----------------------------------------------*)
-        function parseFrame(const buffer : pointer;  const bufferSize : ptrUint) : IFcgiRecord;
+        function setNetString(const netString : string) : IScgiParser;
+
+        (*!------------------------------------------------
+         * extract environment variable from netstring
+         *-----------------------------------------------
+         * @return ICGIEnvironment instance
+         *-----------------------------------------------*)
+        function getStdIn() : IStreamAdapter;
+
+        (*!------------------------------------------------
+         * extract environment variable from netstring
+         *-----------------------------------------------
+         * @return ICGIEnvironment instance
+         *-----------------------------------------------*)
+        function getEnv() : ICGIEnvironment;
     end;
 
 implementation
