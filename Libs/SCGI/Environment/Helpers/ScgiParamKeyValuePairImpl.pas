@@ -33,6 +33,10 @@ type
 
 implementation
 
+uses
+
+    StrUtils;
+
     constructor TScgiParamKeyValuePair.create(const paramStr : string);
     begin
         inherited create();
