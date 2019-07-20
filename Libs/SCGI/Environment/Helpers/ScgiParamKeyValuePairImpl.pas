@@ -11,6 +11,7 @@ unit ScgiParamKeyValuePairImpl;
 interface
 
 {$MODE OBJFPC}
+{$H+}
 
 uses
 
