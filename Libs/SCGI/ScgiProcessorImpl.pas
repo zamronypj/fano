@@ -32,7 +32,7 @@ type
     TScgiProcessor = class(TInterfacedObject, IProtocolProcessor)
     private
         fParser : IScgiParser;
-        fRequestReadyListener : IRequestReadyListener;
+        fRequestReadyListener : IReadyListener;
         fStdIn : IStreamAdapter;
     public
         constructor create(const aParser : IScgiParser);
