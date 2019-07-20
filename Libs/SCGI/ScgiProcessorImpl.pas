@@ -31,7 +31,7 @@ type
      *-----------------------------------------------*)
     TScgiProcessor = class(TInterfacedObject, IProtocolProcessor)
     private
-        fParser : ISgiParser;
+        fParser : IScgiParser;
         fRequestReadyListener : IRequestReadyListener;
         fStdIn : IStreamAdapter;
     public
