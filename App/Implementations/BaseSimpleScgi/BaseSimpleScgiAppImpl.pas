@@ -84,7 +84,7 @@ uses
      * This is provided to simplify thing by providing
      * default service provider
      *-----------------------------------------------*)
-    constructor TBaseSimpleFastCGIWebApplication.create(
+    constructor TBaseSimpleScgiWebApplication.create(
         const workerServer : IRunnableWithDataNotif;
         const container : IDependencyContainer = nil;
         const errHandler : IErrorHandler = nil;
