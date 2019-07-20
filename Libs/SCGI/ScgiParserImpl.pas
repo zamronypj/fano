@@ -76,11 +76,14 @@ implementation
 
 uses
 
+    Classes,
     SysUtils,
     NullStreamAdapterImpl,
     KeyValueEnvironmentImpl,
     NullEnvironmentImpl,
-    ScgiParamKeyValuePairImpl;
+    ScgiParamKeyValuePairImpl,
+    EInvalidScgiHeaderImpl,
+    EInvalidScgiBodyImpl;
 
 resourcestring
 
