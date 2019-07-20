@@ -26,6 +26,7 @@ type
      *--------------------------------------------------*)
     TScgiParamKeyValuePair = class(TKeyValuePair)
     private
+        procedure readKeyValueFromString(const aStr : string);
     public
         constructor create(const paramStr : string);
     end;
