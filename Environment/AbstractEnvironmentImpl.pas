@@ -27,7 +27,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *--------------------------------------------------*)
-    TAbstracTAbstractCGIEnvironment = class(TInjectableObject, ICGIEnvironment)
+    TAbstractCGIEnvironment = class(TInjectableObject, ICGIEnvironment)
     public
         (*!-----------------------------------------
          * Retrieve an environment variable
