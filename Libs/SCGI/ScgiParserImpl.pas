@@ -78,7 +78,15 @@ uses
 
     SysUtils,
     NullStreamAdapterImpl,
-    NullEnvironmentImpl;
+    KeyValueEnvironmentImpl,
+    NullEnvironmentImpl,
+    ScgiParamKeyValuePairImpl;
+
+resourcestring
+
+    sInvalidHeaderContent = 'Invalid header content length. Expected %d bytes got %d bytes';
+    sInvalidHeaderFormat = 'Invalid header format. Expected end with ''%s'' got ''%s''';
+    sInvalidBodyLength = 'Invalid body length. Expected %d bytes got %d bytes';
 
     constructor TScgiParser.create();
     begin
@@ -105,7 +113,7 @@ uses
     function TScgiParser.parseEnv(const str : string) : ICGIEnvironment;
     begin
         result := TKeyValueEnvironment.create(
-            TScgiKeyValuePair.create(str)
+            TScgiParamKeyValuePair.create(str)
         );
     end;
 
