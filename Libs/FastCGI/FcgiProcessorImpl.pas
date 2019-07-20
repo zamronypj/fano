@@ -211,7 +211,7 @@ uses
      *-----------------------------------------------
      * @return current instance
      *-----------------------------------------------*)
-    function TFcgiProcessor.setReadyListener(const listener : IRequestReadyListener) : IProtocolProcessor;
+    function TFcgiProcessor.setReadyListener(const listener : IReadyListener) : IProtocolProcessor;
     begin
         fcgiRequestReadyListener := listener;
         result := self;
