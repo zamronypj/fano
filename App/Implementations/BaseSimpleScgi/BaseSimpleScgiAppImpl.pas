@@ -5,13 +5,14 @@
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
-unit BaseSimpleFastCGIAppImpl;
+unit BaseSimpleScgiAppImpl;
 
 interface
 
 {$MODE OBJFPC}
 
 uses
+
     DaemonAppImpl,
     DependencyContainerIntf,
     DispatcherIntf,
@@ -25,12 +26,12 @@ type
 
     (*!-----------------------------------------------
      * Base abstract class that implements IWebApplication
-     * and provide basic default for easier setup for FastCGI
+     * and provide basic default for easier setup for SCGI
      * web application
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TBaseSimpleFastCGIWebApplication = class(TDaemonWebApplication)
+    TBaseSimpleScgiWebApplication = class(TDaemonWebApplication)
     protected
         function initDispatcher(const container : IDependencyContainer) : IDispatcher; override;
     public
@@ -59,8 +60,6 @@ uses
 
     SysUtils,
     ProtocolProcessorIntf,
-    FcgiFrameParserFactoryIntf,
-    FcgiFrameParserFactoryImpl,
     DependencyContainerImpl,
     DependencyListImpl,
     EnvironmentImpl,
@@ -69,11 +68,10 @@ uses
     RouteMatcherIntf,
     SimpleRouterFactoryImpl,
     SimpleDispatcherFactoryImpl,
-    FcgiProcessorImpl,
-    FcgiFrameParserImpl,
-    FcgiRequestManagerImpl,
+    ScgiProcessorImpl,
+    ScgiParserImpl,
     OutputBufferImpl,
-    FcgiStdOutWriterImpl,
+    ScgiStdOutWriterImpl,
     StreamAdapterCollectionFactoryImpl;
 
     (*!-----------------------------------------------
@@ -95,11 +93,9 @@ uses
     var appContainer :  IDependencyContainer;
         appErr : IErrorHandler;
         appDispatcher : IDispatcher;
-        fcgiProc : TFcgiProcessor;
         appProcessor : IProtocolProcessor;
         appOutputBuffer : IOutputBuffer;
         appStdOutWriter : IStdOut;
-        aParserFactory : IFcgiFrameParserFactory;
         dispatcherId : string;
         routerId : string;
     begin
@@ -115,14 +111,9 @@ uses
             appErr := TErrorHandler.create();
         end;
 
-        aParserFactory := TFcgiFrameParserFactory.create();
-        fcgiProc := TFcgiProcessor.create(
-            aParserFactory.build(),
-            TFcgiRequestManager.create(TStreamAdapterCollectionFactory.create())
-        );
-        appProcessor := fcgiProc;
+        appProcessor := TScgiProcessor.create(TScgiParser.create());
         appOutputBuffer := TOutputBuffer.create();
-        appStdOutWriter := TFcgiStdOutWriter.create(fcgiProc);
+        appStdOutWriter := TScgiStdOutWriter.create();
 
         routerId := GUIDToString(IRouteMatcher);
         if (not appContainer.has(routerId)) then
@@ -155,7 +146,7 @@ uses
         );
     end;
 
-    function TBaseSimpleFastCGIWebApplication.initDispatcher(const container : IDependencyContainer) : IDispatcher;
+    function TBaseSimpleScgiWebApplication.initDispatcher(const container : IDependencyContainer) : IDispatcher;
     begin
         result := container.get(GUIDToString(IDispatcher)) as IDispatcher;
     end;

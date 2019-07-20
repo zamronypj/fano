@@ -5,7 +5,7 @@
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
-unit FastCGIAppImpl;
+unit DaemonAppImpl;
 
 interface
 
@@ -25,21 +25,22 @@ uses
     DataAvailListenerIntf,
     RunnableWithDataNotifIntf,
     StdOutIntf,
-    FcgiProcessorIntf,
-    FcgiRequestReadyListenerIntf,
+    ProtocolProcessorIntf,
+    ReadyListenerIntf,
     StreamAdapterIntf;
 
 type
 
     (*!-----------------------------------------------
-     * FastCGI web application that implements IWebApplication
+     * Base web application that implements IWebApplication
+     * which run as daemon
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TFastCGIWebApplication = class(TFanoWebApplication, IDataAvailListener, IFcgiRequestReadyListener)
+    TDaemonWebApplication = class(TFanoWebApplication, IDataAvailListener, IReadyListener)
     private
         workerServer : IRunnableWithDataNotif;
-        fcgiProcessor : IFcgiProcessor;
+        fProcessor : IProtocolProcessor;
         fOutputBuffer : IOutputBuffer;
         fStdOutWriter : IStdOut;
 
@@ -67,7 +68,7 @@ type
             const errHandler : IErrorHandler;
             const dispatcherInst : IDispatcher;
             const server : IRunnableWithDataNotif;
-            const aFcgiProcessor : IFcgiProcessor;
+            const aProcessor : IProtocolProcessor;
             const outputBuffer : IOutputBuffer;
             const stdOutWriter : IStdOut
         );
@@ -130,12 +131,12 @@ resourcestring
      * This is provided to simplify thing by providing
      * default service provider
      *-----------------------------------------------*)
-    constructor TFastCGIWebApplication.create(
+    constructor TDaemonWebApplication.create(
         const container : IDependencyContainer;
         const errHandler : IErrorHandler;
         const dispatcherInst : IDispatcher;
         const server : IRunnableWithDataNotif;
-        const aFcgiProcessor : IFcgiProcessor;
+        const aProcessor : IProtocolProcessor;
         const outputBuffer : IOutputBuffer;
         const stdOutWriter : IStdOut
     );
@@ -143,17 +144,17 @@ resourcestring
         inherited create(container, nil, errHandler);
         dispatcher := dispatcherInst;
         workerServer := server;
-        fcgiProcessor := aFcgiProcessor;
+        fProcessor := aProcessor;
         fOutputBuffer := outputBuffer;
         fStdOutWriter := stdOutWriter;
     end;
 
-    destructor TFastCGIWebApplication.destroy();
+    destructor TDaemonWebApplication.destroy();
     begin
         inherited destroy();
         dispatcher := nil;
         workerServer := nil;
-        fcgiProcessor := nil;
+        fProcessor := nil;
         fOutputBuffer := nil;
         fStdOutWriter := nil;
     end;
@@ -163,11 +164,11 @@ resourcestring
      *-----------------------------------------------
      * Note that run keeps run until application is terminated
      *-----------------------------------------------*)
-    procedure TFastCGIWebApplication.attachListenerAndRunServer();
+    procedure TDaemonWebApplication.attachListenerAndRunServer();
     begin
         //This is to ensure that reference count of our instance
         //properly incremented/decremented so no memory leak
-        fcgiProcessor.setReadyListener(self);
+        fProcessor.setReadyListener(self);
         workerServer.setDataAvailListener(self);
         try
             try
@@ -189,7 +190,7 @@ resourcestring
                 end;
             end;
         finally
-            fcgiProcessor.setReadyListener(nil);
+            fProcessor.setReadyListener(nil);
             workerServer.setDataAvailListener(nil);
         end;
     end;
@@ -201,7 +202,7 @@ resourcestring
      *-----------------------------------------------
      * Note that run keeps run until application is terminated
      *-----------------------------------------------*)
-    function TFastCGIWebApplication.run() : IRunnable;
+    function TDaemonWebApplication.run() : IRunnable;
     begin
         if (initialize(dependencyContainer)) then
         begin
@@ -215,7 +216,7 @@ resourcestring
      *------------------------------------------------
      * @param env, CGI environment
      *-----------------------------------------------*)
-    procedure TFastCGIWebApplication.executeRequest(const env : ICGIEnvironment);
+    procedure TDaemonWebApplication.executeRequest(const env : ICGIEnvironment);
     begin
         try
             environment := env;
@@ -248,25 +249,25 @@ resourcestring
      * @param streamCloser, instance that can close stream if required
      * @return true if data is handled
      *-----------------------------------------------*)
-    function TFastCGIWebApplication.handleData(
+    function TDaemonWebApplication.handleData(
         const stream : IStreamAdapter;
         const context : TObject;
         const streamCloser : ICloseable
     ) : boolean;
     begin
-        fcgiProcessor.process(stream, streamCloser);
+        fProcessor.process(stream, streamCloser);
         result := true;
     end;
 
     (*!------------------------------------------------
-     * FastCGI request is ready
+     * Request is ready
      *-----------------------------------------------
      * @param socketStream, original socket stream
      * @param env, CGI environment
      * @param stdInStream, stream contains POST-ed data
      * @return true request is handled
      *-----------------------------------------------*)
-    function TFastCGIWebApplication.ready(
+    function TDaemonWebApplication.ready(
         const socketStream : IStreamAdapter;
         const env : ICGIEnvironment;
         const stdInStream : IStreamAdapter
