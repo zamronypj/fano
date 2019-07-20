@@ -18,6 +18,7 @@ uses
     StreamAdapterIntf,
     CloseableIntf,
     ScgiParserIntf,
+    ProtocolProcessorIntf,
     ReadyListenerIntf;
 
 type
