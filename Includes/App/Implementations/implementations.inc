@@ -16,17 +16,9 @@
 AppImpl,
 SimpleAppImpl,
 
+DaemonAppImpl,
+
 {----------------Begin FastCGI related-----------------------------}
-
-InetSocketSvrImpl,
-
-{$IFDEF unix}
-UnixSocketSvrImpl,
-{$ENDIF}
-
-BoundSocketSvrImpl,
-
-FastCGIAppImpl,
 SimpleFastCGIAppImpl,
 
 {$IFDEF unix}
@@ -34,5 +26,8 @@ SimpleUnixFastCGIAppImpl,
 {$ENDIF}
 
 SimpleSockFastCGIAppImpl,
-
 {---------------- End FastCGI related-----------------------------}
+
+{----------------Begin SCGI related-----------------------------}
+SimpleScgiAppImpl,
+{---------------- End SCGI related-----------------------------}
