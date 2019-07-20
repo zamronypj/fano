@@ -38,19 +38,16 @@ type
         function isDigit(const ch : char) : boolean;
 
         (*!------------------------------------------------
-         * process request stream
+         * parse string and return CGI environment variable
          *-----------------------------------------------*)
-        function parseEnv(const str : string) :ICGIEnvironment;
+        function parseEnv(const str : string) : ICGIEnvironment;
 
         (*!------------------------------------------------
-         * process request stream
+         * parse string and return POST data as stream
          *-----------------------------------------------*)
-        procedure parseStdIn(const str : string);
+        function parseStdIn(const str : string) : IStreamAdapter;
 
-        (*!------------------------------------------------
-         * process request stream
-         *-----------------------------------------------*)
-        procedure parse(const ch : char);
+        function parseNetstring(const ch : char; const stream : IStreamAdapter) :  boolean;
     public
         constructor create();
         destructor destroy(); override;
