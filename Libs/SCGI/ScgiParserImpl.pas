@@ -172,7 +172,7 @@ resourcestring
                     raise EInvalidScgiBody.createFmt(sInvalidBodyLength, [contentLen, bytesRead]);
                 end;
 
-                fStdIn := parseStdIn(str);
+                fStdIn := parseStdIn(strHeader);
                 fParsed := (fEnv <> nil) and (fStdIn <> nil);
             end;
         end else
