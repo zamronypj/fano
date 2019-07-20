@@ -119,7 +119,7 @@ resourcestring
 
     function TScgiParser.parseStdIn(const str : string) : IStreamAdapter;
     begin
-        result := TStreamAdapter(TStringStream(str));
+        result := TStreamAdapter.create(TStringStream.create(str));
         result.seek(0, FROM_BEGINNING);
     end;
 
