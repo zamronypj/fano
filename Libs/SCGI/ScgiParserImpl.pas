@@ -86,6 +86,7 @@ uses
 resourcestring
 
     sInvalidHeaderContent = 'Invalid header content length. Expected %d bytes got %d bytes';
+    sInvalidHeaderLen = 'Invalid header length. Expected integer got string ''%s''';
     sInvalidHeaderFormat = 'Invalid header format. Expected end with ''%s'' got ''%s''';
     sInvalidBodyLength = 'Invalid body length. Expected %d bytes got %d bytes';
 
