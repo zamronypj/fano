@@ -17,6 +17,7 @@ uses
 
     StreamAdapterIntf,
     CloseableIntf,
+    SCGIParserIntf,
     ReadyListenerIntf;
 
 type
@@ -29,8 +30,12 @@ type
      *-----------------------------------------------*)
     TScgiProcessor = class(TInterfacedObject, IProtocolProcessor)
     private
-
+        fParser : ISgiParser;
+        fRequestReadyListener : IRequestReadyListener;
+        fStdIn : IStreamAdapter;
     public
+        constructor create(const aParser : IScgiParser);
+        destructor destroy(); override;
 
         (*!------------------------------------------------
          * process request stream
@@ -52,6 +57,19 @@ type
 
 implementation
 
+    constructor TScgiProcessor.create();
+    begin
+        fRequestReadyListener := nil;
+        fStdIn := nil;
+    end;
+
+    destructor TScgiProcessor.destroy();
+    begin
+        inherited destroy();
+        fRequestReadyListener := nil;
+        fStdIn := nil;
+    end;
+
     (*!------------------------------------------------
      * process request stream
      *-----------------------------------------------*)
@@ -59,7 +77,7 @@ implementation
     begin
         if (fParser.parse(stream)) then
         begin
-
+            fStdIn := fParser.getStdIn();
         end;
     end;
 
@@ -68,7 +86,7 @@ implementation
      *-----------------------------------------------*)
     function TScgiProcessor.getStdIn() : IStreamAdapter;
     begin
-
+        result := fStdIn;
     end;
 
     (*!------------------------------------------------
@@ -78,7 +96,8 @@ implementation
      *-----------------------------------------------*)
     function TScgiProcessor.setReadyListener(const listener : IReadyListener) : IProtocolProcessor;
     begin
-
+        fRequestReadyListener := listener;
+        result := self;
     end;
 
 end.

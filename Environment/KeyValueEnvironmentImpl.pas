@@ -15,10 +15,8 @@ interface
 
 uses
 
-    DependencyIntf,
-    EnvironmentIntf,
     KeyValuePairIntf,
-    EnvironmentImpl;
+    AbstractEnvironmentImpl;
 
 type
 
@@ -28,7 +26,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *--------------------------------------------------*)
-    TKeyValueEnvironment = class(TCGIEnvironment)
+    TKeyValueEnvironment = class(TAbstractCGIEnvironment)
     private
         envVars : IKeyValuePair;
     public

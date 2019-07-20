@@ -32,7 +32,7 @@ type
 
 implementation
 
-    constructor TScgiParamKeyValuePair.create(const paramStr : IStreamAdapter);
+    constructor TScgiParamKeyValuePair.create(const paramStr : string);
     begin
         inherited create();
         readKeyValueFromString(paramStr);

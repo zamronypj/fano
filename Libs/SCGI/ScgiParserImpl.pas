@@ -16,7 +16,9 @@ interface
 uses
 
     StreamAdapterIntf,
+    ScgiParserIntf,
     CloseableIntf,
+    EnvironmentIntf,
     ReadyListenerIntf;
 
 type
@@ -27,18 +29,20 @@ type
      * @link https://python.ca/scgi/protocol.txt
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TScgiParser = class(TInterfacedObject, ISCGIParser)
+    TScgiParser = class(TInterfacedObject, IScgiParser)
     private
         fLenStr : string;
         fContent : string;
         fParsed : boolean;
+        fStdIn : IStreamAdapter;
+        fEnv : ICGIEnvironment;
 
         function isDigit(const ch : char) : boolean;
 
         (*!------------------------------------------------
          * process request stream
          *-----------------------------------------------*)
-        procedure parseEnv(const str : string);
+        function parseEnv(const str : string) :ICGIEnvironment;
 
         (*!------------------------------------------------
          * process request stream
@@ -50,6 +54,8 @@ type
          *-----------------------------------------------*)
         procedure parse(const ch : char);
     public
+        constructor create();
+        destructor destroy(); override;
 
         (*!------------------------------------------------
          * process request stream
@@ -62,11 +68,10 @@ type
         function getStdIn() : IStreamAdapter;
 
         (*!------------------------------------------------
-         * set listener to be notified when request is ready
-         *-----------------------------------------------
-         * @return current instance
+         * get StdIn stream for complete request
          *-----------------------------------------------*)
-        function setReadyListener(const listener : IReadyListener) : IProtocolProcessor;
+        function getEnv() : ICGIEnvironment;
+
     end;
 
 implementation
@@ -75,11 +80,36 @@ uses
 
     SysUtils;
 
-    function isDigit(const ch : char) : boolean;
+    constructor TScgiParser.create(const envFactory : ICGIEnvironmentFactory);
+    begin
+        inherited create();
+        fEnvFactory := envFactory;
+    end;
+
+    destructor TScgiParser.destroy();
+    begin
+        inherited destroy();
+        fEnvFactory := nil;
+    end;
+
+    function TScgiParser.isDigit(const ch : char) : boolean;
     begin
         //result := (x in ['0'..'9']);
         //ch '0' (ASCI 48) ..'9' (ASCI 57)
         result := (byte(ch) < 48) or (byte(ch) > 57);
+    end;
+
+    function TScgiParser.parseEnv(const str : string) : ICGIEnvironment;
+    begin
+        result := TKeyValueEnvironment.create(
+            TScgiKeyValuePair.create(str)
+        );
+    end;
+
+    function TScgiParser.parseStdIn(const str : string) : IStreamAdapter;
+    begin
+        result := TStreamAdapter(TStringStream(str));
+        result.seek(0, FROM_BEGINNING);
     end;
 
     (*!------------------------------------------------
@@ -88,6 +118,7 @@ uses
     function TScgiParser.parseNetstring(const ch : char; const stream : IStreamAdapter) :  boolean;
     var len, bytesRead : integer;
         empty : boolean;
+        terminationChar : char;
     begin
         empty := false;
         if (isDigit(ch)) then
@@ -107,7 +138,28 @@ uses
 
             if (not empty) then
             begin
-                fParsed := parseEnv(envStr) and parseStdIn(envStr);
+                bytesRead := stream.read(terminationChar, 1);
+                if (terminationChar <> ',') then
+                begin
+                    raise EInvalidScgiHeader.createFmt(
+                        sInvalidHeaderFormat,
+                        [',', terminationChar]
+                    );
+                end;
+
+                fEnv := parseEnv(str);
+
+                contentLen := fEnv.intContentLength();
+                setLength(str, contentLen);
+                bytesRead := stream.read(str[1], contentLen);
+
+                if (bytesRead < contentLen) then
+                begin
+                    raise EInvalidScgiBody.createFmt(sInvalidBodyLength, [contentLen, bytesRead]);
+                end;
+
+                fStdIn := parseStdIn(str);
+                fParsed := (fEnv <> nil) and (fStdIn <> nil);
             end;
         end else
         begin
@@ -137,6 +189,7 @@ uses
                 streamEmpty := true;
             end;
         until streamEmpty;
+        result := fParsed;
     end;
 
     (*!------------------------------------------------
@@ -144,17 +197,16 @@ uses
      *-----------------------------------------------*)
     function TScgiParser.getStdIn() : IStreamAdapter;
     begin
-
+        result := fStdIn;
     end;
 
     (*!------------------------------------------------
-     * set listener to be notified weh request is ready
-     *-----------------------------------------------
-     * @return current instance
+     * get environment for complete request
      *-----------------------------------------------*)
-    function TScgiParser.setReadyListener(const listener : IReadyListener) : IProtocolProcessor;
+    function TScgiParser.getEnv() : ICGIEnvironment;
     begin
-
+        result := fEnv;
     end;
+
 
 end.
