@@ -19,9 +19,9 @@ uses
     EnvironmentIntf,
     StreamAdapterIntf,
     ProtocolProcessorIntf,
+    RequestReadyListenerIntf,
     FcgiRequestManagerIntf,
     FcgiRequestIdAwareIntf,
-    FcgiRequestReadyListenerIntf,
     FcgiStdInStreamAwareIntf,
     FcgiFrameParserIntf;
 
@@ -37,7 +37,7 @@ type
     private
         fcgiParser : IFcgiFrameParser;
         fcgiRequestMgr : IFcgiRequestManager;
-        fcgiRequestReadyListener : IFcgiRequestReadyListener;
+        fcgiRequestReadyListener : IRequestReadyListener;
 
         //store request id that is ready to be served
         fCompleteRequestId : word;
@@ -82,7 +82,7 @@ type
          *-----------------------------------------------
          * @return current instance
          *-----------------------------------------------*)
-        function setReadyListener(const listener : IFcgiRequestReadyListener) : IProtocolProcessor;
+        function setReadyListener(const listener : IRequestReadyListener) : IProtocolProcessor;
 
         (*!------------------------------------------------
          * get request id
@@ -211,7 +211,7 @@ uses
      *-----------------------------------------------
      * @return current instance
      *-----------------------------------------------*)
-    function TFcgiProcessor.setReadyListener(const listener : IFcgiRequestReadyListener) : IProtocolProcessor;
+    function TFcgiProcessor.setReadyListener(const listener : IRequestReadyListener) : IProtocolProcessor;
     begin
         fcgiRequestReadyListener := listener;
         result := self;
