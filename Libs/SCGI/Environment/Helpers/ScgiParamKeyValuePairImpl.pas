@@ -23,6 +23,7 @@ type
      * key value pair class having capability
      * to retrieve SCGI environment variable
      *
+     * @link https://python.ca/scgi/protocol.txt
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *--------------------------------------------------*)
     TScgiParamKeyValuePair = class(TKeyValuePair)
