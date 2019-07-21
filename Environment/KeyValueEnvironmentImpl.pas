@@ -36,7 +36,7 @@ type
         {-----------------------------------------
          Retrieve an environment variable
         ------------------------------------------}
-        function env(const key : string) : string; override;
+        function env(const keyName : string) : string; override;
     end;
 
 implementation
