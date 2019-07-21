@@ -165,15 +165,19 @@ resourcestring
                 fEnv := parseEnv(strHeader);
 
                 contentLen := fEnv.intContentLength();
-                setLength(strHeader, contentLen);
-                bytesRead := stream.read(strHeader[1], contentLen);
-
-                if (bytesRead < contentLen) then
+                if (contentLen > 0) then
                 begin
-                    raise EInvalidScgiBody.createFmt(sInvalidBodyLength, [contentLen, bytesRead]);
+                    //read body
+                    setLength(strHeader, contentLen);
+                    bytesRead := stream.read(strHeader[1], contentLen);
+
+                    if (bytesRead < contentLen) then
+                    begin
+                        raise EInvalidScgiBody.createFmt(sInvalidBodyLength, [contentLen, bytesRead]);
+                    end;
+                    fStdIn := parseStdIn(strHeader);
                 end;
 
-                fStdIn := parseStdIn(strHeader);
                 fParsed := (fEnv <> nil) and (fStdIn <> nil);
             end;
         end else
