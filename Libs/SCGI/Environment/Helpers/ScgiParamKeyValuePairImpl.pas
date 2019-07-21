@@ -29,11 +29,7 @@ type
     TScgiParamKeyValuePair = class(TKeyValuePair)
     private
         procedure readKeyValueFromString(const aStr : string);
-        procedure extractKeyValue(
-            const aStr : string;
-            var akey : string;
-            var avalue : string
-        );
+        procedure extractKeyValue(var tmpStr : string; var akey : string; var avalue : string);
     public
         constructor create(const paramStr : string);
     end;
