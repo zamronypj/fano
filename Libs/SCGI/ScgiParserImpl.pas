@@ -109,7 +109,7 @@ resourcestring
     begin
         //result := (x in ['0'..'9']);
         //ch '0' (ASCI 48) ..'9' (ASCI 57)
-        result := (byte(ch) < 48) or (byte(ch) > 57);
+        result := (byte(ch) >= 48) and (byte(ch) <= 57);
     end;
 
     function TScgiParser.parseEnv(const str : string) : ICGIEnvironment;
