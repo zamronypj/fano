@@ -67,6 +67,7 @@ uses
     );
     begin
         httpHeaders := hdrs;
+        //redirect response does not need body, so we just use null stream
         fStream := TNullResponseStream.create();
     end;
 

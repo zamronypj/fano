@@ -183,6 +183,8 @@ type
             hdr := headerList.get(i);
             writeln(hdr^.key, ': ', hdr^.value);
         end;
+
+        //CGI protocol requires that header and body are separated by blank line
         writeln();
         result := self;
     end;
