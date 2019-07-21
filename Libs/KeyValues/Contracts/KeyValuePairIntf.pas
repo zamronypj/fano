@@ -31,7 +31,7 @@ type
          * @param val value to use
          * @return current instance
          *-----------------------------------------------*)
-        function setValue(const key : shortstring; const val : string) : IKeyValuePair;
+        function setValue(const keyName : shortstring; const val : string) : IKeyValuePair;
 
         (*!------------------------------------------------
          * get value by key
@@ -40,7 +40,7 @@ type
          * @return value
          * @throws EKeyNotFound exception if not set
          *-----------------------------------------------*)
-        function getValue(const key : shortstring) : string;
+        function getValue(const keyName : shortstring) : string;
 
         (*!------------------------------------------------
          * test if key is set
@@ -48,7 +48,7 @@ type
          * @param key name to use
          * @return boolean true if key is set otherwise false
          *-----------------------------------------------*)
-        function has(const key : shortstring) : boolean;
+        function has(const keyName : shortstring) : boolean;
 
         (*!------------------------------------------------
          * unset key
@@ -57,7 +57,7 @@ type
          * @return current instance
          * @throws EKeyNotFound exception if not set
          *-----------------------------------------------*)
-        function unset(const key : shortstring) : IKeyValuePair;
+        function unset(const keyName : shortstring) : IKeyValuePair;
 
         (*!------------------------------------------------
          * get number of keys
