@@ -50,7 +50,7 @@ uses
         tmpStr : string;
     begin
         //environment variable will be pass in aStr as
-        //key#0value#0key#0value#0key#0value#0 etc
+        //key#0value#0key#0value#0key#0value#0 ....
         tmpStr := aStr;
         while (length(tmpStr) > 0) do
         begin
