@@ -18,10 +18,10 @@ uses
     CloseableIntf,
     EnvironmentIntf,
     StreamAdapterIntf,
-    FcgiProcessorIntf,
+    ProtocolProcessorIntf,
+    ReadyListenerIntf,
     FcgiRequestManagerIntf,
     FcgiRequestIdAwareIntf,
-    FcgiRequestReadyListenerIntf,
     FcgiStdInStreamAwareIntf,
     FcgiFrameParserIntf;
 
@@ -33,11 +33,11 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TFcgiProcessor = class(TInterfacedObject, IFcgiProcessor, IFcgiRequestIdAware, IFcgiStdInStreamAware)
+    TFcgiProcessor = class(TInterfacedObject, IProtocolProcessor, IFcgiRequestIdAware, IFcgiStdInStreamAware)
     private
         fcgiParser : IFcgiFrameParser;
         fcgiRequestMgr : IFcgiRequestManager;
-        fcgiRequestReadyListener : IFcgiRequestReadyListener;
+        fcgiRequestReadyListener : IReadyListener;
 
         //store request id that is ready to be served
         fCompleteRequestId : word;
@@ -82,7 +82,7 @@ type
          *-----------------------------------------------
          * @return current instance
          *-----------------------------------------------*)
-        function setReadyListener(const listener : IFcgiRequestReadyListener) : IFcgiProcessor;
+        function setReadyListener(const listener : IReadyListener) : IProtocolProcessor;
 
         (*!------------------------------------------------
          * get request id
@@ -101,7 +101,6 @@ implementation
 
 uses
 
-    FcgiEnvironmentImpl,
     FcgiRecordIntf,
     KeyValuePairIntf,
     EnvironmentFactoryIntf,
@@ -212,7 +211,7 @@ uses
      *-----------------------------------------------
      * @return current instance
      *-----------------------------------------------*)
-    function TFcgiProcessor.setReadyListener(const listener : IFcgiRequestReadyListener) : IFcgiProcessor;
+    function TFcgiProcessor.setReadyListener(const listener : IReadyListener) : IProtocolProcessor;
     begin
         fcgiRequestReadyListener := listener;
         result := self;

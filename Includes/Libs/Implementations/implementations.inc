@@ -28,6 +28,8 @@ SimpleStdInReaderImpl,
 KeyValuePairImpl,
 KeyValuePairFactoryImpl,
 
+{$INCLUDE Socket/implementations.inc}
 {$INCLUDE Logger/implementations.inc}
 {$INCLUDE LibCurl/implementations.inc}
 {$INCLUDE FastCGI/implementations.inc}
+{$INCLUDE SCGI/implementations.inc}

@@ -5,19 +5,19 @@
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
-unit BaseSimpleFastCGIAppImpl;
+unit BaseSimpleScgiAppImpl;
 
 interface
 
 {$MODE OBJFPC}
 
 uses
-    FastCGIAppImpl,
+
+    DaemonAppImpl,
     DependencyContainerIntf,
     DispatcherIntf,
     EnvironmentIntf,
     ErrorHandlerIntf,
-    FcgiProcessorIntf,
     OutputBufferIntf,
     RunnableWithDataNotifIntf,
     StdOutIntf;
@@ -26,12 +26,12 @@ type
 
     (*!-----------------------------------------------
      * Base abstract class that implements IWebApplication
-     * and provide basic default for easier setup for FastCGI
+     * and provide basic default for easier setup for SCGI
      * web application
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TBaseSimpleFastCGIWebApplication = class(TFastCGIWebApplication)
+    TBaseSimpleScgiWebApplication = class(TDaemonWebApplication)
     protected
         function initDispatcher(const container : IDependencyContainer) : IDispatcher; override;
     public
@@ -59,22 +59,18 @@ implementation
 uses
 
     SysUtils,
-    FcgiFrameParserFactoryIntf,
-    FcgiFrameParserFactoryImpl,
+    ProtocolProcessorIntf,
     DependencyContainerImpl,
     DependencyListImpl,
-    EnvironmentImpl,
     ErrorHandlerImpl,
     RouterIntf,
     RouteMatcherIntf,
     SimpleRouterFactoryImpl,
     SimpleDispatcherFactoryImpl,
-    FcgiProcessorImpl,
-    FcgiFrameParserImpl,
-    FcgiRequestManagerImpl,
+    ScgiProcessorImpl,
+    ScgiParserImpl,
     OutputBufferImpl,
-    FcgiStdOutWriterImpl,
-    StreamAdapterCollectionFactoryImpl;
+    ScgiStdOutWriterImpl;
 
     (*!-----------------------------------------------
      * constructor
@@ -86,7 +82,7 @@ uses
      * This is provided to simplify thing by providing
      * default service provider
      *-----------------------------------------------*)
-    constructor TBaseSimpleFastCGIWebApplication.create(
+    constructor TBaseSimpleScgiWebApplication.create(
         const workerServer : IRunnableWithDataNotif;
         const container : IDependencyContainer = nil;
         const errHandler : IErrorHandler = nil;
@@ -95,11 +91,9 @@ uses
     var appContainer :  IDependencyContainer;
         appErr : IErrorHandler;
         appDispatcher : IDispatcher;
-        fcgiProc : TFcgiProcessor;
-        appFcgiProcessor : IFcgiProcessor;
+        appProcessor : IProtocolProcessor;
         appOutputBuffer : IOutputBuffer;
         appStdOutWriter : IStdOut;
-        aParserFactory : IFcgiFrameParserFactory;
         dispatcherId : string;
         routerId : string;
     begin
@@ -115,14 +109,9 @@ uses
             appErr := TErrorHandler.create();
         end;
 
-        aParserFactory := TFcgiFrameParserFactory.create();
-        fcgiProc := TFcgiProcessor.create(
-            aParserFactory.build(),
-            TFcgiRequestManager.create(TStreamAdapterCollectionFactory.create())
-        );
-        appFcgiProcessor := fcgiProc;
+        appProcessor := TScgiProcessor.create(TScgiParser.create());
         appOutputBuffer := TOutputBuffer.create();
-        appStdOutWriter := TFcgiStdOutWriter.create(fcgiProc);
+        appStdOutWriter := TScgiStdOutWriter.create();
 
         routerId := GUIDToString(IRouteMatcher);
         if (not appContainer.has(routerId)) then
@@ -149,13 +138,13 @@ uses
             appErr,
             appDispatcher,
             workerServer,
-            appFcgiProcessor,
+            appProcessor,
             appOutputBuffer,
             appStdOutWriter
         );
     end;
 
-    function TBaseSimpleFastCGIWebApplication.initDispatcher(const container : IDependencyContainer) : IDispatcher;
+    function TBaseSimpleScgiWebApplication.initDispatcher(const container : IDependencyContainer) : IDispatcher;
     begin
         result := container.get(GUIDToString(IDispatcher)) as IDispatcher;
     end;

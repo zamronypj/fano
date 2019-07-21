@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit FcgiProcessorIntf;
+unit ScgiParserIntf;
 
 interface
 
@@ -15,37 +15,38 @@ interface
 
 uses
 
-    StreamAdapterIntf,
-    CloseableIntf,
-    FcgiRequestReadyListenerIntf;
+    EnvironmentIntf,
+    StreamAdapterIntf;
 
 type
 
     (*!-----------------------------------------------
-     * Interface for any class having capability to process
-     * FastCGI stream from web server
+     * Interface for any class having capability to parse
+     * SCGI string
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    IFcgiProcessor = interface
-        ['{D702F184-8CA5-48AC-AC71-6E5C4EE02382}']
+    IScgiParser = interface
+        ['{D0607EED-62DE-4D37-B9BB-A83ECD66032E}']
 
         (*!------------------------------------------------
-         * process request stream
+         * parse stream
          *-----------------------------------------------*)
-        procedure process(const stream : IStreamAdapter; const streamCloser : ICloseable);
+        function parse(const stream : IStreamAdapter) : boolean;
 
         (*!------------------------------------------------
-         * get FastCGI StdIn stream for complete request
+         * get POST data
+         *-----------------------------------------------
+         * @return IStreamAdapter instance
          *-----------------------------------------------*)
         function getStdIn() : IStreamAdapter;
 
         (*!------------------------------------------------
-         * set listener to be notified weh request is ready
+         * get environment variable from request
          *-----------------------------------------------
-         * @return current instance
+         * @return ICGIEnvironment instance
          *-----------------------------------------------*)
-        function setReadyListener(const listener : IFcgiRequestReadyListener) : IFcgiProcessor;
+        function getEnv() : ICGIEnvironment;
     end;
 
 implementation

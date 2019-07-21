@@ -15,18 +15,9 @@
 
 TFanoWebApplication = AppImpl.TFanoWebApplication;
 TSimpleWebApplication = SimpleAppImpl.TSimpleWebApplication;
+TDaemonWebApplication = DaemonAppImpl.TDaemonWebApplication;
 
 {----------------Begin FastCGI related-----------------------------}
-
-TInetSocketSvr = InetSocketSvrImpl.TInetSocketSvr;
-
-{$IFDEF unix}
-TUnixSocketSvr = UnixSocketSvrImpl.TUnixSocketSvr;
-{$ENDIF}
-
-TBoundSocketSvr = BoundSocketSvrImpl.TBoundSocketSvr;
-
-TFastCGIWebApplication = FastCGIAppImpl.TFastCGIWebApplication;
 TSimpleFastCGIWebApplication = SimpleFastCGIAppImpl.TSimpleFastCGIWebApplication;
 
 {$IFDEF unix}
@@ -36,3 +27,7 @@ TSimpleUnixFastCGIWebApplication = SimpleUnixFastCGIAppImpl.TSimpleUnixFastCGIWe
 TSimpleSockFastCGIWebApplication = SimpleSockFastCGIAppImpl.TSimpleSockFastCGIWebApplication;
 
 {----------------End FastCGI related-----------------------------}
+
+{----------------Begin SCGI related-----------------------------}
+TSimpleScgiWebApplication = SimpleScgiAppImpl.TSimpleScgiWebApplication;
+{----------------End SCGI related-----------------------------}

@@ -5,7 +5,7 @@
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
-unit AppImpl;
+unit CoreAppImpl;
 
 interface
 
@@ -18,7 +18,8 @@ uses
     AppIntf,
     DispatcherIntf,
     EnvironmentIntf,
-    ErrorHandlerIntf;
+    ErrorHandlerIntf,
+    CoreAppConsts;
 
 type
 
@@ -27,7 +28,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TFanoWebApplication = class(TInterfacedObject, IWebApplication, IRunnable)
+    TCoreWebApplication = class(TInterfacedObject, IWebApplication, IRunnable)
     protected
         dependencyContainer : IDependencyContainer;
         dispatcher : IDispatcher;
@@ -98,7 +99,7 @@ type
             const errHandler : IErrorHandler
         );
         destructor destroy(); override;
-        function run() : IRunnable; virtual;
+        function run() : IRunnable; virtual; abstract;
     end;
 
 implementation
@@ -109,19 +110,9 @@ uses
     ResponseIntf,
 
     ///exception-related units
-    ERouteHandlerNotFoundImpl,
-    EMethodNotAllowedImpl,
-    EDependencyNotFoundImpl,
-    EInvalidDispatcherImpl,
-    EInvalidFactoryImpl;
+    EInvalidDispatcherImpl;
 
-resourcestring
-
-    sHttp404Message = 'Not Found';
-    sHttp405Message = 'Method Not Allowed';
-    sErrInvalidDispatcher = 'Dispatcher instance is invalid';
-
-    procedure TFanoWebApplication.reset();
+    procedure TCoreWebApplication.reset();
     begin
         dispatcher := nil;
         environment := nil;
@@ -143,7 +134,7 @@ resourcestring
      * goes wrong, we can be sure that there is error handler
      * to handle the exception
      *-----------------------------------------------*)
-    constructor TFanoWebApplication.create(
+    constructor TCoreWebApplication.create(
         const container : IDependencyContainer;
         const env : ICGIEnvironment;
         const errHandler : IErrorHandler
@@ -159,7 +150,7 @@ resourcestring
     (*!-----------------------------------------------
      * destructor
      *-----------------------------------------------*)
-    destructor TFanoWebApplication.destroy();
+    destructor TCoreWebApplication.destroy();
     begin
         inherited destroy();
         reset();
@@ -176,7 +167,7 @@ resourcestring
      * implementation they like, we need to be informed
      * about it.
      *-----------------------------------------------*)
-    procedure TFanoWebApplication.buildDispatcher(const container : IDependencyContainer);
+    procedure TCoreWebApplication.buildDispatcher(const container : IDependencyContainer);
     begin
         dispatcher := initDispatcher(container);
         if (dispatcher = nil) then
@@ -197,7 +188,7 @@ resourcestring
      * is we put this in run() method which maybe not right
      * place.
      *-----------------------------------------------*)
-    function TFanoWebApplication.initialize(const container : IDependencyContainer) : boolean;
+    function TCoreWebApplication.initialize(const container : IDependencyContainer) : boolean;
     begin
         buildDependencies(container);
         buildRoutes(container);
@@ -213,7 +204,7 @@ resourcestring
      * TODO: need to think about how to execute when
      * application is run as daemon.
      *-----------------------------------------------*)
-    function TFanoWebApplication.execute() : IRunnable;
+    function TCoreWebApplication.execute() : IRunnable;
     var response : IResponse;
     begin
         response := dispatcher.dispatchRequest(environment);
@@ -225,69 +216,4 @@ resourcestring
         end;
     end;
 
-    (*!-----------------------------------------------
-     * execute application and handle exception
-     *------------------------------------------------
-     * @return current application instance
-     *-----------------------------------------------
-     * TODO: need to think about how to execute when
-     * application is run as daemon.
-     *-----------------------------------------------*)
-    function TFanoWebApplication.run() : IRunnable;
-    begin
-        try
-            if (initialize(dependencyContainer)) then
-            begin
-                result := execute();
-            end;
-        except
-            on e : ERouteHandlerNotFound do
-            begin
-                errorHandler.handleError(e, 404, sHttp404Message);
-                reset();
-            end;
-
-            on e : EMethodNotAllowed do
-            begin
-                errorHandler.handleError(e, 405, sHttp405Message);
-                reset();
-            end;
-
-            on e : EDependencyNotFound do
-            begin
-                errorHandler.handleError(e);
-                reset();
-            end;
-
-            on e : EInvalidDispatcher do
-            begin
-                errorHandler.handleError(e);
-                reset();
-            end;
-
-            on e : EInvalidFactory do
-            begin
-                errorHandler.handleError(e);
-                reset();
-            end;
-
-            on e : EAccessViolation do
-            begin
-                errorHandler.handleError(e);
-                reset();
-            end;
-
-            on e : EInOutError do
-            begin
-                errorHandler.handleError(e);
-                reset();
-            end;
-
-            on e : Exception do
-            begin
-                errorHandler.handleError(e);
-                reset();
-            end;
-        end;
-    end;
 end.

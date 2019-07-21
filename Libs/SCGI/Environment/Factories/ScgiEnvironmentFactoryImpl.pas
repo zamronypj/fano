@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit FcgiEnvironmentFactoryImpl;
+unit ScgiEnvironmentFactoryImpl;
 
 interface
 
@@ -24,16 +24,15 @@ uses
 type
     (*!------------------------------------------------
      * factory class to create class having capability
-     * to retrieve FastCGI environment variable
+     * to retrieve SCGI environment variable
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *--------------------------------------------------*)
-    TFCGIEnvironmentFactory = class(TFactory, IDependencyFactory, ICGIEnvironmentFactory)
+    TSCGIEnvironmentFactory = class(TFactory, IDependencyFactory, ICGIEnvironmentFactory)
     private
-        fParamStream : IStreamAdapter;
+        fParamStr : string;
     public
-        constructor create(const paramStream : IStreamAdapter);
-        destructor destroy(); override;
+        constructor create(const paramStr : string);
         function build(const container : IDependencyContainer) : IDependency; override;
         function build() : ICGIEnvironment;
     end;
@@ -43,18 +42,12 @@ implementation
 uses
 
     classes,
-    FcgiParamKeyValuePairImpl,
+    ScgiParamKeyValuePairImpl,
     KeyValueEnvironmentImpl;
 
-    constructor TFCGIEnvironmentFactory.create(const paramStream : IStreamAdapter);
+    constructor TSCGIEnvironmentFactory.create(const paramStr : string);
     begin
-        fParamStream := paramStream;
-    end;
-
-    destructor TFCGIEnvironmentFactory.destroy();
-    begin
-        inherited destroy();
-        fParamStream := nil;
+        fParamStr := paramStr;
     end;
 
     function TFCGIEnvironmentFactory.build(const container : IDependencyContainer) : IDependency;
@@ -65,7 +58,7 @@ uses
     function TFCGIEnvironmentFactory.build() : ICGIEnvironment;
     begin
         result := TKeyValueEnvironment.create(
-            TFcgiParamKeyValuePair.create(fParamStream)
+            TScgiParamKeyValuePair.create(fParamStr)
         );
     end;
 

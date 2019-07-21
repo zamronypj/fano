@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit FcgiEnvironmentImpl;
+unit KeyValueEnvironmentImpl;
 
 interface
 
@@ -15,20 +15,18 @@ interface
 
 uses
 
-    DependencyIntf,
-    EnvironmentIntf,
     KeyValuePairIntf,
-    EnvironmentImpl;
+    AbstractEnvironmentImpl;
 
 type
 
     (*!------------------------------------------------
      * basic having capability to retrieve
-     * CGI environment variable from FastCGI protocol
+     * CGI environment variable from key value pair
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *--------------------------------------------------*)
-    TFCGIEnvironment = class(TCGIEnvironment)
+    TKeyValueEnvironment = class(TAbstractCGIEnvironment)
     private
         envVars : IKeyValuePair;
     public
@@ -38,17 +36,17 @@ type
         {-----------------------------------------
          Retrieve an environment variable
         ------------------------------------------}
-        function env(const key : string) : string; override;
+        function env(const keyName : string) : string; override;
     end;
 
 implementation
 
-    constructor TFCGIEnvironment.create(const aEnvVars : IKeyValuePair);
+    constructor TKeyValueEnvironment.create(const aEnvVars : IKeyValuePair);
     begin
         envVars := aEnvVars;
     end;
 
-    destructor TFCGIEnvironment.destroy();
+    destructor TKeyValueEnvironment.destroy();
     begin
         inherited destroy();
         envVars := nil;
@@ -57,11 +55,11 @@ implementation
     {-----------------------------------------
      Retrieve an environment variable
     ------------------------------------------}
-    function TFCGIEnvironment.env(const key : string) : string;
+    function TKeyValueEnvironment.env(const keyName : string) : string;
     begin
-        if (envVars.has(key)) then
+        if (envVars.has(keyName)) then
         begin
-            result := envVars.getValue(key);
+            result := envVars.getValue(keyName);
         end else
         begin
             result := '';

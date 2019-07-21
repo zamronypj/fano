@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit EnvironmentImpl;
+unit NullEnvironmentImpl;
 
 interface
 
@@ -20,12 +20,11 @@ uses
 type
 
     (*!------------------------------------------------
-     * basic having capability to retrieve
-     * CGI environment variable
+     * dummy CGI environment variable
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *--------------------------------------------------*)
-    TCGIEnvironment = class(TAbstractCGIEnvironment)
+    TNullCGIEnvironment = class(TAbstractCGIEnvironment)
     public
         (*!-----------------------------------------
          * Retrieve an environment variable
@@ -38,10 +37,6 @@ type
 
 implementation
 
-uses
-
-    dos;
-
 
     (*!-----------------------------------------
      * Retrieve an environment variable
@@ -49,9 +44,9 @@ uses
      * @param key name of variable
      * @return variable value
      *------------------------------------------*)
-    function TCGIEnvironment.env(const keyName : string) : string;
+    function TNullCGIEnvironment.env(const keyName : string) : string;
     begin
-        result := getenv(keyName);
+        result := '';
     end;
 
 end.

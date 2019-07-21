@@ -16,19 +16,19 @@ uses
 
     StreamAdapterIntf,
     StdOutIntf,
+    StreamStdOutImpl,
     FcgiRequestIdAwareIntf;
 
 type
 
     (*!-----------------------------------------------
-     * FastCGI frame processor that parse FastCGI frame
-     * and build CGI environment and write response
+     * IStdOut implementation having capability to write
+     * response to FCGI_STDOUT
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TFcgiStdOutWriter = class(TInterfacedObject, IStdOut)
+    TFcgiStdOutWriter = class(TStreamStdOut)
     private
-        fStream : IStreamAdapter;
         fRequestIdAware : IFcgiRequestIdAware;
 
         (*!------------------------------------------------
@@ -49,6 +49,8 @@ type
          *-----------------------------------------------*)
         function writeEnd(const requestId : word; const stream : IStreamAdapter) : IStdOut;
 
+    protected
+
         (*!------------------------------------------------
          * write string to FCGI_STDOUT stream and
          * mark it end of request (if markEnd is true)
@@ -61,34 +63,13 @@ type
          * very long string may be splitted into several
          * FCGI_STDOUT records
          *-----------------------------------------------*)
-        function writeStream(const stream : IStreamAdapter; const str : string) : IStdOut;
+        function writeStream(const stream : IStreamAdapter; const str : string) : IStdOut; override;
     public
 
         constructor create(
             const requestIdAware : IFcgiRequestIdAware;
             const astream : IStreamAdapter = nil
         );
-        destructor destroy(); override;
-
-        function setStream(const astream : IStreamAdapter) : IStdOut;
-
-        (*!------------------------------------------------
-         * write string to FCGI_STDOUT stream and
-         * mark it end of request (if markEnd is true)
-         *-----------------------------------------------
-         * @param str, string to write
-         * @return current instance
-         *-----------------------------------------------*)
-        function write(const str : string) : IStdOut;
-
-        (*!------------------------------------------------
-         * write string with newline to FCGI_STDOUT stream and
-         * mark it end of request (if markEnd is true)
-         *-----------------------------------------------
-         * @param str, string to write
-         * @return current instance
-         *-----------------------------------------------*)
-        function writeln(const str : string) : IStdOut;
 
     end;
 
@@ -96,35 +77,21 @@ implementation
 
 uses
 
-    fastcgi,
     classes,
     math,
     strutils,
     FcgiRecordIntf,
     FcgiStdOut,
     FcgiEndRequest,
-    StreamAdapterImpl,
-    NullStreamAdapterImpl;
+    StreamAdapterImpl;
 
     constructor TFcgiStdOutWriter.create(
         const requestIdAware : IFcgiRequestIdAware;
         const astream : IStreamAdapter = nil
     );
     begin
+        inherited create(astream);
         fRequestIdAware := requestIdAware;
-        fStream := astream;
-    end;
-
-    destructor TFcgiStdOutWriter.destroy();
-    begin
-        inherited destroy();
-        fStream := nil;
-    end;
-
-    function TFcgiStdOutWriter.setStream(const astream : IStreamAdapter) : IStdOut;
-    begin
-        fStream := astream;
-        result := self;
     end;
 
     (*!------------------------------------------------
@@ -203,27 +170,4 @@ uses
         result:= self;
     end;
 
-    (*!------------------------------------------------
-     * write string to FCGI_STDOUT stream and
-     * mark it end of request (if markEnd is true)
-     *-----------------------------------------------
-     * @param str, string to write
-     * @return current instance
-     *-----------------------------------------------*)
-    function TFcgiStdOutWriter.write(const str : string) : IStdOut;
-    begin
-        result := writeStream(fStream, str);
-    end;
-
-    (*!------------------------------------------------
-     * write string with newline to FCGI_STDOUT stream and
-     * mark it end of request (if markEnd is true)
-     *-----------------------------------------------
-     * @param str, string to write
-     * @return current instance
-     *-----------------------------------------------*)
-    function TFcgiStdOutWriter.writeln(const str : string) : IStdOut;
-    begin
-        result := writeStream(fStream, str + LineEnding);
-    end;
 end.

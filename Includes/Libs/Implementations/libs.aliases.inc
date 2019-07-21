@@ -21,6 +21,8 @@ TSimpleStdInReader = SimpleStdInReaderImpl.TSimpleStdInReader;
 TKeyValuePair = KeyValuePairImpl.TKeyValuePair;
 TKeyValuePairFactory = KeyValuePairFactoryImpl.TKeyValuePairFactory;
 
+{$INCLUDE Socket/libs.aliases.inc}
 {$INCLUDE Logger/libs.aliases.inc}
 {$INCLUDE LibCurl/libs.aliases.inc}
 {$INCLUDE FastCGI/libs.aliases.inc}
+{$INCLUDE SCGI/libs.aliases.inc}
