@@ -62,7 +62,6 @@ uses
     ProtocolProcessorIntf,
     DependencyContainerImpl,
     DependencyListImpl,
-    EnvironmentImpl,
     ErrorHandlerImpl,
     RouterIntf,
     RouteMatcherIntf,
@@ -71,8 +70,7 @@ uses
     ScgiProcessorImpl,
     ScgiParserImpl,
     OutputBufferImpl,
-    ScgiStdOutWriterImpl,
-    StreamAdapterCollectionFactoryImpl;
+    ScgiStdOutWriterImpl;
 
     (*!-----------------------------------------------
      * constructor
