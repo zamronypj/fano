@@ -177,6 +177,7 @@ resourcestring
                     end;
                     fStdIn := parseStdIn(strHeader);
                 end;
+                empty := true;
 
                 fParsed := (fEnv <> nil) and (fStdIn <> nil);
             end;
@@ -203,7 +204,7 @@ resourcestring
             bytesRead := stream.read(ch, 1);
             if (bytesRead > 0) then
             begin
-                parseNetString(ch, stream);
+                streamEmpty := parseNetString(ch, stream);
             end else
             begin
                 streamEmpty := true;
