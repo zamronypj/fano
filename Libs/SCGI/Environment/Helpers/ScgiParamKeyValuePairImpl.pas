@@ -49,13 +49,15 @@ uses
         akey, avalue : string;
         tmpStr : string;
     begin
-        tmpStr := astr;
+        //environment variable will be pass in aStr as
+        //key#0value#0key#0value#0key#0value#0 etc
+        tmpStr := aStr;
         while (length(tmpStr) > 0) do
         begin
             separator0 := pos(#0, tmpStr);
             separator1 := posEx(#0, tmpStr, separator0 + 1);
-            akey := copy(tmpStr, 1, separator0);
-            avalue := copy(tmpStr, separator0 + 1, separator1);
+            akey := copy(tmpStr, 1, separator0 - 1);
+            avalue := copy(tmpStr, separator0 + 1, separator1 - separator0 - 1);
             delete(tmpStr, 1, separator1);
             setValue(akey, avalue);
         end;
