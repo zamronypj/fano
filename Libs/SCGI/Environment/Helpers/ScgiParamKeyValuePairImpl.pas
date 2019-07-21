@@ -29,6 +29,11 @@ type
     TScgiParamKeyValuePair = class(TKeyValuePair)
     private
         procedure readKeyValueFromString(const aStr : string);
+        procedure extractKeyValue(
+            const aStr : string;
+            var akey : string;
+            var avalue : string
+        );
     public
         constructor create(const paramStr : string);
     end;
@@ -45,30 +50,38 @@ uses
         readKeyValueFromString(paramStr);
     end;
 
-    procedure TScgiParamKeyValuePair.readKeyValueFromString(const aStr : string);
+    procedure TScgiParamKeyValuePair.extractKeyValue(
+        var tmpStr : string;
+        var akey : string;
+        var avalue : string
+    );
     var separator0, separator1 : integer;
-        lenKey, lenValue : integer;
-        akey, avalue : string;
+        lenValue : integer;
+    begin
+        //environment variable will be pass in tmpStr as
+        //key#0value#0key#0value#0key#0value#0 ....
+        separator0 := pos(#0, tmpStr);
+        separator1 := posEx(#0, tmpStr, separator0 + 1);
+        akey := copy(tmpStr, 1, separator0 - 1);
+        lenValue := separator1 - separator0 - 1;
+        if (lenValue > 0) then
+        begin
+            avalue := copy(tmpStr, separator0 + 1, lenValue);
+        end else
+        begin
+            avalue := '';
+        end;
+        delete(tmpStr, 1, separator1);
+    end;
+
+    procedure TScgiParamKeyValuePair.readKeyValueFromString(const aStr : string);
+    var akey, avalue : string;
         tmpStr : string;
     begin
-        //environment variable will be pass in aStr as
-        //key#0value#0key#0value#0key#0value#0 ....
         tmpStr := aStr;
         while (length(tmpStr) > 0) do
         begin
-            separator0 := pos(#0, tmpStr);
-            separator1 := posEx(#0, tmpStr, separator0 + 1);
-            lenKey := separator0 - 1;
-            lenValue := separator1 - lenKey;
-            akey := copy(tmpStr, 1, lenKey);
-            if (lenValue > 0) then
-            begin
-                avalue := copy(tmpStr, separator0 + 1, lenValue);
-            end else
-            begin
-                avalue := '';
-            end;
-            delete(tmpStr, 1, separator1);
+            extractKeyValue(tmpStr, akey, avalue);
             setValue(akey, avalue);
         end;
     end;
