@@ -40,7 +40,7 @@ implementation
 
 uses
 
-    dos;
+    SysUtils;
 
 
     (*!-----------------------------------------
@@ -51,7 +51,7 @@ uses
      *------------------------------------------*)
     function TCGIEnvironment.env(const keyName : string) : string;
     begin
-        result := getenv(keyName);
+        result := GetEnvironmentVariable(keyName);
     end;
 
 end.
