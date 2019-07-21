@@ -35,7 +35,7 @@ type
          * @param key name of variable
          * @return variable value
          *------------------------------------------*)
-        function env(const key : string) : string; virtual; abstract;
+        function env(const keyName : string) : string; virtual; abstract;
 
         {-----------------------------------------
          Retrieve GATEWAY_INTERFACE environment variable

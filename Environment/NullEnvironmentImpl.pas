@@ -32,7 +32,7 @@ type
          * @param key name of variable
          * @return variable value
          *------------------------------------------*)
-        function env(const key : string) : string; override;
+        function env(const keyName : string) : string; override;
     end;
 
 implementation
@@ -44,7 +44,7 @@ implementation
      * @param key name of variable
      * @return variable value
      *------------------------------------------*)
-    function TNullCGIEnvironment.env(const key : string) : string;
+    function TNullCGIEnvironment.env(const keyName : string) : string;
     begin
         result := '';
     end;

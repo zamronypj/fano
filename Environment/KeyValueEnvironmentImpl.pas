@@ -55,11 +55,11 @@ implementation
     {-----------------------------------------
      Retrieve an environment variable
     ------------------------------------------}
-    function TKeyValueEnvironment.env(const key : string) : string;
+    function TKeyValueEnvironment.env(const keyName : string) : string;
     begin
-        if (envVars.has(key)) then
+        if (envVars.has(keyName)) then
         begin
-            result := envVars.getValue(key);
+            result := envVars.getValue(keyName);
         end else
         begin
             result := '';

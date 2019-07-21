@@ -27,7 +27,7 @@ type
         {-----------------------------------------
          Retrieve an environment variable
         ------------------------------------------}
-        function env(const key : string) : string;
+        function env(const keyName : string) : string;
 
         {-----------------------------------------
          Retrieve GATEWAY_INTERFACE environment variable

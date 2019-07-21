@@ -33,7 +33,7 @@ type
          * @param key name of variable
          * @return variable value
          *------------------------------------------*)
-        function env(const key : string) : string; override;
+        function env(const keyName : string) : string; override;
     end;
 
 implementation
@@ -49,9 +49,9 @@ uses
      * @param key name of variable
      * @return variable value
      *------------------------------------------*)
-    function TCGIEnvironment.env(const key : string) : string;
+    function TCGIEnvironment.env(const keyName : string) : string;
     begin
-        result := getenv(key);
+        result := getenv(keyName);
     end;
 
 end.
