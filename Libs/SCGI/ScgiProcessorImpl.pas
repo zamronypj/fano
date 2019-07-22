@@ -34,6 +34,8 @@ type
         fParser : IScgiParser;
         fRequestReadyListener : IReadyListener;
         fStdIn : IStreamAdapter;
+
+        procedure resetInternalVars();
     public
         constructor create(const aParser : IScgiParser);
         destructor destroy(); override;
@@ -58,6 +60,10 @@ type
 
 implementation
 
+uses
+
+    SysUtils;
+
     constructor TScgiProcessor.create(const aParser : IScgiParser);
     begin
         inherited create();
@@ -68,7 +74,12 @@ implementation
 
     destructor TScgiProcessor.destroy();
     begin
+        resetInternalVars();
         inherited destroy();
+    end;
+
+    procedure TScgiProcessor.resetInternalVars();
+    begin
         fRequestReadyListener := nil;
         fStdIn := nil;
         fParser := nil;
@@ -80,20 +91,24 @@ implementation
     procedure TScgiProcessor.process(const stream : IStreamAdapter; const streamCloser : ICloseable);
     var handled : boolean;
     begin
-        if (fParser.parse(stream)) then
-        begin
+        try
+            fParser.parse(stream);
             fStdIn := fParser.getStdIn();
             if assigned(fRequestReadyListener) then
             begin
-                handled := fRequestReadyListener.ready(
-                        stream,
-                        fParser.getEnv(),
-                        fStdIn
+                fRequestReadyListener.ready(
+                    stream,
+                    fParser.getEnv(),
+                    fStdIn
                 );
-                if handled then
-                begin
-                    streamCloser.close();
-                end;
+            end;
+            //SCGI protocol requires always close socket connection
+            streamCloser.close();
+        except
+            on e : Exception do
+            begin
+                resetInternalVars();
+                raise;
             end;
         end;
     end;

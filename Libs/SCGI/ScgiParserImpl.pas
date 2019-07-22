@@ -29,9 +29,6 @@ type
      *-----------------------------------------------*)
     TScgiParser = class(TInterfacedObject, IScgiParser)
     private
-        fLenStr : string;
-        fContent : string;
-        fParsed : boolean;
         fStdIn : IStreamAdapter;
         fEnv : ICGIEnvironment;
 
@@ -47,7 +44,7 @@ type
          *-----------------------------------------------*)
         function parseStdIn(const str : string) : IStreamAdapter;
 
-        function parseNetstring(const ch : char; const stream : IStreamAdapter) :  boolean;
+        function parseNetstring(const ch : char; var lenStr : string; const stream : IStreamAdapter) :  boolean;
     public
         constructor create();
         destructor destroy(); override;
@@ -128,7 +125,11 @@ resourcestring
     (*!------------------------------------------------
      * process request stream
      *-----------------------------------------------*)
-    function TScgiParser.parseNetstring(const ch : char; const stream : IStreamAdapter) :  boolean;
+    function TScgiParser.parseNetstring(
+        const ch : char;
+        var lenStr : string;
+        const stream : IStreamAdapter
+    ) :  boolean;
     var len, bytesRead : integer;
         empty : boolean;
         terminationChar : char;
@@ -138,11 +139,11 @@ resourcestring
         empty := false;
         if (isDigit(ch)) then
         begin
-            fLenStr := fLenStr + ch;
+            lenStr := lenStr + ch;
         end else
         if (ch = ':') then
         begin
-            len := strToInt(fLenStr);
+            len := strToInt(lenStr);
             setLength(strHeader, len);
             bytesRead := stream.read(strHeader[1], len);
             empty := (bytesRead <= 0);
@@ -175,15 +176,14 @@ resourcestring
                     begin
                         raise EInvalidScgiBody.createFmt(sInvalidBodyLength, [contentLen, bytesRead]);
                     end;
+
                     fStdIn := parseStdIn(strHeader);
                 end;
                 empty := true;
-
-                fParsed := (fEnv <> nil) and (fStdIn <> nil);
             end;
         end else
         begin
-            raise EInvalidScgiHeader.createFmt(sInvalidHeaderLen, [fLenStr]);
+            raise EInvalidScgiHeader.createFmt(sInvalidHeaderLen, [ lenStr ]);
         end;
         result := empty;
     end;
@@ -195,22 +195,21 @@ resourcestring
     var streamEmpty : boolean;
         ch : char;
         bytesRead : integer;
+        lenStr : string;
     begin
-        fContent := '';
-        fLenStr := '';
-        fParsed := false;
+        lenStr := '';
         streamEmpty := false;
         repeat
             bytesRead := stream.read(ch, 1);
             if (bytesRead > 0) then
             begin
-                streamEmpty := parseNetString(ch, stream);
+                streamEmpty := parseNetString(ch, lenStr, stream);
             end else
             begin
                 streamEmpty := true;
             end;
         until streamEmpty;
-        result := fParsed;
+        result := streamEmpty;
     end;
 
     (*!------------------------------------------------

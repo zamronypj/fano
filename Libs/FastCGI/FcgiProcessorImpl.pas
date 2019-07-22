@@ -153,7 +153,6 @@ uses
     );
     var afcgiRec : IFcgiRecord;
         requestId : word;
-        handled : boolean;
     begin
         if (fcgiParser.hasFrame(buffer, bufferSize)) then
         begin
@@ -166,21 +165,19 @@ uses
 
                 if assigned(fcgiRequestReadyListener) then
                 begin
-                    handled := fcgiRequestReadyListener.ready(
-                         stream,
-                         fcgiRequestMgr.getEnvironment(requestId),
-                         fcgiRequestMgr.getStdInStream(requestId)
+                    fcgiRequestReadyListener.ready(
+                        stream,
+                        fcgiRequestMgr.getEnvironment(requestId),
+                        fcgiRequestMgr.getStdInStream(requestId)
                     );
-                    if handled then
-                    begin
-                        if not fcgiRequestMgr.keepConnection(requestId) then
-                        begin
-                            streamCloser.close();
-                        end;
-
-                        fcgiRequestMgr.remove(requestId);
-                    end;
                 end;
+
+                if not fcgiRequestMgr.keepConnection(requestId) then
+                begin
+                    streamCloser.close();
+                end;
+
+                fcgiRequestMgr.remove(requestId);
             end;
         end;
     end;
