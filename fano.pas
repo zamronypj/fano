@@ -14,9 +14,9 @@ interface
 
 uses
 
-    {$INCLUDE Includes/interfaces.inc}
-    {$INCLUDE Includes/implementations.inc}
-    {$INCLUDE Includes/types.inc}
+    {$INCLUDE src/Includes/interfaces.inc}
+    {$INCLUDE src/Includes/implementations.inc}
+    {$INCLUDE src/Includes/types.inc}
 
 type
     (*!-----------------------------------------------
@@ -30,8 +30,8 @@ type
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *------------------------------------------------*)
 
-    {$INCLUDE Includes/interfaces.aliases.inc}
-    {$INCLUDE Includes/implementations.aliases.inc}
+    {$INCLUDE src/Includes/interfaces.aliases.inc}
+    {$INCLUDE src/Includes/implementations.aliases.inc}
 
 implementation
 
