@@ -89,7 +89,6 @@ uses
      * process request stream
      *-----------------------------------------------*)
     procedure TScgiProcessor.process(const stream : IStreamAdapter; const streamCloser : ICloseable);
-    var handled : boolean;
     begin
         try
             fParser.parse(stream);
