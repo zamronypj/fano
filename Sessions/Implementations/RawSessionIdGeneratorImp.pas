@@ -51,14 +51,14 @@ uses
     SysUtils,
     BaseUnix;
 
-    constructor TBasicSessionIdGenerator.create(const env : ICGIEnvironment; const randInst : IRandom);
+    constructor TRawSessionIdGenerator.create(const env : ICGIEnvironment; const randInst : IRandom);
     begin
         inherited create();
         fEnv := env;
         fRandom := randInst;
     end;
 
-    destructor TBasicSessionIdGenerator.destroy();
+    destructor TRawSessionIdGenerator.destroy();
     begin
         fEnv := nil;
         fRandom := nil;
@@ -70,14 +70,19 @@ uses
      *-------------------------------------
      * @return session id string
      *-------------------------------------*)
-    function TBasicSessionIdGenerator.getSessionId() : string;
+    function TRawSessionIdGenerator.getSessionId() : string;
     var rawSessionId : string;
         tv: TTimeVal;
     begin
         fpGetTimeOfDay (@tv, nil);
         result := format(
-            '%s%d%d',
-            [fEnv.remoteAddr(), tv.tv_sec, tv.tv_usec]
+            '%s%d%d%s',
+            [
+                fEnv.remoteAddr(),
+                tv.tv_sec,
+                tv.tv_usec,
+                stringOf(fRandom.randomBytes(32))
+            ]
         );
     end;
 

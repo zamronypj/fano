@@ -32,11 +32,11 @@ type
         function id() : string;
 
         (*!------------------------------------
-         * get current session id
+         * test if sersion variable is set
          *-------------------------------------
-         * @return session id string
+         * @return true if session variable is set
          *-------------------------------------*)
-        function has(const sessionVar : shortstring) : string;
+        function has(const sessionVar : shortstring) : boolean;
 
         (*!------------------------------------
          * set session variable
@@ -53,6 +53,46 @@ type
          * @return session value
          *-------------------------------------*)
         function getVar(const sessionVar : shortstring) : string;
+
+        (*!------------------------------------
+         * delete session variable
+         *-------------------------------------
+         * @param sessionVar name of session variable
+         * @return current instance
+         *-------------------------------------*)
+        function delete(const sessionVar : shortstring) : ISessionIntf;
+
+        (*!------------------------------------
+         * clear all session variables
+         *-------------------------------------
+         * This is only remove session data, but
+         * underlying storage is kept
+         *-------------------------------------
+         * @return current instance
+         *-------------------------------------*)
+        function clear() : ISessionIntf;
+
+        (*!------------------------------------
+         * terminate session and remove underlying storage
+         * (if any)
+         *-------------------------------------
+         * @return current instance
+         *-------------------------------------*)
+        function terminate() : ISessionIntf;
+
+        (*!------------------------------------
+         * test if current session is expired
+         *-------------------------------------
+         * @return true if session is expired
+         *-------------------------------------*)
+        function expired() : boolean;
+
+        (*!------------------------------------
+         * set expiration date
+         *-------------------------------------
+         * @return current session instance
+         *-------------------------------------*)
+        function expiresAt(const expiredDate : TDateTime) : ISessionIntf;
     end;
 
 implementation
