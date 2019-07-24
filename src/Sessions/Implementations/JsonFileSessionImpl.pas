@@ -33,19 +33,12 @@ type
         fSessionFilename : string;
         fSessionData : TJsonData;
 
-        function buildFilename(
-            const sessionId : string;
-            const baseDir : string;
-            const prefix : string
-        ) : string;
-
         function loadJsonFile(const jsonFile : string) : TJsonData;
         function loadOrCreateJsonFile(const jsonFile : string) : TJsonData;
         procedure writeJsonFile(const jsonFile : string; const jsonData : TJsonData);
 
         procedure raiseExceptionIfAlreadyTerminated();
         procedure raiseExceptionIfExpired();
-        procedure terminateIfExpired();
 
         (*!------------------------------------
          * set session variable
@@ -213,7 +206,7 @@ uses
     begin
         inherited create();
         fSessionId := sessionId;
-        fSessionFilename := buildFilename(sessionId, baseDir, prefix);
+        fSessionFilename := baseDir + prefix + sessionId;
         fSessionData := loadOrCreateJsonFile(fSessionFilename);
         //no whitespace to reduce json file size
         fSessionData.compressedJSON := true;
@@ -236,15 +229,6 @@ uses
             writeJsonFile(fSessionFilename, fSessionData);
             fSessionData.free();
         end;
-    end;
-
-    function TJsonFileSession.buildFilename(
-        const sessionId : string;
-        const baseDir : string;
-        const prefix : string
-    ) : string;
-    begin
-        result:= baseDir + prefix + sessionId;
     end;
 
     function TJsonFileSession.loadJsonFile(const jsonFile : string; const mode :word) : TJsonData;
