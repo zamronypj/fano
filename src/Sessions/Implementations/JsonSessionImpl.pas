@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit JsonFileSessionImpl;
+unit JsonSessionImpl;
 
 interface
 
@@ -22,23 +22,15 @@ uses
 type
 
     (*!------------------------------------------------
-     * class having capability to manager
+     * class having capability to manage
      * session variables in JSON file
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TJsonFileSession = class(TInterfacedObject, ISessionIntf)
+    TJsonSession = class(TInterfacedObject, ISession)
     private
         fSessionId : string;
-        fSessionFilename : string;
         fSessionData : TJsonData;
-
-        function loadJsonFile(const jsonFile : string) : TJsonData;
-        function loadOrCreateJsonFile(const jsonFile : string) : TJsonData;
-        procedure writeJsonFile(const jsonFile : string; const jsonData : TJsonData);
-
-        procedure raiseExceptionIfAlreadyTerminated();
-        procedure raiseExceptionIfExpired();
 
         (*!------------------------------------
          * set session variable
@@ -47,7 +39,7 @@ type
          * @param sessionVal value of session variable
          * @return current instance
          *-------------------------------------*)
-        function internalSetVar(const sessionVar : shortstring; const sessionVal : string) : ISessionIntf;
+        function internalSetVar(const sessionVar : shortstring; const sessionVal : string) : ISession;
 
         (*!------------------------------------
          * get session variable
@@ -62,7 +54,7 @@ type
          * @param sessionVar name of session variable
          * @return current instance
          *-------------------------------------*)
-        function internalDelete(const sessionVar : shortstring) : ISessionIntf;
+        function internalDelete(const sessionVar : shortstring) : ISession;
 
         (*!------------------------------------
          * clear all session variables
@@ -72,21 +64,7 @@ type
          *-------------------------------------
          * @return current instance
          *-------------------------------------*)
-        function internalClear() : ISessionIntf;
-
-        (*!------------------------------------
-         * test if current session is expired
-         *-------------------------------------
-         * @return true if session is expired
-         *-------------------------------------*)
-        function internalExpired() : boolean;
-
-        (*!------------------------------------
-         * set expiration date
-         *-------------------------------------
-         * @return current session instance
-         *-------------------------------------*)
-        function internalExpiresAt(const expiredDate : TDateTime) : ISessionIntf;
+        function internalClear() : ISession;
 
         procedure cleanUp();
     public
@@ -95,16 +73,9 @@ type
          * constructor
          *-------------------------------------
          * @param sessionId session id
-         * @param baseDir base directory where
-         *                session files store
-         * @param prefix strung to be prefix to
-         *                session filename
+         * @param sessionData session data
          *-------------------------------------*)
-        constructor create(
-            const sessionId : string;
-            const baseDir : string;
-            const prefix : string
-        );
+        constructor create(const sessionId : string; const sessionData : string);
 
         destructor destroy(); override;
 
@@ -129,7 +100,7 @@ type
          * @param sessionVal value of session variable
          * @return current instance
          *-------------------------------------*)
-        function setVar(const sessionVar : shortstring; const sessionVal : string) : ISessionIntf;
+        function setVar(const sessionVar : shortstring; const sessionVal : string) : ISession;
 
         (*!------------------------------------
          * get session variable
@@ -144,7 +115,7 @@ type
          * @param sessionVar name of session variable
          * @return current instance
          *-------------------------------------*)
-        function delete(const sessionVar : shortstring) : ISessionIntf;
+        function delete(const sessionVar : shortstring) : ISession;
 
         (*!------------------------------------
          * clear all session variables
@@ -154,15 +125,7 @@ type
          *-------------------------------------
          * @return current instance
          *-------------------------------------*)
-        function clear() : ISessionIntf;
-
-        (*!------------------------------------
-         * terminate session and remove underlying storage
-         * (if any)
-         *-------------------------------------
-         * @return current instance
-         *-------------------------------------*)
-        function terminate() : ISessionIntf;
+        function clear() : ISession;
 
         (*!------------------------------------
          * test if current session is expired
@@ -172,11 +135,18 @@ type
         function expired() : boolean;
 
         (*!------------------------------------
-         * set expiration date
+         * get session expiration date
          *-------------------------------------
-         * @return current session instance
+         * @return date time when session is expired
          *-------------------------------------*)
-        function expiresAt(const expiredDate : TDateTime) : ISessionIntf;
+        function expiresAt() : TDateTime;
+
+        (*!------------------------------------
+         * serialize session data to string
+         *-------------------------------------
+         * @return string of session data
+         *-------------------------------------*)
+        function serialize() : string;
     end;
 
 implementation
@@ -198,72 +168,26 @@ uses
      * @param prefix strung to be prefix to
      *                session filename
      *-------------------------------------*)
-    constructor TJsonFileSession.create(
+    constructor TJsonSession.create(
         const sessionId : string;
-        const baseDir : string;
-        const prefix : string
+        const sessionData : string
     );
     begin
         inherited create();
         fSessionId := sessionId;
-        fSessionFilename := baseDir + prefix + sessionId;
-        fSessionData := loadOrCreateJsonFile(fSessionFilename);
-        //no whitespace to reduce json file size
-        fSessionData.compressedJSON := true;
+        fSessionData := getJSON(sessionData);
         raiseExceptionIfExpired();
     end;
 
-    destructor TJsonFileSession.destroy();
+    destructor TJsonSession.destroy();
     begin
         cleanUp();
         inherited destroy();
     end;
 
-    procedure TJsonFileSession.cleanUp();
+    procedure TJsonSession.cleanUp();
     begin
-        if (expired()) then
-        begin
-            terminate();
-        end else
-        begin
-            writeJsonFile(fSessionFilename, fSessionData);
-            fSessionData.free();
-        end;
-    end;
-
-    function TJsonFileSession.loadJsonFile(const jsonFile : string; const mode :word) : TJsonData;
-    var fs : TFileStream;
-    begin
-        fs := TFileStream.create(jsonFile, mode);
-        try
-            result := getJSON(fs);
-        finally
-            fs.free();
-        end;
-    end;
-
-    function TJsonFileSession.loadOrCreateJsonFile(const jsonFile : string) : TJsonData;
-    var mode : word;
-    begin
-        if (fileExists(jsonFile)) then
-        begin
-            mode := fmOpenRead;
-        end else
-        begin
-            mode := fmCreate;
-        end;
-        result := loadJsonFile(jsonFile, mode);
-    end;
-
-    procedure TJsonFileSession.writeJsonFile(const jsonFile : string; const jsonData : TJsonData);
-    var fs : TFileStream;
-    begin
-        fs := TFileStream.create(jsonFile, fmCreate);
-        try
-            fSessionData.dumpJSON(fs);
-        finally
-            fs.free();
-        end;
+        fSessionData.free();
     end;
 
     (*!------------------------------------
@@ -271,7 +195,7 @@ uses
      *-------------------------------------
      * @return session id string
      *-------------------------------------*)
-    function TJsonFileSession.id() : string;
+    function TJsonSession.id() : string;
     begin
         result := fSessionId;
     end;
@@ -281,7 +205,7 @@ uses
      *-------------------------------------
      * @return session id string
      *-------------------------------------*)
-    function TJsonFileSession.has(const sessionVar : shortstring) : boolean;
+    function TJsonSession.has(const sessionVar : shortstring) : boolean;
     begin
         result := (fSessionData.findPath('sessionVars.' + sessionVar) <> nil);
     end;
@@ -293,7 +217,7 @@ uses
      * @param sessionVal value of session variable
      * @return current instance
      *-------------------------------------*)
-    function TJsonFileSession.internalSetVar(const sessionVar : shortstring; const sessionVal : string) : ISessionIntf;
+    function TJsonSession.internalSetVar(const sessionVar : shortstring; const sessionVal : string) : ISession;
     var sessValue : TJsonData;
         tmpObj : TJsonObject;
     begin
@@ -324,9 +248,8 @@ uses
      * @param sessionVal value of session variable
      * @return current instance
      *-------------------------------------*)
-    function TJsonFileSession.setVar(const sessionVar : shortstring; const sessionVal : string) : ISessionIntf;
+    function TJsonSession.setVar(const sessionVar : shortstring; const sessionVal : string) : ISession;
     begin
-        raiseExceptionIfAlreadyTerminated();
         raiseExceptionIfExpired();
         result := internalSetVar(sessionVar, sessionVal);
     end;
@@ -337,7 +260,7 @@ uses
      * @return session value
      * @throws EJSON exception when not found
      *-------------------------------------*)
-    function TJsonFileSession.internalGetVar(const sessionVar : shortstring) : string;
+    function TJsonSession.internalGetVar(const sessionVar : shortstring) : string;
     var sessValue : TJsonData;
     begin
         sessValue := fSessionData.getPath('sessionVars.' + sessionVar);
@@ -350,7 +273,7 @@ uses
      * @return session value
      * @throws EJSON exception when not found
      *-------------------------------------*)
-    function TJsonFileSession.getVar(const sessionVar : shortstring) : string;
+    function TJsonSession.getVar(const sessionVar : shortstring) : string;
     begin
         raiseExceptionIfAlreadyTerminated();
         raiseExceptionIfExpired();
@@ -363,7 +286,7 @@ uses
      * @param sessionVar name of session variable
      * @return current instance
      *-------------------------------------*)
-    function TJsonFileSession.internalDelete(const sessionVar : shortstring) : ISessionIntf;
+    function TJsonSession.internalDelete(const sessionVar : shortstring) : ISession;
     var sessValue : TJsonData;
     begin
         sessValue := fSessionData.getPath('sessionVars');
@@ -380,9 +303,8 @@ uses
      * @param sessionVar name of session variable
      * @return current instance
      *-------------------------------------*)
-    function TJsonFileSession.delete(const sessionVar : shortstring) : ISessionIntf;
+    function TJsonSession.delete(const sessionVar : shortstring) : ISession;
     begin
-        raiseExceptionIfAlreadyTerminated();
         raiseExceptionIfExpired();
         result := internalDelete(sessionVar);
     end;
@@ -395,7 +317,7 @@ uses
      *-------------------------------------
      * @return current instance
      *-------------------------------------*)
-    function TJsonFileSession.internalClear() : ISessionIntf;
+    function TJsonSession.internalClear() : ISession;
     begin
         result := self;
     end;
@@ -408,26 +330,10 @@ uses
      *-------------------------------------
      * @return current instance
      *-------------------------------------*)
-    function TJsonFileSession.clear() : ISessionIntf;
+    function TJsonSession.clear() : ISession;
     begin
-        raiseExceptionIfAlreadyTerminated();
         raiseExceptionIfExpired();
         result := internalClear();
-    end;
-
-    (*!------------------------------------
-     * terminate session and remove underlying storage
-     * (if any)
-     *-------------------------------------
-     * @return current instance
-     *-------------------------------------*)
-    function TJsonFileSession.terminate() : ISessionIntf;
-    begin
-        freeAndNil(fSessionData);
-        if (fileExists(fSessionFilename)) then
-        begin
-            deleteFile(fSessionFilename);
-        end;
     end;
 
     (*!------------------------------------
@@ -435,7 +341,7 @@ uses
      *-------------------------------------
      * @return true if session is expired
      *-------------------------------------*)
-    function TJsonFileSession.internalExpired() : boolean;
+    function TJsonSession.expired() : boolean;
     var expiredDateTime : TDateTime;
     begin
         expiredDateTime := TDateTime(fSessionData.getPath('expire').asFloat);
@@ -445,54 +351,34 @@ uses
     end;
 
     (*!------------------------------------
-     * test if current session is expired
-     *-------------------------------------
-     * @return true if session is expired
-     *-------------------------------------*)
-    function TJsonFileSession.expired() : boolean;
-    begin
-        raiseExceptionIfAlreadyTerminated();
-        result := internalExpired();
-    end;
-
-    (*!------------------------------------
      * set expiration date
      *-------------------------------------
      * @return current session instance
      *-------------------------------------*)
-    function TJsonFileSession.internalExpiresAt(const expiredDate : TDateTime) : ISessionIntf;
+    function TJsonSession.expiresAt() : TDateTime;
     var sessData :TJsonObject;
+        expiredDate : double;
     begin
         sessData := TJsonObject(fSessionData);
-        sessData.floats['expire'].asFloat := TJsonFloat(expiredDate);
-        result := self;
+        expiredDate := sessData.floats['expire'].asFloat;
+        result := TDateTime(expiredDate);
     end;
 
-    (*!------------------------------------
-     * set expiration date
-     *-------------------------------------
-     * @return current session instance
-     *-------------------------------------*)
-    function TJsonFileSession.expiresAt(const expiredDate : TDateTime) : ISessionIntf;
-    begin
-        raiseExceptionIfAlreadyTerminated();
-        result := internalExpiresAt(expiredDate);
-    end;
-
-    procedure TJsonFileSession.raiseExceptionIfExpired();
+    procedure TJsonSession.raiseExceptionIfExpired();
     begin
         if (expired()) then
         begin
-            terminate();
             raise ESessionExpired.create(rsSessionExpired);
         end;
     end;
 
-    procedure TJsonFileSession.raiseExceptionIfAlreadyTerminated();
+    (*!------------------------------------
+     * serialize session data to string
+     *-------------------------------------
+     * @return string of session data
+     *-------------------------------------*)
+    function TJsonSession.serialize() : string;
     begin
-        if (fSessionData = nil) then
-        begin
-            raise ESessionInvalid.create(rsSessionInvalid);
-        end;
+        result := fSessionData.asJSON;
     end;
 end.

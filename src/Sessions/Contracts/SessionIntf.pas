@@ -13,6 +13,10 @@ interface
 {$MODE OBJFPC}
 {$H+}
 
+uses
+
+    SerializeableIntf;
+
 type
 
     (*!------------------------------------------------
@@ -21,7 +25,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    ISessionIntf = interface
+    ISession = interface(ISerializeable)
         ['{17731DEE-C1ED-4543-86BE-7F72F2A19FEF}']
 
         (*!------------------------------------
@@ -32,7 +36,7 @@ type
         function id() : string;
 
         (*!------------------------------------
-         * test if sersion variable is set
+         * test if session variable is set
          *-------------------------------------
          * @return true if session variable is set
          *-------------------------------------*)
@@ -45,7 +49,7 @@ type
          * @param sessionVal value of session variable
          * @return current instance
          *-------------------------------------*)
-        function setVar(const sessionVar : shortstring; const sessionVal : string) : ISessionIntf;
+        function setVar(const sessionVar : shortstring; const sessionVal : string) : ISession;
 
         (*!------------------------------------
          * get session variable
@@ -60,25 +64,14 @@ type
          * @param sessionVar name of session variable
          * @return current instance
          *-------------------------------------*)
-        function delete(const sessionVar : shortstring) : ISessionIntf;
+        function delete(const sessionVar : shortstring) : ISession;
 
         (*!------------------------------------
          * clear all session variables
          *-------------------------------------
-         * This is only remove session data, but
-         * underlying storage is kept
-         *-------------------------------------
          * @return current instance
          *-------------------------------------*)
-        function clear() : ISessionIntf;
-
-        (*!------------------------------------
-         * terminate session and remove underlying storage
-         * (if any)
-         *-------------------------------------
-         * @return current instance
-         *-------------------------------------*)
-        function terminate() : ISessionIntf;
+        function clear() : ISession;
 
         (*!------------------------------------
          * test if current session is expired
@@ -88,11 +81,11 @@ type
         function expired() : boolean;
 
         (*!------------------------------------
-         * set expiration date
+         * get session expiration date
          *-------------------------------------
-         * @return current session instance
+         * @return date time when session is expired
          *-------------------------------------*)
-        function expiresAt(const expiredDate : TDateTime) : ISessionIntf;
+        function expiresAt() : TDateTime;
     end;
 
 implementation
