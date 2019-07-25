@@ -312,15 +312,16 @@ var
      * handle incoming connection until terminated
      *-----------------------------------------------*)
     procedure TSocketSvr.handleConnection();
-    var readfds : TFDSet;
+    var origfds, readfds : TFDSet;
         highestHandle : longint;
         terminated : boolean;
     begin
         //find file descriptor with biggest value
         highestHandle := getHighestHandle(fListenSocket, terminatePipeIn);
+        origfds := initFileDescSet(fListenSocket, terminatePipeIn);
         terminated := false;
         repeat
-            readfds := initFileDescSet(fListenSocket, terminatePipeIn);
+            readfds := origfds;
 
             //wait indefinitely until something happen in fListenSocket or terminatePipeIn
             if fpSelect(highestHandle + 1, @readfds, nil, nil, nil) > 0 then
