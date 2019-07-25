@@ -36,6 +36,12 @@ type
      *-----------------------------------------------*)
     TSocketSvr = class(TInterfacedObject, IRunnable, IRunnableWithDataNotif)
     private
+        (*!-----------------------------------------------
+        * make listen socket non blocking
+        *-------------------------------------------------
+        * @param listenSocket, listen socket handle
+        *-----------------------------------------------*)
+        procedure makeNonBlockingSocket(listenSocket : longint);
 
         (*!-----------------------------------------------
         * accept all incoming connection until no more pending
@@ -85,6 +91,20 @@ type
             const readfds : TFDSet;
             var terminated : boolean
         );
+
+        (*!-----------------------------------------------
+         * remove client socket from monitored set
+         *-------------------------------------------------
+         * @param clientSocket, client socket to be remove
+         * @param maxHandle, highest handle
+         * @param origFds, original file descriptor set
+         *-----------------------------------------------*)
+        procedure removeFromMonitoredSet(
+            const clientSocket : longint;
+            var maxHandle : longint;
+            var origFds : TFDSet
+        );
+
     protected
         fDataAvailListener : IDataAvailListener;
         fListenSocket : longint;
@@ -188,6 +208,7 @@ var
         fListenSocket := listenSocket;
         fQueueSize := queueSize;
         fDataAvailListener := nil;
+        makeNonBlockingSocket(listenSocket);
     end;
 
     (*!-----------------------------------------------
@@ -197,6 +218,18 @@ var
     begin
         shutdown();
         inherited destroy();
+    end;
+
+    (*!-----------------------------------------------
+     * make listen socket non blocking
+     *-------------------------------------------------
+     * @param listenSocket, listen socket handle
+     *-----------------------------------------------*)
+    procedure TSocketSvr.makeNonBlockingSocket(listenSocket : longint);
+    begin
+        //read control flag and set listen to be non blocking
+        flags := fpFcntl(listenSocket, F_GETFL, 0);
+        fpFcntl(listenSocket, F_SETFl, flags or O_NONBLOCK);
     end;
 
     (*!-----------------------------------------------
@@ -260,7 +293,7 @@ var
      *-------------------------------------------------
      * @param listenSocket, listen socket handle
      *-----------------------------------------------*)
-    procedure TSocketSvr.acceptAllConnections(listenSocket : longint);
+    procedure TSocketSvr.acceptAllConnections(listenSocket : longint; var origFds : TFDSet);
     var clientSocket : longint;
     begin
         repeat
@@ -269,12 +302,34 @@ var
             clientSocket := accept(listenSocket);
             if (clientSocket > 0) then
             begin
-                //allow this connection, tell that data is available
-                handleClientConnection(clientSocket);
+                //monitor each client socket for IO
+                fpFD_SET(clientSocket, origFds);
             end;
         until (clientSocket < 0);
     end;
 
+    (*!-----------------------------------------------
+     * remove client socket from monitored set
+     *-------------------------------------------------
+     * @param clientSocket, client socket to be remove
+     * @param maxHandle, highest handle
+     * @param origFds, original file descriptor set
+     *-----------------------------------------------*)
+    procedure TSocketSvr.removeFromMonitoredSet(
+        const clientSocket : longint;
+        var maxHandle : longint;
+        var origFds : TFDSet
+    );
+    begin
+        fpFD_CLR(clientSocket, origFds);
+        if (clientSocket = maxHandle) then
+        begin
+            while (fpFD_ISSET(maxHandle, origFds) = 0) do
+            begin
+                dec(maxHandle);
+            end;
+        end;
+    end;
 
     (*!-----------------------------------------------
      * handle when one or more file descriptor is ready for I/O
@@ -288,24 +343,38 @@ var
         listenSocket : longint;
         pipeIn : longint;
         const readfds : TFDSet;
+        const maxHandle : longint;
+        var origFds : TFDSet;
         var terminated : boolean
     );
     var ch : char;
+        sockHandle : longint;
     begin
-        if fpFD_ISSET(pipeIn, readfds) > 0 then
+        for sockHandle := 0 to maxHandle do
         begin
-            //we get termination signal, just read until no more
-            //bytes and quit
-            fpRead(pipeIn, @ch, 1);
-            terminated := true;
-        end else
-        if fpFD_ISSET(listenSocket, readfds) > 0 then
-        begin
-            //we have something with listening socket, it means there is
-            //new connection coming, accept it
-            acceptAllConnections(listenSocket);
+            if fpFD_ISSET(sockHandle, readfds) > 0 then
+            begin
+                if sockHandle = pipeIn then
+                begin
+                    //we get termination signal, just read until no more
+                    //bytes and quit
+                    fpRead(pipeIn, @ch, 1);
+                    terminated := true;
+                end else
+                if sockHandle = listenSocket then
+                begin
+                    //we have something with listening socket, it means there is
+                    //new connection coming, accept it
+                    acceptAllConnections(listenSocket);
+                end else
+                begin
+                    //if we get here then it must be from one or
+                    //more client connections
+                    handleClientConnection(handle);
+                    removeFromMonitoredSet(handle, maxHandle, origFds);
+                end;
+            end;
         end;
-
     end;
 
     (*!-----------------------------------------------

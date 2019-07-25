@@ -25,6 +25,8 @@ type
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
     TSockStream = class(THandleStream)
+    private
+        procedure raiseExceptionIfWouldBlock();
     public
         function read(var buffer; count: longint): longint; override;
         function write(const buffer; count: longint): longint; override;
@@ -34,11 +36,30 @@ implementation
 
 uses
 
-    sockets;
+    sockets,
+    ESockWouldBlockImpl;
+
+resourcestring
+
+    rsWouldBlock = 'Read socket would block on socket, error: %d';
+
+    procedure TSockStream.raiseExceptionIfWouldBlock();
+    var errno : longint;
+    begin
+        errno := socketError();
+        if errno = EsockEWOULDBLOCK then
+        begin
+            raise ESockWouldBlock.createFmt(rsWouldBlock), [errno]);
+        end;
+    end;
 
     function TSockStream.read(var buffer; count: longint): longint;
     begin
         result := fpRecv(Handle, @buffer, count, 0);
+        if result < 0 then
+        begin
+            raiseExceptionIfWouldBlock();
+        end;
     end;
 
     function TSockStream.write(const buffer; count: longint): longint;
