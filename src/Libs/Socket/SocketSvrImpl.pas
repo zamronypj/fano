@@ -420,13 +420,13 @@ var
         var terminated : boolean
     );
     var ch : char;
-        sockHandle : longint;
+        fds : longint;
     begin
-        for sockHandle := 0 to maxHandle do
+        for fds := 0 to maxHandle do
         begin
-            if fpFD_ISSET(sockHandle, readfds) > 0 then
+            if fpFD_ISSET(fds, readfds) > 0 then
             begin
-                if sockHandle = pipeIn then
+                if fds = pipeIn then
                 begin
                     //we get termination signal, just read until no more
                     //bytes and quit
@@ -434,7 +434,7 @@ var
                     terminated := true;
                     break;
                 end else
-                if sockHandle = listenSocket then
+                if fds = listenSocket then
                 begin
                     //we have something with listening socket, it means there is
                     //new connection coming, accept it
@@ -443,8 +443,8 @@ var
                 begin
                     //if we get here then it must be from one or
                     //more client connections
-                    handleClientConnection(handle);
-                    removeFromMonitoredSet(handle, maxHandle, origFds);
+                    handleClientConnection(fds);
+                    removeFromMonitoredSet(fds, maxHandle, origFds);
                 end;
 
                 dec(totDesc);
