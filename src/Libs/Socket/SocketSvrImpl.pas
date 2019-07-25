@@ -38,6 +38,14 @@ type
     private
 
         (*!-----------------------------------------------
+        * accept all incoming connection until no more pending
+        * connection available
+        *-------------------------------------------------
+        * @param listenSocket, listen socket handle
+        *-----------------------------------------------*)
+        procedure acceptAllConnections(listenSocket : longint);
+
+        (*!-----------------------------------------------
          * called when client connection is established
          *-------------------------------------------------
          * @param clientSocket, socket handle where data can be read
@@ -247,6 +255,28 @@ var
     end;
 
     (*!-----------------------------------------------
+     * accept all incoming connection until no more pending
+     * connection available
+     *-------------------------------------------------
+     * @param listenSocket, listen socket handle
+     *-----------------------------------------------*)
+    procedure TSocketSvr.acceptAllConnections(listenSocket : longint);
+    var clientSocket : longint;
+    begin
+        repeat
+            //we have something with listening socket, it means there is
+            //new connection coming, accept it
+            clientSocket := accept(listenSocket);
+            if (clientSocket > 0) then
+            begin
+                //allow this connection, tell that data is available
+                handleClientConnection(clientSocket);
+            end;
+        until (clientSocket < 0);
+    end;
+
+
+    (*!-----------------------------------------------
      * handle when one or more file descriptor is ready for I/O
      *-------------------------------------------------
      * @param listenSocket, listen socket handle
@@ -260,8 +290,7 @@ var
         const readfds : TFDSet;
         var terminated : boolean
     );
-    var clientSocket : longint;
-        ch : char;
+    var ch : char;
     begin
         if fpFD_ISSET(pipeIn, readfds) > 0 then
         begin
@@ -274,10 +303,7 @@ var
         begin
             //we have something with listening socket, it means there is
             //new connection coming, accept it
-            clientSocket := accept(listenSocket);
-
-            //allow this connection, tell that data is available
-            handleClientConnection(clientSocket);
+            acceptAllConnections(listenSocket);
         end;
 
     end;
