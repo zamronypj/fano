@@ -37,6 +37,7 @@ implementation
 uses
 
     sockets,
+    BaseUnix,
     ESockWouldBlockImpl;
 
 resourcestring
