@@ -47,7 +47,7 @@ resourcestring
     var errno : longint;
     begin
         errno := socketError();
-        if (errno = EsockEWOULDBLOCK) or (errno = EsockEAGAIN) then
+        if (errno = ESysEWOULDBLOCK) or (errno = ESysEAGAIN) then
         begin
             //not ready for read
             //raise ESockWouldBlock.createFmt(rsWouldBlock, [errno]);
