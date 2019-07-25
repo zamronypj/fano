@@ -323,7 +323,7 @@ var
         errno := socketError();
         if errno = EsockEWOULDBLOCK then
         begin
-            raise ESockWouldBlock.createFmt(rsWouldBlock, [errno]);
+            raise ESockWouldBlock.createFmt(rsAcceptWouldBlock, [errno]);
         end;
     end;
 
