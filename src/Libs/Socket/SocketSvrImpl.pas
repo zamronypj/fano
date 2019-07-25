@@ -384,6 +384,7 @@ var
         var origFds : TFDSet
     );
     var clientSocket : longint;
+        errno : longint;
     begin
         repeat
             //we have something with listening socket, it means there is
@@ -392,7 +393,12 @@ var
 
             if (clientSocket < 0) then
             begin
-                raiseExceptionIfWouldBlock();
+                errno := socketError();
+                if (errno = EsockEWOULDBLOCK) or (errno = EsockEAGAIN) then
+                begin
+                    //no pending connection
+                    //just exit
+                end;
             end else
             begin
                 //add client socket to be monitored for I/O
