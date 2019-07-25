@@ -438,7 +438,7 @@ var
                 begin
                     //we have something with listening socket, it means there is
                     //new connection coming, accept it
-                    acceptAllConnections(listenSocket);
+                    acceptAllConnections(listenSocket, maxHandle, origFds);
                 end else
                 begin
                     //if we get here then it must be from one or
