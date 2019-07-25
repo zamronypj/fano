@@ -26,7 +26,7 @@ type
      *-----------------------------------------------*)
     TSockStream = class(THandleStream)
     private
-        procedure raiseExceptionIfWouldBlock();
+        procedure raiseExceptionIfAny();
     public
         function read(var buffer; count: longint): longint; override;
         function write(const buffer; count: longint): longint; override;
@@ -37,21 +37,18 @@ implementation
 uses
 
     sockets,
-    BaseUnix,
-    ESockWouldBlockImpl;
+    BaseUnix;
 
-resourcestring
-
-    rsWouldBlock = 'Read socket would block on socket, error: %d';
-
-    procedure TSockStream.raiseExceptionIfWouldBlock();
+    procedure TSockStream.raiseExceptionIfAny();
     var errno : longint;
     begin
         errno := socketError();
         if (errno = ESockEWOULDBLOCK) or (errno = ESysEAGAIN) then
         begin
-            //not ready for read
-            //raise ESockWouldBlock.createFmt(rsWouldBlock, [errno]);
+            //not ready for read, do nothing, we will retry
+        end else
+        begin
+            //TODO handle other error code
         end;
     end;
 
@@ -60,7 +57,7 @@ resourcestring
         result := fpRecv(Handle, @buffer, count, 0);
         if result < 0 then
         begin
-            raiseExceptionIfWouldBlock();
+            raiseExceptionIfAny();
         end;
     end;
 

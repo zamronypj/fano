@@ -37,7 +37,7 @@ type
      *-----------------------------------------------*)
     TSocketSvr = class(TInterfacedObject, IRunnable, IRunnableWithDataNotif)
     private
-        procedure raiseExceptionIfWouldBlock();
+        procedure raiseExceptionIfAny();
 
         (*!-----------------------------------------------
          * make listen socket non blocking
@@ -317,13 +317,17 @@ var
         end;
     end;
 
-    procedure TSocketSvr.raiseExceptionIfWouldBlock();
+    procedure TSocketSvr.raiseExceptionIfAny();
     var errno : longint;
     begin
         errno := socketError();
-        if errno = EsockEWOULDBLOCK then
+        if (errno = EsockEWOULDBLOCK) or (errno = EsysEAGAIN) then
         begin
-            raise ESockWouldBlock.createFmt(rsAcceptWouldBlock, [errno]);
+            //if we get here, it mostly because socket is non blocking
+            //but no pending connection, so just do nothing
+        end else
+        begin
+            //TODO handle error
         end;
     end;
 
@@ -384,7 +388,6 @@ var
         var origFds : TFDSet
     );
     var clientSocket : longint;
-        errno : longint;
     begin
         repeat
             //we have something with listening socket, it means there is
@@ -393,12 +396,7 @@ var
 
             if (clientSocket < 0) then
             begin
-                errno := socketError();
-                if (errno = ESockEWOULDBLOCK) or (errno = ESysEAGAIN) then
-                begin
-                    //no pending connection
-                    //just exit
-                end;
+                raiseExceptionIfAny();
             end else
             begin
                 //add client socket to be monitored for I/O
