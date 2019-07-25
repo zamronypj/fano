@@ -49,7 +49,7 @@ resourcestring
         errno := socketError();
         if errno = EsockEWOULDBLOCK then
         begin
-            raise ESockWouldBlock.createFmt(rsWouldBlock), [errno]);
+            raise ESockWouldBlock.createFmt(rsWouldBlock, [errno]);
         end;
     end;
 

@@ -20,7 +20,8 @@ uses
     RunnableWithDataNotifIntf,
     DataAvailListenerIntf,
     StreamAdapterIntf,
-    BaseUnix;
+    BaseUnix,
+    Unix;
 
 type
 
@@ -36,20 +37,28 @@ type
      *-----------------------------------------------*)
     TSocketSvr = class(TInterfacedObject, IRunnable, IRunnableWithDataNotif)
     private
+        procedure raiseExceptionIfWouldBlock();
+
         (*!-----------------------------------------------
-        * make listen socket non blocking
-        *-------------------------------------------------
-        * @param listenSocket, listen socket handle
-        *-----------------------------------------------*)
+         * make listen socket non blocking
+         *-------------------------------------------------
+         * @param listenSocket, listen socket handle
+         *-----------------------------------------------*)
         procedure makeNonBlockingSocket(listenSocket : longint);
 
         (*!-----------------------------------------------
-        * accept all incoming connection until no more pending
-        * connection available
-        *-------------------------------------------------
-        * @param listenSocket, listen socket handle
-        *-----------------------------------------------*)
-        procedure acceptAllConnections(listenSocket : longint);
+         * accept all incoming connection until no more pending
+         * connection available
+         *-------------------------------------------------
+         * @param listenSocket, listen socket handle
+         * @param maxHandle, highest handle
+         * @param origFds, original file descriptor set
+         *-----------------------------------------------*)
+        procedure acceptAllConnections(
+            const listenSocket : longint;
+            var maxHandle : longint;
+            var origFds : TFDSet
+        );
 
         (*!-----------------------------------------------
          * called when client connection is established
@@ -83,24 +92,43 @@ type
          * @param listenSocket, listen socket handle
          * @param pipeIn, terminate pipe input handle
          * @param readfds, file descriptor set
+         * @param totDesc, number of file descriptor ready for I/O
+         * @param maxHandle, highest handle
+         * @param origFds, original file descriptor set
          * @param terminated, set true if we should terminate
          *-----------------------------------------------*)
         procedure handleFileDescriptorIOReady(
             listenSocket : longint;
             pipeIn : longint;
             const readfds : TFDSet;
+            var totDesc : longint;
+            var maxHandle : longint;
+            var origFds : TFDSet;
             var terminated : boolean
+        );
+
+        (*!-----------------------------------------------
+         * add client socket to monitored set
+         *-------------------------------------------------
+         * @param fds, file descriptor to be added
+         * @param maxHandle, highest handle
+         * @param origFds, original file descriptor set
+         *-----------------------------------------------*)
+        procedure addToMonitoredSet(
+            const fds : longint;
+            var maxHandle : longint;
+            var origFds : TFDSet
         );
 
         (*!-----------------------------------------------
          * remove client socket from monitored set
          *-------------------------------------------------
-         * @param clientSocket, client socket to be remove
+         * @param fds, file descriptor to be removed
          * @param maxHandle, highest handle
          * @param origFds, original file descriptor set
          *-----------------------------------------------*)
         procedure removeFromMonitoredSet(
-            const clientSocket : longint;
+            const fds : longint;
             var maxHandle : longint;
             var origFds : TFDSet
         );
@@ -182,8 +210,8 @@ implementation
 
 uses
 
-    Unix,
     ESockListenImpl,
+    ESockWouldBlockImpl,
     StreamAdapterImpl,
     SockStreamImpl,
     CloseableStreamImpl;
@@ -191,6 +219,7 @@ uses
 resourcestring
 
     rsSocketListenFailed = 'Listening failed, error: %d';
+    rsAcceptWouldBlock = 'Accept socket would block on socket, error: %d';
 
 var
 
@@ -227,7 +256,7 @@ var
      *-----------------------------------------------*)
     procedure TSocketSvr.makeNonBlockingSocket(listenSocket : longint);
     begin
-        //read control flag and set listen to be non blocking
+        //read control flag and set listen socket to be non blocking
         flags := fpFcntl(listenSocket, F_GETFL, 0);
         fpFcntl(listenSocket, F_SETFl, flags or O_NONBLOCK);
     end;
@@ -287,42 +316,51 @@ var
         end;
     end;
 
-    (*!-----------------------------------------------
-     * accept all incoming connection until no more pending
-     * connection available
-     *-------------------------------------------------
-     * @param listenSocket, listen socket handle
-     *-----------------------------------------------*)
-    procedure TSocketSvr.acceptAllConnections(listenSocket : longint; var origFds : TFDSet);
-    var clientSocket : longint;
+    procedure TSocketSvr.raiseExceptionIfWouldBlock();
+    var errno : longint;
     begin
-        repeat
-            //we have something with listening socket, it means there is
-            //new connection coming, accept it
-            clientSocket := accept(listenSocket);
-            if (clientSocket > 0) then
-            begin
-                //monitor each client socket for IO
-                fpFD_SET(clientSocket, origFds);
-            end;
-        until (clientSocket < 0);
+        errno := socketError();
+        if errno = EsockEWOULDBLOCK then
+        begin
+            raise ESockWouldBlock.createFmt(rsWouldBlock, [errno]);
+        end;
     end;
 
     (*!-----------------------------------------------
-     * remove client socket from monitored set
+     * add file descriptor to monitored set
      *-------------------------------------------------
-     * @param clientSocket, client socket to be remove
+     * @param fds, file descriptor to be added
      * @param maxHandle, highest handle
      * @param origFds, original file descriptor set
      *-----------------------------------------------*)
-    procedure TSocketSvr.removeFromMonitoredSet(
-        const clientSocket : longint;
+    procedure TSocketSvr.addToMonitoredSet(
+        const fds : longint;
         var maxHandle : longint;
         var origFds : TFDSet
     );
     begin
-        fpFD_CLR(clientSocket, origFds);
-        if (clientSocket = maxHandle) then
+        fpFD_SET(fds, origFds);
+        if fds > maxHandle then
+        begin
+            maxHandle := fds;
+        end;
+    end;
+
+    (*!-----------------------------------------------
+     * remove file descriptor from monitored set
+     *-------------------------------------------------
+     * @param fds, file descriptor to be removed
+     * @param maxHandle, highest handle
+     * @param origFds, original file descriptor set
+     *-----------------------------------------------*)
+    procedure TSocketSvr.removeFromMonitoredSet(
+        const fds : longint;
+        var maxHandle : longint;
+        var origFds : TFDSet
+    );
+    begin
+        fpFD_CLR(fds, origFds);
+        if (fds = maxHandle) then
         begin
             while (fpFD_ISSET(maxHandle, origFds) = 0) do
             begin
@@ -330,6 +368,38 @@ var
             end;
         end;
     end;
+
+    (*!-----------------------------------------------
+     * accept all incoming connection until no more pending
+     * connection available
+     *-------------------------------------------------
+     * @param listenSocket, listen socket handle
+     * @param maxHandle, highest handle
+     * @param origFds, original file descriptor set
+     *-----------------------------------------------*)
+    procedure TSocketSvr.acceptAllConnections(
+        const listenSocket : longint;
+        var maxHandle : longint;
+        var origFds : TFDSet
+    );
+    var clientSocket : longint;
+    begin
+        repeat
+            //we have something with listening socket, it means there is
+            //new connection coming, accept it
+            clientSocket := accept(listenSocket);
+
+            if (clientSocket < 0) then
+            begin
+                raiseExceptionIfWouldBlock();
+            end else
+            begin
+                //add client socket to be monitored for I/O
+                addToMonitoredSet(clientSocket, maxHandle, origFds);
+            end;
+        until (clientSocket < 0);
+    end;
+
 
     (*!-----------------------------------------------
      * handle when one or more file descriptor is ready for I/O
@@ -343,7 +413,8 @@ var
         listenSocket : longint;
         pipeIn : longint;
         const readfds : TFDSet;
-        const maxHandle : longint;
+        var totDesc : longint;
+        var maxHandle : longint;
         var origFds : TFDSet;
         var terminated : boolean
     );
@@ -360,6 +431,7 @@ var
                     //bytes and quit
                     fpRead(pipeIn, @ch, 1);
                     terminated := true;
+                    break;
                 end else
                 if sockHandle = listenSocket then
                 begin
@@ -373,6 +445,14 @@ var
                     handleClientConnection(handle);
                     removeFromMonitoredSet(handle, maxHandle, origFds);
                 end;
+
+                dec(totDesc);
+                if (totDesc <= 0) then
+                begin
+                    //if we get here, it means all file descriptors ready for I/O
+                    //has been processed, so we can exit loop early
+                    break;
+                end;
             end;
         end;
     end;
@@ -384,6 +464,7 @@ var
     var origfds, readfds : TFDSet;
         highestHandle : longint;
         terminated : boolean;
+    var totDesc : longint;
     begin
         //find file descriptor with biggest value
         highestHandle := getHighestHandle(fListenSocket, terminatePipeIn);
@@ -393,10 +474,19 @@ var
             readfds := origfds;
 
             //wait indefinitely until something happen in fListenSocket or terminatePipeIn
-            if fpSelect(highestHandle + 1, @readfds, nil, nil, nil) > 0 then
+            totDesc := fpSelect(highestHandle + 1, @readfds, nil, nil, nil);
+            if totDesc > 0 then
             begin
                 //one or more file descriptors is ready for I/O, check further
-                handleFileDescriptorIOReady(fListenSocket, terminatePipeIn, readfds, terminated);
+                handleFileDescriptorIOReady(
+                    fListenSocket,
+                    terminatePipeIn,
+                    readfds,
+                    totDesc,
+                    highestHandle,
+                    origfds,
+                    terminated
+                );
             end;
         until terminated;
     end;
