@@ -394,7 +394,7 @@ var
             if (clientSocket < 0) then
             begin
                 errno := socketError();
-                if (errno = ESysEWOULDBLOCK) or (errno = ESysEAGAIN) then
+                if (errno = ESockEWOULDBLOCK) or (errno = ESysEAGAIN) then
                 begin
                     //no pending connection
                     //just exit
