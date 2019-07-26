@@ -255,7 +255,7 @@ var
      * @param listenSocket, listen socket handle
      *-----------------------------------------------*)
     procedure TSocketSvr.makeNonBlockingSocket(listenSocket : longint);
-    var flags : integer;
+    var flags : longint;
     begin
         //read control flag and set listen socket to be non blocking
         flags := fpFcntl(listenSocket, F_GETFL, 0);
