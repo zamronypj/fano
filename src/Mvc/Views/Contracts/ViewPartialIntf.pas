@@ -35,6 +35,8 @@ type
          *-----------------------------------------------
          * @param templatePath file path of template
          * @param viewParams instance contains view parameters
+         * @return string which all variables replaced with value from
+         *        view parameters
          *-----------------------------------------------*)
         function partial(
             const templatePath : string;
