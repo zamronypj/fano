@@ -25,6 +25,8 @@ type
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
     TSockStream = class(THandleStream)
+    private
+        procedure raiseExceptionIfAny();
     public
         function read(var buffer; count: longint): longint; override;
         function write(const buffer; count: longint): longint; override;
@@ -34,11 +36,29 @@ implementation
 
 uses
 
-    sockets;
+    sockets,
+    BaseUnix;
+
+    procedure TSockStream.raiseExceptionIfAny();
+    var errno : longint;
+    begin
+        errno := socketError();
+        if (errno = ESockEWOULDBLOCK) or (errno = ESysEAGAIN) then
+        begin
+            //not ready for read, do nothing, we will retry
+        end else
+        begin
+            //TODO handle other error code
+        end;
+    end;
 
     function TSockStream.read(var buffer; count: longint): longint;
     begin
         result := fpRecv(Handle, @buffer, count, 0);
+        if result < 0 then
+        begin
+            raiseExceptionIfAny();
+        end;
     end;
 
     function TSockStream.write(const buffer; count: longint): longint;
