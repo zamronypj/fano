@@ -11,10 +11,10 @@
 # bin directory structure
 #----------------------------------------------
 
-bin/*
-bin/unit/*
-!bin/README.md
-!bin/unit/README.md
+tests/bin/*
+tests/bin/unit/*
+!tests/bin/README.md
+!tests/bin/unit/README.md
 
 #----------------------------------------------
 # Ignore FreePascal built-in console IDE generated files
