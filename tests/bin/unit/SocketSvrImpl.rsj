@@ -1,0 +1,4 @@
+{"version":1,"strings":[
+{"hash":30133572,"name":"socketsvrimpl.rssocketlistenfailed","sourcebytes":[76,105,115,116,101,110,105,110,103,32,102,97,105,108,101,100,44,32,101,114,114,111,114,58,32,37,100],"value":"Listening failed, error: %d"},
+{"hash":147202500,"name":"socketsvrimpl.rsacceptwouldblock","sourcebytes":[65,99,99,101,112,116,32,115,111,99,107,101,116,32,119,111,117,108,100,32,98,108,111,99,107,32,111,110,32,115,111,99,107,101,116,44,32,101,114,114,111,114,58,32,37,100],"value":"Accept socket would block on socket, error: %d"}
+]}

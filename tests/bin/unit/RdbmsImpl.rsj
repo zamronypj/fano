@@ -1,0 +1,4 @@
+{"version":1,"strings":[
+{"hash":249152046,"name":"rdbmsimpl.serrinvalidconnection","sourcebytes":[73,110,118,97,108,105,100,32,99,111,110,110,101,99,116,105,111,110],"value":"Invalid connection"},
+{"hash":50833422,"name":"rdbmsimpl.serrinvalidfield","sourcebytes":[73,110,118,97,108,105,100,32,102,105,101,108,100,46],"value":"Invalid field."}
+]}

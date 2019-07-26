@@ -1,0 +1,4 @@
+{"version":1,"strings":[
+{"hash":152025108,"name":"inetsocketsvrimpl.rsbindfailed","sourcebytes":[66,105,110,100,32,102,97,105,108,101,100,32,111,110,32,37,115,58,37,100,44,32,101,114,114,111,114,58,32,37,100],"value":"Bind failed on %s:%d, error: %d"},
+{"hash":150210932,"name":"inetsocketsvrimpl.rscreatefailed","sourcebytes":[67,114,101,97,116,101,32,115,111,99,107,101,116,32,111,110,32,37,115,58,37,100,32,102,97,105,108,101,100,44,32,101,114,114,111,114,58,32,37,100],"value":"Create socket on %s:%d failed, error: %d"}
+]}
