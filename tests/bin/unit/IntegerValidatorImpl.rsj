@@ -1,3 +1,0 @@
-{"version":1,"strings":[
-{"hash":4919221,"name":"integervalidatorimpl.serrfieldmustbeinteger","sourcebytes":[70,105,101,108,100,32,37,115,32,109,117,115,116,32,98,101,32,105,110,116,101,103,101,114,32,118,97,108,117,101],"value":"Field %s must be integer value"}
-]}

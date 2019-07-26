@@ -1,5 +1,0 @@
-{"version":1,"strings":[
-{"hash":5018452,"name":"dependencycontainerimpl.sdependencynotfound","sourcebytes":[68,101,112,101,110,100,101,110,99,121,32,37,115,32,110,111,116,32,102,111,117,110,100],"value":"Dependency %s not found"},
-{"hash":180203716,"name":"dependencycontainerimpl.sinvalidfactory","sourcebytes":[70,97,99,116,111,114,121,32,37,115,32,105,115,32,105,110,118,97,108,105,100],"value":"Factory %s is invalid"},
-{"hash":170283203,"name":"dependencycontainerimpl.sunsupportedmultilevelalias","sourcebytes":[85,110,115,117,112,112,111,114,116,101,100,32,109,117,108,116,105,112,108,101,32,108,101,118,101,108,32,97,108,105,97,115,32,37,115,32,116,111,32,37,115],"value":"Unsupported multiple level alias %s to %s"}
-]}

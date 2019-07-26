@@ -1,4 +1,0 @@
-{"version":1,"strings":[
-{"hash":85684740,"name":"unixsocketsvrimpl.rsbindfailed","sourcebytes":[66,105,110,100,32,102,97,105,108,101,100,32,111,110,32,102,105,108,101,32,37,115,44,32,101,114,114,111,114,58,32,37,100],"value":"Bind failed on file %s, error: %d"},
-{"hash":101744148,"name":"unixsocketsvrimpl.rscreatefailed","sourcebytes":[67,114,101,97,116,101,32,83,111,99,107,101,116,32,111,110,32,102,105,108,101,32,37,115,32,102,97,105,108,101,100,44,32,101,114,114,111,114,58,32,37,100],"value":"Create Socket on file %s failed, error: %d"}
-]}

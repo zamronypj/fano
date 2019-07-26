@@ -1,3 +1,0 @@
-{"version":1,"strings":[
-{"hash":104181420,"name":"streamadapterimpl.serrinvalidstream","sourcebytes":[83,116,114,101,97,109,32,99,97,110,32,110,111,116,32,98,101,32,110,105,108],"value":"Stream can not be nil"}
-]}

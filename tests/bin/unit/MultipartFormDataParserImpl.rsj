@@ -1,4 +1,0 @@
-{"version":1,"strings":[
-{"hash":144317913,"name":"multipartformdataparserimpl.serrinvalidboundary","sourcebytes":[73,110,118,97,108,105,100,32,109,117,108,116,105,112,97,114,116,47,102,111,114,109,45,100,97,116,97,32,98,111,117,110,100,97,114,121],"value":"Invalid multipart\/form-data boundary"},
-{"hash":246872581,"name":"multipartformdataparserimpl.serrinvalidmultipartformdataname","sourcebytes":[73,110,118,97,108,105,100,32,109,117,108,116,105,112,97,114,116,47,102,111,114,109,45,100,97,116,97,32,110,97,109,101],"value":"Invalid multipart\/form-data name"}
-]}

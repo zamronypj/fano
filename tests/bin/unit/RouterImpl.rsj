@@ -1,4 +1,0 @@
-{"version":1,"strings":[
-{"hash":39117571,"name":"routerimpl.sroutenotfound","sourcebytes":[82,111,117,116,101,32,110,111,116,32,102,111,117,110,100,46,32,77,101,116,104,111,100,58,32,37,115,32,85,114,105,58,32,37,115],"value":"Route not found. Method: %s Uri: %s"},
-{"hash":47590547,"name":"routerimpl.smethodnotallowed","sourcebytes":[77,101,116,104,111,100,32,110,111,116,32,97,108,108,111,119,101,100,46,32,77,101,116,104,111,100,58,32,37,115,32,85,114,105,58,32,37,115],"value":"Method not allowed. Method: %s Uri: %s"}
-]}

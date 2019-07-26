@@ -1,3 +1,0 @@
-{"version":1,"strings":[
-{"hash":200020323,"name":"alphanumspacevalidatorimpl.serrnotvalidalphanumspace","sourcebytes":[70,105,101,108,100,32,37,115,32,109,117,115,116,32,98,101,32,97,108,112,104,97,32,110,117,109,101,114,105,99,32,119,104,105,116,101,115,112,97,99,101,32,99,104,97,114,97,99,116,101,114,115],"value":"Field %s must be alpha numeric whitespace characters"}
-]}
