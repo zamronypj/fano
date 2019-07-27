@@ -138,7 +138,7 @@ implementation
         if (level = 'CRITICAL') then
         begin
             criticalLogger.log(level, msg, context);
-        end
+        end;
         result := self;
     end;
 
