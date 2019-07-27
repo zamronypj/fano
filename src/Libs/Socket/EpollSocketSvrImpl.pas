@@ -403,6 +403,7 @@ var
             totFd := epoll_wait(epollFd, events, maxEvents, -1);
             if totFd > 0 then
             begin
+                writeln('ready IO');
                 //one or more file descriptors is ready for I/O, check further
                 handleFileDescriptorIOReady(
                     epollFd,
@@ -520,7 +521,6 @@ var
         //write one byte to mark termination
         ch := '.';
         fpWrite(terminatePipeOut, ch, 1);
-        writeln('doTerminate');
     end;
 
     (*!-----------------------------------------------
