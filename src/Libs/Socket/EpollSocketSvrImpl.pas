@@ -412,6 +412,11 @@ var
                     events,
                     terminated
                 );
+            end else
+            if (totFd < 0) then
+            begin
+                //we have error just terminate
+                terminated := true;
             end;
         until terminated;
     end;
