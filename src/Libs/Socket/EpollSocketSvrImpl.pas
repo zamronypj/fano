@@ -68,7 +68,7 @@ type
             const termPipeIn : longint;
             const listenSocket : longint;
             const events : PEpoll_Event;
-            const maxEvents : longint;
+            const maxEvents : longint
         );
 
         (*!-----------------------------------------------
@@ -397,7 +397,7 @@ var
         const termPipeIn : longint;
         const listenSocket : longint;
         const events : PEpoll_Event;
-        const maxEvents : longint;
+        const maxEvents : longint
     );
     var terminated : boolean;
         totFd : longint;
