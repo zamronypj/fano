@@ -21,13 +21,24 @@ DaemonAppImpl,
 {----------------Begin FastCGI related-----------------------------}
 SimpleFastCGIAppImpl,
 
-{$IFDEF unix}
+{$IFDEF UNIX}
 SimpleUnixFastCGIAppImpl,
 {$ENDIF}
 
 SimpleSockFastCGIAppImpl,
+
+
+{$IFDEF LINUX}
+EpollSimpleFastCGIAppImpl,
+EpollSimpleUnixFastCGIAppImpl,
+EpollSimpleSockFastCGIAppImpl,
+{$ENDIF}
 {---------------- End FastCGI related-----------------------------}
 
 {----------------Begin SCGI related-----------------------------}
 SimpleScgiAppImpl,
+
+{$IFDEF LINUX}
+EpollSimpleScgiAppImpl,
+{$ENDIF}
 {---------------- End SCGI related-----------------------------}

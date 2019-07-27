@@ -20,14 +20,24 @@ TDaemonWebApplication = DaemonAppImpl.TDaemonWebApplication;
 {----------------Begin FastCGI related-----------------------------}
 TSimpleFastCGIWebApplication = SimpleFastCGIAppImpl.TSimpleFastCGIWebApplication;
 
-{$IFDEF unix}
+{$IFDEF UNIX}
 TSimpleUnixFastCGIWebApplication = SimpleUnixFastCGIAppImpl.TSimpleUnixFastCGIWebApplication;
 {$ENDIF}
 
 TSimpleSockFastCGIWebApplication = SimpleSockFastCGIAppImpl.TSimpleSockFastCGIWebApplication;
 
+
+{$IFDEF LINUX}
+TEpollSimpleFastCGIWebApplication = EpollSimpleFastCGIAppImpl.TEpollSimpleFastCGIWebApplication;
+TEpollSimpleUnixFastCGIWebApplication = EpollSimpleUnixFastCGIAppImpl.TEpollSimpleUnixFastCGIWebApplication;
+TEpollSimpleSockFastCGIWebApplication = EpollSimpleSockFastCGIAppImpl.TEpollSimpleSockFastCGIWebApplication;
+{$ENDIF}
 {----------------End FastCGI related-----------------------------}
 
 {----------------Begin SCGI related-----------------------------}
 TSimpleScgiWebApplication = SimpleScgiAppImpl.TSimpleScgiWebApplication;
+
+{$IFDEF LINUX}
+TEpollSimpleScgiWebApplication = EpollSimpleScgiAppImpl.TEpollSimpleScgiWebApplication;
+{$ENDIF}
 {----------------End SCGI related-----------------------------}
