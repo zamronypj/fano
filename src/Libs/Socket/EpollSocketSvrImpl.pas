@@ -61,6 +61,17 @@ type
         );
 
         (*!-----------------------------------------------
+         * wait for connection
+         *-----------------------------------------------*)
+        procedure waitForConnection(
+            const epollFd : longint;
+            const termPipeIn : longint;
+            const listenSocket : longint;
+            const events : PEpoll_Event;
+            const maxEvents : longint;
+        );
+
+        (*!-----------------------------------------------
          * called when client connection is established
          *-------------------------------------------------
          * @param clientSocket, socket handle where data can be read
