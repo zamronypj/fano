@@ -28,7 +28,7 @@ type
         fInfoLoggerFactory : IDependencyFactory;
         fDebugLoggerFactory : IDependencyFactory;
         fWarningLoggerFactory : IDependencyFactory;
-        fWriticalLoggerFactory : IDependencyFactory;
+        fCriticalLoggerFactory : IDependencyFactory;
     public
         (*!--------------------------------------
          * constructor
