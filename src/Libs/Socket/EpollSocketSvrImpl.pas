@@ -42,11 +42,11 @@ type
         procedure raiseExceptionIfAny();
 
         (*!-----------------------------------------------
-         * make listen socket non blocking
+         * make file descriptor non blocking
          *-------------------------------------------------
-         * @param listenSocket, listen socket handle
+         * @param fd, file descriptor
          *-----------------------------------------------*)
-        procedure makeNonBlockingSocket(listenSocket : longint);
+        procedure makeNonBlocking(fd : longint);
 
         (*!-----------------------------------------------
          * accept all incoming connection until no more pending
@@ -102,8 +102,9 @@ type
          *-------------------------------------------------
          * @param epollFd, file descriptor returned from epoll_create
          * @param fd, file descriptor to be added
+         * @param flag, operation flag
          *-----------------------------------------------*)
-        procedure addToMonitoredSet(const epollFd : longint; const fd : longint);
+        procedure addToMonitoredSet(const epollFd : longint; const fd : longint; const flag : longint);
 
         (*!-----------------------------------------------
          * remove file descriptor from monitored set
@@ -222,7 +223,7 @@ var
         fListenSocket := listenSocket;
         fQueueSize := queueSize;
         fDataAvailListener := nil;
-        makeNonBlockingSocket(listenSocket);
+        makeNonBlocking(listenSocket);
     end;
 
     (*!-----------------------------------------------
@@ -235,16 +236,16 @@ var
     end;
 
     (*!-----------------------------------------------
-     * make listen socket non blocking
+     * make file descriptor non blocking
      *-------------------------------------------------
-     * @param listenSocket, listen socket handle
+     * @param fd, file descriptor
      *-----------------------------------------------*)
-    procedure TEpollSocketSvr.makeNonBlockingSocket(listenSocket : longint);
+    procedure TEpollSocketSvr.makeNonBlocking(fd : longint);
     var flags : longint;
     begin
-        //read control flag and set listen socket to be non blocking
-        flags := fpFcntl(listenSocket, F_GETFL, 0);
-        fpFcntl(listenSocket, F_SETFl, flags or O_NONBLOCK);
+        //read control flag and set file descriptor to be non blocking
+        flags := fpFcntl(fd, F_GETFL, 0);
+        fpFcntl(fd, F_SETFl, flags or O_NONBLOCK);
     end;
 
     (*!-----------------------------------------------
@@ -280,11 +281,12 @@ var
      *-----------------------------------------------*)
     procedure TEpollSocketSvr.addToMonitoredSet(
         const epollFd : longint;
-        const fd : longint
+        const fd : longint;
+        const flag : longint
     );
     var ev : TEpoll_Event;
     begin
-        ev.events := EPOLLIN;
+        ev.events := flag;
         ev.data.fd := fd;
         epoll_ctl(epollFd, EPOLL_CTL_ADD, fd, @ev);
     end;
@@ -332,8 +334,9 @@ var
                 raiseExceptionIfAny();
             end else
             begin
-                //add client socket to be monitored for I/O
-                addToMonitoredSet(epollFd, clientSocket);
+                makeNonBlocking(clientSocket);
+                //add client socket to be monitored for I/O read
+                addToMonitoredSet(epollFd, clientSocket, EPOLLIN or EPOLLET);
             end;
         until (clientSocket < 0);
     end;
@@ -358,7 +361,7 @@ var
         var terminated : boolean
     );
     var ch : char;
-        i, fd : longint;
+        i, fd, res : longint;
         eventArr : PEPoll_EventArr;
     begin
         //use pointer to array for easier access
@@ -370,7 +373,9 @@ var
             begin
                 //we get termination signal, just read until no more
                 //bytes and quit
-                fpRead(pipeIn, @ch, 1);
+                repeat
+                    res := fpRead(pipeIn, @ch, 1);
+                until res = ESysEAGAIN;
                 terminated := true;
                 break;
             end else
@@ -402,8 +407,8 @@ var
     var terminated : boolean;
         totFd : longint;
     begin
-        addToMonitoredSet(epollFd, termPipeIn);
-        addToMonitoredSet(epollFd, listenSocket);
+        addToMonitoredSet(epollFd, termPipeIn, EPOLLIN or EPOLLET or EPOLLONESHOT);
+        addToMonitoredSet(epollFd, listenSocket, EPOLLIN);
         terminated := false;
         repeat
             //wait indefinitely until something happen in fListenSocket or terminatePipeIn
