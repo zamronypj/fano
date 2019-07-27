@@ -66,10 +66,10 @@ uses
      * @param criticalLoggerFactory factory for critical log
      *---------------------------------------*)
     constructor TSegregatedLoggerFactory.create(
-        const infoLoggerFactory  IDependencyFactory;
-        const debugLoggerFactory  IDependencyFactory;
-        const warningLoggerFactory  IDependencyFactory;
-        const criticalLoggerFactory  IDependencyFactory
+        const infoLoggerFactory : IDependencyFactory;
+        const debugLoggerFactory : IDependencyFactory;
+        const warningLoggerFactory : IDependencyFactory;
+        const criticalLoggerFactory : IDependencyFactory
     );
     begin
         fInfoLoggerFactory := infoLoggerFactory;
