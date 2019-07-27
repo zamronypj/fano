@@ -365,7 +365,6 @@ var
                     res := fpRead(pipeIn, @ch, 1);
                 until res = ESysEAGAIN;
                 terminated := true;
-                writeln('terminated');
                 break;
             end else
             if (fd = listenSocket) then
@@ -521,6 +520,7 @@ var
         //write one byte to mark termination
         ch := '.';
         fpWrite(terminatePipeOut, ch, 1);
+        writeln('doTerminate');
     end;
 
     (*!-----------------------------------------------
