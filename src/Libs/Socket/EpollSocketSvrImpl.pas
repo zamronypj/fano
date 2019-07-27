@@ -42,13 +42,6 @@ type
         procedure raiseExceptionIfAny();
 
         (*!-----------------------------------------------
-         * make file descriptor non blocking
-         *-------------------------------------------------
-         * @param fd, file descriptor
-         *-----------------------------------------------*)
-        procedure makeNonBlocking(fd : longint);
-
-        (*!-----------------------------------------------
          * accept all incoming connection until no more pending
          * connection available
          *-------------------------------------------------
@@ -212,6 +205,14 @@ var
     //pipe handle that we use to monitor if we get SIGTERM/SIGINT signal
     terminatePipeIn, terminatePipeOut : longInt;
 
+    procedure makeNonBlocking(fd: longint);
+    var flags : integer;
+    begin
+        //read control flag and set pipe in to be non blocking
+        flags := fpFcntl(fd, F_GETFL, 0);
+        fpFcntl(fd, F_SETFl, flags or O_NONBLOCK);
+    end;
+
     (*!-----------------------------------------------
      * constructor
      *-------------------------------------------------
@@ -233,19 +234,6 @@ var
     begin
         shutdown();
         inherited destroy();
-    end;
-
-    (*!-----------------------------------------------
-     * make file descriptor non blocking
-     *-------------------------------------------------
-     * @param fd, file descriptor
-     *-----------------------------------------------*)
-    procedure TEpollSocketSvr.makeNonBlocking(fd : longint);
-    var flags : longint;
-    begin
-        //read control flag and set file descriptor to be non blocking
-        flags := fpFcntl(fd, F_GETFL, 0);
-        fpFcntl(fd, F_SETFl, flags or O_NONBLOCK);
     end;
 
     (*!-----------------------------------------------
@@ -377,6 +365,7 @@ var
                     res := fpRead(pipeIn, @ch, 1);
                 until res = ESysEAGAIN;
                 terminated := true;
+                writeln('terminated');
                 break;
             end else
             if (fd = listenSocket) then
@@ -549,15 +538,11 @@ var
     end;
 
     procedure makePipeNonBlocking(termPipeIn: longint; termPipeOut : longint);
-    var flags : integer;
     begin
         //read control flag and set pipe in to be non blocking
-        flags := fpFcntl(termPipeIn, F_GETFL, 0);
-        fpFcntl(termPipeIn, F_SETFl, flags or O_NONBLOCK);
-
+        makeNonBlocking(termPipeIn);
         //read control flag and set pipe out to be non blocking
-        flags := fpFcntl(termPipeOut, F_GETFL, 0);
-        fpFcntl(termPipeOut, F_SETFl, flags or O_NONBLOCK);
+        makeNonBlocking(termPipeOut);
     end;
 
 initialization
