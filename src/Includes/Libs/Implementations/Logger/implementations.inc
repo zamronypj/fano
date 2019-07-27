@@ -7,6 +7,8 @@
  *}
 
 {------------ Begin logger-related------------------}
+AbstractLoggerImpl,
+
 FileLoggerImpl,
 FileLoggerFactoryImpl,
 
@@ -15,4 +17,10 @@ NullLoggerFactoryImpl,
 
 CompositeLoggerImpl,
 CompositeLoggerFactoryImpl,
+
+SegregatedLoggerImpl,
+SegregatedLoggerFactoryImpl,
+
+StdOutLoggerImpl,
+StdOutLoggerFactoryImpl,
 {------------ End logger-related------------------}
