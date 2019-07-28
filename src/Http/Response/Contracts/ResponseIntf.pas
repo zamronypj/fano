@@ -37,7 +37,7 @@ type
         function headers() : IHeaders;
 
         (*!------------------------------------
-         * output http response to STDIN
+         * output http response to STDOUT
          *-------------------------------------
          * @return current instance
          *-------------------------------------*)

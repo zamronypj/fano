@@ -43,6 +43,7 @@ implementation
             //TODO : do we need to create new instance?
             //response stream may contain big data
             //so just pass the current stream (for now)
+            //Should watch out for memory leak
             body()
         );
         //TODO : copy any property
