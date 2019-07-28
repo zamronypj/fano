@@ -61,7 +61,7 @@ type
          *-------------------------------------*)
         function body() : IResponseStream;
 
-        function clone() : ICloneable; override;
+        function clone() : ICloneable;
     end;
 
 implementation
