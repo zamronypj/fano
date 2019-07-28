@@ -58,6 +58,8 @@ type
          * @return response body
          *-------------------------------------*)
         function body() : IResponseStream;
+
+        function clone() : ICloneable; override;
     end;
 
 implementation
@@ -134,4 +136,16 @@ uses
     begin
         result := fStream;
     end;
+
+    function TRedirectResponse.clone() : ICloneable;
+    var clonedObj : IResponse;
+    begin
+        clonedObj := TRedirectResponse.create(
+            httpHeaders.clone() as IHeaders,
+            fUrl,
+            fStatus
+        );
+        result := clonedObj;
+    end;
+
 end.
