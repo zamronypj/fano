@@ -14,6 +14,8 @@ interface
 {$H+}
 
 uses
+
+    CloneableIntf,
     ResponseIntf,
     ResponseStreamIntf,
     HeadersIntf;
@@ -33,7 +35,14 @@ type
 
         function redirectCodeMessage(const code : word) : string;
     public
-        constructor create(const hdrs : IHeaders; const status : word; const url : string);
+        (*!------------------------------------
+         * constructor
+         *-------------------------------------
+         * @param hdrs header conllection instance
+         * @param url target url to redirect
+         * @param status, optional HTTP redirection status, default is 302
+         *-------------------------------------*)
+        constructor create(const hdrs : IHeaders; const url : string; const status : word = 302);
         destructor destroy(); override;
 
         (*!------------------------------------
@@ -51,6 +60,8 @@ type
          * @return response body
          *-------------------------------------*)
         function body() : IResponseStream;
+
+        function clone() : ICloneable;
     end;
 
 implementation
@@ -60,10 +71,17 @@ uses
     sysutils,
     NullResponseStreamImpl;
 
+    (*!------------------------------------
+     * constructor
+     *-------------------------------------
+     * @param hdrs header conllection instance
+     * @param url target url to redirect
+     * @param status, optional HTTP redirection status, default is 302
+     *-------------------------------------*)
     constructor TRedirectResponse.create(
         const hdrs : IHeaders;
-        const status : word;
-        const url : string
+        const url : string;
+        const status : word = 302
     );
     begin
         httpHeaders := hdrs;
@@ -120,4 +138,16 @@ uses
     begin
         result := fStream;
     end;
+
+    function TRedirectResponse.clone() : ICloneable;
+    var clonedObj : IResponse;
+    begin
+        clonedObj := TRedirectResponse.create(
+            httpHeaders.clone() as IHeaders,
+            fUrl,
+            fStatus
+        );
+        result := clonedObj;
+    end;
+
 end.
