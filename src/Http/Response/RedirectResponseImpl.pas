@@ -33,7 +33,14 @@ type
 
         function redirectCodeMessage(const code : word) : string;
     public
-        constructor create(const hdrs : IHeaders; const status : word; const url : string);
+        (*!------------------------------------
+         * constructor
+         *-------------------------------------
+         * @param hdrs header conllection instance
+         * @param url target url to redirect
+         * @param status, optional HTTP redirection status, default is 302
+         *-------------------------------------*)
+        constructor create(const hdrs : IHeaders; const url : string; const status : word = 302);
         destructor destroy(); override;
 
         (*!------------------------------------
@@ -60,10 +67,17 @@ uses
     sysutils,
     NullResponseStreamImpl;
 
+    (*!------------------------------------
+     * constructor
+     *-------------------------------------
+     * @param hdrs header conllection instance
+     * @param url target url to redirect
+     * @param status, optional HTTP redirection status, default is 302
+     *-------------------------------------*)
     constructor TRedirectResponse.create(
         const hdrs : IHeaders;
-        const status : word;
-        const url : string
+        const url : string;
+        const status : word = 302
     );
     begin
         httpHeaders := hdrs;

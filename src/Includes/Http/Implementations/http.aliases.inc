@@ -3,6 +3,7 @@ TRequest = RequestImpl.TRequest;
 TResponse = ResponseImpl.TResponse;
 TJsonResponse = JsonResponseImpl.TJsonResponse;
 TBinaryResponse = BinaryResponseImpl.TBinaryResponse;
+TRedirectResponse = RedirectResponseImpl.TRedirectResponse;
 TResponseStream = ResponseStreamImpl.TResponseStream;
 TUploadedFile = UploadedFileImpl.TUploadedFile;
 TUploadedFileCollection = UploadedFileCollectionImpl.TUploadedFileCollection;

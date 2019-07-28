@@ -55,7 +55,10 @@ type
         function has(const key : shortstring) : boolean;
 
         (*!------------------------------------
-         * output http headers to STDIN
+         * output http headers to STDOUT
+         *-------------------------------------
+         * Implementor must end with empty blank line
+         * after write all headers
          *-------------------------------------
          * @return header instance
          *-------------------------------------*)
