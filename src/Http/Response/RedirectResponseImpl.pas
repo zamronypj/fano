@@ -14,6 +14,8 @@ interface
 {$H+}
 
 uses
+
+    CloneableIntf,
     ResponseIntf,
     ResponseStreamIntf,
     HeadersIntf;
