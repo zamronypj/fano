@@ -542,6 +542,7 @@ var
         fpWrite(epollTerminatePipeOut, ch, 1);
         //restore old handler
         fpSigaction(sig, @oldHandler, nil);
+        fpKill(fpGetPid(), sig);
         writeln('do terminate epoll socket svr');
     end;
 
