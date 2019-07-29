@@ -189,7 +189,8 @@ uses
     StreamAdapterImpl,
     SockStreamImpl,
     CloseableStreamImpl,
-    EEpollCtlImpl;
+    EEpollCtlImpl,
+    TermSignalImpl;
 
 resourcestring
 
@@ -203,9 +204,9 @@ type
 
 var
 
-    //pipe handle that we use to monitor if we get SIGTERM/SIGINT signal
-    epollTerminatePipeIn, epollTerminatePipeOut : longInt;
-    oldHandler : SigactionRec;
+    // //pipe handle that we use to monitor if we get SIGTERM/SIGINT signal
+    // epollTerminatePipeIn, epollTerminatePipeOut : longInt;
+    // oldHandler : SigactionRec;
 
     procedure makeNonBlocking(fd: longint);
     var flags : integer;
@@ -450,7 +451,7 @@ var
             try
                 waitForConnection(
                     epollFd,
-                    epollTerminatePipeIn,
+                    terminatePipeIn, //global pipe for terminate
                     fListenSocket,
                     events,
                     MAX_EVENTS
@@ -534,55 +535,54 @@ var
      *-------------------------------------------------
      * Signal handler must be ordinary procedure
      *-----------------------------------------------*)
-    procedure doTerminate(sig : longint; info : PSigInfo; ctx : PSigContext); cdecl;
-    var ch : char;
-    begin
-        //write one byte to mark termination
-        ch := '.';
-        fpWrite(epollTerminatePipeOut, ch, 1);
-        //restore old handler
-        fpSigaction(sig, @oldHandler, nil);
-        fpKill(fpGetPid(), sig);
-        writeln('do terminate epoll socket svr');
-    end;
+    // procedure doTerminate(sig : longint; info : PSigInfo; ctx : PSigContext); cdecl;
+    // var ch : char;
+    // begin
+    //     //write one byte to mark termination
+    //     ch := '.';
+    //     fpWrite(epollTerminatePipeOut, ch, 1);
+    //     //restore old handler
+    //     fpSigaction(sig, @oldHandler, nil);
+    //     fpKill(fpGetPid(), sig);
+    // end;
 
     (*!-----------------------------------------------
      * install signal handler
      *-------------------------------------------------
      * @param aSig, signal id i.e, SIGTERM, SIGINT or SIGQUIT
      *-----------------------------------------------*)
-    procedure installTerminateSignalHandler(aSig : longint);
-    var newAct : SigactionRec;
-    begin
-        fillChar(newAct, sizeOf(SigactionRec), #0);
-        fillChar(oldHandler, sizeOf(Sigactionrec), #0);
-        newAct.sa_handler := @doTerminate;
-        fpSigaction(aSig, @newAct, @oldHandler);
-    end;
+    // procedure installTerminateSignalHandler(aSig : longint);
+    // var newAct : SigactionRec;
+    // begin
+    //     fillChar(newAct, sizeOf(SigactionRec), #0);
+    //     fillChar(oldHandler, sizeOf(Sigactionrec), #0);
+    //     newAct.sa_handler := @doTerminate;
+    //     fpSigaction(aSig, @newAct, @oldHandler);
+    // end;
 
-    procedure makePipeNonBlocking(termPipeIn: longint; termPipeOut : longint);
-    begin
-        //read control flag and set pipe in to be non blocking
-        makeNonBlocking(termPipeIn);
-        //read control flag and set pipe out to be non blocking
-        makeNonBlocking(termPipeOut);
-    end;
+    // procedure makePipeNonBlocking(termPipeIn: longint; termPipeOut : longint);
+    // begin
+    //     //read control flag and set pipe in to be non blocking
+    //     makeNonBlocking(termPipeIn);
+    //     //read control flag and set pipe out to be non blocking
+    //     makeNonBlocking(termPipeOut);
+    // end;
 
 initialization
 
     //setup non blocking pipe to use for signal handler.
     //Need to be done before install handler to prevent race condition
-    assignPipe(epollTerminatePipeIn, epollTerminatePipeOut);
-    makePipeNonBlocking(epollTerminatePipeIn, epollTerminatePipeOut);
+    // assignPipe(epollTerminatePipeIn, epollTerminatePipeOut);
+    // makePipeNonBlocking(epollTerminatePipeIn, epollTerminatePipeOut);
 
     //install signal handler after pipe setup
-    installTerminateSignalHandler(SIGTERM);
-    installTerminateSignalHandler(SIGINT);
-    installTerminateSignalHandler(SIGQUIT);
+    // installTerminateSignalHandler(SIGTERM);
+    // installTerminateSignalHandler(SIGINT);
+    // installTerminateSignalHandler(SIGQUIT);
 
 finalization
 
-    fpClose(epollTerminatePipeIn);
-    fpClose(epollTerminatePipeOut);
+    // fpClose(epollTerminatePipeIn);
+    // fpClose(epollTerminatePipeOut);
 
 end.
