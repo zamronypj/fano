@@ -202,7 +202,7 @@ type
     TEPoll_EventArr = array [0..0] of TEPoll_Event;
     PEPoll_EventArr = ^TEPoll_EventArr;
 
-var
+//var
 
     // //pipe handle that we use to monitor if we get SIGTERM/SIGINT signal
     // epollTerminatePipeIn, epollTerminatePipeOut : longInt;
