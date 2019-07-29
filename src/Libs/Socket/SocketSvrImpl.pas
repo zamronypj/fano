@@ -576,6 +576,7 @@ var
         fpWrite(terminatePipeOut, ch, 1);
         //restore old handler
         fpSigaction(sig, @oldHandler, nil);
+        writeln('do terminate socket svr');
     end;
 
     (*!-----------------------------------------------
