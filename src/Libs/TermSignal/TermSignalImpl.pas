@@ -21,13 +21,9 @@ uses
 var
 
     //pipe handle that we use to monitor if we get SIGTERM/SIGINT signal
-    terminatePipeIn, terminatePipeOut : longInt;
+    terminatePipeIn, terminatePipeOut : longint;
 
 implementation
-
-var
-
-    oldHandler : SigactionRec;
 
     (*!-----------------------------------------------
      * make listen socket non blocking
@@ -59,9 +55,6 @@ var
         //write one byte to mark termination
         ch := '.';
         fpWrite(terminatePipeOut, ch, 1);
-        //restore old handler
-        fpSigaction(sig, @oldHandler, nil);
-        fpKill(fpGetPid(), sig);
     end;
 
     (*!-----------------------------------------------
@@ -73,9 +66,9 @@ var
     var newAct : SigactionRec;
     begin
         fillChar(newAct, sizeOf(SigactionRec), #0);
-        fillChar(oldHandler, sizeOf(Sigactionrec), #0);
+        fillChar(oldAct, sizeOf(Sigactionrec), #0);
         newAct.sa_handler := @doTerminate;
-        fpSigaction(aSig, @newAct, @oldHandler);
+        fpSigaction(aSig, @newAct, nil);
     end;
 
     procedure makePipeNonBlocking(termPipeIn: longint; termPipeOut : longint);
