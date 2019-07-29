@@ -106,8 +106,6 @@ implementation
 
 uses
 
-    sockets,
-    baseunix,
     fastcgi,
     EInvalidFcgiBufferImpl,
     EInvalidFcgiRecordTypeImpl,
@@ -228,7 +226,6 @@ uses
         out streamEmpty : boolean
     ) : integer;
     var bytesRead : int64;
-        err : longint;
     begin
         result := 0;
         if amountToRead <= 0 then
@@ -237,7 +234,6 @@ uses
         end;
 
         streamEmpty := false;
-        err := 0;
         repeat
             bytesRead := stream.read(buf^, amountToRead);
             if (bytesRead > 0) then
@@ -245,16 +241,6 @@ uses
                 dec(amountToRead, bytesRead);
                 inc(buf, bytesRead);
                 inc(result, bytesRead);
-            end else
-            if (bytesRead < 0) then
-            begin
-                err := socketError();
-                if (err = ESysEAGAIN) or (err = ESysEWouldBlock) then
-                begin
-                    //EAGAIN EWOULDBLOCK means socket is ready for IO but data is not
-                    //available yet. exit loop so we can retry later
-                    streamEmpty := true;
-                end;
             end else
             begin
                 streamEmpty := true;

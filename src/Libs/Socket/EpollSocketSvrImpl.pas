@@ -330,7 +330,7 @@ type
                 raiseExceptionIfAny();
             end else
             begin
-                makeNonBlocking(clientSocket);
+                //makeNonBlocking(clientSocket);
                 //add client socket to be monitored for I/O read
                 addToMonitoredSet(epollFd, clientSocket, EPOLLIN {or EPOLLET});
             end;
