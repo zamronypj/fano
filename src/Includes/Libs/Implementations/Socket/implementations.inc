@@ -20,3 +20,9 @@ UnixSocketSvrImpl,
 {$ENDIF}
 
 BoundSocketSvrImpl,
+
+{$IFDEF LINUX}
+EpollInetSocketSvrImpl,
+EpollUnixSocketSvrImpl,
+EpollBoundSocketSvrImpl,
+{$ENDIF}
