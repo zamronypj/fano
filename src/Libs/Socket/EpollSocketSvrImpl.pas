@@ -355,21 +355,29 @@ var
         var terminated : boolean
     );
     var ch : char;
-        i, fd, res : longint;
+        i, fd, res, err : longint;
         eventArr : PEPoll_EventArr;
     begin
+        writeln('io ready');
         //use pointer to array for easier access
         eventArr := PEPoll_EventArr(events);
         for i := 0 to totFd -1  do
         begin
             fd := eventArr^[i].data.fd;
+            writeln('io ready for fd:', fd);
             if (fd = pipeIn) then
             begin
+                writeln('io ready for terminate pipe:', fd);
                 //we get termination signal, just read until no more
                 //bytes and quit
+                err := 0;
                 repeat
                     res := fpRead(pipeIn, @ch, 1);
-                until res = ESysEAGAIN;
+                    if (res < 0) then
+                    begin
+                        err := socketError();
+                    end;
+                until (res = 0) or (err = ESysEAGAIN);
                 terminated := true;
                 break;
             end else
@@ -431,7 +439,7 @@ var
      * handle incoming connection until terminated
      *-----------------------------------------------*)
     procedure TEpollSocketSvr.handleConnection();
-    const MAX_EVENTS = 40;
+    const MAX_EVENTS = 64;
     var epollFd : longint;
         events : PEpoll_event;
     begin
