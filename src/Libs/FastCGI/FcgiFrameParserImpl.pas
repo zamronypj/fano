@@ -249,15 +249,17 @@ uses
             if (bytesRead < 0) then
             begin
                 err := socketError();
+                if (err = ESysEAGAIN) or (err = ESysEWouldBlock) then
+                begin
+                    //EAGAIN EWOULDBLOCK means socket is ready for IO but data is not
+                    //available yet. exit loop so we can retry later
+                    streamEmpty := true;
+                end;
             end else
             begin
                 streamEmpty := true;
             end;
-        until (amountToRead = 0) or
-            streamEmpty or
-            //EAGAIN EWOULDBLOCK means socket is ready for IO but data is not
-            //available yet. exit loop so we can retry later
-            (err = ESysEAGAIN) or (err = ESysEWouldBlock);
+        until (amountToRead = 0) or streamEmpty;
     end;
 
     (*!------------------------------------------------
