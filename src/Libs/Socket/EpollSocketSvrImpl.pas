@@ -365,10 +365,8 @@ type
         for i := 0 to totFd -1  do
         begin
             fd := eventArr^[i].data.fd;
-            writeln('io ready for fd:', fd);
             if (fd = pipeIn) then
             begin
-                writeln('io ready for terminate pipe:', fd);
                 //we get termination signal, just read until no more
                 //bytes and quit
                 err := 0;
@@ -428,11 +426,15 @@ type
                     terminated
                 );
             end else
+            if (totFd = 0) then
+            begin
+                //timeout reached.
+                //For now, do nothing
+            end else
             if (totFd < 0) then
             begin
                 //we have error just terminate
                 terminated := true;
-                writeln('somethin error');
             end;
         until terminated;
     end;
