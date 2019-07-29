@@ -222,12 +222,6 @@ resourcestring
     rsSocketListenFailed = 'Listening failed, error: %d';
     rsAcceptWouldBlock = 'Accept socket would block on socket, error: %d';
 
-// var
-
-//     //pipe handle that we use to monitor if we get SIGTERM/SIGINT signal
-//     terminatePipeIn, terminatePipeOut : longInt;
-//     oldHandler : SigactionRec;
-
     (*!-----------------------------------------------
      * constructor
      *-------------------------------------------------
@@ -557,70 +551,5 @@ resourcestring
         handleConnection();
         result := self;
     end;
-
-
-    (*!-----------------------------------------------
-     * signal handler that will be called when
-     * SIGTERM, SIGINT and SIGQUIT is received
-     *-------------------------------------------------
-     * @param sig, signal id i.e, SIGTERM, SIGINT or SIGQUIT
-     * @param info, information about signal
-     * @param ctx, contex about signal
-     *-------------------------------------------------
-     * Signal handler must be ordinary procedure
-     *-----------------------------------------------*)
-    // procedure doTerminate(sig : longint; info : PSigInfo; ctx : PSigContext); cdecl;
-    // var ch : char;
-    // begin
-    //     //write one byte to mark termination
-    //     ch := '.';
-    //     fpWrite(terminatePipeOut, ch, 1);
-    //     //restore old handler
-    //     fpSigaction(sig, @oldHandler, nil);
-    //     fpKill(fpGetPid(), sig);
-    // end;
-
-    (*!-----------------------------------------------
-     * install signal handler
-     *-------------------------------------------------
-     * @param aSig, signal id i.e, SIGTERM, SIGINT or SIGQUIT
-     *-----------------------------------------------*)
-    // procedure installTerminateSignalHandler(aSig : longint);
-    // var newAct : SigactionRec;
-    // begin
-    //     fillChar(newAct, sizeOf(SigactionRec), #0);
-    //     fillChar(oldHandler, sizeOf(Sigactionrec), #0);
-    //     newAct.sa_handler := @doTerminate;
-    //     fpSigaction(aSig, @newAct, @oldHandler);
-    // end;
-
-    // procedure makePipeNonBlocking(termPipeIn: longint; termPipeOut : longint);
-    // var flags : integer;
-    // begin
-    //     //read control flag and set pipe in to be non blocking
-    //     flags := fpFcntl(termPipeIn, F_GETFL, 0);
-    //     fpFcntl(termPipeIn, F_SETFl, flags or O_NONBLOCK);
-
-    //     //read control flag and set pipe out to be non blocking
-    //     flags := fpFcntl(termPipeOut, F_GETFL, 0);
-    //     fpFcntl(termPipeOut, F_SETFl, flags or O_NONBLOCK);
-    // end;
-
-initialization
-
-    //setup non blocking pipe to use for signal handler.
-    //Need to be done before install handler to prevent race condition
-    // assignPipe(terminatePipeIn, terminatePipeOut);
-    // makePipeNonBlocking(terminatePipeIn, terminatePipeOut);
-
-    // //install signal handler after pipe setup
-    // installTerminateSignalHandler(SIGTERM);
-    // installTerminateSignalHandler(SIGINT);
-    // installTerminateSignalHandler(SIGQUIT);
-
-finalization
-
-    // fpClose(terminatePipeIn);
-    // fpClose(terminatePipeOut);
 
 end.
