@@ -22,11 +22,12 @@ var
 
     //pipe handle that we use to monitor if we get SIGTERM/SIGINT signal
     terminatePipeIn, terminatePipeOut : longInt;
-    oldHandler : SigactionRec;
-
 
 implementation
 
+var
+
+    oldHandler : SigactionRec;
 
     (*!-----------------------------------------------
      * make listen socket non blocking
@@ -78,7 +79,6 @@ implementation
     end;
 
     procedure makePipeNonBlocking(termPipeIn: longint; termPipeOut : longint);
-    var flags : integer;
     begin
         //read control flag and set pipe in to be non blocking
         makeNonBlocking(termPipeIn);
