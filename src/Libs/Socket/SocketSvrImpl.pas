@@ -225,6 +225,7 @@ var
 
     //pipe handle that we use to monitor if we get SIGTERM/SIGINT signal
     terminatePipeIn, terminatePipeOut : longInt;
+    oldHandler : SigactionRec;
 
     (*!-----------------------------------------------
      * constructor
@@ -573,6 +574,8 @@ var
         //write one byte to mark termination
         ch := '.';
         fpWrite(terminatePipeOut, ch, 1);
+        //restore old handler
+        fpSigaction(sig, @oldHandler, nil);
     end;
 
     (*!-----------------------------------------------
@@ -581,12 +584,12 @@ var
      * @param aSig, signal id i.e, SIGTERM, SIGINT or SIGQUIT
      *-----------------------------------------------*)
     procedure installTerminateSignalHandler(aSig : longint);
-    var oldAct, newAct : SigactionRec;
+    var newAct : SigactionRec;
     begin
         fillChar(newAct, sizeOf(SigactionRec), #0);
-        fillChar(oldAct, sizeOf(Sigactionrec), #0);
+        fillChar(oldHandler, sizeOf(Sigactionrec), #0);
         newAct.sa_handler := @doTerminate;
-        fpSigaction(aSig, @newAct, @oldAct);
+        fpSigaction(aSig, @newAct, @oldHandler);
     end;
 
     procedure makePipeNonBlocking(termPipeIn: longint; termPipeOut : longint);
