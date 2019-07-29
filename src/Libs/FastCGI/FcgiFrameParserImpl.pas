@@ -107,6 +107,7 @@ implementation
 uses
 
     sockets,
+    baseunix,
     fastcgi,
     EInvalidFcgiBufferImpl,
     EInvalidFcgiRecordTypeImpl,
