@@ -37,8 +37,10 @@ EpollSimpleSockFastCGIAppImpl,
 
 {----------------Begin SCGI related-----------------------------}
 SimpleScgiAppImpl,
+SimpleUnixScgiAppImpl,
 
 {$IFDEF LINUX}
 EpollSimpleScgiAppImpl,
+EpollSimpleUnixScgiAppImpl,
 {$ENDIF}
 {---------------- End SCGI related-----------------------------}

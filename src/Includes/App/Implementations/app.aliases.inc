@@ -36,8 +36,10 @@ TEpollSimpleSockFastCGIWebApplication = EpollSimpleSockFastCGIAppImpl.TEpollSimp
 
 {----------------Begin SCGI related-----------------------------}
 TSimpleScgiWebApplication = SimpleScgiAppImpl.TSimpleScgiWebApplication;
+TSimpleUnixScgiWebApplication = SimpleUnixScgiAppImpl.TSimpleUnixScgiWebApplication;
 
 {$IFDEF LINUX}
 TEpollSimpleScgiWebApplication = EpollSimpleScgiAppImpl.TEpollSimpleScgiWebApplication;
+TEpollSimpleUnixScgiWebApplication = EpollSimpleUnixScgiAppImpl.TEpollSimpleUnixScgiWebApplication;
 {$ENDIF}
 {----------------End SCGI related-----------------------------}
