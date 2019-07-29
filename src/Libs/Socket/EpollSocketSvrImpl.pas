@@ -188,7 +188,8 @@ uses
     ESockWouldBlockImpl,
     StreamAdapterImpl,
     SockStreamImpl,
-    CloseableStreamImpl;
+    CloseableStreamImpl,
+    EEpollCtlImpl;
 
 resourcestring
 
@@ -280,7 +281,7 @@ var
         res := epoll_ctl(epollFd, EPOLL_CTL_ADD, fd, @ev);
         if (res < 0) then
         begin
-            raise Exception.create('fail add file descriptor');
+            raise EEpollCtl.create('fail add file descriptor');
         end;
     end;
 
