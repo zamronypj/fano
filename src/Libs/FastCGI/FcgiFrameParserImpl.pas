@@ -106,6 +106,7 @@ implementation
 
 uses
 
+    sockets,
     fastcgi,
     EInvalidFcgiBufferImpl,
     EInvalidFcgiRecordTypeImpl,
