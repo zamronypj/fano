@@ -63,12 +63,12 @@ implementation
      * @param aSig, signal id i.e, SIGTERM, SIGINT or SIGQUIT
      *-----------------------------------------------*)
     procedure installTerminateSignalHandler(aSig : longint);
-    var newAct : SigactionRec;
+    var oldAct, newAct : SigactionRec;
     begin
         fillChar(newAct, sizeOf(SigactionRec), #0);
         fillChar(oldAct, sizeOf(Sigactionrec), #0);
         newAct.sa_handler := @doTerminate;
-        fpSigaction(aSig, @newAct, nil);
+        fpSigaction(aSig, @newAct, @oldAct);
     end;
 
     procedure makePipeNonBlocking(termPipeIn: longint; termPipeOut : longint);
