@@ -108,6 +108,10 @@ uses
             306 : result := 'Switch Proxy';
             307 : result := 'Temporary Redirect';
             308 : result := 'Permanent Redirect';
+            else
+            begin
+                result := 'Unknown redirect code';
+            end;
         end;
     end;
 
