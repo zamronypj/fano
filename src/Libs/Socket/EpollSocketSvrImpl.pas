@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit SocketSvrImpl;
+unit EpollSocketSvrImpl;
 
 interface
 
@@ -21,7 +21,8 @@ uses
     DataAvailListenerIntf,
     StreamAdapterIntf,
     BaseUnix,
-    Unix;
+    Unix,
+    Linux;
 
 type
 
@@ -29,35 +30,38 @@ type
      * Socket server implementation which support graceful
      * shutdown when receive SIGTERM/SIGINT signal and also
      * allow for keeping client connection open if required
+     * This class using Linux epoll API to monitor file descriptors
      *----------------------------------------------------
      * We implement our own socket server because TSocketServer
      * from fcl-net not suitable for handling graceful shutdown
      *-------------------------------------------------
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TSocketSvr = class(TInterfacedObject, IRunnable, IRunnableWithDataNotif)
+    TEpollSocketSvr = class(TInterfacedObject, IRunnable, IRunnableWithDataNotif)
     private
         procedure raiseExceptionIfAny();
-
-        (*!-----------------------------------------------
-         * make listen socket non blocking
-         *-------------------------------------------------
-         * @param listenSocket, listen socket handle
-         *-----------------------------------------------*)
-        procedure makeNonBlockingSocket(listenSocket : longint);
 
         (*!-----------------------------------------------
          * accept all incoming connection until no more pending
          * connection available
          *-------------------------------------------------
+         * @param epollFd, file descriptor returned from epoll_create()
          * @param listenSocket, listen socket handle
-         * @param maxHandle, highest handle
-         * @param origFds, original file descriptor set
          *-----------------------------------------------*)
         procedure acceptAllConnections(
+            const epollFd : longint;
+            const listenSocket : longint
+        );
+
+        (*!-----------------------------------------------
+         * wait for connection
+         *-----------------------------------------------*)
+        procedure waitForConnection(
+            const epollFd : longint;
+            const termPipeIn : longint;
             const listenSocket : longint;
-            var maxHandle : longint;
-            var origFds : TFDSet
+            const events : PEpoll_Event;
+            const maxEvents : longint
         );
 
         (*!-----------------------------------------------
@@ -68,70 +72,40 @@ type
         procedure handleClientConnection(clientSocket : longint);
 
         (*!-----------------------------------------------
-         * initialize file descriptor set for listening
-         * socket and also termination pipe
-         *-------------------------------------------------
-         * @param listenSocket, socket handle
-         * @param pipeIn, pipe input handle
-         * @return file descriptor set
-         *-----------------------------------------------*)
-        function initFileDescSet(listenSocket : longint; pipeIn : longint) : TFDSet;
-
-        (*!-----------------------------------------------
-         * find file descriptor with biggest value
-         *-------------------------------------------------
-         * @param listenSocket, socket handle
-         * @param pipeIn, pipe input handle
-         * @return highest handle
-         *-----------------------------------------------*)
-        function getHighestHandle(listenSocket : longint; pipeIn : longint) : longint;
-
-        (*!-----------------------------------------------
          * handle when one or more file descriptor is ready for I/O
          *-------------------------------------------------
+         * @param epollFd, file descriptor returned from epoll_create()
          * @param listenSocket, listen socket handle
          * @param pipeIn, terminate pipe input handle
-         * @param readfds, file descriptor set
-         * @param totDesc, number of file descriptor ready for I/O
-         * @param maxHandle, highest handle
-         * @param origFds, original file descriptor set
+         * @param totFd, total file descriptor ready for I/O
+         * @param events, array of TEpoll_Event contained file descriptors
          * @param terminated, set true if we should terminate
          *-----------------------------------------------*)
         procedure handleFileDescriptorIOReady(
-            listenSocket : longint;
-            pipeIn : longint;
-            const readfds : TFDSet;
-            var totDesc : longint;
-            var maxHandle : longint;
-            var origFds : TFDSet;
+            const epollFd : longint;
+            const listenSocket : longint;
+            const pipeIn : longint;
+            const totFd : longint;
+            const events : PEpoll_Event;
             var terminated : boolean
         );
 
         (*!-----------------------------------------------
-         * add client socket to monitored set
+         * add file descriptor to monitored set
          *-------------------------------------------------
-         * @param fds, file descriptor to be added
-         * @param maxHandle, highest handle
-         * @param origFds, original file descriptor set
+         * @param epollFd, file descriptor returned from epoll_create
+         * @param fd, file descriptor to be added
+         * @param flag, operation flag
          *-----------------------------------------------*)
-        procedure addToMonitoredSet(
-            const fds : longint;
-            var maxHandle : longint;
-            var origFds : TFDSet
-        );
+        procedure addToMonitoredSet(const epollFd : longint; const fd : longint; const flag : cardinal);
 
         (*!-----------------------------------------------
-         * remove client socket from monitored set
+         * remove file descriptor from monitored set
          *-------------------------------------------------
-         * @param fds, file descriptor to be removed
-         * @param maxHandle, highest handle
-         * @param origFds, original file descriptor set
+         * @param epollFd, file descriptor returned from epoll_create()
+         * @param fd, file descriptor to be removed
          *-----------------------------------------------*)
-        procedure removeFromMonitoredSet(
-            const fds : longint;
-            var maxHandle : longint;
-            var origFds : TFDSet
-        );
+        procedure removeFromMonitoredSet(const epollFd : longint; const fd : longint);
 
     protected
         fDataAvailListener : IDataAvailListener;
@@ -215,6 +189,7 @@ uses
     StreamAdapterImpl,
     SockStreamImpl,
     CloseableStreamImpl,
+    EEpollCtlImpl,
     TermSignalImpl;
 
 resourcestring
@@ -222,46 +197,52 @@ resourcestring
     rsSocketListenFailed = 'Listening failed, error: %d';
     rsAcceptWouldBlock = 'Accept socket would block on socket, error: %d';
 
+type
+
+    TEPoll_EventArr = array [0..0] of TEPoll_Event;
+    PEPoll_EventArr = ^TEPoll_EventArr;
+
+//var
+
+    // //pipe handle that we use to monitor if we get SIGTERM/SIGINT signal
+    // epollTerminatePipeIn, epollTerminatePipeOut : longInt;
+    // oldHandler : SigactionRec;
+
+    procedure makeNonBlocking(fd: longint);
+    var flags : integer;
+    begin
+        //read control flag and set pipe in to be non blocking
+        flags := fpFcntl(fd, F_GETFL, 0);
+        fpFcntl(fd, F_SETFl, flags or O_NONBLOCK);
+    end;
+
     (*!-----------------------------------------------
      * constructor
      *-------------------------------------------------
      * @param listenSocket, socket handle created with fpSocket()
      * @param queueSize, number of queue when listen, 5 = default of Berkeley Socket
      *-----------------------------------------------*)
-    constructor TSocketSvr.create(listenSocket : longint; queueSize : integer = 5);
+    constructor TEpollSocketSvr.create(listenSocket : longint; queueSize : integer = 5);
     begin
         fListenSocket := listenSocket;
         fQueueSize := queueSize;
         fDataAvailListener := nil;
-        makeNonBlockingSocket(listenSocket);
+        makeNonBlocking(listenSocket);
     end;
 
     (*!-----------------------------------------------
      * destructor
      *-----------------------------------------------*)
-    destructor TSocketSvr.destroy();
+    destructor TEpollSocketSvr.destroy();
     begin
         shutdown();
         inherited destroy();
     end;
 
     (*!-----------------------------------------------
-     * make listen socket non blocking
-     *-------------------------------------------------
-     * @param listenSocket, listen socket handle
-     *-----------------------------------------------*)
-    procedure TSocketSvr.makeNonBlockingSocket(listenSocket : longint);
-    var flags : longint;
-    begin
-        //read control flag and set listen socket to be non blocking
-        flags := fpFcntl(listenSocket, F_GETFL, 0);
-        fpFcntl(listenSocket, F_SETFl, flags or O_NONBLOCK);
-    end;
-
-    (*!-----------------------------------------------
      * begin listen socket
      *-----------------------------------------------*)
-    procedure TSocketSvr.listen();
+    procedure TEpollSocketSvr.listen();
     begin
         if fpListen(fListenSocket, fQueueSize) <> 0 then
         begin
@@ -269,51 +250,7 @@ resourcestring
         end;
     end;
 
-    (*!-----------------------------------------------
-     * initialize file descriptor set for listening
-     * socket and also termination pipe
-     *-------------------------------------------------
-     * @param listenSocket, socket handle
-     * @param pipeIn, pipe input handle
-     * @return file descriptor set
-     *-----------------------------------------------*)
-    function TSocketSvr.initFileDescSet(listenSocket : longint; pipeIn : longint) : TFDSet;
-    begin
-        //initialize struct and reset all file descriptors
-        result := default(TFDSet);
-        fpFD_ZERO(result);
-
-        //add listenSocket to set of read file descriptor we need to monitor
-        //so we know if there something happen with listening socket
-        fpFD_SET(listenSocket, result);
-
-        //also add terminatePipeIn so we get notified if we get signal to terminate
-        fpFD_SET(pipeIn, result);
-    end;
-
-    (*!-----------------------------------------------
-     * find file descriptor with biggest value
-     *-------------------------------------------------
-     * @param listenSocket, socket handle
-     * @param pipeIn, pipe input handle
-     * @return highest handle
-     *-----------------------------------------------*)
-    function TSocketSvr.getHighestHandle(listenSocket : longint; pipeIn : longint) : longint;
-    begin
-        //find file descriptor with biggest value
-        result := 0;
-        if (listenSocket > result) then
-        begin
-            result := listenSocket;
-        end;
-
-        if (pipeIn > result) then
-        begin
-            result := pipeIn;
-        end;
-    end;
-
-    procedure TSocketSvr.raiseExceptionIfAny();
+    procedure TEpollSocketSvr.raiseExceptionIfAny();
     var errno : longint;
     begin
         errno := socketError();
@@ -330,58 +267,56 @@ resourcestring
     (*!-----------------------------------------------
      * add file descriptor to monitored set
      *-------------------------------------------------
-     * @param fds, file descriptor to be added
-     * @param maxHandle, highest handle
-     * @param origFds, original file descriptor set
+     * @param epollFd, file descriptor returned from epoll_create
+     * @param fd, file descriptor to be added
      *-----------------------------------------------*)
-    procedure TSocketSvr.addToMonitoredSet(
-        const fds : longint;
-        var maxHandle : longint;
-        var origFds : TFDSet
+    procedure TEpollSocketSvr.addToMonitoredSet(
+        const epollFd : longint;
+        const fd : longint;
+        const flag : cardinal
     );
+    var ev : TEpoll_Event;
+        res : longint;
     begin
-        fpFD_SET(fds, origFds);
-        if fds > maxHandle then
+        ev.events := flag;
+        ev.data.fd := fd;
+        res := epoll_ctl(epollFd, EPOLL_CTL_ADD, fd, @ev);
+        if (res < 0) then
         begin
-            maxHandle := fds;
+            raise EEpollCtl.create('fail add file descriptor');
         end;
     end;
 
     (*!-----------------------------------------------
      * remove file descriptor from monitored set
      *-------------------------------------------------
-     * @param fds, file descriptor to be removed
-     * @param maxHandle, highest handle
-     * @param origFds, original file descriptor set
+     * @param epollFd, file descriptor returned from epoll_create()
+     * @param fd, file descriptor to be removed
      *-----------------------------------------------*)
-    procedure TSocketSvr.removeFromMonitoredSet(
-        const fds : longint;
-        var maxHandle : longint;
-        var origFds : TFDSet
+    procedure TEpollSocketSvr.removeFromMonitoredSet(
+        const epollFd : longint;
+        const fd : longint
     );
+    var ev : TEpoll_Event;
     begin
-        fpFD_CLR(fds, origFds);
-        if (fds = maxHandle) then
-        begin
-            while (fpFD_ISSET(maxHandle, origFds) = 0) do
-            begin
-                dec(maxHandle);
-            end;
-        end;
+        //for EPOLL_CTRL_DEL, epoll_event is ignored but
+        //due to bug, Linux kernel < 2.6.9 requires non-NULL,
+        //here we just give them although not used.
+        ev.events := EPOLLIN;
+        ev.data.fd := fd;
+        epoll_ctl(epollFd, EPOLL_CTL_DEL, fd, @ev);
     end;
 
     (*!-----------------------------------------------
      * accept all incoming connection until no more pending
      * connection available
      *-------------------------------------------------
+     * @param epollFd, file descriptor returned from epoll_create()
      * @param listenSocket, listen socket handle
-     * @param maxHandle, highest handle
-     * @param origFds, original file descriptor set
      *-----------------------------------------------*)
-    procedure TSocketSvr.acceptAllConnections(
-        const listenSocket : longint;
-        var maxHandle : longint;
-        var origFds : TFDSet
+    procedure TEpollSocketSvr.acceptAllConnections(
+        const epollFd : longint;
+        const listenSocket : longint
     );
     var clientSocket : longint;
     begin
@@ -395,8 +330,13 @@ resourcestring
                 raiseExceptionIfAny();
             end else
             begin
-                //add client socket to be monitored for I/O
-                addToMonitoredSet(clientSocket, maxHandle, origFds);
+                //TODO : improve FCGI parser so we can use non blocking socket
+                //Turn off for now as our FCGI parser not suitable for
+                //handling non blocking socket
+                //makeNonBlocking(clientSocket);
+
+                //add client socket to be monitored for I/O read
+                addToMonitoredSet(epollFd, clientSocket, EPOLLIN {or EPOLLET});
             end;
         until (clientSocket < 0);
     end;
@@ -405,91 +345,129 @@ resourcestring
     (*!-----------------------------------------------
      * handle when one or more file descriptor is ready for I/O
      *-------------------------------------------------
+     * @param epollFd, file descriptor returned from epoll_create()
      * @param listenSocket, listen socket handle
      * @param pipeIn, terminate pipe input handle
-     * @param readfds, file descriptor set
+     * @param totFd, total file descriptor ready for I/O
+     * @param events, array of TEpoll_Event contained file descriptors
      * @param terminated, set true if we should terminate
      *-----------------------------------------------*)
-    procedure TSocketSvr.handleFileDescriptorIOReady(
-        listenSocket : longint;
-        pipeIn : longint;
-        const readfds : TFDSet;
-        var totDesc : longint;
-        var maxHandle : longint;
-        var origFds : TFDSet;
+    procedure TEpollSocketSvr.handleFileDescriptorIOReady(
+        const epollFd : longint;
+        const listenSocket : longint;
+        const pipeIn : longint;
+        const totFd : longint;
+        const events : PEpoll_Event;
         var terminated : boolean
     );
     var ch : char;
-        fds : longint;
+        i, fd, res, err : longint;
+        eventArr : PEPoll_EventArr;
     begin
-        for fds := 0 to maxHandle do
+        //use pointer to array for easier access
+        eventArr := PEPoll_EventArr(events);
+        for i := 0 to totFd -1  do
         begin
-            if fpFD_ISSET(fds, readfds) > 0 then
+            fd := eventArr^[i].data.fd;
+            if (fd = pipeIn) then
             begin
-                if fds = pipeIn then
-                begin
-                    //we get termination signal, just read until no more
-                    //bytes and quit
-                    fpRead(pipeIn, @ch, 1);
-                    terminated := true;
-                    break;
-                end else
-                if fds = listenSocket then
-                begin
-                    //we have something with listening socket, it means there is
-                    //new connection coming, accept it
-                    acceptAllConnections(listenSocket, maxHandle, origFds);
-                end else
-                begin
-                    //if we get here then it must be from one or
-                    //more client connections
-                    handleClientConnection(fds);
-                    removeFromMonitoredSet(fds, maxHandle, origFds);
-                end;
-
-                dec(totDesc);
-                if (totDesc <= 0) then
-                begin
-                    //if we get here, it means all file descriptors ready for I/O
-                    //has been processed, so we can exit loop early
-                    break;
-                end;
+                //we get termination signal, just read until no more
+                //bytes and quit
+                err := 0;
+                repeat
+                    res := fpRead(pipeIn, @ch, 1);
+                    if (res < 0) then
+                    begin
+                        err := socketError();
+                    end;
+                until (res = 0) or (err = ESysEAGAIN);
+                terminated := true;
+                break;
+            end else
+            if (fd = listenSocket) then
+            begin
+                //we have something with listening socket, it means there is
+                //new connection coming, accept it
+                acceptAllConnections(epollFd, listenSocket);
+            end else
+            begin
+                //if we get here then it must be from one or
+                //more client connections
+                handleClientConnection(fd);
+                removeFromMonitoredSet(epollFd, fd);
             end;
         end;
     end;
 
     (*!-----------------------------------------------
-     * handle incoming connection until terminated
+     * wait for connection
      *-----------------------------------------------*)
-    procedure TSocketSvr.handleConnection();
-    var origfds, readfds : TFDSet;
-        highestHandle : longint;
-        terminated : boolean;
-    var totDesc : longint;
+    procedure TEpollSocketSvr.waitForConnection(
+        const epollFd : longint;
+        const termPipeIn : longint;
+        const listenSocket : longint;
+        const events : PEpoll_Event;
+        const maxEvents : longint
+    );
+    var terminated : boolean;
+        totFd : longint;
     begin
-        //find file descriptor with biggest value
-        highestHandle := getHighestHandle(fListenSocket, terminatePipeIn);
-        origfds := initFileDescSet(fListenSocket, terminatePipeIn);
+        addToMonitoredSet(epollFd, termPipeIn, EPOLLIN);
+        addToMonitoredSet(epollFd, listenSocket, EPOLLIN);
         terminated := false;
         repeat
-            readfds := origfds;
-
-            //wait indefinitely until something happen in fListenSocket or terminatePipeIn
-            totDesc := fpSelect(highestHandle + 1, @readfds, nil, nil, nil);
-            if totDesc > 0 then
+            //wait indefinitely until something happen in fListenSocket or epollTerminatePipeIn
+            totFd := epoll_wait(epollFd, events, maxEvents, -1);
+            if totFd > 0 then
             begin
                 //one or more file descriptors is ready for I/O, check further
                 handleFileDescriptorIOReady(
-                    fListenSocket,
-                    terminatePipeIn,
-                    readfds,
-                    totDesc,
-                    highestHandle,
-                    origfds,
+                    epollFd,
+                    listenSocket,
+                    termPipeIn,
+                    totFd,
+                    events,
                     terminated
                 );
+            end else
+            if (totFd = 0) then
+            begin
+                //timeout reached.
+                //For now, do nothing
+            end else
+            if (totFd < 0) then
+            begin
+                //we have error just terminate
+                terminated := true;
             end;
         until terminated;
+    end;
+
+    (*!-----------------------------------------------
+     * handle incoming connection until terminated
+     *-----------------------------------------------*)
+    procedure TEpollSocketSvr.handleConnection();
+    const MAX_EVENTS = 64;
+    var epollFd : longint;
+        events : PEpoll_event;
+    begin
+        epollFd := epoll_create(1024);
+        try
+            getmem(events, MAX_EVENTS * sizeof(TEpoll_Event));
+            try
+                waitForConnection(
+                    epollFd,
+                    terminatePipeIn, //global pipe for terminate
+                    fListenSocket,
+                    events,
+                    MAX_EVENTS
+                );
+            finally
+                freemem(events);
+            end;
+        finally
+            fpClose(epollFd);
+        end
     end;
 
     (*!-----------------------------------------------
@@ -498,7 +476,7 @@ resourcestring
      * @param clientSocket, socket handle
      * @return stream of socket
      *-----------------------------------------------*)
-    function TSocketSvr.getSockStream(clientSocket : longint) : IStreamAdapter;
+    function TEpollSocketSvr.getSockStream(clientSocket : longint) : IStreamAdapter;
     begin
         result := TStreamAdapter.create(TSockStream.create(clientSocket));
     end;
@@ -508,7 +486,7 @@ resourcestring
      *-------------------------------------------------
      * @param clientSocket, socket handle where data can be read
      *-----------------------------------------------*)
-    procedure TSocketSvr.handleClientConnection(clientSocket : longint);
+    procedure TEpollSocketSvr.handleClientConnection(clientSocket : longint);
     var aStream : TCloseableStream;
     begin
         if (assigned(fDataAvailListener)) then
@@ -532,19 +510,19 @@ resourcestring
      * @param dataListener, class that wish to be notified
      * @return true current instance
     *-----------------------------------------------*)
-    function TSocketSvr.setDataAvailListener(const dataListener : IDataAvailListener) : IRunnableWithDataNotif;
+    function TEpollSocketSvr.setDataAvailListener(const dataListener : IDataAvailListener) : IRunnableWithDataNotif;
     begin
         fDataAvailListener := dataListener;
         result := self;
     end;
 
-    procedure TSocketSvr.shutdown();
+    procedure TEpollSocketSvr.shutdown();
     begin
         closeSocket(fListenSocket);
         fDataAvailListener := nil;
     end;
 
-    function TSocketSvr.run() : IRunnable;
+    function TEpollSocketSvr.run() : IRunnable;
     begin
         bind();
         listen();

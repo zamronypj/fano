@@ -228,13 +228,12 @@ uses
     var bytesRead : int64;
     begin
         result := 0;
-        streamEmpty := false;
-
         if amountToRead <= 0 then
         begin
             exit;
         end;
 
+        streamEmpty := false;
         repeat
             bytesRead := stream.read(buf^, amountToRead);
             if (bytesRead > 0) then
