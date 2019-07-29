@@ -13,7 +13,7 @@ interface
 
 uses
 
-    BaseSimpleFastCGIAppImpl,
+    BaseSimpleScgiAppImpl,
     DependencyContainerIntf,
     DispatcherIntf,
     ErrorHandlerIntf;
@@ -31,7 +31,7 @@ type
      *------------------------------------------------------
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TSimpleUnixScgiWebApplication = class(TBaseSimpleSCGIWebApplication)
+    TSimpleUnixScgiWebApplication = class(TBaseSimpleScgiWebApplication)
     public
 
         (*!-----------------------------------------------
