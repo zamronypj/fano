@@ -1,6 +1,7 @@
 # Fano Framework
 
 Web application framework for modern Pascal programming language.
+[Learn more](https://fanoframework.github.io).
 
 ## Requirement
 
