@@ -203,7 +203,7 @@ type
 var
 
     //pipe handle that we use to monitor if we get SIGTERM/SIGINT signal
-    terminatePipeIn, terminatePipeOut : longInt;
+    epollTerminatePipeIn, epollTerminatePipeOut : longInt;
 
     procedure makeNonBlocking(fd: longint);
     var flags : integer;
@@ -273,10 +273,15 @@ var
         const flag : longint
     );
     var ev : TEpoll_Event;
+        res : longint;
     begin
         ev.events := flag;
         ev.data.fd := fd;
-        epoll_ctl(epollFd, EPOLL_CTL_ADD, fd, @ev);
+        res := epoll_ctl(epollFd, EPOLL_CTL_ADD, fd, @ev);
+        if (res < 0) then
+        begin
+            raise Exception.create('fail add file descriptor');
+        end;
     end;
 
     (*!-----------------------------------------------
@@ -395,11 +400,11 @@ var
     var terminated : boolean;
         totFd : longint;
     begin
-        addToMonitoredSet(epollFd, termPipeIn, EPOLLIN or EPOLLET or EPOLLONESHOT);
+        addToMonitoredSet(epollFd, termPipeIn, EPOLLIN);
         addToMonitoredSet(epollFd, listenSocket, EPOLLIN);
         terminated := false;
         repeat
-            //wait indefinitely until something happen in fListenSocket or terminatePipeIn
+            //wait indefinitely until something happen in fListenSocket or epollTerminatePipeIn
             totFd := epoll_wait(epollFd, events, maxEvents, -1);
             if totFd > 0 then
             begin
@@ -435,7 +440,7 @@ var
             try
                 waitForConnection(
                     epollFd,
-                    terminatePipeIn,
+                    epollTerminatePipeIn,
                     fListenSocket,
                     events,
                     MAX_EVENTS
@@ -524,7 +529,7 @@ var
     begin
         //write one byte to mark termination
         ch := '.';
-        fpWrite(terminatePipeOut, ch, 1);
+        fpWrite(epollTerminatePipeOut, ch, 1);
     end;
 
     (*!-----------------------------------------------
@@ -553,8 +558,8 @@ initialization
 
     //setup non blocking pipe to use for signal handler.
     //Need to be done before install handler to prevent race condition
-    assignPipe(terminatePipeIn, terminatePipeOut);
-    makePipeNonBlocking(terminatePipeIn, terminatePipeOut);
+    assignPipe(epollTerminatePipeIn, epollTerminatePipeOut);
+    makePipeNonBlocking(epollTerminatePipeIn, epollTerminatePipeOut);
 
     //install signal handler after pipe setup
     installTerminateSignalHandler(SIGTERM);
@@ -563,7 +568,7 @@ initialization
 
 finalization
 
-    fpClose(terminatePipeIn);
-    fpClose(terminatePipeOut);
+    fpClose(epollTerminatePipeIn);
+    fpClose(epollTerminatePipeOut);
 
 end.
