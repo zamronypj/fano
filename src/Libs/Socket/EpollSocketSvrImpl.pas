@@ -97,7 +97,7 @@ type
          * @param fd, file descriptor to be added
          * @param flag, operation flag
          *-----------------------------------------------*)
-        procedure addToMonitoredSet(const epollFd : longint; const fd : longint; const flag : longint);
+        procedure addToMonitoredSet(const epollFd : longint; const fd : longint; const flag : cardinal);
 
         (*!-----------------------------------------------
          * remove file descriptor from monitored set
@@ -273,7 +273,7 @@ type
     procedure TEpollSocketSvr.addToMonitoredSet(
         const epollFd : longint;
         const fd : longint;
-        const flag : longint
+        const flag : cardinal
     );
     var ev : TEpoll_Event;
         res : longint;
