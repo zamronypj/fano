@@ -24,7 +24,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TGuidSessionIdGenerator = class(TInterfacedObject, ISessionIdGeneratorIntf)
+    TGuidSessionIdGenerator = class(TInterfacedObject, ISessionIdGenerator)
     public
         (*!------------------------------------
          * get session id

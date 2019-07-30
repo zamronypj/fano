@@ -21,7 +21,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    ISessionIdGeneratorIntf = interface
+    ISessionIdGenerator = interface
         ['{DD1BED9D-3C01-4857-A585-B3B77B7463AF}']
 
         (*!------------------------------------

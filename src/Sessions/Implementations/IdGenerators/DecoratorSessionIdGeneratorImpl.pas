@@ -24,7 +24,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TDecoratorSessionIdGenerator = class(TInterfacedObject, ISessionIdGeneratorIntf)
+    TDecoratorSessionIdGenerator = class(TInterfacedObject, ISessionIdGenerator)
     protected
         fActualGenerator : ISessionIdGeneratorIntf;
     public

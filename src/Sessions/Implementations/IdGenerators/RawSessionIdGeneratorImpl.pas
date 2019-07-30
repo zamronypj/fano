@@ -26,7 +26,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TRawSessionIdGenerator = class(TInterfacedObject, ISessionIdGeneratorIntf)
+    TRawSessionIdGenerator = class(TInterfacedObject, ISessionIdGenerator)
     protected
         fEnv : ICGIEnvironment;
         fRandom : IRandom;
