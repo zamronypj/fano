@@ -34,8 +34,8 @@ type
         fSessionFilename : string;
         fSessionIdGenerator : ISessionIdGenerator;
 
-        function loadJsonFile(const jsonFile : string) : TJsonData;
-        function loadOrCreateJsonFile(const jsonFile : string) : TJsonData;
+        function loadJsonFile(const jsonFile : string; const mode :word) : string;
+        function loadOrCreateJsonFile(const jsonFile : string) : string;
         procedure writeJsonFile(const jsonFile : string; const jsonData : TJsonData);
         function loadStreamAsString(const stream : TStream) : string;
 
