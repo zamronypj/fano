@@ -374,7 +374,7 @@ uses
         expiredDate : double;
     begin
         sessData := TJsonObject(fSessionData);
-        expiredDate := sessData.floats['expire'].asFloat;
+        expiredDate := sessData.floats['expire'];
         result := TDateTime(expiredDate);
     end;
 
