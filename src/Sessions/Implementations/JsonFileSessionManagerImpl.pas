@@ -179,7 +179,7 @@ uses
         fs := TFileStream.create(jsonFile, fmCreate);
         try
             fs.seek(0, soFromBeginning);
-            fs.writeBuffer(jsonData[0], length(jsonData));
+            fs.writeBuffer(jsonData[1], length(jsonData));
         finally
             fs.free();
         end;
@@ -248,7 +248,7 @@ uses
     var sessFilename : string;
     begin
         sessFilename := fSessionFilename + session.id();
-        writeToFile(sessFilename, session.serialize());
+        writeJsonFile(sessFilename, session.serialize());
         session.clear();
     end;
 
