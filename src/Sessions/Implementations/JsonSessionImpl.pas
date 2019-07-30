@@ -330,7 +330,7 @@ uses
         sessValue := fSessionData.getPath('sessionVars');
         if (sessValue <> nil) then
         begin
-            TJsonObject(sessValue).delete(sessionVar);
+            sessValue.clear();
         end;
         result := self;
     end;
