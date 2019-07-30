@@ -106,6 +106,7 @@ uses
     jsonParser,
     DateUtils,
     SessionConsts,
+    JsonSessionImpl,
     ESessionExpiredImpl;
 
     (*!------------------------------------
