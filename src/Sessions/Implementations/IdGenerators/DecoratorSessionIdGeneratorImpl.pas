@@ -26,9 +26,9 @@ type
      *-----------------------------------------------*)
     TDecoratorSessionIdGenerator = class(TInterfacedObject, ISessionIdGenerator)
     protected
-        fActualGenerator : ISessionIdGeneratorIntf;
+        fActualGenerator : ISessionIdGenerator;
     public
-        constructor create(const gen : ISessionIdGeneratorIntf);
+        constructor create(const gen : ISessionIdGenerator);
         destructor destroy(); override;
 
         (*!------------------------------------
@@ -41,7 +41,7 @@ type
 
 implementation
 
-    constructor TDecoratorSessionIdGenerator.create(const gen : ISessionIdGeneratorIntf);
+    constructor TDecoratorSessionIdGenerator.create(const gen : ISessionIdGenerator);
     begin
         inherited create();
         fActualGenerator := gen;
