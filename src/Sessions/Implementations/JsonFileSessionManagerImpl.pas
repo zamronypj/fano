@@ -15,6 +15,7 @@ interface
 
 uses
 
+    Classes,
     fpjson,
     SessionIntf,
     SessionIdGeneratorIntf,
@@ -36,6 +37,7 @@ type
         function loadJsonFile(const jsonFile : string) : TJsonData;
         function loadOrCreateJsonFile(const jsonFile : string) : TJsonData;
         procedure writeJsonFile(const jsonFile : string; const jsonData : TJsonData);
+        function loadStreamAsString(const stream : TStream) : string;
 
         procedure raiseExceptionIfAlreadyTerminated();
         procedure raiseExceptionIfExpired();
@@ -98,7 +100,6 @@ implementation
 
 uses
 
-    Classes,
     jsonParser,
     DateUtils,
     SessionConsts,
