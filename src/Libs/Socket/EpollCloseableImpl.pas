@@ -30,14 +30,11 @@ type
     private
         fEpollHandle : longint;
         fHandle : THandle;
-        fCloseable : ICloseable;
     public
         constructor create(
             const epollHandle : longint;
-            const ahandle: THandle;
-            const closable : ICloseable
+            const ahandle: THandle
         );
-        destructor destroy(); override;
         function close() : boolean;
     end;
 
@@ -52,19 +49,11 @@ uses
 
     constructor TEpollCloseable.create(
         const epollHandle : longint;
-        const ahandle: THandle;
-        const closable : ICloseable
+        const ahandle: THandle
     );
     begin
         fEpollHandle := epollHandle;
         fHandle := aHandle;
-        fCloseable := closable;
-    end;
-
-    destructor TEpollCloseable.destroy();
-    begin
-        inherited destroy();
-        fCloseable := nil;
     end;
 
     function TEpollCloseable.close() : boolean;
@@ -79,7 +68,7 @@ uses
 
         //we need to close socket after remove from epoll,
         //@link https://idea.popcount.org/2017-03-20-epoll-is-fundamentally-broken-22/
-        fCloseable.close();
+        closeSocket(fHandle);
         result := true;
     end;
 
