@@ -197,17 +197,6 @@ resourcestring
     rsSocketListenFailed = 'Listening failed, error: %d';
     rsAcceptWouldBlock = 'Accept socket would block on socket, error: %d';
 
-type
-
-    TEPoll_EventArr = array [0..0] of TEPoll_Event;
-    PEPoll_EventArr = ^TEPoll_EventArr;
-
-//var
-
-    // //pipe handle that we use to monitor if we get SIGTERM/SIGINT signal
-    // epollTerminatePipeIn, epollTerminatePipeOut : longInt;
-    // oldHandler : SigactionRec;
-
     procedure makeNonBlocking(fd: longint);
     var flags : integer;
     begin
