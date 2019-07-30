@@ -36,11 +36,8 @@ type
 
         function loadJsonFile(const jsonFile : string; const mode :word) : string;
         function loadOrCreateJsonFile(const jsonFile : string) : string;
-        procedure writeJsonFile(const jsonFile : string; const jsonData : TJsonData);
+        procedure writeJsonFile(const jsonFile : string; const jsonData : string);
         function loadStreamAsString(const stream : TStream) : string;
-
-        procedure raiseExceptionIfAlreadyTerminated();
-        procedure raiseExceptionIfExpired();
 
     public
 
@@ -57,6 +54,11 @@ type
             const baseDir : string;
             const prefix : string
         );
+
+        (*!------------------------------------
+         * destructor
+         *-------------------------------------*)
+        destructor destroy(); override;
 
         (*!------------------------------------
          * create session from session id
@@ -125,6 +127,15 @@ uses
         fSessionFilename := baseDir + prefix;
     end;
 
+    (*!------------------------------------
+     * destructor
+     *-------------------------------------*)
+    destructor TJsonFileSessionManager.destroy();
+    begin
+        inherited destroy();
+        fSessionIdGenerator := nil;
+    end;
+
     function TJsonFileSessionManager.loadStreamAsString(const stream : TStream) : string;
     var strStream : TStringStream;
     begin
@@ -189,7 +200,7 @@ uses
      * or expired, new ISession is created with empty
      * data, session life time is set to lifeTime value
      *-------------------------------------*)
-    function beginSession(
+    function TJsonFileSessionManager.beginSession(
         const sessionId : string;
         const lifeTimeInSec : integer
     ) : ISession;
