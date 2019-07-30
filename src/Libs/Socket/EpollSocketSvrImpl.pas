@@ -54,6 +54,12 @@ type
         );
 
         (*!-----------------------------------------------
+         * read terminate pipe in
+         * @param pipeIn, terminate pipe input handle
+         *-----------------------------------------------*)
+        procedure readPipe(const pipeIn : longint);
+
+        (*!-----------------------------------------------
          * wait for connection
          *-------------------------------------------------
          * @param epollFd, file descriptor returned from epoll_create()
@@ -343,6 +349,25 @@ resourcestring
         until (clientSocket < 0);
     end;
 
+    (*!-----------------------------------------------
+     * read terminate pipe in
+     * @param pipeIn, terminate pipe input handle
+     *-----------------------------------------------*)
+    procedure TEpollSocketSvr.readPipe(const pipeIn : longint);
+    var ch : char;
+        res, err : longint;
+    begin
+        //we get termination signal, just read until no more
+        //bytes and quit
+        err := 0;
+        repeat
+            res := fpRead(pipeIn, @ch, 1);
+            if (res < 0) then
+            begin
+                err := socketError();
+            end;
+        until (res = 0) or (err = ESysEAGAIN);
+    end;
 
     (*!-----------------------------------------------
      * handle when one or more file descriptor is ready for I/O
@@ -362,24 +387,14 @@ resourcestring
         const events : PEpoll_Event;
         var terminated : boolean
     );
-    var ch : char;
-        i, fd, res, err : longint;
+    var i, fd : longint;
     begin
         for i := 0 to totFd -1  do
         begin
             fd := events[i].data.fd;
             if (fd = pipeIn) then
             begin
-                //we get termination signal, just read until no more
-                //bytes and quit
-                err := 0;
-                repeat
-                    res := fpRead(pipeIn, @ch, 1);
-                    if (res < 0) then
-                    begin
-                        err := socketError();
-                    end;
-                until (res = 0) or (err = ESysEAGAIN);
+                readPipe(pipeIn);
                 terminated := true;
                 break;
             end else
