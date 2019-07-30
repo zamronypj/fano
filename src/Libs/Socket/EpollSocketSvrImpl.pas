@@ -188,6 +188,7 @@ implementation
 
 uses
 
+    CloseableIntf,
     ESockListenImpl,
     ESockWouldBlockImpl,
     StreamAdapterImpl,
