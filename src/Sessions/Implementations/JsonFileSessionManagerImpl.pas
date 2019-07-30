@@ -18,6 +18,7 @@ uses
     Classes,
     fpjson,
     SessionIntf,
+    SessionIdGeneratorIntf,
     SessionManagerIntf;
 
 type
