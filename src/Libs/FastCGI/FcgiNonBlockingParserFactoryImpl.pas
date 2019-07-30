@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit FcgiFrameParserFactoryImpl;
+unit FcgiNonBlockingParserFactoryImpl;
 
 interface
 
@@ -23,11 +23,11 @@ uses
 type
 
     (*!-----------------------------------------------
-     * FastCGI Frame Parser Factory
+     * FastCGI Non blocking Parser Factory
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TFcgiFrameParserFactory = class (TFcgiBaseParserFactory)
+    TFcgiNonBlockingParserFactory = class (TFcgiBaseParserFactory)
     public
         (*!------------------------------------------------
          * build frame parser instance
@@ -42,18 +42,18 @@ implementation
 uses
 
     MemAllocatorImpl,
-    FcgiFrameParserImpl;
+    FcgiNonBlockingParserImpl;
 
     (*!------------------------------------------------
      * build frame parser instance
      *-----------------------------------------------
      * @return frame parser instance
      *-----------------------------------------------*)
-    function TFcgiFrameParserFactory.build() : IFcgiFrameParser;
+    function TFcgiNonBlockingParserFactory.build() : IFcgiFrameParser;
     var mem : TMemAllocator;
     begin
         mem := TMemAllocator.create();
-        result := TFcgiFrameParser.create(createRecordFactories(), mem, mem);
+        result := TFcgiNonBlockingParser.create(createRecordFactories(), mem, mem);
     end;
 
 end.
