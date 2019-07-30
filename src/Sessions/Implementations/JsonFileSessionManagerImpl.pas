@@ -34,8 +34,7 @@ type
         fSessionFilename : string;
         fSessionIdGenerator : ISessionIdGenerator;
 
-        function loadJsonFile(const jsonFile : string; const mode :word) : string;
-        function loadOrCreateJsonFile(const jsonFile : string) : string;
+        function loadJsonFile(const jsonFile : string) : string;
         procedure writeJsonFile(const jsonFile : string; const jsonData : string);
         function loadStreamAsString(const stream : TStream) : string;
 
@@ -150,28 +149,15 @@ uses
         end;
     end;
 
-    function TJsonFileSessionManager.loadJsonFile(const jsonFile : string; const mode :word) : string;
+    function TJsonFileSessionManager.loadJsonFile(const jsonFile : string) : string;
     var fs : TFileStream;
     begin
-        fs := TFileStream.create(jsonFile, mode);
+        fs := TFileStream.create(jsonFile, fmOpenRead or fmShareDenyWrite);
         try
             result := loadStreamAsString(fs);
         finally
             fs.free();
         end;
-    end;
-
-    function TJsonFileSessionManager.loadOrCreateJsonFile(const jsonFile : string) : string;
-    var mode : word;
-    begin
-        if (fileExists(jsonFile)) then
-        begin
-            mode := fmOpenRead;
-        end else
-        begin
-            mode := fmCreate;
-        end;
-        result := loadJsonFile(jsonFile, mode);
     end;
 
     procedure TJsonFileSessionManager.writeJsonFile(const jsonFile : string; const jsonData : string);
@@ -213,7 +199,7 @@ uses
         sessFile := fSessionFilename + sessionId;
         if fileExists(sessFile) then
         begin
-            sess := TJsonSession.create(sessionId, loadFileToString(sessFile));
+            sess := TJsonSession.create(sessionId, loadJsonFile(sessFile));
             try
                 result := sess;
             except
