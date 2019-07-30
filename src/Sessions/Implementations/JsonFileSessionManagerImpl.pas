@@ -28,7 +28,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TJsonFileSessionManagerManager = class(TInterfacedObject, ISessionManager)
+    TJsonFileSessionManager = class(TInterfacedObject, ISessionManager)
     private
         fSessionFilename : string;
         fSessionIdGenerator : ISessionIdGenerator;
