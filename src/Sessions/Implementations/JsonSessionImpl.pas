@@ -360,7 +360,7 @@ uses
         expiredDateTime := TDateTime(fSessionData.getPath('expire').asFloat);
         //value > 0, means now() is later than expiredDateTime i.e,
         //expireddateTime is in past
-        result (compareDateTime(now(), expiredDateTime) > 0);
+        result := (compareDateTime(now(), expiredDateTime) > 0);
     end;
 
     (*!------------------------------------
