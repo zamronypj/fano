@@ -284,7 +284,7 @@ uses
     begin
         raiseExceptionIfAlreadyTerminated();
         raiseExceptionIfExpired();
-        result := internalGetVar(sessionVar, sessionVal);
+        result := internalGetVar(sessionVar);
     end;
 
     (*!------------------------------------
@@ -325,7 +325,13 @@ uses
      * @return current instance
      *-------------------------------------*)
     function TJsonSession.internalClear() : ISession;
+    var sessValue : TJsonData;
     begin
+        sessValue := fSessionData.getPath('sessionVars');
+        if (sessValue <> nil) then
+        begin
+            TJsonObject(sessValue).delete(sessionVar);
+        end;
         result := self;
     end;
 
