@@ -31,6 +31,9 @@ type
         fSessionId : string;
         fSessionData : TJsonData;
 
+        procedure raiseExceptionIfAlreadyTerminated();
+        procedure raiseExceptionIfExpired();
+
         (*!------------------------------------
          * set session variable
          *-------------------------------------
@@ -240,6 +243,11 @@ uses
         result := self;
     end;
 
+    procedure TJsonSession.raiseExceptionIfAlreadyTerminated();
+    begin
+        //TODO: raise ESessionTerminated.create()
+    end;
+
     (*!------------------------------------
      * set session variable
      *-------------------------------------
@@ -367,7 +375,7 @@ uses
     begin
         if (expired()) then
         begin
-            raise ESessionExpired.create(rsSessionExpired);
+            raise ESessionExpired.createFmt(rsSessionExpired, [fSessionId]);
         end;
     end;
 

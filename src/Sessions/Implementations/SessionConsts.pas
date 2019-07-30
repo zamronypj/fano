@@ -15,7 +15,7 @@ interface
 
 resourcestring
 
-    rsSessionExpired = 'Session is expired';
+    rsSessionExpired = 'Session is expired. Id : %s';
     rsSessionInvalid = 'Session is invalid';
 
 implementation
