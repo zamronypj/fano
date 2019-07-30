@@ -54,7 +54,19 @@ type
         );
 
         (*!-----------------------------------------------
+         * read terminate pipe in
+         * @param pipeIn, terminate pipe input handle
+         *-----------------------------------------------*)
+        procedure readPipe(const pipeIn : longint);
+
+        (*!-----------------------------------------------
          * wait for connection
+         *-------------------------------------------------
+         * @param epollFd, file descriptor returned from epoll_create()
+         * @param termPipeIn, terminate pipe in
+         * @param listenSocket, listen socket
+         * @param events, array of TEpoll_Event contained file descriptors
+         * @param maxEvent, total item in events array
          *-----------------------------------------------*)
         procedure waitForConnection(
             const epollFd : longint;
@@ -63,6 +75,13 @@ type
             const events : PEpoll_Event;
             const maxEvents : longint
         );
+
+        (*!-----------------------------------------------
+         * run wait for connection loop
+         *-------------------------------------------------
+         * @param epollFd, file descriptor returned from epoll_create()
+         *-----------------------------------------------*)
+        procedure runWaitConnection(const epollFd : longint);
 
         (*!-----------------------------------------------
          * called when client connection is established
@@ -186,6 +205,7 @@ uses
 
     ESockListenImpl,
     ESockWouldBlockImpl,
+    EEpollCreateImpl,
     StreamAdapterImpl,
     SockStreamImpl,
     CloseableStreamImpl,
@@ -330,6 +350,25 @@ resourcestring
         until (clientSocket < 0);
     end;
 
+    (*!-----------------------------------------------
+     * read terminate pipe in
+     * @param pipeIn, terminate pipe input handle
+     *-----------------------------------------------*)
+    procedure TEpollSocketSvr.readPipe(const pipeIn : longint);
+    var ch : char;
+        res, err : longint;
+    begin
+        //we get termination signal, just read until no more
+        //bytes and quit
+        err := 0;
+        repeat
+            res := fpRead(pipeIn, @ch, 1);
+            if (res < 0) then
+            begin
+                err := socketError();
+            end;
+        until (res = 0) or (err = ESysEAGAIN);
+    end;
 
     (*!-----------------------------------------------
      * handle when one or more file descriptor is ready for I/O
@@ -349,24 +388,14 @@ resourcestring
         const events : PEpoll_Event;
         var terminated : boolean
     );
-    var ch : char;
-        i, fd, res, err : longint;
+    var i, fd : longint;
     begin
         for i := 0 to totFd -1  do
         begin
             fd := events[i].data.fd;
             if (fd = pipeIn) then
             begin
-                //we get termination signal, just read until no more
-                //bytes and quit
-                err := 0;
-                repeat
-                    res := fpRead(pipeIn, @ch, 1);
-                    if (res < 0) then
-                    begin
-                        err := socketError();
-                    end;
-                until (res = 0) or (err = ESysEAGAIN);
+                readPipe(pipeIn);
                 terminated := true;
                 break;
             end else
@@ -387,6 +416,12 @@ resourcestring
 
     (*!-----------------------------------------------
      * wait for connection
+     *-------------------------------------------------
+     * @param epollFd, file descriptor returned from epoll_create()
+     * @param termPipeIn, terminate pipe in
+     * @param listenSocket, listen socket
+     * @param events, array of TEpoll_Event contained file descriptors
+     * @param maxEvent, total item in events array
      *-----------------------------------------------*)
     procedure TEpollSocketSvr.waitForConnection(
         const epollFd : longint;
@@ -430,30 +465,45 @@ resourcestring
     end;
 
     (*!-----------------------------------------------
+     * run wait for connection loop
+     *-------------------------------------------------
+     * @param epollFd, file descriptor returned from epoll_create()
+     *-----------------------------------------------*)
+    procedure TEpollSocketSvr.runWaitConnection(const epollFd : longint);
+    const MAX_EVENTS = 64;
+    var events : PEpoll_event;
+    begin
+        getmem(events, MAX_EVENTS * sizeof(TEpoll_Event));
+        try
+            waitForConnection(
+                epollFd,
+                terminatePipeIn, //global pipe for terminate
+                fListenSocket,
+                events,
+                MAX_EVENTS
+            );
+        finally
+            freemem(events);
+        end;
+    end;
+
+    (*!-----------------------------------------------
      * handle incoming connection until terminated
+     *-------------------------------------------------
+     * @throws EEpollCreate exception
      *-----------------------------------------------*)
     procedure TEpollSocketSvr.handleConnection();
-    const MAX_EVENTS = 64;
     var epollFd : longint;
-        events : PEpoll_event;
     begin
         epollFd := epoll_create(1024);
-        try
-            getmem(events, MAX_EVENTS * sizeof(TEpoll_Event));
-            try
-                waitForConnection(
-                    epollFd,
-                    terminatePipeIn, //global pipe for terminate
-                    fListenSocket,
-                    events,
-                    MAX_EVENTS
-                );
-            finally
-                freemem(events);
-            end;
-        finally
-            fpClose(epollFd);
-        end
+
+        if (epollFd < 0) then
+        begin
+            raise EEpollCreate.create('Fail to initialize epoll');
+        end;
+
+        runWaitConnection(epollFd);
+        fpClose(epollFd);
     end;
 
     (*!-----------------------------------------------
