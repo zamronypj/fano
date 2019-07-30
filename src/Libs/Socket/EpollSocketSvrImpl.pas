@@ -67,9 +67,13 @@ type
         (*!-----------------------------------------------
          * called when client connection is established
          *-------------------------------------------------
+         * @param epollFd, file descriptor returned from epoll_create()
          * @param clientSocket, socket handle where data can be read
          *-----------------------------------------------*)
-        procedure handleClientConnection(clientSocket : longint);
+        procedure handleClientConnection(
+            const epollFd : longint;
+            const clientSocket : longint
+        );
 
         (*!-----------------------------------------------
          * handle when one or more file descriptor is ready for I/O
@@ -184,11 +188,13 @@ implementation
 
 uses
 
+    CloseableIntf,
     ESockListenImpl,
     ESockWouldBlockImpl,
     StreamAdapterImpl,
     SockStreamImpl,
     CloseableStreamImpl,
+    EpollCloseableImpl,
     EEpollCtlImpl,
     TermSignalImpl;
 
@@ -325,6 +331,8 @@ resourcestring
                 //makeNonBlocking(clientSocket);
 
                 //add client socket to be monitored for I/O read
+                //note that before client socket is closed,
+                //we will remove it from monitored set (see TEpollCloseable class)
                 addToMonitoredSet(epollFd, clientSocket, EPOLLIN {or EPOLLET});
             end;
         until (clientSocket < 0);
@@ -379,8 +387,7 @@ resourcestring
             begin
                 //if we get here then it must be from one or
                 //more client connections
-                handleClientConnection(fd);
-                removeFromMonitoredSet(epollFd, fd);
+                handleClientConnection(epollFd, fd);
             end;
         end;
     end;
@@ -427,6 +434,8 @@ resourcestring
                 terminated := true;
             end;
         until terminated;
+        removeFromMonitoredSet(epollFd, termPipeIn);
+        removeFromMonitoredSet(epollFd, listenSocket);
     end;
 
     (*!-----------------------------------------------
@@ -470,21 +479,30 @@ resourcestring
     (*!-----------------------------------------------
      * called when client connection is allowed
      *-------------------------------------------------
+     * @param epollFd, file descriptor returned from epoll_create()
      * @param clientSocket, socket handle where data can be read
      *-----------------------------------------------*)
-    procedure TEpollSocketSvr.handleClientConnection(clientSocket : longint);
-    var aStream : TCloseableStream;
+    procedure TEpollSocketSvr.handleClientConnection(
+        const epollFd : longint;
+        const clientSocket : longint
+    );
+    var astream : IStreamAdapter;
+        streamCloser : ICloseable;
     begin
         if (assigned(fDataAvailListener)) then
         begin
-            aStream := TCloseableStream.create(
-                clientSocket,
-                getSockStream(clientSocket)
-            );
+            astream := getSockStream(clientSocket);
             try
-                fDataAvailListener.handleData(aStream, self, astream);
+                //create instance which can remove client socket
+                //from epoll monitoring and after that close socket
+                streamCloser := TEpollCloseable.create(epollFd, clientSocket);
+                try
+                    fDataAvailListener.handleData(astream, self, streamCloser);
+                finally
+                    streamCloser := nil;
+                end;
             finally
-                aStream.free();
+                astream := nil;
             end;
         end;
     end;
