@@ -205,6 +205,7 @@ uses
 
     ESockListenImpl,
     ESockWouldBlockImpl,
+    EEpollCreateImpl,
     StreamAdapterImpl,
     SockStreamImpl,
     CloseableStreamImpl,
