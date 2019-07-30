@@ -500,16 +500,24 @@ type
         const epollFd : longint;
         const clientSocket : longint
     );
+    var astream : IStreamAdapter;
+        streamCloser : ICloseable;
     begin
         if (assigned(fDataAvailListener)) then
         begin
-            //create instance which can remove client socket
-            //from epoll monitoring and after that close socket
-            fDataAvailListener.handleData(
-                getSockStream(clientSocket),
-                self,
-                TEpollCloseable.create(epollFd, clientSocket)
-            );
+            astream := getSockStream(clientSocket);
+            try
+                //create instance which can remove client socket
+                //from epoll monitoring and after that close socket
+                streamCloser := TEpollCloseable.create(epollFd, clientSocket);
+                try
+                    fDataAvailListener.handleData(astream, self, streamCloser);
+                finally
+                    streamCloser := nil;
+                end;
+            finally
+                astream := nil;
+            end;
         end;
     end;
 

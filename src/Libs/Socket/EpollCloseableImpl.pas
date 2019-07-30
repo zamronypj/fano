@@ -31,10 +31,7 @@ type
         fEpollHandle : longint;
         fHandle : THandle;
     public
-        constructor create(
-            const epollHandle : longint;
-            const ahandle: THandle
-        );
+        constructor create(const epollHandle : longint; const ahandle: THandle);
         function close() : boolean;
     end;
 
