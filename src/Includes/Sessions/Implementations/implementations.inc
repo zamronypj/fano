@@ -23,4 +23,4 @@ Md5SessionIdGeneratorImpl,
 Sha1SessionIdGeneratorImpl,
 
 JsonSessionImpl,
-JsonSessionManagerImpl,
+JsonFileSessionManagerImpl,

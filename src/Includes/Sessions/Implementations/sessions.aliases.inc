@@ -23,4 +23,4 @@ TMd5SessionIdGenerator = Md5SessionIdGeneratorImpl.TMd5SessionIdGenerator;
 TSha1SessionIdGenerator = Sha1SessionIdGeneratorImpl.TSha1SessionIdGenerator;
 
 TJsonSession = JsonSessionImpl.TJsonSession;
-TJsonSessionManager = JsonSessionManagerImpl.TJsonSessionManager;
+TJsonFileSessionManager = JsonFileSessionManagerImpl.TJsonFileSessionManager;
