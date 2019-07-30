@@ -45,7 +45,7 @@ type
          *-------------------------------------*)
         function beginSession(
             const sessionId : string;
-            const lifeTimeInSec : integer;
+            const lifeTimeInSec : integer
         ) : ISession;
 
         (*!------------------------------------
