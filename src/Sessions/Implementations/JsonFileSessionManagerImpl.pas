@@ -74,7 +74,7 @@ type
          *-------------------------------------*)
         function beginSession(
             const sessionId : string;
-            const lifeTimeInSec : integer;
+            const lifeTimeInSec : integer
         ) : ISession;
 
         (*!------------------------------------
@@ -190,7 +190,7 @@ uses
      *-------------------------------------*)
     function beginSession(
         const sessionId : string;
-        const lifeTimeInSec : integer;
+        const lifeTimeInSec : integer
     ) : ISession;
     var sess : ISession;
         sessFile : string;
