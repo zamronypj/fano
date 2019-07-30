@@ -7,6 +7,16 @@
 #------------------------------------------------
 
 #----------------------------------------------
+# Ignore test runner generated binary but keep
+# bin directory structure
+#----------------------------------------------
+
+tests/bin/*
+tests/bin/unit/*
+!tests/bin/README.md
+!tests/bin/unit/README.md
+
+#----------------------------------------------
 # Ignore FreePascal built-in console IDE generated files
 #----------------------------------------------
 fp.dir
