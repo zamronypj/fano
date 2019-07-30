@@ -362,13 +362,10 @@ type
     );
     var ch : char;
         i, fd, res, err : longint;
-        eventArr : PEPoll_EventArr;
     begin
-        //use pointer to array for easier access
-        eventArr := PEPoll_EventArr(events);
         for i := 0 to totFd -1  do
         begin
-            fd := eventArr^[i].data.fd;
+            fd := events[i].data.fd;
             if (fd = pipeIn) then
             begin
                 //we get termination signal, just read until no more
