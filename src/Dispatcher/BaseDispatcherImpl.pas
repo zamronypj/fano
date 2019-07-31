@@ -30,8 +30,9 @@ type
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
     TBaseDispatcher = class(TInjectableObject, IDispatcher)
+    private
+        routeMatcher : IRouteMatcher;
     protected
-        routeCollection : IRouteMatcher;
         responseFactory : IResponseFactory;
         requestFactory : IRequestFactory;
 
@@ -49,7 +50,8 @@ type
 implementation
 
 uses
-    sysutils,
+
+    SysUtils,
     UrlHelpersImpl;
 
     constructor TBaseDispatcher.create(
@@ -58,7 +60,7 @@ uses
         const reqFactory : IRequestFactory
     );
     begin
-        routeCollection := routes;
+        routeMatcher := routes;
         responseFactory := respFactory;
         requestFactory := reqFactory;
     end;
@@ -66,14 +68,14 @@ uses
     destructor TBaseDispatcher.destroy();
     begin
         inherited destroy();
-        routeCollection := nil;
+        routeMatcher := nil;
         responseFactory := nil;
         requestFactory := nil;
     end;
 
     function TBaseDispatcher.getRouteHandler(const env: ICGIEnvironment) : IRouteHandler;
     begin
-        result := routeCollection.match(
+        result := routeMatcher.match(
             env.requestMethod(),
             //remove any query string parts to avoid messing up pattern matching
             env.requestUri().stripQueryString()
