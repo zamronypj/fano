@@ -19,7 +19,8 @@ uses
     fpjson,
     SessionIntf,
     SessionIdGeneratorIntf,
-    SessionManagerIntf;
+    SessionManagerIntf,
+    InjectableObjectImpl;
 
 type
 
@@ -29,7 +30,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TJsonFileSessionManager = class(TInterfacedObject, ISessionManager)
+    TJsonFileSessionManager = class(TinjectableObject, ISessionManager)
     private
         fSessionFilename : string;
         fSessionIdGenerator : ISessionIdGenerator;

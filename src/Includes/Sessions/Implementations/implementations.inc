@@ -24,3 +24,4 @@ Sha1SessionIdGeneratorImpl,
 
 JsonSessionImpl,
 JsonFileSessionManagerImpl,
+JsonFileSessionManagerFactoryImpl,
