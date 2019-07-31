@@ -23,9 +23,7 @@ uses
     MiddlewareCollectionIntf,
     MiddlewareChainFactoryIntf,
     RouteHandlerIntf,
-    MiddlewareIntf,
     MiddlewareCollectionAwareIntf,
-    MiddlewareChainIntf,
     InjectableObjectImpl,
     BaseDispatcherImpl;
 
@@ -67,6 +65,10 @@ type
     end;
 
 implementation
+
+uses
+
+    MiddlewareChainIntf;
 
     constructor TDispatcher.create(
         const appBeforeMiddlewares : IMiddlewareCollection;
