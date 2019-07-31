@@ -237,6 +237,7 @@ uses
         sessFilename := fSessionFilename + session.id();
         writeJsonFile(sessFilename, session.serialize());
         session.clear();
+        result := self;
     end;
 
     (*!------------------------------------
@@ -255,5 +256,6 @@ uses
         begin
             deleteFile(sessFilename);
         end;
+        result := self;
     end;
 end.
