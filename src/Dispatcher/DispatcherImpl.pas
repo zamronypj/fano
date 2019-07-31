@@ -38,6 +38,17 @@ type
         appBeforeMiddlewareList : IMiddlewareCollection;
         appAfterMiddlewareList : IMiddlewareCollection;
         middlewareChainFactory : IMiddlewareChainFactory;
+
+        function executeMiddlewareChain(
+            const env: ICGIEnvironment;
+            const routeHandler : IRouteHandler;
+            const routeMiddlewares : IMiddlewareCollectionAware
+        ) : IResponse;
+
+        function executeMiddlewares(
+            const env: ICGIEnvironment;
+            const routeHandler : IRouteHandler
+        ) : IResponse;
     public
         constructor create(
             const appBeforeMiddlewares : IMiddlewareCollection;
@@ -83,29 +94,52 @@ uses
         middlewareChainFactory := nil;
     end;
 
-    function TDispatcher.dispatchRequest(const env: ICGIEnvironment) : IResponse;
-    var routeHandler : IRouteHandler;
-        middlewareChain : IMiddlewareChain;
-        routeMiddlewares : IMiddlewareCollectionAware;
+    function TDispatcher.executeMiddlewareChain(
+        const env: ICGIEnvironment;
+        const routeHandler : IRouteHandler;
+        const routeMiddlewares : IMiddlewareCollectionAware
+    ) : IResponse;
+    var middlewareChain : IMiddlewareChain;
     begin
+        middlewareChain := middlewareChainFactory.build(
+            appBeforeMiddlewareList,
+            appAfterMiddlewareList,
+            routeMiddlewares.getBefore(),
+            routeMiddlewares.getAfter()
+        );
         try
-            routeHandler := getRouteHandler(env);
-            routeMiddlewares := routeHandler.getMiddlewares();
-            middlewareChain := middlewareChainFactory.build(
-                appBeforeMiddlewareList,
-                appAfterMiddlewareList,
-                routeMiddlewares.getBefore(),
-                routeMiddlewares.getAfter()
-            );
             result := middlewareChain.execute(
                 requestFactory.build(env),
                 responseFactory.build(env),
                 routeHandler
             );
         finally
-            routeHandler := nil;
             middlewareChain := nil;
+        end;
+    end;
+
+    function TDispatcher.executeMiddlewares(
+        const env: ICGIEnvironment;
+        const routeHandler : IRouteHandler
+    ) : IResponse;
+    var routeMiddlewares : IMiddlewareCollectionAware;
+    begin
+        routeMiddlewares := routeHandler.getMiddlewares();
+        try
+            result := executeMiddlewareChain(env, routeHandler, routeMiddlewares);
+        finally
             routeMiddlewares := nil;
+        end;
+    end;
+
+    function TDispatcher.dispatchRequest(const env: ICGIEnvironment) : IResponse;
+    var routeHandler : IRouteHandler;
+    begin
+        routeHandler := getRouteHandler(env);
+        try
+            result := executeMiddlewares(env, routeHandler);
+        finally
+            routeHandler := nil;
         end;
     end;
 end.
