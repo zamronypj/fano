@@ -20,3 +20,9 @@ TUnixSocketSvr = UnixSocketSvrImpl.TUnixSocketSvr;
 {$ENDIF}
 
 TBoundSocketSvr = BoundSocketSvrImpl.TBoundSocketSvr;
+
+{$IFDEF LINUX}
+TEpollInetSocketSvr = EpollInetSocketSvrImpl.TEpollInetSocketSvr;
+TEpollUnixSocketSvr = EpollUnixSocketSvrImpl.TEpollUnixSocketSvr;
+TEpollBoundSocketSvr = EpollBoundSocketSvrImpl.TEpollBoundSocketSvr;
+{$ENDIF}
