@@ -15,7 +15,6 @@ interface
 
 uses
 
-    Classes,
     fpjson,
     SessionIntf;
 
@@ -31,6 +30,9 @@ type
     private
         fSessionId : string;
         fSessionData : TJsonData;
+
+        procedure raiseExceptionIfAlreadyTerminated();
+        procedure raiseExceptionIfExpired();
 
         (*!------------------------------------
          * set session variable
@@ -154,6 +156,7 @@ implementation
 uses
 
     Classes,
+    SysUtils,
     jsonParser,
     DateUtils,
     SessionConsts,
@@ -241,6 +244,11 @@ uses
         result := self;
     end;
 
+    procedure TJsonSession.raiseExceptionIfAlreadyTerminated();
+    begin
+        //TODO: raise ESessionTerminated.create()
+    end;
+
     (*!------------------------------------
      * set session variable
      *-------------------------------------
@@ -277,7 +285,7 @@ uses
     begin
         raiseExceptionIfAlreadyTerminated();
         raiseExceptionIfExpired();
-        result := internalGetVar(sessionVar, sessionVal);
+        result := internalGetVar(sessionVar);
     end;
 
     (*!------------------------------------
@@ -318,7 +326,13 @@ uses
      * @return current instance
      *-------------------------------------*)
     function TJsonSession.internalClear() : ISession;
+    var sessValue : TJsonData;
     begin
+        sessValue := fSessionData.getPath('sessionVars');
+        if (sessValue <> nil) then
+        begin
+            sessValue.clear();
+        end;
         result := self;
     end;
 
@@ -347,7 +361,7 @@ uses
         expiredDateTime := TDateTime(fSessionData.getPath('expire').asFloat);
         //value > 0, means now() is later than expiredDateTime i.e,
         //expireddateTime is in past
-        result (compareDateTime(now(), expiredDateTime) > 0);
+        result := (compareDateTime(now(), expiredDateTime) > 0);
     end;
 
     (*!------------------------------------
@@ -360,7 +374,7 @@ uses
         expiredDate : double;
     begin
         sessData := TJsonObject(fSessionData);
-        expiredDate := sessData.floats['expire'].asFloat;
+        expiredDate := sessData.floats['expire'];
         result := TDateTime(expiredDate);
     end;
 
@@ -368,7 +382,7 @@ uses
     begin
         if (expired()) then
         begin
-            raise ESessionExpired.create(rsSessionExpired);
+            raise ESessionExpired.createFmt(rsSessionExpired, [fSessionId]);
         end;
     end;
 

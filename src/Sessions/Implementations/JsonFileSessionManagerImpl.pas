@@ -18,6 +18,7 @@ uses
     Classes,
     fpjson,
     SessionIntf,
+    SessionIdGeneratorIntf,
     SessionManagerIntf;
 
 type
@@ -28,17 +29,14 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TJsonFileSessionManagerManager = class(TInterfacedObject, ISessionManager)
+    TJsonFileSessionManager = class(TInterfacedObject, ISessionManager)
     private
         fSessionFilename : string;
         fSessionIdGenerator : ISessionIdGenerator;
 
-        function loadJsonFile(const jsonFile : string) : TJsonData;
-        function loadOrCreateJsonFile(const jsonFile : string) : TJsonData;
-        procedure writeJsonFile(const jsonFile : string; const jsonData : TJsonData);
-
-        procedure raiseExceptionIfAlreadyTerminated();
-        procedure raiseExceptionIfExpired();
+        function loadJsonFile(const jsonFile : string) : string;
+        procedure writeJsonFile(const jsonFile : string; const jsonData : string);
+        function loadStreamAsString(const stream : TStream) : string;
 
     public
 
@@ -57,6 +55,11 @@ type
         );
 
         (*!------------------------------------
+         * destructor
+         *-------------------------------------*)
+        destructor destroy(); override;
+
+        (*!------------------------------------
          * create session from session id
          *-------------------------------------
          * @param sessionId session id
@@ -73,7 +76,7 @@ type
          *-------------------------------------*)
         function beginSession(
             const sessionId : string;
-            const lifeTimeInSec : integer;
+            const lifeTimeInSec : integer
         ) : ISession;
 
         (*!------------------------------------
@@ -98,10 +101,11 @@ implementation
 
 uses
 
-    Classes,
+    SysUtils,
     jsonParser,
     DateUtils,
     SessionConsts,
+    JsonSessionImpl,
     ESessionExpiredImpl;
 
     (*!------------------------------------
@@ -123,6 +127,15 @@ uses
         fSessionFilename := baseDir + prefix;
     end;
 
+    (*!------------------------------------
+     * destructor
+     *-------------------------------------*)
+    destructor TJsonFileSessionManager.destroy();
+    begin
+        inherited destroy();
+        fSessionIdGenerator := nil;
+    end;
+
     function TJsonFileSessionManager.loadStreamAsString(const stream : TStream) : string;
     var strStream : TStringStream;
     begin
@@ -136,28 +149,15 @@ uses
         end;
     end;
 
-    function TJsonFileSessionManager.loadJsonFile(const jsonFile : string; const mode :word) : string;
+    function TJsonFileSessionManager.loadJsonFile(const jsonFile : string) : string;
     var fs : TFileStream;
     begin
-        fs := TFileStream.create(jsonFile, mode);
+        fs := TFileStream.create(jsonFile, fmOpenRead or fmShareDenyWrite);
         try
             result := loadStreamAsString(fs);
         finally
             fs.free();
         end;
-    end;
-
-    function TJsonFileSessionManager.loadOrCreateJsonFile(const jsonFile : string) : string;
-    var mode : word;
-    begin
-        if (fileExists(jsonFile)) then
-        begin
-            mode := fmOpenRead;
-        end else
-        begin
-            mode := fmCreate;
-        end;
-        result := loadJsonFile(jsonFile, mode);
     end;
 
     procedure TJsonFileSessionManager.writeJsonFile(const jsonFile : string; const jsonData : string);
@@ -166,7 +166,7 @@ uses
         fs := TFileStream.create(jsonFile, fmCreate);
         try
             fs.seek(0, soFromBeginning);
-            fs.writeBuffer(jsonData[0], length(jsonData));
+            fs.writeBuffer(jsonData[1], length(jsonData));
         finally
             fs.free();
         end;
@@ -187,9 +187,9 @@ uses
      * or expired, new ISession is created with empty
      * data, session life time is set to lifeTime value
      *-------------------------------------*)
-    function beginSession(
+    function TJsonFileSessionManager.beginSession(
         const sessionId : string;
-        const lifeTimeInSec : integer;
+        const lifeTimeInSec : integer
     ) : ISession;
     var sess : ISession;
         sessFile : string;
@@ -199,7 +199,7 @@ uses
         sessFile := fSessionFilename + sessionId;
         if fileExists(sessFile) then
         begin
-            sess := TJsonSession.create(sessionId, loadFileToString(sessFile));
+            sess := TJsonSession.create(sessionId, loadJsonFile(sessFile));
             try
                 result := sess;
             except
@@ -235,7 +235,7 @@ uses
     var sessFilename : string;
     begin
         sessFilename := fSessionFilename + session.id();
-        writeToFile(sessFilename, session.serialize());
+        writeJsonFile(sessFilename, session.serialize());
         session.clear();
     end;
 

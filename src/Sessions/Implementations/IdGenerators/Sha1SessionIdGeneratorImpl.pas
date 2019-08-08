@@ -31,7 +31,7 @@ type
          *-------------------------------------
          * @return session id string
          *-------------------------------------*)
-        function getSessionId() : string;
+        function getSessionId() : string; override;
     end;
 
 implementation
