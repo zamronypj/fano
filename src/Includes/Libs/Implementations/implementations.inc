@@ -18,8 +18,11 @@ StdErrBufferFactoryImpl,
 
 StringFileReaderImpl,
 StringFileReaderFactoryImpl,
+BasicFileReaderImpl,
+BasicFileReaderFactoryImpl,
 
 StreamAdapterImpl,
+SerialiazeableStreamImpl,
 EInvalidStreamImpl,
 
 StdInReaderImpl,

@@ -15,7 +15,8 @@ interface
 
 uses
 
-    SessionIntf;
+    SessionIntf,
+    RequestIntf;
 
 type
 
@@ -29,22 +30,14 @@ type
         ['{F6526BF2-538B-46CC-AF49-D5F373B6E2F5}']
 
         (*!------------------------------------
-         * create session from session id
+         * create session from request
          *-------------------------------------
-         * @param sessionId session id
+         * @param request current request instance
          * @param lifeTimeInSec life time of session in seconds
          * @return session instance
-         *-------------------------------------
-         * if sessionId point to valid session id in storage,
-         * then new ISession is created with is data populated
-         * from storage. lifeTimeInSec parameter is ignored
-         *
-         * if sessionId is empty string or invalid
-         * or expired, new ISession is created with empty
-         * data, session life time is set to lifeTime value
          *-------------------------------------*)
         function beginSession(
-            const sessionId : string;
+            const request : IRequest;
             const lifeTimeInSec : integer
         ) : ISession;
 
@@ -56,6 +49,14 @@ type
          * @return current instance
          *-------------------------------------*)
         function endSession(const session : ISession) : ISessionManager;
+
+        (*!------------------------------------
+         * end session and remove its storage
+         *-------------------------------------
+         * @param session session instance
+         * @return current instance
+         *-------------------------------------*)
+        function destroySession(const session : ISession) : ISessionManager;
     end;
 
 implementation

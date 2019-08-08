@@ -20,45 +20,24 @@ uses
     SessionIntf,
     SessionIdGeneratorIntf,
     SessionManagerIntf,
-    InjectableObjectImpl;
+    RequestIntf,
+    FileReaderIntf,
+    AbstractSessionManagerImpl;
 
 type
 
     (*!------------------------------------------------
-     * class having capability to manager
+     * class having capability to manage
      * session variables in JSON file
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TJsonFileSessionManager = class(TinjectableObject, ISessionManager)
+    TJsonFileSessionManager = class(TAbstractSessionManager)
     private
         fSessionFilename : string;
-        fSessionIdGenerator : ISessionIdGenerator;
+        fFileReader : IFileReader;
 
-        function loadJsonFile(const jsonFile : string) : string;
         procedure writeJsonFile(const jsonFile : string; const jsonData : string);
-        function loadStreamAsString(const stream : TStream) : string;
-
-    public
-
-        (*!------------------------------------
-         * constructor
-         *-------------------------------------
-         * @param baseDir base directory where
-         *                session files store
-         * @param prefix string to be prefix to
-         *                session filename
-         *-------------------------------------*)
-        constructor create(
-            const sessionIdGenerator : ISessionIdGenerator;
-            const baseDir : string;
-            const prefix : string
-        );
-
-        (*!------------------------------------
-         * destructor
-         *-------------------------------------*)
-        destructor destroy(); override;
 
         (*!------------------------------------
          * create session from session id
@@ -75,10 +54,50 @@ type
          * or expired, new ISession is created with empty
          * data, session life time is set to lifeTime value
          *-------------------------------------*)
-        function beginSession(
+        function createSession(
             const sessionId : string;
             const lifeTimeInSec : integer
         ) : ISession;
+
+    public
+
+        (*!------------------------------------
+         * constructor
+         *-------------------------------------
+         * @param sessionIdGenerator helper class
+         *           which can generate session id
+         * @param cookieName name of cookie to use
+         * @param fileReader helper class
+         *           which can read file to string
+         * @param baseDir base directory where
+         *                session files store
+         * @param prefix string to be prefix to
+         *                session filename
+         *-------------------------------------*)
+        constructor create(
+            const sessionIdGenerator : ISessionIdGenerator;
+            const cookieName : string;
+            const fileReader : IFileReader;
+            const baseDir : string;
+            const prefix : string
+        );
+
+        (*!------------------------------------
+         * destructor
+         *-------------------------------------*)
+        destructor destroy(); override;
+
+        (*!------------------------------------
+         * create session from request
+         *-------------------------------------
+         * @param request current request instance
+         * @param lifeTimeInSec life time of session in seconds
+         * @return session instance
+         *-------------------------------------*)
+        function beginSession(
+            const request : IRequest;
+            const lifeTimeInSec : integer
+        ) : ISession; override;
 
         (*!------------------------------------
          * end session and save session data to
@@ -87,7 +106,9 @@ type
          * @param session session instance
          * @return current instance
          *-------------------------------------*)
-        function endSession(const session : ISession) : ISessionManager;
+        function endSession(
+            const session : ISession
+        ) : ISessionManager; override;
 
         (*!------------------------------------
          * end session and remove its storage
@@ -95,7 +116,9 @@ type
          * @param session session instance
          * @return current instance
          *-------------------------------------*)
-        function destroySession(const session : ISession) : ISessionManager;
+        function destroySession(
+            const session : ISession
+        ) : ISessionManager; override;
     end;
 
 implementation
@@ -112,6 +135,11 @@ uses
     (*!------------------------------------
      * constructor
      *-------------------------------------
+     * @param sessionIdGenerator helper class
+     *           which can generate session id
+     * @param cookieName name of cookie to use
+     * @param fileReader helper class
+     *           which can read file to string
      * @param baseDir base directory where
      *                session files store
      * @param prefix strung to be prefix to
@@ -119,46 +147,34 @@ uses
      *-------------------------------------*)
     constructor TJsonFileSessionManager.create(
         const sessionIdGenerator : ISessionIdGenerator;
+        const cookieName : string;
+        const fileReader : IFileReader;
         const baseDir : string;
         const prefix : string
     );
     begin
-        inherited create();
-        fSessionIdGenerator := sessionIdGenerator;
+        inherited create(sessionIdGenerator, cookieName);
         fSessionFilename := baseDir + prefix;
+        fFileReader := fileReader;
     end;
 
     (*!------------------------------------
-     * destructor
+     * constructor
+     *-------------------------------------
+     * @param sessionIdGenerator helper class
+     *           which can generate session id
+     * @param cookieName name of cookie to use
+     * @param fileReader helper class
+     *           which can read file to string
+     * @param baseDir base directory where
+     *                session files store
+     * @param prefix strung to be prefix to
+     *                session filename
      *-------------------------------------*)
     destructor TJsonFileSessionManager.destroy();
     begin
+        fFileReader := nil;
         inherited destroy();
-        fSessionIdGenerator := nil;
-    end;
-
-    function TJsonFileSessionManager.loadStreamAsString(const stream : TStream) : string;
-    var strStream : TStringStream;
-    begin
-        strStream := TStringStream.create('');
-        try
-            stream.seek(0, soFromBeginning);
-            strStream.copyFrom(stream, 0);
-            result := strStream.dataString;
-        finally
-            strStream.free();
-        end;
-    end;
-
-    function TJsonFileSessionManager.loadJsonFile(const jsonFile : string) : string;
-    var fs : TFileStream;
-    begin
-        fs := TFileStream.create(jsonFile, fmOpenRead or fmShareDenyWrite);
-        try
-            result := loadStreamAsString(fs);
-        finally
-            fs.free();
-        end;
     end;
 
     procedure TJsonFileSessionManager.writeJsonFile(const jsonFile : string; const jsonData : string);
@@ -188,7 +204,7 @@ uses
      * or expired, new ISession is created with empty
      * data, session life time is set to lifeTime value
      *-------------------------------------*)
-    function TJsonFileSessionManager.beginSession(
+    function TJsonFileSessionManager.createSession(
         const sessionId : string;
         const lifeTimeInSec : integer
     ) : ISession;
@@ -200,7 +216,7 @@ uses
         sessFile := fSessionFilename + sessionId;
         if fileExists(sessFile) then
         begin
-            sess := TJsonSession.create(sessionId, loadJsonFile(sessFile));
+            sess := TJsonSession.create(sessionId, fFileReader.readFile(sessFile));
             try
                 result := sess;
             except
@@ -223,6 +239,23 @@ uses
             );
         end;
         result := sess;
+    end;
+
+    (*!------------------------------------
+     * create session from request
+     *-------------------------------------
+     * @param request current request instance
+     * @param lifeTimeInSec life time of session in seconds
+     * @return session instance
+     *-------------------------------------*)
+    function TJsonFileSessionManager.beginSession(
+        const request : IRequest;
+        const lifeTimeInSec : integer
+    ) : ISession;
+    var sessionId : string;
+    begin
+        sessionId := request.getCookieParam(fCookieName);
+        result := createSession(sessionId, lifeTimeInSec);
     end;
 
     (*!------------------------------------

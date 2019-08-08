@@ -11,6 +11,8 @@ TStdErrBufferFactory = StdErrBufferFactoryImpl.TStdErrBufferFactory;
 
 TStringFileReader = StringFileReaderImpl.TStringFileReader;
 TStringFileReaderFactory = StringFileReaderFactoryImpl.TStringFileReaderFactory;
+TBasicFileReader = BasicFileReaderImpl.TBasicFileReader;
+TBasicFileReaderFactory = BasicFileReaderFactoryImpl.TBasicFileReaderFactory;
 
 TStreamAdapter = StreamAdapterImpl.TStreamAdapter;
 EInvalidStream = EInvalidStreamImpl.EInvalidStream;
