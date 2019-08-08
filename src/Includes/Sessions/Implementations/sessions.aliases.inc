@@ -24,3 +24,4 @@ TSha1SessionIdGenerator = Sha1SessionIdGeneratorImpl.TSha1SessionIdGenerator;
 
 TJsonSession = JsonSessionImpl.TJsonSession;
 TJsonFileSessionManager = JsonFileSessionManagerImpl.TJsonFileSessionManager;
+TJsonFileSessionManagerFactory = JsonFileSessionManagerFactoryImpl.TJsonFileSessionManagerFactory;

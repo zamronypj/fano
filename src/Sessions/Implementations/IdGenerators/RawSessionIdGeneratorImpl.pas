@@ -71,8 +71,7 @@ uses
      * @return session id string
      *-------------------------------------*)
     function TRawSessionIdGenerator.getSessionId() : string;
-    var rawSessionId : string;
-        tv: TTimeVal;
+    var tv: TTimeVal;
     begin
         fpGetTimeOfDay (@tv, nil);
         result := format(

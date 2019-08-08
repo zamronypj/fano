@@ -19,7 +19,8 @@ uses
     fpjson,
     SessionIntf,
     SessionIdGeneratorIntf,
-    SessionManagerIntf;
+    SessionManagerIntf,
+    InjectableObjectImpl;
 
 type
 
@@ -29,7 +30,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TJsonFileSessionManager = class(TInterfacedObject, ISessionManager)
+    TJsonFileSessionManager = class(TinjectableObject, ISessionManager)
     private
         fSessionFilename : string;
         fSessionIdGenerator : ISessionIdGenerator;
@@ -237,6 +238,7 @@ uses
         sessFilename := fSessionFilename + session.id();
         writeJsonFile(sessFilename, session.serialize());
         session.clear();
+        result := self;
     end;
 
     (*!------------------------------------
@@ -255,5 +257,6 @@ uses
         begin
             deleteFile(sessFilename);
         end;
+        result := self;
     end;
 end.
