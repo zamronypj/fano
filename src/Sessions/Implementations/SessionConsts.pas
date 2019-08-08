@@ -13,6 +13,10 @@ interface
 {$MODE OBJFPC}
 {$H+}
 
+const
+
+    FANO_COOKIE_NAME = 'FANOSESSID';
+
 resourcestring
 
     rsSessionExpired = 'Session is expired. Id : %s';

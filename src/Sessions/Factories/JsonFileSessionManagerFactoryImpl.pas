@@ -16,7 +16,8 @@ uses
 
     DependencyIntf,
     DependencyContainerIntf,
-    FactoryImpl;
+    FactoryImpl,
+    SessionConsts;
 
 type
     (*!------------------------------------------------
@@ -26,10 +27,15 @@ type
      *-----------------------------------------------*)
     TJsonFileSessionManagerFactory = class(TFactory)
     private
+        fCookieName : string;
         fBaseDir : string;
         fPrefix : string;
     public
-        constructor create(const baseDir : string = '/tmp'; const prefix : string = '');
+        constructor create(
+            const cookieName : string = FANO_COOKIE_NAME;
+            const baseDir : string = '/tmp';
+            const prefix : string = ''
+        );
 
         (*!---------------------------------------------------
          * build class instance
@@ -48,8 +54,13 @@ uses
     JsonFileSessionManagerImpl,
     GuidSessionIdGeneratorImpl;
 
-    constructor TJsonFileSessionManagerFactory.create(const baseDir : string = '/tmp'; const prefix : string = '');
+    constructor TJsonFileSessionManagerFactory.create(
+        const cookieName : string = FANO_COOKIE_NAME;
+        const baseDir : string = '/tmp';
+        const prefix : string = ''
+    );
     begin
+        fCookieName := cookieName;
         fBaseDir := baseDir;
         fPrefix := prefix;
     end;
@@ -63,6 +74,8 @@ uses
     begin
         result := TJsonFileSessionManager.create(
             TGuidSessionIdGenerator.create(),
+            fCookieName,
+            TStringFileReader.create(),
             fBaseDir,
             fPrefix
         );
