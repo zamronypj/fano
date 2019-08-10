@@ -291,7 +291,7 @@ resourcestring
             if (lenKeyValue = 2) then
             begin
                 new(param);
-                param^.key := keyvalue[0];
+                param^.key := trim(keyvalue[0]);
                 param^.value := (keyvalue[1]).urlDecode();
                 body.add(param^.key, param);
             end;
