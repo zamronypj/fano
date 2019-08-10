@@ -51,6 +51,7 @@ implementation
 
 uses
 
+    StringFileReaderImpl,
     JsonFileSessionManagerImpl,
     GuidSessionIdGeneratorImpl;
 
