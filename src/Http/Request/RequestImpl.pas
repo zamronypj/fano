@@ -34,7 +34,9 @@ type
     (*!------------------------------------------------
      * basic class having capability as
      * HTTP request
-     *
+     *-------------------------------------------------
+     * TODO: refactor
+     *-------------------------------------------------
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
     TRequest = class(TInterfacedObject, IRequest)
@@ -64,7 +66,8 @@ type
 
         procedure initParamsFromString(
             const data : string;
-            const body : IList
+            const body : IList;
+            const separatorChar : char = '&'
         );
 
         procedure initPostBodyParamsFromStdInput(
@@ -272,13 +275,14 @@ resourcestring
 
     procedure TRequest.initParamsFromString(
         const data : string;
-        const body : IList
+        const body : IList;
+        const separatorChar : char = '&'
     );
     var arrOfQryStr, keyvalue : TStringArray;
         i, len, lenKeyValue : integer;
         param : PKeyValue;
     begin
-        arrOfQryStr := data.split(['&']);
+        arrOfQryStr := data.split([separatorChar]);
         len := length(arrOfQryStr);
         for i:= 0 to len-1 do
         begin
@@ -307,7 +311,7 @@ resourcestring
         const cookies : IList
     );
     begin
-        initParamsFromString(env.httpCookie(), cookies);
+        initParamsFromString(env.httpCookie(), cookies, ';');
     end;
 
     procedure TRequest.raiseExceptionIfPostDataTooBig(const contentLength : int64);
