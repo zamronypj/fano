@@ -22,7 +22,7 @@ BasicFileReaderImpl,
 BasicFileReaderFactoryImpl,
 
 StreamAdapterImpl,
-SerialiazeableStreamImpl,
+SerializeableStreamImpl,
 EInvalidStreamImpl,
 
 StdInReaderImpl,

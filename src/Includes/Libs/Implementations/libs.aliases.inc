@@ -16,6 +16,7 @@ TBasicFileReaderFactory = BasicFileReaderFactoryImpl.TBasicFileReaderFactory;
 
 TStreamAdapter = StreamAdapterImpl.TStreamAdapter;
 EInvalidStream = EInvalidStreamImpl.EInvalidStream;
+TSerializeableStream = SerializeableStreamImpl.TSerializeableStream;
 
 TStdInReader = StdInReaderImpl.TStdInReader;
 TSimpleStdInReader = SimpleStdInReaderImpl.TSimpleStdInReader;
