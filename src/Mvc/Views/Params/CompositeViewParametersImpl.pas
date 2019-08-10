@@ -112,12 +112,12 @@ uses
         keys.capacity := firstCount + secondCount;
         for indx := 0 to firstCount-1 do
         begin
-            keys.add(firstKeys[i]);
+            keys.add(firstKeys[indx]);
         end;
 
         for indx := 0 to secondCount-1 do
         begin
-            keys.add(secondKeys[i]);
+            keys.add(secondKeys[indx]);
         end;
         result := keys;
     end;
