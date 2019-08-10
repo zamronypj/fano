@@ -32,7 +32,7 @@ type
     private
         firstViewParam : IViewParameters;
         secondViewParam : IViewParameters;
-
+        keys : TStrings;
     public
         constructor create(
             const firstParam : IViewParameters;
