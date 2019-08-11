@@ -94,7 +94,7 @@ uses
         begin
             errCode := socketError();
             raise ESockCreate.createFmt(
-                rsCreateUnixSockFailed,
+                rsCreateFailed,
                 [ fileName, strError(errCode), errCode ]
             );
         end else
