@@ -210,6 +210,7 @@ implementation
 
 uses
 
+    Errors,
     SocketConsts,
     ESockListenImpl,
     ESockWouldBlockImpl,

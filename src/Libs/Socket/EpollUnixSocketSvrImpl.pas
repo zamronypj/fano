@@ -73,6 +73,7 @@ uses
     SysUtils,
     BaseUnix,
     Unix,
+    Errors,
     ESockCreateImpl,
     ESockBindImpl,
     SocketConsts;
@@ -82,6 +83,7 @@ uses
      *-------------------------------------------------
      * @param listenSocket, socket handle created with fpSocket()
      * @param queueSize, number of queue when listen, 5 = default of Berkeley Socket
+     * TODO: refactor as it is similar to TUnixSocketSvr.create()
      *-----------------------------------------------*)
     constructor TEpollUnixSocketSvr.create(const filename : string);
     var socket, errCode : longint;
@@ -115,6 +117,7 @@ uses
 
     (*!-----------------------------------------------
      * bind socket to an Inet socket address
+     * TODO: refactor as it is similar to TUnixSocketSvr.bind()
      *-----------------------------------------------*)
     procedure TEpollUnixSocketSvr.bind();
     var errCode : longint;
@@ -137,6 +140,7 @@ uses
      *-------------------------------------------------
      * @param listenSocket, socket handle created with fpSocket()
      * @return client socket which data can be read
+     * TODO: refactor as it is similar to TUnixSocketSvr.accept()
      *-----------------------------------------------*)
     function TEpollUnixSocketSvr.accept(listenSocket : longint) : longint;
     var addrLen : TSockLen;

@@ -211,7 +211,8 @@ uses
     CloseableStreamImpl,
     EEpollCtlImpl,
     TermSignalImpl,
-    SocketConsts;
+    SocketConsts,
+    Errors;
 
     procedure makeNonBlocking(fd: longint);
     var flags : integer;

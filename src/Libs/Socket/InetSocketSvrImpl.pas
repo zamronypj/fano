@@ -65,6 +65,7 @@ uses
     SysUtils,
     BaseUnix,
     Unix,
+    Errors,
     ESockCreateImpl,
     ESockBindImpl,
     SocketConsts;
@@ -74,6 +75,7 @@ uses
      *-------------------------------------------------
      * @param host, hostname or ip
      * @param port, port
+     * TODO: refactor as it is similar to TEpollInetSocketSvr.create()
      *-----------------------------------------------*)
     constructor TInetSocketSvr.create(const host : string; const port : word);
     var socket, errCode : longint;
@@ -120,6 +122,7 @@ uses
      *-------------------------------------------------
      * @param listenSocket, socket handle created with fpSocket()
      * @return client socket which data can be read
+     * TODO: refactor as it is similar to TEpollInetSocketSvr.accept()
      *-----------------------------------------------*)
     function TInetSocketSvr.accept(listenSocket : longint) : longint;
     var addrLen : TSockLen;
