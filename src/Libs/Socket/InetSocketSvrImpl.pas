@@ -65,29 +65,31 @@ uses
     SysUtils,
     BaseUnix,
     Unix,
+    Errors,
     ESockCreateImpl,
-    ESockBindImpl;
-
-resourcestring
-
-    rsBindFailed = 'Bind failed on %s:%d, error: %d';
-    rsCreateFailed = 'Create socket on %s:%d failed, error: %d';
+    ESockBindImpl,
+    SocketConsts;
 
     (*!-----------------------------------------------
      * constructor
      *-------------------------------------------------
      * @param host, hostname or ip
      * @param port, port
+     * TODO: refactor as it is similar to TEpollInetSocketSvr.create()
      *-----------------------------------------------*)
     constructor TInetSocketSvr.create(const host : string; const port : word);
-    var socket : longint;
+    var socket, errCode : longint;
     begin
         fHost := host;
         fPort := port;
         socket := fpSocket(AF_INET, SOCK_STREAM, 0);
         if socket = -1 then
         begin
-            raise ESockCreate.createFmt(rsCreateFailed,[ host, port, socketError() ]);
+            errCode := socketError();
+            raise ESockCreate.createFmt(
+                rsCreateFailed,
+                [ format('%s:%d', [host, port]), strError(errCode), errCode ]
+            );
         end else
         begin
             inherited create(socket);
@@ -97,15 +99,21 @@ resourcestring
 
     (*!-----------------------------------------------
      * bind socket to an socket address
-     s*-----------------------------------------------*)
+     * TODO: refactor as it is similar to TEpollInetSocketSvr.bind()
+     *-----------------------------------------------*)
     procedure TInetSocketSvr.bind();
+    var errCode : longint;
     begin
         FInetAddr.sin_family := AF_INET;
         FInetAddr.sin_port := htons(FPort);
         FInetAddr.sin_addr.s_addr := LongWord(StrToNetAddr(FHost));
         if fpBind(fListenSocket, @FInetAddr, sizeof(FInetAddr)) <> 0 then
         begin
-            raise ESockBind.createFmt(rsBindFailed, [ FHost, FPort, socketError() ]);
+            errCode := socketError();
+            raise ESockBind.createFmt(
+                rsBindFailed,
+                [ format('%s:%d', [FHost, FPort]), strError(errCode), errCode ]
+            );
         end;
     end;
 
@@ -114,6 +122,7 @@ resourcestring
      *-------------------------------------------------
      * @param listenSocket, socket handle created with fpSocket()
      * @return client socket which data can be read
+     * TODO: refactor as it is similar to TEpollInetSocketSvr.accept()
      *-----------------------------------------------*)
     function TInetSocketSvr.accept(listenSocket : longint) : longint;
     var addrLen : TSockLen;
