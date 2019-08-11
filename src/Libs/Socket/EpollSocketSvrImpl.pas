@@ -210,12 +210,8 @@ uses
     SockStreamImpl,
     CloseableStreamImpl,
     EEpollCtlImpl,
-    TermSignalImpl;
-
-resourcestring
-
-    rsSocketListenFailed = 'Listening failed, error: %d';
-    rsAcceptWouldBlock = 'Accept socket would block on socket, error: %d';
+    TermSignalImpl,
+    SocketConsts;
 
     procedure makeNonBlocking(fd: longint);
     var flags : integer;
@@ -250,12 +246,18 @@ resourcestring
 
     (*!-----------------------------------------------
      * begin listen socket
+     * TODO: refactor as it is similar to TSocketSvr.listen()
      *-----------------------------------------------*)
     procedure TEpollSocketSvr.listen();
+    var errCode : longint;
     begin
         if fpListen(fListenSocket, fQueueSize) <> 0 then
         begin
-            raise ESockListen.createFmt(rsSocketListenFailed, [ socketError() ]);
+            errCode := socketError();
+            raise ESockListen.createFmt(
+                rsSocketListenFailed,
+                [ strError(errCode), errCode ]
+            );
         end;
     end;
 
@@ -292,7 +294,7 @@ resourcestring
         res := epoll_ctl(epollFd, EPOLL_CTL_ADD, fd, @ev);
         if (res < 0) then
         begin
-            raise EEpollCtl.create('fail add file descriptor');
+            raise EEpollCtl.create(raEpollAddFileDescriptorFailed);
         end;
     end;
 
@@ -499,7 +501,7 @@ resourcestring
 
         if (epollFd < 0) then
         begin
-            raise EEpollCreate.create('Fail to initialize epoll');
+            raise EEpollCreate.create(rsEpollInitFailed);
         end;
 
         runWaitConnection(epollFd);
