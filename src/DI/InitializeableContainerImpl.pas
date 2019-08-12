@@ -28,6 +28,13 @@ type
     protected
         fActualContainer : IDependencyContainer;
 
+        (*!--------------------------------------------------------
+         * initialize application required services
+         *---------------------------------------------------------
+         * @param cntr dependency container
+         *---------------------------------------------------------
+         * Note: child class must provide its implementation
+         *---------------------------------------------------------*)
         procedure initializeServices(const cntr : IDependencyContainer); virtual; abstract;
     public
         (*!--------------------------------------------------------
