@@ -26,6 +26,7 @@ ViewParametersImpl,
 ViewParametersFactoryImpl,
 NullViewParametersImpl,
 NullViewParametersFactoryImpl,
+CompositeViewParametersImpl,
 
 ViewImpl,
 StaticViewImpl,

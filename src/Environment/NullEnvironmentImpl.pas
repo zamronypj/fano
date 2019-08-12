@@ -33,6 +33,21 @@ type
          * @return variable value
          *------------------------------------------*)
         function env(const keyName : string) : string; override;
+
+        (*!------------------------------------------------
+         * get number of variables
+         *-----------------------------------------------
+         * @return number of variables
+         *-----------------------------------------------*)
+        function count() : integer; override;
+
+        (*!------------------------------------------------
+         * get key by index
+         *-----------------------------------------------
+         * @param index index to use
+         * @return key name
+         *-----------------------------------------------*)
+        function getKey(const indx : integer) : shortstring; override;
     end;
 
 implementation
@@ -46,7 +61,30 @@ implementation
      *------------------------------------------*)
     function TNullCGIEnvironment.env(const keyName : string) : string;
     begin
+        //intentionally does nothing
         result := '';
     end;
 
+    (*!------------------------------------------------
+     * get number of variables
+     *-----------------------------------------------
+     * @return number of variables
+     *-----------------------------------------------*)
+    function TNullCGIEnvironment.count() : integer;
+    begin
+        //intentionally does nothing
+        result := 0;
+    end;
+
+    (*!------------------------------------------------
+     * get key by index
+     *-----------------------------------------------
+     * @param index index to use
+     * @return key name
+     *-----------------------------------------------*)
+    function TNullCGIEnvironment.getKey(const indx : integer) : shortstring;
+    begin
+        //intentionally does nothing
+        result := '';
+    end;
 end.

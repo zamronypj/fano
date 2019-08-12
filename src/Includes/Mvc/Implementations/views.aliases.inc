@@ -10,6 +10,7 @@ TViewParameters = ViewParametersImpl.TViewParameters;
 TViewParametersFactory = ViewParametersFactoryImpl.TViewParametersFactory;
 TNullViewParameters = NullViewParametersImpl.TNullViewParameters;
 TNullViewParametersFactory = NullViewParametersFactoryImpl.TNullViewParametersFactory;
+TCompositeViewParameters = CompositeViewParametersImpl.TCompositeViewParameters;
 
 TView = ViewImpl.TView;
 TStaticView = StaticViewImpl.TStaticView;

@@ -37,6 +37,21 @@ type
          Retrieve an environment variable
         ------------------------------------------}
         function env(const keyName : string) : string; override;
+
+        (*!------------------------------------------------
+         * get number of variables
+         *-----------------------------------------------
+         * @return number of variables
+         *-----------------------------------------------*)
+        function count() : integer; override;
+
+        (*!------------------------------------------------
+         * get key by index
+         *-----------------------------------------------
+         * @param index index to use
+         * @return key name
+         *-----------------------------------------------*)
+        function getKey(const indx : integer) : shortstring; override;
     end;
 
 implementation
@@ -66,4 +81,24 @@ implementation
         end;
     end;
 
+    (*!------------------------------------------------
+     * get number of variables
+     *-----------------------------------------------
+     * @return number of variables
+     *-----------------------------------------------*)
+    function TKeyValueEnvironment.count() : integer;
+    begin
+        result := envVars.count();
+    end;
+
+    (*!------------------------------------------------
+     * get key by index
+     *-----------------------------------------------
+     * @param index index to use
+     * @return key name
+     *-----------------------------------------------*)
+    function TKeyValueEnvironment.getKey(const indx : integer) : shortstring;
+    begin
+        result := envVars.getKey(indx);
+    end;
 end.

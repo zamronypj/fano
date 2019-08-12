@@ -13,3 +13,5 @@
  *-----------------------------------------------*)
 
 EnvironmentIntf,
+EnvironmentEnumeratorIntf,
+EnvironmentFactoryIntf,

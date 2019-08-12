@@ -17,6 +17,7 @@ uses
 
     DependencyIntf,
     EnvironmentIntf,
+    EnvironmentEnumeratorIntf,
     InjectableObjectImpl;
 
 type
@@ -27,7 +28,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *--------------------------------------------------*)
-    TAbstractCGIEnvironment = class(TInjectableObject, ICGIEnvironment)
+    TAbstractCGIEnvironment = class(TInjectableObject, ICGIEnvironment, ICGIEnvironmentEnumerator)
     public
         (*!-----------------------------------------
          * Retrieve an environment variable
@@ -134,6 +135,21 @@ type
          Retrieve HTTP_COOKIE environment variable
         ------------------------------------------}
         function httpCookie() : string;
+
+        (*!------------------------------------------------
+         * get number of variables
+         *-----------------------------------------------
+         * @return number of variables
+         *-----------------------------------------------*)
+        function count() : integer; virtual; abstract;
+
+        (*!------------------------------------------------
+         * get key by index
+         *-----------------------------------------------
+         * @param index index to use
+         * @return key name
+         *-----------------------------------------------*)
+        function getKey(const indx : integer) : shortstring; virtual; abstract;
     end;
 
 implementation
