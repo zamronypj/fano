@@ -31,25 +31,25 @@ type
         (*!--------------------------------------------------------
          * initialize application required services
          *---------------------------------------------------------
-         * @param cntr dependency container
+         * @param container dependency container
          *---------------------------------------------------------
          * Note: child class must provide its implementation
          *---------------------------------------------------------*)
-        procedure initializeServices(const cntr : IDependencyContainer); virtual; abstract;
+        procedure initializeServices(const container : IDependencyContainer); virtual; abstract;
     public
         (*!--------------------------------------------------------
          * constructor
          *---------------------------------------------------------
-         * @param cntr actual dependency container
+         * @param container actual dependency container
          *---------------------------------------------------------*)
-        constructor create(const cntr : IDependencyContainer);
+        constructor create(const container : IDependencyContainer);
 
         (*!--------------------------------------------------------
          * destructor
          *---------------------------------------------------------*)
         destructor destroy(); override;
 
-        property container : IDependencyContainer read fActualContainer implements IDependencyContainer;
+        property serviceContainer : IDependencyContainer read fActualContainer implements IDependencyContainer;
     end;
 
 implementation
@@ -60,10 +60,10 @@ implementation
      *---------------------------------------------------------
      * @param cntr actual dependency container
      *---------------------------------------------------------*)
-    constructor TInitializeableContainer.create(const cntr : IDependencyContainer);
+    constructor TInitializeableContainer.create(const container : IDependencyContainer);
     begin
         inherited create();
-        fActualContainer := cntr;
+        fActualContainer := container;
         initializeServices(fActualContainer);
     end;
 
