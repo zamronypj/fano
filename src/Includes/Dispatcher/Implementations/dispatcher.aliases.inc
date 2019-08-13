@@ -2,6 +2,8 @@ EInvalidDispatcher = EInvalidDispatcherImpl.EInvalidDispatcher;
 EMethodNotAllowed = EMethodNotAllowedImpl.EMethodNotAllowed;
 ERouteHandlerNotFound = ERouteHandlerNotFoundImpl.ERouteHandlerNotFound;
 
+TDispatcher = DispatcherImpl.TDispatcherFactory;
+TSimpleDispatcher = SimpleDispatcherImpl.TSimpleDispatcher;
 
 TDispatcherFactory = DispatcherFactoryImpl.TDispatcherFactory;
 TSimpleDispatcherFactory = SimpleDispatcherFactoryImpl.TSimpleDispatcherFactory;
