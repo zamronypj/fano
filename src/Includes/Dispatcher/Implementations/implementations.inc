@@ -13,6 +13,8 @@
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
  *-----------------------------------------------*)
 
+DispatcherImpl,
+SimpleDispatcherImpl,
 DispatcherFactoryImpl,
 SimpleDispatcherFactoryImpl,
 EInvalidDispatcherImpl,
