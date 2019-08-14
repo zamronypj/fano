@@ -32,9 +32,14 @@ type
     private
         fMiddlewares : IMiddlewareCollectionAware;
         varPlaceholders : TArrayOfPlaceholders;
+
+        function getActualMiddlewares() : IMiddlewareCollectionAware;
+        function IMiddlewareCollectionAware.getMiddlewares = getActualMiddlewares;
     public
         constructor create(const aMiddlewares : IMiddlewareCollectionAware);
         destructor destroy(); override;
+
+        function getMiddlewares() : IMiddlewareCollectionAware;
 
         function handleRequest(
             const request : IRequest;
@@ -55,8 +60,6 @@ type
          * get single route argument data
          *--------------------------------------------*)
         function getArg(const key : string) : TPlaceholder;
-
-        property middlewares : IMiddlewareCollectionAware read fMiddlewares implements IMiddlewareCollectionAware;
     end;
 
 implementation
@@ -83,9 +86,19 @@ resourcestring
         inherited destroy();
     end;
 
+    function TRouteHandler.getActualMiddlewares() : IMiddlewareCollectionAware;
+    begin
+        result := fMiddlewares;
+    end;
+
+    function TRouteHandler.getMiddlewares() : IMiddlewareCollectionAware;
+    begin
+        result := self;
+    end;
+
     (*!-------------------------------------------
-        * Set route argument data
-        *--------------------------------------------*)
+     * Set route argument data
+     *--------------------------------------------*)
     function TRouteHandler.setArgs(const placeHolders : TArrayOfPlaceholders) : IRouteHandler;
     begin
         varPlaceholders := placeHolders;
