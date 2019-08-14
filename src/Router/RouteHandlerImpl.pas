@@ -60,6 +60,8 @@ type
          * get single route argument data
          *--------------------------------------------*)
         function getArg(const key : string) : TPlaceholder;
+
+        property middlewares : IMiddlewareCollectionAware read fMiddlewares implements IMiddlewareCollectionAware;
     end;
 
 implementation
