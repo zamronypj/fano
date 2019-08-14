@@ -123,7 +123,7 @@ uses
     ) : IResponse;
     var routeMiddlewares : IMiddlewareCollectionAware;
     begin
-        routeMiddlewares := routeHandler.getMiddlewares();
+        routeMiddlewares := routeHandler as IMiddlewareCollectionAware;
         try
             result := executeMiddlewareChain(env, routeHandler, routeMiddlewares);
         finally
