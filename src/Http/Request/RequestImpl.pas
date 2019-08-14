@@ -513,4 +513,15 @@ resourcestring
     begin
         result := (webEnvironment.env('HTTP_X_REQUESTED_WITH') = 'XMLHttpRequest');
     end;
+
+    (*!------------------------------------------------
+     * get request method GET, POST, HEAD, etc
+     *-------------------------------------------------
+     * @return string request method
+     *------------------------------------------------*)
+    function TRequest.getMethod() : string;
+    begin
+        result := webEnvironment.requestMethod();
+    end;
+
 end.
