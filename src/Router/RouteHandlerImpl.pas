@@ -83,11 +83,6 @@ resourcestring
         inherited destroy();
     end;
 
-    function TRouteHandler.getMiddlewares() : IMiddlewareCollectionAware;
-    begin
-        result := self;
-    end;
-
     (*!-------------------------------------------
      * Set route argument data
      *--------------------------------------------*)
