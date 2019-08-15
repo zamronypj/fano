@@ -18,7 +18,7 @@ uses
     RequestIntf,
     RouteHandlerIntf,
     RouteHandlerImpl,
-    MiddlewareCollectionIntf,
+    MiddlewareCollectionAwareIntf,
     ViewIntf,
     ViewParametersIntf;
 
@@ -35,8 +35,7 @@ type
         viewParams : IViewParameters;
     public
         constructor create(
-            const beforeMiddlewares : IMiddlewareCollection;
-            const afterMiddlewares : IMiddlewareCollection;
+            const aMiddlewares : IMiddlewareCollectionAware;
             const viewInst : IView;
             const viewParamsInst : IViewParameters
         );
@@ -51,13 +50,12 @@ type
 implementation
 
     constructor TController.create(
-        const beforeMiddlewares : IMiddlewareCollection;
-        const afterMiddlewares : IMiddlewareCollection;
+        const aMiddlewares : IMiddlewareCollectionAware;
         const viewInst : IView;
         const viewParamsInst : IViewParameters
     );
     begin
-        inherited create(beforeMiddlewares, afterMiddlewares);
+        inherited create(aMiddlewares);
         gView := viewInst;
         viewParams := viewParamsInst;
     end;

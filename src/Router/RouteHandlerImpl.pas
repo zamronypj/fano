@@ -16,8 +16,6 @@ uses
 
     RequestIntf,
     ResponseIntf,
-    MiddlewareIntf,
-    MiddlewareCollectionIntf,
     MiddlewareCollectionAwareIntf,
     RouteHandlerIntf,
     PlaceholderTypes,
@@ -32,20 +30,11 @@ type
      * -----------------------------------------------*)
     TRouteHandler = class(TInjectableObject, IRouteHandler, IMiddlewareCollectionAware)
     private
-        beforeMiddlewareList : IMiddlewareCollection;
-        afterMiddlewareList : IMiddlewareCollection;
+        fMiddlewares : IMiddlewareCollectionAware;
         varPlaceholders : TArrayOfPlaceholders;
     public
-        constructor create(
-            const beforeMiddlewares : IMiddlewareCollection;
-            const afterMiddlewares : IMiddlewareCollection
-        );
+        constructor create(const aMiddlewares : IMiddlewareCollectionAware);
         destructor destroy(); override;
-        function addBefore(const middleware : IMiddleware) : IMiddlewareCollectionAware;
-        function addAfter(const middleware : IMiddleware) : IMiddlewareCollectionAware;
-        function getMiddlewares() : IMiddlewareCollectionAware;
-        function getBefore() : IMiddlewareCollection;
-        function getAfter() : IMiddlewareCollection;
 
         function handleRequest(
             const request : IRequest;
@@ -66,6 +55,8 @@ type
          * get single route argument data
          *--------------------------------------------*)
         function getArg(const key : string) : TPlaceholder;
+
+        property middlewares : IMiddlewareCollectionAware read fMiddlewares implements IMiddlewareCollectionAware;
     end;
 
 implementation
@@ -78,54 +69,23 @@ resourcestring
 
     sRouteArgNotFound = 'Route argument %s not found';
 
-    constructor TRouteHandler.create(
-        const beforeMiddlewares : IMiddlewareCollection;
-        const afterMiddlewares : IMiddlewareCollection
-    );
+    constructor TRouteHandler.create(const aMiddlewares : IMiddlewareCollectionAware);
     begin
-        beforeMiddlewareList := beforeMiddlewares;
-        afterMiddlewareList := afterMiddlewares;
+        inherited create();
+        fMiddlewares := aMiddlewares;
         varPlaceholders := nil;
     end;
 
     destructor TRouteHandler.destroy();
     begin
-        inherited destroy();
-        beforeMiddlewareList := nil;
-        afterMiddlewareList := nil;
+        fMiddlewares := nil;
         varPlaceholders := nil;
-    end;
-
-    function TRouteHandler.addBefore(const middleware : IMiddleware) : IMiddlewareCollectionAware;
-    begin
-        beforeMiddlewareList.add(middleware);
-        result := self;
-    end;
-
-    function TRouteHandler.addAfter(const middleware : IMiddleware) : IMiddlewareCollectionAware;
-    begin
-        afterMiddlewareList.add(middleware);
-        result := self;
-    end;
-
-    function TRouteHandler.getBefore() : IMiddlewareCollection;
-    begin
-        result := beforeMiddlewareList;
-    end;
-
-    function TRouteHandler.getAfter() : IMiddlewareCollection;
-    begin
-        result := afterMiddlewareList;
-    end;
-
-    function TRouteHandler.getMiddlewares() : IMiddlewareCollectionAware;
-    begin
-        result := self;
+        inherited destroy();
     end;
 
     (*!-------------------------------------------
-        * Set route argument data
-        *--------------------------------------------*)
+     * Set route argument data
+     *--------------------------------------------*)
     function TRouteHandler.setArgs(const placeHolders : TArrayOfPlaceholders) : IRouteHandler;
     begin
         varPlaceholders := placeHolders;
@@ -133,8 +93,8 @@ resourcestring
     end;
 
     (*!-------------------------------------------
-        * get route argument data
-        *--------------------------------------------*)
+     * get route argument data
+     *--------------------------------------------*)
     function TRouteHandler.getArgs() : TArrayOfPlaceholders;
     begin
         result := varPlaceholders;

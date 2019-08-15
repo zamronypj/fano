@@ -28,7 +28,6 @@ type
      *-------------------------------------------------*)
     IRouteHandler = interface(IRequestHandler)
         ['{7F3C1F5B-4D60-441B-820F-400D76EAB1DC}']
-        function getMiddlewares() : IMiddlewareCollectionAware;
 
         (*!-------------------------------------------
          * Set route argument data
