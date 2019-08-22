@@ -27,7 +27,7 @@ type
 
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
-    IServiceContainer = interface (IDependencyContainer)
+    IServiceContainer = interface
         ['{BC4A8D34-FE8E-4EA3-A7EB-51A92889DA66}']
 
         (*!--------------------------------------------------------
