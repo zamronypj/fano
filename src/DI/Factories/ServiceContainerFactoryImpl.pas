@@ -13,7 +13,8 @@ interface
 
 uses
 
-    DependencyContainerIntf;
+    DependencyContainerIntf,
+    ContainerFactoryIntf;
 
 type
 
