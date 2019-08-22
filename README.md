@@ -78,6 +78,8 @@ all your applications that depends on Fano will be affected. If newer version of
 - Improve data validation and sanitation
 - Unit test
 
+See [Projects](https://github.com/orgs/fanoframework/projects) for more information about what is currently being developed or planed.
+
 ## Copyright Notice
 
 [See NOTICE.txt](NOTICE.txt)
