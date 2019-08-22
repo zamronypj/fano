@@ -5,7 +5,7 @@
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
-unit DependencyContainerIntf;
+unit ServiceContainerIntf;
 
 interface
 
@@ -13,16 +13,13 @@ interface
 {$H+}
 
 uses
-    DependencyIntf;
+
+    DependencyIntf,
+    DependencyContainerIntf,
+    ServiceIntf,
+    ServiceFactoryIntf;
 
 type
-    {-----------------------------------
-      make it forward declaration.
-      We are forced to combine factory interface
-      and container interface in one unit
-      because of circular reference
-    ------------------------------------}
-    IDependencyFactory = interface;
 
     {------------------------------------------------
      interface for any class having capability to manage
@@ -30,40 +27,40 @@ type
 
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
-    IDependencyContainer = interface
-        ['{7B76FB8C-47E0-4EE2-9020-341867711D9A}']
+    IServiceContainer = interface (IDependencyContainer)
+        ['{BC4A8D34-FE8E-4EA3-A7EB-51A92889DA66}']
 
         (*!--------------------------------------------------------
-         * Add factory instance to service registration as
+         * register factory instance to service registration as
          * single instance
          *---------------------------------------------------------
-         * @param serviceName name of service
+         * @param service service to be register
          * @param serviceFactory factory instance
          * @return current dependency container instance
          *---------------------------------------------------------*)
-        function add(const serviceName : shortstring; const serviceFactory : IDependencyFactory) : IDependencyContainer;
+        function register(const service : IInterface; const serviceFactory : IServiceFactory) : IServiceContainer;
 
         (*!--------------------------------------------------------
-         * Add factory instance to service registration as
+         * register factory instance to service registration as
          * multiple instance
          *---------------------------------------------------------
-         * @param serviceName name of service
+         * @param service service to be registered
          * @param serviceFactory factory instance
          * @return current dependency container instance
          *---------------------------------------------------------*)
-        function factory(const serviceName : shortstring; const serviceFactory : IDependencyFactory) : IDependencyContainer;
+        function registerMultiple(const service : IInterface; const serviceFactory : IServiceFactory) : IServiceContainer;
 
         (*!--------------------------------------------------------
-         * Add alias name to existing service
+         * register alias to existing service
          *---------------------------------------------------------
-         * @param aliasName alias name of service
-         * @param serviceName actual name of service
+         * @param aliasService alias of service
+         * @param serviceName actual service
          * @return current dependency container instance
          *---------------------------------------------------------*)
-        function alias(const aliasName: shortstring; const serviceName : shortstring) : IDependencyContainer;
+        function registerAlias(const aliasService: IInterface; const service : IInterface) : IServiceContainer;
 
         (*!--------------------------------------------------------
-         * get instance from service registration using its name.
+         * resolve instance from service registration using its name.
          *---------------------------------------------------------
          * @param serviceName name of service
          * @return dependency instance
@@ -72,9 +69,9 @@ type
          * if serviceName is registered with add(), then this method
          * will always return same instance. If serviceName is
          * registered using factory(), this method will return
-         * different instance everytime get() is called.
+         * different instance everytim get() is called.
          *---------------------------------------------------------*)
-        function get(const serviceName : shortstring) : IDependency;
+        function resolve(const service : IInterface) : IService;
 
         (*!--------------------------------------------------------
          * test if service is already registered or not.
@@ -82,25 +79,7 @@ type
          * @param serviceName name of service
          * @return boolean true if service is registered otherwise false
          *---------------------------------------------------------*)
-        function has(const serviceName : shortstring) : boolean;
-    end;
-
-    {------------------------------------------------
-     interface for any class having capability to
-     create other instance
-
-     @author Zamrony P. Juhara <zamronypj@yahoo.com>
-    -----------------------------------------------}
-    IDependencyFactory = interface
-        ['{BB858A2C-65DD-47C6-9A04-7C4CCA2816DD}']
-
-        {*!----------------------------------------
-         * build instance
-         *-----------------------------------------
-         * @param container dependency container instance
-         * @return instance of IDependency interface
-         *------------------------------------------*}
-        function build(const container : IDependencyContainer) : IDependency;
+        function isRegistered(const service : IInterface) : boolean;
     end;
 
 implementation
