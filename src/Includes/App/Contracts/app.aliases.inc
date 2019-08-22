@@ -14,3 +14,4 @@
  *-----------------------------------------------*)
 
 IWebApplication = AppIntf.IWebApplication;
+IWebApplicationFactory = AppFactoryIntf.IWebApplicationFactory;
