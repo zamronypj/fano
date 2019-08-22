@@ -80,10 +80,10 @@ type
          * @return dependency instance
          * @throws EDependencyNotFoundImpl exception when name is not registered
          *---------------------------------------------------------
-         * if serviceName is registered with add(), then this method
-         * will always return same instance. If serviceName is
-         * registered using factory(), this method will return
-         * different instance everytim get() is called.
+         * if service is registered with register(), then this method
+         * will always return same instance. If service is
+         * registered using registerMultiple(), this method will return
+         * different instance everytime resolve() is called.
          *---------------------------------------------------------*)
         function resolve(const service : IInterface) : IService;
 
@@ -102,8 +102,7 @@ implementation
 
 uses
 
-    sysutils;
-
+    SysUtils;
 
     constructor TServiceContainer.create(const di :IDependencyContainer);
     begin
