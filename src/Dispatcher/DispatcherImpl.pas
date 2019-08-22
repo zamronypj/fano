@@ -96,10 +96,8 @@ uses
     var middlewareChain : IMiddlewareChain;
     begin
         middlewareChain := middlewareChainFactory.build(
-            applicationMiddlewares.getBefore(),
-            applicationMiddlewares.getAfter(),
-            routeMiddlewares.getBefore(),
-            routeMiddlewares.getAfter()
+            applicationMiddlewares,
+            routeMiddlewares
         );
         try
             result := middlewareChain.execute(

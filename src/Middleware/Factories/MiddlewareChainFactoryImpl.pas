@@ -16,7 +16,7 @@ uses
 
    MiddlewareChainIntf,
    MiddlewareChainFactoryIntf,
-   MiddlewareCollectionIntf;
+   MiddlewareCollectionAwareIntf;
 
 type
 
