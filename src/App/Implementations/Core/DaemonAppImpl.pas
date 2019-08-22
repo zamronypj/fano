@@ -164,29 +164,32 @@ uses
         //This is to ensure that reference count of our instance
         //properly incremented/decremented so no memory leak
         fProcessor.setReadyListener(self);
-        workerServer.setDataAvailListener(self);
         try
+            workerServer.setDataAvailListener(self);
             try
-                //execute run loop until terminated
-                workerServer.run();
-            except
-                //TODO add better exception handling for ESockBind, ESockListen, ESockCreate
-                on e : ESockCreate do
-                begin
-                    writeln(e.message);
+                try
+                    //execute run loop until terminated
+                    workerServer.run();
+                except
+                    //TODO add better exception handling for ESockBind, ESockListen, ESockCreate
+                    on e : ESockCreate do
+                    begin
+                        writeln(e.message);
+                    end;
+                    on e : ESockBind do
+                    begin
+                        writeln(e.message);
+                    end;
+                    on e : ESockListen do
+                    begin
+                        writeln(e.message);
+                    end;
                 end;
-                on e : ESockBind do
-                begin
-                    writeln(e.message);
-                end;
-                on e : ESockListen do
-                begin
-                    writeln(e.message);
-                end;
+            finally
+                workerServer.setDataAvailListener(nil);
             end;
         finally
             fProcessor.setReadyListener(nil);
-            workerServer.setDataAvailListener(nil);
         end;
     end;
 
