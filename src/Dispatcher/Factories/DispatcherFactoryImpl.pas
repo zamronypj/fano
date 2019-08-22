@@ -53,22 +53,22 @@ uses
         const routeMatcherInst : IRouteMatcher
     );
     begin
+        inherited create();
         appMiddlewares := appMiddlewaresInst;
         routeMatcher := routeMatcherInst;
     end;
 
     destructor TDispatcherFactory.destroy();
     begin
-        inherited destroy();
         appMiddlewares := nil;
         routeMatcher := nil;
+        inherited destroy();
     end;
 
     function TDispatcherFactory.build(const container : IDependencyContainer) : IDependency;
     begin
         result := TDispatcher.create(
-            appMiddlewares.getBefore(),
-            appMiddlewares.getAfter(),
+            appMiddlewares,
             TMiddlewareChainFactory.create(),
             routeMatcher,
             TResponseFactory.create(),
