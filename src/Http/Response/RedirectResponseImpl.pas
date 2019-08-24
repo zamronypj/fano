@@ -84,16 +84,19 @@ uses
         const status : word = 302
     );
     begin
-        httpHeaders := hdrs;
+        inherited create();
         //redirect response does not need body, so we just use null stream
         fStream := TNullResponseStream.create();
+        httpHeaders := hdrs;
+        fStatus := status;
+        fUrl := url;
     end;
 
     destructor TRedirectResponse.destroy();
     begin
-        inherited destroy();
         fStream := nil;
         httpHeaders := nil;
+        inherited destroy();
     end;
 
     function TRedirectResponse.redirectCodeMessage(const code : word) : string;
