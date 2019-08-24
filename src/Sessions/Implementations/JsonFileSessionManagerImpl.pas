@@ -43,6 +43,21 @@ type
          * create session from session id
          *-------------------------------------
          * @param sessionId session id
+         * @return session instance or nil if not found
+         *-------------------------------------
+         * if sessionId point to valid session id in storage,
+         * then new ISession is created with is data populated
+         * from storage.
+         *
+         * if sessionId is empty string or invalid
+         * or expired, returns nil
+         *-------------------------------------*)
+        function findSession(const sessionId : string) : ISession;
+
+        (*!------------------------------------
+         * create session from session id
+         *-------------------------------------
+         * @param sessionId session id
          * @param lifeTimeInSec life time of session in seconds
          * @return session instance
          *-------------------------------------
@@ -59,6 +74,25 @@ type
             const lifeTimeInSec : integer
         ) : ISession;
 
+        (*!------------------------------------
+         * end session and persist to storage
+         *-------------------------------------
+         * @param session session instance
+         * @return current instance
+         *-------------------------------------*)
+        function persistSession(
+            const session : ISession
+        ) : ISessionManager; override;
+
+        (*!------------------------------------
+         * end session and remove its storage
+         *-------------------------------------
+         * @param session session instance
+         * @return current instance
+         *-------------------------------------*)
+        function destroySession(
+            const session : ISession
+        ) : ISessionManager; override;
     public
 
         (*!------------------------------------
@@ -110,15 +144,6 @@ type
             const session : ISession
         ) : ISessionManager; override;
 
-        (*!------------------------------------
-         * end session and remove its storage
-         *-------------------------------------
-         * @param session session instance
-         * @return current instance
-         *-------------------------------------*)
-        function destroySession(
-            const session : ISession
-        ) : ISessionManager; override;
     end;
 
 implementation
@@ -193,8 +218,7 @@ uses
      * create session from session id
      *-------------------------------------
      * @param sessionId session id
-     * @param lifeTimeInSec life time of session in seconds
-     * @return session instance
+     * @return session instance or nil if not found
      *-------------------------------------
      * if sessionId point to valid session id in storage,
      * then new ISession is created with is data populated
@@ -204,10 +228,7 @@ uses
      * or expired, new ISession is created with empty
      * data, session life time is set to lifeTime value
      *-------------------------------------*)
-    function TJsonFileSessionManager.createSession(
-        const sessionId : string;
-        const lifeTimeInSec : integer
-    ) : ISession;
+    function TJsonFileSessionManager.findSession(const sessionId : string) : ISession;
     var sess : ISession;
         sessFile : string;
         expiredDate : TDateTime;
@@ -226,6 +247,32 @@ uses
                 end;
             end;
         end;
+        result := sess;
+    end;
+
+    (*!------------------------------------
+     * create session from session id
+     *-------------------------------------
+     * @param sessionId session id
+     * @param lifeTimeInSec life time of session in seconds
+     * @return session instance
+     *-------------------------------------
+     * if sessionId point to valid session id in storage,
+     * then new ISession is created with is data populated
+     * from storage. lifeTimeInSec parameter is ignored
+     *
+     * if sessionId is empty string or invalid
+     * or expired, new ISession is created with empty
+     * data, session life time is set to lifeTime value
+     *-------------------------------------*)
+    function TJsonFileSessionManager.createSession(
+        const sessionId : string;
+        const lifeTimeInSec : integer
+    ) : ISession;
+    var sess : ISession;
+        expiredDate : TDateTime;
+    begin
+        sess := findSession(sessionId);
 
         if sess = nil then
         begin
@@ -238,6 +285,7 @@ uses
                 )
             );
         end;
+
         result := sess;
     end;
 
@@ -259,6 +307,19 @@ uses
     end;
 
     (*!------------------------------------
+     * get session from request
+     *-------------------------------------
+     * @param request current request instance
+     * @return session instance or nil if not found
+     *-------------------------------------*)
+    function TJsonFileSessionManager.getSession(const request : IRequest) : ISession;
+    var sessionId : string;
+    begin
+        sessionId := request.getCookieParam(fCookieName);
+        result := findSession(sessionId);
+    end;
+
+    (*!------------------------------------
      * end session and save session data to
      * persistent storage
      *-------------------------------------
@@ -266,6 +327,25 @@ uses
      * @return current instance
      *-------------------------------------*)
     function TJsonFileSessionManager.endSession(const session : ISession) : ISessionManager;
+    begin
+        if session.expired() then
+        begin
+            destroySession(session);
+        end else
+        begin
+            persistSession(session);
+        end;
+        result := self;
+    end;
+
+    (*!------------------------------------
+     * end session and delete session data from
+     * persistent storage
+     *-------------------------------------
+     * @param session session instance
+     * @return current instance
+     *-------------------------------------*)
+    function TJsonFileSessionManager.persistSession(const session : ISession) : ISessionManager;
     var sessFilename : string;
     begin
         sessFilename := fSessionFilename + session.id();
