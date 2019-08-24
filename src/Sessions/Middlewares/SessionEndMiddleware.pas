@@ -13,6 +13,7 @@ uses
 
     MiddlewareIntf,
     SessionManagerIntf,
+    SessionIntf,
     RequestIntf,
     ResponseIntf,
     AbstractSessionMiddleware;
@@ -31,7 +32,7 @@ type
             const request : IRequest;
             const response : IResponse;
             var canContinue : boolean
-        ) : IResponse;
+        ) : IResponse; override;
     end;
 
 implementation
@@ -42,12 +43,10 @@ implementation
           var canContinue : boolean
     ) : IResponse;
     var sess : ISession;
-        cookie : ICookie;
     begin
         sess := fSession.getSession(request);
         fSession.endSession(sess);
-        cookie := TCookie.create(sess);
-        result := TCookieResponse.create(response, cookie);
+        result := TSessionResponse.create(response, sess);
     end;
 
 end.
