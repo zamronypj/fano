@@ -85,10 +85,11 @@ uses
     );
     begin
         inherited create();
-        httpHeaders := hdrs;
-        fStatus := status;
         //redirect response does not need body, so we just use null stream
         fStream := TNullResponseStream.create();
+        httpHeaders := hdrs;
+        fStatus := status;
+        fUrl := url;
     end;
 
     destructor TRedirectResponse.destroy();
