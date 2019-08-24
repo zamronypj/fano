@@ -82,7 +82,7 @@ type
          *-------------------------------------*)
         function persistSession(
             const session : ISession
-        ) : ISessionManager; override;
+        ) : ISessionManager;
 
         (*!------------------------------------
          * end session and remove its storage
@@ -92,7 +92,7 @@ type
          *-------------------------------------*)
         function destroySession(
             const session : ISession
-        ) : ISessionManager; override;
+        ) : ISessionManager;
     public
 
         (*!------------------------------------
@@ -132,6 +132,14 @@ type
             const request : IRequest;
             const lifeTimeInSec : integer
         ) : ISession; override;
+
+        (*!------------------------------------
+         * get session from request
+         *-------------------------------------
+         * @param request current request instance
+         * @return session instance or nil if not found
+         *-------------------------------------*)
+        function getSession(const request : IRequest) : ISession; override;
 
         (*!------------------------------------
          * end session and save session data to

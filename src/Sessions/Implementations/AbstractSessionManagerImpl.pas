@@ -67,6 +67,14 @@ type
         ) : ISession; virtual; abstract;
 
         (*!------------------------------------
+         * get session from request
+         *-------------------------------------
+         * @param request current request instance
+         * @return session instance or nil if not found
+         *-------------------------------------*)
+        function getSession(const request : IRequest) : ISession; virtual; abstract;
+
+        (*!------------------------------------
          * end session and save session data to
          * persistent storage
          *-------------------------------------
@@ -77,15 +85,6 @@ type
             const session : ISession
         ) : ISessionManager; virtual; abstract;
 
-        (*!------------------------------------
-         * end session and remove its storage
-         *-------------------------------------
-         * @param session session instance
-         * @return current instance
-         *-------------------------------------*)
-        function destroySession(
-            const session : ISession
-        ) : ISessionManager; virtual; abstract;
     end;
 
 implementation
