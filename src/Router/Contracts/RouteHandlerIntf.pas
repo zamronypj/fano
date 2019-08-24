@@ -31,18 +31,26 @@ type
 
         (*!-------------------------------------------
          * Set route argument data
+         *--------------------------------------------
+         * @param placeHolders array of placeholders
+         * @return current instance
          *--------------------------------------------*)
         function setArgs(const placeHolders : TArrayOfPlaceholders) : IRouteHandler;
 
         (*!-------------------------------------------
          * get route argument data
+         *--------------------------------------------
+         * @return current array of placeholders
          *--------------------------------------------*)
         function getArgs() : TArrayOfPlaceholders;
 
         (*!-------------------------------------------
          * get single route argument data
+         *--------------------------------------------
+         * @param key name of argument
+         * @return placeholder
          *--------------------------------------------*)
-        function getArg(const key : string) : TPlaceholder;
+        function getArg(const key : shortstring) : TPlaceholder;
     end;
 
 implementation
