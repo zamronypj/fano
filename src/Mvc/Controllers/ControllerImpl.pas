@@ -38,12 +38,12 @@ type
         (*!-------------------------------------------
          * constructor
          *--------------------------------------------
-         * @param middlewares object represent middlewares
+         * @param amiddlewares object represent middlewares
          * @param viewInst view instance to use
          * @param viewParamsInt view parameters
          *--------------------------------------------*)
         constructor create(
-            const middlewares : IMiddlewareCollectionAware;
+            const amiddlewares : IMiddlewareCollectionAware;
             const viewInst : IView;
             const viewParamsInst : IViewParameters
         );
@@ -71,17 +71,17 @@ implementation
     (*!-------------------------------------------
      * constructor
      *--------------------------------------------
-     * @param middlewares object represent middlewares
+     * @param amiddlewares object represent middlewares
      * @param viewInst view instance to use
      * @param viewParamsInt view parameters
      *--------------------------------------------*)
     constructor TController.create(
-        const middlewares : IMiddlewareCollectionAware;
+        const amiddlewares : IMiddlewareCollectionAware;
         const viewInst : IView;
         const viewParamsInst : IViewParameters
     );
     begin
-        inherited create(middlewares);
+        inherited create(amiddlewares);
         gView := viewInst;
         viewParams := viewParamsInst;
     end;

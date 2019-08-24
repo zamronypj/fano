@@ -37,9 +37,9 @@ type
         (*!-------------------------------------------
          * constructor
          *--------------------------------------------
-         * @param middlewares object represent middlewares
+         * @param amiddlewares object represent middlewares
          *--------------------------------------------*)
-        constructor create(const middlewares : IMiddlewareCollectionAware);
+        constructor create(const amiddlewares : IMiddlewareCollectionAware);
 
         (*!-------------------------------------------
          * destructor
@@ -94,14 +94,14 @@ uses
     (*!-------------------------------------------
      * constructor
      *--------------------------------------------
-     * @param middlewares object represent middlewares
+     * @param amiddlewares object represent middlewares
      * @param viewInst view instance to use
      * @param viewParamsInt view parameters
      *--------------------------------------------*)
-    constructor TRouteHandler.create(const middlewares : IMiddlewareCollectionAware);
+    constructor TRouteHandler.create(const amiddlewares : IMiddlewareCollectionAware);
     begin
         inherited create();
-        fMiddlewares := middlewares;
+        fMiddlewares := amiddlewares;
         varPlaceholders := nil;
     end;
 
