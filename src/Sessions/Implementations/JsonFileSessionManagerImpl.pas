@@ -239,7 +239,6 @@ uses
     function TJsonFileSessionManager.findSession(const sessionId : string) : ISession;
     var sess : ISession;
         sessFile : string;
-        expiredDate : TDateTime;
     begin
         sess := nil;
         sessFile := fSessionFilename + sessionId;
