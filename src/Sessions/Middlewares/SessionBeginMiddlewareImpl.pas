@@ -5,7 +5,7 @@
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
  * @license   https://github.com/fanoframework/fano-app-middleware/blob/master/LICENSE (GPL 3.0)
  *------------------------------------------------------------- *)
-unit SessionBeginMiddleware;
+unit SessionBeginMiddlewareImpl;
 
 interface
 
@@ -14,7 +14,7 @@ uses
     RequestIntf,
     ResponseIntf,
     SessionManagerIntf,
-    AbstractSessionMiddleware;
+    AbstractSessionMiddlewareImpl;
 
 type
 

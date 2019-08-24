@@ -25,3 +25,10 @@ Sha1SessionIdGeneratorImpl,
 JsonSessionImpl,
 JsonFileSessionManagerImpl,
 JsonFileSessionManagerFactoryImpl,
+
+AbstractSessionMiddlewareImpl,
+SessionBeginMiddlewareImpl,
+SessionEndMiddlewareImpl,
+
+SessionBeginMiddlewareFactoryImpl,
+SessionEndMiddlewareFactoryImpl,

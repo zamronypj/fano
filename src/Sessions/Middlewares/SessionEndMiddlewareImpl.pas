@@ -5,7 +5,7 @@
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
  * @license   https://github.com/fanoframework/fano-app-middleware/blob/master/LICENSE (GPL 3.0)
  *------------------------------------------------------------- *)
-unit AbstractSessionMiddleware;
+unit SessionEndMiddlewareImpl;
 
 interface
 
@@ -13,43 +13,40 @@ uses
 
     MiddlewareIntf,
     SessionManagerIntf,
+    SessionIntf,
     RequestIntf,
     ResponseIntf,
-    InjectableObjectImpl;
+    AbstractSessionMiddlewareImpl;
 
 type
 
     (*!------------------------------------------------
-     * middleware implementation that manages session
+     * middleware implementation that persist session
+     * data to storage at the end of request
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TAbstractSessionMiddleware = class(TInjectableObject, IMiddleware)
-    protected
-        fSessionMgr : ISessionManager;
+    TSessionEndMiddleware = class(TAbstractSessionMiddleware)
     public
-        constructor create(const sessionMgr : ISessionManager);
-        destructor destroy(); override;
-
         function handleRequest(
             const request : IRequest;
             const response : IResponse;
             var canContinue : boolean
-        ) : IResponse; virtual; abstract;
+        ) : IResponse; override;
     end;
 
 implementation
 
-    constructor TAbstractSessionMiddleware.create(const sessionMgr : ISessionManager);
+    function TSessionEndMiddleware.handleRequest(
+          const request : IRequest;
+          const response : IResponse;
+          var canContinue : boolean
+    ) : IResponse;
+    var sess : ISession;
     begin
-        inherited create();
-        fSessionMgr := sessionMgr;
-    end;
-
-    destructor TAbstractSessionMiddleware.destroy();
-    begin
-        fSessionMgr := nil;
-        inherited destroy();
+        sess := fSession.getSession(request);
+        fSession.endSession(sess);
+        result := TSessionResponse.create(response, sess);
     end;
 
 end.

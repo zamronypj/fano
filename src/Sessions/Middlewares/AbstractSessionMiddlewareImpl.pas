@@ -5,7 +5,7 @@
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
  * @license   https://github.com/fanoframework/fano-app-middleware/blob/master/LICENSE (GPL 3.0)
  *------------------------------------------------------------- *)
-unit SessionEndMiddleware;
+unit AbstractSessionMiddlewareImpl;
 
 interface
 
@@ -13,40 +13,43 @@ uses
 
     MiddlewareIntf,
     SessionManagerIntf,
-    SessionIntf,
     RequestIntf,
     ResponseIntf,
-    AbstractSessionMiddleware;
+    InjectableObjectImpl;
 
 type
 
     (*!------------------------------------------------
-     * middleware implementation that persist session
-     * data to storage at the end of request
+     * middleware implementation that manages session
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TSessionEndMiddleware = class(TAbstractSessionMiddleware)
+    TAbstractSessionMiddleware = class(TInjectableObject, IMiddleware)
+    protected
+        fSessionMgr : ISessionManager;
     public
+        constructor create(const sessionMgr : ISessionManager);
+        destructor destroy(); override;
+
         function handleRequest(
             const request : IRequest;
             const response : IResponse;
             var canContinue : boolean
-        ) : IResponse; override;
+        ) : IResponse; virtual; abstract;
     end;
 
 implementation
 
-    function TSessionEndMiddleware.handleRequest(
-          const request : IRequest;
-          const response : IResponse;
-          var canContinue : boolean
-    ) : IResponse;
-    var sess : ISession;
+    constructor TAbstractSessionMiddleware.create(const sessionMgr : ISessionManager);
     begin
-        sess := fSession.getSession(request);
-        fSession.endSession(sess);
-        result := TSessionResponse.create(response, sess);
+        inherited create();
+        fSessionMgr := sessionMgr;
+    end;
+
+    destructor TAbstractSessionMiddleware.destroy();
+    begin
+        fSessionMgr := nil;
+        inherited destroy();
     end;
 
 end.
