@@ -358,7 +358,7 @@ uses
     function TJsonSession.expired() : boolean;
     var expiredDateTime : TDateTime;
     begin
-        expiredDateTime := TDateTime(fSessionData.getPath('expire').asFloat);
+        expiredDateTime := strToDateTime(fSessionData.getPath('expire').asString);
         //value > 0, means now() is later than expiredDateTime i.e,
         //expireddateTime is in past
         result := (compareDateTime(now(), expiredDateTime) > 0);
@@ -370,12 +370,8 @@ uses
      * @return current session instance
      *-------------------------------------*)
     function TJsonSession.expiresAt() : TDateTime;
-    var sessData :TJsonObject;
-        expiredDate : double;
     begin
-        sessData := TJsonObject(fSessionData);
-        expiredDate := sessData.floats['expire'];
-        result := TDateTime(expiredDate);
+        result := strToDateTime(fSessionData.getPath('expire').asString);
     end;
 
     procedure TJsonSession.raiseExceptionIfExpired();

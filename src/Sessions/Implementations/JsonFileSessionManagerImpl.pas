@@ -234,7 +234,7 @@ uses
                 fSessionIdGenerator.getSessionId(),
                 format(
                     '{"expire": "%s", "sessionVars" : {}}',
-                    [ dateTimeToStr(expiredDate) ]
+                    [ formatDateTime('dd-mm-yyyy hh:nn:ss', expiredDate) ]
                 )
             );
         end;
