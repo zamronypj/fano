@@ -214,7 +214,7 @@ uses
     begin
         sess := nil;
         sessFile := fSessionFilename + sessionId;
-        if fileExists(sessFile) then
+        if (sessionId <> '') and (fileExists(sessFile)) then
         begin
             sess := TJsonSession.create(sessionId, fFileReader.readFile(sessFile));
             try
