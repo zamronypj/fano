@@ -45,8 +45,7 @@ type
          * get session from request
          *-------------------------------------
          * @param request current request instance
-         * @param lifeTimeInSec life time of session in seconds
-         * @return session instance
+         * @return session instance or nil if not found
          *-------------------------------------*)
         function getSession(const request : IRequest) : ISession;
 
