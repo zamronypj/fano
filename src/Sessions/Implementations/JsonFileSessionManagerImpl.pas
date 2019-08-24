@@ -275,7 +275,7 @@ uses
     end;
 
     (*!------------------------------------
-     * end session and save session data to
+     * end session and delete session data from
      * persistent storage
      *-------------------------------------
      * @param session session instance
