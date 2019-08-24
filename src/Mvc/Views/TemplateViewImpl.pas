@@ -59,7 +59,7 @@ implementation
     );
     var fReader : IFileReader;
     begin
-        fileReader := templateReaderInst;
+        fReader := templateReaderInst;
         inherited create(templateParserInst, fReader.readFile(tplPath));
     end;
 
