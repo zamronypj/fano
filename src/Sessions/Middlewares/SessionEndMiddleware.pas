@@ -42,9 +42,9 @@ implementation
           var canContinue : boolean
     ) : IResponse;
     var sess : ISession;
-        cookie ; ICookie;
+        cookie : ICookie;
     begin
-        sess := fSession.getSessionFromRequest(request);
+        sess := fSession.getSession(request);
         fSession.endSession(sess);
         cookie := TCookie.create(sess);
         result := TCookieResponse.create(response, cookie);
