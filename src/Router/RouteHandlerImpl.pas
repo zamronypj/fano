@@ -33,9 +33,26 @@ type
         fMiddlewares : IMiddlewareCollectionAware;
         varPlaceholders : TArrayOfPlaceholders;
     public
-        constructor create(const aMiddlewares : IMiddlewareCollectionAware);
+
+        (*!-------------------------------------------
+         * constructor
+         *--------------------------------------------
+         * @param middlewares object represent middlewares
+         *--------------------------------------------*)
+        constructor create(const middlewares : IMiddlewareCollectionAware);
+
+        (*!-------------------------------------------
+         * destructor
+         *--------------------------------------------*)
         destructor destroy(); override;
 
+        (*!-------------------------------------------
+         * abstract method that handle request
+         *--------------------------------------------
+         * @param request object represent current request
+         * @param response object represent current response
+         * @return new response
+         *--------------------------------------------*)
         function handleRequest(
             const request : IRequest;
             const response : IResponse
@@ -43,18 +60,26 @@ type
 
         (*!-------------------------------------------
          * Set route argument data
+         *--------------------------------------------
+         * @param placeHolders array of placeholders
+         * @return current instance
          *--------------------------------------------*)
         function setArgs(const placeHolders : TArrayOfPlaceholders) : IRouteHandler;
 
         (*!-------------------------------------------
          * get route argument data
+         *--------------------------------------------
+         * @return current array of placeholders
          *--------------------------------------------*)
         function getArgs() : TArrayOfPlaceholders;
 
         (*!-------------------------------------------
          * get single route argument data
+         *--------------------------------------------
+         * @param key name of argument
+         * @return placeholder
          *--------------------------------------------*)
-        function getArg(const key : string) : TPlaceholder;
+        function getArg(const key : shortstring) : TPlaceholder;
 
         property middlewares : IMiddlewareCollectionAware read fMiddlewares implements IMiddlewareCollectionAware;
     end;
@@ -63,16 +88,20 @@ implementation
 
 uses
 
+    RouteConsts,
     ERouteArgNotFoundImpl;
 
-resourcestring
-
-    sRouteArgNotFound = 'Route argument %s not found';
-
-    constructor TRouteHandler.create(const aMiddlewares : IMiddlewareCollectionAware);
+    (*!-------------------------------------------
+     * constructor
+     *--------------------------------------------
+     * @param middlewares object represent middlewares
+     * @param viewInst view instance to use
+     * @param viewParamsInt view parameters
+     *--------------------------------------------*)
+    constructor TRouteHandler.create(const middlewares : IMiddlewareCollectionAware);
     begin
         inherited create();
-        fMiddlewares := aMiddlewares;
+        fMiddlewares := middlewares;
         varPlaceholders := nil;
     end;
 

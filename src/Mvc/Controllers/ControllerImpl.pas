@@ -34,13 +34,32 @@ type
         gView : IView;
         viewParams : IViewParameters;
     public
+
+        (*!-------------------------------------------
+         * constructor
+         *--------------------------------------------
+         * @param middlewares object represent middlewares
+         * @param viewInst view instance to use
+         * @param viewParamsInt view parameters
+         *--------------------------------------------*)
         constructor create(
-            const aMiddlewares : IMiddlewareCollectionAware;
+            const middlewares : IMiddlewareCollectionAware;
             const viewInst : IView;
             const viewParamsInst : IViewParameters
         );
+
+        (*!-------------------------------------------
+         * destructor
+         *--------------------------------------------*)
         destructor destroy(); override;
 
+        (*!-------------------------------------------
+         * handle request
+         *--------------------------------------------
+         * @param request object represent current request
+         * @param response object represent current response
+         * @return new response
+         *--------------------------------------------*)
         function handleRequest(
               const request : IRequest;
               const response : IResponse
@@ -49,24 +68,41 @@ type
 
 implementation
 
+    (*!-------------------------------------------
+     * constructor
+     *--------------------------------------------
+     * @param middlewares object represent middlewares
+     * @param viewInst view instance to use
+     * @param viewParamsInt view parameters
+     *--------------------------------------------*)
     constructor TController.create(
-        const aMiddlewares : IMiddlewareCollectionAware;
+        const middlewares : IMiddlewareCollectionAware;
         const viewInst : IView;
         const viewParamsInst : IViewParameters
     );
     begin
-        inherited create(aMiddlewares);
+        inherited create(middlewares);
         gView := viewInst;
         viewParams := viewParamsInst;
     end;
 
+    (*!-------------------------------------------
+     * destructor
+     *--------------------------------------------*)
     destructor TController.destroy();
     begin
-        inherited destroy();
         gView := nil;
         viewParams := nil;
+        inherited destroy();
     end;
 
+    (*!-------------------------------------------
+     * handle request
+     *--------------------------------------------
+     * @param request object represent current request
+     * @param response object represent current response
+     * @return new response
+     *--------------------------------------------*)
     function TController.handleRequest(
           const request : IRequest;
           const response : IResponse
