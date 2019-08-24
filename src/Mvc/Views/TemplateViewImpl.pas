@@ -57,11 +57,10 @@ implementation
         const templateParserInst : ITemplateParser;
         const templateReaderInst : IFileReader
     );
+    var fReader : IFileReader;
     begin
-        inherited create(
-            templateParserInst,
-            templateReaderInst.readFile(tplPath)
-        );
+        fileReader := templateReaderInst;
+        inherited create(templateParserInst, fReader.readFile(tplPath));
     end;
 
 end.

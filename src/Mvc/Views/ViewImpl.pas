@@ -91,6 +91,7 @@ uses
         const tplContent : string
     );
     begin
+        inherited create();
         templateParser := templateParserInst;
         templateContent := tplContent;
     end;
@@ -100,8 +101,8 @@ uses
      *-----------------------------------------------*)
     destructor TView.destroy();
     begin
-        inherited destroy();
         templateParser := nil;
+        inherited destroy();
     end;
 
     (*!------------------------------------------------

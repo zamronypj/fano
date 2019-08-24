@@ -37,8 +37,7 @@ type
      *---------------------------------------------------*)
     TDispatcher = class(TBaseDispatcher)
     private
-        appBeforeMiddlewareList : IMiddlewareCollection;
-        appAfterMiddlewareList : IMiddlewareCollection;
+        applicationMiddlewares : IMiddlewareCollectionAware;
         middlewareChainFactory : IMiddlewareChainFactory;
 
         function executeMiddlewareChain(
@@ -53,8 +52,7 @@ type
         ) : IResponse;
     public
         constructor create(
-            const appBeforeMiddlewares : IMiddlewareCollection;
-            const appAfterMiddlewares : IMiddlewareCollection;
+            const appMiddlewares : IMiddlewareCollectionAware;
             const chainFactory : IMiddlewareChainFactory;
             const routes : IRouteMatcher;
             const respFactory : IResponseFactory;
@@ -71,8 +69,7 @@ uses
     MiddlewareChainIntf;
 
     constructor TDispatcher.create(
-        const appBeforeMiddlewares : IMiddlewareCollection;
-        const appAfterMiddlewares : IMiddlewareCollection;
+        const appMiddlewares : IMiddlewareCollectionAware;
         const chainFactory : IMiddlewareChainFactory;
         const routes : IRouteMatcher;
         const respFactory : IResponseFactory;
@@ -80,17 +77,15 @@ uses
     );
     begin
         inherited create(routes, respFactory, reqFactory);
-        appBeforeMiddlewareList := appBeforeMiddlewares;
-        appAfterMiddlewareList := appAfterMiddlewares;
+        applicationMiddlewares := appMiddlewares;
         middlewareChainFactory := chainFactory;
     end;
 
     destructor TDispatcher.destroy();
     begin
-        inherited destroy();
-        appBeforeMiddlewareList := nil;
-        appAfterMiddlewareList := nil;
+        applicationMiddlewares := nil;
         middlewareChainFactory := nil;
+        inherited destroy();
     end;
 
     function TDispatcher.executeMiddlewareChain(
@@ -101,10 +96,8 @@ uses
     var middlewareChain : IMiddlewareChain;
     begin
         middlewareChain := middlewareChainFactory.build(
-            appBeforeMiddlewareList,
-            appAfterMiddlewareList,
-            routeMiddlewares.getBefore(),
-            routeMiddlewares.getAfter()
+            applicationMiddlewares,
+            routeMiddlewares
         );
         try
             result := middlewareChain.execute(

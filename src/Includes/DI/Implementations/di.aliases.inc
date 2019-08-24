@@ -21,3 +21,9 @@ TFactory = FactoryImpl.TFactory;
 EDependencyNotFound = EDependencyNotFoundImpl.EDependencyNotFound;
 EInvalidFactory = EInvalidFactoryImpl.EInvalidFactory;
 EDependencyAlias = EDependencyAliasImpl.EDependencyAlias;
+
+TBasicContainerFactory = BasicContainerFactoryImpl.TBasicContainerFactory;
+
+TService = ServiceImpl.TService;
+TServiceContainer = ServiceContainerImpl.TServiceContainer;
+TServiceContainerFactory = ServiceContainerFactoryImpl.TServiceContainerFactory;

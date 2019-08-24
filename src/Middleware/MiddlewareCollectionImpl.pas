@@ -17,7 +17,8 @@ uses
     classes,
     DependencyIntf,
     MiddlewareIntf,
-    MiddlewareCollectionIntf;
+    MiddlewareCollectionIntf,
+    InjectableObjectImpl;
 
 type
 
@@ -27,7 +28,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TMiddlewareCollection = class(TInterfacedObject, IMiddlewareCollection, IDependency)
+    TMiddlewareCollection = class(TInjectableObject, IMiddlewareCollection)
     private
         middlewareList : TInterfaceList;
     public

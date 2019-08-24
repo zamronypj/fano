@@ -32,6 +32,13 @@ type
         ['{32913245-599A-4BF4-B25D-7E2EF349F7BB}']
 
         (*!------------------------------------------------
+         * get request method GET, POST, HEAD, etc
+         *-------------------------------------------------
+         * @return string request method
+         *------------------------------------------------*)
+        function getMethod() : string;
+
+        (*!------------------------------------------------
          * get single query param value by its name
          *-------------------------------------------------
          * @param string key name of key

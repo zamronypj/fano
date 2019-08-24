@@ -6,12 +6,15 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-(*! ---------------------------------------------
- * unit interfaces for app that is included in
- * fano.pas unit
- *
- * @author Zamrony P. Juhara <zamronypj@yahoo.com>
- *-----------------------------------------------*)
+unit RouteConsts;
 
-AppIntf,
-AppFactoryIntf,
+interface
+
+{$MODE OBJFPC}
+
+resourcestring
+
+    sRouteArgNotFound = 'Route argument %s not found';
+
+implementation
+end.

@@ -16,7 +16,7 @@ uses
 
    MiddlewareChainIntf,
    MiddlewareChainFactoryIntf,
-   MiddlewareCollectionIntf;
+   MiddlewareCollectionAwareIntf;
 
 type
 
@@ -29,10 +29,8 @@ type
     TMiddlewareChainFactory = class(TInterfacedObject, IMiddlewareChainFactory)
     public
         function build(
-            const appBeforeMiddlewares : IMiddlewareCollection;
-            const appAfterMiddlewares : IMiddlewareCollection;
-            const routeBeforeMiddlewares : IMiddlewareCollection;
-            const routeAfterMiddlewares : IMiddlewareCollection
+            const appMiddlewares : IMiddlewareCollectionAware;
+            const routeMiddlewares : IMiddlewareCollectionAware
         ) : IMiddlewareChain;
     end;
 
@@ -42,17 +40,15 @@ uses
     MiddlewareChainImpl;
 
     function TMiddlewareChainFactory.build(
-        const appBeforeMiddlewares : IMiddlewareCollection;
-        const appAfterMiddlewares : IMiddlewareCollection;
-        const routeBeforeMiddlewares : IMiddlewareCollection;
-        const routeAfterMiddlewares : IMiddlewareCollection
+        const appMiddlewares : IMiddlewareCollectionAware;
+        const routeMiddlewares : IMiddlewareCollectionAware
     ) : IMiddlewareChain;
     begin
         result := TMiddlewareChain.create(
-            appBeforeMiddlewares,
-            appAfterMiddlewares,
-            routeBeforeMiddlewares,
-            routeAfterMiddlewares
+            appMiddlewares.getBefore(),
+            appMiddlewares.getAfter(),
+            routeMiddlewares.getBefore(),
+            routeMiddlewares.getAfter()
         );
     end;
 end.

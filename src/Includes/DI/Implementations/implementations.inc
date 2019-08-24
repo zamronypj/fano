@@ -22,3 +22,8 @@ EDependencyNotFoundImpl,
 EInvalidFactoryImpl,
 EDependencyAliasImpl,
 FactoryImpl,
+
+ServiceImpl,
+ServiceContainerImpl,
+BasicContainerFactoryImpl,
+ServiceContainerFactoryImpl,
