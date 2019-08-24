@@ -130,7 +130,7 @@ uses
 
     function TRedirectResponse.write() : IResponse;
     begin
-        httpHeaders.setHeader('Status: ', intToStr(fStatus) + ' ' + redirectCodeMessage(fStatus));
+        httpHeaders.setHeader('Status', intToStr(fStatus) + ' ' + redirectCodeMessage(fStatus));
         httpHeaders.setHeader('Location', fUrl);
         httpHeaders.writeHeaders();
         result := self;
