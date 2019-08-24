@@ -39,7 +39,7 @@ type
         constructor create(
             const tplPath : string;
             const templateParserInst : ITemplateParser;
-            templateReaderInst : IFileReader
+            const templateReaderInst : IFileReader
         );
     end;
 
@@ -55,13 +55,12 @@ implementation
     constructor TTemplateView.create(
         const tplPath : string;
         const templateParserInst : ITemplateParser;
-        templateReaderInst : IFileReader
+        const templateReaderInst : IFileReader
     );
+    var fReader : IFileReader;
     begin
-        inherited create(
-            templateParserInst,
-            templateReaderInst.readFile(tplPath)
-        );
+        fileReader := templateReaderInst;
+        inherited create(templateParserInst, fReader.readFile(tplPath));
     end;
 
 end.
