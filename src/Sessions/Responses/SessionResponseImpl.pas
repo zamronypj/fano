@@ -56,7 +56,7 @@ implementation
     begin
         inherited create();
         fResponse := aResponse;
-        addHeaders(fResponse.headers(), fSession, fCookieFactory);
+        addHeaders(fResponse.headers(), aSession, cookieFactory);
     end;
 
     destructor TSessionResponse.destroy();
