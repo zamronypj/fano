@@ -79,6 +79,14 @@ type
         function get(const indx : integer) : pointer;
         procedure delete(const indx : integer);
         function keyOfIndex(const indx : integer) : shortstring;
+
+        (*!------------------------------------------------
+         * get index by key name
+         *-----------------------------------------------
+         * @param key name
+         * @return index of key
+         *-----------------------------------------------*)
+        function indexOf(const key : shortstring) : integer;
     end;
 
 implementation
@@ -401,5 +409,16 @@ const
     function TSimpleRegexRouteList.keyOfIndex(const indx : integer) : shortstring;
     begin
         result := hashesList.keyOfIndex(indx);
+    end;
+
+    (*!------------------------------------------------
+     * get index by key name
+     *-----------------------------------------------
+     * @param key name
+     * @return index of key
+     *-----------------------------------------------*)
+    function TSimpleRegexRouteList.indexOf(const key : shortstring) : integer;
+    begin
+        result := hashesList.findIndexOf(key);
     end;
 end.
