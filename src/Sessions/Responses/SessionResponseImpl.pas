@@ -49,9 +49,9 @@ type
 implementation
 
     constructor TSessionResponse.create(
-        aResponse : IResponse;
-        aSession : ISession;
-        cookieFactory : ICookieFactory
+        const aResponse : IResponse;
+        const aSession : ISession;
+        const cookieFactory : ICookieFactory
     );
     begin
         inherited create();
