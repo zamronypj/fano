@@ -16,7 +16,8 @@ interface
 uses
 
     CookieIntf,
-    CookieFactoryIntf;
+    CookieFactoryIntf,
+    InjectableObjectImpl;
 
 type
 
