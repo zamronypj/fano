@@ -90,7 +90,8 @@ uses
         sess := fSessionMgr.beginSession(request, fExpiresInSec);
         try
             newResp := fActualMiddlewareChain.execute(request, response, requestHandler);
-            result := TSessionResponse.create(newResp, sess, fCookieFactory);
+            //result := TSessionResponse.create(newResp, sess, fCookieFactory);
+            result := newResp;
             fSessionMgr.endSession(sess);
         finally
             sess := nil;
