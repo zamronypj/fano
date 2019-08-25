@@ -55,13 +55,6 @@ type
         destructor destroy(); override;
 
         (*!------------------------------------
-         * get session name
-         *-------------------------------------
-         * @return session name
-         *-------------------------------------*)
-        function sessionName() : string;
-
-        (*!------------------------------------
          * create session from request
          *-------------------------------------
          * @param request current request instance
@@ -122,11 +115,5 @@ implementation
         inherited destroy();
         fSessionIdGenerator := nil;
     end;
-
-    function TAbstractSessionManager.sessionName() : string;
-    begin
-        result := fCookieName;
-    end;
-
 
 end.

@@ -30,13 +30,6 @@ type
         ['{F6526BF2-538B-46CC-AF49-D5F373B6E2F5}']
 
         (*!------------------------------------
-         * get session name
-         *-------------------------------------
-         * @return session name
-         *-------------------------------------*)
-        function sessionName() : string;
-
-        (*!------------------------------------
          * create session from request
          *-------------------------------------
          * @param request current request instance

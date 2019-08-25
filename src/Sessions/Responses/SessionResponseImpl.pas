@@ -74,7 +74,7 @@ implementation
     ) : IResponse;
     var cookie : ICookie;
     begin
-        cookie := cookieFactory.value(sess.id()).build();
+        cookie := cookieFactory.name(sess.name()).value(sess.id()).build();
         hdrs.setHeader('Set-Cookie', cookie.serialize());
         result := self;
     end;

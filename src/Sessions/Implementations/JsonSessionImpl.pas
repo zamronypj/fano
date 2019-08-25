@@ -74,12 +74,24 @@ type
         (*!------------------------------------
          * constructor
          *-------------------------------------
-         * @param sessionId session id
-         * @param sessionData session data
+         * @param sessName session name
+         * @param sessId session id
+         * @param sessData session data
          *-------------------------------------*)
-        constructor create(const sessionId : string; const sessionData : string);
+        constructor create(
+            const sessName : string;
+            const sessId : string;
+            const sessData : string
+        );
 
         destructor destroy(); override;
+
+        (*!------------------------------------
+         * get session name
+         *-------------------------------------
+         * @return session name
+         *-------------------------------------*)
+        function name() : string;
 
         (*!------------------------------------
          * get current session id
@@ -165,20 +177,20 @@ uses
     (*!------------------------------------
      * constructor
      *-------------------------------------
-     * @param sessionId session id
-     * @param baseDir base directory where
-     *                session files store
-     * @param prefix strung to be prefix to
-     *                session filename
+     * @param sessName session name
+     * @param sessId session id
+     * @param sessData session data
      *-------------------------------------*)
     constructor TJsonSession.create(
-        const sessionId : string;
-        const sessionData : string
+        const sessName : string;
+        const sessId : string;
+        const sessData : string
     );
     begin
         inherited create();
-        fSessionId := sessionId;
-        fSessionData := getJSON(sessionData);
+        fSessionName := sessName;
+        fSessionId := sessId;
+        fSessionData := getJSON(sessData);
         raiseExceptionIfExpired();
     end;
 
@@ -192,6 +204,12 @@ uses
     begin
         fSessionData.free();
     end;
+
+    function TJsonSession.name() : string;
+    begin
+        result := fSessionName;
+    end;
+
 
     (*!------------------------------------
      * get current session id

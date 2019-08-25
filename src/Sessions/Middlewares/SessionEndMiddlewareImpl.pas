@@ -16,6 +16,7 @@ uses
     SessionIntf,
     RequestIntf,
     ResponseIntf,
+    CookieFactoryIntf,
     AbstractSessionMiddlewareImpl;
 
 type
@@ -27,7 +28,16 @@ type
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
     TSessionEndMiddleware = class(TAbstractSessionMiddleware)
+    private
+        fCookieFactory : ICookieFactory;
     public
+        constructor create(
+            const sessionMgr : ISessionManager;
+            const cookieFactory : ICookieFactory
+        );
+
+        destructor destroy(); override;
+
         function handleRequest(
             const request : IRequest;
             const response : IResponse;
@@ -36,6 +46,21 @@ type
     end;
 
 implementation
+
+    constructor TSessionEndMiddleware.create(
+        const sessionMgr : ISessionManager;
+        const cookieFactory : ICookieFactory
+    );
+    begin
+        inherited create(sessionMgr);
+        fCookieFactory := cookieFactory;
+    end;
+
+    destructor TSessionEndMiddleware.destroy();
+    begin
+        fCookieFactory:= nil;
+        inherited destroy();
+    end;
 
     function TSessionEndMiddleware.handleRequest(
           const request : IRequest;
@@ -46,7 +71,7 @@ implementation
     begin
         sess := fSession.getSession(request);
         fSession.endSession(sess);
-        result := TSessionResponse.create(response, sess);
+        result := TSessionResponse.create(response, sess, fCookieFactory);
     end;
 
 end.

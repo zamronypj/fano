@@ -244,7 +244,11 @@ uses
         sessFile := fSessionFilename + sessionId;
         if (sessionId <> '') and (fileExists(sessFile)) then
         begin
-            sess := TJsonSession.create(sessionId, fFileReader.readFile(sessFile));
+            sess := TJsonSession.create(
+                fCookieName,
+                sessionId,
+                fFileReader.readFile(sessFile)
+            );
             try
                 result := sess;
             except
@@ -285,6 +289,7 @@ uses
         begin
             expiredDate := incSecond(now(), lifeTimeInSec);
             sess := TJsonSession.create(
+                fCookieName,
                 fSessionIdGenerator.getSessionId(),
                 format(
                     '{"expire": "%s", "sessionVars" : {}}',
