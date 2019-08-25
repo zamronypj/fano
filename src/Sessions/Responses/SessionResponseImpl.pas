@@ -29,8 +29,6 @@ type
     TSessionResponse = class(TInjectableObject, IResponse)
     private
         fResponse : IResponse;
-        fSession : ISession;
-        fCookieFactory : ICookieFactory;
 
         function addHeaders(
             const hdrs : IHeaders;
@@ -39,9 +37,9 @@ type
         ) : IResponse;
     public
         constructor create(
-            aResponse : IResponse;
-            aSession : ISession;
-            cookieFactory : ICookieFactory
+            const aResponse : IResponse;
+            const aSession : ISession;
+            const cookieFactory : ICookieFactory
         );
         destructor destroy(); override;
 
@@ -58,15 +56,11 @@ implementation
     begin
         inherited create();
         fResponse := aResponse;
-        fSession := aSession;
-        fCookieFactory := cookieFactory;
-        addHeaders(fResponse.headers(), fSession, fCookieFactory);
+        addHeaders(headers(), fSession, fCookieFactory);
     end;
 
     destructor TSessionResponse.destroy();
     begin
-        fCookieFactory := nil;
-        fSession := nil;
         fResponse := nil;
         inherited destroy();
     end;
