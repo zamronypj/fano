@@ -32,3 +32,5 @@ SessionEndMiddlewareImpl,
 
 SessionBeginMiddlewareFactoryImpl,
 SessionEndMiddlewareFactoryImpl,
+
+SessionResponseImpl,

@@ -32,3 +32,5 @@ TSessionEndMiddleware = SessionEndMiddlewareImpl.TSessionEndMiddleware;
 
 TSessionBeginMiddlewareFactory = SessionBeginMiddlewareFactoryImpl.TSessionBeginMiddlewareFactory;
 TSessionEndMiddlewareFactory = SessionEndMiddlewareFactoryImpl.TSessionEndMiddlewareFactory;
+
+TSessionResponse = SessionResponseImpl.TSessionResponse;
