@@ -28,6 +28,7 @@ type
      *-----------------------------------------------*)
     TJsonSession = class(TInterfacedObject, ISession)
     private
+        fSessionName : string;
         fSessionId : string;
         fSessionData : TJsonData;
 
