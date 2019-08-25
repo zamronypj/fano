@@ -611,6 +611,6 @@ const
      *-----------------------------------------------*)
     function TCombineRegexRouteList.indexOf(const key : shortstring) : integer;
     begin
-        result := hashesList.findIndexOf(key);
+        result := hashesList.indexOf(key);
     end;
 end.
