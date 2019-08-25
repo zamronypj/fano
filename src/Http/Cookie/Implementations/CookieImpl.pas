@@ -422,11 +422,13 @@ resourcestring
      * @return current instance
      *------------------------------------------------*)
     function TCookie.setSameSite(const cookieSameSite : string) : ICookie;
+    var isValid : boolean;
     begin
-        if not (
-            (cookieSameSite = 'Strict') or
+        isValid := (cookieSameSite = 'Strict') or
             (cookieSameSite =  'Lax') or
-            (cookieSameSite = 'None'])) then
+            (cookieSameSite = 'None');
+
+        if not isValid then
         begin
             raise EInvalidCookie.createFmt(
                 sErrCookieAttrInvalidValue,
