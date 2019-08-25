@@ -39,9 +39,9 @@ type
         ) : IResponse;
     public
         constructor create(
-            const aResponse : IResponse;
-            const aSession : ISession;
-            const cookieFactory : ICookieFactory
+            aResponse : IResponse;
+            aSession : ISession;
+            cookieFactory : ICookieFactory
         );
         destructor destroy(); override;
 
@@ -51,9 +51,9 @@ type
 implementation
 
     constructor TSessionResponse.create(
-        const aResponse : IResponse;
-        const aSession : ISession;
-        const cookieFactory : ICookieFactory
+        aResponse : IResponse;
+        aSession : ISession;
+        cookieFactory : ICookieFactory
     );
     begin
         inherited create();
