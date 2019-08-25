@@ -22,6 +22,7 @@ uses
     SessionManagerIntf,
     RequestIntf,
     FileReaderIntf,
+    ListIntf,
     AbstractSessionManagerImpl;
 
 type
@@ -36,6 +37,7 @@ type
     private
         fSessionFilename : string;
         fFileReader : IFileReader;
+        fSessionList : IList;
 
         procedure writeJsonFile(const jsonFile : string; const jsonData : string);
 
@@ -93,6 +95,8 @@ type
         function destroySession(
             const session : ISession
         ) : ISessionManager;
+
+        procedure cleanUpSessionList();
     public
 
         (*!------------------------------------
@@ -163,7 +167,15 @@ uses
     DateUtils,
     SessionConsts,
     JsonSessionImpl,
+    HashListImpl,
     ESessionExpiredImpl;
+
+type
+
+    TSessionItem = record
+        sessionObj : ISession;
+    end;
+    PSessionItem = ^TSessionItem;
 
     (*!------------------------------------
      * constructor
@@ -189,6 +201,7 @@ uses
         inherited create(sessionIdGenerator, cookieName);
         fSessionFilename := baseDir + prefix;
         fFileReader := fileReader;
+        fSessionList := THashList.create();
     end;
 
     (*!------------------------------------
@@ -206,8 +219,23 @@ uses
      *-------------------------------------*)
     destructor TJsonFileSessionManager.destroy();
     begin
+        cleanUpSessionList();
         fFileReader := nil;
+        fSessionList := nil;
         inherited destroy();
+    end;
+
+    procedure TJsonFileSessionManager.cleanUpSessionList();
+    var indx : integer;
+        item : PSessionItem;
+    begin
+        for indx := fSessionList.count()-1  downto 0 do
+        begin
+            item := fSessionList.get(indx);
+            item.sessionObj := nil;
+            dispose(item);
+            fSessionList.delete(indx);
+        end;
     end;
 
     procedure TJsonFileSessionManager.writeJsonFile(const jsonFile : string; const jsonData : string);
@@ -313,9 +341,17 @@ uses
         const lifeTimeInSec : integer
     ) : ISession;
     var sessionId : string;
+        sess : ISession;
+        item : PSessionItem;
     begin
         sessionId := request.getCookieParam(fCookieName);
-        result := createSession(sessionId, lifeTimeInSec);
+        sess := createSession(sessionId, lifeTimeInSec);
+
+        new(item);
+        item^.sessionObj := sess;
+        fSessionList.add(sess.id(), item);
+
+        result := sess;
     end;
 
     (*!------------------------------------
@@ -325,10 +361,12 @@ uses
      * @return session instance or nil if not found
      *-------------------------------------*)
     function TJsonFileSessionManager.getSession(const request : IRequest) : ISession;
-    var sessionId : string;
+    var sessionId : shortstring;
+        item : PSessionItem;
     begin
         sessionId := request.getCookieParam(fCookieName);
-        result := findSession(sessionId);
+        item := fSessionList.find(sessionId);
+        result := item.sessionObj;
     end;
 
     (*!------------------------------------
@@ -339,6 +377,8 @@ uses
      * @return current instance
      *-------------------------------------*)
     function TJsonFileSessionManager.endSession(const session : ISession) : ISessionManager;
+    var indx : integer;
+        item : PSessionItem;
     begin
         if session.expired() then
         begin
@@ -347,6 +387,13 @@ uses
         begin
             persistSession(session);
         end;
+
+        indx := fSessionList.indexOf(session.id());
+        item := fSessionList.get(indx);
+        item.sessionObj := nil;
+        dispose(item);
+        fSessionList.delete(indx);
+
         result := self;
     end;
 

@@ -28,8 +28,8 @@ type
      *-----------------------------------------------*)
     TJsonSession = class(TInterfacedObject, ISession)
     private
-        fSessionName : string;
-        fSessionId : string;
+        fSessionName : shortstring;
+        fSessionId : shortstring;
         fSessionData : TJsonData;
 
         procedure raiseExceptionIfAlreadyTerminated();
@@ -92,14 +92,14 @@ type
          *-------------------------------------
          * @return session name
          *-------------------------------------*)
-        function name() : string;
+        function name() : shortstring;
 
         (*!------------------------------------
          * get current session id
          *-------------------------------------
          * @return session id string
          *-------------------------------------*)
-        function id() : string;
+        function id() : shortstring;
 
         (*!------------------------------------
          * get current session id
@@ -183,8 +183,8 @@ uses
      * @param sessData session data
      *-------------------------------------*)
     constructor TJsonSession.create(
-        const sessName : string;
-        const sessId : string;
+        const sessName : shortstring;
+        const sessId : shortstring;
         const sessData : string
     );
     begin
@@ -206,7 +206,7 @@ uses
         fSessionData.free();
     end;
 
-    function TJsonSession.name() : string;
+    function TJsonSession.name() : shortstring;
     begin
         result := fSessionName;
     end;
@@ -217,7 +217,7 @@ uses
      *-------------------------------------
      * @return session id string
      *-------------------------------------*)
-    function TJsonSession.id() : string;
+    function TJsonSession.id() : shortstring;
     begin
         result := fSessionId;
     end;

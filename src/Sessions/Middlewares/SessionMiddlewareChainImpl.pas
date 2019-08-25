@@ -89,7 +89,7 @@ uses
     begin
         sess := fSessionMgr.beginSession(request, fExpiresInSec);
         newResp := fActualMiddlewareChain.execute(request, response, requestHandler);
-        fSessionMgr.endSession(sess);
         result := TSessionResponse.create(newResp, sess, fCookieFactory);
+        fSessionMgr.endSession(sess);
     end;
 end.
