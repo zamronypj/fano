@@ -7,3 +7,5 @@ IUploadedFile = UploadedFileIntf.IUploadedFile;
 IUploadedFileCollection = UploadedFileCollectionIntf.IUploadedFileCollection;
 IUploadedFileArray = UploadedFileCollectionIntf.IUploadedFileArray;
 IRequestFactory = RequestFactoryIntf.IRequestFactory;
+ICookie = CookieIntf.ICookie;
+ICookieFactory = CookieFactoryIntf.ICookieFactory;
