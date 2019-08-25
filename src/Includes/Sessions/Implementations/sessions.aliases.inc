@@ -26,11 +26,7 @@ TJsonSession = JsonSessionImpl.TJsonSession;
 TJsonFileSessionManager = JsonFileSessionManagerImpl.TJsonFileSessionManager;
 TJsonFileSessionManagerFactory = JsonFileSessionManagerFactoryImpl.TJsonFileSessionManagerFactory;
 
-TAbstractSessionMiddleware = AbstractSessionMiddlewareImpl.TAbstractSessionMiddleware;
-TSessionBeginMiddleware = SessionBeginMiddlewareImpl.TSessionBeginMiddleware;
-TSessionEndMiddleware = SessionEndMiddlewareImpl.TSessionEndMiddleware;
-
-TSessionBeginMiddlewareFactory = SessionBeginMiddlewareFactoryImpl.TSessionBeginMiddlewareFactory;
-TSessionEndMiddlewareFactory = SessionEndMiddlewareFactoryImpl.TSessionEndMiddlewareFactory;
+TSessionMiddlewareChainFactory = SessionMiddlewareChainFactoryImpl.TSessionMiddlewareChainFactory;
+TSessionMiddlewareChain = SessionMiddlewareChainImpl.TSessionMiddlewareChain;
 
 TSessionResponse = SessionResponseImpl.TSessionResponse;

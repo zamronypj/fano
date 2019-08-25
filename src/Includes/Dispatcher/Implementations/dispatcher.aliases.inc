@@ -7,3 +7,4 @@ TSimpleDispatcher = SimpleDispatcherImpl.TSimpleDispatcher;
 
 TDispatcherFactory = DispatcherFactoryImpl.TDispatcherFactory;
 TSimpleDispatcherFactory = SimpleDispatcherFactoryImpl.TSimpleDispatcherFactory;
+TSessionDispatcherFactory = SessionDispatcherFactoryImpl.TSessionDispatcherFactory;

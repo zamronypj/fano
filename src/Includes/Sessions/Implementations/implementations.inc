@@ -26,11 +26,7 @@ JsonSessionImpl,
 JsonFileSessionManagerImpl,
 JsonFileSessionManagerFactoryImpl,
 
-AbstractSessionMiddlewareImpl,
-SessionBeginMiddlewareImpl,
-SessionEndMiddlewareImpl,
-
-SessionBeginMiddlewareFactoryImpl,
-SessionEndMiddlewareFactoryImpl,
+SessionMiddlewareChainFactoryImpl,
+SessionMiddlewareChainImpl,
 
 SessionResponseImpl,
