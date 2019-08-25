@@ -112,8 +112,8 @@ implementation
      *-------------------------------------*)
     destructor TAbstractSessionManager.destroy();
     begin
-        inherited destroy();
         fSessionIdGenerator := nil;
+        inherited destroy();
     end;
 
 end.
