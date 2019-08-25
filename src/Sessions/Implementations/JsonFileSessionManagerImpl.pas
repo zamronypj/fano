@@ -38,6 +38,7 @@ type
         fSessionFilename : string;
         fFileReader : IFileReader;
         fSessionList : IList;
+        fCurrentSession : ISession;
 
         procedure writeJsonFile(const jsonFile : string; const jsonData : string);
 
@@ -341,6 +342,7 @@ type
         item^.sessionObj := sess;
         fSessionList.add(sess.id(), item);
 
+        fCurrentSession := sess;
         result := sess;
     end;
 
@@ -358,8 +360,16 @@ type
         item := fSessionList.find(sessionId);
         //it is assumed that getSession will be called between
         //beginSession() and endSession()
-        //which implies sessionId ALWAYS registered in current session list
-        result := item^.sessionObj;
+        //so fCurrentSession MUST NOT nil
+        if (item = nil) and (fCurrentSession <> nil) then
+        begin
+            //if we get here, it means, this is the first request
+            //so cookie is not yet set
+            result := fCurrentSession;
+        end else
+        begin
+            result := item^.sessionObj;
+        end
     end;
 
     (*!------------------------------------
@@ -386,6 +396,8 @@ type
         item^.sessionObj := nil;
         dispose(item);
         fSessionList.delete(indx);
+
+        fCurrentSession := nil;
 
         result := self;
     end;
