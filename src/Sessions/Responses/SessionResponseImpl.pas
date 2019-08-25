@@ -32,7 +32,11 @@ type
         fSession : ISession;
         fCookieFactory : ICookieFactory;
 
-        function addHeaders(const hdrs : IHeaders; const sess : ISession) : IResponse;
+        function addHeaders(
+            const hdrs : IHeaders;
+            const sess : ISession;
+            const cookieFactory : ICookieFactory
+        ) : IResponse;
     public
         constructor create(
             const aResponse : IResponse;
