@@ -169,7 +169,7 @@ type
     end;
 
     (*!------------------------------------
-     * output http headers to STDIN
+     * output http headers to STDOUT
      *-------------------------------------
      * @return header instance
      *-------------------------------------*)

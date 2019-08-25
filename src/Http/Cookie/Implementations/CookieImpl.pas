@@ -470,7 +470,6 @@ resourcestring
      *------------------------------------------------*)
     function TCookie.serialize() : string;
     var cookieStr : string;
-        rfc
     begin
         if (fCookieName = '') then
         begin
@@ -478,7 +477,7 @@ resourcestring
             raise EInvalidCookie.create(sErrCookieNameNotSet);
         end;
 
-        cookieStr := ' ' + fCookieName + '=' + fCookieValue + ';';
+        cookieStr := fCookieName + '=' + fCookieValue + ';';
 
         if (fCookiePath <> '') then
         begin
