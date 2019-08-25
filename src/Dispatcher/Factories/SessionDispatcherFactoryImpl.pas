@@ -18,7 +18,8 @@ uses
     FactoryImpl,
     RouteMatcherIntf,
     MiddlewareCollectionAwareIntf,
-    MiddlewareChainFactoryIntf;
+    MiddlewareChainFactoryIntf,
+    DispatcherFactoryImpl;
 
 type
 
