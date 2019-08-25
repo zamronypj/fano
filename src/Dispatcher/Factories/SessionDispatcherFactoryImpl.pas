@@ -19,6 +19,8 @@ uses
     RouteMatcherIntf,
     MiddlewareCollectionAwareIntf,
     MiddlewareChainFactoryIntf,
+    SessionManagerIntf,
+    CookieFactoryIntf,
     DispatcherFactoryImpl;
 
 type
@@ -31,7 +33,21 @@ type
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *---------------------------------------------------*)
     TSessionDispatcherFactory = class(TDispatcherFactory)
+    private
+        fSessionMgr : ISessionManager;
+        fCookieFactory : ICookieFactory;
+        fExpiresInSec : integer;
     protected
+        constructor create (
+            const appMiddlewaresInst : IMiddlewareCollectionAware;
+            const routeMatcherInst : IRouteMatcher;
+            const sessionMgr : ISessionManager;
+            const cookieFactory : ICookieFactory;
+            const expiresInSec : integer
+        );
+
+        destructor destroy(); override;
+
         function createMiddlewareChainFactory() : IMiddlewareChainFactory; override;
     end;
 
@@ -41,9 +57,37 @@ uses
 
     SessionMiddlewareChainFactoryImpl;
 
-    function TSessionDispatcherFactory.createMiddlewareChainFactory() : IMiddlewareChainFactory;
+    constructor TSessionDispatcherFactory.create (
+        const appMiddlewaresInst : IMiddlewareCollectionAware;
+        const routeMatcherInst : IRouteMatcher;
+        const sessionMgr : ISessionManager;
+        const cookieFactory : ICookieFactory;
+        const expiresInSec : integer
+    );
     begin
-        result := TSessionMiddlewareChainFactory.create();
+        inherited create(appMiddlewaresInst, routeMatcherInst);
+        fSessionMgr := sessionMgr;
+        fCookieFactory := cookieFactory;
+        fExpiresInSec := expiresInSec;
+    end;
+
+    destructor TSessionDispatcherFactory.destroy();
+    begin
+        fSessionMgr := nil;
+        fCookieFactory := nil;
+        inherited destroy();
+    end;
+
+    function TSessionDispatcherFactory.createMiddlewareChainFactory() : IMiddlewareChainFactory;
+    var actualFactory : IMiddlewareChainFactory;
+    begin
+        actualFactory := inherited createMiddlewareChainFactory();
+        result := TSessionMiddlewareChainFactory.create(
+            actualFactory,
+            fSessionMgr,
+            fCookieFactory,
+            fExpiresInSec
+        );
     end;
 
 end.
