@@ -38,6 +38,8 @@ type
         fCookieFactory : ICookieFactory;
         fExpiresInSec : integer;
     protected
+        function createMiddlewareChainFactory() : IMiddlewareChainFactory; override;
+    public
         constructor create (
             const appMiddlewaresInst : IMiddlewareCollectionAware;
             const routeMatcherInst : IRouteMatcher;
@@ -47,8 +49,6 @@ type
         );
 
         destructor destroy(); override;
-
-        function createMiddlewareChainFactory() : IMiddlewareChainFactory; override;
     end;
 
 implementation
