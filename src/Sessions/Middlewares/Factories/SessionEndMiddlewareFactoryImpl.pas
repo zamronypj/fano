@@ -14,6 +14,7 @@ uses
     DependencyContainerIntf,
     DependencyIntf,
     SessionManagerIntf,
+    CookieFactoryIntf,
     FactoryImpl;
 
 type
@@ -21,8 +22,12 @@ type
     TSessionEndMiddlewareFactory = class(TFactory, IDependencyFactory)
     private
         fSessionMgr : ISessionManager;
+        fCookieFactory : ICookieFactory;
     public
-        constructor create(const sessMgr : ISessionManager);
+        constructor create(
+            const sessMgr : ISessionManager;
+            const cookieFactory : ICookieFactory
+        );
         destructor destroy(); override;
         function build(const container : IDependencyContainer) : IDependency; override;
     end;
@@ -33,20 +38,25 @@ uses
 
     SessionEndMiddlewareImpl;
 
-    constructor TSessionEndMiddlewareFactory.create(const sessMgr : ISessionManager);
+    constructor TSessionEndMiddlewareFactory.create(
+        const sessMgr : ISessionManager;
+        const cookieFactory : ICookieFactory
+    );
     begin
         inherited create();
         fSessionMgr := sessMgr;
+        fCookieFactory := cookieFactory;
     end;
 
     destructor TSessionEndMiddlewareFactory.destroy();
     begin
         fSessionMgr := nil;
+        fCookieFactory := nil;
         inherited destroy();
     end;
 
     function TSessionEndMiddlewareFactory.build(const container : IDependencyContainer) : IDependency;
     begin
-        result := TSessionEndMiddleware.create(fSessionMgr);
+        result := TSessionEndMiddleware.create(fSessionMgr, fCookieFactory);
     end;
 end.

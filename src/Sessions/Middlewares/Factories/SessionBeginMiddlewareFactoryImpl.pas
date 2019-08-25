@@ -41,7 +41,7 @@ uses
     begin
         inherited create();
         fSessionMgr := sessMgr;
-        fExpiresInSec := expiredInSec
+        fExpiresInSec := expiresInSec;
     end;
 
     destructor TSessionBeginMiddlewareFactory.destroy();
