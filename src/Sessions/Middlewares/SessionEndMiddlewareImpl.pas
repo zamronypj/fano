@@ -70,7 +70,7 @@ implementation
     var sess : ISession;
     begin
         sess := fSessionMgr.getSession(request);
-        fSession.endSession(sess);
+        fSessionMgr.endSession(sess);
         result := TSessionResponse.create(response, sess, fCookieFactory);
     end;
 
