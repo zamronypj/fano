@@ -54,7 +54,8 @@ implementation
 
 uses
 
-    SessionIntf;
+    SessionIntf,
+    SessionResponseImpl;
 
     constructor TSessionMiddlewareChain.create(
         const actualMiddlewareChain : IMiddlewareChain;
