@@ -366,6 +366,9 @@ type
     begin
         sessionId := request.getCookieParam(fCookieName);
         item := fSessionList.find(sessionId);
+        //it is assumed that getSession will be called between
+        //beginSession() and endSession()
+        //which implies sessionId ALWAYS registered in current session list
         result := item.sessionObj;
     end;
 
