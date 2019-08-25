@@ -205,17 +205,7 @@ type
     end;
 
     (*!------------------------------------
-     * constructor
-     *-------------------------------------
-     * @param sessionIdGenerator helper class
-     *           which can generate session id
-     * @param cookieName name of cookie to use
-     * @param fileReader helper class
-     *           which can read file to string
-     * @param baseDir base directory where
-     *                session files store
-     * @param prefix strung to be prefix to
-     *                session filename
+     * destructor
      *-------------------------------------*)
     destructor TJsonFileSessionManager.destroy();
     begin
@@ -232,7 +222,7 @@ type
         for indx := fSessionList.count()-1  downto 0 do
         begin
             item := fSessionList.get(indx);
-            item.sessionObj := nil;
+            item^.sessionObj := nil;
             dispose(item);
             fSessionList.delete(indx);
         end;
@@ -369,7 +359,7 @@ type
         //it is assumed that getSession will be called between
         //beginSession() and endSession()
         //which implies sessionId ALWAYS registered in current session list
-        result := item.sessionObj;
+        result := item^.sessionObj;
     end;
 
     (*!------------------------------------
@@ -393,7 +383,7 @@ type
 
         indx := fSessionList.indexOf(session.id());
         item := fSessionList.get(indx);
-        item.sessionObj := nil;
+        item^.sessionObj := nil;
         dispose(item);
         fSessionList.delete(indx);
 
