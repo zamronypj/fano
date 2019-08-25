@@ -47,6 +47,10 @@ type
 
 implementation
 
+uses
+
+    SessionResponseImpl;
+
     constructor TSessionEndMiddleware.create(
         const sessionMgr : ISessionManager;
         const cookieFactory : ICookieFactory
