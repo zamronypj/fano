@@ -52,6 +52,10 @@ type
 
 implementation
 
+uses
+
+    SessionIntf;
+
     constructor TSessionMiddlewareChain.create(
         const actualMiddlewareChain : IMiddlewareChain;
         const sessionMgr : ISessionManager;
