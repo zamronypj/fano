@@ -55,14 +55,14 @@ implementation
         const aSession : ISession;
         const cookieFactory : ICookieFactory
     );
-    var hdrs : IHeaders;
+    //var hdrs : IHeaders;
     begin
         inherited create();
         fResponse := aResponse;
         fSession := aSession;
         fCookieFactory := cookieFactory;
-        hdrs := fResponse.headers();
-        addHeaders(hdrs, fSession, fCookieFactory);
+        //hdrs := fResponse.headers();
+        //addHeaders(hdrs, fSession, fCookieFactory);
     end;
 
     destructor TSessionResponse.destroy();
