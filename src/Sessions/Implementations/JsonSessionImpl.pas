@@ -80,8 +80,8 @@ type
          * @param sessData session data
          *-------------------------------------*)
         constructor create(
-            const sessName : string;
-            const sessId : string;
+            const sessName : shortstring;
+            const sessId : shortstring;
             const sessData : string
         );
 
