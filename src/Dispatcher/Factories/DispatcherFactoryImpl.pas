@@ -17,7 +17,8 @@ uses
     DependencyContainerIntf,
     FactoryImpl,
     RouteMatcherIntf,
-    MiddlewareCollectionAwareIntf;
+    MiddlewareCollectionAwareIntf,
+    MiddlewareChainFactoryIntf;
 
 type
 
@@ -31,6 +32,8 @@ type
     private
         appMiddlewares : IMiddlewareCollectionAware;
         routeMatcher : IRouteMatcher;
+    protected
+        function createMiddlewareChainFactory() : IMiddlewareChainFactory; virtual;
     public
         constructor create (
             const appMiddlewaresInst : IMiddlewareCollectionAware;
@@ -65,11 +68,16 @@ uses
         inherited destroy();
     end;
 
+    function TDispatcherFactory.createMiddlewareChainFactory() : IMiddlewareChainFactory;
+    begin
+        result := TMiddlewareChainFactory.create();
+    end;
+
     function TDispatcherFactory.build(const container : IDependencyContainer) : IDependency;
     begin
         result := TDispatcher.create(
             appMiddlewares,
-            TMiddlewareChainFactory.create(),
+            createMiddlewareChainFactory(),
             routeMatcher,
             TResponseFactory.create(),
             TRequestFactory.create()
