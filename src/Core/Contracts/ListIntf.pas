@@ -73,6 +73,14 @@ type
          * @return key name
          *-----------------------------------------------*)
         function keyOfIndex(const indx : integer) : shortstring;
+
+        (*!------------------------------------------------
+         * get index by key name
+         *-----------------------------------------------
+         * @param key name
+         * @return index of key
+         *-----------------------------------------------*)
+        function indexOf(const key : shortstring) : integer;
     end;
 
 implementation
