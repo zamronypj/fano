@@ -53,7 +53,7 @@ implementation
           var canContinue : boolean
     ) : IResponse;
     begin
-        fSession.beginSession(request, fExpiresInSec);
+        fSessionMgr.beginSession(request, fExpiresInSec);
         result := response;
     end;
 
