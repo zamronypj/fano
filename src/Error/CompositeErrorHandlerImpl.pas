@@ -16,6 +16,7 @@ interface
 uses
     sysutils,
     ErrorHandlerIntf,
+    EnvironmentEnumeratorIntf,
     BaseErrorHandlerImpl;
 
 type
@@ -44,6 +45,7 @@ type
         destructor destroy(); override;
 
         function handleError(
+            const env : ICGIEnvironmentEnumerator;
             const exc : Exception;
             const status : integer = 500;
             const msg : string  = 'Internal Server Error'

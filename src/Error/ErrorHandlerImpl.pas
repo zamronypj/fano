@@ -17,6 +17,7 @@ uses
 
     sysutils,
     ErrorHandlerIntf,
+    EnvironmentEnumeratorIntf,
     BaseErrorHandlerImpl;
 
 type
@@ -31,6 +32,7 @@ type
         function getStackTrace(const e: Exception) : string;
     public
         function handleError(
+            const env : ICGIEnvironmentEnumerator;
             const exc : Exception;
             const status : integer = 500;
             const msg : string  = 'Internal Server Error'
@@ -66,6 +68,7 @@ implementation
     end;
 
     function TErrorHandler.handleError(
+        const env : ICGIEnvironmentEnumerator;
         const exc : Exception;
         const status : integer = 500;
         const msg : string  = 'Internal Server Error'

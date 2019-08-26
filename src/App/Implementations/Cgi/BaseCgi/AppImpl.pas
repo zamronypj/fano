@@ -60,49 +60,19 @@ uses
         except
             on e : ERouteHandlerNotFound do
             begin
-                errorHandler.handleError(e, 404, sHttp404Message);
+                errorHandler.handleError(envEnum, e, 404, sHttp404Message);
                 reset();
             end;
 
             on e : EMethodNotAllowed do
             begin
-                errorHandler.handleError(e, 405, sHttp405Message);
-                reset();
-            end;
-
-            on e : EDependencyNotFound do
-            begin
-                errorHandler.handleError(e);
-                reset();
-            end;
-
-            on e : EInvalidDispatcher do
-            begin
-                errorHandler.handleError(e);
-                reset();
-            end;
-
-            on e : EInvalidFactory do
-            begin
-                errorHandler.handleError(e);
-                reset();
-            end;
-
-            on e : EAccessViolation do
-            begin
-                errorHandler.handleError(e);
-                reset();
-            end;
-
-            on e : EInOutError do
-            begin
-                errorHandler.handleError(e);
+                errorHandler.handleError(envEnum, e, 405, sHttp405Message);
                 reset();
             end;
 
             on e : Exception do
             begin
-                errorHandler.handleError(e);
+                errorHandler.handleError(envEnum, e);
                 reset();
             end;
         end;

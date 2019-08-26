@@ -222,17 +222,17 @@ uses
         except
               on e : ERouteHandlerNotFound do
               begin
-                  errorHandler.handleError(e, 404, sHttp404Message);
+                  errorHandler.handleError(envEnum, e, 404, sHttp404Message);
               end;
 
               on e : EMethodNotAllowed do
               begin
-                  errorHandler.handleError(e, 405, sHttp405Message);
+                  errorHandler.handleError(envEnum, e, 405, sHttp405Message);
               end;
 
               on e : Exception do
               begin
-                  errorHandler.handleError(e);
+                  errorHandler.handleError(envEnum, e);
               end;
         end;
     end;

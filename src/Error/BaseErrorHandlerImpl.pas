@@ -17,6 +17,7 @@ uses
 
     sysutils,
     ErrorHandlerIntf,
+    EnvironmentEnumeratorIntf,
     InjectableObjectImpl;
 
 type
@@ -37,6 +38,7 @@ type
          * @param msg HTTP error message
          *---------------------------------------------------*)
         function handleError(
+            const env : ICGIEnvironmentEnumerator;
             const exc : Exception;
             const status : integer = 500;
             const msg : string  = 'Internal Server Error'

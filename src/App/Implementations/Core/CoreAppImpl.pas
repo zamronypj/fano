@@ -18,6 +18,7 @@ uses
     AppIntf,
     DispatcherIntf,
     EnvironmentIntf,
+    EnvironmentEnumeratorIntf,
     ErrorHandlerIntf,
     CoreAppConsts;
 
@@ -33,6 +34,7 @@ type
         dependencyContainer : IDependencyContainer;
         dispatcher : IDispatcher;
         environment : ICGIEnvironment;
+        envEnum : ICGIEnvironmentEnumerator;
         errorHandler : IErrorHandler;
 
         (*!-----------------------------------------------
@@ -116,6 +118,7 @@ uses
     begin
         dispatcher := nil;
         environment := nil;
+        envEnum := nil;
         errorHandler := nil;
         dependencyContainer := nil;
     end;
@@ -140,9 +143,11 @@ uses
         const errHandler : IErrorHandler
     );
     begin
+        inherited create();
         randomize();
         reset();
         environment := env;
+        envEnum := env as ICGIEnvironmentEnumerator;
         errorHandler := errHandler;
         dependencyContainer := container;
     end;
@@ -152,8 +157,8 @@ uses
      *-----------------------------------------------*)
     destructor TCoreWebApplication.destroy();
     begin
-        inherited destroy();
         reset();
+        inherited destroy();
     end;
 
     (*!-----------------------------------------------
