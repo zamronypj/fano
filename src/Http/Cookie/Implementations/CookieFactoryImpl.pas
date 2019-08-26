@@ -137,9 +137,9 @@ uses
         fCookieDomain := '';
         fCookieMaxAge := 3600;
         fCookieExpires :=  incSecond(now(), fCookieMaxAge);
-        fCookieSecure := true;
-        fCookieHttpOnly := true;
-        fCookieSameSite := 'Strict';
+        fCookieSecure := false;
+        fCookieHttpOnly := false;
+        fCookieSameSite := 'Lax';
     end;
 
     (*!------------------------------------------------

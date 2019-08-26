@@ -225,7 +225,7 @@ resourcestring
         const cookieMaxAge : integer = -1;
         const cookieSecure : boolean = false;
         const cookieHttpOnly : boolean = false;
-        const cookieSameSite : string = ''
+        const cookieSameSite : string = 'Lax'
     );
     begin
         fCookieName := cookieName;
