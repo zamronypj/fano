@@ -110,6 +110,7 @@ implementation
 uses
 
     SysUtils,
+    EnvironmentEnumeratorIntf,
     ERouteHandlerNotFoundImpl,
     EMethodNotAllowedImpl,
     ESockBindImpl,
@@ -220,20 +221,23 @@ uses
             environment := env;
             execute();
         except
-              on e : ERouteHandlerNotFound do
-              begin
-                  errorHandler.handleError(e, 404, sHttp404Message);
-              end;
+            on e : ERouteHandlerNotFound do
+            begin
+                envEnum := env as ICGIEnvironmentEnumerator;
+                errorHandler.handleError(envEnum, e, 404, sHttp404Message);
+            end;
 
-              on e : EMethodNotAllowed do
-              begin
-                  errorHandler.handleError(e, 405, sHttp405Message);
-              end;
+            on e : EMethodNotAllowed do
+            begin
+                envEnum := env as ICGIEnvironmentEnumerator;
+                errorHandler.handleError(envEnum, e, 405, sHttp405Message);
+            end;
 
-              on e : Exception do
-              begin
-                  errorHandler.handleError(e);
-              end;
+            on e : Exception do
+            begin
+                envEnum := env as ICGIEnvironmentEnumerator;
+                errorHandler.handleError(envEnum, e);
+            end;
         end;
     end;
 

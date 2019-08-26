@@ -38,6 +38,14 @@ type
          * @return key name
          *-----------------------------------------------*)
         function getKey(const indx : integer) : shortstring;
+
+        (*!------------------------------------------------
+         * get value by index
+         *-----------------------------------------------
+         * @param index index to use
+         * @return value name
+         *-----------------------------------------------*)
+        function getValue(const indx : integer) : string;
     end;
 
 implementation
