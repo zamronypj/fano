@@ -30,6 +30,7 @@ type
     TErrorHandler = class(TBaseErrorHandler)
     private
         function getStackTrace(const e: Exception) : string;
+        function getEnvTrace(const env: ICGIEnvironmentEnumerator) : string;
     public
         function handleError(
             const env : ICGIEnvironmentEnumerator;
@@ -46,9 +47,7 @@ implementation
         i: integer;
         frames: PPointer;
     begin
-        result := '<!DOCTYPE html><html><head>'+
-                  '<title>Fano Application Error</title></head><body>' +
-                  '<h2>Fano Application Error</h2>';
+        result := '';
         if (e <> nil) then
         begin
             result := result +
@@ -64,7 +63,23 @@ implementation
         begin
             result := result + BackTraceStrFunc(frames[i]) + LineEnding;
         end;
-        result := result + '</pre></body></html>';
+        result := result + '</pre>';
+    end;
+
+    function TErrorHandler.getEnvTrace(const env: ICGIEnvironmentEnumerator) : string;
+    var indx, totEnv: integer;
+    begin
+        totEnv := env.count();
+        result := '<h3>Environments</h3><table>' +
+            '<tr><td>Name</td><td>Value</td></tr>';
+
+        for i:=0 to totEnv-1 do
+        begin
+            result := '<tr><td>' + env.getKey(indx) + '</td>'+
+                '<td>' + env.getValue(indx) + '</td></tr>';
+        end;
+
+        result := result + '</table>';
     end;
 
     function TErrorHandler.handleError(
@@ -77,7 +92,14 @@ implementation
         writeln('Content-Type: text/html');
         writeln('Status: ', intToStr(status), ' ', msg);
         writeln();
+        writeln(
+            '<!DOCTYPE html><html><head>' +
+            '<title>Fano Application Error</title></head><body>' +
+            '<h2>Fano Application Error</h2>'
+        );
         writeln(getStackTrace(exc));
+        writeln(getEnvTrace(env));
+        writeln('</body></html>');
         result := self;
     end;
 end.
