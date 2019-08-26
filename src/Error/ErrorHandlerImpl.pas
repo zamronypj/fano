@@ -70,8 +70,8 @@ implementation
     var indx, totEnv: integer;
     begin
         totEnv := env.count();
-        result := '<h3>Environments</h3><table>' +
-            '<tr><td>Name</td><td>Value</td></tr>';
+        result := '<h3>Environments</h3><table bporder="1">' +
+            '<tr><th>Name</th><th>Value</th></tr>';
 
         for indx := 0 to totEnv-1 do
         begin
