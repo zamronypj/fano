@@ -75,7 +75,7 @@ implementation
 
         for indx := 0 to totEnv-1 do
         begin
-            result := '<tr><td>' + env.getKey(indx) + '</td>'+
+            result := result + '<tr><td>' + env.getKey(indx) + '</td>'+
                 '<td>' + env.getValue(indx) + '</td></tr>';
         end;
 
