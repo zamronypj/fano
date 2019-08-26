@@ -198,6 +198,12 @@ uses
         buildDependencies(container);
         buildRoutes(container);
         buildDispatcher(container);
+
+        if envEnum = nil then
+        begin
+            envEnum := environment as ICGIEnvironmentEnumerator;
+        end;
+
         result := true;
     end;
 
