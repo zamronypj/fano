@@ -59,7 +59,7 @@ uses
         result := TCompositeErrorHandler.create(
             TLogErrorHandler.create(TFileLogger.create(logFilename)),
             TTemplateErrorHandler.create(templateFilename)
-        )
+        );
     end;
 
 end.
