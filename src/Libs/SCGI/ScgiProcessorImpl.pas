@@ -90,7 +90,7 @@ uses
      *-----------------------------------------------*)
     procedure TScgiProcessor.process(const stream : IStreamAdapter; const streamCloser : ICloseable);
     begin
-        try
+        // try
             fParser.parse(stream);
             fStdIn := fParser.getStdIn();
             if assigned(fRequestReadyListener) then
@@ -103,13 +103,13 @@ uses
             end;
             //SCGI protocol requires always close socket connection
             streamCloser.close();
-        except
-            on e : Exception do
-            begin
-                resetInternalVars();
-                raise;
-            end;
-        end;
+        // except
+        //     on e : Exception do
+        //     begin
+        //         resetInternalVars();
+        //         raise;
+        //     end;
+        // end;
     end;
 
     (*!------------------------------------------------
