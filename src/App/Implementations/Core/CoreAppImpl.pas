@@ -34,7 +34,6 @@ type
         dependencyContainer : IDependencyContainer;
         dispatcher : IDispatcher;
         environment : ICGIEnvironment;
-        envEnum : ICGIEnvironmentEnumerator;
         errorHandler : IErrorHandler;
 
         (*!-----------------------------------------------
@@ -118,7 +117,6 @@ uses
     begin
         dispatcher := nil;
         environment := nil;
-        envEnum := nil;
         errorHandler := nil;
         dependencyContainer := nil;
     end;
@@ -147,7 +145,6 @@ uses
         randomize();
         reset();
         environment := env;
-        envEnum := env as ICGIEnvironmentEnumerator;
         errorHandler := errHandler;
         dependencyContainer := container;
     end;
@@ -198,12 +195,6 @@ uses
         buildDependencies(container);
         buildRoutes(container);
         buildDispatcher(container);
-
-        if envEnum = nil then
-        begin
-            envEnum := environment as ICGIEnvironmentEnumerator;
-        end;
-
         result := true;
     end;
 
