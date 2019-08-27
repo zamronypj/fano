@@ -179,7 +179,9 @@ resourcestring
 
                     fStdIn := parseStdIn(strHeader);
                 end;
-                empty := true;
+                //try read just to make sure
+                bytesRead := stream.read(terminationChar, 1);
+                empty := (bytesRead <= 0);
             end;
         end else
         begin
