@@ -203,10 +203,9 @@ resourcestring
             bytesRead := stream.read(ch, 1);
             if (bytesRead > 0) then
             begin
-                parseNetString(ch, lenStr, stream);
+                streamEmpty := parseNetString(ch, lenStr, stream);
             end else
             begin
-                //if we get here, stream connection is closed or EWOULDBLOCK
                 streamEmpty := true;
             end;
         until streamEmpty;
