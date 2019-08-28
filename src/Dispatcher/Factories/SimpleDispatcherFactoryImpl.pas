@@ -67,7 +67,7 @@ uses
     function TSimpleDispatcherFactory.build(const container : IDependencyContainer) : IDependency;
     begin
         result := TSimpleDispatcher.create(
-            routeMatcher,
+            fRouteMatcher,
             fRequestResponseFactory.responseFactory,
             fRequestResponseFactory.requestFactory
         );
