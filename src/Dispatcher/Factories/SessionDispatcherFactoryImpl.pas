@@ -19,6 +19,7 @@ uses
     RouteMatcherIntf,
     MiddlewareCollectionAwareIntf,
     MiddlewareChainFactoryIntf,
+    RequestResponseFactoryIntf,
     SessionManagerIntf,
     CookieFactoryIntf,
     DispatcherFactoryImpl;
