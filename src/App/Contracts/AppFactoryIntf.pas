@@ -18,7 +18,10 @@ uses
     DependencyContainerIntf,
     DispatcherIntf,
     ErrorHandlerIntf,
-    StdInIntf;
+    StdInIntf,
+    StdOutIntf,
+    ProtocolProcessorIntf,
+    OutputBufferIntf;
 
 type
 
