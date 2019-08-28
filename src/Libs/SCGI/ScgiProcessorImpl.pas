@@ -90,26 +90,18 @@ uses
      *-----------------------------------------------*)
     procedure TScgiProcessor.process(const stream : IStreamAdapter; const streamCloser : ICloseable);
     begin
-        // try
-            fParser.parse(stream);
-            fStdIn := fParser.getStdIn();
-            if assigned(fRequestReadyListener) then
-            begin
-                fRequestReadyListener.ready(
-                    stream,
-                    fParser.getEnv(),
-                    fStdIn
-                );
-            end;
-            //SCGI protocol requires always close socket connection
-            streamCloser.close();
-        // except
-        //     on e : Exception do
-        //     begin
-        //         resetInternalVars();
-        //         raise;
-        //     end;
-        // end;
+        fParser.parse(stream);
+        fStdIn := fParser.getStdIn();
+        if assigned(fRequestReadyListener) then
+        begin
+            fRequestReadyListener.ready(
+                stream,
+                fParser.getEnv(),
+                fStdIn
+            );
+        end;
+        //SCGI protocol requires always close socket connection
+        streamCloser.close();
     end;
 
     (*!------------------------------------------------
