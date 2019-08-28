@@ -28,15 +28,21 @@ type
      *-----------------------------------------------*)
     TSimpleDispatcher = class(TBaseDispatcher)
     public
-        function dispatchRequest(const env: ICGIEnvironment) : IResponse; override;
+        function dispatchRequest(
+            const env: ICGIEnvironment;
+            const stdIn : IStdIn
+        ) : IResponse; override;
     end;
 
 implementation
 
-    function TSimpleDispatcher.dispatchRequest(const env: ICGIEnvironment) : IResponse;
+    function TSimpleDispatcher.dispatchRequest(
+        const env: ICGIEnvironment;
+        const stdIn : IStdIn
+    ) : IResponse;
     begin
         result := getRouteHandler(env).handleRequest(
-            requestFactory.build(env),
+            requestFactory.build(env, stdIn),
             responseFactory.build(env)
         );
     end;
