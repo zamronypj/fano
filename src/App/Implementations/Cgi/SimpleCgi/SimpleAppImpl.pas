@@ -59,7 +59,8 @@ uses
     RouteMatcherIntf,
     SimpleRouterFactoryImpl,
     SimpleDispatcherFactoryImpl,
-    StdInReaderImpl;
+    StdInReaderImpl,
+    StdInIntf;
 
     (*!-----------------------------------------------
      * constructor
