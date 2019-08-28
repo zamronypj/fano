@@ -34,7 +34,7 @@ type
         fRequestResponseFactory : IRequestResponseFactory;
     public
         constructor create (
-            const routeMatcherInst : IRouteMatcher;
+            const routeMatcher : IRouteMatcher;
             const requestResponseFactory : IRequestResponseFactory
         );
         destructor destroy(); override;
