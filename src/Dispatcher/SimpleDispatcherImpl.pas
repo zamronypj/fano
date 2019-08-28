@@ -15,6 +15,7 @@ uses
 
     EnvironmentIntf,
     ResponseIntf,
+    StdInIntf,
     BaseDispatcherImpl;
 
 type
