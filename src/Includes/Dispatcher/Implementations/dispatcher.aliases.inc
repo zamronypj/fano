@@ -11,4 +11,3 @@ TSessionDispatcherFactory = SessionDispatcherFactoryImpl.TSessionDispatcherFacto
 
 TRequestResponseFactory = RequestResponseFactoryImpl.TRequestResponseFactory;
 TFcgiRequestResponseFactory = FcgiRequestResponseFactoryImpl.TFcgiRequestResponseFactory;
-TScgiRequestResponseFactory = ScgiRequestResponseFactoryImpl.TScgiRequestResponseFactory;

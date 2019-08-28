@@ -24,4 +24,3 @@ ERouteHandlerNotFoundImpl,
 
 RequestResponseFactoryImpl,
 FcgiRequestResponseFactoryImpl,
-ScgiRequestResponseFactoryImpl,
