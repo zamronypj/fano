@@ -38,7 +38,9 @@ type
 implementation
 
 uses
+
     RequestImpl,
+    FcgiRequestImpl,
     HashListImpl,
     MultipartFormDataParserImpl,
     UploadedFileCollectionFactoryImpl,
