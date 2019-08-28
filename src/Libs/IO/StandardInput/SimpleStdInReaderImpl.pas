@@ -63,7 +63,7 @@ implementation
      * @param stream, stream to write to
      * @return current instance
      *-----------------------------------------------*)
-    function TSimpleStdInReader.setStream(const astream : IStreamAdapter) : IStdInReader;
+    function TSimpleStdInReader.setStream(const astream : IStreamAdapter) : IStdIn;
     begin
         //intentionally does nothing
         result := self;
