@@ -17,6 +17,7 @@ uses
     RequestFactoryIntf,
     ResponseFactoryIntf,
     RequestResponseFactoryIntf,
+    FcgiRequestIdAwareIntf,
     InjectableObjectImpl;
 
 type
@@ -28,7 +29,11 @@ type
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *---------------------------------------------------*)
     TFcgiRequestResponseFactory = class(TInjectableObject, IRequestResponseFactory)
+    private
+        fRequestIdAware : IFcgiRequestIdAware;
     public
+        constructor create(const requestIdAware : IFcgiRequestIdAware);
+        destructor destroy(); override;
         function getRequestFactory() : IRequestFactory;
         function getResponseFactory() : IResponseFactory;
     end;
@@ -40,9 +45,21 @@ uses
     FcgiRequestFactoryImpl,
     ResponseFactoryImpl;
 
+    constructor TFcgiRequestResponseFactory.create(const requestIdAware : IFcgiRequestIdAware);
+    begin
+        inherited create();
+        fRequestIdAware := requestIdAware;
+    end;
+
+    destructor TFcgiRequestResponseFactory.destroy();
+    begin
+        fRequestIdAware := nil;
+        inherited destroy();
+    end;
+
     function TFcgiRequestResponseFactory.getRequestFactory() : IRequestFactory;
     begin
-        result := TFcgiRequestFactory.create();
+        result := TFcgiRequestFactory.create(fRequestIdAware);
     end;
 
     function TFcgiRequestResponseFactory.getResponseFactory() : IResponseFactory;
