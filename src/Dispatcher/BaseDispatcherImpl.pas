@@ -21,6 +21,7 @@ uses
     RequestFactoryIntf,
     RouteMatcherIntf,
     RouteHandlerIntf,
+    StdInIntf,
     InjectableObjectImpl;
 
 type
