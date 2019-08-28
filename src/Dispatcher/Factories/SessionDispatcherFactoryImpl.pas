@@ -43,6 +43,7 @@ type
         constructor create (
             const appMiddlewaresInst : IMiddlewareCollectionAware;
             const routeMatcherInst : IRouteMatcher;
+            const requestResponseFactory : IRequestResponseFactory;
             const sessionMgr : ISessionManager;
             const cookieFactory : ICookieFactory;
             const expiresInSec : integer
