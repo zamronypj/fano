@@ -74,7 +74,8 @@ uses
     FcgiRequestManagerImpl,
     OutputBufferImpl,
     FcgiStdOutWriterImpl,
-    StreamAdapterCollectionFactoryImpl;
+    StreamAdapterCollectionFactoryImpl,
+    FcgiRequestResponseFactoryImpl;
 
     (*!-----------------------------------------------
      * constructor
@@ -140,7 +141,7 @@ uses
                 dispatcherId,
                 TSimpleDispatcherFactory.create(
                     appContainer.get(routerId) as IRouteMatcher,
-                    TFcgiRequestResponseFactory.create()
+                    TFcgiRequestResponseFactory.create(fcgiProc)
                 )
             );
         end;
