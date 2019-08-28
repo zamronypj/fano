@@ -60,7 +60,8 @@ uses
     SimpleRouterFactoryImpl,
     SimpleDispatcherFactoryImpl,
     StdInReaderImpl,
-    StdInIntf;
+    StdInIntf,
+    RequestResponseFactoryImpl;
 
     (*!-----------------------------------------------
      * constructor
@@ -110,7 +111,8 @@ uses
             appContainer.add(
                 'dispatcher',
                 TSimpleDispatcherFactory.create(
-                    appContainer.get('router') as IRouteMatcher
+                    appContainer.get('router') as IRouteMatcher,
+                    TRequestResponseFactory.create()
                 )
             );
         end;
