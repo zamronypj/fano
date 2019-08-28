@@ -13,6 +13,10 @@ interface
 {$MODE OBJFPC}
 {$H+}
 
+uses
+
+    StreamAdapterIntf;
+
 type
 
     (*!------------------------------------------------
@@ -31,7 +35,7 @@ type
          * @param stream, stream to write to
          * @return current instance
          *-----------------------------------------------*)
-        function setStream(const astream : IStreamAdapter) : IStdInReader;
+        function setStream(const astream : IStreamAdapter) : IStdIn;
 
         function readStdIn(const contentLength : int64) : string;
     end;
