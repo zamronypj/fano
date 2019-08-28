@@ -14,8 +14,8 @@ interface
 
 uses
 
-    FcgiProcessorIntf,
-    FcgiFrameParserIntf;
+    RequestIntf,
+    FcgiRequestIntf;
 
 type
 
