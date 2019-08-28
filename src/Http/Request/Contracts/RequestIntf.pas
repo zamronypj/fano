@@ -18,7 +18,8 @@ uses
     AjaxAwareIntf,
     ListIntf,
     UploadedFileIntf,
-    UploadedFileCollectionIntf;
+    UploadedFileCollectionIntf,
+    EnvironmentIntf;
 
 type
 
@@ -37,6 +38,7 @@ type
          * @return string request method
          *------------------------------------------------*)
         function getMethod() : string;
+        property method : string read getMethod;
 
         (*!------------------------------------------------
          * get single query param value by its name
@@ -54,6 +56,7 @@ type
          * @return list of query string params
          *------------------------------------------------*)
         function getQueryParams() : IList;
+        property queryParams : IList read getQueryParams;
 
         (*!------------------------------------------------
          * get single cookie param value by its name
@@ -71,6 +74,7 @@ type
          * @return list of cookie params
          *------------------------------------------------*)
         function getCookieParams() : IList;
+        property cookieParams : IList read getCookieParams;
 
         (*!------------------------------------------------
          * get request body data
@@ -88,6 +92,7 @@ type
          * @return array of parsed body params
          *------------------------------------------------*)
         function getParsedBodyParams() : IList;
+        property parsedBodyParams : IList read getParsedBodyParams;
 
         (*!------------------------------------------------
          * get request uploaded file by name
@@ -105,6 +110,15 @@ type
          *         upload
          *------------------------------------------------*)
         function getUploadedFiles() : IUploadedFileCollection;
+        property uploadedFiles : IUploadedFileCollection read getUploadedFiles;
+
+        (*!------------------------------------------------
+         * get CGI environment
+         *-------------------------------------------------
+         * @return ICGIEnvironment
+         *------------------------------------------------*)
+        function getEnvironment() : ICGIEnvironment;
+        property env : ICGIEnvironment read getEnvironment;
     end;
 
 implementation
