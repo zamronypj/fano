@@ -20,7 +20,7 @@ uses
 type
 
     (*!-----------------------------------------------
-     * FastCGI web application that implements IWebApplication
+     * FastCGI request that implements IRequest
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
@@ -69,8 +69,8 @@ implementation
 
     destructor TFcgiRequest.destroy();
     begin
-        inherited destroy();
         fRequest := nil;
+        inherited destroy();
     end;
 
     (*!------------------------------------------------

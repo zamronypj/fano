@@ -21,3 +21,7 @@ SessionDispatcherFactoryImpl,
 EInvalidDispatcherImpl,
 EMethodNotAllowedImpl,
 ERouteHandlerNotFoundImpl,
+
+RequestResponseFactoryImpl,
+FcgiRequestResponseFactoryImpl,
+ScgiRequestResponseFactoryImpl,

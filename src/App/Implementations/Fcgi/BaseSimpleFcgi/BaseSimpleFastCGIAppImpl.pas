@@ -139,7 +139,8 @@ uses
             appContainer.add(
                 dispatcherId,
                 TSimpleDispatcherFactory.create(
-                    appContainer.get(routerId) as IRouteMatcher
+                    appContainer.get(routerId) as IRouteMatcher,
+                    TFcgiRequestResponseFactory.create()
                 )
             );
         end;

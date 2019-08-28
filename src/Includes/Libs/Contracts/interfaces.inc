@@ -20,6 +20,7 @@ StreamAdapterIntf,
 StdInReaderIntf,
 StdOutIntf,
 StdErrIntf,
+StdInStreamAwareIntf,
 
 HttpClientHandleAwareIntf,
 HttpClientHeadersIntf,

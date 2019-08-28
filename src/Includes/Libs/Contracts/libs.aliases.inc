@@ -5,6 +5,7 @@ IStreamAdapter = StreamAdapterIntf.IStreamAdapter;
 IStdInReader = StdInReaderIntf.IStdInReader;
 IStdOut = StdOutIntf.IStdOut;
 IStdErr = StdErrIntf.IStdErr;
+IStdInStreamAware = StdInStreamAwareIntf.IStdInStreamAware;
 
 IHttpClientHandleAware = HttpClientHandleAwareIntf.IHttpClientHandleAware;
 IHttpClientHeaders = HttpClientHeadersIntf.IHttpClientHeaders;

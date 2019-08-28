@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit FcgiRequestFactoryImpl;
+unit ScgiRequestFactoryImpl;
 
 interface
 
@@ -17,24 +17,19 @@ uses
     EnvironmentIntf,
     RequestIntf,
     RequestFactoryIntf,
-    FcgiRequestIdAwareIntf,
     StdInStreamAwareIntf;
 
 type
     (*!------------------------------------------------
-     * factory class for FastCGI Request
+     * factory class for SCGI Request
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TFcgiRequestFactory = class(TInterfacedObject, IRequestFactory)
+    TScgiRequestFactory = class(TInterfacedObject, IRequestFactory)
     private
-        fRequestIdAware : IFcgiRequestIdAware;
         fStdInAware : IStdInStreamAware;
     public
-        constructor create(
-            const requestIdAware : IFcgiRequestIdAware;
-            const stdInAware : IStdInStreamAware;
-        );
+        constructor create(const stdInAware : IStdInStreamAware);
         destructor destroy; override;
         function build(const env : ICGIEnvironment) : IRequest;
     end;
@@ -50,27 +45,21 @@ uses
     StdInReaderIntf,
     StdInFromStreamImpl;
 
-    constructor TFcgiRequestFactory.create(
-        const requestIdAware : IFcgiRequestIdAware;
-        const stdInAware : IStdInStreamAware;
-    );
+    constructor TScgiRequestFactory.create(const stdInAware : IStdInStreamAware);
     begin
-        inherited create();
-        fRequestIdAware := requestIdAware;
         fStdInAware := stdInStreamAware;
     end;
 
     destructor TFcgiRequestFactory.destroy();
     begin
-        fRequestIdAware := nil;
         fStdInAware := nil;
         inherited destroy();
     end;
 
-    function TFcgiRequestFactory.build(const env : ICGIEnvironment) : IRequest;
+    function TScgiRequestFactory.build(const env : ICGIEnvironment) : IRequest;
     var arequest : IRequest;
     begin
-        arequest := TRequest.create(
+        result := TRequest.create(
             env,
             THashList.create(),
             THashList.create(),
@@ -80,6 +69,5 @@ uses
             ),
             TStdInReaderFromStream.create(fStdInAware.getStdIn())
         );
-        result := TFcgiRequest.create(fRequestIdAware.getRequestId(), arequest);
     end;
 end.
