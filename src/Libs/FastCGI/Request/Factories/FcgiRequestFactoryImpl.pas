@@ -17,8 +17,8 @@ uses
     EnvironmentIntf,
     RequestIntf,
     RequestFactoryIntf,
-    FcgiRequestIdAwareIntf,
-    StdInStreamAwareIntf;
+    StdInIntf,
+    FcgiRequestIdAwareIntf;
 
 type
     (*!------------------------------------------------
@@ -29,14 +29,10 @@ type
     TFcgiRequestFactory = class(TInterfacedObject, IRequestFactory)
     private
         fRequestIdAware : IFcgiRequestIdAware;
-        fStdInAware : IStdInStreamAware;
     public
-        constructor create(
-            const requestIdAware : IFcgiRequestIdAware;
-            const stdInAware : IStdInStreamAware;
-        );
+        constructor create(const requestIdAware : IFcgiRequestIdAware);
         destructor destroy; override;
-        function build(const env : ICGIEnvironment) : IRequest;
+        function build(const env : ICGIEnvironment; const stdIn  : IStdIn) : IRequest;
     end;
 
 implementation
@@ -46,24 +42,19 @@ uses
     HashListImpl,
     MultipartFormDataParserImpl,
     UploadedFileCollectionFactoryImpl,
-    UploadedFileCollectionWriterFactoryImpl,
-    StdInIntf,
-    StdInFromStreamImpl;
+    UploadedFileCollectionWriterFactoryImpl;
 
     constructor TFcgiRequestFactory.create(
-        const requestIdAware : IFcgiRequestIdAware;
-        const stdInAware : IStdInStreamAware;
+        const requestIdAware : IFcgiRequestIdAware
     );
     begin
         inherited create();
         fRequestIdAware := requestIdAware;
-        fStdInAware := stdInStreamAware;
     end;
 
     destructor TFcgiRequestFactory.destroy();
     begin
         fRequestIdAware := nil;
-        fStdInAware := nil;
         inherited destroy();
     end;
 
