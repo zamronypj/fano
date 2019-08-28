@@ -16,6 +16,7 @@ uses
 
     RequestFactoryIntf,
     ResponseFactoryIntf,
+    RequestResponseFactoryIntf,
     InjectableObjectImpl;
 
 type
