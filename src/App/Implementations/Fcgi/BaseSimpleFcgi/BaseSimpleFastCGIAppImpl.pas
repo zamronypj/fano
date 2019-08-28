@@ -154,12 +154,12 @@ uses
         inherited create(
             appContainer,
             appErr,
-            appStdIn,
             appDispatcher,
             workerServer,
             appProcessor,
             appOutputBuffer,
-            appStdOutWriter
+            appStdOutWriter,
+            appStdIn
         );
     end;
 
