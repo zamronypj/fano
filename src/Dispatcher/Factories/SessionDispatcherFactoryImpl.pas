@@ -60,12 +60,13 @@ uses
     constructor TSessionDispatcherFactory.create (
         const appMiddlewaresInst : IMiddlewareCollectionAware;
         const routeMatcherInst : IRouteMatcher;
+        const requestResponseFactory : IRequestResponseFactory;
         const sessionMgr : ISessionManager;
         const cookieFactory : ICookieFactory;
         const expiresInSec : integer
     );
     begin
-        inherited create(appMiddlewaresInst, routeMatcherInst);
+        inherited create(appMiddlewaresInst, routeMatcherInst, requestResponseFactory);
         fSessionMgr := sessionMgr;
         fCookieFactory := cookieFactory;
         fExpiresInSec := expiresInSec;
