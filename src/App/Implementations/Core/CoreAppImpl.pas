@@ -36,7 +36,7 @@ type
         dispatcher : IDispatcher;
         environment : ICGIEnvironment;
         errorHandler : IErrorHandler;
-        fStdIn : IStdIn;
+        fStdInReader : IStdIn;
 
         (*!-----------------------------------------------
          * execute application and write response
@@ -101,7 +101,7 @@ type
             const container : IDependencyContainer;
             const env : ICGIEnvironment;
             const errHandler : IErrorHandler;
-            const stdIn : IStdIn
+            const stdInReader : IStdIn
         );
         destructor destroy(); override;
         function run() : IRunnable; virtual; abstract;
@@ -123,6 +123,7 @@ uses
         environment := nil;
         errorHandler := nil;
         dependencyContainer := nil;
+        fStdInReader := nil;
     end;
 
     (*!-----------------------------------------------
@@ -142,15 +143,17 @@ uses
     constructor TCoreWebApplication.create(
         const container : IDependencyContainer;
         const env : ICGIEnvironment;
-        const errHandler : IErrorHandler
+        const errHandler : IErrorHandler;
+        const stdInReader : IStdIn
     );
     begin
         inherited create();
         randomize();
         reset();
+        dependencyContainer := container;
         environment := env;
         errorHandler := errHandler;
-        dependencyContainer := container;
+        fStdInReader := stdInReader;
     end;
 
     (*!-----------------------------------------------
@@ -213,7 +216,7 @@ uses
     function TCoreWebApplication.execute() : IRunnable;
     var response : IResponse;
     begin
-        response := dispatcher.dispatchRequest(environment);
+        response := dispatcher.dispatchRequest(environment, fStdInReader);
         try
             response.write();
             result := self;

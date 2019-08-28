@@ -24,6 +24,7 @@ uses
     MiddlewareChainFactoryIntf,
     RouteHandlerIntf,
     MiddlewareCollectionAwareIntf,
+    StdInIntf,
     InjectableObjectImpl,
     BaseDispatcherImpl;
 
@@ -42,12 +43,14 @@ type
 
         function executeMiddlewareChain(
             const env: ICGIEnvironment;
+            const stdIn : IStdIn;
             const routeHandler : IRouteHandler;
             const routeMiddlewares : IMiddlewareCollectionAware
         ) : IResponse;
 
         function executeMiddlewares(
             const env: ICGIEnvironment;
+            const stdIn : IStdIn;
             const routeHandler : IRouteHandler
         ) : IResponse;
     public
@@ -59,7 +62,18 @@ type
             const reqFactory : IRequestFactory
         );
         destructor destroy(); override;
-        function dispatchRequest(const env: ICGIEnvironment) : IResponse; override;
+
+        (*!-------------------------------------------
+         * dispatch request
+         *--------------------------------------------
+         * @param env CGI environment
+         * @param stdIn STDIN reader
+         * @return response
+         *--------------------------------------------*)
+        function dispatchRequest(
+            const env: ICGIEnvironment;
+            const stdIn : IStdIn
+        ) : IResponse; override;
     end;
 
 implementation
@@ -90,8 +104,9 @@ uses
 
     function TDispatcher.executeMiddlewareChain(
         const env: ICGIEnvironment;
+        const stdIn : IStdIn;
         const routeHandler : IRouteHandler;
-        const routeMiddlewares : IMiddlewareCollectionAware
+        const routeMiddlewares : IMiddlewareCollectionAware;
     ) : IResponse;
     var middlewareChain : IMiddlewareChain;
     begin
@@ -101,7 +116,7 @@ uses
         );
         try
             result := middlewareChain.execute(
-                requestFactory.build(env),
+                requestFactory.build(env, stdIn),
                 responseFactory.build(env),
                 routeHandler
             );
@@ -112,24 +127,28 @@ uses
 
     function TDispatcher.executeMiddlewares(
         const env: ICGIEnvironment;
+        const stdIn : IStdIn;
         const routeHandler : IRouteHandler
     ) : IResponse;
     var routeMiddlewares : IMiddlewareCollectionAware;
     begin
         routeMiddlewares := routeHandler as IMiddlewareCollectionAware;
         try
-            result := executeMiddlewareChain(env, routeHandler, routeMiddlewares);
+            result := executeMiddlewareChain(env, stdIn, routeHandler, routeMiddlewares);
         finally
             routeMiddlewares := nil;
         end;
     end;
 
-    function TDispatcher.dispatchRequest(const env: ICGIEnvironment) : IResponse;
+    function TDispatcher.dispatchRequest(
+        const env: ICGIEnvironment;
+        const stdIn : IStdIn
+    ) : IResponse;
     var routeHandler : IRouteHandler;
     begin
         routeHandler := getRouteHandler(env);
         try
-            result := executeMiddlewares(env, routeHandler);
+            result := executeMiddlewares(env, stdIn, routeHandler);
         finally
             routeHandler := nil;
         end;

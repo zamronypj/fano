@@ -67,7 +67,7 @@ uses
         inherited destroy();
     end;
 
-    function TFcgiRequestFactory.build(const env : ICGIEnvironment) : IRequest;
+    function TFcgiRequestFactory.build(const env : ICGIEnvironment; const stdIn : IStdIn) : IRequest;
     var arequest : IRequest;
     begin
         arequest := TRequest.create(
@@ -78,7 +78,7 @@ uses
             TMultipartFormDataParser.create(
                 TUploadedFileCollectionWriterFactory.create()
             ),
-            TStdInReaderFromStream.create(fStdInAware.getStdIn())
+            stdIn
         );
         result := TFcgiRequest.create(fRequestIdAware.getRequestId(), arequest);
     end;

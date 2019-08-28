@@ -24,6 +24,7 @@ uses
     DataAvailListenerIntf,
     RunnableWithDataNotifIntf,
     StdOutIntf,
+    StdInIntf,
     ProtocolProcessorIntf,
     ReadyListenerIntf,
     StreamAdapterIntf,
@@ -71,7 +72,8 @@ type
             const server : IRunnableWithDataNotif;
             const aProcessor : IProtocolProcessor;
             const outputBuffer : IOutputBuffer;
-            const stdOutWriter : IStdOut
+            const stdOutWriter : IStdOut;
+            const stdInReader : IStdIn
         );
         destructor destroy(); override;
         function run() : IRunnable; override;
@@ -134,10 +136,11 @@ uses
         const server : IRunnableWithDataNotif;
         const aProcessor : IProtocolProcessor;
         const outputBuffer : IOutputBuffer;
-        const stdOutWriter : IStdOut
+        const stdOutWriter : IStdOut;
+        const stdInReader : IStdIn
     );
     begin
-        inherited create(container, nil, errHandler);
+        inherited create(container, nil, errHandler, stdInReader);
         dispatcher := dispatcherInst;
         workerServer := server;
         fProcessor := aProcessor;
@@ -276,6 +279,7 @@ uses
         fOutputBuffer.beginBuffering();
         try
             //when we get here, CGI environment and any POST data are ready
+            fStdInReader.setStream(stdInStream);
             executeRequest(env);
         finally
             fOutputBuffer.endBuffering();

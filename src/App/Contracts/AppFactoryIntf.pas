@@ -14,7 +14,11 @@ interface
 
 uses
 
-    AppIntf;
+    AppIntf,
+    DependencyContainerIntf,
+    DispatcherIntf,
+    ErrorHandlerIntf,
+    StdInIntf;
 
 type
 
@@ -26,6 +30,14 @@ type
      *-----------------------------------------------*)
     IWebApplicationFactory = interface
         ['{47D5B42D-6735-47E3-A789-5C51E874B368}']
+
+        function container(const acontainer : IDependencyContainer) : IWebApplicationFactory;
+        function errorHandler(const aerrorHandler : IErrorHandler) : IWebApplicationFactory;
+        function dispatcher(const aDispatcher : IDispatcher) : IWebApplicationFactory;
+        function stdIn(const astdIn : IStdIn) : IWebApplicationFactory;
+        function stdOut(const astdOut : IStdOut) : IWebApplicationFactory;
+        function protocol(const aProtocol : IProtocolProcessor) : IWebApplicationFactory;
+        function outputBuffer(const aOutBuffer : IOutputBuffer) : IWebApplicationFactory;
 
         function build() : IWebApplication;
     end;
