@@ -97,7 +97,8 @@ type
         constructor create(
             const container : IDependencyContainer;
             const env : ICGIEnvironment;
-            const errHandler : IErrorHandler
+            const errHandler : IErrorHandler;
+            const stdIn : IStdIn
         );
         destructor destroy(); override;
         function run() : IRunnable; virtual; abstract;

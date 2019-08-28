@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit StdInReaderIntf;
+unit StdInIntf;
 
 interface
 
@@ -22,8 +22,17 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    IStdInReader = interface
+    IStdIn = interface
         ['{D2806A1E-54D6-4830-A833-95A78ACE2F29}']
+
+        (*!------------------------------------------------
+         * set stream to write to if any
+         *-----------------------------------------------
+         * @param stream, stream to write to
+         * @return current instance
+         *-----------------------------------------------*)
+        function setStream(const astream : IStreamAdapter) : IStdInReader;
+
         function readStdIn(const contentLength : int64) : string;
     end;
 

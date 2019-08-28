@@ -23,7 +23,7 @@ uses
     UploadedFileIntf,
     UploadedFileCollectionIntf,
     UploadedFileCollectionWriterIntf,
-    StdInReaderIntf;
+    StdInIntf;
 
 const
 
@@ -49,7 +49,7 @@ type
         uploadedFiles: IUploadedFileCollection;
         uploadedFilesWriter: IUploadedFileCollectionWriter;
         multipartFormDataParser : IMultipartFormDataParser;
-        stdInReader : IStdInReader;
+        stdInReader : IStdIn;
 
         (*!------------------------------------------------
          * maximum POST data size in bytes
@@ -119,7 +119,7 @@ type
             const cookies : IList;
             const body : IList;
             const multipartFormDataParserInst : IMultipartFormDataParser;
-            const stdInputReader : IStdInReader;
+            const stdInputReader : IStdIn;
             const maxPostSize : int64 = DEFAULT_MAX_POST_SIZE;
             const maxUploadSize : int64 = DEFAULT_MAX_UPLOAD_SIZE
         );
@@ -233,7 +233,7 @@ resourcestring
         const cookies : IList;
         const body : IList;
         const multipartFormDataParserInst : IMultipartFormDataParser;
-        const stdInputReader : IStdInReader;
+        const stdInputReader : IStdIn;
         const maxPostSize : int64 = DEFAULT_MAX_POST_SIZE;
         const maxUploadSize : int64 = DEFAULT_MAX_UPLOAD_SIZE
     );

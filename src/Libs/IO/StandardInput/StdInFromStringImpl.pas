@@ -15,9 +15,9 @@ interface
 
 uses
 
-    sysutils,
+    SysUtils,
     InjectableObjectImpl,
-    StdInReaderIntf;
+    StdInIntf;
 
 type
 
@@ -26,12 +26,19 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TStdInFromString = class(TInjectableObject, IStdInReader)
+    TStdInFromString = class(TInjectableObject, IStdIn)
     private
         fInputStr : string;
     public
         constructor create(const inputStr : string);
         function readStdIn(const contentLength : int64) : string;
+        (*!------------------------------------------------
+         * set stream to write to if any
+         *-----------------------------------------------
+         * @param stream, stream to write to
+         * @return current instance
+         *-----------------------------------------------*)
+        function setStream(const astream : IStreamAdapter) : IStdIn;
     end;
 
 implementation
@@ -44,5 +51,18 @@ implementation
     function TStdInFromString.readStdIn(const contentLength : int64) : string;
     begin
         result := copy(fInputStr, 1, contentLength);
+    end;
+
+    (*!------------------------------------------------
+     * set stream to write to if any
+     *-----------------------------------------------
+     * @param stream, stream to write to
+     * @return current instance
+     *-----------------------------------------------*)
+    function TStdInFromString.setStream(const astream : IStreamAdapter) : IStdIn;
+    begin
+        setLength(fInputStr, astream.size());
+        aStream.readBuffer(fInputStr[1], length(fInputStr));
+        result := self;
     end;
 end.

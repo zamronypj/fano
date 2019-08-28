@@ -17,7 +17,7 @@ uses
 
     sysutils,
     InjectableObjectImpl,
-    StdInReaderIntf;
+    StdInIntf;
 
 type
 
@@ -26,8 +26,16 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TSimpleStdInReader = class(TInjectableObject, IStdInReader)
+    TSimpleStdInReader = class(TInjectableObject, IStdIn)
     public
+        (*!------------------------------------------------
+         * set stream to write to if any
+         *-----------------------------------------------
+         * @param stream, stream to write to
+         * @return current instance
+         *-----------------------------------------------*)
+        function setStream(const astream : IStreamAdapter) : IStdIn;
+
         function readStdIn(const contentLength : int64) : string;
     end;
 
@@ -46,5 +54,17 @@ implementation
             result[ctr+1] := ch;
             inc(ctr);
         end;
+    end;
+
+    (*!------------------------------------------------
+     * set stream to write to if any
+     *-----------------------------------------------
+     * @param stream, stream to write to
+     * @return current instance
+     *-----------------------------------------------*)
+    function TSimpleStdInReader.setStream(const astream : IStreamAdapter) : IStdInReader;
+    begin
+        //intentionally does nothing
+        result := self;
     end;
 end.

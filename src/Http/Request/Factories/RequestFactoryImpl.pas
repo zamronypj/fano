@@ -36,7 +36,6 @@ uses
     MultipartFormDataParserImpl,
     UploadedFileCollectionFactoryImpl,
     UploadedFileCollectionWriterFactoryImpl,
-    StdInReaderIntf,
     StdInReaderImpl,
     SimpleStdInReaderImpl;
 
