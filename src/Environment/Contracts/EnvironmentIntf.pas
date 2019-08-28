@@ -13,6 +13,10 @@ interface
 {$MODE OBJFPC}
 {$H+}
 
+uses
+
+    EnvironmentEnumeratorIntf;
+
 type
 
     (*!------------------------------------------------
@@ -126,6 +130,9 @@ type
          Retrieve HTTP_COOKIE environment variable
         ------------------------------------------}
         function httpCookie() : string;
+
+        function getEnumerator() : ICGIEnvironmentEnumerator;
+        property enumerator : ICGIEnvironmentEnumerator read getEnumerator;
     end;
 
 implementation

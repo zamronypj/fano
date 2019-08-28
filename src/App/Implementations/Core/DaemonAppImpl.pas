@@ -147,12 +147,12 @@ uses
 
     destructor TDaemonWebApplication.destroy();
     begin
-        inherited destroy();
         dispatcher := nil;
         workerServer := nil;
         fProcessor := nil;
         fOutputBuffer := nil;
         fStdOutWriter := nil;
+        inherited destroy();
     end;
 
     (*!-----------------------------------------------
@@ -223,20 +223,17 @@ uses
         except
             on e : ERouteHandlerNotFound do
             begin
-                envEnum := env as ICGIEnvironmentEnumerator;
-                errorHandler.handleError(envEnum, e, 404, sHttp404Message);
+                errorHandler.handleError(env.enumerator, e, 404, sHttp404Message);
             end;
 
             on e : EMethodNotAllowed do
             begin
-                envEnum := env as ICGIEnvironmentEnumerator;
-                errorHandler.handleError(envEnum, e, 405, sHttp405Message);
+                errorHandler.handleError(env.enumerator, e, 405, sHttp405Message);
             end;
 
             on e : Exception do
             begin
-                envEnum := env as ICGIEnvironmentEnumerator;
-                errorHandler.handleError(envEnum, e);
+                errorHandler.handleError(env.enumerator, e);
             end;
         end;
     end;

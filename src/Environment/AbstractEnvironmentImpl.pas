@@ -158,6 +158,8 @@ type
          * @return value name
          *-----------------------------------------------*)
         function getValue(const indx : integer) : string; virtual;
+
+        function getEnumerator() : ICGIEnvironmentEnumerator;
     end;
 
 implementation
@@ -342,5 +344,10 @@ resourcestring
     function TAbstractCGIEnvironment.getValue(const indx : integer) : string;
     begin
         result := env(getKey(indx));
+    end;
+
+    function TAbstractCGIEnvironment.getEnumerator() : ICGIEnvironmentEnumerator;
+    begin
+        result := self;
     end;
 end.
