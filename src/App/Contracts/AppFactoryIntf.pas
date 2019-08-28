@@ -41,6 +41,7 @@ type
         function stdOut(const astdOut : IStdOut) : IWebApplicationFactory;
         function protocol(const aProtocol : IProtocolProcessor) : IWebApplicationFactory;
         function outputBuffer(const aOutBuffer : IOutputBuffer) : IWebApplicationFactory;
+        function useSession(const useSess : boolean) : IWebApplicationFactory;
 
         function build() : IWebApplication;
     end;
