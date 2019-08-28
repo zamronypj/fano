@@ -14,6 +14,7 @@ interface
 {$H+}
 
 uses
+
     EnvironmentIntf,
     RequestIntf,
     ListIntf,
@@ -198,6 +199,13 @@ type
          *         upload
          *------------------------------------------------*)
         function getUploadedFiles() : IUploadedFileCollection;
+
+        (*!------------------------------------------------
+         * get CGI environment
+         *-------------------------------------------------
+         * @return ICGIEnvironment
+         *------------------------------------------------*)
+        function getEnvironment() : ICGIEnvironment;
 
         (*!------------------------------------------------
          * test if current request is comming from AJAX request
@@ -529,6 +537,16 @@ resourcestring
     function TRequest.getMethod() : string;
     begin
         result := webEnvironment.requestMethod();
+    end;
+
+    (*!------------------------------------------------
+     * get CGI environment
+     *-------------------------------------------------
+     * @return ICGIEnvironment
+     *------------------------------------------------*)
+    function TRequest.getEnvironment() : ICGIEnvironment;
+    begin
+        result := webEnvironment;
     end;
 
 end.
