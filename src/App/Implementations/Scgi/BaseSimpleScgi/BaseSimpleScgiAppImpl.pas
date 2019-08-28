@@ -73,7 +73,8 @@ uses
     ScgiStdOutWriterImpl,
     StdInIntf,
     StdInFromStreamImpl,
-    NullStreamAdapterImpl;
+    NullStreamAdapterImpl,
+    RequestResponseFactoryImpl;
 
     (*!-----------------------------------------------
      * constructor
@@ -133,7 +134,8 @@ uses
             appContainer.add(
                 dispatcherId,
                 TSimpleDispatcherFactory.create(
-                    appContainer.get(routerId) as IRouteMatcher
+                    appContainer.get(routerId) as IRouteMatcher,
+                    TRequestResponseFactory.create()
                 )
             );
         end;
