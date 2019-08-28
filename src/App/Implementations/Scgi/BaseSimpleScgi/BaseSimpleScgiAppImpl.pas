@@ -70,7 +70,10 @@ uses
     ScgiProcessorImpl,
     ScgiParserImpl,
     OutputBufferImpl,
-    ScgiStdOutWriterImpl;
+    ScgiStdOutWriterImpl,
+    StdInIntf,
+    StdInFromStreamImpl,
+    NullStreamAdapterImpl;
 
     (*!-----------------------------------------------
      * constructor
@@ -94,6 +97,7 @@ uses
         appProcessor : IProtocolProcessor;
         appOutputBuffer : IOutputBuffer;
         appStdOutWriter : IStdOut;
+        appStdIn : IStdIn;
         dispatcherId : string;
         routerId : string;
     begin
@@ -112,6 +116,7 @@ uses
         appProcessor := TScgiProcessor.create(TScgiParser.create());
         appOutputBuffer := TOutputBuffer.create();
         appStdOutWriter := TScgiStdOutWriter.create();
+        appStdIn := TStdInFromStream.create(TNullStreamAdapter.create());
 
         routerId := GUIDToString(IRouteMatcher);
         if (not appContainer.has(routerId)) then
@@ -140,7 +145,8 @@ uses
             workerServer,
             appProcessor,
             appOutputBuffer,
-            appStdOutWriter
+            appStdOutWriter,
+            appStdIn
         );
     end;
 
