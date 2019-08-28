@@ -17,6 +17,7 @@ uses
 
     SysUtils,
     InjectableObjectImpl,
+    StreamAdapterIntf,
     StdInIntf;
 
 type
