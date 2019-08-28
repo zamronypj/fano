@@ -50,7 +50,7 @@ uses
         fStdInAware := stdInStreamAware;
     end;
 
-    destructor TFcgiRequestFactory.destroy();
+    destructor TScgiRequestFactory.destroy();
     begin
         fStdInAware := nil;
         inherited destroy();
