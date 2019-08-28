@@ -53,7 +53,7 @@ uses
         result := TCompositeErrorHandler.create(
             TLogErrorHandler.create(TFileLogger.create(logFilename)),
             TNullErrorHandler.create()
-        )
+        );
     end;
 
 end.

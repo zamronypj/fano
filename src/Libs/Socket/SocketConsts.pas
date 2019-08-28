@@ -23,6 +23,8 @@ resourcestring
     rsEpollInitFailed = 'Fail to initialize epoll';
     raEpollAddFileDescriptorFailed = 'Fail to add file descriptor';
 
+    rsSocketError = 'Socket error: %s (%d)';
+
 implementation
 
 end.

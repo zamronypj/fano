@@ -14,6 +14,7 @@ interface
 {$H+}
 
 uses
+
     EnvironmentIntf,
     RequestIntf,
     ListIntf,
@@ -125,6 +126,13 @@ type
         destructor destroy(); override;
 
         (*!------------------------------------------------
+         * get request method GET, POST, HEAD, etc
+         *-------------------------------------------------
+         * @return string request method
+         *------------------------------------------------*)
+        function getMethod() : string;
+
+        (*!------------------------------------------------
          * get single query param value by its name
          *-------------------------------------------------
          * @param string key name of key
@@ -191,6 +199,13 @@ type
          *         upload
          *------------------------------------------------*)
         function getUploadedFiles() : IUploadedFileCollection;
+
+        (*!------------------------------------------------
+         * get CGI environment
+         *-------------------------------------------------
+         * @return ICGIEnvironment
+         *------------------------------------------------*)
+        function getEnvironment() : ICGIEnvironment;
 
         (*!------------------------------------------------
          * test if current request is comming from AJAX request
@@ -513,4 +528,25 @@ resourcestring
     begin
         result := (webEnvironment.env('HTTP_X_REQUESTED_WITH') = 'XMLHttpRequest');
     end;
+
+    (*!------------------------------------------------
+     * get request method GET, POST, HEAD, etc
+     *-------------------------------------------------
+     * @return string request method
+     *------------------------------------------------*)
+    function TRequest.getMethod() : string;
+    begin
+        result := webEnvironment.requestMethod();
+    end;
+
+    (*!------------------------------------------------
+     * get CGI environment
+     *-------------------------------------------------
+     * @return ICGIEnvironment
+     *------------------------------------------------*)
+    function TRequest.getEnvironment() : ICGIEnvironment;
+    begin
+        result := webEnvironment;
+    end;
+
 end.

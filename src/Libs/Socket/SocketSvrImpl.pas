@@ -214,6 +214,7 @@ uses
     SocketConsts,
     ESockListenImpl,
     ESockWouldBlockImpl,
+    ESockErrorImpl,
     StreamAdapterImpl,
     SockStreamImpl,
     CloseableStreamImpl,
@@ -326,7 +327,10 @@ uses
             //but no pending connection, so just do nothing
         end else
         begin
-            //TODO handle error
+            raise ESockError.createFmt(
+                rsSocketError,
+                [ strError(errno), errno ]
+            );
         end;
     end;
 

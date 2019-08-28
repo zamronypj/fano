@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit MiddlewareChainFactoryIntf;
+unit AppFactoryIntf;
 
 interface
 
@@ -14,24 +14,20 @@ interface
 
 uses
 
-   MiddlewareChainIntf,
-   MiddlewareCollectionAwareIntf;
+    AppIntf;
 
 type
 
     (*!------------------------------------------------
      * interface for any class having capability to create
-     * middleware chain instance
+     * IWebApplication instance
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    IMiddlewareChainFactory = interface
-        ['{3D57F1EB-46CD-4D63-B77B-D51C656139EE}']
+    IWebApplicationFactory = interface
+        ['{47D5B42D-6735-47E3-A789-5C51E874B368}']
 
-        function build(
-            const appMiddlewares : IMiddlewareCollectionAware;
-            const routeMiddlewares : IMiddlewareCollectionAware
-        ) : IMiddlewareChain;
+        function build() : IWebApplication;
     end;
 
 implementation

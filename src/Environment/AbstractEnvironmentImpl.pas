@@ -150,6 +150,16 @@ type
          * @return key name
          *-----------------------------------------------*)
         function getKey(const indx : integer) : shortstring; virtual; abstract;
+
+        (*!------------------------------------------------
+         * get value by index
+         *-----------------------------------------------
+         * @param index index to use
+         * @return value name
+         *-----------------------------------------------*)
+        function getValue(const indx : integer) : string; virtual;
+
+        function getEnumerator() : ICGIEnvironmentEnumerator;
     end;
 
 implementation
@@ -323,5 +333,21 @@ resourcestring
     function TAbstractCGIEnvironment.httpCookie() : string;
     begin
         result := env('HTTP_COOKIE');
+    end;
+
+    (*!------------------------------------------------
+     * get value by index
+     *-----------------------------------------------
+     * @param index index to use
+     * @return key name
+     *-----------------------------------------------*)
+    function TAbstractCGIEnvironment.getValue(const indx : integer) : string;
+    begin
+        result := env(getKey(indx));
+    end;
+
+    function TAbstractCGIEnvironment.getEnumerator() : ICGIEnvironmentEnumerator;
+    begin
+        result := self;
     end;
 end.

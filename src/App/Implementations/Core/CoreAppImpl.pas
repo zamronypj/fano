@@ -18,6 +18,7 @@ uses
     AppIntf,
     DispatcherIntf,
     EnvironmentIntf,
+    EnvironmentEnumeratorIntf,
     ErrorHandlerIntf,
     CoreAppConsts;
 
@@ -140,6 +141,7 @@ uses
         const errHandler : IErrorHandler
     );
     begin
+        inherited create();
         randomize();
         reset();
         environment := env;
@@ -152,8 +154,8 @@ uses
      *-----------------------------------------------*)
     destructor TCoreWebApplication.destroy();
     begin
-        inherited destroy();
         reset();
+        inherited destroy();
     end;
 
     (*!-----------------------------------------------

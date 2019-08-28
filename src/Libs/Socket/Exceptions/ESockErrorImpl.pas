@@ -6,12 +6,22 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-(*! ---------------------------------------------
- * unit interfaces for app that is included in
- * fano.pas unit
- *
- * @author Zamrony P. Juhara <zamronypj@yahoo.com>
- *-----------------------------------------------*)
+unit ESockErrorImpl;
 
-AppIntf,
-AppFactoryIntf,
+interface
+
+{$MODE OBJFPC}
+{$H+}
+
+uses
+
+    SysUtils;
+
+type
+
+    ESockError = class(Exception)
+    end;
+
+implementation
+
+end.
