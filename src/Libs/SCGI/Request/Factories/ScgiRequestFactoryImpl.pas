@@ -42,7 +42,7 @@ uses
     MultipartFormDataParserImpl,
     UploadedFileCollectionFactoryImpl,
     UploadedFileCollectionWriterFactoryImpl,
-    StdInReaderIntf,
+    StdInIntf,
     StdInFromStreamImpl;
 
     constructor TScgiRequestFactory.create(const stdInAware : IStdInStreamAware);

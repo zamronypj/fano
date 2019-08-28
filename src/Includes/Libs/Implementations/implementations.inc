@@ -27,6 +27,8 @@ EInvalidStreamImpl,
 
 StdInReaderImpl,
 SimpleStdInReaderImpl,
+StdInFromStringImpl,
+StdInFromStreamImpl,
 
 KeyValuePairImpl,
 KeyValuePairFactoryImpl,

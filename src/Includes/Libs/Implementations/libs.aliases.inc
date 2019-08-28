@@ -20,6 +20,8 @@ TSerializeableStream = SerializeableStreamImpl.TSerializeableStream;
 
 TStdInReader = StdInReaderImpl.TStdInReader;
 TSimpleStdInReader = SimpleStdInReaderImpl.TSimpleStdInReader;
+TStdInFromString = StdInFromStringImpl.TStdInFromString;
+TStdInFromStream = StdInFromStreamImpl.TStdInFromStream;
 
 TKeyValuePair = KeyValuePairImpl.TKeyValuePair;
 TKeyValuePairFactory = KeyValuePairFactoryImpl.TKeyValuePairFactory;

@@ -20,6 +20,7 @@ uses
     EnvironmentIntf,
     EnvironmentEnumeratorIntf,
     ErrorHandlerIntf,
+    StdInIntf,
     CoreAppConsts;
 
 type
@@ -35,6 +36,7 @@ type
         dispatcher : IDispatcher;
         environment : ICGIEnvironment;
         errorHandler : IErrorHandler;
+        fStdIn : IStdIn;
 
         (*!-----------------------------------------------
          * execute application and write response
@@ -93,6 +95,7 @@ type
          * @param container dependency container
          * @param env CGI environment instance
          * @param errHandler error handler
+         * @param stdIn standard input reader
          *-----------------------------------------------*)
         constructor create(
             const container : IDependencyContainer;

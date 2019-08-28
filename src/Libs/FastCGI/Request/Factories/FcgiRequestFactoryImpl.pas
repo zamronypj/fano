@@ -47,7 +47,7 @@ uses
     MultipartFormDataParserImpl,
     UploadedFileCollectionFactoryImpl,
     UploadedFileCollectionWriterFactoryImpl,
-    StdInReaderIntf,
+    StdInIntf,
     StdInFromStreamImpl;
 
     constructor TFcgiRequestFactory.create(
