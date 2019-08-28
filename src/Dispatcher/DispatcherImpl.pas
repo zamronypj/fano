@@ -106,7 +106,7 @@ uses
         const env: ICGIEnvironment;
         const stdIn : IStdIn;
         const routeHandler : IRouteHandler;
-        const routeMiddlewares : IMiddlewareCollectionAware;
+        const routeMiddlewares : IMiddlewareCollectionAware
     ) : IResponse;
     var middlewareChain : IMiddlewareChain;
     begin
