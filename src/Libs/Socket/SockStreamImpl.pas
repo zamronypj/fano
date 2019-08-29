@@ -63,7 +63,8 @@ uses
 
     function TSockStream.write(const buffer; count: longint): longint;
     begin
-        result := fpSend(Handle, @buffer, count, 0);
+        //disable signal such as SIGPIPE, we will handle error ourselves
+        result := fpSend(Handle, @buffer, count, MSG_NOSIGNAL);
     end;
 
 end.
