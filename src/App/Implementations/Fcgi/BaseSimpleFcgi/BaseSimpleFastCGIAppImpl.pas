@@ -75,7 +75,6 @@ uses
     OutputBufferImpl,
     FcgiStdOutWriterImpl,
     StreamAdapterCollectionFactoryImpl,
-    FcgiRequestResponseFactoryImpl,
     RequestResponseFactoryImpl,
     NullStreamAdapterImpl,
     StdInFromStreamImpl,
