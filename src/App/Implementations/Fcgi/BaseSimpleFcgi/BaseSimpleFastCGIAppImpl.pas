@@ -146,7 +146,7 @@ uses
                 dispatcherId,
                 TSimpleDispatcherFactory.create(
                     appContainer.get(routerId) as IRouteMatcher,
-                    TFcgiRequestResponseFactory.create(fcgiProc)
+                    TRequestResponseFactory.create()
                 )
             );
         end;
