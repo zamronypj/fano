@@ -32,7 +32,9 @@ type
 implementation
 
 uses
+
     RequestImpl,
+    RequestHeadersImpl,
     HashListImpl,
     MultipartFormDataParserImpl,
     UploadedFileCollectionFactoryImpl,
@@ -46,6 +48,7 @@ uses
     ) : IRequest;
     begin
         result := TRequest.create(
+            TRequestHeaders.create(env),
             env,
             THashList.create(),
             THashList.create(),

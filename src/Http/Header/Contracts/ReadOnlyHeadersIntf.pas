@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit HeadersIntf;
+unit ReadOnlyHeadersIntf;
 
 interface
 
@@ -15,37 +15,35 @@ interface
 
 uses
 
-    ReadOnlyHeadersIntf;
+    CloneableIntf;
 
 type
 
     (*!------------------------------------------------
      * interface for any class having capability to
-     * set and write HTTP headers
+     * read HTTP headers
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    IHeaders = interface(IReadOnlyHeaders)
-        ['{8CFE49E5-F77A-4949-B748-C2C63A6735C3}']
+    IReadOnlyHeaders = interface(ICloneable)
+        ['{D709619D-84D4-4F89-A993-7988D167376D}']
 
         (*!------------------------------------
-         * set http header
+         * get http header
          *-------------------------------------
-         * @param key name  of http header to set
-         * @param value value of header
-         * @return header instance
+         * @param key name  of http header to get
+         * @return header value
+         * @throws EHeaderNotSet
          *-------------------------------------*)
-        function setHeader(const key : shortstring; const value : string) : IHeaders;
+        function getHeader(const key : shortstring) : string;
 
         (*!------------------------------------
-         * output http headers to STDOUT
+         * test if http header already been set
          *-------------------------------------
-         * Implementor must end with empty blank line
-         * after write all headers
-         *-------------------------------------
-         * @return header instance
+         * @param key name  of http header to test
+         * @return boolean true if header is set
          *-------------------------------------*)
-        function writeHeaders() : IHeaders;
+        function has(const key : shortstring) : boolean;
     end;
 
 implementation

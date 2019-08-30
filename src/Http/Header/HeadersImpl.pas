@@ -77,11 +77,8 @@ implementation
 uses
 
     HashListImpl,
+    HeaderConsts,
     EHeaderNotSetImpl;
-
-resourcestring
-
-    sErrHeaderNotSet = 'Header %s is not set';
 
 type
 

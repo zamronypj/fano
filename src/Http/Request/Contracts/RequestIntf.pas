@@ -19,6 +19,7 @@ uses
     ListIntf,
     UploadedFileIntf,
     UploadedFileCollectionIntf,
+    ReadonlyHeadersIntf,
     EnvironmentIntf;
 
 type
@@ -37,7 +38,7 @@ type
          *-------------------------------------
          * @return header instance
          *-------------------------------------*)
-        function headers() : IHeaders;
+        function headers() : IReadOnlyHeaders;
 
         (*!------------------------------------------------
          * get request method GET, POST, HEAD, etc

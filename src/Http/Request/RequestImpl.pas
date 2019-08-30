@@ -23,7 +23,8 @@ uses
     UploadedFileIntf,
     UploadedFileCollectionIntf,
     UploadedFileCollectionWriterIntf,
-    StdInIntf;
+    StdInIntf,
+    ReadOnlyHeadersIntf;
 
 const
 
@@ -42,6 +43,7 @@ type
      *-----------------------------------------------*)
     TRequest = class(TInterfacedObject, IRequest)
     private
+        fHeaders : IReadOnlyHeaders;
         webEnvironment : ICGIEnvironment;
         queryParams : IList;
         cookieParams : IList;
@@ -114,6 +116,7 @@ type
 
     public
         constructor create(
+            const aheaders : IReadOnlyHeaders;
             const env : ICGIEnvironment;
             const query : IList;
             const cookies : IList;
@@ -124,6 +127,13 @@ type
             const maxUploadSize : int64 = DEFAULT_MAX_UPLOAD_SIZE
         );
         destructor destroy(); override;
+
+        (*!------------------------------------
+         * get http headers instance
+         *-------------------------------------
+         * @return header instance
+         *-------------------------------------*)
+        function headers() : IReadOnlyHeaders;
 
         (*!------------------------------------------------
          * get request method GET, POST, HEAD, etc
@@ -220,6 +230,7 @@ implementation
 uses
 
     sysutils,
+    StringUtils,
     UrlHelpersImpl,
     EInvalidRequestImpl;
 
@@ -228,6 +239,7 @@ resourcestring
     sErrExceedMaxPostSize = 'POST size (%d) exceeds maximum allowable POST size (%d)';
 
     constructor TRequest.create(
+        const aheaders : IReadOnlyHeaders;
         const env : ICGIEnvironment;
         const query : IList;
         const cookies : IList;
@@ -238,6 +250,8 @@ resourcestring
         const maxUploadSize : int64 = DEFAULT_MAX_UPLOAD_SIZE
     );
     begin
+        inherited create();
+        fHeaders := aheaders;
         webEnvironment := env;
         queryParams := query;
         cookieParams := cookies;
@@ -250,6 +264,8 @@ resourcestring
         maximumPostSize := maxPostSize;
         maximumUploadedFileSize := maxUploadSize;
 
+        initHeadersFromEnvironment(env, fHeaders);
+
         initParamsFromEnvironment(
             webEnvironment,
             queryParams,
@@ -261,7 +277,6 @@ resourcestring
 
     destructor TRequest.destroy();
     begin
-        inherited destroy();
         clearParams(queryParams);
         clearParams(cookieParams);
         clearParams(bodyParams);
@@ -273,6 +288,18 @@ resourcestring
         uploadedFilesWriter := nil;
         multipartFormDataParser := nil;
         stdInReader := nil;
+        fHeaders := nil;
+        inherited destroy();
+    end;
+
+    (*!------------------------------------
+     * get http headers instance
+     *-------------------------------------
+     * @return header instance
+     *-------------------------------------*)
+    function TRequest.headers() : IHeaders;
+    begin
+        result := fHeaders;
     end;
 
     procedure TRequest.clearParams(const params : IList);
