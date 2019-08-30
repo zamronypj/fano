@@ -32,6 +32,13 @@ type
     IRequest = interface(IAjaxAware)
         ['{32913245-599A-4BF4-B25D-7E2EF349F7BB}']
 
+        (*!------------------------------------
+         * get http headers instance
+         *-------------------------------------
+         * @return header instance
+         *-------------------------------------*)
+        function headers() : IHeaders;
+
         (*!------------------------------------------------
          * get request method GET, POST, HEAD, etc
          *-------------------------------------------------
