@@ -15,7 +15,8 @@ interface
 
 uses
 
-    HeadersIntf;
+    RequestIntf,
+    ResponseIntf;
 
 type
 
@@ -35,7 +36,7 @@ type
          * @param requestHeaders request header
          * @return true if request is allowed
          *-------------------------------------------------*)
-        function isAllowed(const requestHeaders : IHeaders) : boolean;
+        function isAllowed(const request : IRequest) : boolean;
 
         (*!------------------------------------------------
          * test of current request is CORS request
@@ -43,7 +44,7 @@ type
          * @param requestHeaders request header
          * @return true if request is CORS request
          *-------------------------------------------------*)
-        function isCorsRequest(const requestHeaders : IHeaders) : boolean;
+        function isCorsRequest(const request : IRequest) : boolean;
 
         (*!------------------------------------------------
          * test of current request is preflight request
@@ -51,18 +52,18 @@ type
          * @param requestHeaders request header
          * @return true if request is preflight request
          *-------------------------------------------------*)
-        function isPreflightRequest(const requestHeaders : IHeaders) : boolean;
+        function isPreflightRequest(const request : IRequest) : boolean;
 
         (*!------------------------------------------------
          * add CORS header to response headers
          *-------------------------------------------------
-         * @param responseHeaders response header
-         * @param requestHeaders request header
+         * @param response current response object
+         * @param request current request object
          * @return current instance
          *-------------------------------------------------*)
-        function addCorsHeaders(
-            const responseHeaders : IHeaders;
-            const requestHeaders : IHeaders
+        function addCorsResponseHeaders(
+            const response : IResponse;
+            const request : IRequest
         ) : ICors;
     end;
 

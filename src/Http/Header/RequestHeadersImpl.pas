@@ -86,9 +86,13 @@ uses
      * input: X-Requested-With
      * output: HTTP_X_REQUESTED_WITH
      *-------------------------------------*)
-    function TRequestHeaders.headerToEnvVar(const header : string) : string;
+    function TRequestHeaders.headerToEnvVar(const key : string) : string;
     begin
-        result := 'HTTP_' + stringReplace(UpperCase(key), '-', '_', [rfReplaceAll]);
+        result := stringReplace(UpperCase(key), '-', '_', [rfReplaceAll]);
+        if not ((key = 'Content-Length') or (key = 'Content-Type')) then
+        begin
+            result := 'HTTP_' + result;
+        end;
     end;
 
     (*!------------------------------------

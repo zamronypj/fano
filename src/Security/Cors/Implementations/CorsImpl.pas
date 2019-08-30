@@ -82,7 +82,7 @@ implementation
      * @param requestHeaders request header
      * @return true if request is allowed
      *-------------------------------------------------*)
-    function TCors.isAllowed(const requestHeaders : IHeaders) : boolean;
+    function TCors.isAllowed(const request : IRequest) : boolean;
     begin
     end;
 
@@ -117,8 +117,11 @@ implementation
      * @param requestHeaders request header
      * @return true if request is preflight request
      *-------------------------------------------------*)
-    function TCors.isPreflightRequest(const requestHeaders : IHeaders) : boolean;
+    function TCors.isPreflightRequest(const request : IRequest) : boolean;
     begin
+        result := isCorsRequest(request) and
+            (request.method = 'OPTIONS') and
+            request.headers().has('Access-Control-Request-Method');
     end;
 
     (*!------------------------------------------------
@@ -129,8 +132,8 @@ implementation
      * @return current instance
      *-------------------------------------------------*)
     function TCors.addCorsHeaders(
-        const responseHeaders : IHeaders;
-        const requestHeaders : IHeaders
+        const response : IResponse;
+        const request : IRequest
     ) : ICors;
     begin
     end;

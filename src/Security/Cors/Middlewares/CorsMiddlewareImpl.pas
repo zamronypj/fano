@@ -71,14 +71,14 @@ uses
         httpCode := 403;
         rejectReason := 'Origin not allowed';
 
-        canContinue := fCors.isAllowed(request.headers());
+        canContinue := fCors.isAllowed(request);
         if canContinue then
         begin
-            fCors.addCorsHeaders(response.headers(), request.headers());
+            fCors.addCorsHeaders(response, request);
             result := response;
         end else
         begin
-            result := THttpCodeResponse.create(403, rejectReason)
+            result := THttpCodeResponse.create(httpCode, rejectReason);
         end;
     end;
 
