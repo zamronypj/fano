@@ -14,9 +14,9 @@ interface
 
 uses
 
-   MiddlewareChainIntf,
-   MiddlewareChainFactoryIntf,
-   MiddlewareCollectionAwareIntf;
+    MiddlewareChainIntf,
+    MiddlewareChainFactoryIntf,
+    MiddlewareCollectionAwareIntf;
 
 type
 
