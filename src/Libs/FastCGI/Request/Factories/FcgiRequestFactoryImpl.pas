@@ -40,6 +40,7 @@ implementation
 uses
 
     RequestImpl,
+    RequestHeadersImpl,
     FcgiRequestImpl,
     HashListImpl,
     MultipartFormDataParserImpl,
@@ -64,6 +65,7 @@ uses
     var arequest : IRequest;
     begin
         arequest := TRequest.create(
+            TRequestHeaders.create(env),
             env,
             THashList.create(),
             THashList.create(),
