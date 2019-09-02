@@ -16,7 +16,8 @@ interface
 uses
 
     RequestIntf,
-    ResponseIntf;
+    ResponseIntf,
+    RegexIntf;
 
 type
 
@@ -29,6 +30,7 @@ type
     TCors = class(TInterfacedObject, ICors)
     private
         fConfig : ICorsConfig;
+        fRegex : IRegex;
 
         (*!------------------------------------------------
          * test of current request is in same host
@@ -38,7 +40,7 @@ type
          *-------------------------------------------------*)
         function isSameHost(const request : IRequest) : boolean;
     public
-        constructor create(const config : ICorsConfig);
+        constructor create(const config : ICorsConfig; const regex : IRegex);
         destructor destroy(); override;
 
         (*!------------------------------------------------
@@ -97,14 +99,16 @@ uses
     SysUtils,
     StrUtils;
 
-    constructor TCors.create(const config : ICorsConfig);
+    constructor TCors.create(const config : ICorsConfig; const regex : IRegex);
     begin
         fConfig := config;
+        fRegex := regex;
     end;
 
     destructor TCors.destroy();
     begin
         fConfig := nil;
+        fRegex := nil;
         inherited destroy();
     end;
 
@@ -116,18 +120,30 @@ uses
      *-------------------------------------------------*)
     function TCors.isAllowed(const request : IRequest) : boolean;
     var origin : string;
+        i, len : integer;
     begin
-        if (matchStr('*', fAllowedOrigins)) then
+        result := false;
+
+        if (matchStr('*', fConfig.allowedOrigins)) then
         begin
             result := true;
         end;
 
         origin := request.headers().getHeader('Origin');
-        if (matchStr(origin, fAllowedOrigins)) then
+        if (matchStr(origin, fConfig.allowedOrigins)) then
         begin
             result := true;
         end;
 
+        len := length(fConfig.allowedOriginsPatterns);
+        for i:= 0 to len - 1 do
+        begin
+            if (fRegex.match(fConfig.allowedOriginsPatterns[i], origin)) then
+            begin
+                result := true;
+                break;
+            end;
+        end;
     end;
 
     (*!------------------------------------------------
@@ -187,24 +203,24 @@ uses
             request.headers().getHeader('Origin')
         );
 
-        if (fSupportsCredentials) then
+        if (fConfig.supportsCredentials) then
         begin
             respHeaders.setHeader('Access-Control-Allow-Credentials', 'true');
         end;
 
-        if (fMaxAge > 0) then
+        if (fConfig.maxAge > 0) then
         begin
-            respHeaders.setHeader('Access-Control-Max-Age', intostr(fMaxAge));
+            respHeaders.setHeader('Access-Control-Max-Age', intostr(fConfig.maxAge));
         end;
 
-        if (length(fAllowedMethods > 0)) then
+        if (length(fConfig.allowedMethods > 0)) then
         begin
-            respHeaders.setHeader('Access-Control-Request-Method', fAllowedMethods.join(', '));
+            respHeaders.setHeader('Access-Control-Request-Method', fConfig.allowedMethods.join(', '));
         end;
 
-        if (length(fAllowedHeaders > 0)) then
+        if (length(fConfig.allowedHeaders > 0)) then
         begin
-            respHeaders.setHeader('Access-Control-Request-Headers', fAllowedHeaders.join(', '));
+            respHeaders.setHeader('Access-Control-Request-Headers', fConfig.allowedHeaders.join(', '));
         end;
 
         result := response;
@@ -236,14 +252,14 @@ uses
             respHeaders.setHeader('Vary', respHeaders.getHeader('Vary') + ', Origin');
         end;
 
-        if (fSupportsCredentials) then
+        if (fConfig.supportsCredentials) then
         begin
             respHeaders.setHeader('Access-Control-Allow-Credentials', 'true');
         end;
 
-        if (length(fExposedHeaders> 0)) then
+        if (length(fConfig.exposedHeaders > 0)) then
         begin
-            respHeaders.setHeader('Access-Control-Expose-Headers', fExposedHeaders.join(', '));
+            respHeaders.setHeader('Access-Control-Expose-Headers', fConfig.exposedHeaders.join(', '));
         end;
 
         result := response;
