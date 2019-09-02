@@ -51,7 +51,7 @@ type
          * @param requestHeaders request header
          * @return true if request is CORS request
          *-------------------------------------------------*)
-        function isCorsRequest(const requestHeaders : IHeaders) : boolean;
+        function isCorsRequest(const requestHeaders : IRequest) : boolean;
 
         (*!------------------------------------------------
          * test of current request is preflight request
