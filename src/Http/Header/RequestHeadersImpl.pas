@@ -120,7 +120,7 @@ uses
      * @param key name  of http header to test
      * @return boolean true if header is set
      *-------------------------------------*)
-    function THeaders.has(const key : shortstring) : boolean;
+    function TRequestHeaders.has(const key : shortstring) : boolean;
     var envStr : string;
         i, len : integer;
     begin
