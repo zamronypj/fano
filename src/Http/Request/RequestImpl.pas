@@ -294,7 +294,7 @@ resourcestring
      *-------------------------------------
      * @return header instance
      *-------------------------------------*)
-    function TRequest.headers() : IHeaders;
+    function TRequest.headers() : IReadOnlyHeaders;
     begin
         result := fHeaders;
     end;
