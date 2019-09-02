@@ -263,8 +263,6 @@ resourcestring
         maximumPostSize := maxPostSize;
         maximumUploadedFileSize := maxUploadSize;
 
-        initHeadersFromEnvironment(env, fHeaders);
-
         initParamsFromEnvironment(
             webEnvironment,
             queryParams,
