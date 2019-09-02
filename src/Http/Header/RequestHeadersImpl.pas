@@ -17,6 +17,7 @@ uses
 
     ReadOnlyHeadersIntf,
     EnvironmentIntf,
+    CloneableIntf,
     InjectableObjectImpl;
 
 type
