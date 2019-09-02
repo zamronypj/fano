@@ -28,7 +28,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TRequestHeaders = class(TinjectableObject, IReadonlyHeaders)
+    TRequestHeaders = class(TInjectableObject, IReadonlyHeaders, ICloneable)
     private
         fEnv : ICGIEnvironment;
 
