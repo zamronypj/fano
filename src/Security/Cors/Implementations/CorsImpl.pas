@@ -39,6 +39,10 @@ type
          * @return true if request is same host
          *-------------------------------------------------*)
         function isSameHost(const request : IRequest) : boolean;
+
+        function isOriginAllowed(const request : IRequest) : boolean;
+        function isMethodAllowed(const request : IRequest) : boolean;
+        function isHeaderAllowed(const request : IRequest) : boolean;
     public
         constructor create(const config : ICorsConfig; const regex : IRegex);
         destructor destroy(); override;
@@ -113,12 +117,12 @@ uses
     end;
 
     (*!------------------------------------------------
-     * test of current request is allowed
+     * test of current request origin is allowed
      *-------------------------------------------------
      * @param requestHeaders request header
      * @return true if request is allowed
      *-------------------------------------------------*)
-    function TCors.isAllowed(const request : IRequest) : boolean;
+    function TCors.isOriginAllowed(const request : IRequest) : boolean;
     var origin : string;
         i, len : integer;
     begin
@@ -144,6 +148,78 @@ uses
                 break;
             end;
         end;
+    end;
+
+    (*!------------------------------------------------
+     * test of current request method is allowed
+     *-------------------------------------------------
+     * @param requestHeaders request header
+     * @return true if request is allowed
+     *-------------------------------------------------*)
+    function TCors.isMethodAllowed(const request : IRequest) : boolean;
+    var method : string;
+        i, len : integer;
+    begin
+        result := false;
+
+        if (matchStr('*', fConfig.allowedMethods)) then
+        begin
+            result := true;
+            exit;
+        end;
+
+        method := request.headers().getHeader('Access-Control-Request-Method');
+        if (matchStr(upperCase(method), fConfig.allowedMethods)) then
+        begin
+            result := true;
+        end;
+    end;
+
+    (*!------------------------------------------------
+     * test of current request header is allowed
+     *-------------------------------------------------
+     * @param request request
+     * @return true if request header is allowed
+     *-------------------------------------------------*)
+    function TCors.isHeaderAllowed(const request : IRequest) : boolean;
+    var header : string;
+        i, len : integer;
+        headers : TStringArray;
+    begin
+        result := false;
+
+        if (matchStr('*', fConfig.allowedHeaders)) then
+        begin
+            result := true;
+            exit;
+        end;
+
+        if (request.headers().has('Access-Control-Request-Headers')) then
+        begin
+            header := request.headers().getHeader('Access-Control-Request-Headers');
+            headers := header.split([',']);
+            len := length(headers);
+            result := true;
+            for i:= 0 to len-1 do
+            begin
+                if not matchStr(trim(headers[i]), fConfig.allowedHeaders) then
+                begin
+                    result := false;
+                    break;
+                end;
+            end;
+        end;
+    end;
+
+    (*!------------------------------------------------
+     * test of current request is allowed
+     *-------------------------------------------------
+     * @param requestHeaders request header
+     * @return true if request is allowed
+     *-------------------------------------------------*)
+    function TCors.isAllowed(const request : IRequest) : boolean;
+    begin
+        result := isOriginAllowed(request);
     end;
 
     (*!------------------------------------------------
@@ -197,6 +273,24 @@ uses
     ) : IResponse;
     var respHeaders : IHeaders;
     begin
+        if (not isOriginAllowed(request)) then
+        begin
+            result := THttpCodeResponse.create(403, 'Origin not allowed', response.headers());
+            exit;
+        end;
+
+        if (not isMethodAllowed(request)) then
+        begin
+            result := THttpCodeResponse.create(405, 'Method not allowed', response.headers());
+            exit;
+        end;
+
+        if (not isHeaderAllowed(request)) then
+        begin
+            result := THttpCodeResponse.create(403, 'Header not allowed', response.headers());
+            exit;
+        end;
+
         respHeaders := response.headers();
         respHeaders.setHeader(
             'Access-Control-Allow-Origin',
