@@ -32,7 +32,7 @@ type
     private
         fEnv : ICGIEnvironment;
 
-        function headerToEnvVar(const header : string) : string;
+        function headerToEnvVar(const key : string) : string;
     public
         constructor create(const env : ICGIEnvironment);
         destructor destroy(); override;
