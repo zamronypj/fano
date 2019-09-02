@@ -28,6 +28,8 @@ type
      *-------------------------------------------------*)
     TCors = class(TInterfacedObject, ICors)
     private
+        fConfig : ICorsConfig;
+
         (*!------------------------------------------------
          * test of current request is in same host
          *-------------------------------------------------
@@ -36,6 +38,8 @@ type
          *-------------------------------------------------*)
         function isSameHost(const request : IRequest) : boolean;
     public
+        constructor create(const config : ICorsConfig);
+        destructor destroy(); override;
 
         (*!------------------------------------------------
          * test of current request is allowed
@@ -62,6 +66,18 @@ type
         function isPreflightRequest(const request : IRequest) : boolean;
 
         (*!------------------------------------------------
+         * handle prefight request
+         *-------------------------------------------------
+         * @param response current response object
+         * @param request current request object
+         * @return response
+         *-------------------------------------------------*)
+        function handlePreflightRequest(
+            const request : IRequest;
+            const response : IResponse
+        ) : IResponse;
+
+        (*!------------------------------------------------
          * add CORS header to response headers
          *-------------------------------------------------
          * @param responseHeaders response header
@@ -76,6 +92,22 @@ type
 
 implementation
 
+uses
+
+    SysUtils,
+    StrUtils;
+
+    constructor TCors.create(const config : ICorsConfig);
+    begin
+        fConfig := config;
+    end;
+
+    destructor TCors.destroy();
+    begin
+        fConfig := nil;
+        inherited destroy();
+    end;
+
     (*!------------------------------------------------
      * test of current request is allowed
      *-------------------------------------------------
@@ -83,7 +115,19 @@ implementation
      * @return true if request is allowed
      *-------------------------------------------------*)
     function TCors.isAllowed(const request : IRequest) : boolean;
+    var origin : string;
     begin
+        if (matchStr('*', fAllowedOrigins)) then
+        begin
+            result := true;
+        end;
+
+        origin := request.headers().getHeader('Origin');
+        if (matchStr(origin, fAllowedOrigins)) then
+        begin
+            result := true;
+        end;
+
     end;
 
     (*!------------------------------------------------
@@ -125,17 +169,84 @@ implementation
     end;
 
     (*!------------------------------------------------
+     * handle prefight request
+     *-------------------------------------------------
+     * @param response current response object
+     * @param request current request object
+     * @return response
+     *-------------------------------------------------*)
+    function TCors.handlePreflightRequest(
+        const request : IRequest;
+        const response : IResponse
+    ) : IResponse;
+    var respHeaders : IHeaders;
+    begin
+        respHeaders := response.headers();
+        respHeaders.setHeader(
+            'Access-Control-Allow-Origin',
+            request.headers().getHeader('Origin')
+        );
+
+        if (fSupportsCredentials) then
+        begin
+            respHeaders.setHeader('Access-Control-Allow-Credentials', 'true');
+        end;
+
+        if (fMaxAge > 0) then
+        begin
+            respHeaders.setHeader('Access-Control-Max-Age', intostr(fMaxAge));
+        end;
+
+        if (length(fAllowedMethods > 0)) then
+        begin
+            respHeaders.setHeader('Access-Control-Request-Method', fAllowedMethods.join(', '));
+        end;
+
+        if (length(fAllowedHeaders > 0)) then
+        begin
+            respHeaders.setHeader('Access-Control-Request-Headers', fAllowedHeaders.join(', '));
+        end;
+
+        result := response;
+    end;
+
+    (*!------------------------------------------------
      * add CORS header to response headers
      *-------------------------------------------------
      * @param responseHeaders response header
      * @param requestHeaders request header
-     * @return current instance
+     * @return response
      *-------------------------------------------------*)
     function TCors.addCorsHeaders(
         const response : IResponse;
         const request : IRequest
-    ) : ICors;
+    ) : IResponse;
+    var respHeaders : IHeaders;
     begin
+        respHeaders := response.headers();
+        respHeaders.setHeader(
+            'Access-Control-Allow-Origin',
+            request.headers().getHeader('Origin')
+        );
+        if (not respHeaders.has('Vary')) then
+        begin
+            respHeaders.setHeader('Vary', 'Origin');
+        end else
+        begin
+            respHeaders.setHeader('Vary', respHeaders.getHeader('Vary') + ', Origin');
+        end;
+
+        if (fSupportsCredentials) then
+        begin
+            respHeaders.setHeader('Access-Control-Allow-Credentials', 'true');
+        end;
+
+        if (length(fExposedHeaders> 0)) then
+        begin
+            respHeaders.setHeader('Access-Control-Expose-Headers', fExposedHeaders.join(', '));
+        end;
+
+        result := response;
     end;
 
 end.

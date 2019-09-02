@@ -22,8 +22,7 @@ type
 
     (*!------------------------------------------------
      * interface for any class having capability to
-     * generate token to protect Cross-Site Request Forgery
-     * (CSRF) attack
+     * handle Cross-Origin Resource Sharing request
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
@@ -53,6 +52,18 @@ type
          * @return true if request is preflight request
          *-------------------------------------------------*)
         function isPreflightRequest(const request : IRequest) : boolean;
+
+        (*!------------------------------------------------
+         * handle prefight request
+         *-------------------------------------------------
+         * @param response current response object
+         * @param request current request object
+         * @return response
+         *-------------------------------------------------*)
+        function handlePreflightRequest(
+            const request : IRequest;
+            const response : IResponse
+        ) : IResponse;
 
         (*!------------------------------------------------
          * add CORS header to response headers

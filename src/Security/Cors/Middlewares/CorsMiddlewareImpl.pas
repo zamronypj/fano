@@ -31,6 +31,11 @@ type
     TCorsMiddleware = class(TInjectableObject, IMiddleware)
     private
         fCors : ICors;
+        function handlePreflightRequest(
+            const request : IRequest;
+            const response : IResponse;
+            var canContinue : boolean
+        ) : IResponse;
     public
         constructor create(const cors : ICors);
         destructor destroy(); override;
@@ -60,25 +65,42 @@ uses
         inherited destroy();
     end;
 
+    function TCorsMiddleware.handlePreflightRequest(
+          const request : IRequest;
+          const response : IResponse;
+          var canContinue : boolean
+    ) : IResponse;
+    begin
+        if (fCors.isPreflightRequest(request)) then
+        begin
+            canContinue := false;
+            result := fCors.handlePreflightRequest(request, response);
+        end else
+        begin
+            if (not fCors.isAllowed(request)) then
+            begin
+                canContinue := false;
+                result := THttpCodeResponse.create(403, 'Not allowed', response.headers());
+            end else
+            begin
+                fCors.addCorsResponseHeaders(response, request);
+                result := response;
+            end;
+        end;
+    end;
+
     function TCorsMiddleware.handleRequest(
           const request : IRequest;
           const response : IResponse;
           var canContinue : boolean
     ) : IResponse;
-    var rejectReason : string;
-        httpCode : word;
     begin
-        httpCode := 403;
-        rejectReason := 'Origin not allowed';
-
-        canContinue := fCors.isAllowed(request);
-        if canContinue then
+        if (not fCors.isCorsRequest(request)) then
         begin
-            fCors.addCorsHeaders(response, request);
             result := response;
         end else
         begin
-            result := THttpCodeResponse.create(httpCode, rejectReason);
+            result := handlePreflightRequest(request, response, canContinue);
         end;
     end;
 
