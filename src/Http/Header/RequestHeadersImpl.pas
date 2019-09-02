@@ -129,7 +129,7 @@ uses
         len := fEnv.enumerator.count();
         for i := 0 to len - 1 do
         begin
-            if (fEnv.getKey(i) = envStr) then
+            if (fEnv.enumerator.getKey(i) = envStr) then
             begin
                 result := true;
                 exit;
