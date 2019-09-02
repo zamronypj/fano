@@ -230,7 +230,6 @@ implementation
 uses
 
     sysutils,
-    StringUtils,
     UrlHelpersImpl,
     EInvalidRequestImpl;
 
