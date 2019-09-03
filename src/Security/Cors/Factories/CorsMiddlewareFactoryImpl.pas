@@ -39,7 +39,7 @@ uses
 
     CorsMiddlewareImpl,
     CorsImpl,
-    CorsConfigImpl
+    CorsConfigImpl,
     RegexImpl;
 
     function TCorsMiddlewareFactory.build(const container : IDependencyContainer) : IDependency;

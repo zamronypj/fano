@@ -49,14 +49,6 @@ type
 
 implementation
 
-uses
-
-    CorsMiddlewareImpl,
-    CorsImpl,
-    CorsConfigImpl,
-    NullCorsImpl,
-    RegexImpl;
-
     (*!------------------------------------------------
      * make TStringArray from open array
      *
