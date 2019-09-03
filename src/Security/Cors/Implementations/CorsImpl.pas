@@ -131,13 +131,13 @@ uses
     begin
         result := false;
 
-        if (matchStr('*', fConfig.allowedOrigins)) then
+        if (ansiMatchStr('*', fConfig.allowedOrigins)) then
         begin
             result := true;
         end;
 
         origin := request.headers().getHeader('Origin');
-        if (matchStr(origin, fConfig.allowedOrigins)) then
+        if (ansiMatchStr(origin, fConfig.allowedOrigins)) then
         begin
             result := true;
         end;
@@ -165,14 +165,14 @@ uses
     begin
         result := false;
 
-        if (matchStr('*', fConfig.allowedMethods)) then
+        if (ansiMatchStr('*', fConfig.allowedMethods)) then
         begin
             result := true;
             exit;
         end;
 
         method := request.headers().getHeader('Access-Control-Request-Method');
-        if (matchStr(upperCase(method), fConfig.allowedMethods)) then
+        if (ansiMatchStr(upperCase(method), fConfig.allowedMethods)) then
         begin
             result := true;
         end;
@@ -191,7 +191,7 @@ uses
     begin
         result := false;
 
-        if (matchStr('*', fConfig.allowedHeaders)) then
+        if (ansiMatchStr('*', fConfig.allowedHeaders)) then
         begin
             result := true;
             exit;
@@ -205,7 +205,7 @@ uses
             result := true;
             for i:= 0 to len-1 do
             begin
-                if not matchStr(trim(headers[i]), fConfig.allowedHeaders) then
+                if not ansiMatchStr(trim(headers[i]), fConfig.allowedHeaders) then
                 begin
                     result := false;
                     break;
