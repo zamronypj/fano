@@ -58,6 +58,10 @@ type
 
 implementation
 
+uses
+
+    SysUtils;
+
     function handleWildCard(const arr : TStringArray) : TStringArray;
     begin
         if (ansiMatchStr('*', arr)) then
