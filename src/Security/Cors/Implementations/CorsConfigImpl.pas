@@ -37,13 +37,13 @@ type
         fMaxAge : integer;
     public
         constructor create(
-            const allowedOrigins : TStringArray = nil;
-            const allowedOriginsPatterns : TStringArray = nil;
-            const allowedMethods : TStringArray = nil;
-            const allowedHeaders : TStringArray = nil;
-            const exposedHeaders : TStringArray = nil;
-            const supportsCredentials : boolean = false;
-            const maxAge : integer = 3600
+            const allowedOrigins : TStringArray;
+            const allowedOriginsPatterns : TStringArray;
+            const allowedMethods : TStringArray;
+            const allowedHeaders : TStringArray;
+            const exposedHeaders : TStringArray;
+            const supportsCredentials : boolean;
+            const maxAge : integer
         );
         destructor destroy(); override;
 
