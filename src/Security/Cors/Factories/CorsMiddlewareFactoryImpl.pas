@@ -27,7 +27,10 @@ type
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
     TCorsMiddlewareFactory = class(TFactory)
+    private
+        fAllowedOrigins : TStringArray;
     public
+        function allowedOrigins(const allowedOriginArr : TStringArray) : IDependencyFactory;
         function build(const container : IDependencyContainer) : IDependency; override;
     end;
 
@@ -41,11 +44,19 @@ uses
     NullCorsImpl,
     RegexImpl;
 
+    function TCorsMiddlewareFactory.allowedOrigins(const allowedOriginArr : TStringArray) : IDependencyFactory;
+    begin
+        fAllowedOrigins := allowedOriginArr;
+        result := self;
+    end;
+
     function TCorsMiddlewareFactory.build(const container : IDependencyContainer) : IDependency;
     begin
         result := TCorsMiddleware.create(
             TCors.create(
-                TCorsConfig.create(),
+                TCorsConfig.create(
+                    fAllowedOrigins
+                ),
                 TRegex.create()
             )
         );
