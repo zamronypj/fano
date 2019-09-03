@@ -48,17 +48,11 @@ type
         destructor destroy(); override;
 
         function getAllowedOrigins() : TStringArray;
-
         function getAllowedOriginsPatterns() : TStringArray;
-
         function getAllowedMethods() : TStringArray;
-
         function getAllowedHeaders() : TStringArray;
-
         function getExposedHeaders() : TStringArray;
-
         function getSupportsCredentials() : boolean;
-
         function getMaxAge() : integer;
     end;
 

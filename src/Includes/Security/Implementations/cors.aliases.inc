@@ -7,17 +7,13 @@
  *}
 
 (*! ---------------------------------------------
- * alias for interface in security
- * that is included in fano.pas unit
+ * alias for implementation in security
+ * that is included in implementations.aliases.inc
  *
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
  *-----------------------------------------------*)
 
-ICsrf = CsrfIntf.ICsrf;
-ISanitizer = SanitizerIntf.ISanitizer;
-IValidator = ValidatorIntf.IValidator;
-IValidatorCollection = ValidatorCollectionIntf.IValidatorCollection;
-IValidationRules = ValidationRulesIntf.IValidationRules;
-IRequestValidator = RequestValidatorIntf.IRequestValidator;
-
-{$INCLUDE cors.aliases.inc}
+TCors = CorsImpl.TCors;
+TCorsConfigImpl = CorsConfigImpl.TCorsConfig;
+TCorsMiddleware = CorsMiddlewareImpl.TCorsMiddleware;
+TCorsMiddlewareFactory = CorsMiddlewareFactoryImpl.TCorsMiddlewareFactory;

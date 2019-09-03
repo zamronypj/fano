@@ -7,31 +7,11 @@
  *}
 
 (*! ---------------------------------------------
- * implementation units for security
+ * alias for interface in security
  * that is included in fano.pas unit
  *
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
  *-----------------------------------------------*)
 
-ValidationResultTypes,
-
-ValidationImpl,
-ValidationFactoryImpl,
-EInvalidValidatorImpl,
-
-BaseValidatorImpl,
-AlphaNumValidatorImpl,
-AlphaNumSpaceValidatorImpl,
-CompositeValidatorImpl,
-IntegerValidatorImpl,
-MaxIntegerValidatorImpl,
-MinIntegerValidatorImpl,
-RegexValidatorImpl,
-RequiredValidatorImpl,
-
-ValidationMiddlewareImpl,
-
-CorsImpl,
-CorsConfigImpl,
-CorsMiddlewareImpl,
-CorsMiddlewareFactoryImpl,
+ICors = CorsIntf.ICors;
+ICorsConfig = CorsConfigIntf.ICorsConfig;

@@ -20,3 +20,6 @@ ValidatorCollectionIntf,
 SanitizerIntf,
 
 CsrfIntf,
+
+CorsIntf,
+CorsConfigIntf,
