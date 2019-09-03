@@ -31,7 +31,7 @@ type
     private
         fAllowedOrigins : TStringArray;
     public
-        function allowedOrigins(const allowedOriginArr : TStringArray) : IDependencyFactory;
+        function allowedOrigins(const allowedOriginArr : array of string) : IDependencyFactory;
         function build(const container : IDependencyContainer) : IDependency; override;
     end;
 
@@ -45,7 +45,7 @@ uses
     NullCorsImpl,
     RegexImpl;
 
-    function TCorsMiddlewareFactory.allowedOrigins(const allowedOriginArr : TStringArray) : IDependencyFactory;
+    function TCorsMiddlewareFactory.allowedOrigins(const allowedOriginArr : array of string) : IDependencyFactory;
     begin
         fAllowedOrigins := allowedOriginArr;
         result := self;
