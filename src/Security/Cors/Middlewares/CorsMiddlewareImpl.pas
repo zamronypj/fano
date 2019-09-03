@@ -83,8 +83,7 @@ uses
                 result := THttpCodeResponse.create(403, 'Not allowed', response.headers());
             end else
             begin
-                fCors.addCorsResponseHeaders(request, response);
-                result := response;
+                result := fCors.addCorsResponseHeaders(request, response);
             end;
         end;
     end;
