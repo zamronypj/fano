@@ -207,7 +207,7 @@ uses
             result := true;
             for i:= 0 to len-1 do
             begin
-                if not ansiMatchStr(trim(headers[i]), fConfig.allowedHeaders) then
+                if not ansiMatchStr(lowercase(trim(headers[i])), fConfig.allowedHeaders) then
                 begin
                     result := false;
                     break;

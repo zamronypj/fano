@@ -58,6 +58,28 @@ type
 
 implementation
 
+    function makeUpperCase(const arr : TStringArray) : TStringArray;
+    var i, len : integer;
+    begin
+        len := length(arr);
+        setLength(result, len);
+        for i:= 0 to len-1 do
+        begin
+            result[i] := uppercase(arr[i]);
+        end;
+    end;
+
+    function makeLowerCase(const arr : TStringArray) : TStringArray;
+    var i, len : integer;
+    begin
+        len := length(arr);
+        setLength(result, len);
+        for i:= 0 to len-1 do
+        begin
+            result[i] := lowercase(arr[i]);
+        end;
+    end;
+
     constructor TCorsConfig.create(
         const allowedOrigins : TStringArray;
         const allowedOriginsPatterns : TStringArray;
@@ -70,9 +92,9 @@ implementation
     begin
         fAllowedOrigins := allowedOrigins;
         fAllowedOriginsPatterns := allowedOriginsPatterns;
-        fAllowedMethods := allowedMethods;
-        fAllowedHeaders := allowedHeaders;
-        fExposedHeaders := exposedHeaders;
+        fAllowedMethods := makeUpperCase(allowedMethods);
+        fAllowedHeaders := makeLowerCase(allowedHeaders);
+        fExposedHeaders := makeUpperCase(exposedHeaders);
         fSupportsCredentials := supportsCredentials;
         fMaxAge := maxAge;
     end;
