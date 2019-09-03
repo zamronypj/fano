@@ -11,6 +11,7 @@ unit CorsMiddlewareFactoryImpl;
 interface
 
 {$MODE OBJFPC}
+{$H+}
 
 uses
 
