@@ -19,6 +19,7 @@ uses
     ResponseIntf,
     CorsIntf,
     CorsConfigIntf,
+    HeadersIntf,
     RegexIntf;
 
 type
@@ -88,13 +89,13 @@ type
         (*!------------------------------------------------
          * add CORS header to response headers
          *-------------------------------------------------
-         * @param responseHeaders response header
-         * @param requestHeaders request header
-         * @return current instance
+         * @param request current request
+         * @param response current response
+         * @return response with added header
          *-------------------------------------------------*)
         function addCorsHeaders(
-            const responseHeaders : IHeaders;
-            const requestHeaders : IHeaders
+            const request : IRequest;
+            const response : IResponse
         ) : IResponse;
     end;
 
@@ -325,13 +326,13 @@ uses
     (*!------------------------------------------------
      * add CORS header to response headers
      *-------------------------------------------------
-     * @param responseHeaders response header
-     * @param requestHeaders request header
-     * @return response
+     * @param request current request
+     * @param response current response
+     * @return response with added header
      *-------------------------------------------------*)
     function TCors.addCorsHeaders(
-        const response : IResponse;
-        const request : IRequest
+        const request : IRequest;
+        const response : IResponse
     ) : IResponse;
     var respHeaders : IHeaders;
     begin

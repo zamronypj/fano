@@ -68,13 +68,13 @@ type
         (*!------------------------------------------------
          * add CORS header to response headers
          *-------------------------------------------------
-         * @param response current response object
          * @param request current request object
-         * @return current instance
+         * @param response current response object
+         * @return response with added header
          *-------------------------------------------------*)
         function addCorsResponseHeaders(
-            const response : IResponse;
-            const request : IRequest
+            const request : IRequest;
+            const response : IResponse
         ) : IResponse;
     end;
 
