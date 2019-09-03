@@ -105,6 +105,7 @@ uses
 
     SysUtils,
     StrUtils,
+    UrlHelpersImpl,
     HttpCodeResponseImpl;
 
     constructor TCors.create(const config : ICorsConfig; const regex : IRegex);
