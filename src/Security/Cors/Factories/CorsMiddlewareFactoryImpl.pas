@@ -15,6 +15,7 @@ interface
 uses
 
     FactoryImpl,
+    DependencyContainerIntf,
     DependencyIntf;
 
 type
@@ -27,7 +28,7 @@ type
      *-------------------------------------------------*)
     TCorsMiddlewareFactory = class(TFactory)
     public
-        function build(const container : IDepenedencyContainer) : IDependency;
+        function build(const container : IDependencyContainer) : IDependency;
     end;
 
 implementation
