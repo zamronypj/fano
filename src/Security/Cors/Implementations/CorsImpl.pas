@@ -128,6 +128,7 @@ uses
     function TCors.isOriginAllowed(const request : IRequest) : boolean;
     var origin : string;
         i, len : integer;
+        matchRes : TRegexMatchResult;
     begin
         result := false;
 
@@ -145,7 +146,8 @@ uses
         len := length(fConfig.allowedOriginsPatterns);
         for i:= 0 to len - 1 do
         begin
-            if (fRegex.match(fConfig.allowedOriginsPatterns[i], origin)) then
+            matchRes := fRegex.match(fConfig.allowedOriginsPatterns[i], origin);
+            if (matchRes.matched) then
             begin
                 result := true;
                 break;
