@@ -38,13 +38,13 @@ type
         fSupportsCredentials : boolean;
         fMaxAge : integer;
     public
-        function allowedOrigins(const allowedOriginArr : array of string) : IDependencyFactory;
-        function allowedOriginsPatterns(const patternArr : array of string) : IDependencyFactory;
-        function allowedMethods(const methods : array of string) : IDependencyFactory;
-        function allowedHeaders(const hdrs : array of string) : IDependencyFactory;
-        function exposedHeaders(const hdrs : array of string) : IDependencyFactory;
-        function maxAge(const age : integer) : IDependencyFactory;
-        function supportsCredentials(const supportCred : boolean) : IDependencyFactory;
+        function allowedOrigins(const allowedOriginArr : array of string) : TBaseCorsMiddlewareFactory;
+        function allowedOriginsPatterns(const patternArr : array of string) : TBaseCorsMiddlewareFactory;
+        function allowedMethods(const methods : array of string) : TBaseCorsMiddlewareFactory;
+        function allowedHeaders(const hdrs : array of string) : TBaseCorsMiddlewareFactory;
+        function exposedHeaders(const hdrs : array of string) : TBaseCorsMiddlewareFactory;
+        function maxAge(const age : integer) : TBaseCorsMiddlewareFactory;
+        function supportsCredentials(const supportCred : boolean) : TBaseCorsMiddlewareFactory;
     end;
 
 implementation
@@ -66,43 +66,55 @@ implementation
         end;
     end;
 
-    function TBaseCorsMiddlewareFactory.allowedOrigins(const allowedOriginArr : array of string) : IDependencyFactory;
+    function TBaseCorsMiddlewareFactory.allowedOrigins(
+        const allowedOriginArr : array of string
+    ) : TBaseCorsMiddlewareFactory;
     begin
         fAllowedOrigins := makeStringArray(allowedOriginArr);
         result := self;
     end;
 
-    function TBaseCorsMiddlewareFactory.allowedOriginsPatterns(const patternArr : array of string) : IDependencyFactory;
+    function TBaseCorsMiddlewareFactory.allowedOriginsPatterns(
+        const patternArr : array of string
+    ) : TBaseCorsMiddlewareFactory;
     begin
         fAllowedOriginsPatterns := makeStringArray(patternArr);
         result := self;
     end;
 
-    function TBaseCorsMiddlewareFactory.allowedMethods(const methods : array of string) : IDependencyFactory;
+    function TBaseCorsMiddlewareFactory.allowedMethods(
+        const methods : array of string
+    ) : TBaseCorsMiddlewareFactory;
     begin
         fAllowedMethods := makeStringArray(methods);
         result := self;
     end;
 
-    function TBaseCorsMiddlewareFactory.allowedHeaders(const hdrs : array of string) : IDependencyFactory;
+    function TBaseCorsMiddlewareFactory.allowedHeaders(
+        const hdrs : array of string
+    ) : TBaseCorsMiddlewareFactory;
     begin
         fAllowedHeaders := makeStringArray(hdrs);
         result := self;
     end;
 
-    function TBaseCorsMiddlewareFactory.exposedHeaders(const hdrs : array of string) : IDependencyFactory;
+    function TBaseCorsMiddlewareFactory.exposedHeaders(
+        const hdrs : array of string
+    ) : TBaseCorsMiddlewareFactory;
     begin
         fExposedHeaders := makeStringArray(hdrs);
         result := self;
     end;
 
-    function TBaseCorsMiddlewareFactory.maxAge(const age : integer) : IDependencyFactory;
+    function TBaseCorsMiddlewareFactory.maxAge(const age : integer) : TBaseCorsMiddlewareFactory;
     begin
         fMaxAge := age;
         result := self;
     end;
 
-    function TBaseCorsMiddlewareFactory.supportsCredentials(const supportCred : boolean) : IDependencyFactory;
+    function TBaseCorsMiddlewareFactory.supportsCredentials(
+        const supportCred : boolean
+    ) : TBaseCorsMiddlewareFactory;
     begin
         fSupportsCredentials := supportCred;
         result := self;
