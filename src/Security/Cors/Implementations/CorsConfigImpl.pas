@@ -117,6 +117,11 @@ implementation
         setLength(fAllowedMethods, 0);
         setLength(fAllowedHeaders, 0);
         setLength(fExposedHeaders, 0);
+        fAllowedOrigins := nil;
+        fAllowedOriginsPatterns := nil;
+        fAllowedMethods := nil;
+        fAllowedHeaders := nil;
+        fExposedHeaders := nil;
         inherited destroy();
     end;
 
