@@ -15,5 +15,8 @@
 
 TCors = CorsImpl.TCors;
 TCorsConfigImpl = CorsConfigImpl.TCorsConfig;
+TNullCors = NullCorsImpl.TNullCors;
 TCorsMiddleware = CorsMiddlewareImpl.TCorsMiddleware;
+TBaseCorsMiddlewareFactory = BaseCorsMiddlewareFactoryImpl.TBaseCorsMiddlewareFactory;
 TCorsMiddlewareFactory = CorsMiddlewareFactoryImpl.TCorsMiddlewareFactory;
+TNullCorsMiddlewareFactory = NullCorsMiddlewareFactoryImpl.TNullCorsMiddlewareFactory;

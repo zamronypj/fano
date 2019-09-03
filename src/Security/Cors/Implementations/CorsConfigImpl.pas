@@ -59,53 +59,20 @@ type
 implementation
 
     constructor TCorsConfig.create(
-        const allowedOrigins : TStringArray = nil;
-        const allowedOriginsPatterns : TStringArray = nil;
-        const allowedMethods : TStringArray = nil;
-        const allowedHeaders : TStringArray = nil;
-        const exposedHeaders : TStringArray = nil;
-        const supportsCredentials : boolean = false;
-        const maxAge : integer = 3600
+        const allowedOrigins : TStringArray;
+        const allowedOriginsPatterns : TStringArray;
+        const allowedMethods : TStringArray;
+        const allowedHeaders : TStringArray;
+        const exposedHeaders : TStringArray;
+        const supportsCredentials : boolean;
+        const maxAge : integer
     );
     begin
-        if (allowedOrigins = nil) then
-        begin
-            setLength(fAllowedOrigins, 1);
-            fAllowedOrigins[0] := '*';
-        end else
-        begin
-            fAllowedOrigins := allowedOrigins;
-        end;
-
+        fAllowedOrigins := allowedOrigins;
         fAllowedOriginsPatterns := allowedOriginsPatterns;
-
-        if (allowedMethods = nil) then
-        begin
-            setLength(fAllowedMethods, 1);
-            fAllowedMethods[0] := '*';
-        end else
-        begin
-            fAllowedMethods := allowedMethods;
-        end;
-
-        if (allowedHeaders = nil) then
-        begin
-            setLength(fAllowedHeaders, 1);
-            fAllowedHeaders[0] := '*';
-        end else
-        begin
-            fAllowedHeaders := allowedHeaders;
-        end;
-
-        if (exposedHeaders = nil) then
-        begin
-            setLength(fExposedHeaders, 1);
-            fExposedHeaders[0] := '*';
-        end else
-        begin
-            fExposedHeaders := exposedHeaders;
-        end;
-
+        fAllowedMethods := allowedMethods;
+        fAllowedHeaders := allowedHeaders;
+        fExposedHeaders := exposedHeaders;
         fSupportsCredentials := supportsCredentials;
         fMaxAge := maxAge;
     end;

@@ -15,7 +15,7 @@ interface
 
 uses
 
-    FactoryImpl,
+    BaseCorsMiddlewareFactoryImpl,
     DependencyContainerIntf,
     DependencyIntf,
     SysUtils;
@@ -28,12 +28,8 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TCorsMiddlewareFactory = class(TFactory)
-    private
-        fAllowedOrigins : TStringArray;
-        function makeStringArray(const arr : array of string) : TStringArray;
+    TCorsMiddlewareFactory = class(TBaseCorsMiddlewareFactory)
     public
-        function allowedOrigins(const allowedOriginArr : array of string) : IDependencyFactory;
         function build(const container : IDependencyContainer) : IDependency; override;
     end;
 
@@ -43,33 +39,21 @@ uses
 
     CorsMiddlewareImpl,
     CorsImpl,
-    CorsConfigImpl,
-    NullCorsImpl,
+    CorsConfigImpl
     RegexImpl;
-
-    function TCorsMiddlewareFactory.makeStringArray(const arr : array of string) : TStringArray;
-    var i, len: Integer;
-    begin
-        len := high(arr) - low(arr) + 1;
-        setLength(result, len);
-        for i:= 0 to len - 1 do
-        begin
-            result[i] := arr[i];
-        end;
-    end;
-
-    function TCorsMiddlewareFactory.allowedOrigins(const allowedOriginArr : array of string) : IDependencyFactory;
-    begin
-        fAllowedOrigins := makeStringArray(allowedOriginArr);
-        result := self;
-    end;
 
     function TCorsMiddlewareFactory.build(const container : IDependencyContainer) : IDependency;
     begin
         result := TCorsMiddleware.create(
             TCors.create(
                 TCorsConfig.create(
-                    fAllowedOrigins
+                    fAllowedOrigins,
+                    fAllowedOriginsPatterns,
+                    fAllowedMethods,
+                    fAllowedHeaders,
+                    fExposedHeaders,
+                    fSupportsCredentials,
+                    fMaxAge
                 ),
                 TRegex.create()
             )
