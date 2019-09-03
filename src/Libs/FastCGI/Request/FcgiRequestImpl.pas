@@ -153,6 +153,12 @@ type
          *------------------------------------------------*)
         function getEnvironment() : ICGIEnvironment;
 
+        (*!------------------------------------------------
+         * test if current request is coming from AJAX request
+         *-------------------------------------------------
+         * @return true if ajax request
+         *------------------------------------------------*)
+        function isXhr() : boolean;
     end;
 
 implementation
@@ -315,6 +321,16 @@ implementation
     function TFcgiRequest.getEnvironment() : ICGIEnvironment;
     begin
         result := fRequest.getEnvironment();
+    end;
+
+    (*!------------------------------------------------
+     * test if current request is coming from AJAX request
+     *-------------------------------------------------
+     * @return true if ajax request false otherwise
+     *------------------------------------------------*)
+    function TFcgiRequest.isXhr() : boolean;
+    begin
+        result := fRequest.isXhr();
     end;
 
 end.

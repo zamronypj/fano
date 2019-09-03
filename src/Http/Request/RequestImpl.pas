@@ -228,7 +228,7 @@ type
         function getEnvironment() : ICGIEnvironment;
 
         (*!------------------------------------------------
-         * test if current request is comming from AJAX request
+         * test if current request is coming from AJAX request
          *-------------------------------------------------
          * @return true if ajax request
          *------------------------------------------------*)
