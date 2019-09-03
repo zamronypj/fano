@@ -57,13 +57,16 @@ implementation
 
     destructor TMiddlewareCollection.destroy();
     var i : integer;
+        mw : IInterface;
     begin
-        inherited destroy();
         for i := middlewareList.count - 1 downto 0 do
         begin
+            mw := middlewareList[i];
+            mw := nil;
             middlewareList.delete(i);
         end;
         middlewareList.free();
+        inherited destroy();
     end;
 
     function TMiddlewareCollection.add(const middleware : IMiddleware) : IMiddlewareCollection;
