@@ -57,12 +57,10 @@ implementation
 
     destructor TMiddlewareCollection.destroy();
     var i : integer;
-        mw : IInterface;
     begin
         for i := middlewareList.count - 1 downto 0 do
         begin
-            mw := middlewareList[i];
-            mw := nil;
+            middlewareList[i] := nil;
             middlewareList.delete(i);
         end;
         middlewareList.free();
