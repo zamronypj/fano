@@ -16,7 +16,8 @@ uses
 
     FactoryImpl,
     DependencyContainerIntf,
-    DependencyIntf;
+    DependencyIntf,
+    SysUtils;
 
 type
 
