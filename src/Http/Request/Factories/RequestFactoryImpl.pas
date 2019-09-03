@@ -40,7 +40,8 @@ uses
     UploadedFileCollectionFactoryImpl,
     UploadedFileCollectionWriterFactoryImpl,
     StdInReaderImpl,
-    SimpleStdInReaderImpl;
+    SimpleStdInReaderImpl,
+    UriImpl;
 
     function TRequestFactory.build(
         const env : ICGIEnvironment;
