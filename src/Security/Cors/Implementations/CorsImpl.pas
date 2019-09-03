@@ -309,7 +309,7 @@ uses
 
         if (fConfig.maxAge > 0) then
         begin
-            respHeaders.setHeader('Access-Control-Max-Age', intostr(fConfig.maxAge));
+            respHeaders.setHeader('Access-Control-Max-Age', intToStr(fConfig.maxAge));
         end;
 
         if (length(fConfig.allowedMethods > 0)) then
