@@ -24,7 +24,7 @@ type
 
     (*!------------------------------------------------
      * basic class having capability to create
-     * middleware chain instance
+     * middleware that handle CORS
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
