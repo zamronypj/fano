@@ -16,7 +16,7 @@ interface
 uses
 
     UriIntf,
-    RequestIntf;
+    EnvironmentIntf;
 
 type
 
