@@ -28,7 +28,7 @@ type
      *-------------------------------------------------*)
     TCorsMiddlewareFactory = class(TFactory)
     public
-        function build(const container : IDependencyContainer) : IDependency;
+        function build(const container : IDependencyContainer) : IDependency; override;
     end;
 
 implementation
@@ -37,6 +37,7 @@ uses
 
     CorsMiddlewareImpl,
     CorsImpl,
+    CorsConfigImpl,
     RegexImpl;
 
     function TCorsMiddlewareFactory.build(const container : IDependencyContainer) : IDependency;
