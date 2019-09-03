@@ -58,6 +58,19 @@ type
 
 implementation
 
+    function handleWildCard(const arr : TStringArray) : TStringArray;
+    begin
+        if (ansiMatchStr('*', arr)) then
+        begin
+            //wildcard means all
+            setLength(result, 1);
+            result[0] := '*';
+        end else
+        begin
+            result := arr;
+        end;
+    end;
+
     function makeUpperCase(const arr : TStringArray) : TStringArray;
     var i, len : integer;
     begin
@@ -92,9 +105,9 @@ implementation
     begin
         fAllowedOrigins := allowedOrigins;
         fAllowedOriginsPatterns := allowedOriginsPatterns;
-        fAllowedMethods := makeUpperCase(allowedMethods);
-        fAllowedHeaders := makeLowerCase(allowedHeaders);
-        fExposedHeaders := makeUpperCase(exposedHeaders);
+        fAllowedMethods := makeUpperCase(handleWildCard(allowedMethods));
+        fAllowedHeaders := makeLowerCase(handleWildCard(allowedHeaders));
+        fExposedHeaders := makeUpperCase(handleWildCard(exposedHeaders));
         fSupportsCredentials := supportsCredentials;
         fMaxAge := maxAge;
     end;

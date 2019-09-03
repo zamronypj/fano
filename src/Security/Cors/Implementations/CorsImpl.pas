@@ -313,16 +313,30 @@ uses
             respHeaders.setHeader('Access-Control-Max-Age', intToStr(fConfig.maxAge));
         end;
 
-        if (length(fConfig.allowedMethods) > 0) then
+        if (ansiMatchStr('*', fConfig.allowedMethods)) then
         begin
-            str:= ''.join(', ', fConfig.allowedMethods);
-            respHeaders.setHeader('Access-Control-Allow-Methods', str);
+            str := request.headers().getHeader('Access-Control-Request-Method');
+            respHeaders.setHeader('Access-Control-Allow-Methods', uppercase(str));
+        end else
+        begin
+            if (length(fConfig.allowedMethods) > 0) then
+            begin
+                str:= ''.join(', ', fConfig.allowedMethods);
+                respHeaders.setHeader('Access-Control-Allow-Methods', str);
+            end;
         end;
 
-        if (length(fConfig.allowedHeaders) > 0) then
+        if (ansiMatchStr('*', fConfig.allowedHeaders)) then
         begin
-            str := ''.join(', ', fConfig.allowedHeaders);
-            respHeaders.setHeader('Access-Control-Allow-Headers', str);
+            str := request.headers().getHeader('Access-Control-Request-Headers');
+            respHeaders.setHeader('Access-Control-Allow-Headers', uppercase(str));
+        end else
+        begin
+            if (length(fConfig.allowedHeaders) > 0) then
+            begin
+                str := ''.join(', ', fConfig.allowedHeaders);
+                respHeaders.setHeader('Access-Control-Allow-Headers', str);
+            end;
         end;
 
         result := response;
