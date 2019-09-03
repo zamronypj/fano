@@ -60,7 +60,6 @@ implementation
 
 uses
 
-    SysUtils,
     StrUtils;
 
     function handleWildCard(const arr : TStringArray) : TStringArray;
