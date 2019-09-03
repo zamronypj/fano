@@ -37,7 +37,6 @@ type
         fPort : string;
         fPath : string;
         fQuery : string;
-        fPath : string;
         fFragment : string;
 
         function getUserInfoFromAuthority(const authority : string) : string;
