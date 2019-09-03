@@ -30,7 +30,7 @@ type
      *-------------------------------------------------*)
     TCorsMiddlewareFactory = class(TFactory)
     private
-        fAllowedOrigins : array of string;
+        fAllowedOrigins : TStringArray;
         function makeStringArray(const arr : array of string) : TStringArray;
     public
         function allowedOrigins(const allowedOriginArr : array of string) : IDependencyFactory;
@@ -60,7 +60,7 @@ uses
 
     function TCorsMiddlewareFactory.allowedOrigins(const allowedOriginArr : array of string) : IDependencyFactory;
     begin
-        fAllowedOrigins := allowedOriginArr;
+        fAllowedOrigins := makeStringArray(allowedOriginArr);
         result := self;
     end;
 
@@ -69,7 +69,7 @@ uses
         result := TCorsMiddleware.create(
             TCors.create(
                 TCorsConfig.create(
-                    makeStringArray(fAllowedOrigins)
+                    fAllowedOrigins
                 ),
                 TRegex.create()
             )
