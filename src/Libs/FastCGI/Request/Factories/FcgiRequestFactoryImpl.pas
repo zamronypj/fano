@@ -45,7 +45,8 @@ uses
     HashListImpl,
     MultipartFormDataParserImpl,
     UploadedFileCollectionFactoryImpl,
-    UploadedFileCollectionWriterFactoryImpl;
+    UploadedFileCollectionWriterFactoryImpl,
+    UriImpl;
 
     constructor TFcgiRequestFactory.create(
         const requestIdAware : IFcgiRequestIdAware
@@ -65,6 +66,7 @@ uses
     var arequest : IRequest;
     begin
         arequest := TRequest.create(
+            TUri.create(env),
             TRequestHeaders.create(env),
             env,
             THashList.create(),
