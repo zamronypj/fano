@@ -312,12 +312,12 @@ uses
             respHeaders.setHeader('Access-Control-Max-Age', intToStr(fConfig.maxAge));
         end;
 
-        if (length(fConfig.allowedMethods > 0)) then
+        if (length(fConfig.allowedMethods) > 0) then
         begin
             respHeaders.setHeader('Access-Control-Request-Method', fConfig.allowedMethods.join(', '));
         end;
 
-        if (length(fConfig.allowedHeaders > 0)) then
+        if (length(fConfig.allowedHeaders) > 0) then
         begin
             respHeaders.setHeader('Access-Control-Request-Headers', fConfig.allowedHeaders.join(', '));
         end;
@@ -356,7 +356,7 @@ uses
             respHeaders.setHeader('Access-Control-Allow-Credentials', 'true');
         end;
 
-        if (length(fConfig.exposedHeaders > 0)) then
+        if (length(fConfig.exposedHeaders) > 0) then
         begin
             respHeaders.setHeader('Access-Control-Expose-Headers', fConfig.exposedHeaders.join(', '));
         end;
