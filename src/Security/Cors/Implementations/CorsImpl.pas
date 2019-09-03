@@ -105,7 +105,6 @@ uses
 
     SysUtils,
     StrUtils,
-    UrlHelpersImpl,
     HttpCodeResponseImpl;
 
     constructor TCors.create(const config : ICorsConfig; const regex : IRegex);
@@ -278,6 +277,7 @@ uses
         const response : IResponse
     ) : IResponse;
     var respHeaders : IHeaders;
+        str : string;
     begin
         if (not isOriginAllowed(request)) then
         begin
@@ -315,12 +315,14 @@ uses
 
         if (length(fConfig.allowedMethods) > 0) then
         begin
-            respHeaders.setHeader('Access-Control-Request-Method', fConfig.allowedMethods.join(', '));
+            str:= ''.join(', ', fConfig.allowedMethods);
+            respHeaders.setHeader('Access-Control-Request-Method', str);
         end;
 
         if (length(fConfig.allowedHeaders) > 0) then
         begin
-            respHeaders.setHeader('Access-Control-Request-Headers', fConfig.allowedHeaders.join(', '));
+            str := ''.join(', ', fConfig.allowedHeaders);
+            respHeaders.setHeader('Access-Control-Request-Headers', str);
         end;
 
         result := response;
