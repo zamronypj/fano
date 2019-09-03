@@ -316,13 +316,13 @@ uses
         if (length(fConfig.allowedMethods) > 0) then
         begin
             str:= ''.join(', ', fConfig.allowedMethods);
-            respHeaders.setHeader('Access-Control-Request-Method', str);
+            respHeaders.setHeader('Access-Control-Allow-Methods', str);
         end;
 
         if (length(fConfig.allowedHeaders) > 0) then
         begin
             str := ''.join(', ', fConfig.allowedHeaders);
-            respHeaders.setHeader('Access-Control-Request-Headers', str);
+            respHeaders.setHeader('Access-Control-Allow-Headers', str);
         end;
 
         result := response;
