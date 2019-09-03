@@ -104,7 +104,8 @@ implementation
 uses
 
     SysUtils,
-    StrUtils;
+    StrUtils,
+    HttpCodeResponseImpl;
 
     constructor TCors.create(const config : ICorsConfig; const regex : IRegex);
     begin
@@ -163,7 +164,6 @@ uses
      *-------------------------------------------------*)
     function TCors.isMethodAllowed(const request : IRequest) : boolean;
     var method : string;
-        i, len : integer;
     begin
         result := false;
 
