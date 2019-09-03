@@ -17,6 +17,7 @@ uses
 
     RequestIntf,
     ResponseIntf,
+    CorsIntf,
     RegexIntf;
 
 type
