@@ -93,7 +93,7 @@ type
          * @param response current response
          * @return response with added header
          *-------------------------------------------------*)
-        function addCorsHeaders(
+        function addCorsResponseHeaders(
             const request : IRequest;
             const response : IResponse
         ) : IResponse;
@@ -330,7 +330,7 @@ uses
      * @param response current response
      * @return response with added header
      *-------------------------------------------------*)
-    function TCors.addCorsHeaders(
+    function TCors.addCorsResponseHeaders(
         const request : IRequest;
         const response : IResponse
     ) : IResponse;
