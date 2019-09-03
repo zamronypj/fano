@@ -27,3 +27,5 @@ EInvalidUploadedFileImpl,
 
 CookieImpl,
 CookieFactoryImpl,
+
+UriImpl,

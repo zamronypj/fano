@@ -24,7 +24,8 @@ uses
     UploadedFileCollectionIntf,
     UploadedFileCollectionWriterIntf,
     StdInIntf,
-    ReadOnlyHeadersIntf;
+    ReadOnlyHeadersIntf,
+    UriIntf;
 
 const
 
@@ -43,6 +44,7 @@ type
      *-----------------------------------------------*)
     TRequest = class(TInterfacedObject, IRequest)
     private
+        fUri : IUri;
         fHeaders : IReadOnlyHeaders;
         webEnvironment : ICGIEnvironment;
         queryParams : IList;
@@ -116,6 +118,7 @@ type
 
     public
         constructor create(
+            const anUri : IUri;
             const aheaders : IReadOnlyHeaders;
             const env : ICGIEnvironment;
             const query : IList;
@@ -238,6 +241,7 @@ resourcestring
     sErrExceedMaxPostSize = 'POST size (%d) exceeds maximum allowable POST size (%d)';
 
     constructor TRequest.create(
+        const anUri : IUri;
         const aheaders : IReadOnlyHeaders;
         const env : ICGIEnvironment;
         const query : IList;
@@ -250,6 +254,7 @@ resourcestring
     );
     begin
         inherited create();
+        fUri := anUri;
         fHeaders := aheaders;
         webEnvironment := env;
         queryParams := query;
@@ -286,6 +291,7 @@ resourcestring
         multipartFormDataParser := nil;
         stdInReader := nil;
         fHeaders := nil;
+        fUri := nil;
         inherited destroy();
     end;
 
@@ -297,6 +303,16 @@ resourcestring
     function TRequest.headers() : IReadOnlyHeaders;
     begin
         result := fHeaders;
+    end;
+
+    (*!------------------------------------------------
+     * get request URI
+     *-------------------------------------------------
+     * @return IUri of current request
+     *------------------------------------------------*)
+    function TRequest.uri() : IUri;
+    begin
+        result := fUri;
     end;
 
     procedure TRequest.clearParams(const params : IList);

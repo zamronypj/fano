@@ -20,7 +20,8 @@ uses
     UploadedFileIntf,
     UploadedFileCollectionIntf,
     ReadonlyHeadersIntf,
-    EnvironmentIntf;
+    EnvironmentIntf,
+    UriIntf;
 
 type
 
@@ -39,6 +40,13 @@ type
          * @return header instance
          *-------------------------------------*)
         function headers() : IReadOnlyHeaders;
+
+        (*!------------------------------------------------
+         * get request URI
+         *-------------------------------------------------
+         * @return IUri of current request
+         *------------------------------------------------*)
+        function uri() : IUri;
 
         (*!------------------------------------------------
          * get request method GET, POST, HEAD, etc

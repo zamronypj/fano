@@ -52,23 +52,23 @@ type
         (*!------------------------------------------------
          * test of current request is allowed
          *-------------------------------------------------
-         * @param requestHeaders request header
+         * @param request current request
          * @return true if request is allowed
          *-------------------------------------------------*)
-        function isAllowed(const requestHeaders : IHeaders) : boolean;
+        function isAllowed(const request : IRequest) : boolean;
 
         (*!------------------------------------------------
          * test of current request is CORS request
          *-------------------------------------------------
-         * @param requestHeaders request header
+         * @param request current request
          * @return true if request is CORS request
          *-------------------------------------------------*)
-        function isCorsRequest(const requestHeaders : IRequest) : boolean;
+        function isCorsRequest(const request : IRequest) : boolean;
 
         (*!------------------------------------------------
          * test of current request is preflight request
          *-------------------------------------------------
-         * @param requestHeaders request header
+         * @param request current request
          * @return true if request is preflight request
          *-------------------------------------------------*)
         function isPreflightRequest(const request : IRequest) : boolean;
@@ -121,7 +121,7 @@ uses
     (*!------------------------------------------------
      * test of current request origin is allowed
      *-------------------------------------------------
-     * @param requestHeaders request header
+     * @param request current request
      * @return true if request is allowed
      *-------------------------------------------------*)
     function TCors.isOriginAllowed(const request : IRequest) : boolean;
@@ -155,7 +155,7 @@ uses
     (*!------------------------------------------------
      * test of current request method is allowed
      *-------------------------------------------------
-     * @param requestHeaders request header
+     * @param request current request
      * @return true if request is allowed
      *-------------------------------------------------*)
     function TCors.isMethodAllowed(const request : IRequest) : boolean;
@@ -180,7 +180,7 @@ uses
     (*!------------------------------------------------
      * test of current request header is allowed
      *-------------------------------------------------
-     * @param request request
+     * @param request current request
      * @return true if request header is allowed
      *-------------------------------------------------*)
     function TCors.isHeaderAllowed(const request : IRequest) : boolean;
@@ -216,7 +216,7 @@ uses
     (*!------------------------------------------------
      * test of current request is allowed
      *-------------------------------------------------
-     * @param requestHeaders request header
+     * @param request current request
      * @return true if request is allowed
      *-------------------------------------------------*)
     function TCors.isAllowed(const request : IRequest) : boolean;
@@ -234,7 +234,7 @@ uses
     var origin, schemeAndHost : string;
     begin
         origin := request.headers().getHeader('Origin');
-        schemeAndHost := request.env.requestScheme() + '//' + request.env.httpHost();
+        schemeAndHost := request.uri().schemeAuthority;
         result := (origin = schemeAndHost);
     end;
 

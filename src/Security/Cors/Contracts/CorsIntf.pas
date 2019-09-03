@@ -32,7 +32,7 @@ type
         (*!------------------------------------------------
          * test of current request is allowed
          *-------------------------------------------------
-         * @param requestHeaders request header
+         * @param request current request
          * @return true if request is allowed
          *-------------------------------------------------*)
         function isAllowed(const request : IRequest) : boolean;
@@ -40,7 +40,7 @@ type
         (*!------------------------------------------------
          * test of current request is CORS request
          *-------------------------------------------------
-         * @param requestHeaders request header
+         * @param request current request
          * @return true if request is CORS request
          *-------------------------------------------------*)
         function isCorsRequest(const request : IRequest) : boolean;
@@ -48,7 +48,7 @@ type
         (*!------------------------------------------------
          * test of current request is preflight request
          *-------------------------------------------------
-         * @param requestHeaders request header
+         * @param request current request
          * @return true if request is preflight request
          *-------------------------------------------------*)
         function isPreflightRequest(const request : IRequest) : boolean;

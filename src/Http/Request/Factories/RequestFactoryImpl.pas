@@ -48,6 +48,7 @@ uses
     ) : IRequest;
     begin
         result := TRequest.create(
+            TUri.create(env),
             TRequestHeaders.create(env),
             env,
             THashList.create(),

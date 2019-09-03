@@ -13,3 +13,5 @@ EInvalidUploadedFile = EInvalidUploadedFileImpl.EInvalidUploadedFile;
 
 TCookie = CookieImpl.TCookie;
 TCookieFactory = CookieFactoryImpl.TCookieFactory;
+
+TUri = UriImpl.TUri;
