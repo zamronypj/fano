@@ -41,12 +41,12 @@ uses
     RegexImpl;
 
     function TCorsMiddlewareFactory.build(const container : IDependencyContainer) : IDependency;
+    var cors : ICors;
     begin
-        result := TCorsMiddleware.create(
-            TCors.create(
-                TCorsConfig.create(),
-                TRegex.create()
-            )
+        cors := TCors.create(
+            nil,
+            TRegex.create()
         );
+        result := TCorsMiddleware.create(cors);
     end;
 end.
