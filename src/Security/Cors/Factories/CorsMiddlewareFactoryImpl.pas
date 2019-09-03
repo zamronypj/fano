@@ -30,7 +30,8 @@ type
      *-------------------------------------------------*)
     TCorsMiddlewareFactory = class(TFactory)
     private
-        fAllowedOrigins : TStringArray;
+        fAllowedOrigins : array of string;
+        function makeStringArray(const arr : array of string) : TStringArray;
     public
         function allowedOrigins(const allowedOriginArr : array of string) : IDependencyFactory;
         function build(const container : IDependencyContainer) : IDependency; override;
@@ -46,6 +47,17 @@ uses
     NullCorsImpl,
     RegexImpl;
 
+    function TCorsMiddlewareFactory.makeStringArray(const arr : array of string) : TStringArray;
+    var i, len: Integer;
+    begin
+        len := high(arr) - low(arr) + 1;
+        setLength(result, len);
+        for i:= 0 to len - 1 do
+        begin
+            result[i] := arr[i];
+        end;
+    end;
+
     function TCorsMiddlewareFactory.allowedOrigins(const allowedOriginArr : array of string) : IDependencyFactory;
     begin
         fAllowedOrigins := allowedOriginArr;
@@ -57,7 +69,7 @@ uses
         result := TCorsMiddleware.create(
             TCors.create(
                 TCorsConfig.create(
-                    fAllowedOrigins
+                    makeStringArray(fAllowedOrigins)
                 ),
                 TRegex.create()
             )
