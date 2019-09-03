@@ -36,7 +36,6 @@ implementation
 uses
 
     CorsMiddlewareImpl,
-    NullMiddlewareImpl,
     CorsImpl,
     CorsConfigImpl,
     NullCorsImpl,
@@ -44,7 +43,6 @@ uses
 
     function TCorsMiddlewareFactory.build(const container : IDependencyContainer) : IDependency;
     begin
-        //result := TCorsMiddleware.create(TNullCors.create());
-        result := TNullMiddleware.create();
+        result := TCorsMiddleware.create(TNullCors.create());
     end;
 end.

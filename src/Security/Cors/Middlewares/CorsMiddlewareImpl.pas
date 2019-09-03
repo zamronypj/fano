@@ -56,7 +56,7 @@ uses
     constructor TCorsMiddleware.create(const cors : ICors);
     begin
         inherited create();
-        fCors := nil;
+        fCors := cors;
     end;
 
     destructor TCorsMiddleware.destroy();
