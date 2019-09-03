@@ -340,6 +340,7 @@ uses
         const response : IResponse
     ) : IResponse;
     var respHeaders : IHeaders;
+        str : string;
     begin
         respHeaders := response.headers();
         respHeaders.setHeader(
@@ -361,7 +362,8 @@ uses
 
         if (length(fConfig.exposedHeaders) > 0) then
         begin
-            respHeaders.setHeader('Access-Control-Expose-Headers', fConfig.exposedHeaders.join(', '));
+            str := ''.join(', ', fConfig.exposedHeaders);
+            respHeaders.setHeader('Access-Control-Expose-Headers', str);
         end;
 
         result := response;
