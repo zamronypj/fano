@@ -110,6 +110,20 @@ type
             const routeName: string;
             const routeHandler : IRouteHandler
         ) : IRouteHandler;
+
+        (*!------------------------------------------
+         * set route handler for multiple HTTP verbs
+         * ------------------------------------------
+         * @param verbs array of http verbs, GET, POST, etc
+         * @param routeName regex pattern for route
+         * @param routeHandler instance route handler
+         * @return route handler instance
+         *-------------------------------------------*)
+        function map(
+            const verbs : array of string;
+            const routeName: string;
+            const routeHandler : IRouteHandler
+        ) : IRouteHandler;
     end;
 
 implementation

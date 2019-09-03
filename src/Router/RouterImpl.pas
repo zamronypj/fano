@@ -124,6 +124,20 @@ type
             const routeHandler : IRouteHandler
         ) : IRouteHandler;
 
+        (*!------------------------------------------
+         * set route handler for multiple HTTP verbs
+         * ------------------------------------------
+         * @param verbs array of http verbs, GET, POST, etc
+         * @param routeName regex pattern for route
+         * @param routeHandler instance route handler
+         * @return route handler instance
+         *-------------------------------------------*)
+        function map(
+            const verbs : array of string;
+            const routeName: string;
+            const routeHandler : IRouteHandler
+        ) : IRouteHandler;
+
         (*!----------------------------------------------
          * find route handler based request method and uri
          * ----------------------------------------------
@@ -330,6 +344,41 @@ resourcestring
     end;
 
     (*!------------------------------------------
+     * set route handler for multiple HTTP verbs
+     * ------------------------------------------
+     * @param verbs array of http verbs, GET, POST, etc
+     * @param routeName regex pattern for route
+     * @param routeHandler instance route handler
+     * @return route handler instance
+     *-------------------------------------------*)
+    function TRouter.map(
+        const verbs : array of string;
+        const routeName: string;
+        const routeHandler : IRouteHandler
+    ) : IRouteHandler;
+    var routeData : PRouteRec;
+        i, len : integer;
+        averb : string;
+    begin
+        routeData := findRouteData(routeName);
+        len := high(verbs) - low(verbs) + 1;
+        for i := 0 to len - 1 do
+        begin
+            averb := uppercase(verbs[i]);
+            case averb of
+                'GET' :  routeData^.getRoute := routeHandler;
+                'POST' :  routeData^.postRoute := routeHandler;
+                'PUT' :  routeData^.putRoute := routeHandler;
+                'DELETE' :  routeData^.deleteRoute := routeHandler;
+                'PATCH' :  routeData^.patchRoute := routeHandler;
+                'OPTIONS' : routeData^.optionsRoute := routeHandler;
+                'HEAD' :  routeData^.headRoute := routeHandler;
+            end;
+        end;
+        result := routeHandler;
+    end;
+
+    (*!------------------------------------------
      * get route handler based on request method
      * ------------------------------------------
      * @param requestMethod GET, POST, etc
@@ -338,9 +387,11 @@ resourcestring
      *-------------------------------------------*)
     function TRouter.getRouteHandler(const requestMethod : string; const routeData :PRouteRec) : IRouteHandler;
     var routeHandler : IRouteHandler;
+        method : string;
     begin
+        method := uppercase(requestMethod);
         routeHandler := nil;
-        case requestMethod of
+        case method of
             'GET' : routeHandler := routeData^.getRoute;
             'POST' : routeHandler := routeData^.postRoute;
             'PUT' : routeHandler := routeData^.putRoute;
