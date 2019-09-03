@@ -37,8 +37,8 @@ type
             const afterMiddlewares : IMiddlewareCollection
         );
         destructor destroy(); override;
-        function addBefore(middleware : IMiddleware) : IMiddlewareCollectionAware;
-        function addAfter(middleware : IMiddleware) : IMiddlewareCollectionAware;
+        function addBefore(const middleware : IMiddleware) : IMiddlewareCollectionAware;
+        function addAfter(const middleware : IMiddleware) : IMiddlewareCollectionAware;
         function getBefore() : IMiddlewareCollection;
         function getAfter() : IMiddlewareCollection;
     end;
@@ -62,13 +62,13 @@ implementation
         inherited destroy();
     end;
 
-    function TMiddlewareCollectionAware.addBefore(middleware : IMiddleware) : IMiddlewareCollectionAware;
+    function TMiddlewareCollectionAware.addBefore(const middleware : IMiddleware) : IMiddlewareCollectionAware;
     begin
         beforeMiddlewareList.add(middleware);
         result := self;
     end;
 
-    function TMiddlewareCollectionAware.addAfter(middleware : IMiddleware) : IMiddlewareCollectionAware;
+    function TMiddlewareCollectionAware.addAfter(const middleware : IMiddleware) : IMiddlewareCollectionAware;
     begin
         afterMiddlewareList.add(middleware);
         result := self;
