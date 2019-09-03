@@ -47,6 +47,7 @@ type
         constructor create(const env : ICGIEnvironment);
         function getScheme() : string;
         function getAuthority() : string;
+        function getSchemeAuthority() : string;
         function getUserInfo() : string;
         function getHost() : string;
         function getPort() : string;
