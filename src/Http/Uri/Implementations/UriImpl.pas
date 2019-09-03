@@ -61,10 +61,10 @@ implementation
 
     constructor TUri.create(const env : ICGIEnvironment);
     begin
-        fScheme := env.requestScheme;
-        fAuthority := env.requestHost;
-        fPathQueryFragment := env.requestUri;
-        fQuery := env.queryString;
+        fScheme := env.requestScheme();
+        fAuthority := env.httpHost();
+        fPathQueryFragment := env.requestUri();
+        fQuery := env.queryString();
         fUserInfo := getUserInfoFromAuthority(fAuthority);
         fHost := getHostFromAuthority(fAuthority);
         fPort := getPortFromAuthority(fAuthority);
