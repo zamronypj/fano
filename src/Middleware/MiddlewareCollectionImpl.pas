@@ -60,7 +60,6 @@ implementation
     begin
         for i := middlewareList.count - 1 downto 0 do
         begin
-            middlewareList[i] := nil;
             middlewareList.delete(i);
         end;
         middlewareList.free();

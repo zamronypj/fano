@@ -34,7 +34,7 @@ type
          * @param middleware middleware to add
          * @return current middleware collection aware instance
          *-------------------------------------------------*)
-        function addBefore(const middleware : IMiddleware) : IMiddlewareCollectionAware;
+        function addBefore(middleware : IMiddleware) : IMiddlewareCollectionAware;
 
         (*!------------------------------------------------
          * Add middleware to list of middleware that is
@@ -43,7 +43,7 @@ type
          * @param middleware middleware to add
          * @return current middleware collection aware instance
          *-------------------------------------------------*)
-        function addAfter(const middleware : IMiddleware) : IMiddlewareCollectionAware;
+        function addAfter(middleware : IMiddleware) : IMiddlewareCollectionAware;
 
         (*!------------------------------------------------
          * get list of middleware that is
