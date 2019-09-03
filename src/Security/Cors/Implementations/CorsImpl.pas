@@ -93,7 +93,7 @@ type
         function addCorsHeaders(
             const responseHeaders : IHeaders;
             const requestHeaders : IHeaders
-        ) : ICors;
+        ) : IResponse;
     end;
 
 implementation

@@ -75,7 +75,7 @@ type
         function addCorsResponseHeaders(
             const response : IResponse;
             const request : IRequest
-        ) : ICors;
+        ) : IResponse;
     end;
 
 implementation
