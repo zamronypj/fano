@@ -45,7 +45,7 @@ uses
     begin
         cors := TCors.create(
             nil,
-            TRegex.create()
+            nil
         );
         result := TCorsMiddleware.create(cors);
     end;
