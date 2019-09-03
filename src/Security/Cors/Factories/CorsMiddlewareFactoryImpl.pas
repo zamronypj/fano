@@ -38,15 +38,11 @@ uses
     CorsMiddlewareImpl,
     CorsImpl,
     CorsConfigImpl,
+    NullCorsImpl,
     RegexImpl;
 
     function TCorsMiddlewareFactory.build(const container : IDependencyContainer) : IDependency;
-    var cors : ICors;
     begin
-        cors := TCors.create(
-            nil,
-            nil
-        );
-        result := TCorsMiddleware.create(cors);
+        result := TCorsMiddleware.create(TNullCors.create());
     end;
 end.
