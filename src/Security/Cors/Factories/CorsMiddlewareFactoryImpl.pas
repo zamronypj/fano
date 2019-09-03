@@ -43,6 +43,11 @@ uses
 
     function TCorsMiddlewareFactory.build(const container : IDependencyContainer) : IDependency;
     begin
-        result := TCorsMiddleware.create(TNullCors.create());
+        result := TCorsMiddleware.create(
+            TCors.create(
+                TCorsConfig.create(),
+                TRegex.create()
+            )
+        );
     end;
 end.
