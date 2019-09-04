@@ -164,13 +164,11 @@ implementation
 
 uses
 
+    SysUtils;
+    RouteConsts,
     ERouteHandlerNotFoundImpl,
     EMethodNotAllowedImpl;
 
-resourcestring
-
-    sRouteNotFound = 'Route not found. Method: %s Uri: %s';
-    sMethodNotAllowed = 'Method not allowed. Method: %s Uri: %s';
 
     constructor TRouter.create(const routes : IRouteList);
     begin

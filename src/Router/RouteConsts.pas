@@ -15,6 +15,8 @@ interface
 resourcestring
 
     sRouteArgNotFound = 'Route argument %s not found';
+    sRouteNotFound = 'Route not found. Method: %s Uri: %s';
+    sMethodNotAllowed = 'Method not allowed. Method: %s Uri: %s';
 
 implementation
 end.
