@@ -124,6 +124,18 @@ type
             const routeName: string;
             const routeHandler : IRouteHandler
         ) : IRouteHandler;
+
+        (*!------------------------------------------
+         * set route handler for all HTTP verbs
+         * ------------------------------------------
+         * @param routeName regex pattern for route
+         * @param routeHandler instance route handler
+         * @return route handler instance
+         *-------------------------------------------*)
+        function any(
+            const routeName: string;
+            const routeHandler : IRouteHandler
+        ) : IRouteHandler;
     end;
 
 implementation

@@ -138,6 +138,18 @@ type
             const routeHandler : IRouteHandler
         ) : IRouteHandler;
 
+        (*!------------------------------------------
+         * set route handler for all HTTP verbs
+         * ------------------------------------------
+         * @param routeName regex pattern for route
+         * @param routeHandler instance route handler
+         * @return route handler instance
+         *-------------------------------------------*)
+        function any(
+            const routeName: string;
+            const routeHandler : IRouteHandler
+        ) : IRouteHandler;
+
         (*!----------------------------------------------
          * find route handler based request method and uri
          * ----------------------------------------------
@@ -375,6 +387,30 @@ resourcestring
                 'HEAD' :  routeData^.headRoute := routeHandler;
             end;
         end;
+        result := routeHandler;
+    end;
+
+    (*!------------------------------------------
+     * set route handler for all HTTP verbs
+     * ------------------------------------------
+     * @param routeName regex pattern for route
+     * @param routeHandler instance route handler
+     * @return route handler instance
+     *-------------------------------------------*)
+    function TRouter.any(
+        const routeName: string;
+        const routeHandler : IRouteHandler
+    ) : IRouteHandler;
+    var routeData : PRouteRec;
+    begin
+        routeData := findRouteData(routeName);
+        routeData^.getRoute := routeHandler;
+        routeData^.postRoute := routeHandler;
+        routeData^.putRoute := routeHandler;
+        routeData^.deleteRoute := routeHandler;
+        routeData^.patchRoute := routeHandler;
+        routeData^.optionsRoute := routeHandler;
+        routeData^.headRoute := routeHandler;
         result := routeHandler;
     end;
 
