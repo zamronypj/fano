@@ -15,6 +15,7 @@ type
         ['{054EE7FE-20CF-4E46-A9B2-37921D890E33}']
         function getString(const configName : string; const defaultValue : string = '') : string;
         function getInt(const configName : string; const defaultValue : integer = 0) : integer;
+        function getBool(const configName : string; const defaultValue : boolean = false) : boolean;
     end;
 
 implementation

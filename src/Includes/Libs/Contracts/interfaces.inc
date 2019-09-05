@@ -17,9 +17,10 @@ LoggerIntf,
 FileReaderIntf,
 StreamAdapterIntf,
 
-StdInReaderIntf,
+StdInIntf,
 StdOutIntf,
 StdErrIntf,
+StdInStreamAwareIntf,
 
 HttpClientHandleAwareIntf,
 HttpClientHeadersIntf,

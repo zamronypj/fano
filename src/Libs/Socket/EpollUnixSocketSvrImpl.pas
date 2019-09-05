@@ -73,28 +73,30 @@ uses
     SysUtils,
     BaseUnix,
     Unix,
+    Errors,
     ESockCreateImpl,
-    ESockBindImpl;
-
-resourcestring
-
-    rsBindFailed = 'Bind failed on file %s, error: %d';
-    rsCreateFailed = 'Create Socket on file %s failed, error: %d';
+    ESockBindImpl,
+    SocketConsts;
 
     (*!-----------------------------------------------
      * constructor
      *-------------------------------------------------
      * @param listenSocket, socket handle created with fpSocket()
      * @param queueSize, number of queue when listen, 5 = default of Berkeley Socket
+     * TODO: refactor as it is similar to TUnixSocketSvr.create()
      *-----------------------------------------------*)
     constructor TEpollUnixSocketSvr.create(const filename : string);
-    var socket : longint;
+    var socket, errCode : longint;
     begin
         fSocketFile := filename;
         socket := fpSocket(AF_UNIX, SOCK_STREAM, 0);
         if socket = -1 then
         begin
-            raise ESockCreate.createFmt(rsCreateFailed,[ fileName, socketError() ]);
+            errCode := socketError();
+            raise ESockCreate.createFmt(
+                rsCreateFailed,
+                [ fileName, strError(errCode), errCode ]
+            );
         end else
         begin
             inherited create(socket);
@@ -115,15 +117,20 @@ resourcestring
 
     (*!-----------------------------------------------
      * bind socket to an Inet socket address
+     * TODO: refactor as it is similar to TUnixSocketSvr.bind()
      *-----------------------------------------------*)
     procedure TEpollUnixSocketSvr.bind();
-    var
+    var errCode : longint;
         addrLen  : longint;
     begin
         StrToUnixAddr(fSocketFile, FUnixAddr, addrLen);
         if fpBind(fListenSocket, @FUnixAddr, addrLen) <> 0 then
         begin
-            raise ESockBind.createFmt(rsBindFailed, [ FSocketFile, socketError() ]);
+            errCode := socketError();
+            raise ESockBind.createFmt(
+                rsBindFailed,
+                [ FSocketFile, strError(errCode), errCode ]
+            );
         end;
         fSocketAddrLen := addrLen;
     end;
@@ -133,6 +140,7 @@ resourcestring
      *-------------------------------------------------
      * @param listenSocket, socket handle created with fpSocket()
      * @return client socket which data can be read
+     * TODO: refactor as it is similar to TUnixSocketSvr.accept()
      *-----------------------------------------------*)
     function TEpollUnixSocketSvr.accept(listenSocket : longint) : longint;
     var addrLen : TSockLen;

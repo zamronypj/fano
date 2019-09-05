@@ -14,6 +14,7 @@ interface
 
 uses
     EnvironmentIntf,
+    StdInIntf,
     RequestIntf,
     RequestFactoryIntf;
 
@@ -25,24 +26,31 @@ type
      *-----------------------------------------------*)
     TRequestFactory = class(TInterfacedObject, IRequestFactory)
     public
-        function build(const env : ICGIEnvironment) : IRequest;
+        function build(const env : ICGIEnvironment; const stdIn : IStdIn) : IRequest;
     end;
 
 implementation
 
 uses
+
     RequestImpl,
+    RequestHeadersImpl,
     HashListImpl,
     MultipartFormDataParserImpl,
     UploadedFileCollectionFactoryImpl,
     UploadedFileCollectionWriterFactoryImpl,
-    StdInReaderIntf,
     StdInReaderImpl,
-    SimpleStdInReaderImpl;
+    SimpleStdInReaderImpl,
+    UriImpl;
 
-    function TRequestFactory.build(const env : ICGIEnvironment) : IRequest;
+    function TRequestFactory.build(
+        const env : ICGIEnvironment;
+        const stdIn : IStdIn
+    ) : IRequest;
     begin
         result := TRequest.create(
+            TUri.create(env),
+            TRequestHeaders.create(env),
             env,
             THashList.create(),
             THashList.create(),
@@ -50,7 +58,7 @@ uses
             TMultipartFormDataParser.create(
                 TUploadedFileCollectionWriterFactory.create()
             ),
-            TStdInReader.create()
+            stdIn
         );
     end;
 end.

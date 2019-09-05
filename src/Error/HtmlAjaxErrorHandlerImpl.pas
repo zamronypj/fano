@@ -18,6 +18,7 @@ uses
     SysUtils,
     AjaxAwareIntf,
     ErrorHandlerIntf,
+    EnvironmentEnumeratorIntf,
     BaseErrorHandlerImpl;
 
 type
@@ -67,6 +68,7 @@ type
          * @param msg HTTP error message
          *---------------------------------------------------*)
         function handleError(
+            const env : ICGIEnvironmentEnumerator;
             const exc : Exception;
             const status : integer = 500;
             const msg : string  = 'Internal Server Error'
@@ -125,12 +127,13 @@ implementation
      * @param msg HTTP error message
      *---------------------------------------------------*)
     function THtmlAjaxErrorHandler.handleError(
+        const env : ICGIEnvironmentEnumerator;
         const exc : Exception;
         const status : integer = 500;
         const msg : string  = 'Internal Server Error'
     ) : IErrorHandler;
     begin
-        getErrorHandler().handleError(exc, status, msg);
+        getErrorHandler().handleError(env, exc, status, msg);
         result := self;
     end;
 end.

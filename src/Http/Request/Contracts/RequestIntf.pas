@@ -18,7 +18,10 @@ uses
     AjaxAwareIntf,
     ListIntf,
     UploadedFileIntf,
-    UploadedFileCollectionIntf;
+    UploadedFileCollectionIntf,
+    ReadonlyHeadersIntf,
+    EnvironmentIntf,
+    UriIntf;
 
 type
 
@@ -30,6 +33,28 @@ type
      *-----------------------------------------------*)
     IRequest = interface(IAjaxAware)
         ['{32913245-599A-4BF4-B25D-7E2EF349F7BB}']
+
+        (*!------------------------------------
+         * get http headers instance
+         *-------------------------------------
+         * @return header instance
+         *-------------------------------------*)
+        function headers() : IReadOnlyHeaders;
+
+        (*!------------------------------------------------
+         * get request URI
+         *-------------------------------------------------
+         * @return IUri of current request
+         *------------------------------------------------*)
+        function uri() : IUri;
+
+        (*!------------------------------------------------
+         * get request method GET, POST, HEAD, etc
+         *-------------------------------------------------
+         * @return string request method
+         *------------------------------------------------*)
+        function getMethod() : string;
+        property method : string read getMethod;
 
         (*!------------------------------------------------
          * get single query param value by its name
@@ -47,6 +72,7 @@ type
          * @return list of query string params
          *------------------------------------------------*)
         function getQueryParams() : IList;
+        property queryParams : IList read getQueryParams;
 
         (*!------------------------------------------------
          * get single cookie param value by its name
@@ -64,6 +90,7 @@ type
          * @return list of cookie params
          *------------------------------------------------*)
         function getCookieParams() : IList;
+        property cookieParams : IList read getCookieParams;
 
         (*!------------------------------------------------
          * get request body data
@@ -81,6 +108,7 @@ type
          * @return array of parsed body params
          *------------------------------------------------*)
         function getParsedBodyParams() : IList;
+        property parsedBodyParams : IList read getParsedBodyParams;
 
         (*!------------------------------------------------
          * get request uploaded file by name
@@ -98,6 +126,15 @@ type
          *         upload
          *------------------------------------------------*)
         function getUploadedFiles() : IUploadedFileCollection;
+        property uploadedFiles : IUploadedFileCollection read getUploadedFiles;
+
+        (*!------------------------------------------------
+         * get CGI environment
+         *-------------------------------------------------
+         * @return ICGIEnvironment
+         *------------------------------------------------*)
+        function getEnvironment() : ICGIEnvironment;
+        property env : ICGIEnvironment read getEnvironment;
     end;
 
 implementation

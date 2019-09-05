@@ -37,8 +37,8 @@ type
         (*!------------------------------------------------
          * validate token name and value
          *-------------------------------------------------
-         * @param key token name
-         * @param key token value
+         * @param tokenName token name
+         * @param tokenValue token value
          * @return true if token match with previously generated
          *-------------------------------------------------*)
         function isTokenValid(const tokenName : string; const tokenValue :string) : boolean;

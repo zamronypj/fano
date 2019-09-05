@@ -87,6 +87,7 @@ implementation
         const routeAfterMiddlewares : IMiddlewareCollection
     );
     begin
+        inherited create();
         appBeforeMiddlewareList := appBeforeMiddlewares;
         appAfterMiddlewareList := appAfterMiddlewares;
         routeBeforeMiddlewareList := routeBeforeMiddlewares;
@@ -95,11 +96,11 @@ implementation
 
     destructor TMiddlewareChain.destroy();
     begin
-        inherited destroy();
         appBeforeMiddlewareList := nil;
         appAfterMiddlewareList := nil;
         routeBeforeMiddlewareList := nil;
         routeAfterMiddlewareList := nil;
+        inherited destroy();
     end;
 
     function TMiddlewareChain.executeMiddlewares(

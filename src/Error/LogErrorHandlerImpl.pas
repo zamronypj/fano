@@ -17,6 +17,7 @@ uses
     sysutils,
     ErrorHandlerIntf,
     LoggerIntf,
+    EnvironmentEnumeratorIntf,
     BaseErrorHandlerImpl;
 
 type
@@ -42,6 +43,7 @@ type
         destructor destroy(); override;
 
         function handleError(
+            const env : ICGIEnvironmentEnumerator;
             const exc : Exception;
             const status : integer = 500;
             const msg : string  = 'Internal Server Error'
@@ -92,6 +94,7 @@ implementation
     end;
 
     function TLogErrorHandler.handleError(
+        const env : ICGIEnvironmentEnumerator;
         const exc : Exception;
         const status : integer = 500;
         const msg : string  = 'Internal Server Error'

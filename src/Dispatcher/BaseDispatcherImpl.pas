@@ -21,6 +21,7 @@ uses
     RequestFactoryIntf,
     RouteMatcherIntf,
     RouteHandlerIntf,
+    StdInIntf,
     InjectableObjectImpl;
 
 type
@@ -44,7 +45,18 @@ type
             const reqFactory : IRequestFactory
         );
         destructor destroy(); override;
-        function dispatchRequest(const env: ICGIEnvironment) : IResponse; virtual; abstract;
+
+        (*!-------------------------------------------
+         * dispatch request
+         *--------------------------------------------
+         * @param env CGI environment
+         * @param stdIn STDIN reader
+         * @return response
+         *--------------------------------------------*)
+        function dispatchRequest(
+            const env: ICGIEnvironment;
+            const stdIn : IStdIn
+        ) : IResponse; virtual; abstract;
     end;
 
 implementation

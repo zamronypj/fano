@@ -77,11 +77,8 @@ implementation
 uses
 
     HashListImpl,
+    HeaderConsts,
     EHeaderNotSetImpl;
-
-resourcestring
-
-    sErrHeaderNotSet = 'Header %s is not set';
 
 type
 
@@ -169,7 +166,7 @@ type
     end;
 
     (*!------------------------------------
-     * output http headers to STDIN
+     * output http headers to STDOUT
      *-------------------------------------
      * @return header instance
      *-------------------------------------*)

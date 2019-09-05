@@ -7,13 +7,14 @@
  *}
 
 (*! ---------------------------------------------
- * implementation units for dependncy container
+ * implementation units for dependency container
  * that is included in fano.pas unit
  *
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
  *-----------------------------------------------*)
 
 DependencyContainerImpl,
+InitializeableContainerImpl,
 DependencyListImpl,
 InjectableObjectImpl,
 
@@ -21,3 +22,8 @@ EDependencyNotFoundImpl,
 EInvalidFactoryImpl,
 EDependencyAliasImpl,
 FactoryImpl,
+
+ServiceImpl,
+ServiceContainerImpl,
+BasicContainerFactoryImpl,
+ServiceContainerFactoryImpl,

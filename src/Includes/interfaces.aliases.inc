@@ -27,4 +27,5 @@
 {$INCLUDE Libs/Contracts/libs.aliases.inc}
 {$INCLUDE Mvc/Contracts/mvc.aliases.inc}
 {$INCLUDE Security/Contracts/security.aliases.inc}
+{$INCLUDE Sessions/Contracts/sessions.aliases.inc}
 {$INCLUDE Db/Contracts/db.aliases.inc}

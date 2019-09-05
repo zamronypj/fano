@@ -13,5 +13,8 @@
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
  *-----------------------------------------------*)
 
+AbstractEnvironmentImpl,
 EnvironmentImpl,
+KeyValueEnvironmentImpl,
+NullEnvironmentImpl,
 EnvironmentFactoryImpl,

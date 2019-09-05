@@ -34,6 +34,21 @@ type
          * @return variable value
          *------------------------------------------*)
         function env(const keyName : string) : string; override;
+
+        (*!------------------------------------------------
+         * get number of variables
+         *-----------------------------------------------
+         * @return number of variables
+         *-----------------------------------------------*)
+        function count() : integer; override;
+
+        (*!------------------------------------------------
+         * get key by index
+         *-----------------------------------------------
+         * @param index index to use
+         * @return key name
+         *-----------------------------------------------*)
+        function getKey(const indx : integer) : shortstring; override;
     end;
 
 implementation
@@ -54,4 +69,28 @@ uses
         result := GetEnvironmentVariable(keyName);
     end;
 
+    (*!------------------------------------------------
+     * get number of variables
+     *-----------------------------------------------
+     * @return number of variables
+     *-----------------------------------------------*)
+    function TCGIEnvironment.count() : integer;
+    begin
+        //GetEnvironmentVariableCount() use 1-based index,
+        //we always use zero-based so subtract 1
+        result := GetEnvironmentVariableCount() - 1;
+    end;
+
+    (*!------------------------------------------------
+     * get key by index
+     *-----------------------------------------------
+     * @param index index to use
+     * @return key name
+     *-----------------------------------------------*)
+    function TCGIEnvironment.getKey(const indx : integer) : shortstring;
+    begin
+        //GetEnvironmentString() use 1-based index,
+        //we always use zero-based so add 1
+        result := GetEnvironmentString(indx + 1);
+    end;
 end.

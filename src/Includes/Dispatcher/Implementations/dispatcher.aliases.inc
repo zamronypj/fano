@@ -2,6 +2,12 @@ EInvalidDispatcher = EInvalidDispatcherImpl.EInvalidDispatcher;
 EMethodNotAllowed = EMethodNotAllowedImpl.EMethodNotAllowed;
 ERouteHandlerNotFound = ERouteHandlerNotFoundImpl.ERouteHandlerNotFound;
 
+TDispatcher = DispatcherImpl.TDispatcher;
+TSimpleDispatcher = SimpleDispatcherImpl.TSimpleDispatcher;
 
 TDispatcherFactory = DispatcherFactoryImpl.TDispatcherFactory;
 TSimpleDispatcherFactory = SimpleDispatcherFactoryImpl.TSimpleDispatcherFactory;
+TSessionDispatcherFactory = SessionDispatcherFactoryImpl.TSessionDispatcherFactory;
+
+TRequestResponseFactory = RequestResponseFactoryImpl.TRequestResponseFactory;
+TFcgiRequestResponseFactory = FcgiRequestResponseFactoryImpl.TFcgiRequestResponseFactory;

@@ -24,3 +24,5 @@ TValidationResult = ValidationResultTypes.TValidationResult;
 {$INCLUDE validators.aliases.inc}
 
 TValidationMiddleware = ValidationMiddlewareImpl.TValidationMiddleware;
+
+{$INCLUDE cors.aliases.inc}

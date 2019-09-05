@@ -16,6 +16,7 @@ interface
 uses
     sysutils,
     ErrorHandlerIntf,
+    EnvironmentEnumeratorIntf,
     BaseErrorHandlerImpl;
 
 type
@@ -27,6 +28,7 @@ type
     TNullErrorHandler = class(TBaseErrorHandler)
     public
         function handleError(
+            const env : ICGIEnvironmentEnumerator;
             const exc : Exception;
             const status : integer = 500;
             const msg : string  = 'Internal Server Error'
@@ -36,6 +38,7 @@ type
 implementation
 
     function TNullErrorHandler.handleError(
+        const env : ICGIEnvironmentEnumerator;
         const exc : Exception;
         const status : integer = 500;
         const msg : string  = 'Internal Server Error'

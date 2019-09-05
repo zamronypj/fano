@@ -104,12 +104,15 @@ uses
      *-----------------------------------------------*)
     function TFcgiStdOutWriter.writeStdOut(const str : string; const requestId : word; const stream : IStreamAdapter) : IStdOut;
     var arecord : IFcgiRecord;
+        strStream : IStreamAdapter;
     begin
-        arecord := TFcgiStdOut.create(
-            TStreamAdapter.create(TStringStream.create(str)),
-            requestId
-        );
-        arecord.write(stream);
+        if (length(str) > 0) then
+        begin
+            strStream := TStreamAdapter.create(TStringStream.create(str));
+            strStream.seek(0);
+            arecord := TFcgiStdOut.create(strStream, requestId);
+            arecord.write(stream);
+        end;
         result := self;
     end;
 

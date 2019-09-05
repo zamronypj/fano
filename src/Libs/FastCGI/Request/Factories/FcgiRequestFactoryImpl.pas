@@ -17,8 +17,8 @@ uses
     EnvironmentIntf,
     RequestIntf,
     RequestFactoryIntf,
-    FcgiRequestIdAwareIntf,
-    FcgiStdInStreamAwareIntf;
+    StdInIntf,
+    FcgiRequestIdAwareIntf;
 
 type
     (*!------------------------------------------------
@@ -29,47 +29,45 @@ type
     TFcgiRequestFactory = class(TInterfacedObject, IRequestFactory)
     private
         fRequestIdAware : IFcgiRequestIdAware;
-        fStdInAware : IFcgiStdInStreamAware;
     public
-        constructor create(
-            const requestIdAware : IFcgiRequestIdAware;
-            const stdInAware : IFcgiStdInStreamAware;
-        );
+        constructor create(const requestIdAware : IFcgiRequestIdAware);
         destructor destroy; override;
-        function build(const env : ICGIEnvironment) : IRequest;
+        function build(const env : ICGIEnvironment; const stdIn  : IStdIn) : IRequest;
     end;
 
 implementation
 
 uses
+
     RequestImpl,
+    RequestHeadersImpl,
+    FcgiRequestImpl,
     HashListImpl,
     MultipartFormDataParserImpl,
     UploadedFileCollectionFactoryImpl,
     UploadedFileCollectionWriterFactoryImpl,
-    StdInReaderIntf,
-    StdInFromStreamImpl;
+    UriImpl;
 
     constructor TFcgiRequestFactory.create(
-        const requestIdAware : IFcgiRequestIdAware;
-        const stdInAware : IFcgiStdInStreamAware;
+        const requestIdAware : IFcgiRequestIdAware
     );
     begin
+        inherited create();
         fRequestIdAware := requestIdAware;
-        fStdInAware := stdInStreamAware;
     end;
 
     destructor TFcgiRequestFactory.destroy();
     begin
-        inherited destroy();
         fRequestIdAware := nil;
-        fStdInAware := nil;
+        inherited destroy();
     end;
 
-    function TFcgiRequestFactory.build(const env : ICGIEnvironment) : IRequest;
+    function TFcgiRequestFactory.build(const env : ICGIEnvironment; const stdIn : IStdIn) : IRequest;
     var arequest : IRequest;
     begin
         arequest := TRequest.create(
+            TUri.create(env),
+            TRequestHeaders.create(env),
             env,
             THashList.create(),
             THashList.create(),
@@ -77,7 +75,7 @@ uses
             TMultipartFormDataParser.create(
                 TUploadedFileCollectionWriterFactory.create()
             ),
-            TStdInReaderFromStream.create(fStdInAware.getStdIn())
+            stdIn
         );
         result := TFcgiRequest.create(fRequestIdAware.getRequestId(), arequest);
     end;

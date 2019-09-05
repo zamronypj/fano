@@ -6,30 +6,30 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit SessionIntf;
+unit RandomIntf;
 
 interface
 
 {$MODE OBJFPC}
 {$H+}
 
+uses
+
+    SysUtils;
+
 type
 
     (*!------------------------------------------------
      * interface for any class having capability to
-     * manage session data
+     * get random value
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    ISession = interface
-        ['{3A456015-1398-461E-A272-AAFB67D5086F}']
-        function has(const key : string) : boolean;
-        function read(const key : string) : string;
-        function write(const key : string; const value : string) : ISession;
+    IRandom = interface
+        ['{44932581-5658-42C1-BEF5-9C46917CAE30}']
+
+        function randomBytes(const totalBytes : integer) : TBytes;
     end;
 
 implementation
-
-
-
 end.

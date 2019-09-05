@@ -30,6 +30,7 @@ type
     TJsonResponse = class(TInterfacedObject, IResponse, ICloneable)
     private
         httpHeaders : IHeaders;
+        responseStream : IResponseStream;
         jsonStream : TStringStream;
     public
         constructor create(const hdrs : IHeaders; const json : string);
@@ -64,12 +65,14 @@ uses
     begin
         httpHeaders := hdrs;
         jsonStream := TStringStream.create(json);
+        responseStream := TResponseStream.create(jsonStream, false);
     end;
 
     destructor TJsonResponse.destroy();
     begin
         inherited destroy();
         jsonStream.free();
+        responseStream := nil;
         httpHeaders := nil;
     end;
 
@@ -109,6 +112,6 @@ uses
      *-------------------------------------*)
     function TJsonResponse.body() : IResponseStream;
     begin
-        result := TResponseStream.create(jsonStream);
+        result := responseStream;
     end;
 end.

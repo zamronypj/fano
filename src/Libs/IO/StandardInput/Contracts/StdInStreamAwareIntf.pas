@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit FcgiStdInStreamAwareIntf;
+unit StdInStreamAwareIntf;
 
 interface
 
@@ -25,8 +25,8 @@ type
 
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    IFcgiStdInStreamAware = interface
-        ['{C91FCF4D-0A9B-4EC3-A725-0C9808C6CBEF}']
+    IStdInStreamAware = interface
+        ['{E7AA86D2-940B-47F3-9922-4F1F663FDFB6}']
 
         (*!------------------------------------------------
          * get StdIn stream

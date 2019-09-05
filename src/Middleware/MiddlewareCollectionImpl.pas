@@ -17,7 +17,8 @@ uses
     classes,
     DependencyIntf,
     MiddlewareIntf,
-    MiddlewareCollectionIntf;
+    MiddlewareCollectionIntf,
+    InjectableObjectImpl;
 
 type
 
@@ -27,7 +28,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TMiddlewareCollection = class(TInterfacedObject, IMiddlewareCollection, IDependency)
+    TMiddlewareCollection = class(TInjectableObject, IMiddlewareCollection)
     private
         middlewareList : TInterfaceList;
     public
@@ -57,12 +58,12 @@ implementation
     destructor TMiddlewareCollection.destroy();
     var i : integer;
     begin
-        inherited destroy();
         for i := middlewareList.count - 1 downto 0 do
         begin
             middlewareList.delete(i);
         end;
         middlewareList.free();
+        inherited destroy();
     end;
 
     function TMiddlewareCollection.add(const middleware : IMiddleware) : IMiddlewareCollection;
