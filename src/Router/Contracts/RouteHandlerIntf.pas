@@ -28,22 +28,29 @@ type
      *-------------------------------------------------*)
     IRouteHandler = interface(IRequestHandler)
         ['{7F3C1F5B-4D60-441B-820F-400D76EAB1DC}']
-        function getMiddlewares() : IMiddlewareCollectionAware;
 
         (*!-------------------------------------------
          * Set route argument data
+         *--------------------------------------------
+         * @param placeHolders array of placeholders
+         * @return current instance
          *--------------------------------------------*)
         function setArgs(const placeHolders : TArrayOfPlaceholders) : IRouteHandler;
 
         (*!-------------------------------------------
          * get route argument data
+         *--------------------------------------------
+         * @return current array of placeholders
          *--------------------------------------------*)
         function getArgs() : TArrayOfPlaceholders;
 
         (*!-------------------------------------------
          * get single route argument data
+         *--------------------------------------------
+         * @param key name of argument
+         * @return placeholder
          *--------------------------------------------*)
-        function getArg(const key : string) : TPlaceholder;
+        function getArg(const key : shortstring) : TPlaceholder;
     end;
 
 implementation

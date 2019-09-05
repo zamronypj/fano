@@ -18,6 +18,7 @@ uses
     sysutils,
     DependencyIntf,
     ErrorHandlerIntf,
+    EnvironmentEnumeratorIntf,
     BaseErrorHandlerImpl;
 
 type
@@ -40,6 +41,7 @@ type
          * @param msg HTTP error message
          *---------------------------------------------------*)
         function handleError(
+            const env : ICGIEnvironmentEnumerator;
             const exc : Exception;
             const status : integer = 500;
             const msg : string  = 'Internal Server Error'
@@ -89,6 +91,7 @@ implementation
      * @param msg HTTP error message
      *---------------------------------------------------*)
     function TAjaxErrorHandler.handleError(
+        const env : ICGIEnvironmentEnumerator;
         const exc : Exception;
         const status : integer = 500;
         const msg : string  = 'Internal Server Error'

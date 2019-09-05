@@ -16,6 +16,7 @@ interface
 uses
     sysutils,
     ErrorHandlerIntf,
+    EnvironmentEnumeratorIntf,
     BaseErrorHandlerImpl;
 
 type
@@ -44,6 +45,7 @@ type
         destructor destroy(); override;
 
         function handleError(
+            const env : ICGIEnvironmentEnumerator;
             const exc : Exception;
             const status : integer = 500;
             const msg : string  = 'Internal Server Error'
@@ -75,13 +77,14 @@ implementation
     end;
 
     function TCompositeErrorHandler.handleError(
+        const env : ICGIEnvironmentEnumerator;
         const exc : Exception;
         const status : integer = 500;
         const msg : string  = 'Internal Server Error'
     ) : IErrorHandler;
     begin
-        firstErrorHandler.handleError(exc, status, msg);
-        secondErrorHandler.handleError(exc, status, msg);
+        firstErrorHandler.handleError(env, exc, status, msg);
+        secondErrorHandler.handleError(env, exc, status, msg);
         result := self;
     end;
 end.

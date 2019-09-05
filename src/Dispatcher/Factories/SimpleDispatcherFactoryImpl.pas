@@ -16,7 +16,8 @@ uses
     DependencyIntf,
     DependencyContainerIntf,
     FactoryImpl,
-    RouteMatcherIntf;
+    RouteMatcherIntf,
+    RequestResponseFactoryIntf;
 
 type
 
@@ -28,10 +29,14 @@ type
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *---------------------------------------------------*)
     TSimpleDispatcherFactory = class(TFactory, IDependencyFactory)
-    private
-        routeMatcher : IRouteMatcher;
+    protected
+        fRouteMatcher : IRouteMatcher;
+        fRequestResponseFactory : IRequestResponseFactory;
     public
-        constructor create (const routeMatcherInst : IRouteMatcher);
+        constructor create (
+            const routeMatcher : IRouteMatcher;
+            const requestResponseFactory : IRequestResponseFactory
+        );
         destructor destroy(); override;
         function build(const container : IDependencyContainer) : IDependency; override;
     end;
@@ -39,29 +44,32 @@ type
 implementation
 
 uses
-    SimpleDispatcherImpl,
-    RequestFactoryImpl,
-    ResponseFactoryImpl;
+
+    SimpleDispatcherImpl;
 
     constructor TSimpleDispatcherFactory.create(
-        const routeMatcherInst : IRouteMatcher
+        const routeMatcher : IRouteMatcher;
+        const requestResponseFactory : IRequestResponseFactory
     );
     begin
-        routeMatcher := routeMatcherInst;
+        inherited create();
+        fRouteMatcher := routeMatcher;
+        fRequestResponseFactory := requestResponseFactory;
     end;
 
     destructor TSimpleDispatcherFactory.destroy();
     begin
+        fRouteMatcher := nil;
+        fRequestResponseFactory := nil;
         inherited destroy();
-        routeMatcher := nil;
     end;
 
     function TSimpleDispatcherFactory.build(const container : IDependencyContainer) : IDependency;
     begin
         result := TSimpleDispatcher.create(
-            routeMatcher,
-            TResponseFactory.create(),
-            TRequestFactory.create()
+            fRouteMatcher,
+            fRequestResponseFactory.responseFactory,
+            fRequestResponseFactory.requestFactory
         );
     end;
 

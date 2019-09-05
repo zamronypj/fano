@@ -19,3 +19,5 @@ IValidator = ValidatorIntf.IValidator;
 IValidatorCollection = ValidatorCollectionIntf.IValidatorCollection;
 IValidationRules = ValidationRulesIntf.IValidationRules;
 IRequestValidator = RequestValidatorIntf.IRequestValidator;
+
+{$INCLUDE cors.aliases.inc}

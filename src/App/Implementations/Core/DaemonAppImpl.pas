@@ -24,6 +24,7 @@ uses
     DataAvailListenerIntf,
     RunnableWithDataNotifIntf,
     StdOutIntf,
+    StdInIntf,
     ProtocolProcessorIntf,
     ReadyListenerIntf,
     StreamAdapterIntf,
@@ -71,7 +72,8 @@ type
             const server : IRunnableWithDataNotif;
             const aProcessor : IProtocolProcessor;
             const outputBuffer : IOutputBuffer;
-            const stdOutWriter : IStdOut
+            const stdOutWriter : IStdOut;
+            const stdInReader : IStdIn
         );
         destructor destroy(); override;
         function run() : IRunnable; override;
@@ -110,6 +112,7 @@ implementation
 uses
 
     SysUtils,
+    EnvironmentEnumeratorIntf,
     ERouteHandlerNotFoundImpl,
     EMethodNotAllowedImpl,
     ESockBindImpl,
@@ -133,10 +136,11 @@ uses
         const server : IRunnableWithDataNotif;
         const aProcessor : IProtocolProcessor;
         const outputBuffer : IOutputBuffer;
-        const stdOutWriter : IStdOut
+        const stdOutWriter : IStdOut;
+        const stdInReader : IStdIn
     );
     begin
-        inherited create(container, nil, errHandler);
+        inherited create(container, nil, errHandler, stdInReader);
         dispatcher := dispatcherInst;
         workerServer := server;
         fProcessor := aProcessor;
@@ -146,12 +150,12 @@ uses
 
     destructor TDaemonWebApplication.destroy();
     begin
-        inherited destroy();
         dispatcher := nil;
         workerServer := nil;
         fProcessor := nil;
         fOutputBuffer := nil;
         fStdOutWriter := nil;
+        inherited destroy();
     end;
 
     (*!-----------------------------------------------
@@ -164,29 +168,32 @@ uses
         //This is to ensure that reference count of our instance
         //properly incremented/decremented so no memory leak
         fProcessor.setReadyListener(self);
-        workerServer.setDataAvailListener(self);
         try
+            workerServer.setDataAvailListener(self);
             try
-                //execute run loop until terminated
-                workerServer.run();
-            except
-                //TODO add better exception handling for ESockBind, ESockListen, ESockCreate
-                on e : ESockCreate do
-                begin
-                    writeln(e.message);
+                try
+                    //execute run loop until terminated
+                    workerServer.run();
+                except
+                    //TODO add better exception handling for ESockBind, ESockListen, ESockCreate
+                    on e : ESockCreate do
+                    begin
+                        writeln(e.message);
+                    end;
+                    on e : ESockBind do
+                    begin
+                        writeln(e.message);
+                    end;
+                    on e : ESockListen do
+                    begin
+                        writeln(e.message);
+                    end;
                 end;
-                on e : ESockBind do
-                begin
-                    writeln(e.message);
-                end;
-                on e : ESockListen do
-                begin
-                    writeln(e.message);
-                end;
+            finally
+                workerServer.setDataAvailListener(nil);
             end;
         finally
             fProcessor.setReadyListener(nil);
-            workerServer.setDataAvailListener(nil);
         end;
     end;
 
@@ -217,20 +224,20 @@ uses
             environment := env;
             execute();
         except
-              on e : ERouteHandlerNotFound do
-              begin
-                  errorHandler.handleError(e, 404, sHttp404Message);
-              end;
+            on e : ERouteHandlerNotFound do
+            begin
+                errorHandler.handleError(env.enumerator, e, 404, sHttp404Message);
+            end;
 
-              on e : EMethodNotAllowed do
-              begin
-                  errorHandler.handleError(e, 405, sHttp405Message);
-              end;
+            on e : EMethodNotAllowed do
+            begin
+                errorHandler.handleError(env.enumerator, e, 405, sHttp405Message);
+            end;
 
-              on e : Exception do
-              begin
-                  errorHandler.handleError(e);
-              end;
+            on e : Exception do
+            begin
+                errorHandler.handleError(env.enumerator, e);
+            end;
         end;
     end;
 
@@ -272,6 +279,7 @@ uses
         fOutputBuffer.beginBuffering();
         try
             //when we get here, CGI environment and any POST data are ready
+            fStdInReader.setStream(stdInStream);
             executeRequest(env);
         finally
             fOutputBuffer.endBuffering();

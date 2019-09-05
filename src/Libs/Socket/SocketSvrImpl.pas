@@ -210,17 +210,15 @@ implementation
 
 uses
 
+    Errors,
+    SocketConsts,
     ESockListenImpl,
     ESockWouldBlockImpl,
+    ESockErrorImpl,
     StreamAdapterImpl,
     SockStreamImpl,
     CloseableStreamImpl,
     TermSignalImpl;
-
-resourcestring
-
-    rsSocketListenFailed = 'Listening failed, error: %d';
-    rsAcceptWouldBlock = 'Accept socket would block on socket, error: %d';
 
     (*!-----------------------------------------------
      * constructor
@@ -260,12 +258,18 @@ resourcestring
 
     (*!-----------------------------------------------
      * begin listen socket
+     * TODO: refactor as it is similar to TEpollSocketSvr.listen()
      *-----------------------------------------------*)
     procedure TSocketSvr.listen();
+    var errCode : longint;
     begin
         if fpListen(fListenSocket, fQueueSize) <> 0 then
         begin
-            raise ESockListen.createFmt(rsSocketListenFailed, [ socketError() ]);
+            errCode := socketError();
+            raise ESockListen.createFmt(
+                rsSocketListenFailed,
+                [ strError(errCode), errCode ]
+            );
         end;
     end;
 
@@ -314,16 +318,19 @@ resourcestring
     end;
 
     procedure TSocketSvr.raiseExceptionIfAny();
-    var errno : longint;
+    var errCode : longint;
     begin
-        errno := socketError();
-        if (errno = EsockEWOULDBLOCK) or (errno = EsysEAGAIN) then
+        errCode := socketError();
+        if (errCode = EsockEWOULDBLOCK) or (errCode = EsysEAGAIN) then
         begin
             //if we get here, it mostly because socket is non blocking
             //but no pending connection, so just do nothing
         end else
         begin
-            //TODO handle error
+            raise ESockError.createFmt(
+                rsSocketError,
+                [ strError(errCode), errCode ]
+            );
         end;
     end;
 

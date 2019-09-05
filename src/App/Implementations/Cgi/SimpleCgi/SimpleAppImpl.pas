@@ -58,7 +58,10 @@ uses
     ErrorHandlerImpl,
     RouteMatcherIntf,
     SimpleRouterFactoryImpl,
-    SimpleDispatcherFactoryImpl;
+    SimpleDispatcherFactoryImpl,
+    StdInReaderImpl,
+    StdInIntf,
+    RequestResponseFactoryImpl;
 
     (*!-----------------------------------------------
      * constructor
@@ -78,6 +81,7 @@ uses
     var appContainer :  IDependencyContainer;
         appEnv : ICGIEnvironment;
         appErr : IErrorHandler;
+        appStdIn : IStdIn;
     begin
         appContainer := container;
         if (appContainer = nil) then
@@ -107,12 +111,15 @@ uses
             appContainer.add(
                 'dispatcher',
                 TSimpleDispatcherFactory.create(
-                    appContainer.get('router') as IRouteMatcher
+                    appContainer.get('router') as IRouteMatcher,
+                    TRequestResponseFactory.create()
                 )
             );
         end;
 
-        inherited create(appContainer, appEnv, appErr);
+        appStdIn := TStdInReader.create();
+
+        inherited create(appContainer, appEnv, appErr, appStdIn);
     end;
 
     function TSimpleWebApplication.initDispatcher(const container : IDependencyContainer) : IDispatcher;

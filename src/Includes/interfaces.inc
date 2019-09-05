@@ -27,4 +27,5 @@
 {$INCLUDE Libs/Contracts/interfaces.inc}
 {$INCLUDE Mvc/Contracts/interfaces.inc}
 {$INCLUDE Security/Contracts/interfaces.inc}
+{$INCLUDE Sessions/Contracts/interfaces.inc}
 {$INCLUDE Db/Contracts/interfaces.inc}

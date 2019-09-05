@@ -6,8 +6,8 @@ Web application framework for modern Pascal programming language.
 ## Requirement
 
 - [Free Pascal](https://www.freepascal.org/) >= 3.0
-- [libcurl development](https://curl.haxx.se/libcurl/)
 - Web Server (Apache, nginx)
+- [libcurl development](https://curl.haxx.se/libcurl/) (optional)
 
 ## Installation
 
@@ -77,6 +77,8 @@ all your applications that depends on Fano will be affected. If newer version of
 - Elasticsearch database support
 - Improve data validation and sanitation
 - Unit test
+
+See [Projects](https://github.com/orgs/fanoframework/projects) for more information about what is currently being developed or planed.
 
 ## Copyright Notice
 

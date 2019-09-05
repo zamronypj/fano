@@ -20,9 +20,9 @@ uses
     StreamAdapterIntf,
     ProtocolProcessorIntf,
     ReadyListenerIntf,
+    StdInStreamAwareIntf,
     FcgiRequestManagerIntf,
     FcgiRequestIdAwareIntf,
-    FcgiStdInStreamAwareIntf,
     FcgiFrameParserIntf;
 
 type
@@ -33,7 +33,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TFcgiProcessor = class(TInterfacedObject, IProtocolProcessor, IFcgiRequestIdAware, IFcgiStdInStreamAware)
+    TFcgiProcessor = class(TInterfacedObject, IProtocolProcessor, IFcgiRequestIdAware, IStdInStreamAware)
     private
         fcgiParser : IFcgiFrameParser;
         fcgiRequestMgr : IFcgiRequestManager;
@@ -129,10 +129,10 @@ uses
      *-----------------------------------------------*)
     destructor TFcgiProcessor.destroy();
     begin
-        inherited destroy();
         fcgiParser := nil;
         fcgiRequestMgr := nil;
         fcgiRequestReadyListener := nil;
+        inherited destroy();
     end;
 
     (*!-----------------------------------------------

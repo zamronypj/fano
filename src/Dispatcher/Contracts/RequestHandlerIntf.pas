@@ -25,6 +25,14 @@ type
     -----------------------------------------------}
     IRequestHandler = interface
         ['{483E0FAB-E1E6-4B8C-B193-F8615E039369}']
+
+        (*!-------------------------------------------
+         * handle request
+         *--------------------------------------------
+         * @param request object represent current request
+         * @param response object represent current response
+         * @return new response
+         *--------------------------------------------*)
         function handleRequest(const request : IRequest; const response : IResponse) : IResponse;
     end;
 

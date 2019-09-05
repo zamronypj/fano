@@ -14,6 +14,7 @@ interface
 {$H+}
 
 uses
+
     EnvironmentIntf,
     RequestIntf,
     ListIntf,
@@ -22,7 +23,9 @@ uses
     UploadedFileIntf,
     UploadedFileCollectionIntf,
     UploadedFileCollectionWriterIntf,
-    StdInReaderIntf;
+    StdInIntf,
+    ReadOnlyHeadersIntf,
+    UriIntf;
 
 const
 
@@ -34,11 +37,15 @@ type
     (*!------------------------------------------------
      * basic class having capability as
      * HTTP request
-     *
+     *-------------------------------------------------
+     * TODO: refactor
+     *-------------------------------------------------
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
     TRequest = class(TInterfacedObject, IRequest)
     private
+        fUri : IUri;
+        fHeaders : IReadOnlyHeaders;
         webEnvironment : ICGIEnvironment;
         queryParams : IList;
         cookieParams : IList;
@@ -46,7 +53,7 @@ type
         uploadedFiles: IUploadedFileCollection;
         uploadedFilesWriter: IUploadedFileCollectionWriter;
         multipartFormDataParser : IMultipartFormDataParser;
-        stdInReader : IStdInReader;
+        stdInReader : IStdIn;
 
         (*!------------------------------------------------
          * maximum POST data size in bytes
@@ -64,7 +71,8 @@ type
 
         procedure initParamsFromString(
             const data : string;
-            const body : IList
+            const body : IList;
+            const separatorChar : char = '&'
         );
 
         procedure initPostBodyParamsFromStdInput(
@@ -110,16 +118,39 @@ type
 
     public
         constructor create(
+            const anUri : IUri;
+            const aheaders : IReadOnlyHeaders;
             const env : ICGIEnvironment;
             const query : IList;
             const cookies : IList;
             const body : IList;
             const multipartFormDataParserInst : IMultipartFormDataParser;
-            const stdInputReader : IStdInReader;
+            const stdInputReader : IStdIn;
             const maxPostSize : int64 = DEFAULT_MAX_POST_SIZE;
             const maxUploadSize : int64 = DEFAULT_MAX_UPLOAD_SIZE
         );
         destructor destroy(); override;
+
+        (*!------------------------------------
+         * get http headers instance
+         *-------------------------------------
+         * @return header instance
+         *-------------------------------------*)
+        function headers() : IReadOnlyHeaders;
+
+        (*!------------------------------------------------
+         * get request URI
+         *-------------------------------------------------
+         * @return IUri of current request
+         *------------------------------------------------*)
+        function uri() : IUri;
+
+        (*!------------------------------------------------
+         * get request method GET, POST, HEAD, etc
+         *-------------------------------------------------
+         * @return string request method
+         *------------------------------------------------*)
+        function getMethod() : string;
 
         (*!------------------------------------------------
          * get single query param value by its name
@@ -190,7 +221,14 @@ type
         function getUploadedFiles() : IUploadedFileCollection;
 
         (*!------------------------------------------------
-         * test if current request is comming from AJAX request
+         * get CGI environment
+         *-------------------------------------------------
+         * @return ICGIEnvironment
+         *------------------------------------------------*)
+        function getEnvironment() : ICGIEnvironment;
+
+        (*!------------------------------------------------
+         * test if current request is coming from AJAX request
          *-------------------------------------------------
          * @return true if ajax request
          *------------------------------------------------*)
@@ -210,16 +248,21 @@ resourcestring
     sErrExceedMaxPostSize = 'POST size (%d) exceeds maximum allowable POST size (%d)';
 
     constructor TRequest.create(
+        const anUri : IUri;
+        const aheaders : IReadOnlyHeaders;
         const env : ICGIEnvironment;
         const query : IList;
         const cookies : IList;
         const body : IList;
         const multipartFormDataParserInst : IMultipartFormDataParser;
-        const stdInputReader : IStdInReader;
+        const stdInputReader : IStdIn;
         const maxPostSize : int64 = DEFAULT_MAX_POST_SIZE;
         const maxUploadSize : int64 = DEFAULT_MAX_UPLOAD_SIZE
     );
     begin
+        inherited create();
+        fUri := anUri;
+        fHeaders := aheaders;
         webEnvironment := env;
         queryParams := query;
         cookieParams := cookies;
@@ -243,7 +286,6 @@ resourcestring
 
     destructor TRequest.destroy();
     begin
-        inherited destroy();
         clearParams(queryParams);
         clearParams(cookieParams);
         clearParams(bodyParams);
@@ -255,6 +297,29 @@ resourcestring
         uploadedFilesWriter := nil;
         multipartFormDataParser := nil;
         stdInReader := nil;
+        fHeaders := nil;
+        fUri := nil;
+        inherited destroy();
+    end;
+
+    (*!------------------------------------
+     * get http headers instance
+     *-------------------------------------
+     * @return header instance
+     *-------------------------------------*)
+    function TRequest.headers() : IReadOnlyHeaders;
+    begin
+        result := fHeaders;
+    end;
+
+    (*!------------------------------------------------
+     * get request URI
+     *-------------------------------------------------
+     * @return IUri of current request
+     *------------------------------------------------*)
+    function TRequest.uri() : IUri;
+    begin
+        result := fUri;
     end;
 
     procedure TRequest.clearParams(const params : IList);
@@ -272,13 +337,14 @@ resourcestring
 
     procedure TRequest.initParamsFromString(
         const data : string;
-        const body : IList
+        const body : IList;
+        const separatorChar : char = '&'
     );
     var arrOfQryStr, keyvalue : TStringArray;
         i, len, lenKeyValue : integer;
         param : PKeyValue;
     begin
-        arrOfQryStr := data.split(['&']);
+        arrOfQryStr := data.split([separatorChar]);
         len := length(arrOfQryStr);
         for i:= 0 to len-1 do
         begin
@@ -287,7 +353,7 @@ resourcestring
             if (lenKeyValue = 2) then
             begin
                 new(param);
-                param^.key := keyvalue[0];
+                param^.key := trim(keyvalue[0]);
                 param^.value := (keyvalue[1]).urlDecode();
                 body.add(param^.key, param);
             end;
@@ -307,7 +373,7 @@ resourcestring
         const cookies : IList
     );
     begin
-        initParamsFromString(env.httpCookie(), cookies);
+        initParamsFromString(env.httpCookie(), cookies, ';');
     end;
 
     procedure TRequest.raiseExceptionIfPostDataTooBig(const contentLength : int64);
@@ -509,4 +575,25 @@ resourcestring
     begin
         result := (webEnvironment.env('HTTP_X_REQUESTED_WITH') = 'XMLHttpRequest');
     end;
+
+    (*!------------------------------------------------
+     * get request method GET, POST, HEAD, etc
+     *-------------------------------------------------
+     * @return string request method
+     *------------------------------------------------*)
+    function TRequest.getMethod() : string;
+    begin
+        result := webEnvironment.requestMethod();
+    end;
+
+    (*!------------------------------------------------
+     * get CGI environment
+     *-------------------------------------------------
+     * @return ICGIEnvironment
+     *------------------------------------------------*)
+    function TRequest.getEnvironment() : ICGIEnvironment;
+    begin
+        result := webEnvironment;
+    end;
+
 end.

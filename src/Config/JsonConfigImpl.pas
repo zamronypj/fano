@@ -35,6 +35,7 @@ type
         destructor destroy(); override;
         function getString(const configName : string; const defaultValue : string = '') : string;
         function getInt(const configName : string; const defaultValue : integer = 0) : integer;
+        function getBool(const configName : string; const defaultValue : boolean = false) : boolean;
     end;
 
 implementation
@@ -77,6 +78,19 @@ uses
         end else
         begin
             result := jsonData.asInteger;
+        end;
+    end;
+
+    function TJsonConfig.getBool(const configName : string; const defaultValue : boolean = false) : boolean;
+    var jsonData : TJSONData;
+    begin
+        jsonData := json.findPath(configName);
+        if (jsonData = nil) then
+        begin
+            result := defaultValue;
+        end else
+        begin
+            result := jsonData.asBoolean;
         end;
     end;
 

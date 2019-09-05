@@ -1,0 +1,100 @@
+{*!
+ * Fano Web Framework (https://fanoframework.github.io)
+ *
+ * @link      https://github.com/fanoframework/fano
+ * @copyright Copyright (c) 2018 Zamrony P. Juhara
+ * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
+ *}
+
+unit NullProtocolProcessorImpl;
+
+interface
+
+{$MODE OBJFPC}
+{$H+}
+
+uses
+
+    StreamAdapterIntf,
+    CloseableIntf,
+    ReadyListenerIntf,
+    ProtocolProcessorIntf;
+
+type
+
+    (*!-----------------------------------------------
+     * null class having capability to process
+     * stream from web server
+     *
+     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+     *-----------------------------------------------*)
+    TNullProtocolProcessor = class(TInterfacedObject, IProtocolProcessor)
+    private
+        fStream : IStreamAdapter;
+    public
+        constructor create();
+        destructor destroy(); override;
+
+        (*!------------------------------------------------
+         * process request stream
+         *-----------------------------------------------*)
+        procedure process(const stream : IStreamAdapter; const streamCloser : ICloseable);
+
+        (*!------------------------------------------------
+         * get StdIn stream for complete request
+         *-----------------------------------------------*)
+        function getStdIn() : IStreamAdapter;
+
+        (*!------------------------------------------------
+         * set listener to be notified when request is ready
+         *-----------------------------------------------
+         * @return current instance
+         *-----------------------------------------------*)
+        function setReadyListener(const listener : IReadyListener) : IProtocolProcessor;
+    end;
+
+implementation
+
+uses
+
+    NullStreamAdapterImpl;
+
+    constructor TNullProtocolProcessor.create();
+    begin
+        inherited create();
+        fStream := TNullStreamAdapter.create();
+    end;
+
+    destructor TNullProtocolProcessor.destroy();
+    begin
+        fStream := nil;
+        inherited destroy();
+    end;
+
+    (*!------------------------------------------------
+     * process request stream
+     *-----------------------------------------------*)
+    procedure TNullProtocolProcessor.process(const stream : IStreamAdapter; const streamCloser : ICloseable);
+    begin
+        //intentionally does nothing
+    end;
+
+    (*!------------------------------------------------
+     * get StdIn stream for complete request
+     *-----------------------------------------------*)
+    function TNullProtocolProcessor.getStdIn() : IStreamAdapter;
+    begin
+        result := fStream;
+    end;
+
+    (*!------------------------------------------------
+     * set listener to be notified when request is ready
+     *-----------------------------------------------
+     * @return current instance
+     *-----------------------------------------------*)
+    function TNullProtocolProcessor.setReadyListener(const listener : IReadyListener) : IProtocolProcessor;
+    begin
+        result := self;
+    end;
+
+end.
