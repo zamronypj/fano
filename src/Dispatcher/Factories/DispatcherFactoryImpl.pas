@@ -15,9 +15,11 @@ interface
 uses
     DependencyIntf,
     DependencyContainerIntf,
-    FactoryImpl,
     RouteMatcherIntf,
-    MiddlewareCollectionAwareIntf;
+    MiddlewareCollectionAwareIntf,
+    MiddlewareChainFactoryIntf,
+    RequestResponseFactoryIntf,
+    SimpleDispatcherFactoryImpl;
 
 type
 
@@ -27,14 +29,16 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *---------------------------------------------------*)
-    TDispatcherFactory = class(TFactory, IDependencyFactory)
+    TDispatcherFactory = class(TSimpleDispatcherFactory)
     private
         appMiddlewares : IMiddlewareCollectionAware;
-        routeMatcher : IRouteMatcher;
+    protected
+        function createMiddlewareChainFactory() : IMiddlewareChainFactory; virtual;
     public
         constructor create (
             const appMiddlewaresInst : IMiddlewareCollectionAware;
-            const routeMatcherInst : IRouteMatcher
+            const routeMatcher : IRouteMatcher;
+            const requestResponseFactory : IRequestResponseFactory
         );
         destructor destroy(); override;
         function build(const container : IDependencyContainer) : IDependency; override;
@@ -44,35 +48,38 @@ implementation
 
 uses
     DispatcherImpl,
-    RequestFactoryImpl,
-    ResponseFactoryImpl,
+    RequestResponseFactoryImpl,
     MiddlewareChainFactoryImpl;
 
     constructor TDispatcherFactory.create(
         const appMiddlewaresInst : IMiddlewareCollectionAware;
-        const routeMatcherInst : IRouteMatcher
+        const routeMatcher : IRouteMatcher;
+        const requestResponseFactory : IRequestResponseFactory
     );
     begin
-        inherited create();
+        inherited create(routeMatcher, requestResponseFactory);
         appMiddlewares := appMiddlewaresInst;
-        routeMatcher := routeMatcherInst;
     end;
 
     destructor TDispatcherFactory.destroy();
     begin
         appMiddlewares := nil;
-        routeMatcher := nil;
         inherited destroy();
+    end;
+
+    function TDispatcherFactory.createMiddlewareChainFactory() : IMiddlewareChainFactory;
+    begin
+        result := TMiddlewareChainFactory.create();
     end;
 
     function TDispatcherFactory.build(const container : IDependencyContainer) : IDependency;
     begin
         result := TDispatcher.create(
             appMiddlewares,
-            TMiddlewareChainFactory.create(),
-            routeMatcher,
-            TResponseFactory.create(),
-            TRequestFactory.create()
+            createMiddlewareChainFactory(),
+            fRouteMatcher,
+            fRequestResponseFactory.responseFactory,
+            fRequestResponseFactory.requestFactory
         );
     end;
 

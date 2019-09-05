@@ -266,7 +266,8 @@ resourcestring
     );
     const MAX_BUFF_SIZE = 4096;
     var buff : pointer;
-        buffSize : int64;
+        buffSize, excessBytes : int64;
+        i, totIteration : integer;
     begin
         if (bytesToCopy = 0) then
         begin
@@ -274,14 +275,22 @@ resourcestring
         end;
 
         buffSize := min(MAX_BUFF_SIZE, bytesToCopy);
+        totIteration := bytesToCopy div buffSize;
+        excessBytes := bytesToCopy mod buffSize;
 
         getMem(buff, buffSize);
         try
-            repeat
+            for i:= 0 to totIteration-1 do
+            begin
                 srcStream.readBuffer(buff^, buffSize);
                 dstStream.writeBuffer(buff^, buffSize);
-                buffSize := min(MAX_BUFF_SIZE, bytesToCopy - buffSize);
-            until buffSize = 0;
+            end;
+
+            if (excessBytes > 0) then
+            begin
+                srcStream.readBuffer(buff^, excessBytes);
+                dstStream.writeBuffer(buff^, excessBytes);
+            end;
         finally
             freeMem(buff);
         end;

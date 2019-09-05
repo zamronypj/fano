@@ -19,7 +19,9 @@ uses
     ListIntf,
     UploadedFileIntf,
     UploadedFileCollectionIntf,
-    EnvironmentIntf;
+    ReadonlyHeadersIntf,
+    EnvironmentIntf,
+    UriIntf;
 
 type
 
@@ -31,6 +33,20 @@ type
      *-----------------------------------------------*)
     IRequest = interface(IAjaxAware)
         ['{32913245-599A-4BF4-B25D-7E2EF349F7BB}']
+
+        (*!------------------------------------
+         * get http headers instance
+         *-------------------------------------
+         * @return header instance
+         *-------------------------------------*)
+        function headers() : IReadOnlyHeaders;
+
+        (*!------------------------------------------------
+         * get request URI
+         *-------------------------------------------------
+         * @return IUri of current request
+         *------------------------------------------------*)
+        function uri() : IUri;
 
         (*!------------------------------------------------
          * get request method GET, POST, HEAD, etc

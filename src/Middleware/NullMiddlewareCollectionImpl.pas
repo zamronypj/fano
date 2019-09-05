@@ -13,10 +13,11 @@ interface
 {$MODE OBJFPC}
 
 uses
-    classes,
+
     DependencyIntf,
     MiddlewareIntf,
-    MiddlewareCollectionIntf;
+    MiddlewareCollectionIntf,
+    InjectableObjectImpl;
 
 type
 
@@ -26,7 +27,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TNullMiddlewareCollection = class(TInterfacedObject, IMiddlewareCollection, IDependency)
+    TNullMiddlewareCollection = class(TInjectableObject, IMiddlewareCollection)
     public
         function add(const middleware : IMiddleware) : IMiddlewareCollection;
         function count() : integer;

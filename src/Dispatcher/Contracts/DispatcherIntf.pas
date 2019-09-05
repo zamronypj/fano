@@ -15,6 +15,7 @@ interface
 uses
 
     EnvironmentIntf,
+    StdInIntf,
     ResponseIntf;
 
 type
@@ -27,7 +28,18 @@ type
      *---------------------------------------------------*)
     IDispatcher = interface
         ['{F13A78C0-3A00-4E19-8C84-B6A7A77A3B25}']
-        function dispatchRequest(const env: ICGIEnvironment) : IResponse;
+
+        (*!-------------------------------------------
+         * dispatch request
+         *--------------------------------------------
+         * @param env CGI environment
+         * @param stdIn STDIN reader
+         * @return response
+         *--------------------------------------------*)
+        function dispatchRequest(
+            const env: ICGIEnvironment;
+            const stdIn : IStdIn
+        ) : IResponse;
     end;
 
 implementation

@@ -74,7 +74,11 @@ uses
     FcgiRequestManagerImpl,
     OutputBufferImpl,
     FcgiStdOutWriterImpl,
-    StreamAdapterCollectionFactoryImpl;
+    StreamAdapterCollectionFactoryImpl,
+    RequestResponseFactoryImpl,
+    NullStreamAdapterImpl,
+    StdInFromStreamImpl,
+    StdInIntf;
 
     (*!-----------------------------------------------
      * constructor
@@ -99,6 +103,7 @@ uses
         appProcessor : IProtocolProcessor;
         appOutputBuffer : IOutputBuffer;
         appStdOutWriter : IStdOut;
+        appStdIn : IStdIn;
         aParserFactory : IFcgiFrameParserFactory;
         dispatcherId : string;
         routerId : string;
@@ -123,6 +128,7 @@ uses
         appProcessor := fcgiProc;
         appOutputBuffer := TOutputBuffer.create();
         appStdOutWriter := TFcgiStdOutWriter.create(fcgiProc);
+        appStdIn := TStdInFromStream.create(TNullStreamAdapter.create());
 
         routerId := GUIDToString(IRouteMatcher);
         if (not appContainer.has(routerId)) then
@@ -139,7 +145,8 @@ uses
             appContainer.add(
                 dispatcherId,
                 TSimpleDispatcherFactory.create(
-                    appContainer.get(routerId) as IRouteMatcher
+                    appContainer.get(routerId) as IRouteMatcher,
+                    TRequestResponseFactory.create()
                 )
             );
         end;
@@ -151,7 +158,8 @@ uses
             workerServer,
             appProcessor,
             appOutputBuffer,
-            appStdOutWriter
+            appStdOutWriter,
+            appStdIn
         );
     end;
 

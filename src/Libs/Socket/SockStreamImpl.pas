@@ -54,7 +54,8 @@ uses
 
     function TSockStream.read(var buffer; count: longint): longint;
     begin
-        result := fpRecv(Handle, @buffer, count, 0);
+        //disable signal such as SIGPIPE, we will handle error ourselves
+        result := fpRecv(Handle, @buffer, count, MSG_NOSIGNAL);
         if result < 0 then
         begin
             raiseExceptionIfAny();
@@ -63,7 +64,8 @@ uses
 
     function TSockStream.write(const buffer; count: longint): longint;
     begin
-        result := fpSend(Handle, @buffer, count, 0);
+        //disable signal such as SIGPIPE, we will handle error ourselves
+        result := fpSend(Handle, @buffer, count, MSG_NOSIGNAL);
     end;
 
 end.

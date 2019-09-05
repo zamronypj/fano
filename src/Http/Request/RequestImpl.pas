@@ -23,7 +23,9 @@ uses
     UploadedFileIntf,
     UploadedFileCollectionIntf,
     UploadedFileCollectionWriterIntf,
-    StdInReaderIntf;
+    StdInIntf,
+    ReadOnlyHeadersIntf,
+    UriIntf;
 
 const
 
@@ -42,6 +44,8 @@ type
      *-----------------------------------------------*)
     TRequest = class(TInterfacedObject, IRequest)
     private
+        fUri : IUri;
+        fHeaders : IReadOnlyHeaders;
         webEnvironment : ICGIEnvironment;
         queryParams : IList;
         cookieParams : IList;
@@ -49,7 +53,7 @@ type
         uploadedFiles: IUploadedFileCollection;
         uploadedFilesWriter: IUploadedFileCollectionWriter;
         multipartFormDataParser : IMultipartFormDataParser;
-        stdInReader : IStdInReader;
+        stdInReader : IStdIn;
 
         (*!------------------------------------------------
          * maximum POST data size in bytes
@@ -114,16 +118,32 @@ type
 
     public
         constructor create(
+            const anUri : IUri;
+            const aheaders : IReadOnlyHeaders;
             const env : ICGIEnvironment;
             const query : IList;
             const cookies : IList;
             const body : IList;
             const multipartFormDataParserInst : IMultipartFormDataParser;
-            const stdInputReader : IStdInReader;
+            const stdInputReader : IStdIn;
             const maxPostSize : int64 = DEFAULT_MAX_POST_SIZE;
             const maxUploadSize : int64 = DEFAULT_MAX_UPLOAD_SIZE
         );
         destructor destroy(); override;
+
+        (*!------------------------------------
+         * get http headers instance
+         *-------------------------------------
+         * @return header instance
+         *-------------------------------------*)
+        function headers() : IReadOnlyHeaders;
+
+        (*!------------------------------------------------
+         * get request URI
+         *-------------------------------------------------
+         * @return IUri of current request
+         *------------------------------------------------*)
+        function uri() : IUri;
 
         (*!------------------------------------------------
          * get request method GET, POST, HEAD, etc
@@ -208,7 +228,7 @@ type
         function getEnvironment() : ICGIEnvironment;
 
         (*!------------------------------------------------
-         * test if current request is comming from AJAX request
+         * test if current request is coming from AJAX request
          *-------------------------------------------------
          * @return true if ajax request
          *------------------------------------------------*)
@@ -228,16 +248,21 @@ resourcestring
     sErrExceedMaxPostSize = 'POST size (%d) exceeds maximum allowable POST size (%d)';
 
     constructor TRequest.create(
+        const anUri : IUri;
+        const aheaders : IReadOnlyHeaders;
         const env : ICGIEnvironment;
         const query : IList;
         const cookies : IList;
         const body : IList;
         const multipartFormDataParserInst : IMultipartFormDataParser;
-        const stdInputReader : IStdInReader;
+        const stdInputReader : IStdIn;
         const maxPostSize : int64 = DEFAULT_MAX_POST_SIZE;
         const maxUploadSize : int64 = DEFAULT_MAX_UPLOAD_SIZE
     );
     begin
+        inherited create();
+        fUri := anUri;
+        fHeaders := aheaders;
         webEnvironment := env;
         queryParams := query;
         cookieParams := cookies;
@@ -261,7 +286,6 @@ resourcestring
 
     destructor TRequest.destroy();
     begin
-        inherited destroy();
         clearParams(queryParams);
         clearParams(cookieParams);
         clearParams(bodyParams);
@@ -273,6 +297,29 @@ resourcestring
         uploadedFilesWriter := nil;
         multipartFormDataParser := nil;
         stdInReader := nil;
+        fHeaders := nil;
+        fUri := nil;
+        inherited destroy();
+    end;
+
+    (*!------------------------------------
+     * get http headers instance
+     *-------------------------------------
+     * @return header instance
+     *-------------------------------------*)
+    function TRequest.headers() : IReadOnlyHeaders;
+    begin
+        result := fHeaders;
+    end;
+
+    (*!------------------------------------------------
+     * get request URI
+     *-------------------------------------------------
+     * @return IUri of current request
+     *------------------------------------------------*)
+    function TRequest.uri() : IUri;
+    begin
+        result := fUri;
     end;
 
     procedure TRequest.clearParams(const params : IList);

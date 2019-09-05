@@ -15,7 +15,7 @@ interface
 
 uses
 
-    CloneableIntf;
+    ReadOnlyHeadersIntf;
 
 type
 
@@ -25,7 +25,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    IHeaders = interface(ICloneable)
+    IHeaders = interface(IReadOnlyHeaders)
         ['{8CFE49E5-F77A-4949-B748-C2C63A6735C3}']
 
         (*!------------------------------------
@@ -36,23 +36,6 @@ type
          * @return header instance
          *-------------------------------------*)
         function setHeader(const key : shortstring; const value : string) : IHeaders;
-
-        (*!------------------------------------
-         * get http header
-         *-------------------------------------
-         * @param key name  of http header to get
-         * @return header value
-         * @throws EHeaderNotSet
-         *-------------------------------------*)
-        function getHeader(const key : shortstring) : string;
-
-        (*!------------------------------------
-         * test if http header already been set
-         *-------------------------------------
-         * @param key name  of http header to test
-         * @return boolean true if header is set
-         *-------------------------------------*)
-        function has(const key : shortstring) : boolean;
 
         (*!------------------------------------
          * output http headers to STDOUT

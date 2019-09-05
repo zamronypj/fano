@@ -17,7 +17,8 @@ uses
     DependencyIntf,
     MiddlewareIntf,
     MiddlewareCollectionIntf,
-    MiddlewareCollectionAwareIntf;
+    MiddlewareCollectionAwareIntf,
+    InjectableObjectImpl;
 
 type
 
@@ -26,7 +27,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TMiddlewareCollectionAware = class(TInterfacedObject, IDependency, IMiddlewareCollectionAware)
+    TMiddlewareCollectionAware = class(TInjectableObject, IMiddlewareCollectionAware)
     private
         beforeMiddlewareList : IMiddlewareCollection;
         afterMiddlewareList : IMiddlewareCollection;
@@ -49,15 +50,16 @@ implementation
         const afterMiddlewares : IMiddlewareCollection
     );
     begin
+        inherited create();
         beforeMiddlewareList := beforeMiddlewares;
         afterMiddlewareList := afterMiddlewares;
     end;
 
     destructor TMiddlewareCollectionAware.destroy();
     begin
-        inherited destroy();
         beforeMiddlewareList := nil;
         afterMiddlewareList := nil;
+        inherited destroy();
     end;
 
     function TMiddlewareCollectionAware.addBefore(const middleware : IMiddleware) : IMiddlewareCollectionAware;

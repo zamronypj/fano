@@ -18,7 +18,7 @@ uses
     sysutils,
     InjectableObjectImpl,
     StreamAdapterIntf,
-    StdInReaderIntf;
+    StdInIntf;
 
 type
 
@@ -27,11 +27,20 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TStdInFromStream = class(TInjectableObject, IStdInReader)
+    TStdInFromStream = class(TInjectableObject, IStdIn)
     private
         fInputStream : IStreamAdapter;
     public
         constructor create(const inputStream : IStreamAdapter);
+        destructor destroy(); override;
+
+        (*!------------------------------------------------
+         * set stream to write to if any
+         *-----------------------------------------------
+         * @param stream, stream to write to
+         * @return current instance
+         *-----------------------------------------------*)
+        function setStream(const astream : IStreamAdapter) : IStdIn;
         function readStdIn(const contentLength : int64) : string;
     end;
 
@@ -39,7 +48,14 @@ implementation
 
     constructor TStdInFromStream.create(const inputStream : IStreamAdapter);
     begin
-        fInputStream := inputStream;
+        inherited create();
+        setStream(inputStream);
+    end;
+
+    destructor TStdInFromStream.destroy();
+    begin
+        fInputStream := nil;
+        inherited destroy();
     end;
 
     function TStdInFromStream.readStdIn(const contentLength : int64) : string;
@@ -47,4 +63,17 @@ implementation
         setLength(result, contentLength);
         fInputStream.readBuffer(result[1], contentLength);
     end;
+
+    (*!------------------------------------------------
+     * set stream to write to if any
+     *-----------------------------------------------
+     * @param stream, stream to write to
+     * @return current instance
+     *-----------------------------------------------*)
+    function TStdInFromStream.setStream(const astream : IStreamAdapter) : IStdIn;
+    begin
+        fInputStream := aStream;
+        result := self;
+    end;
+
 end.

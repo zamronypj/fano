@@ -30,3 +30,11 @@ RegexValidatorImpl,
 RequiredValidatorImpl,
 
 ValidationMiddlewareImpl,
+
+CorsImpl,
+CorsConfigImpl,
+NullCorsImpl,
+CorsMiddlewareImpl,
+BaseCorsMiddlewareFactoryImpl,
+CorsMiddlewareFactoryImpl,
+NullCorsMiddlewareFactoryImpl,

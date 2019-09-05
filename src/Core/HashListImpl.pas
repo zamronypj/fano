@@ -36,6 +36,14 @@ type
         function add(const key : shortstring; const data : pointer) : integer;
         function find(const key : shortstring) : pointer;
         function keyOfIndex(const indx : integer) : shortstring;
+
+        (*!------------------------------------------------
+         * get index by key name
+         *-----------------------------------------------
+         * @param key name
+         * @return index of key
+         *-----------------------------------------------*)
+        function indexOf(const key : shortstring) : integer;
     end;
 
 implementation
@@ -79,5 +87,16 @@ implementation
     function THashList.keyOfIndex(const indx : integer) : shortstring;
     begin
         result := hashes.nameOfIndex(indx);
+    end;
+
+    (*!------------------------------------------------
+     * get index by key name
+     *-----------------------------------------------
+     * @param key name
+     * @return index of key
+     *-----------------------------------------------*)
+    function THashList.indexOf(const key : shortstring) : integer;
+    begin
+        result := hashes.findIndexOf(key);
     end;
 end.

@@ -18,12 +18,17 @@ StdErrBufferFactoryImpl,
 
 StringFileReaderImpl,
 StringFileReaderFactoryImpl,
+BasicFileReaderImpl,
+BasicFileReaderFactoryImpl,
 
 StreamAdapterImpl,
+SerializeableStreamImpl,
 EInvalidStreamImpl,
 
 StdInReaderImpl,
 SimpleStdInReaderImpl,
+StdInFromStringImpl,
+StdInFromStreamImpl,
 
 KeyValuePairImpl,
 KeyValuePairFactoryImpl,

@@ -318,10 +318,10 @@ uses
     end;
 
     procedure TSocketSvr.raiseExceptionIfAny();
-    var errno : longint;
+    var errCode : longint;
     begin
-        errno := socketError();
-        if (errno = EsockEWOULDBLOCK) or (errno = EsysEAGAIN) then
+        errCode := socketError();
+        if (errCode = EsockEWOULDBLOCK) or (errCode = EsysEAGAIN) then
         begin
             //if we get here, it mostly because socket is non blocking
             //but no pending connection, so just do nothing
@@ -329,7 +329,7 @@ uses
         begin
             raise ESockError.createFmt(
                 rsSocketError,
-                [ strError(errno), errno ]
+                [ strError(errCode), errCode ]
             );
         end;
     end;

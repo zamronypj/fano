@@ -2,9 +2,10 @@ IOutputBuffer = OutputBufferIntf.IOutputBuffer;
 ILogger = LoggerIntf.ILogger;
 IFileReader = FileReaderIntf.IFileReader;
 IStreamAdapter = StreamAdapterIntf.IStreamAdapter;
-IStdInReader = StdInReaderIntf.IStdInReader;
+IStdIn = StdInIntf.IStdIn;
 IStdOut = StdOutIntf.IStdOut;
 IStdErr = StdErrIntf.IStdErr;
+IStdInStreamAware = StdInStreamAwareIntf.IStdInStreamAware;
 
 IHttpClientHandleAware = HttpClientHandleAwareIntf.IHttpClientHandleAware;
 IHttpClientHeaders = HttpClientHeadersIntf.IHttpClientHeaders;
