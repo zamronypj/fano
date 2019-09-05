@@ -402,6 +402,7 @@ uses
                 raiseExceptionIfAny();
             end else
             begin
+                makeNonBlockingSocket(clientSocket);
                 //add client socket to be monitored for I/O
                 addToMonitoredSet(clientSocket, maxHandle, origFds);
             end;

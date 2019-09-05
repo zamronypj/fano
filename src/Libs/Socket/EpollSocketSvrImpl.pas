@@ -351,7 +351,7 @@ uses
                 //TODO : improve FCGI parser so we can use non blocking socket
                 //Turn off for now as our FCGI parser not suitable for
                 //handling non blocking socket
-                //makeNonBlocking(clientSocket);
+                makeNonBlocking(clientSocket);
 
                 //add client socket to be monitored for I/O read
                 //note that before client socket is closed,
