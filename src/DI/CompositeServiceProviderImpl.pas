@@ -19,6 +19,8 @@ uses
 
 type
 
+    TServiceProviderArray = array of IServiceProvider;
+
     (*!-----------------------------------------------
      * Base class that can register service using array
      * of external service providers
@@ -27,7 +29,7 @@ type
      *------------------------------------------------*)
     TCompositeServiceProvider = class(TInterfacedObject, IServiceProvider)
     private
-        fProviders : array of IServiceProvider;
+        fProviders : TServiceProviderArray;
     public
         constructor create(const providers : array of IServiceProvider);
         destructor destroy(); override;
@@ -44,12 +46,19 @@ type
 implementation
 
     constructor TCompositeServiceProvider.create(const providers : array of IServiceProvider);
+    var i, tot : integer;
     begin
-        fProviders := providers;
+        tot := high(providers) - low(providers) + 1;
+        setLength(fProviders, tot);
+        for i:= 0 to tot-1 do
+        begin
+            fProviders[i] := providers[i];
+        end;
     end;
 
     destructor TCompositeServiceProvider.destroy();
     begin
+        setLength(fProviders, 0);
         fProviders := nil;
         inherited destroy();
     end;
