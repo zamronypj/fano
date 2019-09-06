@@ -36,7 +36,7 @@ type
          *---------------------------------------------------------
          * @param di instance of IDependencyContainer
          *---------------------------------------------------------*)
-        constructor create(const di :IDependencyContainer);
+        constructor create(const di : IDependencyContainer);
 
         (*!--------------------------------------------------------
          * destructor
