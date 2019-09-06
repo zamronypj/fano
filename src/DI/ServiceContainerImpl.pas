@@ -30,7 +30,6 @@ type
     TServiceContainer = class(TInterfacedObject, IDependencyContainer, IServiceContainer)
     private
         dependencyContainer : IDependencyContainer;
-
     public
         (*!--------------------------------------------------------
          * constructor
