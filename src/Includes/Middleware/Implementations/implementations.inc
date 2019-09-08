@@ -20,3 +20,6 @@ MiddlewareCollectionAwareImpl,
 
 MiddlewareCollectionAwareFactoryImpl,
 NullMiddlewareCollectionAwareFactoryImpl,
+
+NullMiddlewareImpl,
+CompositeMiddlewareImpl,
