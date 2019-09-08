@@ -97,7 +97,11 @@ implementation
             begin
                 break;
             end;
-            newResponse := fMiddlewares[i].handleRequest(request, newResponse);
+            newResponse := fMiddlewares[i].handleRequest(
+                request,
+                newResponse,
+                canContinue
+            );
         end;
         result := newResponse;
     end;
