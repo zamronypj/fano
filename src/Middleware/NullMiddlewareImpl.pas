@@ -43,6 +43,7 @@ implementation
         var canContinue : boolean
     ) : IResponse;
     begin
+        //intentionally does nothing
         result := response;
     end;
 end.
