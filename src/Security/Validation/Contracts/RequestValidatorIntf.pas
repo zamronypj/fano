@@ -43,9 +43,9 @@ type
          * @return validation result
          *-------------------------------------------------
          * This mechanism is provided to allow application doing
-         * validation in middleware before controller is exceuted
+         * validation in middleware before controller is executed
          * and then get validation result in controller/route handler
-         * if course with assumption that it is same request validator
+         * with assumption that it is same request validator
          * instance that is shared between middleware and
          * controller/route handler.
          * IRequestValidator implementation must maintain

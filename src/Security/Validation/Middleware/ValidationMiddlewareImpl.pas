@@ -19,7 +19,8 @@ uses
     RequestIntf,
     ResponseIntf,
     RequestValidatorintf,
-    MiddlewareIntf;
+    MiddlewareIntf,
+    InjectableObjectImpl;
 
 type
 
@@ -29,9 +30,9 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TValidationMiddleware = class(TInterfacedObject, IMiddleware, IDependency)
+    TValidationMiddleware = class(TInjectableObject, IMiddleware)
     private
-        validation : IRequestValidator;
+        fValidation : IRequestValidator;
     public
         constructor create(const validationInst : IRequestValidator);
         destructor destroy(); override;
@@ -65,13 +66,13 @@ uses
 
     constructor TValidationMiddleware.create(const validationInst : IRequestValidator);
     begin
-        validation := validationInst;
+        fValidation := validationInst;
     end;
 
     destructor TValidationMiddleware.destroy();
     begin
+        fValidation := nil;
         inherited destroy();
-        validation := nil;
     end;
 
     (*!---------------------------------------
@@ -90,7 +91,7 @@ uses
         var canContinue : boolean
     ) : IResponse;
     begin
-        validation.validate(request);
+        fValidation.validate(request);
         result := response;
     end;
 
