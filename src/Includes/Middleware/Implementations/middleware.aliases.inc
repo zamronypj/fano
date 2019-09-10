@@ -5,3 +5,6 @@ TMiddlewareCollectionAware = MiddlewareCollectionAwareImpl.TMiddlewareCollection
 
 TMiddlewareCollectionAwareFactory = MiddlewareCollectionAwareFactoryImpl.TMiddlewareCollectionAwareFactory;
 TNullMiddlewareCollectionAwareFactory = NullMiddlewareCollectionAwareFactoryImpl.TNullMiddlewareCollectionAwareFactory;
+
+TNullMiddleware = NullMiddlewareImpl.TNullMiddleware;
+TCompositeMiddleware = CompositeMiddlewareImpl.TCompositeMiddleware;
