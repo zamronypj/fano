@@ -83,7 +83,7 @@ uses
         fac : integer;
     begin
         ident := nil;
-        if (prefix = '') then
+        if (prefix <> '') then
         begin
             ident := pchar(prefix);
         end;
