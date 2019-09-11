@@ -125,7 +125,7 @@ uses
     ) : ILogger;
     var logMsg : string;
     begin
-        logMsg := msg + LineEnding;
+        logMsg := '[' + level + '] ' + msg + LineEnding;
         if (context <> nil) then
         begin
             logMsg := logMsg + '==== Start context ====' + LineEnding +
