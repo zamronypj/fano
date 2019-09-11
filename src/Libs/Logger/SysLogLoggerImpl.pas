@@ -28,6 +28,9 @@ type
      *-----------------------------------------------*)
     TSysLogLogger = class(TAbstractLogger)
     public
+        constructor create(const prefix : string = '');
+        destructor destroy(); override;
+
         (*!--------------------------------------
          * log message
          * --------------------------------------
@@ -66,6 +69,23 @@ uses
         end;
     end;
 
+    constructor TSysLogLogger.create(const prefix : string = '');
+    const ident : pchar;
+    begin
+        ident := nil;
+        if (length(prefix) > 0) then
+        begin
+            ident := pchar(prefix);
+        end;
+        openlog(ident, LOG_NOWAIT or LOG_PID, LOG_USER);
+    end;
+
+    destructor TSysLogLogger.destroy();
+    begin
+        closelog();
+        inherited destroy();
+    end;
+
     (*!--------------------------------------
      * log message
      * --------------------------------------
@@ -80,16 +100,16 @@ uses
         const msg : string;
         const context : ISerializeable = nil
     ) : ILogger;
-    var contextMsg : string;
+    var logMsg : string;
     begin
-        contextMsg := '';
+        logMsg := msg + LineEnding;
         if (context <> nil) then
         begin
-            contextMsg := '==== Start context ====' + LineEnding +
+            logMsg := logMsg + '==== Start context ====' + LineEnding +
                 context.serialize() + LineEnding +
                 '==== End context ====' + LineEnding;
         end;
-        syslog(mapPriority(level), msg + LineEnding + '%s', [contextMsg]);
+        syslog(mapPriority(level), '%s', [logMsg]);
         result := self;
     end;
 
