@@ -24,7 +24,16 @@ type
      @author Zamrony P. Juhara <zamronypj@yahoo.com>
     -----------------------------------------------}
     TSysLogLoggerFactory = class(TFactory, IDependencyFactory)
+    private
+        fPrefix : string;
+        fOption : integer;
+        fFacility : integer;
     public
+        constructor create();
+        function prefix(const aprefix : string) : TSysLogLoggerFactory;
+        function option(const opt : integer) : TSysLogLoggerFactory;
+        function facility(const fac : integer) : TSysLogLoggerFactory;
+
         function build(const container : IDependencyContainer) : IDependency; override;
     end;
 
@@ -34,9 +43,35 @@ uses
 
     SysLogLoggerImpl;
 
+    constructor TSysLogLoggerFactory.create();
+    begin
+        inherited create();
+        fPrefix := '';
+        fOption := -1;
+        fFacility := -1;
+    end;
+
+    function TSysLogLoggerFactory.prefix(const aprefix : string) : TSysLogLoggerFactory;
+    begin
+        fPrefix := prefix;
+        result := self;
+    end;
+
+    function option(const opt : integer) : TSysLogLoggerFactory;
+    begin
+        fOption := opt;
+        result := self;
+    end;
+
+    function facility(const fac : integer) : TSysLogLoggerFactory;
+    begin
+        fFacility := fac;
+        result := self;
+    end;
+
     function TSysLogLoggerFactory.build(const container : IDependencyContainer) : IDependency;
     begin
-        result := TSysLogLogger.create();
+        result := TSysLogLogger.create(fPrefix, fOption, fFacility);
     end;
 
 end.
