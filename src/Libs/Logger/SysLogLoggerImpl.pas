@@ -28,7 +28,11 @@ type
      *-----------------------------------------------*)
     TSysLogLogger = class(TAbstractLogger)
     public
-        constructor create(const prefix : string = '');
+        constructor create(
+            const prefix : string = '';
+            const opt : integer = -1;
+            const facility : integer = -1
+        );
         destructor destroy(); override;
 
         (*!--------------------------------------
@@ -69,15 +73,34 @@ uses
         end;
     end;
 
-    constructor TSysLogLogger.create(const prefix : string = '');
-    const ident : pchar;
+    constructor TSysLogLogger.create(
+        const prefix : string = '';
+        const opt : integer = -1;
+        const facility : integer = -1
+    );
+    var ident : pchar;
+        option : integer;
+        fac : integer;
     begin
         ident := nil;
-        if (length(prefix) > 0) then
+        if (prefix = '') then
         begin
             ident := pchar(prefix);
         end;
-        openlog(ident, LOG_NOWAIT or LOG_PID, LOG_USER);
+
+        option := opt;
+        if (option = -1) then
+        begin
+            option := LOG_NOWAIT or LOG_PID;
+        end;
+
+        fac := facility;
+        if (fac = -1) then
+        begin
+            fac := LOG_USER;
+        end;
+
+        openlog(ident, option, fac);
     end;
 
     destructor TSysLogLogger.destroy();
