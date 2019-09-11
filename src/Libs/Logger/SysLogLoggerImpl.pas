@@ -59,7 +59,7 @@ uses
             'CRITICAL' : result := LOG_CRIT;
             'DEBUG' : result := LOG_DEBUG;
             'WARNING' : result := LOG_WARNING;
-            'ERROR' : result := LOG_ERROR;
+            'ERROR' : result := LOG_ERR;
             'EMERGENCY' : result := LOG_EMERG;
             'NOTICE' : result := LOG_NOTICE;
             'ALERT' : result := LOG_ALERT;
