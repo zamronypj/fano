@@ -23,4 +23,7 @@ SegregatedLoggerFactoryImpl,
 
 StdOutLoggerImpl,
 StdOutLoggerFactoryImpl,
+
+SysLogLoggerImpl,
+SysLogLoggerFactoryImpl,
 {------------ End logger-related------------------}
