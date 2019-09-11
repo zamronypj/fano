@@ -10,6 +10,7 @@ unit SysLogLoggerFactoryImpl;
 interface
 
 {$MODE OBJFPC}
+{$H+}
 
 uses
 
