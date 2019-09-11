@@ -84,6 +84,42 @@ type
          * @return current instance
          *---------------------------------------*)
         function warning(const msg : string; const context : ISerializeable = nil) : ILogger;
+
+        (*!------------------------------------------------
+         * log notice level message
+         *-----------------------------------------------
+         * @param msg actual message to log
+         * @param context object instance related to this message
+         * @return current logger instance
+         *-----------------------------------------------*)
+        function notice(const msg : string; const context : ISerializeable = nil) : ILogger;
+
+        (*!------------------------------------------------
+         * log error level message
+         *-----------------------------------------------
+         * @param msg actual message to log
+         * @param context object instance related to this message
+         * @return current logger instance
+         *-----------------------------------------------*)
+        function error(const msg : string; const context : ISerializeable = nil) : ILogger;
+
+        (*!------------------------------------------------
+         * log alert level message
+         *-----------------------------------------------
+         * @param msg actual message to log
+         * @param context object instance related to this message
+         * @return current logger instance
+         *-----------------------------------------------*)
+        function alert(const msg : string; const context : ISerializeable = nil) : ILogger;
+
+        (*!------------------------------------------------
+         * log emergency level message
+         *-----------------------------------------------
+         * @param msg actual message to log
+         * @param context object instance related to this message
+         * @return current logger instance
+         *-----------------------------------------------*)
+        function emergency(const msg : string; const context : ISerializeable = nil) : ILogger;
     end;
 
 implementation
@@ -140,4 +176,51 @@ implementation
         result := log('WARNING', msg, context);
     end;
 
+    (*!------------------------------------------------
+     * log notice level message
+     *-----------------------------------------------
+     * @param msg actual message to log
+     * @param context object instance related to this message
+     * @return current logger instance
+     *-----------------------------------------------*)
+    function TAbstractLogger.notice(const msg : string; const context : ISerializeable = nil) : ILogger;
+    begin
+        result := log('NOTICE', msg, context);
+    end;
+
+    (*!------------------------------------------------
+     * log error level message
+     *-----------------------------------------------
+     * @param msg actual message to log
+     * @param context object instance related to this message
+     * @return current logger instance
+     *-----------------------------------------------*)
+    function TAbstractLogger.error(const msg : string; const context : ISerializeable = nil) : ILogger;
+    begin
+        result := log('ERROR', msg, context);
+    end;
+
+    (*!------------------------------------------------
+     * log alert level message
+     *-----------------------------------------------
+     * @param msg actual message to log
+     * @param context object instance related to this message
+     * @return current logger instance
+     *-----------------------------------------------*)
+    function TAbstractLogger.alert(const msg : string; const context : ISerializeable = nil) : ILogger;
+    begin
+        result := log('ALERT', msg, context);
+    end;
+
+    (*!------------------------------------------------
+     * log emergency level message
+     *-----------------------------------------------
+     * @param msg actual message to log
+     * @param context object instance related to this message
+     * @return current logger instance
+     *-----------------------------------------------*)
+    function TAbstractLogger.emergency(const msg : string; const context : ISerializeable = nil) : ILogger;
+    begin
+        result := log('EMERGENCY', msg, context);
+    end;
 end.
