@@ -132,7 +132,7 @@ uses
                 context.serialize() + LineEnding +
                 '==== End context ====' + LineEnding;
         end;
-        syslog(mapPriority(level), '%s', [logMsg]);
+        syslog(mapPriority(level), '%s', [ pchar(logMsg) ]);
         result := self;
     end;
 
