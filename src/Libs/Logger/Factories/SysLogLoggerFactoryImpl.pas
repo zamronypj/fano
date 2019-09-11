@@ -54,17 +54,17 @@ uses
 
     function TSysLogLoggerFactory.prefix(const aprefix : string) : TSysLogLoggerFactory;
     begin
-        fPrefix := prefix;
+        fPrefix := aprefix;
         result := self;
     end;
 
-    function option(const opt : integer) : TSysLogLoggerFactory;
+    function TSysLogLoggerFactory.option(const opt : integer) : TSysLogLoggerFactory;
     begin
         fOption := opt;
         result := self;
     end;
 
-    function facility(const fac : integer) : TSysLogLoggerFactory;
+    function TSysLogLoggerFactory.facility(const fac : integer) : TSysLogLoggerFactory;
     begin
         fFacility := fac;
         result := self;
