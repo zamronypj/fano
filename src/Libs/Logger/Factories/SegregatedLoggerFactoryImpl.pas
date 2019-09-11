@@ -25,24 +25,36 @@ type
     -----------------------------------------------}
     TSegregatedLoggerFactory = class(TFactory, IDependencyFactory)
     private
+        fEmergencyLoggerFactory : IDependencyFactory;
+        fAlertLoggerFactory : IDependencyFactory;
+        fCriticalLoggerFactory : IDependencyFactory;
+        fErrorLoggerFactory : IDependencyFactory;
+        fWarningLoggerFactory : IDependencyFactory;
+        fNoticeLoggerFactory : IDependencyFactory;
         fInfoLoggerFactory : IDependencyFactory;
         fDebugLoggerFactory : IDependencyFactory;
-        fWarningLoggerFactory : IDependencyFactory;
-        fCriticalLoggerFactory : IDependencyFactory;
     public
         (*!--------------------------------------
          * constructor
          * --------------------------------------
+         * @param emergencyLoggerFactory factory for emergency log
+         * @param alertLoggerFactory factory for alert log
+         * @param criticalLoggerFactory factory for critical log
+         * @param errorLoggerFactory factory for error log
+         * @param warningLoggerFactory factory for warning log
+         * @param noticeLoggerFactory factory for critical log
          * @param infoLoggerFactory factory for info log
          * @param debugLoggerFactory factory for debug log
-         * @param warningLoggerFactory factory for warning log
-         * @param criticalLoggerFactory factory for critical log
          *---------------------------------------*)
         constructor create(
-            const infoLoggerFactory : IDependencyFactory;
-            const debugLoggerFactory : IDependencyFactory;
+            const emergencyLoggerFactory : IDependencyFactory;
+            const alertLoggerFactory : IDependencyFactory;
+            const criticalLoggerFactory : IDependencyFactory;
+            const errorLoggerFactory : IDependencyFactory;
             const warningLoggerFactory : IDependencyFactory;
-            const criticalLoggerFactory : IDependencyFactory
+            const noticeLoggerFactory : IDependencyFactory;
+            const infoLoggerFactory : IDependencyFactory;
+            const debugLoggerFactory : IDependencyFactory
         );
 
         destructor destroy(); override;
@@ -60,40 +72,60 @@ uses
     (*!--------------------------------------
      * constructor
      * --------------------------------------
+     * @param emergencyLoggerFactory factory for emergency log
+     * @param alertLoggerFactory factory for alert log
+     * @param criticalLoggerFactory factory for critical log
+     * @param errorLoggerFactory factory for error log
+     * @param warningLoggerFactory factory for warning log
+     * @param noticeLoggerFactory factory for critical log
      * @param infoLoggerFactory factory for info log
      * @param debugLoggerFactory factory for debug log
-     * @param warningLoggerFactory factory for warning log
-     * @param criticalLoggerFactory factory for critical log
      *---------------------------------------*)
     constructor TSegregatedLoggerFactory.create(
-        const infoLoggerFactory : IDependencyFactory;
-        const debugLoggerFactory : IDependencyFactory;
+        const emergencyLoggerFactory : IDependencyFactory;
+        const alertLoggerFactory : IDependencyFactory;
+        const criticalLoggerFactory : IDependencyFactory;
+        const errorLoggerFactory : IDependencyFactory;
         const warningLoggerFactory : IDependencyFactory;
-        const criticalLoggerFactory : IDependencyFactory
+        const noticeLoggerFactory : IDependencyFactory;
+        const infoLoggerFactory : IDependencyFactory;
+        const debugLoggerFactory : IDependencyFactory
     );
     begin
+        fEmergencyLoggerFactory := emergencyLoggerFactory;
+        fAlertLoggerFactory := alertLoggerFactory;
+        fCriticalLoggerFactory := criticalLoggerFactory;
+        fErrorLoggerFactory := errorLoggerFactory;
+        fWarningLoggerFactory := warningLoggerFactory;
+        fNoticeLoggerFactory := noticeLoggerFactory;
         fInfoLoggerFactory := infoLoggerFactory;
         fDebugLoggerFactory := debugLoggerFactory;
-        fWarningLoggerFactory := warningLoggerFactory;
-        fCriticalLoggerFactory := criticalLoggerFactory;
     end;
 
     destructor TSegregatedLoggerFactory.destroy();
     begin
-        inherited destroy();
+        fEmergencyLoggerFactory := nil;
+        fAlertLoggerFactory := nil;
+        fCriticalLoggerFactory := nil;
+        fErrorLoggerFactory := nil;
+        fWarningLoggerFactory := nil;
+        fNoticeLoggerFactory := nil;
         fInfoLoggerFactory := nil;
         fDebugLoggerFactory := nil;
-        fWarningLoggerFactory := nil;
-        fCriticalLoggerFactory := nil;
+        inherited destroy();
     end;
 
     function TSegregatedLoggerFactory.build(const container : IDependencyContainer) : IDependency;
     begin
         result := TSegregatedLogger.create(
-            fInfoLoggerFactory.build(container) as ILogger,
-            fDebugLoggerFactory.build(container) as ILogger,
+            fEmergencyLoggerFactory.build(container) as ILogger,
+            fAlertLoggerFactory.build(container) as ILogger,
+            fCriticalLoggerFactory.build(container) as ILogger,
+            fErrorLoggerFactory.build(container) as ILogger,
             fWarningLoggerFactory.build(container) as ILogger,
-            fCriticalLoggerFactory.build(container) as ILogger
+            fNoticeLoggerFactory.build(container) as ILogger,
+            fInfoLoggerFactory.build(container) as ILogger,
+            fDebugLoggerFactory.build(container) as ILogger
         );
     end;
 
