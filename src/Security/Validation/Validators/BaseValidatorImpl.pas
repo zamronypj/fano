@@ -29,6 +29,15 @@ type
     TBaseValidator = class(TInterfacedObject, IValidator)
     private
         errorMsgFormat : string;
+    protected
+        (*!------------------------------------------------
+         * actual data validation
+         *-------------------------------------------------
+         * @param dataToValidate input data
+         * @return true if data is valid otherwise false
+         *-------------------------------------------------*)
+        function isValidData(var dataToValidate : string) : boolean; virtual; abstract;
+
     public
         (*!------------------------------------------------
          * constructor
@@ -48,10 +57,10 @@ type
          * @param dataToValidate input data
          * @return true if data is valid otherwise false
          *-------------------------------------------------*)
-         function isValid(
-             const key : shortstring;
-             const dataToValidate : IList
-         ) : boolean; virtual; abstract;
+        function isValid(
+            const key : shortstring;
+            const dataToValidate : IList
+        ) : boolean; virtual;
 
         (*!------------------------------------------------
          * Get validation error message
@@ -92,5 +101,29 @@ uses
     function TBaseValidator.errorMessage(const key : shortstring) : string;
     begin
         result := format(errorMsgFormat, [key]);
+    end;
+
+    (*!------------------------------------------------
+     * Validate data
+     *-------------------------------------------------
+     * @param key name of field
+     * @param dataToValidate input data
+     * @return true if data is valid otherwise false
+     *-------------------------------------------------*)
+    function TBaseValidator.isValid(
+        const key : shortstring;
+        const dataToValidate : IList
+    ) : boolean;
+    begin
+        val := dataToValidate.find(key);
+        if (val = nil) then
+        begin
+            //if we get here it means there is no field with that name
+            //so assume that validation is success
+            result := true;
+        end else
+        begin
+            result := isValidData(val^.value);
+        end;
     end;
 end.

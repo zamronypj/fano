@@ -29,6 +29,14 @@ type
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
     TRequiredValidator = class(TBaseValidator)
+    protected
+        (*!------------------------------------------------
+         * actual data validation
+         *-------------------------------------------------
+         * @param dataToValidate input data
+         * @return true if data is valid otherwise false
+         *-------------------------------------------------*)
+        function isValidData(var dataToValidate : string) : boolean; override;
     public
         (*!------------------------------------------------
          * constructor
@@ -82,7 +90,17 @@ resourcestring
     var val : PKeyValue;
     begin
         val := dataToValidate.find(key);
-        result := (val <> nil) and (length(val^.value) > 0);
+        result := (val <> nil) and isValidData(val^.value);
     end;
 
+    (*!------------------------------------------------
+     * actual data validation
+     *-------------------------------------------------
+     * @param dataToValidate input data
+     * @return true if data is valid otherwise false
+     *-------------------------------------------------*)
+    function TRequiredValidator.isValidData(const dataToValidate : string) : boolean;
+    begin
+        result := (dataToValidate <> '');
+    end;
 end.

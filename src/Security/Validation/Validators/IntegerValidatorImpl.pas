@@ -28,31 +28,26 @@ type
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
     TIntegerValidator = class(TBaseValidator)
+    protected
+        (*!------------------------------------------------
+         * actual data validation
+         *-------------------------------------------------
+         * @param dataToValidate input data
+         * @return true if data is valid otherwise false
+         *-------------------------------------------------*)
+        function isValidData(var dataToValidate : string) : boolean; override;
     public
         (*!------------------------------------------------
          * constructor
          *-------------------------------------------------*)
         constructor create();
-
-        (*!------------------------------------------------
-         * Validate data
-         *-------------------------------------------------
-         * @param key name of field
-         * @param dataToValidate input data
-         * @return true if data is valid otherwise false
-         *-------------------------------------------------*)
-         function isValid(
-             const key : shortstring;
-             const dataToValidate : IList
-         ) : boolean; override;
     end;
 
 implementation
 
 uses
 
-    SysUtils,
-    KeyValueTypes;
+    SysUtils;
 
 resourcestring
 
@@ -67,34 +62,15 @@ resourcestring
     end;
 
     (*!------------------------------------------------
-     * Validate data
+     * actual data validation
      *-------------------------------------------------
-     * @param dataToValidate data to validate
+     * @param dataToValidate input data
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
-    function TIntegerValidator.isValid(
-        const key : shortstring;
-        const dataToValidate : IList
-    ) : boolean;
-    var val : PKeyValue;
+    function TIntegerValidator.isValidData(const dataToValidate : string) : boolean;
+    var actualVal : integer;
     begin
-        val := dataToValidate.find(key);
-        if (val = nil) then
-        begin
-            //if we get here it means there is no field with that name
-            //so assume that validation is success
-            result := true;
-            exit();
-        end;
-
-        try
-            //try to convert string to integer
-            strToInt(val^.value);
-            result := true;
-        except
-            //if we get here, mostly because of EConvertError exception
-            //so assume it is not valid integer.
-            result := false;
-        end;
+        //try to convert string to integer
+        result := tryStrToInt(dataToValidate, actualVal);
     end;
 end.

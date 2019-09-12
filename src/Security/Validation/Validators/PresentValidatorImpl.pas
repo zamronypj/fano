@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit RegexValidatorImpl;
+unit PresentValidatorImpl;
 
 interface
 
@@ -16,7 +16,6 @@ interface
 uses
 
     ListIntf,
-    RegexIntf,
     ValidatorIntf,
     BaseValidatorImpl;
 
@@ -24,14 +23,12 @@ type
 
     (*!------------------------------------------------
      * basic class having capability to
-     * validate input data using regex matching
+     * validate data that must be present and but
+     * allowed to be empty
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TRegexValidator = class(TBaseValidator)
-    private
-        regex : IRegex;
-        regexPattern : string;
+    TPresentValidator = class(TBaseValidator)
     protected
         (*!------------------------------------------------
          * actual data validation
@@ -43,21 +40,8 @@ type
     public
         (*!------------------------------------------------
          * constructor
-         *-------------------------------------------------
-         * @param regexInst instance of IRegex
-         * @param pattern regex pattern to use for matching
-         * @param errMsgFormat message that is used as template
-         *                    for error message
-         *-------------------------------------------------
-         * errMsgFormat can use format that is support by
-         * SysUtils.Format() function
          *-------------------------------------------------*)
-        constructor create(
-            const regexInst : IRegex;
-            const pattern : string;
-            const errMsgFormat : string
-        );
-        destructor destroy(); override;
+        constructor create();
 
         (*!------------------------------------------------
          * Validate data
@@ -74,32 +58,39 @@ type
 
 implementation
 
+uses
+
+    KeyValueTypes;
+
+resourcestring
+
+    sErrFieldIsPresent = 'Field %s must be present';
+
     (*!------------------------------------------------
      * constructor
-     *-------------------------------------------------
-     * @param regexInst instance of IRegex
-     * @param pattern regex pattern to use for matching
-     * @param errMsgFormat message that is used as template
-     *                    for error message
-     *-------------------------------------------------
-     * errMsgFormat can use format that is support by
-     * SysUtils.Format() function
      *-------------------------------------------------*)
-    constructor TRegexValidator.create(
-        const regexInst : IRegex;
-        const pattern : string;
-        const errMsgFormat : string
-    );
+    constructor TPresentValidator.create();
     begin
-        inherited create(errMsgFormat);
-        regex := regexInst;
-        regexPattern := pattern;
+        inherited create(sErrFieldIsPresent);
     end;
 
-    destructor TRegexValidator.destroy();
+    (*!------------------------------------------------
+     * Validate data
+     *-------------------------------------------------
+     * @param key name of field
+     * @param dataToValidate input data
+     * @return true if data is valid otherwise false
+     *-------------------------------------------------
+     * We assume dataToValidate <> nil
+     *-------------------------------------------------*)
+    function TPresentValidator.isValid(
+        const key : shortstring;
+        const dataToValidate : IList
+    ) : boolean;
+    var val : PKeyValue;
     begin
-        regex := nil;
-        inherited destroy();
+        val := dataToValidate.find(key);
+        result := (val <> nil) and isValidData(val^.value);
     end;
 
     (*!------------------------------------------------
@@ -108,8 +99,10 @@ implementation
      * @param dataToValidate input data
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
-    function TRegexValidator.isValidData(const dataToValidate : string) : boolean;
+    function TPresentValidator.isValidData(const dataToValidate : string) : boolean;
     begin
-        result := regex.match(regexPattern, dataToValidate).matched;
+        //we only need that key is present but it can be empty
+        //so just return true here
+        result := true;
     end;
 end.

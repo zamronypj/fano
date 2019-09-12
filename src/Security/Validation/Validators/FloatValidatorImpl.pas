@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit MaxIntegerValidatorImpl;
+unit FloatValidatorImpl;
 
 interface
 
@@ -23,13 +23,11 @@ type
 
     (*!------------------------------------------------
      * basic class having capability to
-     * validate if data does not greater than a reference value
+     * validate float data
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TMaxIntegerValidator = class(TBaseValidator)
-    private
-        fMaximumValue : integer;
+    TFloatValidator = class(TBaseValidator)
     protected
         (*!------------------------------------------------
          * actual data validation
@@ -41,30 +39,27 @@ type
     public
         (*!------------------------------------------------
          * constructor
-         *-------------------------------------------------
-         * @param maxValue maximum value allowed
          *-------------------------------------------------*)
-        constructor create(const maxValue : integer);
+        constructor create();
+
     end;
 
 implementation
 
 uses
 
-    SysUtils,
-    KeyValueTypes;
+    SysUtils;
 
 resourcestring
 
-    sErrFieldMustBeIntegerWithMaxValue = 'Field %s must be integer with maximum value of ';
+    sErrFieldMustBeFloat = 'Field %s must be float value';
 
     (*!------------------------------------------------
      * constructor
      *-------------------------------------------------*)
-    constructor TMaxIntegerValidator.create(const maxValue : integer);
+    constructor TFloatValidator.create();
     begin
-        inherited create(sErrFieldMustBeIntegerWithMaxValue + intToStr(maxValue));
-        fMaximumValue := maxValue;
+        inherited create(sErrFieldMustBeFloat);
     end;
 
     (*!------------------------------------------------
@@ -73,9 +68,10 @@ resourcestring
      * @param dataToValidate input data
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
-    function TMaxIntegerValidator.isValidData(const dataToValidate : string) : boolean;
-    var intValue : integer;
+    function TFloatValidator.isValidData(const dataToValidate : string) : boolean;
+    var actualVal : single;
     begin
-        result := tryStrToInt(dataToValidate, intValue) and (intValue <= fMaximumValue);
+        //try to convert string to float
+        result := tryStrToFloat(dataToValidate, actualVal);
     end;
 end.

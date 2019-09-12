@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit MaxIntegerValidatorImpl;
+unit AcceptedValidatorImpl;
 
 interface
 
@@ -23,13 +23,12 @@ type
 
     (*!------------------------------------------------
      * basic class having capability to
-     * validate if data does not greater than a reference value
+     * validate true or 'yes', 'on' or 1 data. This
+     * is mostly used for accepting "Terms and Conditions"
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TMaxIntegerValidator = class(TBaseValidator)
-    private
-        fMaximumValue : integer;
+    TAcceptedValidator = class(TBooleanValidator)
     protected
         (*!------------------------------------------------
          * actual data validation
@@ -41,30 +40,26 @@ type
     public
         (*!------------------------------------------------
          * constructor
-         *-------------------------------------------------
-         * @param maxValue maximum value allowed
          *-------------------------------------------------*)
-        constructor create(const maxValue : integer);
+        constructor create();
     end;
 
 implementation
 
 uses
 
-    SysUtils,
-    KeyValueTypes;
+    SysUtils;
 
 resourcestring
 
-    sErrFieldMustBeIntegerWithMaxValue = 'Field %s must be integer with maximum value of ';
+    sErrFieldMustBeAccepted = 'Field %s must be accepted';
 
     (*!------------------------------------------------
      * constructor
      *-------------------------------------------------*)
-    constructor TMaxIntegerValidator.create(const maxValue : integer);
+    constructor TAcceptedValidator.create();
     begin
-        inherited create(sErrFieldMustBeIntegerWithMaxValue + intToStr(maxValue));
-        fMaximumValue := maxValue;
+        inherited create(sErrFieldMustBeAccepted);
     end;
 
     (*!------------------------------------------------
@@ -73,9 +68,13 @@ resourcestring
      * @param dataToValidate input data
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
-    function TMaxIntegerValidator.isValidData(const dataToValidate : string) : boolean;
-    var intValue : integer;
+    function TAcceptedValidator.isValidData(const dataToValidate : string) : boolean;
+    var truthyVal : string;
     begin
-        result := tryStrToInt(dataToValidate, intValue) and (intValue <= fMaximumValue);
+        truthyVal := lowercase(dataToValidate);
+        result := inherited isValidData(truthyVal) or
+            (truthyVal = 'yes') or
+            (truthyVal = 'on') or
+            (truthyVal = '1');
     end;
 end.

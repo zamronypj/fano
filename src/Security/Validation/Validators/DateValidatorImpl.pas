@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit MaxIntegerValidatorImpl;
+unit DateValidatorImpl;
 
 interface
 
@@ -23,13 +23,11 @@ type
 
     (*!------------------------------------------------
      * basic class having capability to
-     * validate if data does not greater than a reference value
+     * validate date data
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TMaxIntegerValidator = class(TBaseValidator)
-    private
-        fMaximumValue : integer;
+    TDateValidator = class(TBaseValidator)
     protected
         (*!------------------------------------------------
          * actual data validation
@@ -41,30 +39,26 @@ type
     public
         (*!------------------------------------------------
          * constructor
-         *-------------------------------------------------
-         * @param maxValue maximum value allowed
          *-------------------------------------------------*)
-        constructor create(const maxValue : integer);
+        constructor create();
     end;
 
 implementation
 
 uses
 
-    SysUtils,
-    KeyValueTypes;
+    SysUtils;
 
 resourcestring
 
-    sErrFieldMustBeIntegerWithMaxValue = 'Field %s must be integer with maximum value of ';
+    sErrFieldMustBeDate = 'Field %s must be date value';
 
     (*!------------------------------------------------
      * constructor
      *-------------------------------------------------*)
-    constructor TMaxIntegerValidator.create(const maxValue : integer);
+    constructor TDateTimeValidator.create();
     begin
-        inherited create(sErrFieldMustBeIntegerWithMaxValue + intToStr(maxValue));
-        fMaximumValue := maxValue;
+        inherited create(sErrFieldMustBeDate);
     end;
 
     (*!------------------------------------------------
@@ -73,9 +67,10 @@ resourcestring
      * @param dataToValidate input data
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
-    function TMaxIntegerValidator.isValidData(const dataToValidate : string) : boolean;
-    var intValue : integer;
+    function TDateValidator.isValidData(const dataToValidate : string) : boolean;
+    var actualVal : TDateTime;
     begin
-        result := tryStrToInt(dataToValidate, intValue) and (intValue <= fMaximumValue);
+        //try to convert string to TDateTime
+        result := tryStrToDate(dataToValidate, actualVal);
     end;
 end.

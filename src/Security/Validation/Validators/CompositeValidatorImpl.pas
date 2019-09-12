@@ -34,6 +34,14 @@ type
     TCompositeValidator = class(TBaseValidator, IValidatorCollection)
     private
         validatorList : TInterfaceList;
+    protected
+        (*!------------------------------------------------
+         * actual data validation
+         *-------------------------------------------------
+         * @param dataToValidate input data
+         * @return true if data is valid otherwise false
+         *-------------------------------------------------*)
+        function isValidData(var dataToValidate : string) : boolean; override;
     public
         constructor create(const errMsgFormat : string);
         destructor destroy(); override;
@@ -83,8 +91,21 @@ implementation
 
     destructor TCompositeValidator.destroy();
     begin
-        inherited destroy();
         validatorList.free();
+        inherited destroy();
+    end;
+
+    (*!------------------------------------------------
+     * actual data validation
+     *-------------------------------------------------
+     * @param dataToValidate input data
+     * @return true if data is valid otherwise false
+     *-------------------------------------------------*)
+    function TCompositeValidator.isValidData(const dataToValidate : string) : boolean;
+    begin
+        //intentionally always pass validation
+        //because we delegate validation to external validators
+        result := true;
     end;
 
     (*!------------------------------------------------

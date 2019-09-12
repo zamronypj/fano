@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit RegexValidatorImpl;
+unit ConfirmedValidatorImpl;
 
 interface
 
@@ -16,7 +16,6 @@ interface
 uses
 
     ListIntf,
-    RegexIntf,
     ValidatorIntf,
     BaseValidatorImpl;
 
@@ -24,14 +23,14 @@ type
 
     (*!------------------------------------------------
      * basic class having capability to
-     * validate input data using regex matching
+     * validate data that must be equal to other field.
+     * This is mostly used for password confirmation
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TRegexValidator = class(TBaseValidator)
+    TConfirmedValidator = class(TBaseValidator)
     private
-        regex : IRegex;
-        regexPattern : string;
+        fConfirmationField : shortstring;
     protected
         (*!------------------------------------------------
          * actual data validation
@@ -43,21 +42,8 @@ type
     public
         (*!------------------------------------------------
          * constructor
-         *-------------------------------------------------
-         * @param regexInst instance of IRegex
-         * @param pattern regex pattern to use for matching
-         * @param errMsgFormat message that is used as template
-         *                    for error message
-         *-------------------------------------------------
-         * errMsgFormat can use format that is support by
-         * SysUtils.Format() function
          *-------------------------------------------------*)
-        constructor create(
-            const regexInst : IRegex;
-            const pattern : string;
-            const errMsgFormat : string
-        );
-        destructor destroy(); override;
+        constructor create(const confirmationField : shortstring);
 
         (*!------------------------------------------------
          * Validate data
@@ -74,32 +60,44 @@ type
 
 implementation
 
+uses
+
+    KeyValueTypes;
+
+resourcestring
+
+    sErrFieldIsConfirmed = 'Field %s value must be equals to %s value';
+
     (*!------------------------------------------------
      * constructor
-     *-------------------------------------------------
-     * @param regexInst instance of IRegex
-     * @param pattern regex pattern to use for matching
-     * @param errMsgFormat message that is used as template
-     *                    for error message
-     *-------------------------------------------------
-     * errMsgFormat can use format that is support by
-     * SysUtils.Format() function
      *-------------------------------------------------*)
-    constructor TRegexValidator.create(
-        const regexInst : IRegex;
-        const pattern : string;
-        const errMsgFormat : string
-    );
+    constructor TConfirmedValidator.create(const confirmationField : shortstring);
     begin
-        inherited create(errMsgFormat);
-        regex := regexInst;
-        regexPattern := pattern;
+        inherited create(sErrFieldIsConfirmed);
+        fConfirmationField := confirmationField;
     end;
 
-    destructor TRegexValidator.destroy();
+    (*!------------------------------------------------
+     * Validate data
+     *-------------------------------------------------
+     * @param key name of field
+     * @param dataToValidate input data
+     * @return true if data is valid otherwise false
+     *-------------------------------------------------
+     * We assume dataToValidate <> nil
+     *-------------------------------------------------*)
+    function TConfirmedValidator.isValid(
+        const key : shortstring;
+        const dataToValidate : IList
+    ) : boolean;
+    var val, confirmVal : PKeyValue;
     begin
-        regex := nil;
-        inherited destroy();
+        val := dataToValidate.find(key);
+        confirmVal := dataToValidate.find(fConfirmationField);
+        result := (val <> nil) and
+            isValidData(val^.value) and
+            (confirmVal <> nil) and
+            (val^.value = confirmVal^.value);
     end;
 
     (*!------------------------------------------------
@@ -108,8 +106,8 @@ implementation
      * @param dataToValidate input data
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
-    function TRegexValidator.isValidData(const dataToValidate : string) : boolean;
+    function TConfirmedValidator.isValidData(const dataToValidate : string) : boolean;
     begin
-        result := regex.match(regexPattern, dataToValidate).matched;
+        result := (dataToValidate <> '');
     end;
 end.
