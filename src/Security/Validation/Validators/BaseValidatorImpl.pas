@@ -27,9 +27,9 @@ type
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
     TBaseValidator = class(TInterfacedObject, IValidator)
-    private
-        errorMsgFormat : string;
     protected
+        errorMsgFormat : string;
+
         (*!------------------------------------------------
          * actual data validation
          *-------------------------------------------------

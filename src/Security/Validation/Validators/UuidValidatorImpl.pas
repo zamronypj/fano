@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit AcceptedValidatorImpl;
+unit UuidValidatorImpl;
 
 interface
 
@@ -17,18 +17,17 @@ uses
 
     ListIntf,
     ValidatorIntf,
-    BooleanValidatorImpl;
+    BaseValidatorImpl;
 
 type
 
     (*!------------------------------------------------
      * basic class having capability to
-     * validate true or 'yes', 'on' or 1 data. This
-     * is mostly used for accepting "Terms and Conditions"
+     * validate uuid data
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TAcceptedValidator = class(TBooleanValidator)
+    TUuidValidator = class(TBaseValidator)
     protected
         (*!------------------------------------------------
          * actual data validation
@@ -52,14 +51,14 @@ uses
 
 resourcestring
 
-    sErrFieldMustBeAccepted = 'Field %s must be accepted';
+    sErrFieldMustBeUuid = 'Field %s must be UUID value';
 
     (*!------------------------------------------------
      * constructor
      *-------------------------------------------------*)
-    constructor TAcceptedValidator.create();
+    constructor TUuidValidator.create();
     begin
-        inherited create(sErrFieldMustBeAccepted);
+        inherited create(sErrFieldMustBeUuid);
     end;
 
     (*!------------------------------------------------
@@ -68,13 +67,10 @@ resourcestring
      * @param dataToValidate input data
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
-    function TAcceptedValidator.isValidData(const dataToValidate : string) : boolean;
-    var truthyVal : string;
+    function TUuidValidator.isValidData(const dataToValidate : string) : boolean;
+    var actualVal : TGUID;
     begin
-        truthyVal := lowercase(dataToValidate);
-        result := inherited isValidData(truthyVal) or
-            (truthyVal = 'yes') or
-            (truthyVal = 'on') or
-            (truthyVal = '1');
+        //try to convert string to uuid
+        result := tryStrToGuid(dataToValidate, actualVal);
     end;
 end.

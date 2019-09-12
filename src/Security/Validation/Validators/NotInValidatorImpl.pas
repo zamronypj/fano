@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit AcceptedValidatorImpl;
+unit NotInValidatorImpl;
 
 interface
 
@@ -17,18 +17,17 @@ uses
 
     ListIntf,
     ValidatorIntf,
-    BooleanValidatorImpl;
+    InValidatorImpl;
 
 type
 
     (*!------------------------------------------------
      * basic class having capability to
-     * validate true or 'yes', 'on' or 1 data. This
-     * is mostly used for accepting "Terms and Conditions"
+     * validate data that must not included in given list of values
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TAcceptedValidator = class(TBooleanValidator)
+    TNotInValidator = class(TInValidator)
     protected
         (*!------------------------------------------------
          * actual data validation
@@ -41,7 +40,7 @@ type
         (*!------------------------------------------------
          * constructor
          *-------------------------------------------------*)
-        constructor create();
+        constructor create(const validValues : array of string);
     end;
 
 implementation
@@ -52,14 +51,16 @@ uses
 
 resourcestring
 
-    sErrFieldMustBeAccepted = 'Field %s must be accepted';
+    sErrFieldMustNotIn = 'Field %s must not in given values ';
+
 
     (*!------------------------------------------------
      * constructor
      *-------------------------------------------------*)
-    constructor TAcceptedValidator.create();
+    constructor TNotInValidator.create(const validValues : array of string);
     begin
-        inherited create(sErrFieldMustBeAccepted);
+        inherited create(validValues);
+        errorMsgFormat := sErrFieldMustNotIn;
     end;
 
     (*!------------------------------------------------
@@ -68,13 +69,8 @@ resourcestring
      * @param dataToValidate input data
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
-    function TAcceptedValidator.isValidData(const dataToValidate : string) : boolean;
-    var truthyVal : string;
+    function TNotInValidator.isValidData(const dataToValidate : string) : boolean;
     begin
-        truthyVal := lowercase(dataToValidate);
-        result := inherited isValidData(truthyVal) or
-            (truthyVal = 'yes') or
-            (truthyVal = 'on') or
-            (truthyVal = '1');
+        result := not (inherited isValidData(dataToValidate));
     end;
 end.

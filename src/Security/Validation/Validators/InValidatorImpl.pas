@@ -28,9 +28,9 @@ type
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
     TInValidator = class(TBaseValidator)
-    private
-        fValidValues : TStringArray;
     protected
+        fValidValues : TStringArray;
+
         (*!------------------------------------------------
          * actual data validation
          *-------------------------------------------------
