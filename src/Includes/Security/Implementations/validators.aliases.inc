@@ -14,11 +14,40 @@
  *-----------------------------------------------*)
 
 TBaseValidator = BaseValidatorImpl.TBaseValidator;
+TRegexValidator = RegexValidatorImpl.TRegexValidator;
+
 TAlphaNumSpaceValidator = AlphaNumSpaceValidatorImpl.TAlphaNumSpaceValidator;
 TAlphaNumValidator = AlphaNumValidatorImpl.TAlphaNumValidator;
+TAlphaNumDashValidator = AlphaNumDashValidatorImpl.TAlphaNumDashValidator;
+TAlphaValidator = AlphaValidatorImpl.TAlphaValidator;
+TEmailValidator = EmailValidatorImpl.TEmailValidator;
+
 TCompositeValidator = CompositeValidatorImpl.TCompositeValidator;
+
 TIntegerValidator = IntegerValidatorImpl.TIntegerValidator;
 TMinIntegerValidator = MinIntegerValidatorImpl.TMinIntegerValidator;
 TMaxIntegerValidator = MaxIntegerValidatorImpl.TMaxIntegerValidator;
-TRegexValidator = RegexValidatorImpl.TRegexValidator;
+
+TFloatValidator = FloatValidatorImpl.TFloatValidator;
+TNumericValidator = NumericValidatorImpl.TNumericValidator;
+TCurrencyValidator = CurrencyValidatorImpl.TCurrencyValidator;
+
+TInValidator = InValidatorImpl.TInValidator;
+TNotInValidator = NotInValidatorImpl.TNotInValidator;
+
+TBooleanValidator = BooleanValidatorImpl.TBooleanValidator;
+TAcceptedValidator = AcceptedValidatorImpl.TAcceptedValidator;
+TConfirmedValidator = ConfirmedValidatorImpl.TConfirmedValidator;
+
 TRequiredValidator = RequiredValidatorImpl.TRequiredValidator;
+TPresentValidator = PresentValidatorImpl.TPresentValidator;
+
+TDateValidator = DateValidatorImpl.TDateValidator;
+TTimeValidator = TimeValidatorImpl.TTimeValidator;
+TDateTimeValidator = DateTimeValidatorImpl.TDateTimeValidator;
+TCompareDateTimeValidator = CompareDateTimeValidatorImpl.TCompareDateTimeValidator;
+TAfterDateTimeValidator = AfterDateTimeValidatorImpl.TAfterDateTimeValidator;
+TBeforeDateTimeValidator = BeforeDateTimeValidatorImpl.TBeforeDateTimeValidator;
+TEqualDateTimeValidator = EqualDateTimeValidatorImpl.TEqualDateTimeValidator;
+
+TUuidValidator = UuidValidatorImpl.TUuidValidator;
