@@ -21,7 +21,8 @@ uses
     ValidatorIntf,
     RequestValidatorintf,
     ValidationRulesIntf,
-    ValidationResultTypes;
+    ValidationResultTypes,
+    InjectableObjectImpl;
 
 type
 
@@ -31,7 +32,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TValidation = class(TInterfacedObject, IRequestValidator, IValidationRules, IDependency)
+    TValidation = class(TInjectableObject, IRequestValidator, IValidationRules)
     private
         validationResult : TValidationResult;
         validatorList : IList;

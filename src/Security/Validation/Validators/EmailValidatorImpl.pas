@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit AlphaNumValidatorImpl;
+unit EmailValidatorImpl;
 
 interface
 
@@ -23,11 +23,11 @@ type
 
     (*!------------------------------------------------
      * basic class having capability to
-     * validate alpha numeric input data
+     * validate email input data
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TAlphaNumValidator = class(TRegexValidator)
+    TEmailValidator = class(TRegexValidator)
     public
         constructor create(const regexInst : IRegex);
     end;
@@ -36,11 +36,15 @@ implementation
 
 resourcestring
 
-    sErrNotValidAlphaNum = 'Field ''%s'' must be alpha numeric characters';
+    sErrNotValidEmail = 'Field ''%s'' must be email format';
 
-    constructor TAlphaNumValidator.create(const regexInst : IRegex);
+    constructor TEmailValidator.create(const regexInst : IRegex);
     begin
-        inherited create(regexInst, '^[a-zA-Z0-9]+$', sErrNotValidAlphaNum);
+        inherited create(
+            regexInst,
+            '^[_a-zA-Z\d\-.]+@([a-zA-Z\d\-]+(\.[_a-zA-Z\d\-]+)*)$',
+            sErrNotValidEmail
+        );
     end;
 
 end.

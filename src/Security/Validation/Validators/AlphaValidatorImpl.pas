@@ -36,7 +36,7 @@ implementation
 
 resourcestring
 
-    sErrNotValidAlpha = 'Field ''%s'' must be alphabet charaters';
+    sErrNotValidAlpha = 'Field ''%s'' must be alphabet characters';
 
     constructor TAlphaValidator.create(const regexInst : IRegex);
     begin
