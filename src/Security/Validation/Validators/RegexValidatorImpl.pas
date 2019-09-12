@@ -58,18 +58,6 @@ type
             const errMsgFormat : string
         );
         destructor destroy(); override;
-
-        (*!------------------------------------------------
-         * Validate data
-         *-------------------------------------------------
-         * @param key name of field
-         * @param dataToValidate input data
-         * @return true if data is valid otherwise false
-         *-------------------------------------------------*)
-         function isValid(
-             const key : shortstring;
-             const dataToValidate : IList
-         ) : boolean; override;
     end;
 
 implementation
