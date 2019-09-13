@@ -51,3 +51,7 @@ TBeforeDateTimeValidator = BeforeDateTimeValidatorImpl.TBeforeDateTimeValidator;
 TEqualDateTimeValidator = EqualDateTimeValidatorImpl.TEqualDateTimeValidator;
 
 TUuidValidator = UuidValidatorImpl.TUuidValidator;
+
+TMinLengthValidator = MinLengthValidatorImpl.TMinLengthValidator;
+TMaxLengthValidator = MaxLengthValidatorImpl.TMaxLengthValidator;
+TEqualLengthValidator = EqualLengthValidatorImpl.TEqualLengthValidator;
