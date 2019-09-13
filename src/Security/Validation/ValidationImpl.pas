@@ -106,9 +106,9 @@ type
 
     destructor TValidation.destroy();
     begin
-        inherited destroy();
         clearValidator();
         validatorList := nil;
+        inherited destroy();
     end;
 
     procedure TValidation.clearValidator();
