@@ -30,7 +30,7 @@ type
      *-------------------------------------------------*)
     TValidationCollection = class(TInjectableObject, IValidatorCollection)
     private
-        requestValidatorList : IList;
+        fRequestValidatorList : IList;
         procedure clearValidator();
     public
 
@@ -76,13 +76,13 @@ type
 
     constructor TValidationCollection.create(const reqValidators : IList);
     begin
-        requestValidatorList := reqValidators;
+        fRequestValidatorList := reqValidators;
     end;
 
     destructor TValidationCollection.destroy();
     begin
         clearValidator();
-        requestValidatorList := nil;
+        fRequestValidatorList := nil;
         inherited destroy();
     end;
 
@@ -90,13 +90,13 @@ type
     var i, len : integer;
         valRec : PValidatorRec;
     begin
-        len := requestValidatorList.count();
+        len := fRequestValidatorList.count();
         for i := len-1 downto 0 do
         begin
-            valRec := requestValidatorList.get(i);
+            valRec := fRequestValidatorList.get(i);
             valRec^.validator := nil;
             dispose(valRec);
-            validatorList.delete(i);
+            fRequestValidatorList.delete(i);
         end;
     end;
 
@@ -114,11 +114,11 @@ type
             raise EInvalidValidator.createFmt(sErrInvalidRequestValidator, [name]);
         end;
 
-        valRec := requestValidatorList.find(name);
+        valRec := fRequestValidatorList.find(name);
         if (valRec = nil) then
         begin
             new(valRec);
-            requestValidatorList.add(name, valRec);
+            fRequestValidatorList.add(name, valRec);
         end;
         valRec^.key := key;
         valRec^.validator := validator;
@@ -134,7 +134,7 @@ type
     function TValidationCollection.get(const name : shortstring) : IRequestValidator;
     var valRec : PValidatorRec;
     begin
-        valRec := requestValidatorList.find(name);
+        valRec := fRequestValidatorList.find(name);
         if (valRec = nil) then
         begin
             raise EInvalidValidator.createFmt(sErrRequestValidatorNotFound, [name]);
