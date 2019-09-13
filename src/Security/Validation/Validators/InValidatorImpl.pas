@@ -15,6 +15,7 @@ interface
 
 uses
 
+    SysUtils,
     ListIntf,
     ValidatorIntf,
     BaseValidatorImpl;
@@ -51,10 +52,6 @@ type
     end;
 
 implementation
-
-uses
-
-    SysUtils;
 
 resourcestring
 
