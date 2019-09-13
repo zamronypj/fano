@@ -55,11 +55,11 @@ type
          * @param request request object
          * @return true if data is valid otherwise false
          *-------------------------------------------------*)
-         function isValid(
-             const key : shortstring;
-             const dataToValidate : IList;
+        function isValid(
+            const key : shortstring;
+            const dataToValidate : IList;
             const request : IRequest
-         ) : boolean; override;
+        ) : boolean; override;
 
     end;
 

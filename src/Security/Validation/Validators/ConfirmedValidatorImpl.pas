@@ -16,6 +16,7 @@ interface
 uses
 
     ListIntf,
+    RequestIntf,
     ValidatorIntf,
     BaseValidatorImpl;
 
@@ -50,12 +51,14 @@ type
          *-------------------------------------------------
          * @param key name of field
          * @param dataToValidate input data
+         * @param request request object
          * @return true if data is valid otherwise false
          *-------------------------------------------------*)
-         function isValid(
-             const key : shortstring;
-             const dataToValidate : IList
-         ) : boolean; override;
+        function isValid(
+            const key : shortstring;
+            const dataToValidate : IList;
+            const request : IRequest
+        ) : boolean; override;
     end;
 
 implementation
@@ -82,13 +85,15 @@ resourcestring
      *-------------------------------------------------
      * @param key name of field
      * @param dataToValidate input data
+     * @param request request object
      * @return true if data is valid otherwise false
      *-------------------------------------------------
      * We assume dataToValidate <> nil
      *-------------------------------------------------*)
     function TConfirmedValidator.isValid(
         const key : shortstring;
-        const dataToValidate : IList
+        const dataToValidate : IList;
+        const request : IRequest
     ) : boolean;
     var val, confirmVal : PKeyValue;
     begin
