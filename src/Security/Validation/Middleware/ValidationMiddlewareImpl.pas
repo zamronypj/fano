@@ -33,8 +33,12 @@ type
     TValidationMiddleware = class(TInjectableObject, IMiddleware)
     private
         fValidation : IRequestValidator;
+        fStopOnValidationError : boolean;
     public
-        constructor create(const validationInst : IRequestValidator);
+        constructor create(
+            const validationInst : IRequestValidator;
+            const stopOnValidationError : boolean = false
+        );
         destructor destroy(); override;
 
         (*!---------------------------------------
@@ -64,9 +68,13 @@ uses
 
     ValidationResultTypes;
 
-    constructor TValidationMiddleware.create(const validationInst : IRequestValidator);
+    constructor TValidationMiddleware.create(
+        const validationInst : IRequestValidator;
+        const stopOnValidationError : boolean = false
+    );
     begin
         fValidation := validationInst;
+        fStopOnValidationError := stopOnValidationError;
     end;
 
     destructor TValidationMiddleware.destroy();
@@ -90,8 +98,10 @@ uses
         const response : IResponse;
         var canContinue : boolean
     ) : IResponse;
+    var validationRes : TValidationResult;
     begin
-        fValidation.validate(request);
+        validationRes := fValidation.validate(request);
+        canContinue := (not fStopOnValidationError) or validationRes.isValid;
         result := response;
     end;
 
