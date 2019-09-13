@@ -42,7 +42,7 @@ type
          * @param dataToValidate input data
          * @return true if data is valid otherwise false
          *-------------------------------------------------*)
-        function isValidData(var dataToValidate : string) : boolean; override;
+        function isValidData(const dataToValidate : string) : boolean; override;
     end;
 
 implementation
