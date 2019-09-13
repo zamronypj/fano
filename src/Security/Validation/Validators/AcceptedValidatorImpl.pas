@@ -59,7 +59,8 @@ resourcestring
      *-------------------------------------------------*)
     constructor TAcceptedValidator.create();
     begin
-        inherited create(sErrFieldMustBeAccepted);
+        inherited create();
+        errorMsgFormat := sErrFieldMustBeAccepted;
     end;
 
     (*!------------------------------------------------
