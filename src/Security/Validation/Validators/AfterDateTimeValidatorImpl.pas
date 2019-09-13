@@ -56,7 +56,7 @@ resourcestring
      *-------------------------------------------------*)
     constructor TAfterDateTimeValidator.create(const refDatetime : TDateTime);
     begin
-        inherited create(sErrFieldMustBeAfterDateTime + StrToDateTime(refDatetime));
+        inherited create(sErrFieldMustBeAfterDateTime + DateTimeToStr(refDatetime));
         fRefDateTime := refDatetime;
     end;
 

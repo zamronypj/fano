@@ -56,7 +56,7 @@ resourcestring
      *-------------------------------------------------*)
     constructor TBeforeDateTimeValidator.create(const refDatetime : TDateTime);
     begin
-        inherited create(sErrFieldMustBeBeforeDateTime + StrToDateTime(refDatetime));
+        inherited create(sErrFieldMustBeBeforeDateTime + DateTimeToStr(refDatetime));
         fRefDateTime := refDatetime;
     end;
 
