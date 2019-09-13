@@ -56,7 +56,7 @@ resourcestring
      *-------------------------------------------------*)
     constructor TEqualDateTimeValidator.create(const refDatetime : TDateTime);
     begin
-        inherited create(sErrFieldMustBeEqualDateTime + StrToDateTime(refDatetime));
+        inherited create(sErrFieldMustBeEqualDateTime + DateTimeToStr(refDatetime));
         fRefDateTime := refDatetime;
     end;
 
