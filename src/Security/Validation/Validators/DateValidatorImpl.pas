@@ -56,7 +56,7 @@ resourcestring
     (*!------------------------------------------------
      * constructor
      *-------------------------------------------------*)
-    constructor TDateTimeValidator.create();
+    constructor TDateValidator.create();
     begin
         inherited create(sErrFieldMustBeDate);
     end;
