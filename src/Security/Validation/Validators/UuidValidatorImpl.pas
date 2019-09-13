@@ -71,6 +71,6 @@ resourcestring
     var actualVal : TGUID;
     begin
         //try to convert string to uuid
-        result := tryStrToGuid(dataToValidate, actualVal);
+        result := tryStringToGuid(dataToValidate, actualVal);
     end;
 end.
