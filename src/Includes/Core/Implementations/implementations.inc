@@ -15,3 +15,5 @@
 
 NullSerializeableImpl,
 StringSerializeableImpl,
+
+HashListImpl,

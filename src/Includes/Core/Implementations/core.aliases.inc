@@ -4,3 +4,4 @@ TKeyValue = KeyValueTypes.TKeyValue;
 TArrayOfKeyValue = KeyValueTypes.TArrayOfKeyValue;
 TNullSerializeable = NullSerializeableImpl.TNullSerializeable;
 TStringSerializeable = StringSerializeableImpl.TStringSerializeable;
+THashList = HashListImpl.THashList;
