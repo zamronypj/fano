@@ -91,7 +91,7 @@ resourcestring
         end;
     end;
 
-    function isValidMimeTypes(const uploadedFiles : IUploadedFiles; const mimeTypes : TStringArray) : boolean;
+    function isValidMimeTypes(const uploadedFiles : IUploadedFileArray; const mimeTypes : TStringArray) : boolean;
     var i, len : integer;
     begin
         result := true;

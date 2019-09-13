@@ -64,7 +64,7 @@ resourcestring
 
     sErrFieldIsUploadedSize = 'Field %s must be a valid uploaded file with size not exceed ';
 
-    function isValidSize(const uploadedFiles : IUploadedFiles; const size : int64) : boolean;
+    function isValidSize(const uploadedFiles : IUploadedFileArray; const size : int64) : boolean;
     var i, len : integer;
     begin
         result := true;
