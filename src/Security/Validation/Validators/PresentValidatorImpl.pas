@@ -59,7 +59,8 @@ resourcestring
      *-------------------------------------------------*)
     constructor TPresentValidator.create();
     begin
-        inherited create(sErrFieldIsPresent);
+        inherited create();
+        errorMsgFormat := sErrFieldIsPresent;
     end;
 
     (*!------------------------------------------------
