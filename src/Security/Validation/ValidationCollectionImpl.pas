@@ -106,7 +106,7 @@ type
      * @param key name of field in GET, POST request input data
      * @return current validation rules
      *-------------------------------------------------*)
-    function TValidationCollection.add(const name : shortstring; const validator : IRequestValidator) : IValidationCollection;
+    function TValidationCollection.add(const name : shortstring; const validator : IRequestValidator) : IValidatorCollection;
     var valRec : PValidatorRec;
     begin
         if (validator = nil) then
