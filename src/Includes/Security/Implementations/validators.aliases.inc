@@ -59,3 +59,5 @@ TEqualLengthValidator = EqualLengthValidatorImpl.TEqualLengthValidator;
 TUploadedFileValidator = UploadedFileValidatorImpl.TUploadedFileValidator;
 TUploadedMimeValidator = UploadedMimeValidatorImpl.TUploadedMimeValidator;
 TUploadedSizeValidator = UploadedSizeValidatorImpl.TUploadedSizeValidator;
+
+TNotValidator = NotValidatorImpl.TNotValidator;
