@@ -120,7 +120,7 @@ type
             new(valRec);
             fRequestValidatorList.add(name, valRec);
         end;
-        valRec^.key := key;
+        valRec^.key := name;
         valRec^.validator := validator;
         result := self;
     end;
