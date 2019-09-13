@@ -37,7 +37,7 @@ type
          * @param dataToValidate input data
          * @return true if data is valid otherwise false
          *-------------------------------------------------*)
-        function isValidData(var dataToValidate : string) : boolean; virtual; abstract;
+        function isValidData(const dataToValidate : string) : boolean; virtual; abstract;
 
     public
         (*!------------------------------------------------
