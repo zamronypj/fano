@@ -85,6 +85,7 @@ resourcestring
     constructor TUploadedSizeValidator.create(const maxSize : int64);
     begin
         inherited create(sErrFieldIsUploadedSize);
+        errorMsgFormat := sErrFieldIsUploadedSize;
         fMaxSize := maxSize;
     end;
 

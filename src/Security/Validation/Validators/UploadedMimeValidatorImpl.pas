@@ -111,7 +111,8 @@ resourcestring
      *-------------------------------------------------*)
     constructor TUploadedMimeValidator.create(const mimes : array of string);
     begin
-        inherited create(sErrFieldIsUploadedMime);
+        inherited create();
+        errorMsgFormat := sErrFieldIsUploadedMime;
         fMimeTypes := initMimeTypes(mimes);
     end;
 
