@@ -16,7 +16,7 @@ interface
 uses
 
     ListIntf,
-    ValidationCollectionIntf,
+    ValidatorCollectionIntf,
     RequestValidatorintf,
     InjectableObjectImpl;
 
@@ -28,7 +28,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TValidationCollection = class(TInjectableObject, IValidationCollection)
+    TValidationCollection = class(TInjectableObject, IValidatorCollection)
     private
         requestValidatorList : IList;
         procedure clearValidator();
