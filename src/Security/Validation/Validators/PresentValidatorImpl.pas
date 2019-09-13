@@ -17,7 +17,7 @@ uses
 
     ListIntf,
     ValidatorIntf,
-    BaseValidatorImpl;
+    RequiredValidatorImpl;
 
 type
 
@@ -28,7 +28,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TPresentValidator = class(TBaseValidator)
+    TPresentValidator = class(TRequiredValidator)
     protected
         (*!------------------------------------------------
          * actual data validation
@@ -42,18 +42,6 @@ type
          * constructor
          *-------------------------------------------------*)
         constructor create();
-
-        (*!------------------------------------------------
-         * Validate data
-         *-------------------------------------------------
-         * @param key name of field
-         * @param dataToValidate input data
-         * @return true if data is valid otherwise false
-         *-------------------------------------------------*)
-         function isValid(
-             const key : shortstring;
-             const dataToValidate : IList
-         ) : boolean; override;
     end;
 
 implementation
@@ -72,25 +60,6 @@ resourcestring
     constructor TPresentValidator.create();
     begin
         inherited create(sErrFieldIsPresent);
-    end;
-
-    (*!------------------------------------------------
-     * Validate data
-     *-------------------------------------------------
-     * @param key name of field
-     * @param dataToValidate input data
-     * @return true if data is valid otherwise false
-     *-------------------------------------------------
-     * We assume dataToValidate <> nil
-     *-------------------------------------------------*)
-    function TPresentValidator.isValid(
-        const key : shortstring;
-        const dataToValidate : IList
-    ) : boolean;
-    var val : PKeyValue;
-    begin
-        val := dataToValidate.find(key);
-        result := (val <> nil) and isValidData(val^.value);
     end;
 
     (*!------------------------------------------------

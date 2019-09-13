@@ -37,7 +37,7 @@ type
         validationResult : TValidationResult;
         validatorList : IList;
         procedure clearValidator();
-        function validateKeyValue(const inputData : IList) : TValidationResult;
+        function validateKeyValue(const inputData : IList; const request : IRequest) : TValidationResult;
         function validateBody(const request : IRequest) : TValidationResult;
         function validateQueryStr(const request : IRequest) : TValidationResult;
     public
@@ -129,9 +129,13 @@ type
      * Validate data from key value pair array
      *-------------------------------------------------
      * @param inputData array of key value pair
+     * @param request request object
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
-    function TValidation.validateKeyValue(const inputData : IList) : TValidationResult;
+    function TValidation.validateKeyValue(
+        const inputData : IList;
+        const request : IRequest
+    ) : TValidationResult;
     var i, len, numFailValidation : integer;
         valRec : PValidatorRec;
     begin
@@ -144,7 +148,7 @@ type
         for i:= 0 to len-1 do
         begin
             valRec := validatorList.get(i);
-            if (not valRec^.validator.isValid(valRec^.key, inputData)) then
+            if (not valRec^.validator.isValid(valRec^.key, inputData, request)) then
             begin
                 //validation is failed, get validation error message
                 with result.errorMessages[numFailValidation] do
@@ -168,7 +172,7 @@ type
      *-------------------------------------------------*)
     function TValidation.validateBody(const request : IRequest) : TValidationResult;
     begin
-        result := validateKeyValue(request.getParsedBodyParams());
+        result := validateKeyValue(request.getParsedBodyParams(), request);
     end;
 
     (*!------------------------------------------------
@@ -179,7 +183,7 @@ type
      *-------------------------------------------------*)
     function TValidation.validateQueryStr(const request : IRequest) : TValidationResult;
     begin
-        result := validateKeyValue(request.getQueryParams());
+        result := validateKeyValue(request.getQueryParams(), request);
     end;
 
     (*!------------------------------------------------

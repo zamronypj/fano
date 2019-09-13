@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit RequiredValidatorImpl;
+unit UploadedFileValidatorImpl;
 
 interface
 
@@ -24,12 +24,11 @@ type
 
     (*!------------------------------------------------
      * basic class having capability to
-     * validate required input data, i.e, data that must
-     * be present and not empty
+     * validate field that is a valid uploaded file
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TRequiredValidator = class(TBaseValidator)
+    TUploadedFileValidator = class(TBaseValidator)
     protected
         (*!------------------------------------------------
          * actual data validation
@@ -61,20 +60,16 @@ type
 
 implementation
 
-uses
-
-    KeyValueTypes;
-
 resourcestring
 
-    sErrFieldIsRequired = 'Field %s is required and not empty';
+    sErrFieldIsUploadedFile = 'Field %s must be a valid uploaded file';
 
     (*!------------------------------------------------
      * constructor
      *-------------------------------------------------*)
-    constructor TRequiredValidator.create();
+    constructor TUploadedFileValidator.create();
     begin
-        inherited create(sErrFieldIsRequired);
+        inherited create(sErrFieldIsUploadedFile);
     end;
 
     (*!------------------------------------------------
@@ -87,15 +82,13 @@ resourcestring
      *-------------------------------------------------
      * We assume dataToValidate <> nil
      *-------------------------------------------------*)
-    function TRequiredValidator.isValid(
+    function TUploadedFileValidator.isValid(
         const key : shortstring;
         const dataToValidate : IList;
         const request : IRequest
     ) : boolean;
-    var val : PKeyValue;
     begin
-        val := dataToValidate.find(key);
-        result := (val <> nil) and isValidData(val^.value);
+        result := (request.getUploadedFile(key) <> nil);
     end;
 
     (*!------------------------------------------------
@@ -104,8 +97,9 @@ resourcestring
      * @param dataToValidate input data
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
-    function TRequiredValidator.isValidData(const dataToValidate : string) : boolean;
+    function TUploadedFileValidator.isValidData(const dataToValidate : string) : boolean;
     begin
-        result := (dataToValidate <> '');
+        //not used here but we must implement as this is abstract method
+        result := true;
     end;
 end.

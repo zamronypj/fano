@@ -16,6 +16,7 @@ interface
 uses
 
     ListIntf,
+    RequestIntf,
     ValidatorIntf;
 
 type
@@ -55,11 +56,13 @@ type
          *-------------------------------------------------
          * @param key name of field
          * @param dataToValidate input data
+         * @param request request object
          * @return true if data is valid otherwise false
          *-------------------------------------------------*)
         function isValid(
             const key : shortstring;
-            const dataToValidate : IList
+            const dataToValidate : IList;
+            const request : IRequest
         ) : boolean; virtual;
 
         (*!------------------------------------------------
@@ -75,6 +78,7 @@ implementation
 
 uses
 
+    KeyValueTypes,
     sysutils;
 
     (*!------------------------------------------------
@@ -108,12 +112,15 @@ uses
      *-------------------------------------------------
      * @param key name of field
      * @param dataToValidate input data
+     * @param request request object
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
     function TBaseValidator.isValid(
         const key : shortstring;
-        const dataToValidate : IList
+        const dataToValidate : IList;
+        const request : IRequest
     ) : boolean;
+    var val : PKeyValue;
     begin
         val := dataToValidate.find(key);
         if (val = nil) then

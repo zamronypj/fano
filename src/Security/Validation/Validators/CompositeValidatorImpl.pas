@@ -15,13 +15,14 @@ interface
 
 uses
 
-    classes,
     ListIntf,
+    RequestIntf,
     ValidatorIntf,
-    ValidatorCollectionIntf,
     BaseValidatorImpl;
 
 type
+
+    TValidatorArray = array of IValidator;
 
     (*!------------------------------------------------
      * basic class having capability to
@@ -31,9 +32,9 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *------------------------------------------------*)
-    TCompositeValidator = class(TBaseValidator, IValidatorCollection)
+    TCompositeValidator = class(TBaseValidator)
     private
-        validatorList : TInterfaceList;
+        fValidators : TValidatorArray;
     protected
         (*!------------------------------------------------
          * actual data validation
@@ -43,7 +44,7 @@ type
          *-------------------------------------------------*)
         function isValidData(var dataToValidate : string) : boolean; override;
     public
-        constructor create(const errMsgFormat : string);
+        constructor create(const avalidators : array of IValidator);
         destructor destroy(); override;
 
         (*!------------------------------------------------
@@ -51,47 +52,52 @@ type
          *-------------------------------------------------
          * @param key name of field
          * @param dataToValidate input data
+         * @param request request object
          * @return true if data is valid otherwise false
          *-------------------------------------------------*)
          function isValid(
              const key : shortstring;
-             const dataToValidate : IList
+             const dataToValidate : IList;
+            const request : IRequest
          ) : boolean; override;
 
-        (*!------------------------------------------------
-         * Add validator to collection
-         *-------------------------------------------------
-         * @param validator validator instance to add
-         * @return current validator collection
-         *-------------------------------------------------*)
-        function add(const validator : IValidator) : IValidatorCollection;
-
-        (*!------------------------------------------------
-         * get number of validator in collection
-         *-------------------------------------------------
-         * @return current validator collection
-         *-------------------------------------------------*)
-        function count() : integer;
-
-        (*!------------------------------------------------
-         * get validator by index
-         *-------------------------------------------------
-         * @return validator instance
-         *-------------------------------------------------*)
-        function get(const indx : integer) : IValidator;
     end;
 
 implementation
 
-    constructor TCompositeValidator.create(const errMsgFormat : string);
+    function initValidators(const avalidators : array of IValidator) : TValidatorArray;
+    var i, len : integer;
     begin
-        inherited create(errMsgFormat);
-        validatorList := TInterfaceList.create();
+        len := high(avalidators) - low(avalidators) + 1;
+        setLength(result, len);
+        for i := 0 to len -1 do
+        begin
+            result[i] := avalidators[i];
+        end;
+    end;
+
+    function freeValidators(const validators : TValidatorArray) : TValidatorArray;
+    var i, len : integer;
+    begin
+        len := length(validators);
+        for i := 0 to len -1 do
+        begin
+            result[i] := nil;
+        end;
+        setLength(result, 0);
+        result := nil;
+    end;
+
+    constructor TCompositeValidator.create(const avalidators : array of IValidator);
+    begin
+        //just set empty error string. We will get from external validators
+        inherited create('');
+        fValidators := initValidators(avalidators);
     end;
 
     destructor TCompositeValidator.destroy();
     begin
-        validatorList.free();
+        fValidators := freeValidators(fValidators);
         inherited destroy();
     end;
 
@@ -116,53 +122,21 @@ implementation
      *-------------------------------------------------*)
     function TCompositeValidator.isValid(
         const key : shortstring;
-        const dataToValidate : IList
+        const dataToValidate : IList;
+        const request : IRequest
     ) : boolean;
     var i, len : integer;
-        validator : IValidator;
     begin
         result := true;
-        len := count();
+        len := length(fValidators);
         for i := 0 to len-1 do
         begin
-            validator := get(i);
-            if (not validator.isValid(key, dataToValidate)) then
+            if (not fValidators[i].isValid(key, dataToValidate, request)) then
             begin
                 result := false;
+                errorMsgFormat := fValidators[i].errorMessage(key);
                 exit();
             end;
         end;
-    end;
-
-    (*!------------------------------------------------
-     * Add validator to collection
-     *-------------------------------------------------
-     * @param validator validator instance to add
-     * @return current validator collection
-     *-------------------------------------------------*)
-    function TCompositeValidator.add(const validator : IValidator) : IValidatorCollection;
-    begin
-        validatorList.add(validator);
-        result := self;
-    end;
-
-    (*!------------------------------------------------
-     * get number of validator in collection
-     *-------------------------------------------------
-     * @return current validator collection
-     *-------------------------------------------------*)
-    function TCompositeValidator.count() : integer;
-    begin
-        result := validatorList.count;
-    end;
-
-    (*!------------------------------------------------
-     * get validator by index
-     *-------------------------------------------------
-     * @return validator instance
-     *-------------------------------------------------*)
-    function TCompositeValidator.get(const indx : integer) : IValidator;
-    begin
-        result := validatorList[indx] as IValidator;
     end;
 end.

@@ -55,3 +55,7 @@ TUuidValidator = UuidValidatorImpl.TUuidValidator;
 TMinLengthValidator = MinLengthValidatorImpl.TMinLengthValidator;
 TMaxLengthValidator = MaxLengthValidatorImpl.TMaxLengthValidator;
 TEqualLengthValidator = EqualLengthValidatorImpl.TEqualLengthValidator;
+
+TUploadedFileValidator = UploadedFileValidatorImpl.TUploadedFileValidator;
+TUploadedMimeValidator = UploadedMimeValidatorImpl.TUploadedMimeValidator;
+TUploadedSizeValidator = UploadedSizeValidatorImpl.TUploadedSizeValidator;

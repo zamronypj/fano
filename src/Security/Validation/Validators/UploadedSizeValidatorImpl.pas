@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit RequiredValidatorImpl;
+unit UploadedSizeValidatorImpl;
 
 interface
 
@@ -15,34 +15,29 @@ interface
 
 uses
 
+    SysUtils,
     ListIntf,
     RequestIntf,
     ValidatorIntf,
-    BaseValidatorImpl;
+    UploadedFileValidatorImpl;
 
 type
 
     (*!------------------------------------------------
      * basic class having capability to
-     * validate required input data, i.e, data that must
-     * be present and not empty
+     * validate field that is a valid uploaded file size
+     * must not exceed maximum size
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TRequiredValidator = class(TBaseValidator)
-    protected
-        (*!------------------------------------------------
-         * actual data validation
-         *-------------------------------------------------
-         * @param dataToValidate input data
-         * @return true if data is valid otherwise false
-         *-------------------------------------------------*)
-        function isValidData(var dataToValidate : string) : boolean; override;
+    TUploadedSizeValidator = class(TUploadedFileValidator)
+    private
+        fMaxSize : int64;
     public
         (*!------------------------------------------------
          * constructor
          *-------------------------------------------------*)
-        constructor create();
+        constructor create(const maxSize : int64);
 
         (*!------------------------------------------------
          * Validate data
@@ -63,18 +58,34 @@ implementation
 
 uses
 
-    KeyValueTypes;
+    UploadedFileCollectionIntf;
 
 resourcestring
 
-    sErrFieldIsRequired = 'Field %s is required and not empty';
+    sErrFieldIsUploadedSize = 'Field %s must be a valid uploaded file with size not exceed ';
+
+    function isValidSize(const uploadedFiles : IUploadedFiles; const size : int64) : boolean;
+    var i, len : integer;
+    begin
+        result := true;
+        len := length(uploadedFiles);
+        for i:= 0 to len - 1 do
+        begin
+            if (uploadedFiles[i].size() > size) then
+            begin
+                result := false;
+                exit();
+            end;
+        end;
+    end;
 
     (*!------------------------------------------------
      * constructor
      *-------------------------------------------------*)
-    constructor TRequiredValidator.create();
+    constructor TUploadedSizeValidator.create(const maxSize : int64);
     begin
-        inherited create(sErrFieldIsRequired);
+        inherited create(sErrFieldIsUploadedSize);
+        fMaxSize := maxSize;
     end;
 
     (*!------------------------------------------------
@@ -87,25 +98,20 @@ resourcestring
      *-------------------------------------------------
      * We assume dataToValidate <> nil
      *-------------------------------------------------*)
-    function TRequiredValidator.isValid(
+    function TUploadedSizeValidator.isValid(
         const key : shortstring;
         const dataToValidate : IList;
         const request : IRequest
     ) : boolean;
-    var val : PKeyValue;
     begin
-        val := dataToValidate.find(key);
-        result := (val <> nil) and isValidData(val^.value);
-    end;
+        result := inherited isValid(key, dataToValidate, request);
+        if not result then
+        begin
+            //not valid uploaded file
+            exit();
+        end;
 
-    (*!------------------------------------------------
-     * actual data validation
-     *-------------------------------------------------
-     * @param dataToValidate input data
-     * @return true if data is valid otherwise false
-     *-------------------------------------------------*)
-    function TRequiredValidator.isValidData(const dataToValidate : string) : boolean;
-    begin
-        result := (dataToValidate <> '');
+        //if we get here, it means it is valid uploaded file, test for its size
+        result := isValidSize(request.getUploadedFile(key), fMaxSize);
     end;
 end.
