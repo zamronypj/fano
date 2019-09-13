@@ -66,7 +66,7 @@ implementation
 
 uses
 
-    HttpCodeResponseImpl;
+    HttpCodeResponseImpl,
     ValidationResultTypes;
 
     constructor TValidationMiddleware.create(
@@ -104,16 +104,16 @@ uses
         validationRes := fValidation.validate(request);
         canContinue := (not fStopOnValidationError) or validationRes.isValid;
 
-        if (not canContinue) then
+        if (canContinue) then
+        begin
+            result := response;
+        end else
         begin
             result := THttpCodeResponse.create(
                 500,
                 validationRes.errorMessages[0].errorMessage,
                 response.headers()
             );
-        end else
-        begin
-            result := response;
         end;
     end;
 
