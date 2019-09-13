@@ -8,7 +8,7 @@
 
 (*! ---------------------------------------------
  * alias for validators implementation in security
- * that is included in security.aliases.inc
+ * that is included in validations.aliases.inc
  *
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
  *-----------------------------------------------*)

@@ -7,11 +7,16 @@
  *}
 
 (*! ---------------------------------------------
- * implementation units for security
- * that is included in fano.pas unit
+ * list of cors units in security
+ * that is included in implementations.inc
  *
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
  *-----------------------------------------------*)
 
-{$INCLUDE validations.implementations.inc}
-{$INCLUDE cors.implementations.inc}
+CorsImpl,
+CorsConfigImpl,
+NullCorsImpl,
+CorsMiddlewareImpl,
+BaseCorsMiddlewareFactoryImpl,
+CorsMiddlewareFactoryImpl,
+NullCorsMiddlewareFactoryImpl,
