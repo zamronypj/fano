@@ -154,6 +154,23 @@ type
         function getEnvironment() : ICGIEnvironment;
 
         (*!------------------------------------------------
+         * get request query string or body data
+         *-------------------------------------------------
+         * @param string key name of key
+         * @param string defValue default value to use if key
+         *               does not exist
+         * @return string value
+         *------------------------------------------------*)
+        function getParam(const key: string; const defValue : string = '') : string;
+
+        (*!------------------------------------------------
+         * get all request query string body data
+         *-------------------------------------------------
+         * @return array of query string and parsed body params
+         *------------------------------------------------*)
+        function getParams() : IList;
+
+        (*!------------------------------------------------
          * test if current request is coming from AJAX request
          *-------------------------------------------------
          * @return true if ajax request
@@ -321,6 +338,29 @@ implementation
     function TFcgiRequest.getEnvironment() : ICGIEnvironment;
     begin
         result := fRequest.getEnvironment();
+    end;
+
+    (*!------------------------------------------------
+     * get single query param or body param value by its name
+     *-------------------------------------------------
+     * @param string key name of key
+     * @param string defValue default value to use if key
+     *               does not exist
+     * @return string value
+     *------------------------------------------------*)
+    function TFcgiRequest.getParam(const key: string; const defValue : string = '') : string;
+    begin
+        result := fRequest.getParam(key, defValue);
+    end;
+
+    (*!------------------------------------------------
+     * get all request query strings or body data
+     *-------------------------------------------------
+     * @return list of request query string parameters
+     *------------------------------------------------*)
+    function TFcgiRequest.getParams() : IList;
+    begin
+        result := fRequest.getParams();
     end;
 
     (*!------------------------------------------------
