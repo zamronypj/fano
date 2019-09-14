@@ -76,16 +76,17 @@ implementation
         end;
     end;
 
-    function freeValidators(const validators : TValidatorArray) : TValidatorArray;
+    function freeValidators(var validators : TValidatorArray) : TValidatorArray;
     var i, len : integer;
     begin
         len := length(validators);
         for i := 0 to len -1 do
         begin
-            result[i] := nil;
+            validators[i] := nil;
         end;
-        setLength(result, 0);
-        result := nil;
+        setLength(validators, 0);
+        validators := nil;
+        result := validators;
     end;
 
     constructor TCompositeValidator.create(const avalidators : array of IValidator);
