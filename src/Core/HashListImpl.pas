@@ -18,11 +18,12 @@ uses
     ListIntf;
 
 type
-    {------------------------------------------------
-     interface for any class having capability to store
-     hash list
-     @author Zamrony P. Juhara <zamronypj@yahoo.com>
-    -----------------------------------------------}
+
+    (*!------------------------------------------------
+     * basic class having capability to store hash list
+     *
+     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+     *-----------------------------------------------*)
     THashList = class(TInterfacedObject, IList)
     private
         hashes : TFPHashList;
@@ -55,8 +56,8 @@ implementation
 
     destructor THashList.destroy();
     begin
-        inherited destroy();
         hashes.free();
+        inherited destroy();
     end;
 
     function THashList.count() : integer;
