@@ -20,4 +20,6 @@ ValidationFactoryImpl,
 EInvalidValidatorImpl,
 ValidationCollectionImpl,
 {$INCLUDE validators.implementations.inc}
+
 ValidationMiddlewareImpl,
+ValidationMiddlewareWithHandlerImpl,
