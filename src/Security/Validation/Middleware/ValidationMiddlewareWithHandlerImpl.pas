@@ -32,7 +32,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TValidationMiddlewareWithHandler. = class(TInjectableObject, IMiddleware)
+    TValidationMiddlewareWithHandler = class(TInjectableObject, IMiddleware)
     private
         fValidation : IRequestValidator;
         fValidationErrorHandler : IRequestHandler;
