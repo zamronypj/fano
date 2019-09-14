@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit ValidationMiddlewareImpl;
+unit ValidationMiddlewareWithHandlerImpl;
 
 interface
 
@@ -18,26 +18,28 @@ uses
     DependencyIntf,
     RequestIntf,
     ResponseIntf,
-    RequestValidatorIntf,
+    RequestValidatorintf,
     MiddlewareIntf,
+    RequestHandlerIntf,
     InjectableObjectImpl;
 
 type
 
     (*!------------------------------------------------
      * basic validation class having capability to
-     * validate input data from request instance
+     * validate input data from request instance and display
+     * custom validation error response
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TValidationMiddleware = class(TInjectableObject, IMiddleware)
+    TValidationMiddlewareWithHandler. = class(TInjectableObject, IMiddleware)
     private
         fValidation : IRequestValidator;
-        fStopOnValidationError : boolean;
+        fValidationErrorHandler : IRequestHandler;
     public
         constructor create(
             const validationInst : IRequestValidator;
-            const stopOnValidationError : boolean = false
+            const validationErrorHandler : IRequestHandler
         );
         destructor destroy(); override;
 
@@ -64,23 +66,20 @@ type
 
 implementation
 
-uses
 
-    HttpCodeResponseImpl,
-    ValidationResultTypes;
-
-    constructor TValidationMiddleware.create(
+    constructor TValidationMiddlewareWithHandler.create(
         const validationInst : IRequestValidator;
-        const stopOnValidationError : boolean = false
+        const validationErrorHandler : IRequestHandler
     );
     begin
         fValidation := validationInst;
-        fStopOnValidationError := stopOnValidationError;
+        fValidationErrorHandler := validationErrorHandler;
     end;
 
-    destructor TValidationMiddleware.destroy();
+    destructor TValidationMiddlewareWithHandler.destroy();
     begin
         fValidation := nil;
+        fValidationErrorHandler := nil;
         inherited destroy();
     end;
 
@@ -94,27 +93,20 @@ uses
      *        to stop execution
      * @return response
      *----------------------------------------*)
-    function TValidationMiddleware.handleRequest(
+    function TValidationMiddlewareWithHandler.handleRequest(
         const request : IRequest;
         const response : IResponse;
         var canContinue : boolean
     ) : IResponse;
-    var validationRes : TValidationResult;
     begin
-        validationRes := fValidation.validate(request);
-        canContinue := (not fStopOnValidationError) or validationRes.isValid;
-
+        canContinue := fValidation.validate(request).isValid;
         if (canContinue) then
         begin
             result := response;
         end else
         begin
-            result := THttpCodeResponse.create(
-                500,
-                //validation failed, errorMessages must has one error message at least
-                validationRes.errorMessages[0].errorMessage,
-                response.headers()
-            );
+            //validation failed, let validation error handler take care
+            result := fValidationErrorHandler.handleRequest(request, response);
         end;
     end;
 
