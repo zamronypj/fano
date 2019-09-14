@@ -197,9 +197,9 @@ type
         i, ctr, lenBody, lenQuery : integer;
     begin
         //merge validation result
-        valResBody := validateBody(request);
         valResQuery := validateQueryStr(request);
-        result.isValid := valResBody.isValid and valResQuery.isValid;
+        valResBody := validateBody(request);
+        result.isValid := valResQuery.isValid or valResBody.isValid;
         lenBody:=length(valResBody.errorMessages);
         lenQuery:=length(valResQuery.errorMessages);
         setlength(result.errorMessages, lenBody + lenQuery);
