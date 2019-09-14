@@ -89,7 +89,8 @@ resourcestring
         if (indx >= 0) and (indx < tot1st) then
         begin
             result := fFirstList.get(indx);
-        end else (indx >= tot1st) and (indx < tot1st + fSecondList.count()) then
+        end else
+        if (indx >= tot1st) and (indx < tot1st + fSecondList.count()) then
         begin
             result := fSecondList.get(indx - tot1st);
         end else
@@ -111,7 +112,8 @@ resourcestring
         if (indx >= 0) and (indx < tot1st) then
         begin
             fFirstList.delete(indx);
-        end else (indx >= tot1st) and (indx < tot1st + fSecondList.count()) then
+        end else
+        if (indx >= tot1st) and (indx < tot1st + fSecondList.count()) then
         begin
             fSecondList.delete(indx - tot1st);
         end;
@@ -145,7 +147,8 @@ resourcestring
         if (indx >= 0) and (indx < tot1st) then
         begin
             result := fFirstList.nameOfIndex(indx);
-        end else (indx >= tot1st) and (indx < tot1st + fSecondList.count()) then
+        end else
+        if (indx >= tot1st) and (indx < tot1st + fSecondList.count()) then
         begin
             result := fSecondList.nameOfIndex(indx - tot1st);
         end else
