@@ -80,13 +80,13 @@ resourcestring
     function TCompositeList.get(const indx : integer) : pointer;
     var tot1st : integer;
     begin
-        if not ((indx >= 0) and (indx < count()) then
+        if not ((indx >= 0) and (indx < count())) then
         begin
             raise EIndexOutOfBound.create(sErrIndexOutOfBound);
         end;
 
         tot1st := fFirstList.count();
-        if (indx >=0) and (indx < tot1st) then
+        if (indx >= 0) and (indx < tot1st) then
         begin
             result := fFirstList.get(indx);
         end else (indx >= tot1st) and (indx < tot1st + fSecondList.count()) then
@@ -102,7 +102,7 @@ resourcestring
     procedure TCompositeList.delete(const indx : integer);
     var tot1st : integer;
     begin
-        if not ((indx >= 0) and (indx < count()) then
+        if not ((indx >= 0) and (indx < count())) then
         begin
             raise EIndexOutOfBound.create(sErrIndexOutOfBound);
         end;
@@ -136,7 +136,7 @@ resourcestring
     function TCompositeList.keyOfIndex(const indx : integer) : shortstring;
     var tot1st : integer;
     begin
-        if not ((indx >= 0) and (indx < count()) then
+        if not ((indx >= 0) and (indx < count())) then
         begin
             raise EIndexOutOfBound.create(sErrIndexOutOfBound);
         end;
