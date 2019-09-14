@@ -38,8 +38,6 @@ type
         validatorList : IList;
         procedure clearValidator();
         function validateKeyValue(const inputData : IList; const request : IRequest) : TValidationResult;
-        function validateBody(const request : IRequest) : TValidationResult;
-        function validateQueryStr(const request : IRequest) : TValidationResult;
     public
 
         constructor create(const validators : IList);
@@ -165,57 +163,15 @@ type
     end;
 
     (*!------------------------------------------------
-     * Validate data from request body
-     *-------------------------------------------------
-     * @param request request instance to validate
-     * @return true if data is valid otherwise false
-     *-------------------------------------------------*)
-    function TValidation.validateBody(const request : IRequest) : TValidationResult;
-    begin
-        result := validateKeyValue(request.getParsedBodyParams(), request);
-    end;
-
-    (*!------------------------------------------------
-     * Validate data from request query string
-     *-------------------------------------------------
-     * @param request request instance to validate
-     * @return true if data is valid otherwise false
-     *-------------------------------------------------*)
-    function TValidation.validateQueryStr(const request : IRequest) : TValidationResult;
-    begin
-        result := validateKeyValue(request.getQueryParams(), request);
-    end;
-
-    (*!------------------------------------------------
      * Validate data from request
      *-------------------------------------------------
      * @param request request instance to validate
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
     function TValidation.validate(const request : IRequest)  : TValidationResult;
-    var valResBody, valResQuery: TValidationResult;
-        i, ctr, lenBody, lenQuery : integer;
     begin
-        //merge validation result
-        valResQuery := validateQueryStr(request);
-        valResBody := validateBody(request);
-        result.isValid := valResQuery.isValid and valResBody.isValid;
-        lenQuery:=length(valResQuery.errorMessages);
-        lenBody:=length(valResBody.errorMessages);
-        setlength(result.errorMessages, lenBody + lenQuery);
-        //TODO: can we improve by removing loop?
-        ctr := 0;
-        for i:=0 to lenQuery-1 do
-        begin
-            result.errorMessages[ctr] := valResQuery.errorMessages[i];
-            inc(ctr);
-        end;
-        for i:=0 to lenBody-1 do
-        begin
-            result.errorMessages[ctr] := valResBody.errorMessages[i];
-            inc(ctr);
-        end;
-        validationResult := result;
+        validationResult := validateKeyValue(request.getParams(), request);
+        result := validationResult;
     end;
 
     (*!------------------------------------------------
