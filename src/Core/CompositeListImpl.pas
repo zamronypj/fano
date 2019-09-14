@@ -146,11 +146,11 @@ resourcestring
         tot1st := fFirstList.count();
         if (indx >= 0) and (indx < tot1st) then
         begin
-            result := fFirstList.nameOfIndex(indx);
+            result := fFirstList.keyOfIndex(indx);
         end else
         if (indx >= tot1st) and (indx < tot1st + fSecondList.count()) then
         begin
-            result := fSecondList.nameOfIndex(indx - tot1st);
+            result := fSecondList.keyOfIndex(indx - tot1st);
         end else
         begin
             //this should not happen
@@ -166,11 +166,11 @@ resourcestring
      *-----------------------------------------------*)
     function TCompositeList.indexOf(const key : shortstring) : integer;
     begin
-        result := fFirstList.findIndexOf(key);
+        result := fFirstList.indexOf(key);
         if (result = -1) then
         begin
             //not found in first list, try second one
-            result := fSecondList.findIndexOf(key);
+            result := fSecondList.indexOf(key);
             if (result <> -1) then
             begin
                 //if we get here then it is found, add offset to make it
