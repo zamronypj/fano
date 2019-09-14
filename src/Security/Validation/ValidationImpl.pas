@@ -199,20 +199,20 @@ type
         //merge validation result
         valResQuery := validateQueryStr(request);
         valResBody := validateBody(request);
-        result.isValid := valResQuery.isValid or valResBody.isValid;
-        lenBody:=length(valResBody.errorMessages);
+        result.isValid := valResQuery.isValid and valResBody.isValid;
         lenQuery:=length(valResQuery.errorMessages);
+        lenBody:=length(valResBody.errorMessages);
         setlength(result.errorMessages, lenBody + lenQuery);
         //TODO: can we improve by removing loop?
         ctr := 0;
-        for i:=0 to lenBody-1 do
-        begin
-            result.errorMessages[ctr] := valResBody.errorMessages[i];
-            inc(ctr);
-        end;
         for i:=0 to lenQuery-1 do
         begin
             result.errorMessages[ctr] := valResQuery.errorMessages[i];
+            inc(ctr);
+        end;
+        for i:=0 to lenBody-1 do
+        begin
+            result.errorMessages[ctr] := valResBody.errorMessages[i];
             inc(ctr);
         end;
         validationResult := result;
