@@ -35,7 +35,6 @@ type
     TCompositeValidator = class(TBaseValidator)
     private
         fValidators : TValidatorArray;
-        fStopOnFail : boolean;
     protected
         (*!------------------------------------------------
          * actual data validation
@@ -45,10 +44,7 @@ type
          *-------------------------------------------------*)
         function isValidData(const dataToValidate : string) : boolean; override;
     public
-        constructor create(
-            const avalidators : array of IValidator;
-            const stopOnFail : boolean = true
-        );
+        constructor create(const avalidators : array of IValidator);
         destructor destroy(); override;
 
         (*!------------------------------------------------
@@ -93,16 +89,11 @@ implementation
         result := validators;
     end;
 
-    constructor TCompositeValidator.create(
-        const avalidators : array of IValidator;
-        const stopOnFail : boolean = true
-    );
+    constructor TCompositeValidator.create(const avalidators : array of IValidator);
     begin
         //just set empty error string. We will get from external validators
         inherited create('');
         fValidators := initValidators(avalidators);
-        //stop validation as soon as one of validation rule fail
-        fStopOnFail := stopOnFail;
     end;
 
     destructor TCompositeValidator.destroy();
@@ -145,11 +136,7 @@ implementation
             begin
                 result := false;
                 errorMsgFormat := fValidators[i].errorMessage(key);
-                if fStopOnFail then
-                begin
-                    //just exit and ignore other validation rule check
-                    exit();
-                end;
+                exit();
             end;
         end;
     end;
