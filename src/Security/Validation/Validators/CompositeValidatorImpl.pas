@@ -66,7 +66,7 @@ implementation
     begin
         result := true;
         len := length(fValidators);
-        for i := 0 to len-1 do
+        for i := 0 to len - 1 do
         begin
             if (not fValidators[i].isValid(key, dataToValidate, request)) then
             begin
