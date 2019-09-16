@@ -18,11 +18,10 @@ uses
     ListIntf,
     RequestIntf,
     ValidatorIntf,
-    BaseValidatorImpl;
+    BaseValidatorImpl,
+    ValidatorArrayTypes;
 
 type
-
-    TValidatorArray = array of IValidator;
 
     (*!------------------------------------------------
      * basic class having capability to
@@ -32,21 +31,8 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *------------------------------------------------*)
-    TCompositeValidator = class(TBaseValidator)
-    private
-        fValidators : TValidatorArray;
-    protected
-        (*!------------------------------------------------
-         * actual data validation
-         *-------------------------------------------------
-         * @param dataToValidate input data
-         * @return true if data is valid otherwise false
-         *-------------------------------------------------*)
-        function isValidData(const dataToValidate : string) : boolean; override;
+    TCompositeValidator = class(TBaseCompositeValidator)
     public
-        constructor create(const avalidators : array of IValidator);
-        destructor destroy(); override;
-
         (*!------------------------------------------------
          * Validate data
          *-------------------------------------------------
@@ -64,56 +50,6 @@ type
     end;
 
 implementation
-
-    function initValidators(const avalidators : array of IValidator) : TValidatorArray;
-    var i, len : integer;
-    begin
-        len := high(avalidators) - low(avalidators) + 1;
-        setLength(result, len);
-        for i := 0 to len -1 do
-        begin
-            result[i] := avalidators[i];
-        end;
-    end;
-
-    function freeValidators(var validators : TValidatorArray) : TValidatorArray;
-    var i, len : integer;
-    begin
-        len := length(validators);
-        for i := 0 to len -1 do
-        begin
-            validators[i] := nil;
-        end;
-        setLength(validators, 0);
-        validators := nil;
-        result := validators;
-    end;
-
-    constructor TCompositeValidator.create(const avalidators : array of IValidator);
-    begin
-        //just set empty error string. We will get from external validators
-        inherited create('');
-        fValidators := initValidators(avalidators);
-    end;
-
-    destructor TCompositeValidator.destroy();
-    begin
-        fValidators := freeValidators(fValidators);
-        inherited destroy();
-    end;
-
-    (*!------------------------------------------------
-     * actual data validation
-     *-------------------------------------------------
-     * @param dataToValidate input data
-     * @return true if data is valid otherwise false
-     *-------------------------------------------------*)
-    function TCompositeValidator.isValidData(const dataToValidate : string) : boolean;
-    begin
-        //intentionally always pass validation
-        //because we delegate validation to external validators
-        result := true;
-    end;
 
     (*!------------------------------------------------
      * Validate data
