@@ -21,7 +21,8 @@ uses
     ValidatorIntf,
     RequestValidatorintf,
     ValidationRulesIntf,
-    ValidationResultTypes;
+    ValidationResultTypes,
+    InjectableObjectImpl;
 
 type
 
@@ -31,14 +32,12 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TValidation = class(TInterfacedObject, IRequestValidator, IValidationRules, IDependency)
+    TValidation = class(TInjectableObject, IRequestValidator, IValidationRules)
     private
         validationResult : TValidationResult;
         validatorList : IList;
         procedure clearValidator();
-        function validateKeyValue(const inputData : IList) : TValidationResult;
-        function validateBody(const request : IRequest) : TValidationResult;
-        function validateQueryStr(const request : IRequest) : TValidationResult;
+        function validateKeyValue(const inputData : IList; const request : IRequest) : TValidationResult;
     public
 
         constructor create(const validators : IList);
@@ -105,9 +104,9 @@ type
 
     destructor TValidation.destroy();
     begin
-        inherited destroy();
         clearValidator();
         validatorList := nil;
+        inherited destroy();
     end;
 
     procedure TValidation.clearValidator();
@@ -128,9 +127,13 @@ type
      * Validate data from key value pair array
      *-------------------------------------------------
      * @param inputData array of key value pair
+     * @param request request object
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
-    function TValidation.validateKeyValue(const inputData : IList) : TValidationResult;
+    function TValidation.validateKeyValue(
+        const inputData : IList;
+        const request : IRequest
+    ) : TValidationResult;
     var i, len, numFailValidation : integer;
         valRec : PValidatorRec;
     begin
@@ -143,7 +146,7 @@ type
         for i:= 0 to len-1 do
         begin
             valRec := validatorList.get(i);
-            if (not valRec^.validator.isValid(valRec^.key, inputData)) then
+            if (not valRec^.validator.isValid(valRec^.key, inputData, request)) then
             begin
                 //validation is failed, get validation error message
                 with result.errorMessages[numFailValidation] do
@@ -160,57 +163,15 @@ type
     end;
 
     (*!------------------------------------------------
-     * Validate data from request body
-     *-------------------------------------------------
-     * @param request request instance to validate
-     * @return true if data is valid otherwise false
-     *-------------------------------------------------*)
-    function TValidation.validateBody(const request : IRequest) : TValidationResult;
-    begin
-        result := validateKeyValue(request.getParsedBodyParams());
-    end;
-
-    (*!------------------------------------------------
-     * Validate data from request query string
-     *-------------------------------------------------
-     * @param request request instance to validate
-     * @return true if data is valid otherwise false
-     *-------------------------------------------------*)
-    function TValidation.validateQueryStr(const request : IRequest) : TValidationResult;
-    begin
-        result := validateKeyValue(request.getQueryParams());
-    end;
-
-    (*!------------------------------------------------
      * Validate data from request
      *-------------------------------------------------
      * @param request request instance to validate
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
     function TValidation.validate(const request : IRequest)  : TValidationResult;
-    var valResBody, valResQuery: TValidationResult;
-        i, ctr, lenBody, lenQuery : integer;
     begin
-        //merge validation result
-        valResBody := validateBody(request);
-        valResQuery := validateQueryStr(request);
-        result.isValid := valResBody.isValid and valResQuery.isValid;
-        lenBody:=length(valResBody.errorMessages);
-        lenQuery:=length(valResQuery.errorMessages);
-        setlength(result.errorMessages, lenBody + lenQuery);
-        //TODO: can we improve by removing loop?
-        ctr := 0;
-        for i:=0 to lenBody-1 do
-        begin
-            result.errorMessages[ctr] := valResBody.errorMessages[i];
-            inc(ctr);
-        end;
-        for i:=0 to lenQuery-1 do
-        begin
-            result.errorMessages[ctr] := valResQuery.errorMessages[i];
-            inc(ctr);
-        end;
-        validationResult := result;
+        validationResult := validateKeyValue(request.getParams(), request);
+        result := validationResult;
     end;
 
     (*!------------------------------------------------

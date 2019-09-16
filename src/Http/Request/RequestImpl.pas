@@ -50,6 +50,7 @@ type
         queryParams : IList;
         cookieParams : IList;
         bodyParams : IList;
+        queryAndBodyParams : IList;
         uploadedFiles: IUploadedFileCollection;
         uploadedFilesWriter: IUploadedFileCollectionWriter;
         multipartFormDataParser : IMultipartFormDataParser;
@@ -67,7 +68,7 @@ type
 
         procedure raiseExceptionIfPostDataTooBig(const contentLength : int64);
 
-        procedure clearParams(const params : IList);
+        procedure clearParams(const aparams : IList);
 
         procedure initParamsFromString(
             const data : string;
@@ -110,7 +111,7 @@ type
          *               does not exist
          * @return string value
          *------------------------------------------------*)
-        function getParam(
+        function getSingleParam(
             const src :IList;
             const key: string;
             const defValue : string = ''
@@ -228,6 +229,23 @@ type
         function getEnvironment() : ICGIEnvironment;
 
         (*!------------------------------------------------
+         * get request query string or body data
+         *-------------------------------------------------
+         * @param string key name of key
+         * @param string defValue default value to use if key
+         *               does not exist
+         * @return string value
+         *------------------------------------------------*)
+        function getParam(const key: string; const defValue : string = '') : string;
+
+        (*!------------------------------------------------
+         * get all request query string body data
+         *-------------------------------------------------
+         * @return array of query string and parsed body params
+         *------------------------------------------------*)
+        function getParams() : IList;
+
+        (*!------------------------------------------------
          * test if current request is coming from AJAX request
          *-------------------------------------------------
          * @return true if ajax request
@@ -241,7 +259,8 @@ uses
 
     sysutils,
     UrlHelpersImpl,
-    EInvalidRequestImpl;
+    EInvalidRequestImpl,
+    CompositeListImpl;
 
 resourcestring
 
@@ -281,7 +300,7 @@ resourcestring
             cookieParams,
             bodyParams
         );
-
+        queryAndBodyParams := TCompositeList.create(queryParams, bodyParams);
     end;
 
     destructor TRequest.destroy();
@@ -293,6 +312,7 @@ resourcestring
         queryParams := nil;
         cookieParams := nil;
         bodyParams := nil;
+        queryAndBodyParams := nil;
         uploadedFiles := nil;
         uploadedFilesWriter := nil;
         multipartFormDataParser := nil;
@@ -322,16 +342,16 @@ resourcestring
         result := fUri;
     end;
 
-    procedure TRequest.clearParams(const params : IList);
+    procedure TRequest.clearParams(const aparams : IList);
     var i, len : integer;
         param : PKeyValue;
     begin
-        len := params.count();
+        len := aparams.count();
         for i:= len-1 downto 0 do
         begin
-            param := params.get(i);
+            param := aparams.get(i);
             dispose(param);
-            params.delete(i);
+            aparams.delete(i);
         end;
     end;
 
@@ -350,11 +370,19 @@ resourcestring
         begin
             keyvalue := arrOfQryStr[i].split('=');
             lenKeyValue := length(keyvalue);
-            if (lenKeyValue = 2) then
+            if (lenKeyValue > 0) then
             begin
                 new(param);
                 param^.key := trim(keyvalue[0]);
-                param^.value := (keyvalue[1]).urlDecode();
+                if (lenKeyValue = 2) then
+                begin
+                    param^.value := (keyvalue[1]).urlDecode();
+                end else
+                begin
+                    //if we get here then we have query parameter with empty data
+                    //such as 'id='
+                    param^.value := '';
+                end;
                 body.add(param^.key, param);
             end;
         end;
@@ -458,7 +486,7 @@ resourcestring
      *               does not exist
      * @return string value
      *------------------------------------------------*)
-    function TRequest.getParam(
+    function TRequest.getSingleParam(
         const src : IList;
         const key: string;
         const defValue : string = ''
@@ -485,7 +513,7 @@ resourcestring
      *------------------------------------------------*)
     function TRequest.getQueryParam(const key: string; const defValue : string = '') : string;
     begin
-        result := getParam(queryParams, key, defValue);
+        result := getSingleParam(queryParams, key, defValue);
     end;
 
     (*!------------------------------------------------
@@ -508,7 +536,7 @@ resourcestring
      *------------------------------------------------*)
     function TRequest.getCookieParam(const key: string; const defValue : string = '') : string;
     begin
-        result := getParam(cookieParams, key, defValue);
+        result := getSingleParam(cookieParams, key, defValue);
     end;
 
     (*!------------------------------------------------
@@ -531,7 +559,7 @@ resourcestring
      *------------------------------------------------*)
     function TRequest.getParsedBodyParam(const key: string; const defValue : string = '') : string;
     begin
-        result := getParam(bodyParams, key, defValue);
+        result := getSingleParam(bodyParams, key, defValue);
     end;
 
     (*!------------------------------------------------
@@ -596,4 +624,26 @@ resourcestring
         result := webEnvironment;
     end;
 
+    (*!------------------------------------------------
+     * get single query param or body param value by its name
+     *-------------------------------------------------
+     * @param string key name of key
+     * @param string defValue default value to use if key
+     *               does not exist
+     * @return string value
+     *------------------------------------------------*)
+    function TRequest.getParam(const key: string; const defValue : string = '') : string;
+    begin
+        result := getSingleParam(queryAndBodyParams, key, defValue);
+    end;
+
+    (*!------------------------------------------------
+     * get all request query strings or body data
+     *-------------------------------------------------
+     * @return list of request query string parameters
+     *------------------------------------------------*)
+    function TRequest.getParams() : IList;
+    begin
+        result := queryAndBodyParams;
+    end;
 end.

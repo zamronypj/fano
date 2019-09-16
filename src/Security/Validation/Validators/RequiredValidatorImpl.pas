@@ -16,6 +16,7 @@ interface
 uses
 
     ListIntf,
+    RequestIntf,
     ValidatorIntf,
     BaseValidatorImpl;
 
@@ -29,6 +30,14 @@ type
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
     TRequiredValidator = class(TBaseValidator)
+    protected
+        (*!------------------------------------------------
+         * actual data validation
+         *-------------------------------------------------
+         * @param dataToValidate input data
+         * @return true if data is valid otherwise false
+         *-------------------------------------------------*)
+        function isValidData(const dataToValidate : string) : boolean; override;
     public
         (*!------------------------------------------------
          * constructor
@@ -38,14 +47,16 @@ type
         (*!------------------------------------------------
          * Validate data
          *-------------------------------------------------
-         * @param key name of field
+         * @param fieldName name of field
          * @param dataToValidate input data
+         * @param request request object
          * @return true if data is valid otherwise false
          *-------------------------------------------------*)
-         function isValid(
-             const key : shortstring;
-             const dataToValidate : IList
-         ) : boolean; override;
+        function isValid(
+            const fieldName : shortstring;
+            const dataToValidate : IList;
+            const request : IRequest
+        ) : boolean; override;
     end;
 
 implementation
@@ -69,20 +80,32 @@ resourcestring
     (*!------------------------------------------------
      * Validate data
      *-------------------------------------------------
-     * @param key name of field
+     * @param fieldName name of field
      * @param dataToValidate input data
+     * @param request request object
      * @return true if data is valid otherwise false
      *-------------------------------------------------
      * We assume dataToValidate <> nil
      *-------------------------------------------------*)
     function TRequiredValidator.isValid(
-        const key : shortstring;
-        const dataToValidate : IList
+        const fieldName : shortstring;
+        const dataToValidate : IList;
+        const request : IRequest
     ) : boolean;
     var val : PKeyValue;
     begin
-        val := dataToValidate.find(key);
-        result := (val <> nil) and (length(val^.value) > 0);
+        val := dataToValidate.find(fieldName);
+        result := (val <> nil) and isValidData(val^.value);
     end;
 
+    (*!------------------------------------------------
+     * actual data validation
+     *-------------------------------------------------
+     * @param dataToValidate input data
+     * @return true if data is valid otherwise false
+     *-------------------------------------------------*)
+    function TRequiredValidator.isValidData(const dataToValidate : string) : boolean;
+    begin
+        result := (dataToValidate <> '');
+    end;
 end.

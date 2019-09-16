@@ -42,3 +42,5 @@ FcgiFrameParserIntf,
 
 ProtocolProcessorIntf,
 ReadyListenerIntf,
+
+RegexIntf,

@@ -27,3 +27,5 @@ IFcgiFrameParser = FcgiFrameParserIntf.IFcgiFrameParser;
 
 IProtocolProcessor = ProtocolProcessorIntf.IProtocolProcessor;
 IReadyListener = ReadyListenerIntf.IReadyListener;
+
+IRegex = RegexIntf.IRegex;

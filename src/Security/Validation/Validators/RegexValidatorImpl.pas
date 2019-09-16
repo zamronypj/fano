@@ -32,6 +32,14 @@ type
     private
         regex : IRegex;
         regexPattern : string;
+    protected
+        (*!------------------------------------------------
+         * actual data validation
+         *-------------------------------------------------
+         * @param dataToValidate input data
+         * @return true if data is valid otherwise false
+         *-------------------------------------------------*)
+        function isValidData(const dataToValidate : string) : boolean; override;
     public
         (*!------------------------------------------------
          * constructor
@@ -50,25 +58,9 @@ type
             const errMsgFormat : string
         );
         destructor destroy(); override;
-
-        (*!------------------------------------------------
-         * Validate data
-         *-------------------------------------------------
-         * @param key name of field
-         * @param dataToValidate input data
-         * @return true if data is valid otherwise false
-         *-------------------------------------------------*)
-         function isValid(
-             const key : shortstring;
-             const dataToValidate : IList
-         ) : boolean; override;
     end;
 
 implementation
-
-uses
-
-    KeyValueTypes;
 
     (*!------------------------------------------------
      * constructor
@@ -94,32 +86,18 @@ uses
 
     destructor TRegexValidator.destroy();
     begin
-        inherited destroy();
         regex := nil;
+        inherited destroy();
     end;
 
     (*!------------------------------------------------
-     * Validate data
+     * actual data validation
      *-------------------------------------------------
-     * @param key name of the field
-     * @param dataToValidate data to validate
+     * @param dataToValidate input data
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
-    function TRegexValidator.isValid(
-        const key : shortstring;
-        const dataToValidate : IList
-    ) : boolean;
-    var val : PKeyValue;
+    function TRegexValidator.isValidData(const dataToValidate : string) : boolean;
     begin
-        val := dataToValidate.find(key);
-        if (val = nil) then
-        begin
-            //if we get here it means there is no field with that name
-            //so assume that validation is success
-            result := true;
-            exit();
-        end;
-
-        result := regex.match(regexPattern, val^.value).matched;
+        result := regex.match(regexPattern, dataToValidate).matched;
     end;
 end.
