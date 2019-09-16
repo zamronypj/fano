@@ -36,8 +36,8 @@ type
         function count() : integer;
         function get(const indx : integer) : pointer;
         procedure delete(const indx : integer);
-        function add(const key : shortstring; const data : pointer) : integer;
-        function find(const key : shortstring) : pointer;
+        function add(const aKey : shortstring; const data : pointer) : integer;
+        function find(const aKey : shortstring) : pointer;
         function keyOfIndex(const indx : integer) : shortstring;
 
         (*!------------------------------------------------
@@ -46,7 +46,7 @@ type
          * @param key name
          * @return index of key
          *-----------------------------------------------*)
-        function indexOf(const key : shortstring) : integer;
+        function indexOf(const aKey : shortstring) : integer;
     end;
 
 implementation
@@ -119,19 +119,19 @@ resourcestring
         end;
     end;
 
-    function TCompositeList.add(const key : shortstring; const data : pointer) : integer;
+    function TCompositeList.add(const aKey : shortstring; const data : pointer) : integer;
     begin
         //just add to the end of list
-        result := fSecondList.add(key, data);
+        result := fSecondList.add(aKey, data);
     end;
 
-    function TCompositeList.find(const key : shortstring) : pointer;
+    function TCompositeList.find(const aKey : shortstring) : pointer;
     begin
-        result := fFirstList.find(key);
+        result := fFirstList.find(aKey);
         if (result = nil) then
         begin
             //not found in first list, try second one
-            result := fSecondList.find(key);
+            result := fSecondList.find(aKey);
         end;
     end;
 
@@ -164,13 +164,13 @@ resourcestring
      * @param key name
      * @return index of key
      *-----------------------------------------------*)
-    function TCompositeList.indexOf(const key : shortstring) : integer;
+    function TCompositeList.indexOf(const aKey : shortstring) : integer;
     begin
-        result := fFirstList.indexOf(key);
+        result := fFirstList.indexOf(aKey);
         if (result = -1) then
         begin
             //not found in first list, try second one
-            result := fSecondList.indexOf(key);
+            result := fSecondList.indexOf(aKey);
             if (result <> -1) then
             begin
                 //if we get here then it is found, add offset to make it

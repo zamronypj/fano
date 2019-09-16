@@ -34,8 +34,8 @@ type
         function count() : integer;
         function get(const indx : integer) : pointer;
         procedure delete(const indx : integer);
-        function add(const key : shortstring; const data : pointer) : integer;
-        function find(const key : shortstring) : pointer;
+        function add(const aKey : shortstring; const data : pointer) : integer;
+        function find(const aKey : shortstring) : pointer;
         function keyOfIndex(const indx : integer) : shortstring;
 
         (*!------------------------------------------------
@@ -44,7 +44,7 @@ type
          * @param key name
          * @return index of key
          *-----------------------------------------------*)
-        function indexOf(const key : shortstring) : integer;
+        function indexOf(const aKey : shortstring) : integer;
     end;
 
 implementation
@@ -75,14 +75,14 @@ implementation
         hashes.delete(indx);
     end;
 
-    function THashList.add(const key : shortstring; const data : pointer) : integer;
+    function THashList.add(const aKey : shortstring; const data : pointer) : integer;
     begin
-        result := hashes.add(key, data);
+        result := hashes.add(aKey, data);
     end;
 
-    function THashList.find(const key : shortstring) : pointer;
+    function THashList.find(const aKey : shortstring) : pointer;
     begin
-        result := hashes.find(key);
+        result := hashes.find(aKey);
     end;
 
     function THashList.keyOfIndex(const indx : integer) : shortstring;
@@ -96,8 +96,8 @@ implementation
      * @param key name
      * @return index of key
      *-----------------------------------------------*)
-    function THashList.indexOf(const key : shortstring) : integer;
+    function THashList.indexOf(const aKey : shortstring) : integer;
     begin
-        result := hashes.findIndexOf(key);
+        result := hashes.findIndexOf(aKey);
     end;
 end.
