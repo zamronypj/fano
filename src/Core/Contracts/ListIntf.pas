@@ -52,19 +52,19 @@ type
         (*!------------------------------------------------
          * add item and associate it with key name
          *-----------------------------------------------
-         * @param key name to use to associate item
+         * @param aKey name to use to associate item
          * @param item item to be added
          * @return index of item
          *-----------------------------------------------*)
-        function add(const key : shortstring; const item : pointer) : integer;
+        function add(const aKey : shortstring; const item : pointer) : integer;
 
         (*!------------------------------------------------
          * find by its key name
          *-----------------------------------------------
-         * @param key name to use to find item
+         * @param aKey name to use to find item
          * @return item instance
          *-----------------------------------------------*)
-        function find(const key : shortstring) : pointer;
+        function find(const aKey : shortstring) : pointer;
 
         (*!------------------------------------------------
          * get key name by using its index
@@ -77,10 +77,10 @@ type
         (*!------------------------------------------------
          * get index by key name
          *-----------------------------------------------
-         * @param key name
+         * @param aKey name
          * @return index of key
          *-----------------------------------------------*)
-        function indexOf(const key : shortstring) : integer;
+        function indexOf(const aKey : shortstring) : integer;
     end;
 
 implementation

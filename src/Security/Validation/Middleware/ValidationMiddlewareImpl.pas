@@ -18,7 +18,7 @@ uses
     DependencyIntf,
     RequestIntf,
     ResponseIntf,
-    RequestValidatorintf,
+    RequestValidatorIntf,
     MiddlewareIntf,
     InjectableObjectImpl;
 
@@ -33,8 +33,12 @@ type
     TValidationMiddleware = class(TInjectableObject, IMiddleware)
     private
         fValidation : IRequestValidator;
+        fStopOnValidationError : boolean;
     public
-        constructor create(const validationInst : IRequestValidator);
+        constructor create(
+            const validationInst : IRequestValidator;
+            const stopOnValidationError : boolean = false
+        );
         destructor destroy(); override;
 
         (*!---------------------------------------
@@ -62,11 +66,16 @@ implementation
 
 uses
 
+    HttpCodeResponseImpl,
     ValidationResultTypes;
 
-    constructor TValidationMiddleware.create(const validationInst : IRequestValidator);
+    constructor TValidationMiddleware.create(
+        const validationInst : IRequestValidator;
+        const stopOnValidationError : boolean = false
+    );
     begin
         fValidation := validationInst;
+        fStopOnValidationError := stopOnValidationError;
     end;
 
     destructor TValidationMiddleware.destroy();
@@ -90,9 +99,23 @@ uses
         const response : IResponse;
         var canContinue : boolean
     ) : IResponse;
+    var validationRes : TValidationResult;
     begin
-        fValidation.validate(request);
-        result := response;
+        validationRes := fValidation.validate(request);
+        canContinue := (not fStopOnValidationError) or validationRes.isValid;
+
+        if (canContinue) then
+        begin
+            result := response;
+        end else
+        begin
+            result := THttpCodeResponse.create(
+                500,
+                //validation failed, errorMessages must has one error message at least
+                validationRes.errorMessages[0].errorMessage,
+                response.headers()
+            );
+        end;
     end;
 
 end.

@@ -23,13 +23,21 @@ type
 
     (*!------------------------------------------------
      * basic class having capability to
-     * validate if data does not less than a reference value
+     * validate if data does not greater than a reference value
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
     TMaxIntegerValidator = class(TBaseValidator)
     private
-        maximumValue : integer;
+        fMaximumValue : integer;
+    protected
+        (*!------------------------------------------------
+         * actual data validation
+         *-------------------------------------------------
+         * @param dataToValidate input data
+         * @return true if data is valid otherwise false
+         *-------------------------------------------------*)
+        function isValidData(const dataToValidate : string) : boolean; override;
     public
         (*!------------------------------------------------
          * constructor
@@ -37,18 +45,6 @@ type
          * @param maxValue maximum value allowed
          *-------------------------------------------------*)
         constructor create(const maxValue : integer);
-
-        (*!------------------------------------------------
-         * Validate data
-         *-------------------------------------------------
-         * @param key name of field
-         * @param dataToValidate input data
-         * @return true if data is valid otherwise false
-         *-------------------------------------------------*)
-         function isValid(
-             const key : shortstring;
-             const dataToValidate : IList
-         ) : boolean; override;
     end;
 
 implementation
@@ -68,38 +64,18 @@ resourcestring
     constructor TMaxIntegerValidator.create(const maxValue : integer);
     begin
         inherited create(sErrFieldMustBeIntegerWithMaxValue + intToStr(maxValue));
-        maximumValue := maxValue;
+        fMaximumValue := maxValue;
     end;
 
     (*!------------------------------------------------
-     * Validate data
+     * actual data validation
      *-------------------------------------------------
-     * @param dataToValidate data to validate
+     * @param dataToValidate input data
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
-    function TMaxIntegerValidator.isValid(
-        const key : shortstring;
-        const dataToValidate : IList
-    ) : boolean;
-    var val : PKeyValue;
-        intValue : integer;
+    function TMaxIntegerValidator.isValidData(const dataToValidate : string) : boolean;
+    var intValue : integer;
     begin
-        val := dataToValidate.find(key);
-        if (val = nil) then
-        begin
-            //if we get here it means there is no field with that name
-            //so assume that validation is success
-            result := true;
-            exit();
-        end;
-
-        try
-            intValue := strToInt(val^.value);
-            result := (intValue <= maximumValue);
-        except
-            //if we get here, mostly because of EConvertError exception
-            //so assume it is not valid integer.
-            result := false;
-        end;
+        result := tryStrToInt(dataToValidate, intValue) and (intValue <= fMaximumValue);
     end;
 end.

@@ -29,7 +29,15 @@ type
      *-------------------------------------------------*)
     TMinIntegerValidator = class(TBaseValidator)
     private
-        minimumValue : integer;
+        fMinimumValue : integer;
+    protected
+        (*!------------------------------------------------
+         * actual data validation
+         *-------------------------------------------------
+         * @param dataToValidate input data
+         * @return true if data is valid otherwise false
+         *-------------------------------------------------*)
+        function isValidData(const dataToValidate : string) : boolean; override;
     public
         (*!------------------------------------------------
          * constructor
@@ -37,26 +45,13 @@ type
          * @param minValue minimum value allowed
          *-------------------------------------------------*)
         constructor create(const minValue : integer);
-
-        (*!------------------------------------------------
-         * Validate data
-         *-------------------------------------------------
-         * @param key name of field
-         * @param dataToValidate input data
-         * @return true if data is valid otherwise false
-         *-------------------------------------------------*)
-         function isValid(
-             const key : shortstring;
-             const dataToValidate : IList
-         ) : boolean; override;
     end;
 
 implementation
 
 uses
 
-    SysUtils,
-    KeyValueTypes;
+    SysUtils;
 
 resourcestring
 
@@ -68,38 +63,18 @@ resourcestring
     constructor TMinIntegerValidator.create(const minValue : integer);
     begin
         inherited create(sErrFieldMustBeIntegerWithMinValue + intToStr(minValue));
-        minimumValue := minValue;
+        fMinimumValue := minValue;
     end;
 
     (*!------------------------------------------------
-     * Validate data
+     * actual data validation
      *-------------------------------------------------
-     * @param dataToValidate data to validate
+     * @param dataToValidate input data
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
-    function TMinIntegerValidator.isValid(
-        const key : shortstring;
-        const dataToValidate : IList
-    ) : boolean;
-    var val : PKeyValue;
-        intValue : integer;
+    function TMinIntegerValidator.isValidData(const dataToValidate : string) : boolean;
+    var intValue : integer;
     begin
-        val := dataToValidate.find(key);
-        if (val = nil) then
-        begin
-            //if we get here it means there is no field with that name
-            //so assume that validation is success
-            result := true;
-            exit();
-        end;
-
-        try
-            intValue := strToInt(val^.value);
-            result := (intValue >= minimumValue);
-        except
-            //if we get here, mostly because of EConvertError exception
-            //so assume it is not valid integer.
-            result := false;
-        end;
+        result := tryStrToInt(dataToValidate, intValue) and (intValue >= fMinimumValue);
     end;
 end.

@@ -16,6 +16,7 @@ interface
 uses
 
     ListIntf,
+    RequestIntf,
     ValidatorIntf;
 
 type
@@ -27,8 +28,17 @@ type
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
     TBaseValidator = class(TInterfacedObject, IValidator)
-    private
+    protected
         errorMsgFormat : string;
+
+        (*!------------------------------------------------
+         * actual data validation
+         *-------------------------------------------------
+         * @param dataToValidate input data
+         * @return true if data is valid otherwise false
+         *-------------------------------------------------*)
+        function isValidData(const dataToValidate : string) : boolean; virtual; abstract;
+
     public
         (*!------------------------------------------------
          * constructor
@@ -44,14 +54,16 @@ type
         (*!------------------------------------------------
          * Validate data
          *-------------------------------------------------
-         * @param key name of field
+         * @param fieldName name of field
          * @param dataToValidate input data
+         * @param request request object
          * @return true if data is valid otherwise false
          *-------------------------------------------------*)
-         function isValid(
-             const key : shortstring;
-             const dataToValidate : IList
-         ) : boolean; virtual; abstract;
+        function isValid(
+            const fieldName : shortstring;
+            const dataToValidate : IList;
+            const request : IRequest
+        ) : boolean; virtual;
 
         (*!------------------------------------------------
          * Get validation error message
@@ -59,14 +71,15 @@ type
          * @param key name of filed that is being validated
          * @return validation error message
          *-------------------------------------------------*)
-        function errorMessage(const key : shortstring) : string;
+        function errorMessage(const fieldName : shortstring) : string;
     end;
 
 implementation
 
 uses
 
-    sysutils;
+    KeyValueTypes,
+    SysUtils;
 
     (*!------------------------------------------------
      * constructor
@@ -89,8 +102,35 @@ uses
      *-------------------------------------------------
      * @return validation error message
      *-------------------------------------------------*)
-    function TBaseValidator.errorMessage(const key : shortstring) : string;
+    function TBaseValidator.errorMessage(const fieldName : shortstring) : string;
     begin
-        result := format(errorMsgFormat, [key]);
+        result := format(errorMsgFormat, [fieldName]);
+    end;
+
+    (*!------------------------------------------------
+     * Validate data
+     *-------------------------------------------------
+     * @param key name of field
+     * @param dataToValidate input data
+     * @param request request object
+     * @return true if data is valid otherwise false
+     *-------------------------------------------------*)
+    function TBaseValidator.isValid(
+        const fieldName : shortstring;
+        const dataToValidate : IList;
+        const request : IRequest
+    ) : boolean;
+    var val : PKeyValue;
+    begin
+        val := dataToValidate.find(fieldName);
+        if (val = nil) then
+        begin
+            //if we get here it means there is no field with that name
+            //so assume that validation is success
+            result := true;
+        end else
+        begin
+            result := isValidData(val^.value);
+        end;
     end;
 end.

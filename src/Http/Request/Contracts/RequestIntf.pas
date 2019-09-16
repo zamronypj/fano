@@ -135,6 +135,24 @@ type
          *------------------------------------------------*)
         function getEnvironment() : ICGIEnvironment;
         property env : ICGIEnvironment read getEnvironment;
+
+        (*!------------------------------------------------
+         * get request query string or body data
+         *-------------------------------------------------
+         * @param string key name of key
+         * @param string defValue default value to use if key
+         *               does not exist
+         * @return string value
+         *------------------------------------------------*)
+        function getParam(const key: string; const defValue : string = '') : string;
+
+        (*!------------------------------------------------
+         * get all request query string body data
+         *-------------------------------------------------
+         * @return array of query string and parsed body params
+         *------------------------------------------------*)
+        function getParams() : IList;
+        property params : IList read getParams;
     end;
 
 implementation
