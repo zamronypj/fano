@@ -23,6 +23,7 @@ TAlphaValidator = AlphaValidatorImpl.TAlphaValidator;
 TEmailValidator = EmailValidatorImpl.TEmailValidator;
 
 TCompositeValidator = CompositeValidatorImpl.TCompositeValidator;
+TCollectiveValidator = CollectiveValidatorImpl.TCollectiveValidator;
 
 TIntegerValidator = IntegerValidatorImpl.TIntegerValidator;
 TMinIntegerValidator = MinIntegerValidatorImpl.TMinIntegerValidator;
