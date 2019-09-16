@@ -67,12 +67,13 @@ implementation
     begin
         result := true;
         len := length(fValidators);
+        errorMsgFormat := '';
         for i := 0 to len - 1 do
         begin
             if (not fValidators[i].isValid(key, dataToValidate, request)) then
             begin
                 result := false;
-                errorMsgFormat := fValidators[i].errorMessage(key);
+                errorMsgFormat := errorMsgFormat + ' and ' + fValidators[i].errorMessage(key);
             end;
         end;
     end;
