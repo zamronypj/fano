@@ -370,11 +370,19 @@ resourcestring
         begin
             keyvalue := arrOfQryStr[i].split('=');
             lenKeyValue := length(keyvalue);
-            if (lenKeyValue = 2) then
+            if (lenKeyValue > 0) then
             begin
                 new(param);
                 param^.key := trim(keyvalue[0]);
-                param^.value := (keyvalue[1]).urlDecode();
+                if (lenKeyValue = 2) then
+                begin
+                    param^.value := (keyvalue[1]).urlDecode();
+                end else
+                begin
+                    //if we get here then we have query parameter with empty data
+                    //such as 'id='
+                    param^.value := '';
+                end;
                 body.add(param^.key, param);
             end;
         end;
