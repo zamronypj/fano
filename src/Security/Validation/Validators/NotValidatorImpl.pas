@@ -59,13 +59,13 @@ type
         (*!------------------------------------------------
          * Validate data
          *-------------------------------------------------
-         * @param key name of field
+         * @param fieldName name of field
          * @param dataToValidate input data
          * @param request request object
          * @return true if data is valid otherwise false
          *-------------------------------------------------*)
         function isValid(
-            const key : shortstring;
+            const fieldName : shortstring;
             const dataToValidate : IList;
             const request : IRequest
         ) : boolean; override;
@@ -105,18 +105,18 @@ uses
     (*!------------------------------------------------
      * Validate data
      *-------------------------------------------------
-     * @param key name of field
+     * @param fieldName name of field
      * @param dataToValidate input data
      * @param request request object
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
     function TNotValidator.isValid(
-        const key : shortstring;
+        const fieldName : shortstring;
         const dataToValidate : IList;
         const request : IRequest
     ) : boolean;
     begin
-        result := not fActualValidator.isValid(key, dataToValidate, request);
+        result := not fActualValidator.isValid(fieldName, dataToValidate, request);
     end;
 
     (*!------------------------------------------------

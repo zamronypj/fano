@@ -43,13 +43,13 @@ type
         (*!------------------------------------------------
          * Validate data
          *-------------------------------------------------
-         * @param key name of field
+         * @param fieldName name of field
          * @param dataToValidate input data
          * @param request request object
          * @return true if data is valid otherwise false
          *-------------------------------------------------*)
          function isValid(
-             const key : shortstring;
+             const fieldName : shortstring;
              const dataToValidate : IList;
              const request : IRequest
          ) : boolean; override;
@@ -126,7 +126,7 @@ resourcestring
     (*!------------------------------------------------
      * Validate data
      *-------------------------------------------------
-     * @param key name of field
+     * @param fieldName name of field
      * @param dataToValidate input data
      * @param request request object
      * @return true if data is valid otherwise false
@@ -134,12 +134,12 @@ resourcestring
      * We assume dataToValidate <> nil
      *-------------------------------------------------*)
     function TUploadedMimeValidator.isValid(
-        const key : shortstring;
+        const fieldName : shortstring;
         const dataToValidate : IList;
         const request : IRequest
     ) : boolean;
     begin
-        result := inherited isValid(key, dataToValidate, request);
+        result := inherited isValid(fieldName, dataToValidate, request);
         if not result then
         begin
             //not valid uploaded file
@@ -147,6 +147,6 @@ resourcestring
         end;
 
         //if we get here, it means it is valid uploaded file, test for its mime
-        result := isValidMimeTypes(request.getUploadedFile(key), fMimeTypes);
+        result := isValidMimeTypes(request.getUploadedFile(fieldName), fMimeTypes);
     end;
 end.

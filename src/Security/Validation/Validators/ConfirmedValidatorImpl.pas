@@ -49,13 +49,13 @@ type
         (*!------------------------------------------------
          * Validate data
          *-------------------------------------------------
-         * @param key name of field
+         * @param fieldName name of field
          * @param dataToValidate input data
          * @param request request object
          * @return true if data is valid otherwise false
          *-------------------------------------------------*)
         function isValid(
-            const key : shortstring;
+            const fieldName : shortstring;
             const dataToValidate : IList;
             const request : IRequest
         ) : boolean; override;
@@ -83,7 +83,7 @@ resourcestring
     (*!------------------------------------------------
      * Validate data
      *-------------------------------------------------
-     * @param key name of field
+     * @param fieldName name of field
      * @param dataToValidate input data
      * @param request request object
      * @return true if data is valid otherwise false
@@ -91,13 +91,13 @@ resourcestring
      * We assume dataToValidate <> nil
      *-------------------------------------------------*)
     function TConfirmedValidator.isValid(
-        const key : shortstring;
+        const fieldName : shortstring;
         const dataToValidate : IList;
         const request : IRequest
     ) : boolean;
     var val, confirmVal : PKeyValue;
     begin
-        val := dataToValidate.find(key);
+        val := dataToValidate.find(fieldName);
         confirmVal := dataToValidate.find(fConfirmationField);
         result := (val <> nil) and
             isValidData(val^.value) and
@@ -113,6 +113,6 @@ resourcestring
      *-------------------------------------------------*)
     function TConfirmedValidator.isValidData(const dataToValidate : string) : boolean;
     begin
-        result := (dataToValidate <> '');
+        result := true;
     end;
 end.

@@ -46,13 +46,13 @@ type
         (*!------------------------------------------------
          * Validate data
          *-------------------------------------------------
-         * @param key name of field
+         * @param fieldName name of field
          * @param dataToValidate input data
          * @param request request object
          * @return true if data is valid otherwise false
          *-------------------------------------------------*)
         function isValid(
-            const key : shortstring;
+            const fieldName : shortstring;
             const dataToValidate : IList;
             const request : IRequest
         ) : boolean; override;
@@ -75,7 +75,7 @@ resourcestring
     (*!------------------------------------------------
      * Validate data
      *-------------------------------------------------
-     * @param key name of field
+     * @param fieldName name of field
      * @param dataToValidate input data
      * @param request request object
      * @return true if data is valid otherwise false
@@ -83,12 +83,12 @@ resourcestring
      * We assume dataToValidate <> nil
      *-------------------------------------------------*)
     function TUploadedFileValidator.isValid(
-        const key : shortstring;
+        const fieldName : shortstring;
         const dataToValidate : IList;
         const request : IRequest
     ) : boolean;
     begin
-        result := (request.getUploadedFile(key) <> nil);
+        result := (request.getUploadedFile(fieldName) <> nil);
     end;
 
     (*!------------------------------------------------
