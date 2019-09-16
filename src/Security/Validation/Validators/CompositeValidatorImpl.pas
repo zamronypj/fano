@@ -35,6 +35,7 @@ type
     TCompositeValidator = class(TBaseValidator)
     private
         fValidators : TValidatorArray;
+        fStopOnFail : boolean;
     protected
         (*!------------------------------------------------
          * actual data validation
@@ -44,7 +45,10 @@ type
          *-------------------------------------------------*)
         function isValidData(const dataToValidate : string) : boolean; override;
     public
-        constructor create(const avalidators : array of IValidator);
+        constructor create(
+            const avalidators : array of IValidator;
+            const stopOnFail : boolean = true
+        );
         destructor destroy(); override;
 
         (*!------------------------------------------------
@@ -89,11 +93,16 @@ implementation
         result := validators;
     end;
 
-    constructor TCompositeValidator.create(const avalidators : array of IValidator);
+    constructor TCompositeValidator.create(
+        const avalidators : array of IValidator;
+        const stopOnFail : boolean = true
+    );
     begin
         //just set empty error string. We will get from external validators
         inherited create('');
         fValidators := initValidators(avalidators);
+        //stop validation as soon as one of validation rule fail
+        fStopOnFail := stopOnFail;
     end;
 
     destructor TCompositeValidator.destroy();
@@ -130,13 +139,17 @@ implementation
     begin
         result := true;
         len := length(fValidators);
-        for i := 0 to len-1 do
+        for i := 0 to len - 1 do
         begin
             if (not fValidators[i].isValid(key, dataToValidate, request)) then
             begin
                 result := false;
                 errorMsgFormat := fValidators[i].errorMessage(key);
-                exit();
+                if fStopOnFail then
+                begin
+                    //just exit and ignore other validation rule check
+                    exit();
+                end;
             end;
         end;
     end;
