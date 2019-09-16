@@ -11,44 +11,39 @@ unit ValidatorCollectionIntf;
 interface
 
 {$MODE OBJFPC}
+{$H+}
 
 uses
 
-    ValidatorIntf;
+    RequestValidatorIntf;
 
 type
 
     (*!------------------------------------------------
      * interface for any class having capability to
-     * manage validator instances
+     * manage request validator instances
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *------------------------------------------------*)
     IValidatorCollection = interface
         ['{D842D49C-09AF-4842-8712-B6C12AFB5C5B}']
 
-
         (*!------------------------------------------------
-         * Add validator to collection
+         * Add request validator to collection
          *-------------------------------------------------
-         * @param validator validator instance to add
+         * @param name name of request validator
+         * @param validator request validator instance to add
          * @return current validator collection
          *-------------------------------------------------*)
-        function add(const validator : IValidator) : IValidatorCollection;
+        function add(const name : shortstring; const validator : IRequestValidator) : IValidatorCollection;
 
         (*!------------------------------------------------
-         * get number of validator in collection
+         * get request validator by name
          *-------------------------------------------------
-         * @return current validator collection
+         * @param name name of request validator
+         * @return request validator instance
          *-------------------------------------------------*)
-        function count() : integer;
-
-        (*!------------------------------------------------
-         * get validator by index
-         *-------------------------------------------------
-         * @return validator instance
-         *-------------------------------------------------*)
-        function get(const indx : integer) : IValidator;
+        function get(const name : shortstring) : IRequestValidator;
     end;
 
 implementation

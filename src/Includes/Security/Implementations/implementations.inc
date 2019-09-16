@@ -13,28 +13,5 @@
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
  *-----------------------------------------------*)
 
-ValidationResultTypes,
-
-ValidationImpl,
-ValidationFactoryImpl,
-EInvalidValidatorImpl,
-
-BaseValidatorImpl,
-AlphaNumValidatorImpl,
-AlphaNumSpaceValidatorImpl,
-CompositeValidatorImpl,
-IntegerValidatorImpl,
-MaxIntegerValidatorImpl,
-MinIntegerValidatorImpl,
-RegexValidatorImpl,
-RequiredValidatorImpl,
-
-ValidationMiddlewareImpl,
-
-CorsImpl,
-CorsConfigImpl,
-NullCorsImpl,
-CorsMiddlewareImpl,
-BaseCorsMiddlewareFactoryImpl,
-CorsMiddlewareFactoryImpl,
-NullCorsMiddlewareFactoryImpl,
+{$INCLUDE validations.implementations.inc}
+{$INCLUDE cors.implementations.inc}

@@ -13,16 +13,5 @@
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
  *-----------------------------------------------*)
 
-EInvalidValidator = EInvalidValidatorImpl.EInvalidValidator;
-TValidation = ValidationImpl.TValidation;
-TValidationFactory = ValidationFactoryImpl.TValidationFactory;
-
-TValidationMessage = ValidationResultTypes.TValidationMessage;
-TValidationMessages = ValidationResultTypes.TValidationMessages;
-TValidationResult = ValidationResultTypes.TValidationResult;
-
-{$INCLUDE validators.aliases.inc}
-
-TValidationMiddleware = ValidationMiddlewareImpl.TValidationMiddleware;
-
+{$INCLUDE validations.aliases.inc}
 {$INCLUDE cors.aliases.inc}

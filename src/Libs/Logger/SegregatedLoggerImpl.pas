@@ -31,25 +31,37 @@ type
      *-----------------------------------------------*)
     TSegregatedLogger = class(TAbstractLogger)
     private
+        emergencyLogger : ILogger;
+        alertLogger : ILogger;
+        criticalLogger : ILogger;
+        errorLogger : ILogger;
+        warningLogger : ILogger;
+        noticeLogger : ILogger;
         infoLogger : ILogger;
         debugLogger : ILogger;
-        warningLogger : ILogger;
-        criticalLogger : ILogger;
     public
 
         (*!--------------------------------------
          * constructor
          * --------------------------------------
+         * @param emergencyLoggerInst logger for emergency log
+         * @param alertLoggerInst logger for alert log
+         * @param criticalLoggerInst logger for critical log
+         * @param errorLoggerInst logger for error log
+         * @param warningLoggerInst logger for warning log
+         * @param noticeLoggerInst logger for notice log
          * @param infoLoggerInst logger for info log
          * @param debugLoggerInst logger for debug log
-         * @param warningLoggerInst logger for warning log
-         * @param criticalLoggerInst logger for critical log
          *---------------------------------------*)
         constructor create(
-            const infoLoggerInst : ILogger;
-            const debugLoggerInst : ILogger;
+            const emergencyLoggerInst : ILogger;
+            const alertLoggerInst : ILogger;
+            const criticalLoggerInst : ILogger;
+            const errorLoggerInst : ILogger;
             const warningLoggerInst : ILogger;
-            const criticalLoggerInst : ILogger
+            const noticeLoggerInst : ILogger;
+            const infoLoggerInst : ILogger;
+            const debugLoggerInst : ILogger
         );
 
         (*!--------------------------------------
@@ -84,16 +96,24 @@ implementation
      * @param criticalLoggerInst logger for critical log
      *---------------------------------------*)
     constructor TSegregatedLogger.create(
-        const infoLoggerInst : ILogger;
-        const debugLoggerInst : ILogger;
+        const emergencyLoggerInst : ILogger;
+        const alertLoggerInst : ILogger;
+        const criticalLoggerInst : ILogger;
+        const errorLoggerInst : ILogger;
         const warningLoggerInst : ILogger;
-        const criticalLoggerInst : ILogger
+        const noticeLoggerInst : ILogger;
+        const infoLoggerInst : ILogger;
+        const debugLoggerInst : ILogger
     );
     begin
+        emergencyLogger := emergencyLoggerInst;
+        alertLogger := alertLoggerInst;
+        criticalLogger := criticalLoggerInst;
+        errorLogger := errorLoggerInst;
+        warningLogger := warningLoggerInst;
+        noticeLogger := noticeLoggerInst;
         infoLogger := infoLoggerInst;
         debugLogger := debugLoggerInst;
-        warningLogger := warningLoggerInst;
-        criticalLogger := criticalLoggerInst;
     end;
 
     (*!--------------------------------------
@@ -101,11 +121,15 @@ implementation
      *---------------------------------------*)
     destructor TSegregatedLogger.destroy();
     begin
-        inherited destroy();
+        emergencyLogger := nil;
+        alertLogger := nil;
+        criticalLogger := nil;
+        errorLogger := nil;
+        warningLogger := nil;
+        noticeLogger := nil;
         infoLogger := nil;
         debugLogger := nil;
-        warningLogger := nil;
-        criticalLogger := nil;
+        inherited destroy();
     end;
 
     (*!--------------------------------------
@@ -123,22 +147,17 @@ implementation
         const context : ISerializeable = nil
     ) : ILogger;
     begin
-        if (level = 'INFO') then
-        begin
-            infoLogger.log(level, msg, context);
-        end else
-        if (level = 'DEBUG') then
-        begin
-            debugLogger.log(level, msg, context);
-        end else
-        if (level = 'WARNING') then
-        begin
-            warningLogger.log(level, msg, context);
-        end else
-        if (level = 'CRITICAL') then
-        begin
-            criticalLogger.log(level, msg, context);
+        case level of
+            'EMERGENCY' : emergencyLogger.log(level, msg, context);
+            'ALERT' : alertLogger.log(level, msg, context);
+            'CRITICAL' : criticalLogger.log(level, msg, context);
+            'ERROR' : errorLogger.log(level, msg, context);
+            'WARNING' : warningLogger.log(level, msg, context);
+            'NOTICE' : noticeLogger.log(level, msg, context);
+            'INFO' : infoLogger.log(level, msg, context);
+            'DEBUG' : debugLogger.log(level, msg, context);
         end;
+
         result := self;
     end;
 
