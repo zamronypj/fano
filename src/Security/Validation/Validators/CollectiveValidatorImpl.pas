@@ -36,13 +36,13 @@ type
         (*!------------------------------------------------
          * Validate data
          *-------------------------------------------------
-         * @param key name of field
+         * @param fieldName name of field
          * @param dataToValidate input data
          * @param request request object
          * @return true if data is valid otherwise false
          *-------------------------------------------------*)
         function isValid(
-            const key : shortstring;
+            const fieldName : shortstring;
             const dataToValidate : IList;
             const request : IRequest
         ) : boolean; override;
@@ -55,11 +55,13 @@ implementation
     (*!------------------------------------------------
      * Validate data
      *-------------------------------------------------
-     * @param dataToValidate data to validate
+     * @param fieldName name of field
+     * @param dataToValidate input data
+     * @param request request object
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
     function TCollectiveValidator.isValid(
-        const key : shortstring;
+        const fieldName : shortstring;
         const dataToValidate : IList;
         const request : IRequest
     ) : boolean;
@@ -70,10 +72,14 @@ implementation
         errorMsgFormat := '';
         for i := 0 to len - 1 do
         begin
-            if (not fValidators[i].isValid(key, dataToValidate, request)) then
+            if (not fValidators[i].isValid(fieldName, dataToValidate, request)) then
             begin
                 result := false;
-                errorMsgFormat := errorMsgFormat + ', ' + fValidators[i].errorMessage(key);
+                if (i > 0) then
+                begin
+                    errorMsgFormat := errorMsgFormat + ', ';
+                end;
+                errorMsgFormat := errorMsgFormat + fValidators[i].errorMessage(fieldName);
             end;
         end;
     end;

@@ -54,13 +54,13 @@ type
         (*!------------------------------------------------
          * Validate data
          *-------------------------------------------------
-         * @param key name of field
+         * @param fieldName name of field
          * @param dataToValidate input data
          * @param request request object
          * @return true if data is valid otherwise false
          *-------------------------------------------------*)
         function isValid(
-            const key : shortstring;
+            const fieldName : shortstring;
             const dataToValidate : IList;
             const request : IRequest
         ) : boolean; virtual;
@@ -71,7 +71,7 @@ type
          * @param key name of filed that is being validated
          * @return validation error message
          *-------------------------------------------------*)
-        function errorMessage(const key : shortstring) : string;
+        function errorMessage(const fieldName : shortstring) : string;
     end;
 
 implementation
@@ -79,7 +79,7 @@ implementation
 uses
 
     KeyValueTypes,
-    sysutils;
+    SysUtils;
 
     (*!------------------------------------------------
      * constructor
@@ -102,9 +102,9 @@ uses
      *-------------------------------------------------
      * @return validation error message
      *-------------------------------------------------*)
-    function TBaseValidator.errorMessage(const key : shortstring) : string;
+    function TBaseValidator.errorMessage(const fieldName : shortstring) : string;
     begin
-        result := format(errorMsgFormat, [key]);
+        result := format(errorMsgFormat, [fieldName]);
     end;
 
     (*!------------------------------------------------
@@ -116,13 +116,13 @@ uses
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
     function TBaseValidator.isValid(
-        const key : shortstring;
+        const fieldName : shortstring;
         const dataToValidate : IList;
         const request : IRequest
     ) : boolean;
     var val : PKeyValue;
     begin
-        val := dataToValidate.find(key);
+        val := dataToValidate.find(fieldName);
         if (val = nil) then
         begin
             //if we get here it means there is no field with that name
