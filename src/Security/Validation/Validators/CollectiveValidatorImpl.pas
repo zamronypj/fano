@@ -73,7 +73,7 @@ implementation
             if (not fValidators[i].isValid(key, dataToValidate, request)) then
             begin
                 result := false;
-                errorMsgFormat := errorMsgFormat + ' and ' + fValidators[i].errorMessage(key);
+                errorMsgFormat := errorMsgFormat + ', ' + fValidators[i].errorMessage(key);
             end;
         end;
     end;
