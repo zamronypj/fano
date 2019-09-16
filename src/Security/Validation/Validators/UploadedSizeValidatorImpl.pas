@@ -105,7 +105,7 @@ resourcestring
         const request : IRequest
     ) : boolean;
     begin
-        result := inherited isValid(key, dataToValidate, request);
+        result := inherited isValid(fieldName, dataToValidate, request);
         if not result then
         begin
             //not valid uploaded file
@@ -113,6 +113,6 @@ resourcestring
         end;
 
         //if we get here, it means it is valid uploaded file, test for its size
-        result := isValidSize(request.getUploadedFile(key), fMaxSize);
+        result := isValidSize(request.getUploadedFile(fieldName), fMaxSize);
     end;
 end.
