@@ -40,8 +40,10 @@ TNotInValidator = NotInValidatorImpl.TNotInValidator;
 TBooleanValidator = BooleanValidatorImpl.TBooleanValidator;
 TAcceptedValidator = AcceptedValidatorImpl.TAcceptedValidator;
 TConfirmedValidator = ConfirmedValidatorImpl.TConfirmedValidator;
+TSameValidator = SameValidatorImpl.TSameValidator;
 
 TRequiredValidator = RequiredValidatorImpl.TRequiredValidator;
+TRequiredIfValidator = RequiredIfValidatorImpl.TRequiredIfValidator;
 TPresentValidator = PresentValidatorImpl.TPresentValidator;
 
 TDateValidator = DateValidatorImpl.TDateValidator;
