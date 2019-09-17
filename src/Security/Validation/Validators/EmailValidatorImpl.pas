@@ -40,7 +40,7 @@ const
 
 resourcestring
 
-    sErrNotValidEmail = 'Field ''%s'' must be email format';
+    sErrNotValidEmail = 'Field %s must be email format';
 
     constructor TEmailValidator.create(const regexInst : IRegex);
     begin

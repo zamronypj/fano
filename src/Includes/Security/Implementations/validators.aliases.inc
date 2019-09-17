@@ -21,6 +21,7 @@ TAlphaNumValidator = AlphaNumValidatorImpl.TAlphaNumValidator;
 TAlphaNumDashValidator = AlphaNumDashValidatorImpl.TAlphaNumDashValidator;
 TAlphaValidator = AlphaValidatorImpl.TAlphaValidator;
 TEmailValidator = EmailValidatorImpl.TEmailValidator;
+TUrlValidator = UrlValidatorImpl.TUrlValidator;
 
 TBaseCompositeValidator = BaseCompositeValidatorImpl.TBaseCompositeValidator;
 TCompositeValidator = CompositeValidatorImpl.TCompositeValidator;
