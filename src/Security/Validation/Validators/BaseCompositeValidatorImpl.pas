@@ -41,7 +41,11 @@ type
          * @param dataToValidate input data
          * @return true if data is valid otherwise false
          *-------------------------------------------------*)
-        function isValidData(const dataToValidate : string) : boolean; override;
+        function isValidData(
+            const dataToValidate : string;
+            const dataCollection : IList;
+            const request : IRequest
+        ) : boolean; override;
     public
         constructor create(const avalidators : array of IValidator);
         destructor destroy(); override;
@@ -93,7 +97,11 @@ implementation
      * @param dataToValidate input data
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
-    function TBaseCompositeValidator.isValidData(const dataToValidate : string) : boolean;
+    function TBaseCompositeValidator.isValidData(
+        const dataToValidate : string;
+        const dataCollection : IList;
+        const request : IRequest
+    ) : boolean;
     begin
         //intentionally always pass validation
         //because we delegate validation to external validators

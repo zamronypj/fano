@@ -18,7 +18,7 @@ uses
     ListIntf,
     RequestIntf,
     ValidatorIntf,
-    BaseValidatorImpl;
+    CompareFieldValidatorImpl;
 
 type
 
@@ -29,43 +29,28 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TConfirmedValidator = class(TBaseValidator)
-    private
-        fConfirmationField : shortstring;
+    TConfirmedValidator = class(TCompareFieldValidator)
     protected
+
         (*!------------------------------------------------
          * actual data validation
          *-------------------------------------------------
          * @param dataToValidate input data
          * @return true if data is valid otherwise false
          *-------------------------------------------------*)
-        function isValidData(const dataToValidate : string) : boolean; override;
+        function compare(
+            const dataToValidate : string;
+            const otherFieldData : string
+        ) : boolean; override;
     public
         (*!------------------------------------------------
          * constructor
          *-------------------------------------------------*)
         constructor create(const confirmationField : shortstring);
 
-        (*!------------------------------------------------
-         * Validate data
-         *-------------------------------------------------
-         * @param fieldName name of field
-         * @param dataToValidate input data
-         * @param request request object
-         * @return true if data is valid otherwise false
-         *-------------------------------------------------*)
-        function isValid(
-            const fieldName : shortstring;
-            const dataToValidate : IList;
-            const request : IRequest
-        ) : boolean; override;
     end;
 
 implementation
-
-uses
-
-    KeyValueTypes;
 
 resourcestring
 
@@ -76,43 +61,21 @@ resourcestring
      *-------------------------------------------------*)
     constructor TConfirmedValidator.create(const confirmationField : shortstring);
     begin
-        inherited create(sErrFieldIsConfirmed);
-        fConfirmationField := confirmationField;
+        inherited create(sErrFieldIsConfirmed, confirmationField);
     end;
 
     (*!------------------------------------------------
-     * Validate data
-     *-------------------------------------------------
-     * @param fieldName name of field
-     * @param dataToValidate input data
-     * @param request request object
-     * @return true if data is valid otherwise false
-     *-------------------------------------------------
-     * We assume dataToValidate <> nil
-     *-------------------------------------------------*)
-    function TConfirmedValidator.isValid(
-        const fieldName : shortstring;
-        const dataToValidate : IList;
-        const request : IRequest
-    ) : boolean;
-    var val, confirmVal : PKeyValue;
-    begin
-        val := dataToValidate.find(fieldName);
-        confirmVal := dataToValidate.find(fConfirmationField);
-        result := (val <> nil) and
-            isValidData(val^.value) and
-            (confirmVal <> nil) and
-            (val^.value = confirmVal^.value);
-    end;
-
-    (*!------------------------------------------------
-     * actual data validation
+     * compare data with data from other field
      *-------------------------------------------------
      * @param dataToValidate input data
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
-    function TConfirmedValidator.isValidData(const dataToValidate : string) : boolean;
+    function TConfirmedValidator.compare(
+        const dataToValidate : string;
+        const otherFieldData : string
+    ) : boolean; override;
     begin
-        result := true;
+        result := (dataToValidate = otherFieldData);
     end;
+
 end.

@@ -37,7 +37,11 @@ type
          * @param dataToValidate input data
          * @return true if data is valid otherwise false
          *-------------------------------------------------*)
-        function isValidData(const dataToValidate : string) : boolean; override;
+        function isValidData(
+            const dataToValidate : string;
+            const dataCollection : IList;
+            const request : IRequest
+        ) : boolean; override;
 
     public
         (*!------------------------------------------------
@@ -125,7 +129,11 @@ uses
      * @param dataToValidate input data
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
-    function TNotValidator.isValidData(const dataToValidate : string) : boolean;
+    function TNotValidator.isValidData(
+        const dataToValidate : string;
+        const dataCollection : IList;
+        const request : IRequest
+    ) : boolean;
     begin
         //intentionally does nothing as we merely implement
         //base abstract method to make this concrete class

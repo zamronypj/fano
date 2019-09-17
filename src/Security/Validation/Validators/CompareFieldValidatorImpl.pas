@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit BooleanValidatorImpl;
+unit CompareFieldValidatorImpl;
 
 interface
 
@@ -16,53 +16,58 @@ interface
 uses
 
     ListIntf,
+    RequestIntf,
     ValidatorIntf,
     BaseValidatorImpl;
 
 type
 
     (*!------------------------------------------------
-     * basic class having capability to
-     * validate boolean data
+     * basic abstract class having capability to
+     * validate data that must be compared with other field
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TBooleanValidator = class(TBaseValidator)
+    TComparedFieldValidator = class(TBaseValidator)
     protected
+        fComparedField : shortstring;
+
         (*!------------------------------------------------
-         * actual data validation
+         * compare data with other data from field
          *-------------------------------------------------
          * @param dataToValidate input data
          * @return true if data is valid otherwise false
          *-------------------------------------------------*)
-        function isValidData(
+        function compare(
             const dataToValidate : string;
-            const dataCollection : IList;
-            const request : IRequest
-        ) : boolean; override;
+            const otherFieldData : string
+        ) : boolean; virtual; abstract;
     public
         (*!------------------------------------------------
          * constructor
          *-------------------------------------------------*)
-        constructor create();
+        constructor create(
+            const errorMsg : string;
+            const fComparedField : shortstring
+        );
     end;
 
 implementation
 
 uses
 
-    SysUtils;
-
-resourcestring
-
-    sErrFieldMustBeBoolean = 'Field %s must be boolean value';
+    KeyValueTypes;
 
     (*!------------------------------------------------
      * constructor
      *-------------------------------------------------*)
-    constructor TBooleanValidator.create();
+    constructor TCompareFieldValidator.create(
+        const errorMsg : string;
+        const comparedField : shortstring
+    );
     begin
-        inherited create(sErrFieldMustBeBoolean);
+        inherited create(errorMsg);
+        fComparedField := comparedField;
     end;
 
     (*!------------------------------------------------
@@ -71,14 +76,21 @@ resourcestring
      * @param dataToValidate input data
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
-    function TBooleanValidator.isValidData(
+    function TComparedValidator.isValidData(
         const dataToValidate : string;
         const dataCollection : IList;
         const request : IRequest
     ) : boolean;
-    var actualVal : boolean;
+    var comparedVal : PKeyValue;
     begin
-        //try to convert string to boolean
-        result := tryStrToBool(dataToValidate, actualVal);
+        comparedVal := dataCollection.find(fComparedField);
+        if (comparedVal = nil) then
+        begin
+            //no field to compared, so assumed fails
+            result := false;
+        end else
+        begin
+            result := compare(dataToValidate, comparedVal^.value);
+        end;
     end;
 end.

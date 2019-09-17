@@ -18,6 +18,7 @@ uses
     ListIntf,
     RequestIntf,
     ValidatorIntf,
+    RequestIntf,
     BaseValidatorImpl;
 
 type
@@ -37,7 +38,11 @@ type
          * @param dataToValidate input data
          * @return true if data is valid otherwise false
          *-------------------------------------------------*)
-        function isValidData(const dataToValidate : string) : boolean; override;
+        function isValidData(
+            const dataToValidate : string;
+            const dataCollection : IList;
+            const request : IRequest
+        ) : boolean; override;
     public
         (*!------------------------------------------------
          * constructor
@@ -95,7 +100,7 @@ resourcestring
     var val : PKeyValue;
     begin
         val := dataToValidate.find(fieldName);
-        result := (val <> nil) and isValidData(val^.value);
+        result := (val <> nil) and isValidData(val^.value, dataToValidate, request);
     end;
 
     (*!------------------------------------------------
@@ -104,7 +109,11 @@ resourcestring
      * @param dataToValidate input data
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
-    function TRequiredValidator.isValidData(const dataToValidate : string) : boolean;
+    function TRequiredValidator.isValidData(
+        const dataToValidate : string;
+        const dataCollection : IList;
+        const request : IRequest
+    ) : boolean;
     begin
         result := (dataToValidate <> '');
     end;

@@ -17,6 +17,7 @@ uses
 
     ListIntf,
     ValidatorIntf,
+    RequestIntf,
     BaseValidatorImpl;
 
 type
@@ -72,7 +73,11 @@ resourcestring
      * @param dataToValidate input data
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
-    function TMinIntegerValidator.isValidData(const dataToValidate : string) : boolean;
+    function TMinIntegerValidator.isValidData(
+        const dataToValidate : string;
+        const dataCollection : IList;
+        const request : IRequest
+    ) : boolean;
     var intValue : integer;
     begin
         result := tryStrToInt(dataToValidate, intValue) and (intValue >= fMinimumValue);
