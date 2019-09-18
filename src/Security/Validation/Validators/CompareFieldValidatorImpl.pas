@@ -28,7 +28,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TComparedFieldValidator = class(TBaseValidator)
+    TCompareFieldValidator = class(TBaseValidator)
     protected
         fComparedField : shortstring;
 
@@ -76,7 +76,7 @@ uses
      * @param dataToValidate input data
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
-    function TComparedValidator.isValidData(
+    function TCompareValidator.isValidData(
         const dataToValidate : string;
         const dataCollection : IList;
         const request : IRequest
