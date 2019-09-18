@@ -70,3 +70,4 @@ TUploadedSizeValidator = UploadedSizeValidatorImpl.TUploadedSizeValidator;
 TNotValidator = NotValidatorImpl.TNotValidator;
 TAlwaysPassValidator = AlwaysPassValidatorImpl.TAlwaysPassValidator;
 TCompareFieldValidator = CompareFieldValidatorImpl.TCompareFieldValidator;
+TExistsValidator = ExistsValidatorImpl.TExistsValidator;
