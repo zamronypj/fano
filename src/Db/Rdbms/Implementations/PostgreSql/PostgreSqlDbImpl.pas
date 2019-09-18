@@ -26,6 +26,8 @@ type
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
     TPostgreSqlDb = class(TRdbms)
+    public
+        constructor create();
     end;
 
 implementation
@@ -33,5 +35,10 @@ implementation
 uses
 
     PqConnection;
+
+    constructor TPostgreSqlDb.create();
+    begin
+        inherited create('PostgreSQL');
+    end;
 
 end.
