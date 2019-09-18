@@ -48,7 +48,7 @@ type
          *-------------------------------------------------*)
         constructor create(
             const errorMsg : string;
-            const fComparedField : shortstring
+            const comparedField : shortstring
         );
     end;
 
