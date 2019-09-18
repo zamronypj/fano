@@ -111,7 +111,7 @@ resourcestring
     begin
         sql := 'SELECT `' + fPrimaryKey + '` FROM `' + fTableName + '`' +
             'WHERE `' + fPrimaryKey + '` = :primaryId LIMIT 1';
-        result := (fDatabase
+        result := (fRdbms
             .prepare(sql)
             .paramStr('primaryId', dataToValidate)
             .execute()
