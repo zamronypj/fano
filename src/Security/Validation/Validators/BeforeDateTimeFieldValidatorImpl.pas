@@ -42,10 +42,32 @@ type
             const dataToValidate : string;
             const otherFieldData : string
         ) : boolean; override;
-
+    public
+        (*!------------------------------------------------
+         * constructor
+         *-------------------------------------------------*)
+        constructor create(const comparedField : shortstring);
     end;
 
 implementation
+
+uses
+
+    SysUtils,
+    DateUtils;
+
+resourcestring
+
+    sErrFieldMustBeBeforeDateTimeField = 'Field %s must be before field ';
+
+    (*!------------------------------------------------
+     * constructor
+     *-------------------------------------------------*)
+    constructor TBeforeDateTimeFieldValidator.create(const comparedField : shortstring);
+    begin
+        inherited create(sErrFieldMustBeBeforeDateTimeField + comparedField, comparedField);
+    end;
+
 
     (*!------------------------------------------------
      * compare data with data from other field

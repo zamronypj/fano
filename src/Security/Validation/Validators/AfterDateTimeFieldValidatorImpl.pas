@@ -42,10 +42,31 @@ type
             const dataToValidate : string;
             const otherFieldData : string
         ) : boolean; override;
-
+    public
+        (*!------------------------------------------------
+         * constructor
+         *-------------------------------------------------*)
+        constructor create(const comparedField : shortstring);
     end;
 
 implementation
+
+uses
+
+    SysUtils,
+    DateUtils;
+
+resourcestring
+
+    sErrFieldMustBeAfterDateTimeField = 'Field %s must be after field ';
+
+    (*!------------------------------------------------
+     * constructor
+     *-------------------------------------------------*)
+    constructor TAfterDateTimeFieldValidator.create(const comparedField : shortstring);
+    begin
+        inherited create(sErrFieldMustBeAfterDateTimeField + comparedField, comparedField);
+    end;
 
     (*!------------------------------------------------
      * compare data with data from other field
