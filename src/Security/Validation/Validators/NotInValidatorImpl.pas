@@ -80,6 +80,6 @@ resourcestring
         const request : IRequest
     ) : boolean;
     begin
-        result := not (inherited isValidData(dataToValidate));
+        result := not (inherited isValidData(dataToValidate, dataCollection, request));
     end;
 end.
