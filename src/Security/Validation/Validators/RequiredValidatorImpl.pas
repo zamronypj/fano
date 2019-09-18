@@ -18,7 +18,6 @@ uses
     ListIntf,
     RequestIntf,
     ValidatorIntf,
-    RequestIntf,
     BaseValidatorImpl;
 
 type
