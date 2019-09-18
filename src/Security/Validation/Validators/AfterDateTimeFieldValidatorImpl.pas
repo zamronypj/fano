@@ -82,6 +82,6 @@ resourcestring
     begin
         result := tryStrTodateTime(dataToValidate, adateTime) and
             tryStrToDateTime(otherFieldData, otherDateTime) and
-            (compareDateTime(adate, refDateTime) > 0);
+            (compareDateTime(adateTime, otherDateTime) > 0);
     end;
 end.
