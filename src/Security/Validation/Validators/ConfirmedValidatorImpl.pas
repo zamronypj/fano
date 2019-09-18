@@ -73,7 +73,7 @@ resourcestring
     function TConfirmedValidator.compare(
         const dataToValidate : string;
         const otherFieldData : string
-    ) : boolean; override;
+    ) : boolean;
     begin
         result := (dataToValidate = otherFieldData);
     end;
