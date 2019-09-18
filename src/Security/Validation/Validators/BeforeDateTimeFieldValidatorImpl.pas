@@ -18,7 +18,7 @@ uses
     ListIntf,
     RequestIntf,
     ValidatorIntf,
-    BaseValidatorImpl;
+    CompareFieldValidatorImpl;
 
 type
 
