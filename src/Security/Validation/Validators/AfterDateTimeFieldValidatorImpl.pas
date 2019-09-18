@@ -80,8 +80,8 @@ resourcestring
     ) : boolean;
     var adateTime, otherDateTime : TDateTime;
     begin
-        result := tryDateTimeToStr(dataToValidate, adateTime) and
-            tryDateTimeToStr(otherFieldData, otherDateTime) and
+        result := tryStrTodateTime(dataToValidate, adateTime) and
+            tryStrToDateTime(otherFieldData, otherDateTime) and
             (compareDateTime(adate, refDateTime) > 0);
     end;
 end.
