@@ -42,6 +42,12 @@ type
             const dataToValidate : string;
             const otherFieldData : string
         ) : boolean; virtual; abstract;
+
+        function isValidData(
+            const dataToValidate : string;
+            const dataCollection : IList;
+            const request : IRequest
+        ) : boolean; override;
     public
         (*!------------------------------------------------
          * constructor
