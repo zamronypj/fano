@@ -179,12 +179,14 @@ uses
          * @return scan result
          *-----------------------------------------------*)
         function TClamAv.scanFile(const filePath : string) : IScanResult;
-        var ret : integer;
+        var ret : longint;
+            scanned : dword;
         begin
+            scanned := 0;
             ret := cl_scanfile(
                 PChar(filePath),
                 @fVirusName,
-                null,
+                scanned,
                 cl_engine(fEngine^),
                 CL_SCAN_STDOPT
             );
