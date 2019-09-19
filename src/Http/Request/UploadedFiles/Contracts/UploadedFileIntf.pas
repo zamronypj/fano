@@ -58,6 +58,13 @@ type
          * @return string original MIME type as uploaded by client
          *------------------------------------------------*)
         function getClientMediaType() : string;
+
+        (*!------------------------------------------------
+         * get temporary filepath
+         *-------------------------------------------------
+         * @return string path of tmp file
+         *------------------------------------------------*)
+        function getTmpFilename() : string;
     end;
 
 implementation

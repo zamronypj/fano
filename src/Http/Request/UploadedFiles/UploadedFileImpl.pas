@@ -107,6 +107,13 @@ type
          * @return string original MIME type as uploaded by client
          *------------------------------------------------*)
         function getClientMediaType() : string;
+
+        (*!------------------------------------------------
+         * get temporary filepath
+         *-------------------------------------------------
+         * @return string path of tmp file
+         *------------------------------------------------*)
+        function getTmpFilename() : string;
     end;
 
 implementation
@@ -273,4 +280,13 @@ resourcestring
         result := tmpMimeType;
     end;
 
+    (*!------------------------------------------------
+     * get temporary filepath
+     *-------------------------------------------------
+     * @return string path of tmp file
+     *------------------------------------------------*)
+    function TUploadedFile.getTmpFilename() : string;
+    begin
+        result := tmpFile;
+    end;
 end.
