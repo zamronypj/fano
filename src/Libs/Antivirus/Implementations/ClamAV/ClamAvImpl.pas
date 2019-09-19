@@ -74,7 +74,7 @@ type
          *------------------------------------------------
          * @return name of virus or empty string if clean
          *-----------------------------------------------*)
-        function virusName() : boolean;
+        function virusName() : string;
 
     end;
 
