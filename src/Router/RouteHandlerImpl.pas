@@ -177,7 +177,7 @@ uses
         len := length(varPlaceholders);
         for i:=0 to len-1 do
         begin
-            if (key = varPlaceholders[i].phName) then
+            if (key = varPlaceholders[i].name) then
             begin
                 result := varPlaceholders[i];
                 exit;
@@ -207,8 +207,10 @@ uses
      * @param routeName name of route
      * @return current instance
      *--------------------------------------------*)
-    function TRouteHandler.setName(const routeName : string) : IRoute;
+    function TRouteHandler.setName(const routeName : shortstring) : IRoute;
     begin
+        fRouteName := routeName;
+        result := self;
     end;
 
     (*!-------------------------------------------
@@ -216,8 +218,9 @@ uses
      *--------------------------------------------
      * @return current route name
      *--------------------------------------------*)
-    function TRouteHandler.getName() : string;
+    function TRouteHandler.getName() : shortstring;
     begin
+        result := fRouteName;
     end;
 
     (*!-------------------------------------------
@@ -227,6 +230,8 @@ uses
      *--------------------------------------------*)
     function TRouteHandler.before(const amiddleware : IMiddleware) : IRoute;
     begin
+        fMiddlewares.addBefore(amiddleware);
+        result := self;
     end;
 
     (*!-------------------------------------------
@@ -236,5 +241,7 @@ uses
      *--------------------------------------------*)
     function TRouteHandler.after(const amiddleware : IMiddleware) : IRoute;
     begin
+        fMiddlewares.addAfter(amiddleware);
+        result := self;
     end;
 end.

@@ -11,46 +11,37 @@ unit RouteHandlerIntf;
 interface
 
 {$MODE OBJFPC}
+{$H+}
 
 uses
-    MiddlewareIntf,
-    MiddlewareCollectionAwareIntf,
-    RequestHandlerIntf,
-    PlaceholderTypes;
+
+    RouteIntf,
+    RequestHandlerIntf;
 
 type
 
     (*!------------------------------------------------
      * interface for any class having capability to
-     * handler route
+     * manage route data
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    IRouteHandler = interface(IRequestHandler)
-        ['{7F3C1F5B-4D60-441B-820F-400D76EAB1DC}']
+    IRouteHandler = interface
+        ['{BD3ACEAB-F00B-4102-A344-8014893279BF}']
 
         (*!-------------------------------------------
-         * Set route argument data
+         * get route instance
          *--------------------------------------------
-         * @param placeHolders array of placeholders
-         * @return current instance
+         * @return route instance
          *--------------------------------------------*)
-        function setArgs(const placeHolders : TArrayOfPlaceholders) : IRouteHandler;
+        function getRoute() : IRoute;
 
         (*!-------------------------------------------
-         * get route argument data
+         * get request handler
          *--------------------------------------------
-         * @return current array of placeholders
+         * @return request handler
          *--------------------------------------------*)
-        function getArgs() : TArrayOfPlaceholders;
-
-        (*!-------------------------------------------
-         * get single route argument data
-         *--------------------------------------------
-         * @param key name of argument
-         * @return placeholder
-         *--------------------------------------------*)
-        function getArg(const key : shortstring) : TPlaceholder;
+        function getHandler() : IRequestHandler;
     end;
 
 implementation

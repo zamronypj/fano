@@ -20,7 +20,8 @@ uses
     RouteMatcherIntf,
     RouteListIntf,
     RouteDataTypes,
-    InjectableObjectImpl;
+    InjectableObjectImpl,
+    RouteHandlerFactory;
 
 type
 
@@ -32,7 +33,7 @@ type
     TRouter = class(TInjectableObject, IRouter, IRouteMatcher)
     private
         routeList : IRouteList;
-        fMiddlewareCollection : IMiddlewareCollectionAware;
+        fRouteHandlerFactory : IRouteHandlerFactory;
 
         function findRouteData(const routePattern: shortstring) : PRouteRec;
         function createEmptyRouteData(const routePattern: shortstring) : PRouteRec;
@@ -243,7 +244,7 @@ uses
     var routeData : PRouteRec;
     begin
         routeData := findRouteData(routePattern);
-        routeData^.getRoute := TRouteHandler.create(fMiddlewareCollection, handler);
+        routeData^.getRoute := fRouteHandlerFactory.build(handler);
         result := routeData^.getRoute as IRoute;
     end;
 
@@ -261,7 +262,7 @@ uses
     var routeData : PRouteRec;
     begin
         routeData := findRouteData(routePattern);
-        routeData^.postRoute := TRouteHandler.create(fMiddlewareCollection, handler);
+        routeData^.postRoute := fRouteHandlerFactory.build(handler);
         result := routeData^.postRoute as IRoute;
     end;
 
@@ -277,10 +278,12 @@ uses
         const handler : IRequestHandler
     ) : IRoute;
     var routeData : PRouteRec;
+        routeHandler : IRouteHandler;
     begin
+        routeHandler := fRouteHandlerFactory.build(handler);
         routeData := findRouteData(routePattern);
-        routeData^.putRoute := TRouteHandler.create(fMiddlewareCollection, handler);
-        result := routeData^.putRoute as IRoute;
+        routeData^.putRoute := routeHandler.getHandler();
+        result := routeHandler.getRoute();
     end;
 
     (*!------------------------------------------

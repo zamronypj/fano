@@ -108,14 +108,14 @@ type
      *
      * [
      *  {
-     *    phName : 'name',
-     *    phValue : '',
-     *    phFormatRegex : '[a-zA-Z0-9\-\*\:]+',
+     *    name : 'name',
+     *    value : '',
+     *    formatRegex : '[a-zA-Z0-9\-\*\:]+',
      *  }
      *  {
-     *    phName : 'unitId',
-     *    phValue : '',
-     *    phFormatRegex : ''
+     *    name : 'unitId',
+     *    value : '',
+     *    formatRegex : ''
      *  }
      * ]
      *
@@ -150,14 +150,14 @@ type
      *
      * [
      *  {
-     *    phName : 'name'
-     *    phValue : 'juhara'
-     *    phFormatRegex : '[a-zA-Z0-9\-\*\:]+',
+     *    name : 'name'
+     *    value : 'juhara'
+     *    formatRegex : '[a-zA-Z0-9\-\*\:]+',
      *  }
      *  {
-     *    phName : 'unitId'
-     *    phValue : 'nice'
-     *    phFormatRegex : ''
+     *    name : 'unitId'
+     *    value : 'nice'
+     *    formatRegex : ''
      *  }
      * ]
      *
@@ -173,6 +173,7 @@ type
             originalRouteWithRegex
         );
     end;
+
     constructor TRegexRouteList.create(const regexInst : IRegex);
     begin
         regex := regexInst;
@@ -215,12 +216,12 @@ type
      *     into array of placeholder
      *     [
      *         {
-     *             phName : 'name'
+     *             name : 'name'
      *             phFormaRegex : '[a-zA-Z0-9\-\*\:]+',
      *         },
      *         {
-     *             phName : 'unitId'
-     *             phFormatRegex : ''
+     *             name : 'unitId'
+     *             formatRegex : ''
      *         }
      *     ]
      * (2) replace route name into new regex string (transformed route name) as
@@ -316,10 +317,10 @@ type
             data := inherited find(matches.matches[0]);
             if (data <> nil) then
             begin
-                if (length(data.phFormatRegex) > 0) then
+                if (length(data.formatRegex) > 0) then
                 begin
                     //if we get here, placeholder expect value to be in format
-                    //as specified by phFormatRegex, test further
+                    //as specified by formatRegex, test further
                     placeholherRegex := regex.match(data.formatRegex, matches.matches[0]);
                     if (placeholderRegex.matched) then
                     begin

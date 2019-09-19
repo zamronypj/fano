@@ -6,28 +6,31 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit PlaceholderTypes;
+unit RouteHandlerFactoryIntf;
 
 interface
 
 {$MODE OBJFPC}
 {$H+}
 
+uses
+
+    RequestHandlerIntf,
+    RouteHandlerIntf;
+
 type
 
     (*!------------------------------------------------
-     * Data structure for storing route variable placeholder
+     * interface for any class having capability to
+     * create route handler
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
-     * -----------------------------------------------*)
-    TPlaceholder = record
-        name : string;
-        value : string;
-        formatRegex : string;
-    end;
-    TArrayOfPlaceholders = array of TPlaceholder;
+     *-------------------------------------------------*)
+    IRouteHandlerFactory = interface
+        ['{1EBACEAD-A5EB-4754-A7D5-531F969088D1}']
 
+        function build(const handler : IRequestHandler) : IRouteHandler;
+    end;
 
 implementation
-
 end.
