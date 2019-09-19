@@ -11,13 +11,15 @@ unit RouteHandlerImpl;
 interface
 
 {$MODE OBJFPC}
+{$H+}
 
 uses
 
     RequestIntf,
     ResponseIntf,
     MiddlewareCollectionAwareIntf,
-    RouteHandlerIntf,
+    RequestHandlerIntf,
+    RouteIntf,
     PlaceholderTypes,
     InjectableObjectImpl;
 
@@ -28,10 +30,12 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      * -----------------------------------------------*)
-    TRouteHandler = class(TInjectableObject, IRouteHandler, IMiddlewareCollectionAware)
+    TRouteHandler = class(TInjectableObject, IRequestHandler, IRouteArgsReader, IRouteArgsWriter, IRoute)
     private
         fMiddlewares : IMiddlewareCollectionAware;
         varPlaceholders : TArrayOfPlaceholders;
+        fActualHandler : IRequestHandler;
+        fRouteName : shortstring;
     public
 
         (*!-------------------------------------------
@@ -39,7 +43,10 @@ type
          *--------------------------------------------
          * @param amiddlewares object represent middlewares
          *--------------------------------------------*)
-        constructor create(const amiddlewares : IMiddlewareCollectionAware);
+        constructor create(
+            const amiddlewares : IMiddlewareCollectionAware;
+            const actualHandler : IRequestHandler
+        );
 
         (*!-------------------------------------------
          * destructor
@@ -47,7 +54,7 @@ type
         destructor destroy(); override;
 
         (*!-------------------------------------------
-         * abstract method that handle request
+         * method that handle request
          *--------------------------------------------
          * @param request object represent current request
          * @param response object represent current response
@@ -56,7 +63,7 @@ type
         function handleRequest(
             const request : IRequest;
             const response : IResponse
-        ) : IResponse; virtual; abstract;
+        ) : IResponse;
 
         (*!-------------------------------------------
          * Set route argument data
@@ -64,7 +71,7 @@ type
          * @param placeHolders array of placeholders
          * @return current instance
          *--------------------------------------------*)
-        function setArgs(const placeHolders : TArrayOfPlaceholders) : IRouteHandler;
+        function setArgs(const placeHolders : TArrayOfPlaceholders) : IRouteArgsWriter;
 
         (*!-------------------------------------------
          * get route argument data
@@ -81,7 +88,34 @@ type
          *--------------------------------------------*)
         function getArg(const key : shortstring) : TPlaceholder;
 
-        property middlewares : IMiddlewareCollectionAware read fMiddlewares implements IMiddlewareCollectionAware;
+        (*!-------------------------------------------
+         * Set route name
+         *--------------------------------------------
+         * @param routeName name of route
+         * @return current instance
+         *--------------------------------------------*)
+        function setName(const routeName : shortstring) : IRoute;
+
+        (*!-------------------------------------------
+         * get route name
+         *--------------------------------------------
+         * @return current route name
+         *--------------------------------------------*)
+        function getName() : shortstring;
+
+        (*!-------------------------------------------
+         * attach middleware before route
+         *--------------------------------------------
+         * @return current route instance
+         *--------------------------------------------*)
+        function before(const amiddleware : IMiddleware) : IRoute;
+
+        (*!-------------------------------------------
+         * attach middleware after route
+         *--------------------------------------------
+         * @return current route instance
+         *--------------------------------------------*)
+        function after(const amiddleware : IMiddleware) : IRoute;
     end;
 
 implementation
@@ -98,16 +132,21 @@ uses
      * @param viewInst view instance to use
      * @param viewParamsInt view parameters
      *--------------------------------------------*)
-    constructor TRouteHandler.create(const amiddlewares : IMiddlewareCollectionAware);
+    constructor TRouteHandler.create(
+        const amiddlewares : IMiddlewareCollectionAware;
+        const actualHandler : IRequestHandler
+    );
     begin
         inherited create();
         fMiddlewares := amiddlewares;
+        fActualHandler := actualHandler;
         varPlaceholders := nil;
     end;
 
     destructor TRouteHandler.destroy();
     begin
         fMiddlewares := nil;
+        fActualHandler := nil;
         varPlaceholders := nil;
         inherited destroy();
     end;
@@ -132,7 +171,7 @@ uses
     (*!-------------------------------------------
      * get single route argument data
      *--------------------------------------------*)
-    function TRouteHandler.getArg(const key : string) : TPlaceholder;
+    function TRouteHandler.getArg(const key : shortstring) : TPlaceholder;
     var i, len:integer;
     begin
         len := length(varPlaceholders);
@@ -147,4 +186,55 @@ uses
         raise ERouteArgNotFound.createFmt(sRouteArgNotFound, [key]);
     end;
 
+    (*!-------------------------------------------
+     * method that handle request
+     *--------------------------------------------
+     * @param request object represent current request
+     * @param response object represent current response
+     * @return new response
+     *--------------------------------------------*)
+    function TRouteHandler.handleRequest(
+        const request : IRequest;
+        const response : IResponse
+    ) : IResponse;
+    begin
+        result := fActualHandler.handleRequest(request, response);
+    end;
+
+    (*!-------------------------------------------
+     * Set route name
+     *--------------------------------------------
+     * @param routeName name of route
+     * @return current instance
+     *--------------------------------------------*)
+    function TRouteHandler.setName(const routeName : string) : IRoute;
+    begin
+    end;
+
+    (*!-------------------------------------------
+     * get route name
+     *--------------------------------------------
+     * @return current route name
+     *--------------------------------------------*)
+    function TRouteHandler.getName() : string;
+    begin
+    end;
+
+    (*!-------------------------------------------
+     * attach middleware before route
+     *--------------------------------------------
+     * @return current route instance
+     *--------------------------------------------*)
+    function TRouteHandler.before(const amiddleware : IMiddleware) : IRoute;
+    begin
+    end;
+
+    (*!-------------------------------------------
+     * attach middleware after route
+     *--------------------------------------------
+     * @return current route instance
+     *--------------------------------------------*)
+    function TRouteHandler.after(const amiddleware : IMiddleware) : IRoute;
+    begin
+    end;
 end.
