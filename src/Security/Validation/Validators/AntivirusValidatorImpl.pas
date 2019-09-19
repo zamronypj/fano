@@ -19,6 +19,8 @@ uses
     RequestIntf,
     ValidatorIntf,
     AntivirusIntf,
+    UploadedFileCollectionIntf,
+    UploadedFileIntf,
     BaseValidatorImpl;
 
 type
@@ -33,6 +35,7 @@ type
     private
         fAntivirus : IAntivirus;
         fOriginalErrMsg : string;
+        function scanUploadedFiles(const uploadedFiles : IUploadedFileArray) : boolean;
     protected
         (*!------------------------------------------------
          * actual data validation
@@ -75,7 +78,6 @@ implementation
 
 uses
 
-    UploadedFileIntf,
     ScanResultIntf;
 
 resourcestring
@@ -90,6 +92,35 @@ resourcestring
         inherited create(sErrFieldIsMustBeFreeFromVirus);
         fOriginalErrMsg := sErrFieldIsMustBeFreeFromVirus;
         fAntivirus := antivirus;
+        fAntivirus.beginScan();
+    end;
+
+    (*!------------------------------------------------
+     * destructor
+     *-------------------------------------------------*)
+    destructor TAntivirusValidator.destroy();
+    begin
+        fAntivirus := nil;
+        inherited destroy();
+    end;
+
+    function TAntivirusValidator.scanUploadedFiles(const uploadedFiles : IUploadedFileArray) : boolean;
+    var scanRes : IScanResult;
+        i, len : integer;
+    begin
+        result := true;
+        len := length(uploadedFiles);
+        for i := 0 to len -1 do
+        begin
+            scanRes := fAntivirus.scanFile(uploadedFiles[i].getTmpFilename());
+            result := result and scanRes.isCleaned();
+            if not result then
+            begin
+                //virus detected, exit loop early
+                errorMsgFormat := fOriginalErrMsg + ' Virus detected: ' + scanRes.virusName();
+                exit;
+            end;
+        end;
     end;
 
     (*!------------------------------------------------
@@ -107,18 +138,12 @@ resourcestring
         const dataToValidate : IList;
         const request : IRequest
     ) : boolean;
-    var uploadedFile : IUploadedFile;
-        scanRes : IScanResult;
+    var uploadedFiles : IUploadedFileArray;
     begin
-        uploadedFile := request.getUploadedFile(fieldName);
-        if (uploadedFile <> nil) then
+        uploadedFiles := request.getUploadedFile(fieldName);
+        if (uploadedFiles <> nil) then
         begin
-            scanRes := fAntivirus.scanFile(uploadedFile.getTmpFilename());
-            result := scanRes.isCleaned();
-            if not result then
-            begin
-                errorMsgFormat := fOriginalErrMsg + ' Virus detected: ' + scanRes.virusName();
-            end;
+            result := scanUploadedFiles(uploadedFiles);
         end else
         begin
             //assume validation pass
