@@ -16,11 +16,11 @@ uses
 
     ResponseIntf,
     RequestIntf,
-    RouteHandlerIntf,
-    RouteHandlerImpl,
+    RequestHandlerIntf,
     MiddlewareCollectionAwareIntf,
     ViewIntf,
-    ViewParametersIntf;
+    ViewParametersIntf,
+    InjectableObjectImpl;
 
 type
 
@@ -29,7 +29,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TController = class(TRouteHandler)
+    TController = class(TInjectableObject, IRequestHandler)
     protected
         gView : IView;
         viewParams : IViewParameters;
@@ -63,7 +63,7 @@ type
         function handleRequest(
               const request : IRequest;
               const response : IResponse
-        ) : IResponse; override;
+        ) : IResponse; virtual;
     end;
 
 implementation
@@ -76,12 +76,10 @@ implementation
      * @param viewParamsInt view parameters
      *--------------------------------------------*)
     constructor TController.create(
-        const amiddlewares : IMiddlewareCollectionAware;
         const viewInst : IView;
         const viewParamsInst : IViewParameters
     );
     begin
-        inherited create(amiddlewares);
         gView := viewInst;
         viewParams := viewParamsInst;
     end;

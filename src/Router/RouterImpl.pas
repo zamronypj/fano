@@ -32,6 +32,7 @@ type
     TRouter = class(TInjectableObject, IRouter, IRouteMatcher)
     private
         routeList : IRouteList;
+        fMiddlewareCollection : IMiddlewareCollectionAware;
 
         function findRouteData(const routePattern: shortstring) : PRouteRec;
         function createEmptyRouteData(const routePattern: shortstring) : PRouteRec;
@@ -45,84 +46,84 @@ type
          * set route handler for HTTP GET
          * ------------------------------------------
          * @param routePattern regex pattern for route
-         * @param routeHandler instance route handler
+         * @param handler instance route handler
          * @return route handler instance
          *-------------------------------------------*)
         function get(
             const routePattern: shortstring;
-            const routeHandler : IRequestHandler
+            const handler : IRequestHandler
         ) : IRoute;
 
         (*!------------------------------------------
          * set route handler for HTTP POST
          * ------------------------------------------
          * @param routePattern regex pattern for route
-         * @param routeHandler instance route handler
+         * @param handler instance route handler
          * @return route handler instance
          *-------------------------------------------*)
         function post(
             const routePattern: shortstring;
-            const routeHandler : IRequestHandler
+            const handler : IRequestHandler
         ) : IRoute;
 
         (*!------------------------------------------
          * set route handler for HTTP PUT
          * ------------------------------------------
          * @param routePattern regex pattern for route
-         * @param routeHandler instance route handler
+         * @param handler instance route handler
          * @return route handler instance
          *-------------------------------------------*)
         function put(
             const routePattern: shortstring;
-            const routeHandler : IRequestHandler
+            const handler : IRequestHandler
         ) : IRoute;
 
         (*!------------------------------------------
          * set route handler for HTTP PATCH
          * ------------------------------------------
          * @param routePattern regex pattern for route
-         * @param routeHandler instance route handler
+         * @param handler instance route handler
          * @return route handler instance
          *-------------------------------------------*)
         function patch(
             const routePattern: shortstring;
-            const routeHandler : IRequestHandler
+            const handler : IRequestHandler
         ) : IRoute;
 
         (*!------------------------------------------
          * set route handler for HTTP DELETE
          * ------------------------------------------
          * @param routePattern regex pattern for route
-         * @param routeHandler instance route handler
+         * @param handler instance route handler
          * @return route handler instance
          *-------------------------------------------*)
         function delete(
             const routePattern: shortstring;
-            const routeHandler : IRequestHandler
+            const handler : IRequestHandler
         ) : IRoute;
 
         (*!------------------------------------------
          * set route handler for HTTP HEAD
          * ------------------------------------------
          * @param routePattern regex pattern for route
-         * @param routeHandler instance route handler
+         * @param handler instance route handler
          * @return route handler instance
          *-------------------------------------------*)
         function head(
             const routePattern: shortstring;
-            const routeHandler : IRequestHandler
+            const handler : IRequestHandler
         ) : IRoute;
 
         (*!------------------------------------------
          * set route handler for HTTP OPTIONS
          * ------------------------------------------
          * @param routePattern regex pattern for route
-         * @param routeHandler instance route handler
+         * @param handler instance route handler
          * @return route handler instance
          *-------------------------------------------*)
         function options(
             const routePattern: shortstring;
-            const routeHandler : IRequestHandler
+            const handler : IRequestHandler
         ) : IRoute;
 
         (*!------------------------------------------
@@ -130,25 +131,25 @@ type
          * ------------------------------------------
          * @param verbs array of http verbs, GET, POST, etc
          * @param routePattern regex pattern for route
-         * @param routeHandler instance route handler
+         * @param handler instance route handler
          * @return route handler instance
          *-------------------------------------------*)
         function map(
             const verbs : array of shortstring;
             const routePattern: shortstring;
-            const routeHandler : IRequestHandler
+            const handler : IRequestHandler
         ) : IRoute;
 
         (*!------------------------------------------
          * set route handler for all HTTP verbs
          * ------------------------------------------
          * @param routePattern regex pattern for route
-         * @param routeHandler instance route handler
+         * @param handler instance route handler
          * @return route handler instance
          *-------------------------------------------*)
         function any(
             const routePattern: shortstring;
-            const routeHandler : IRequestHandler
+            const handler : IRequestHandler
         ) : IRoute;
 
         (*!----------------------------------------------
@@ -232,126 +233,126 @@ uses
      * set route handler for HTTP GET
      * ------------------------------------------
      * @param routePattern regex pattern for route
-     * @param routeHandler instance route handler
+     * @param handler instance route handler
      * @return route handler instance
      *-------------------------------------------*)
     function TRouter.get(
         const routePattern: shortstring;
-        const routeHandler : IRequestHandler
+        const handler : IRequestHandler
     ) : IRoute;
     var routeData : PRouteRec;
     begin
         routeData := findRouteData(routePattern);
-        routeData^.getRoute := routeHandler;
-        result := routeHandler;
+        routeData^.getRoute := TRouteHandler.create(fMiddlewareCollection, handler);
+        result := routeData^.getRoute as IRoute;
     end;
 
     (*!------------------------------------------
      * set route handler for HTTP POST
      * ------------------------------------------
      * @param routePattern regex pattern for route
-     * @param routeHandler instance route handler
+     * @param handler instance route handler
      * @return route handler instance
      *-------------------------------------------*)
     function TRouter.post(
         const routePattern: shortstring;
-        const routeHandler : IRequestHandler
-    ) : IRequestHandler;
+        const handler : IRequestHandler
+    ) : IRoute;
     var routeData : PRouteRec;
     begin
         routeData := findRouteData(routePattern);
-        routeData^.postRoute := routeHandler;
-        result := routeHandler;
+        routeData^.postRoute := TRouteHandler.create(fMiddlewareCollection, handler);
+        result := routeData^.postRoute as IRoute;
     end;
 
     (*!------------------------------------------
      * set route handler for HTTP PUT
      * ------------------------------------------
      * @param routePattern regex pattern for route
-     * @param routeHandler instance route handler
+     * @param handler instance route handler
      * @return route handler instance
      *-------------------------------------------*)
     function TRouter.put(
         const routePattern: shortstring;
-        const routeHandler : IRequestHandler
-    ) : IRequestHandler;
+        const handler : IRequestHandler
+    ) : IRoute;
     var routeData : PRouteRec;
     begin
         routeData := findRouteData(routePattern);
-        routeData^.putRoute := routeHandler;
-        result := routeHandler;
+        routeData^.putRoute := TRouteHandler.create(fMiddlewareCollection, handler);
+        result := routeData^.putRoute as IRoute;
     end;
 
     (*!------------------------------------------
      * set route handler for HTTP PATCH
      * ------------------------------------------
      * @param routePattern regex pattern for route
-     * @param routeHandler instance route handler
+     * @param handler instance route handler
      * @return route handler instance
      *-------------------------------------------*)
     function TRouter.patch(
         const routePattern: shortstring;
-        const routeHandler : IRequestHandler
-    ) : IRequestHandler;
+        const handler : IRequestHandler
+    ) : IRoute;
     var routeData : PRouteRec;
     begin
         routeData := findRouteData(routePattern);
-        routeData^.patchRoute := routeHandler;
-        result := routeHandler;
+        routeData^.patchRoute := TRouteHandler.create(fMiddlewareCollection, handler);
+        result := routeData^.patchRoute as IRoute;
     end;
 
     (*!------------------------------------------
      * set route handler for HTTP DELETE
      * ------------------------------------------
      * @param routePattern regex pattern for route
-     * @param routeHandler instance route handler
+     * @param handler instance route handler
      * @return route handler instance
      *-------------------------------------------*)
     function TRouter.delete(
         const routePattern: shortstring;
-        const routeHandler : IRequestHandler
-    ) : IRequestHandler;
+        const handler : IRequestHandler
+    ) : IRoute;
     var routeData : PRouteRec;
     begin
         routeData := findRouteData(routePattern);
-        routeData^.deleteRoute := routeHandler;
-        result := routeHandler;
+        routeData^.deleteRoute := TRouteHandler.create(fMiddlewareCollection, handler);
+        result := routeData^.deleteRoute as IRoute;
     end;
 
     (*!------------------------------------------
      * set route handler for HTTP HEAD
      * ------------------------------------------
      * @param routePattern regex pattern for route
-     * @param routeHandler instance route handler
+     * @param handler instance route handler
      * @return route handler instance
      *-------------------------------------------*)
     function TRouter.head(
         const routePattern: shortstring;
-        const routeHandler : IRequestHandler
-    ) : IRequestHandler;
+        const handler : IRequestHandler
+    ) : IRoute;
     var routeData : PRouteRec;
     begin
         routeData := findRouteData(routePattern);
-        routeData^.headRoute := routeHandler;
-        result := routeHandler;
+        routeData^.headRoute := TRouteHandler.create(fMiddlewareCollection, handler);
+        result := routeData^.headRoute as IRoute;
     end;
 
     (*!------------------------------------------
      * set route handler for HTTP OPTIONS
      * ------------------------------------------
      * @param routePattern regex pattern for route
-     * @param routeHandler instance route handler
+     * @param handler instance route handler
      * @return route handler instance
      *-------------------------------------------*)
     function TRouter.options(
         const routePattern: shortstring;
-        const routeHandler : IRequestHandler
-    ) : IRequestHandler;
+        const handler : IRequestHandler
+    ) : IRoute;
     var routeData : PRouteRec;
     begin
         routeData := findRouteData(routePattern);
-        routeData^.optionsRoute := routeHandler;
-        result := routeHandler;
+        routeData^.optionsRoute := TRouteHandler.create(fMiddlewareCollection, handler);
+        result := routeData^.optionsRoute as IRoute;
     end;
 
     (*!------------------------------------------
@@ -359,19 +360,21 @@ uses
      * ------------------------------------------
      * @param verbs array of http verbs, GET, POST, etc
      * @param routePattern regex pattern for route
-     * @param routeHandler instance route handler
+     * @param handler instance route handler
      * @return route handler instance
      *-------------------------------------------*)
     function TRouter.map(
         const verbs : array of shortstring;
         const routePattern: shortstring;
-        const routeHandler : IRequestHandler
-    ) : IRequestHandler;
+        const handler : IRequestHandler
+    ) : IRoute;
     var routeData : PRouteRec;
         i, len : integer;
         averb : shortstring;
+        routeHandler : IRequestHandler;
     begin
         routeData := findRouteData(routePattern);
+        routeHandler := TRouteHandler.create(fMiddlewareCollection, handler);
         len := high(verbs) - low(verbs) + 1;
         for i := 0 to len - 1 do
         begin
@@ -386,23 +389,25 @@ uses
                 'HEAD' :  routeData^.headRoute := routeHandler;
             end;
         end;
-        result := routeHandler;
+        result := routeHandler as IRoute;
     end;
 
     (*!------------------------------------------
      * set route handler for all HTTP verbs
      * ------------------------------------------
      * @param routePattern regex pattern for route
-     * @param routeHandler instance route handler
+     * @param handler instance route handler
      * @return route handler instance
      *-------------------------------------------*)
     function TRouter.any(
         const routePattern: shortstring;
-        const routeHandler : IRequestHandler
+        const handler : IRequestHandler
     ) : IRequestHandler;
     var routeData : PRouteRec;
+        routeHandler : IRequestHandler;
     begin
         routeData := findRouteData(routePattern);
+        routeHandler := TRouteHandler.create(fMiddlewareCollection, handler);
         routeData^.getRoute := routeHandler;
         routeData^.postRoute := routeHandler;
         routeData^.putRoute := routeHandler;
@@ -410,7 +415,7 @@ uses
         routeData^.patchRoute := routeHandler;
         routeData^.optionsRoute := routeHandler;
         routeData^.headRoute := routeHandler;
-        result := routeHandler;
+        result := routeHandler as IRoute;
     end;
 
     (*!------------------------------------------
@@ -421,21 +426,21 @@ uses
      * @return route handler instance or nil if not found
      *-------------------------------------------*)
     function TRouter.getRouteHandler(const requestMethod : shortstring; const routeData :PRouteRec) : IRequestHandler;
-    var routeHandler : IRequestHandler;
+    var handler : IRequestHandler;
         method : shortstring;
     begin
         method := uppercase(requestMethod);
-        routeHandler := nil;
+        handler := nil;
         case method of
-            'GET' : routeHandler := routeData^.getRoute;
-            'POST' : routeHandler := routeData^.postRoute;
-            'PUT' : routeHandler := routeData^.putRoute;
-            'DELETE' : routeHandler := routeData^.deleteRoute;
-            'PATCH' : routeHandler := routeData^.patchRoute;
-            'OPTIONS' : routeHandler := routeData^.optionsRoute;
-            'HEAD' : routeHandler := routeData^.headRoute;
+            'GET' : handler := routeData^.getRoute;
+            'POST' : handler := routeData^.postRoute;
+            'PUT' : handler := routeData^.putRoute;
+            'DELETE' : handler := routeData^.deleteRoute;
+            'PATCH' : handler := routeData^.patchRoute;
+            'OPTIONS' : handler := routeData^.optionsRoute;
+            'HEAD' : handler := routeData^.headRoute;
         end;
-        result := routeHandler;
+        result := handler;
     end;
 
     (*!----------------------------------------------
@@ -447,6 +452,7 @@ uses
      *-----------------------------------------------*)
     function TRouter.match(const requestMethod : shortstring; const requestUri : shortstring) : IRequestHandler;
     var routeData : PRouteRec;
+        routeArgs : IRouteArgsWriter;
     begin
         routeData := routeList.match(requestUri);
 
@@ -468,6 +474,7 @@ uses
             );
         end;
 
-        result.setArgs(routeData^.placeholders);
+        routeArgs := (result as IRouteArgsWriter);
+        routeArgs.setArgs(routeData^.placeholders);
     end;
 end.

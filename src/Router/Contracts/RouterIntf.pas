@@ -32,84 +32,84 @@ type
          * set route handler for HTTP GET
          * ------------------------------------------
          * @param routePattern regex pattern for route
-         * @param routeHandler instance route handler
+         * @param handler instance route handler
          * @return route handler instance
          *-------------------------------------------*)
         function get(
             const routePattern: string;
-            const routeHandler : IRequestHandler
+            const handler : IRequestHandler
         ) : IRoute;
 
         (*!------------------------------------------
          * set route handler for HTTP POST
          * ------------------------------------------
          * @param routePattern regex pattern for route
-         * @param routeHandler instance route handler
+         * @param handler instance route handler
          * @return route handler instance
          *-------------------------------------------*)
         function post(
             const routePattern: string;
-            const routeHandler : IRequestHandler
+            const handler : IRequestHandler
         ) : IRoute;
 
         (*!------------------------------------------
          * set route handler for HTTP PUT
          * ------------------------------------------
          * @param routePattern regex pattern for route
-         * @param routeHandler instance route handler
+         * @param handler instance route handler
          * @return route handler instance
          *-------------------------------------------*)
         function put(
             const routePattern: string;
-            const routeHandler : IRequestHandler
+            const handler : IRequestHandler
         ) : IRoute;
 
         (*!------------------------------------------
          * set route handler for HTTP PATCH
          * ------------------------------------------
          * @param routePattern regex pattern for route
-         * @param routeHandler instance route handler
+         * @param handler instance route handler
          * @return route instance
          *-------------------------------------------*)
         function patch(
             const routePattern: string;
-            const routeHandler : IRequestHandler
+            const handler : IRequestHandler
         ) : IRoute;
 
         (*!------------------------------------------
          * set route handler for HTTP DELETE
          * ------------------------------------------
          * @param routePattern regex pattern for route
-         * @param routeHandler instance route handler
+         * @param handler instance route handler
          * @return route instance
          *-------------------------------------------*)
         function delete(
             const routePattern: string;
-            const routeHandler : IRequestHandler
+            const handler : IRequestHandler
         ) : IRoute;
 
         (*!------------------------------------------
          * set route handler for HTTP HEAD
          * ------------------------------------------
          * @param routePattern regex pattern for route
-         * @param routeHandler instance route handler
+         * @param handler instance route handler
          * @return route instance
          *-------------------------------------------*)
         function head(
             const routePattern: string;
-            const routeHandler : IRequestHandler
+            const handler : IRequestHandler
         ) : IRoute;
 
         (*!------------------------------------------
          * set route handler for HTTP OPTIONS
          * ------------------------------------------
          * @param routePattern regex pattern for route
-         * @param routeHandler instance route handler
+         * @param handler instance route handler
          * @return route instance
          *-------------------------------------------*)
         function options(
             const routePattern: string;
-            const routeHandler : IRequestHandler
+            const handler : IRequestHandler
         ) : IRoute;
 
         (*!------------------------------------------
@@ -117,25 +117,25 @@ type
          * ------------------------------------------
          * @param verbs array of http verbs, GET, POST, etc
          * @param routePattern regex pattern for route
-         * @param routeHandler instance route handler
+         * @param handler instance route handler
          * @return route handler instance
          *-------------------------------------------*)
         function map(
             const verbs : array of string;
             const routePattern: string;
-            const routeHandler : IRequestHandler
+            const handler : IRequestHandler
         ) : IRoute;
 
         (*!------------------------------------------
          * set route handler for all HTTP verbs
          * ------------------------------------------
          * @param routePattern regex pattern for route
-         * @param routeHandler instance route handler
+         * @param handler instance route handler
          * @return route handler instance
          *-------------------------------------------*)
         function any(
             const routePattern: string;
-            const routeHandler : IRequestHandler
+            const handler : IRequestHandler
         ) : IRoute;
     end;
 
