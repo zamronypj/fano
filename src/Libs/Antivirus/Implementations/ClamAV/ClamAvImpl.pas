@@ -115,7 +115,7 @@ uses
         var ret : integer;
             sigs : cardinal;
         begin
-            ret := cl_load(cl_retdbdir(), engine, sigs, CL_DB_STDOPT);
+            ret := cl_load(cl_retdbdir(), cl_engine(engine^), sigs, CL_DB_STDOPT);
             raiseExceptionIfFailed(ret, 'Load antivirus database fails. ');
         end;
 
@@ -132,7 +132,7 @@ uses
         begin
             if fEngineCreated then
             begin
-                cl_engine_free(engine);
+                cl_engine_free(cl_engine(engine^));
                 engine := nil;
                 fEngineCreated := false;
             end;
