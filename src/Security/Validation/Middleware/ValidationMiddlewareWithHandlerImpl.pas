@@ -41,7 +41,8 @@ type
     public
         constructor create(
             const validationInst : IRequestValidator;
-            const validationErrorHandler : IRequestHandler
+            const validationErrorHandler : IRequestHandler;
+            const routeArgs : IRouteArgsReader
         );
         destructor destroy(); override;
 
