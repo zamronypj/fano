@@ -39,12 +39,10 @@ type
         (*!-------------------------------------------
          * constructor
          *--------------------------------------------
-         * @param amiddlewares object represent middlewares
          * @param viewInst view instance to use
          * @param viewParamsInt view parameters
          *--------------------------------------------*)
         constructor create(
-            const amiddlewares : IMiddlewareCollectionAware;
             const viewInst : IView;
             const viewParamsInst : IViewParameters
         );
