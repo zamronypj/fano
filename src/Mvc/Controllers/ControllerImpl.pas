@@ -18,19 +18,18 @@ uses
     RequestIntf,
     RequestHandlerIntf,
     RouteArgsReaderIntf,
-    MiddlewareCollectionAwareIntf,
     ViewIntf,
     ViewParametersIntf,
-    InjectableObjectImpl;
+    AbstractControllerImpl;
 
 type
 
     (*!------------------------------------------------
-     * basic controller implementation class
+     * basic controller implementation class with view
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TController = class(TInjectableObject, IRequestHandler)
+    TController = class(TAbstractController)
     protected
         gView : IView;
         viewParams : IViewParameters;
