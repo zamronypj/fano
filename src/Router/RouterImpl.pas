@@ -491,6 +491,6 @@ uses
         end;
 
         routeHandler.argsWriter().setArgs(routeData^.placeholders);
-        result := routeHandler.handler();
+        result := routeHandler;
     end;
 end.
