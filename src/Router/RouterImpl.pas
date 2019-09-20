@@ -442,7 +442,7 @@ uses
      * @param routeData instance route data
      * @return route handler instance or nil if not found
      *-------------------------------------------*)
-    function TRouter.getRouteHandler(const requestMethod : shortstring; const routeData :PRouteRec) : IRequestHandler;
+    function TRouter.getRouteHandler(const requestMethod : shortstring; const routeData :PRouteRec) : IRouteHandler;
     var method : shortstring;
     begin
         method := uppercase(requestMethod);
