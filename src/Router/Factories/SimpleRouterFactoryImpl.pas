@@ -34,10 +34,12 @@ type
 implementation
 
 uses
+
     RouterImpl,
     SimpleRegexRouteListImpl,
     RegexImpl,
-    HashListImpl;
+    HashListImpl,
+    RouteHandlerFactoryImpl;
 
     function TSimpleRouterFactory.build(const container : IDependencyContainer) : IDependency;
     begin
@@ -45,7 +47,8 @@ uses
             TSimpleRegexRouteList.create(
                 TRegex.create(),
                 THashList.create()
-            )
+            ),
+            TRouteHandlerFactory.create()
         );
     end;
 

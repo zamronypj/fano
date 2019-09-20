@@ -33,12 +33,17 @@ type
 implementation
 
 uses
+
     RouterImpl,
-    RouteListImpl;
+    RouteListImpl,
+    RouteHandlerFactoryImpl;
 
     function TRouterFactory.build(const container : IDependencyContainer) : IDependency;
     begin
-        result := TRouter.create(TRouteList.create());
+        result := TRouter.create(
+            TRouteList.create(),
+            TRouteHandlerFactory.create()
+        );
     end;
 
 end.

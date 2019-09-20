@@ -37,7 +37,8 @@ uses
     RouterImpl,
     CombineRegexRouteListImpl,
     RegexImpl,
-    HashListImpl;
+    HashListImpl,
+    RouteHandlerFactoryImpl;
 
     function TCombineRouterFactory.build(const container : IDependencyContainer) : IDependency;
     begin
@@ -45,7 +46,8 @@ uses
             TCombineRegexRouteList.create(
                 TRegex.create(),
                 THashList.create()
-            )
+            ),
+            TRouterHandlerFactory.create()
         );
     end;
 
