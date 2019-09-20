@@ -18,6 +18,7 @@ uses
     MiddlewareChainIntf,
     RequestHandlerIntf,
     RouteHandlerIntf,
+    RouteArgsReaderIntf,
     RequestIntf,
     ResponseIntf,
     MiddlewareCollectionIntf;
