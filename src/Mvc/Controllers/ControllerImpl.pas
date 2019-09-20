@@ -17,6 +17,7 @@ uses
     ResponseIntf,
     RequestIntf,
     RequestHandlerIntf,
+    RouteArgsReaderIntf,
     MiddlewareCollectionAwareIntf,
     ViewIntf,
     ViewParametersIntf,
@@ -58,11 +59,13 @@ type
          *--------------------------------------------
          * @param request object represent current request
          * @param response object represent current response
+         * @param args object represent current route arguments
          * @return new response
          *--------------------------------------------*)
         function handleRequest(
-              const request : IRequest;
-              const response : IResponse
+            const request : IRequest;
+            const response : IResponse;
+            const args : IRouteArgsReader
         ) : IResponse; virtual;
     end;
 
@@ -102,8 +105,9 @@ implementation
      * @return new response
      *--------------------------------------------*)
     function TController.handleRequest(
-          const request : IRequest;
-          const response : IResponse
+        const request : IRequest;
+        const response : IResponse;
+        const args : IRouteArgsReader
     ) : IResponse;
     begin
         result := gView.render(viewParams, response);
