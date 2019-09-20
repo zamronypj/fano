@@ -22,7 +22,7 @@ uses
     RouteDataTypes,
     RouteHandlerIntf,
     InjectableObjectImpl,
-    RouteHandlerFactory;
+    RouteHandlerFactoryIntf;
 
 type
 
