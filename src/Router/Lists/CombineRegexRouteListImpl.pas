@@ -221,8 +221,8 @@ const
         setLength(result, totalPlaceholder);
         for i:=0 to totalPlaceholder-1 do
         begin
-            result[i].phName := matches.matches[i][1];
-            result[i].phValue := '';
+            result[i].name := matches.matches[i][1];
+            result[i].value := '';
         end;
     end;
 
@@ -293,9 +293,9 @@ const
         totalPlaceHolders := length(placeholders);
         for i:=0 to totalPlaceholders-1 do
         begin
-            //placeholders[i].phName already contain variable name
+            //placeholders[i].name already contain variable name
             //so our concern only to fill its value
-            placeholders[i].phValue := matches.matches[0][matchIndex + i + 1];
+            placeholders[i].value := matches.matches[0][matchIndex + i + 1];
         end;
         result := placeHolders;
     end;

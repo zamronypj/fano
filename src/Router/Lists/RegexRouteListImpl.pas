@@ -324,7 +324,7 @@ type
                     placeholherRegex := regex.match(data.formatRegex, matches.matches[0]);
                     if (placeholderRegex.matched) then
                     begin
-                        data.phValue := matches.matches[0];
+                        data.value := matches.matches[0];
                     end else
                     begin
                         //assume not found or some other value
@@ -332,7 +332,7 @@ type
                     end;
                 end else
                 begin
-                    data.phValue := matches.matches[0];
+                    data.value := matches.matches[0];
                 end;
                 //TODO:return also placeholder!!
                 result := data.routeData;
