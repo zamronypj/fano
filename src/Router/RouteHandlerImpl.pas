@@ -21,6 +21,8 @@ uses
     RequestHandlerIntf,
     RouteHandlerIntf,
     RouteIntf,
+    RouteArgsReaderIntf,
+    RouteArgsWriterIntf,
     PlaceholderTypes,
     InjectableObjectImpl;
 
