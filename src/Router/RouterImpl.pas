@@ -42,7 +42,10 @@ type
         function resetRouteData(const routeData : PRouteRec) : PRouteRec;
         function getRouteHandler(const requestMethod : shortstring; const routeData :PRouteRec) : IRouteHandler;
     public
-        constructor create(const routes : IRouteList);
+        constructor create(
+            const routes : IRouteList;
+            const routeHandlerFactory : IRouteHandlerFactory
+        );
         destructor destroy(); override;
 
         (*!------------------------------------------
@@ -175,9 +178,13 @@ uses
     EMethodNotAllowedImpl;
 
 
-    constructor TRouter.create(const routes : IRouteList);
+    constructor TRouter.create(
+        const routes : IRouteList;
+        const routeHandlerFactory : IRouteHandlerFactory
+    );
     begin
         routeList := routes;
+        fRouteHandlerFactory := routeHandlerFactory;
     end;
 
     function TRouter.resetRouteData(const routeData : PRouteRec) : PRouteRec;
@@ -194,10 +201,9 @@ uses
     end;
 
     destructor TRouter.destroy();
-    var i, len:integer;
+    var i, len : integer;
        routeData : PRouteRec;
     begin
-        inherited destroy();
         len := routeList.count();
         for i := len-1 downto 0 do
         begin
@@ -206,6 +212,8 @@ uses
             dispose(routeData);
         end;
         routeList := nil;
+        fRouteHandlerFactory := nil;
+        inherited destroy();
     end;
 
     function TRouter.createEmptyRouteData(const routePattern: shortstring) : PRouteRec;
