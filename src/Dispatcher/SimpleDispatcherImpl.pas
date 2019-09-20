@@ -16,7 +16,7 @@ uses
     EnvironmentIntf,
     ResponseIntf,
     StdInIntf,
-    RouteHandlerIntf;
+    RouteHandlerIntf,
     BaseDispatcherImpl;
 
 type
