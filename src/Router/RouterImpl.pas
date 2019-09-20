@@ -20,6 +20,7 @@ uses
     RouteMatcherIntf,
     RouteListIntf,
     RouteDataTypes,
+    RouteHandlerIntf,
     InjectableObjectImpl,
     RouteHandlerFactory;
 
@@ -38,7 +39,7 @@ type
         function findRouteData(const routePattern: shortstring) : PRouteRec;
         function createEmptyRouteData(const routePattern: shortstring) : PRouteRec;
         function resetRouteData(const routeData : PRouteRec) : PRouteRec;
-        function getRouteHandler(const requestMethod : shortstring; const routeData :PRouteRec) : IRequestHandler;
+        function getRouteHandler(const requestMethod : shortstring; const routeData :PRouteRec) : IRouteHandler;
     public
         constructor create(const routes : IRouteList);
         destructor destroy(); override;
@@ -242,10 +243,12 @@ uses
         const handler : IRequestHandler
     ) : IRoute;
     var routeData : PRouteRec;
+        routeHandler : IRouteHandler;
     begin
+        routeHandler := fRouteHandlerFactory.build(handler);
         routeData := findRouteData(routePattern);
-        routeData^.getRoute := fRouteHandlerFactory.build(handler);
-        result := routeData^.getRoute as IRoute;
+        routeData^.getRoute := routeHandler;
+        result := routeHandler.route();
     end;
 
     (*!------------------------------------------
@@ -260,10 +263,12 @@ uses
         const handler : IRequestHandler
     ) : IRoute;
     var routeData : PRouteRec;
+        routeHandler : IRouteHandler;
     begin
+        routeHandler := fRouteHandlerFactory.build(handler);
         routeData := findRouteData(routePattern);
-        routeData^.postRoute := fRouteHandlerFactory.build(handler);
-        result := routeData^.postRoute as IRoute;
+        routeData^.postRoute := routeHandler;
+        result := routeHandler.route();
     end;
 
     (*!------------------------------------------
@@ -282,8 +287,8 @@ uses
     begin
         routeHandler := fRouteHandlerFactory.build(handler);
         routeData := findRouteData(routePattern);
-        routeData^.putRoute := routeHandler.getHandler();
-        result := routeHandler.getRoute();
+        routeData^.putRoute := routeHandler;
+        result := routeHandler.route();
     end;
 
     (*!------------------------------------------
@@ -298,10 +303,12 @@ uses
         const handler : IRequestHandler
     ) : IRoute;
     var routeData : PRouteRec;
+        routeHandler : IRouteHandler;
     begin
+        routeHandler := fRouteHandlerFactory.build(handler);
         routeData := findRouteData(routePattern);
-        routeData^.patchRoute := TRouteHandler.create(fMiddlewareCollection, handler);
-        result := routeData^.patchRoute as IRoute;
+        routeData^.patchRoute := routeHandler;
+        result := routeHandler.route();
     end;
 
     (*!------------------------------------------
@@ -316,10 +323,12 @@ uses
         const handler : IRequestHandler
     ) : IRoute;
     var routeData : PRouteRec;
+        routeHandler : IRouteHandler;
     begin
+        routeHandler := fRouteHandlerFactory.build(handler);
         routeData := findRouteData(routePattern);
-        routeData^.deleteRoute := TRouteHandler.create(fMiddlewareCollection, handler);
-        result := routeData^.deleteRoute as IRoute;
+        routeData^.deleteRoute := routeHandler;
+        result := routeHandler.route();
     end;
 
     (*!------------------------------------------
@@ -334,10 +343,12 @@ uses
         const handler : IRequestHandler
     ) : IRoute;
     var routeData : PRouteRec;
+        routeHandler : IRouteHandler;
     begin
+        routeHandler := fRouteHandlerFactory.build(handler);
         routeData := findRouteData(routePattern);
-        routeData^.headRoute := TRouteHandler.create(fMiddlewareCollection, handler);
-        result := routeData^.headRoute as IRoute;
+        routeData^.headRoute := routeHandler;
+        result := routeHandler.route();
     end;
 
     (*!------------------------------------------
@@ -352,10 +363,12 @@ uses
         const handler : IRequestHandler
     ) : IRoute;
     var routeData : PRouteRec;
+        routeHandler : IRouteHandler;
     begin
+        routeHandler := fRouteHandlerFactory.build(handler);
         routeData := findRouteData(routePattern);
-        routeData^.optionsRoute := TRouteHandler.create(fMiddlewareCollection, handler);
-        result := routeData^.optionsRoute as IRoute;
+        routeData^.optionsRoute := routeHandler;
+        result := routeHandler.route();
     end;
 
     (*!------------------------------------------
@@ -374,10 +387,10 @@ uses
     var routeData : PRouteRec;
         i, len : integer;
         averb : shortstring;
-        routeHandler : IRequestHandler;
+        routeHandler : IRouteHandler;
     begin
+        routeHandler := fRouteHandlerFactory.build(handler);
         routeData := findRouteData(routePattern);
-        routeHandler := TRouteHandler.create(fMiddlewareCollection, handler);
         len := high(verbs) - low(verbs) + 1;
         for i := 0 to len - 1 do
         begin
@@ -392,7 +405,7 @@ uses
                 'HEAD' :  routeData^.headRoute := routeHandler;
             end;
         end;
-        result := routeHandler as IRoute;
+        result := routeHandler.route();
     end;
 
     (*!------------------------------------------
@@ -405,12 +418,12 @@ uses
     function TRouter.any(
         const routePattern: shortstring;
         const handler : IRequestHandler
-    ) : IRequestHandler;
+    ) : IRoute;
     var routeData : PRouteRec;
-        routeHandler : IRequestHandler;
+        routeHandler : IRouteHandler;
     begin
+        routeHandler := fRouteHandlerFactory.build(handler);
         routeData := findRouteData(routePattern);
-        routeHandler := TRouteHandler.create(fMiddlewareCollection, handler);
         routeData^.getRoute := routeHandler;
         routeData^.postRoute := routeHandler;
         routeData^.putRoute := routeHandler;
@@ -418,7 +431,7 @@ uses
         routeData^.patchRoute := routeHandler;
         routeData^.optionsRoute := routeHandler;
         routeData^.headRoute := routeHandler;
-        result := routeHandler as IRoute;
+        result := routeHandler.route();
     end;
 
     (*!------------------------------------------
@@ -429,21 +442,20 @@ uses
      * @return route handler instance or nil if not found
      *-------------------------------------------*)
     function TRouter.getRouteHandler(const requestMethod : shortstring; const routeData :PRouteRec) : IRequestHandler;
-    var handler : IRequestHandler;
-        method : shortstring;
+    var method : shortstring;
     begin
         method := uppercase(requestMethod);
-        handler := nil;
         case method of
-            'GET' : handler := routeData^.getRoute;
-            'POST' : handler := routeData^.postRoute;
-            'PUT' : handler := routeData^.putRoute;
-            'DELETE' : handler := routeData^.deleteRoute;
-            'PATCH' : handler := routeData^.patchRoute;
-            'OPTIONS' : handler := routeData^.optionsRoute;
-            'HEAD' : handler := routeData^.headRoute;
+            'GET' : result := routeData^.getRoute;
+            'POST' : result := routeData^.postRoute;
+            'PUT' : result := routeData^.putRoute;
+            'DELETE' : result := routeData^.deleteRoute;
+            'PATCH' : result := routeData^.patchRoute;
+            'OPTIONS' : result := routeData^.optionsRoute;
+            'HEAD' : result := routeData^.headRoute;
+        else
+            result := nil;
         end;
-        result := handler;
     end;
 
     (*!----------------------------------------------
@@ -455,7 +467,7 @@ uses
      *-----------------------------------------------*)
     function TRouter.match(const requestMethod : shortstring; const requestUri : shortstring) : IRequestHandler;
     var routeData : PRouteRec;
-        routeArgs : IRouteArgsWriter;
+        routeHandler : IRouteHandler;
     begin
         routeData := routeList.match(requestUri);
 
@@ -467,9 +479,9 @@ uses
             );
         end;
 
-        result := getRouteHandler(requestMethod, routeData);
+        routeHandler := getRouteHandler(requestMethod, routeData);
 
-        if (result = nil) then
+        if (routeHandler = nil) then
         begin
             raise EMethodNotAllowed.createFmt(
                 sMethodNotAllowed,
@@ -477,7 +489,7 @@ uses
             );
         end;
 
-        routeArgs := (result as IRouteArgsWriter);
-        routeArgs.setArgs(routeData^.placeholders);
+        routeHandler.argsWriter().setArgs(routeData^.placeholders);
+        result := routeHandler.handler();
     end;
 end.

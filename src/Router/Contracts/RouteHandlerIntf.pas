@@ -16,7 +16,8 @@ interface
 uses
 
     RouteIntf,
-    RequestHandlerIntf;
+    RequestHandlerIntf,
+    RouteArgsWriterIntf;
 
 type
 
@@ -34,14 +35,21 @@ type
          *--------------------------------------------
          * @return route instance
          *--------------------------------------------*)
-        function getRoute() : IRoute;
+        function route() : IRoute;
 
         (*!-------------------------------------------
          * get request handler
          *--------------------------------------------
          * @return request handler
          *--------------------------------------------*)
-        function getHandler() : IRequestHandler;
+        function handler() : IRequestHandler;
+
+        (*!-------------------------------------------
+         * get router arguments writer
+         *--------------------------------------------
+         * @return route arguments writer instance
+         *--------------------------------------------*)
+        function argsWriter() : IRouteArgsWriter;
     end;
 
 implementation

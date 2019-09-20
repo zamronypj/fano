@@ -15,7 +15,7 @@ interface
 uses
 
     PlaceholderTypes,
-    RequestHandlerIntf;
+    RouteHandlerIntf;
 
 type
 
@@ -27,13 +27,13 @@ type
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      * -----------------------------------------------*)
     TRouteRec = record
-        getRoute : IRequestHandler;
-        postRoute : IRequestHandler;
-        putRoute : IRequestHandler;
-        patchRoute : IRequestHandler;
-        deleteRoute : IRequestHandler;
-        optionsRoute : IRequestHandler;
-        headRoute : IRequestHandler;
+        getRoute : IRouteHandler;
+        postRoute : IRouteHandler;
+        putRoute : IRouteHandler;
+        patchRoute : IRouteHandler;
+        deleteRoute : IRouteHandler;
+        optionsRoute : IRouteHandler;
+        headRoute : IRouteHandler;
 
         placeholders : TArrayOfPlaceholders;
     end;

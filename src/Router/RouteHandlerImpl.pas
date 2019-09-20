@@ -19,6 +19,7 @@ uses
     ResponseIntf,
     MiddlewareCollectionAwareIntf,
     RequestHandlerIntf,
+    RouteHandlerIntf,
     RouteIntf,
     PlaceholderTypes,
     InjectableObjectImpl;
@@ -30,7 +31,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      * -----------------------------------------------*)
-    TRouteHandler = class(TInjectableObject, IRequestHandler, IRouteArgsReader, IRouteArgsWriter, IRoute)
+    TRouteHandler = class(TInjectableObject, IRouteHandler, IRequestHandler, IRouteArgsReader, IRouteArgsWriter, IRoute)
     private
         fMiddlewares : IMiddlewareCollectionAware;
         varPlaceholders : TArrayOfPlaceholders;
@@ -116,6 +117,27 @@ type
          * @return current route instance
          *--------------------------------------------*)
         function after(const amiddleware : IMiddleware) : IRoute;
+
+        (*!-------------------------------------------
+         * get route instance
+         *--------------------------------------------
+         * @return route instance
+         *--------------------------------------------*)
+        function route() : IRoute;
+
+        (*!-------------------------------------------
+         * get request handler
+         *--------------------------------------------
+         * @return request handler
+         *--------------------------------------------*)
+        function handler() : IRequestHandler;
+
+        (*!-------------------------------------------
+         * get router arguments writer
+         *--------------------------------------------
+         * @return route arguments writer instance
+         *--------------------------------------------*)
+        function argsWriter() : IRouteArgsWriter;
     end;
 
 implementation
@@ -242,6 +264,36 @@ uses
     function TRouteHandler.after(const amiddleware : IMiddleware) : IRoute;
     begin
         fMiddlewares.addAfter(amiddleware);
+        result := self;
+    end;
+
+    (*!-------------------------------------------
+     * get route instance
+     *--------------------------------------------
+     * @return route instance
+     *--------------------------------------------*)
+    function TRouteHandler.route() : IRoute;
+    begin
+        result := self;
+    end;
+
+    (*!-------------------------------------------
+     * get request handler
+     *--------------------------------------------
+     * @return request handler
+     *--------------------------------------------*)
+    function TRouteHandler.handler() : IRequestHandler;
+    begin
+        result := self;
+    end;
+
+    (*!-------------------------------------------
+     * get router arguments writer
+     *--------------------------------------------
+     * @return route arguments writer instance
+     *--------------------------------------------*)
+    function TRouteHandler.argsWriter() : IRouteArgsWriter;
+    begin
         result := self;
     end;
 end.
