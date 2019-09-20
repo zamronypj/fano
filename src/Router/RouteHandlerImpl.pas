@@ -18,6 +18,7 @@ uses
     RequestIntf,
     ResponseIntf,
     MiddlewareCollectionAwareIntf,
+    MiddlewareIntf,
     RequestHandlerIntf,
     RouteHandlerIntf,
     RouteIntf,
