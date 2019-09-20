@@ -21,6 +21,7 @@ uses
     RequestValidatorintf,
     MiddlewareIntf,
     RequestHandlerIntf,
+    RouteArgsReaderIntf,
     InjectableObjectImpl;
 
 type
@@ -36,6 +37,7 @@ type
     private
         fValidation : IRequestValidator;
         fValidationErrorHandler : IRequestHandler;
+        fRouteArgs : IRouteArgsReader;
     public
         constructor create(
             const validationInst : IRequestValidator;
@@ -69,17 +71,20 @@ implementation
 
     constructor TValidationMiddlewareWithHandler.create(
         const validationInst : IRequestValidator;
-        const validationErrorHandler : IRequestHandler
+        const validationErrorHandler : IRequestHandler;
+        const routeArgs : IRouteArgReader;
     );
     begin
         fValidation := validationInst;
         fValidationErrorHandler := validationErrorHandler;
+        fRouteArgs := routeArgs;
     end;
 
     destructor TValidationMiddlewareWithHandler.destroy();
     begin
         fValidation := nil;
         fValidationErrorHandler := nil;
+        fRouteArgs := nil;
         inherited destroy();
     end;
 
@@ -106,7 +111,7 @@ implementation
         end else
         begin
             //validation failed, let validation error handler take care
-            result := fValidationErrorHandler.handleRequest(request, response);
+            result := fValidationErrorHandler.handleRequest(request, response, fRouteArgs);
         end;
     end;
 
