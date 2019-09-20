@@ -29,8 +29,12 @@ type
     TRequestHandlerAsMiddleware = class(TInterfacedObject, IMiddleware)
     private
         requestHandler : IRequestHandler;
+        fRouteArgs : IRouteArgsReader;
     public
-        constructor create(requestHandlerInst : IRequestHandler);
+        constructor create(
+            const requestHandlerInst : IRequestHandler;
+            const routeArgs : IRouteArgsReader
+        );
         destructor destroy(); override;
         function handleRequest(
             const request : IRequest;
@@ -41,15 +45,20 @@ type
 
 implementation
 
-    constructor TRequestHandlerAsMiddleware.create(requestHandlerInst : IRequestHandler);
+    constructor TRequestHandlerAsMiddleware.create(
+        const requestHandlerInst : IRequestHandler;
+        const routeArgs : IRouteArgsReader
+    );
     begin
         requestHandler := requestHandlerInst;
+        fRouteArgs := routeArgs;
     end;
 
     destructor TRequestHandlerAsMiddleware.destroy();
     begin
-        inherited destroy();
         requestHandler := nil;
+        fRouteArgs := nil;
+        inherited destroy();
     end;
 
     function TRequestHandlerAsMiddleware.handleRequest(
@@ -59,6 +68,6 @@ implementation
     ) : IResponse;
     begin
         canContinue := true;
-        result := requestHandler.handleRequest(request, response);
+        result := requestHandler.handleRequest(request, response, fRouteArgs);
     end;
 end.

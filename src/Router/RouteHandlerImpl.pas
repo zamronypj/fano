@@ -138,6 +138,13 @@ type
          * @return route arguments writer instance
          *--------------------------------------------*)
         function argsWriter() : IRouteArgsWriter;
+
+        (*!-------------------------------------------
+         * get middlewares collection
+         *--------------------------------------------
+         * @return middleware collections
+         *--------------------------------------------*)
+        function middlewares() : IMiddlewareCollectionAware;
     end;
 
 implementation
@@ -295,5 +302,15 @@ uses
     function TRouteHandler.argsWriter() : IRouteArgsWriter;
     begin
         result := self;
+    end;
+
+    (*!-------------------------------------------
+     * get middlewares collection
+     *--------------------------------------------
+     * @return middleware collections
+     *--------------------------------------------*)
+    function TRouteHandler.middlewares() : IMiddlewareCollectionAware;
+    begin
+        result := fMiddlewares;
     end;
 end.

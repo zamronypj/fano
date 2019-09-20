@@ -17,7 +17,9 @@ uses
 
     RouteIntf,
     RequestHandlerIntf,
-    RouteArgsWriterIntf;
+    RouteArgsWriterIntf,
+    RouteArgsReaderIntf,
+    MiddlewareCollectionAwareIntf;
 
 type
 
@@ -29,6 +31,13 @@ type
      *-------------------------------------------------*)
     IRouteHandler = interface
         ['{BD3ACEAB-F00B-4102-A344-8014893279BF}']
+
+        (*!-------------------------------------------
+         * get middlewares collection
+         *--------------------------------------------
+         * @return middleware collections
+         *--------------------------------------------*)
+        function middlewares() : IMiddlewareCollectionAware;
 
         (*!-------------------------------------------
          * get route instance
@@ -50,6 +59,13 @@ type
          * @return route arguments writer instance
          *--------------------------------------------*)
         function argsWriter() : IRouteArgsWriter;
+
+        (*!-------------------------------------------
+         * get router arguments reader
+         *--------------------------------------------
+         * @return route arguments writer instance
+         *--------------------------------------------*)
+        function argsReader() : IRouteArgsReader;
     end;
 
 implementation

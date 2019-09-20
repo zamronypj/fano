@@ -17,6 +17,7 @@ uses
     MiddlewareIntf,
     MiddlewareChainIntf,
     RequestHandlerIntf,
+    RouteHandlerIntf,
     RequestIntf,
     ResponseIntf,
     MiddlewareCollectionIntf;
@@ -74,7 +75,7 @@ type
         function execute(
             const request : IRequest;
             const response : IResponse;
-            const requestHandler : IRequestHandler
+            const routeHandler : IRouteHandler
         ) : IResponse;
     end;
 
@@ -153,16 +154,20 @@ implementation
     function TMiddlewareChain.execute(
         const request : IRequest;
         const response : IResponse;
-        const requestHandler : IRequestHandler
+        const routeHandler : IRouteHandler
     ) : IResponse;
     var canContinue : boolean;
         newResponse : IResponse;
+        reqHandler : IRequestHandler;
+        routeArgs : IRouteArgsReader;
     begin
         canContinue := true;
         newResponse := executeBeforeMiddlewares(request, response, canContinue);
         if (canContinue) then
         begin
-            newResponse := requestHandler.handleRequest(request, newResponse);
+            reqHandler := routeHandler.handler();
+            routeArgs := routeHandler.argsReader();
+            newResponse := reqHandler.handleRequest(request, newResponse, routeArgs);
             newResponse := executeAfterMiddlewares(request, newResponse, canContinue);
         end;
         result := newResponse;

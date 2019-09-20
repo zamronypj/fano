@@ -15,7 +15,8 @@ interface
 uses
 
     RequestIntf,
-    ResponseIntf;
+    ResponseIntf,
+    RouteArgsReaderIntf;
 
 type
     {------------------------------------------------
@@ -31,9 +32,14 @@ type
          *--------------------------------------------
          * @param request object represent current request
          * @param response object represent current response
+         * @param args object represent current route arguments
          * @return new response
          *--------------------------------------------*)
-        function handleRequest(const request : IRequest; const response : IResponse) : IResponse;
+        function handleRequest(
+            const request : IRequest;
+            const response : IResponse;
+            const args : IRouteArgsReader
+        ) : IResponse;
     end;
 
 implementation

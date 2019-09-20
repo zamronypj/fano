@@ -16,7 +16,7 @@ uses
 
     RequestIntf,
     ResponseIntf,
-    RequestHandlerIntf;
+    RouteHandlerIntf;
 
 type
 
@@ -31,7 +31,7 @@ type
         function execute(
             const request : IRequest;
             const response : IResponse;
-            const requestHandler : IRequestHandler
+            const routeHandler : IRouteHandler
         ) : IResponse;
     end;
 

@@ -161,7 +161,7 @@ type
          * @param requestUri requested Uri
          * @return route handler instance
          *-----------------------------------------------*)
-        function match(const requestMethod : shortstring; const requestUri: shortstring) : IRequestHandler;
+        function match(const requestMethod : shortstring; const requestUri: shortstring) : IRouteHandler;
     end;
 
 implementation
@@ -465,7 +465,7 @@ uses
      * @param requestUri requested Uri
      * @return route handler instance
      *-----------------------------------------------*)
-    function TRouter.match(const requestMethod : shortstring; const requestUri : shortstring) : IRequestHandler;
+    function TRouter.match(const requestMethod : shortstring; const requestUri : shortstring) : IRouteHandler;
     var routeData : PRouteRec;
         routeHandler : IRouteHandler;
     begin
