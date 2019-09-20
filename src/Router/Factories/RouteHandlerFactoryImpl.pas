@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit RouterHandlerFactoryImpl;
+unit RouteHandlerFactoryImpl;
 
 interface
 
@@ -26,7 +26,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TRouterHandlerFactory = class(TInterfacedObject, IRouteHandlerFactory)
+    TRouteHandlerFactory = class(TInterfacedObject, IRouteHandlerFactory)
     private
         fMiddlewareCollectionFactory : IMiddlewareCollectionFactory;
     public
@@ -41,18 +41,18 @@ uses
 
     RouterHandlerImpl;
 
-    constructor TRouterHandlerFactory.create(const middlewareCollectionFactory : IMiddlewareCollectionFactory);
+    constructor TRouteHandlerFactory.create(const middlewareCollectionFactory : IMiddlewareCollectionFactory);
     begin
         fMiddlewareCollectionFactory := middlewareCollectionFactory;
     end;
 
-    destructor TRouterHandlerFactory.destroy();
+    destructor TRouteHandlerFactory.destroy();
     begin
         fMiddlewareCollectionFactory := nil;
         inherited destroy();
     end
 
-    function TRouterHandlerFactory.build(const handler : IRequestHandler) : IRequestHandler;
+    function TRouteHandlerFactory.build(const handler : IRequestHandler) : IRequestHandler;
     begin
         result := TRouteHandler.create(fMiddlewareCollectionFactory.build(), handler);
     end;
