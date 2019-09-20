@@ -143,6 +143,13 @@ type
         function argsWriter() : IRouteArgsWriter;
 
         (*!-------------------------------------------
+         * get router arguments reader
+         *--------------------------------------------
+         * @return route arguments reader instance
+         *--------------------------------------------*)
+        function argsReader() : IRouteArgsReader;
+
+        (*!-------------------------------------------
          * get middlewares collection
          *--------------------------------------------
          * @return middleware collections
@@ -303,6 +310,16 @@ uses
      * @return route arguments writer instance
      *--------------------------------------------*)
     function TRouteHandler.argsWriter() : IRouteArgsWriter;
+    begin
+        result := self;
+    end;
+
+    (*!-------------------------------------------
+     * get router arguments reader
+     *--------------------------------------------
+     * @return route arguments reader instance
+     *--------------------------------------------*)
+    function TRouteHandler.argsReader() : IRouteArgsReader;
     begin
         result := self;
     end;
