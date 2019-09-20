@@ -195,7 +195,7 @@ uses
     (*!-------------------------------------------
      * Set route argument data
      *--------------------------------------------*)
-    function TRouteHandler.setArgs(const placeHolders : TArrayOfPlaceholders) : IRouteHandler;
+    function TRouteHandler.setArgs(const placeHolders : TArrayOfPlaceholders) : IRouteArgsWriter;
     begin
         varPlaceholders := placeHolders;
         result := self;
