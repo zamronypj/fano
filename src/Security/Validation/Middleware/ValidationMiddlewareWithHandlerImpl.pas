@@ -72,7 +72,7 @@ implementation
     constructor TValidationMiddlewareWithHandler.create(
         const validationInst : IRequestValidator;
         const validationErrorHandler : IRequestHandler;
-        const routeArgs : IRouteArgReader;
+        const routeArgs : IRouteArgsReader;
     );
     begin
         fValidation := validationInst;
