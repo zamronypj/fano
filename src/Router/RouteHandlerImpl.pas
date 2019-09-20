@@ -62,11 +62,13 @@ type
          *--------------------------------------------
          * @param request object represent current request
          * @param response object represent current response
+         * @param args object represent current route arguments
          * @return new response
          *--------------------------------------------*)
         function handleRequest(
             const request : IRequest;
-            const response : IResponse
+            const response : IResponse;
+            const args : IRouteArgsReader
         ) : IResponse;
 
         (*!-------------------------------------------
@@ -230,14 +232,16 @@ uses
      *--------------------------------------------
      * @param request object represent current request
      * @param response object represent current response
+     * @param args object represent current route arguments
      * @return new response
      *--------------------------------------------*)
     function TRouteHandler.handleRequest(
         const request : IRequest;
-        const response : IResponse
+        const response : IResponse;
+        const args : IRouteArgsReader
     ) : IResponse;
     begin
-        result := fActualHandler.handleRequest(request, response);
+        result := fActualHandler.handleRequest(request, response, args);
     end;
 
     (*!-------------------------------------------
