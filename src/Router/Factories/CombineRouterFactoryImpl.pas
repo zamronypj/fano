@@ -47,7 +47,7 @@ uses
                 TRegex.create(),
                 THashList.create()
             ),
-            TRouterHandlerFactory.create(getMiddlewareFactory())
+            TRouteHandlerFactory.create(getMiddlewareFactory())
         );
     end;
 
