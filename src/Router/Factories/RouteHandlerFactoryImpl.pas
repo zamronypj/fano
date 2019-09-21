@@ -42,7 +42,7 @@ uses
 
     RouteHandlerImpl;
 
-    constructor TRouteHandlerFactory.create(const middlewareCollectionFactory : IMiddlewareCollectionFactory);
+    constructor TRouteHandlerFactory.create(const middlewareCollectionFactory : IMiddlewareCollectionAwareFactory);
     begin
         fMiddlewareCollectionFactory := middlewareCollectionFactory;
     end;
