@@ -15,7 +15,7 @@ interface
 uses
     DependencyIntf,
     DependencyContainerIntf,
-    AbtractRouterFactoryImpl;
+    AbstractRouterFactoryImpl;
 
 type
 
