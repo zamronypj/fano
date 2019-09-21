@@ -17,6 +17,7 @@ uses
 
     ListIntf,
     ValidatorIntf,
+    RequestIntf,
     BooleanValidatorImpl;
 
 type
@@ -36,7 +37,11 @@ type
          * @param dataToValidate input data
          * @return true if data is valid otherwise false
          *-------------------------------------------------*)
-        function isValidData(const dataToValidate : string) : boolean; override;
+        function isValidData(
+            const dataToValidate : string;
+            const dataCollection : IList;
+            const request : IRequest
+        ) : boolean; override;
     public
         (*!------------------------------------------------
          * constructor
@@ -69,11 +74,15 @@ resourcestring
      * @param dataToValidate input data
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
-    function TAcceptedValidator.isValidData(const dataToValidate : string) : boolean;
+    function TAcceptedValidator.isValidData(
+        const dataToValidate : string;
+        const dataCollection : IList;
+        const request : IRequest
+    ) : boolean;
     var truthyVal : string;
     begin
         truthyVal := lowercase(dataToValidate);
-        result := inherited isValidData(truthyVal) or
+        result := inherited isValidData(truthyVal, dataCollection, request) or
             (truthyVal = 'yes') or
             (truthyVal = 'on') or
             (truthyVal = '1');

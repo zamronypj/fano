@@ -16,6 +16,8 @@ uses
 
     DependencyIntf,
     DependencyContainerIntf,
+    MiddlewareCollectionAwareFactoryIntf,
+    MiddlewareCollectionAwareIntf,
     FactoryImpl;
 
 type
@@ -26,8 +28,9 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TMiddlewareCollectionAwareFactory = class(TFactory, IDependencyFactory)
+    TMiddlewareCollectionAwareFactory = class(TFactory, IMiddlewareCollectionAwareFactory)
     public
+        function build() : IMiddlewareCollectionAware; overload;
         function build(const container : IDependencyContainer) : IDependency; override;
     end;
 
@@ -38,11 +41,16 @@ uses
     MiddlewareCollectionAwareImpl,
     MiddlewareCollectionImpl;
 
-    function TMiddlewareCollectionAwareFactory.build(const container : IDependencyContainer) : IDependency;
+    function TMiddlewareCollectionAwareFactory.build() : IMiddlewareCollectionAware;
     begin
         result := TMiddlewareCollectionAware.create(
             TMiddlewareCollection.create(),
             TMiddlewareCollection.create()
         );
+    end;
+
+    function TMiddlewareCollectionAwareFactory.build(const container : IDependencyContainer) : IDependency;
+    begin
+        result := build() as IDependency;
     end;
 end.

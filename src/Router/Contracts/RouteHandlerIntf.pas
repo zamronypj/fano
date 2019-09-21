@@ -11,46 +11,61 @@ unit RouteHandlerIntf;
 interface
 
 {$MODE OBJFPC}
+{$H+}
 
 uses
-    MiddlewareIntf,
-    MiddlewareCollectionAwareIntf,
+
+    RouteIntf,
     RequestHandlerIntf,
-    PlaceholderTypes;
+    RouteArgsWriterIntf,
+    RouteArgsReaderIntf,
+    MiddlewareCollectionAwareIntf;
 
 type
 
     (*!------------------------------------------------
      * interface for any class having capability to
-     * handler route
+     * manage route data
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    IRouteHandler = interface(IRequestHandler)
-        ['{7F3C1F5B-4D60-441B-820F-400D76EAB1DC}']
+    IRouteHandler = interface
+        ['{BD3ACEAB-F00B-4102-A344-8014893279BF}']
 
         (*!-------------------------------------------
-         * Set route argument data
+         * get middlewares collection
          *--------------------------------------------
-         * @param placeHolders array of placeholders
-         * @return current instance
+         * @return middleware collections
          *--------------------------------------------*)
-        function setArgs(const placeHolders : TArrayOfPlaceholders) : IRouteHandler;
+        function middlewares() : IMiddlewareCollectionAware;
 
         (*!-------------------------------------------
-         * get route argument data
+         * get route instance
          *--------------------------------------------
-         * @return current array of placeholders
+         * @return route instance
          *--------------------------------------------*)
-        function getArgs() : TArrayOfPlaceholders;
+        function route() : IRoute;
 
         (*!-------------------------------------------
-         * get single route argument data
+         * get request handler
          *--------------------------------------------
-         * @param key name of argument
-         * @return placeholder
+         * @return request handler
          *--------------------------------------------*)
-        function getArg(const key : shortstring) : TPlaceholder;
+        function handler() : IRequestHandler;
+
+        (*!-------------------------------------------
+         * get router arguments writer
+         *--------------------------------------------
+         * @return route arguments writer instance
+         *--------------------------------------------*)
+        function argsWriter() : IRouteArgsWriter;
+
+        (*!-------------------------------------------
+         * get router arguments reader
+         *--------------------------------------------
+         * @return route arguments writer instance
+         *--------------------------------------------*)
+        function argsReader() : IRouteArgsReader;
     end;
 
 implementation

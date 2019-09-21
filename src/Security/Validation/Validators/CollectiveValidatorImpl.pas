@@ -65,21 +65,23 @@ implementation
         const dataToValidate : IList;
         const request : IRequest
     ) : boolean;
-    var i, len : integer;
+    var i, len, totFail : integer;
     begin
         result := true;
         len := length(fValidators);
         errorMsgFormat := '';
+        totFail := 0;
         for i := 0 to len - 1 do
         begin
             if (not fValidators[i].isValid(fieldName, dataToValidate, request)) then
             begin
                 result := false;
-                if (i > 0) then
+                if (totFail > 0) then
                 begin
                     errorMsgFormat := errorMsgFormat + ', ';
                 end;
                 errorMsgFormat := errorMsgFormat + fValidators[i].errorMessage(fieldName);
+                inc(totFail);
             end;
         end;
     end;

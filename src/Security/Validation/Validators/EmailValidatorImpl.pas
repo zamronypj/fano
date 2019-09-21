@@ -34,17 +34,17 @@ type
 
 implementation
 
+const
+
+    REGEX_EMAIL = '^[_a-zA-Z\d\-.]+@([a-zA-Z\d\-]+(\.[_a-zA-Z\d\-]+)*)$';
+
 resourcestring
 
-    sErrNotValidEmail = 'Field ''%s'' must be email format';
+    sErrNotValidEmail = 'Field %s must be email format';
 
     constructor TEmailValidator.create(const regexInst : IRegex);
     begin
-        inherited create(
-            regexInst,
-            '^[_a-zA-Z\d\-.]+@([a-zA-Z\d\-]+(\.[_a-zA-Z\d\-]+)*)$',
-            sErrNotValidEmail
-        );
+        inherited create(regexInst, REGEX_EMAIL, sErrNotValidEmail);
     end;
 
 end.

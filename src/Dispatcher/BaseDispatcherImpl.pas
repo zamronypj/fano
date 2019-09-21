@@ -79,10 +79,10 @@ uses
 
     destructor TBaseDispatcher.destroy();
     begin
-        inherited destroy();
         routeMatcher := nil;
         responseFactory := nil;
         requestFactory := nil;
+        inherited destroy();
     end;
 
     function TBaseDispatcher.getRouteHandler(const env: ICGIEnvironment) : IRouteHandler;

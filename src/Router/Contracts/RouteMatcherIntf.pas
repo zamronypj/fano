@@ -11,6 +11,7 @@ unit RouteMatcherIntf;
 interface
 
 {$MODE OBJFPC}
+{$H+}
 
 uses
 
@@ -33,7 +34,7 @@ type
          * @param requestUri requested Uri
          * @return route handler instance
          *-----------------------------------------------*)
-        function match(const requestMethod : string; const requestUri : string) : IRouteHandler;
+        function match(const requestMethod : shortstring; const requestUri : shortstring) : IRouteHandler;
     end;
 
 implementation
