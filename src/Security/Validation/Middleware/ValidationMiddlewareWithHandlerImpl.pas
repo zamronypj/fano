@@ -37,12 +37,10 @@ type
     private
         fValidation : IRequestValidator;
         fValidationErrorHandler : IRequestHandler;
-        fRouteArgs : IRouteArgsReader;
     public
         constructor create(
             const validationInst : IRequestValidator;
-            const validationErrorHandler : IRequestHandler;
-            const routeArgs : IRouteArgsReader
+            const validationErrorHandler : IRequestHandler
         );
         destructor destroy(); override;
 
@@ -51,6 +49,7 @@ type
          *----------------------------------------
          * @param request request instance
          * @param response response instance
+         * @param route arguments
          * @param canContinue return true if execution
          *        can continue to next middleware or false
          *        to stop execution
@@ -62,6 +61,7 @@ type
         function handleRequest(
             const request : IRequest;
             const response : IResponse;
+            const args : IRouteArgsReader;
             var canContinue : boolean
         ) : IResponse;
 
@@ -72,20 +72,17 @@ implementation
 
     constructor TValidationMiddlewareWithHandler.create(
         const validationInst : IRequestValidator;
-        const validationErrorHandler : IRequestHandler;
-        const routeArgs : IRouteArgsReader
+        const validationErrorHandler : IRequestHandler
     );
     begin
         fValidation := validationInst;
         fValidationErrorHandler := validationErrorHandler;
-        fRouteArgs := routeArgs;
     end;
 
     destructor TValidationMiddlewareWithHandler.destroy();
     begin
         fValidation := nil;
         fValidationErrorHandler := nil;
-        fRouteArgs := nil;
         inherited destroy();
     end;
 
@@ -94,6 +91,7 @@ implementation
      *----------------------------------------
      * @param request request instance
      * @param response response instance
+     * @param route arguments
      * @param canContinue return true if execution
      *        can continue to next middleware or false
      *        to stop execution
@@ -102,6 +100,7 @@ implementation
     function TValidationMiddlewareWithHandler.handleRequest(
         const request : IRequest;
         const response : IResponse;
+        const args : IRouteArgsReader;
         var canContinue : boolean
     ) : IResponse;
     begin
