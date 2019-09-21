@@ -16,6 +16,7 @@ uses
 
     MiddlewareCollectionAwareFactoryIntf,
     RequestHandlerIntf,
+    RouteHandlerIntf,
     RouteHandlerFactoryIntf;
 
 type
@@ -32,7 +33,7 @@ type
     public
         constructor create(const middlewareCollectionFactory : IMiddlewareCollectionAwareFactory);
         destructor destroy(); override;
-        function build(const handler : IRequestHandler) : IRequestHandler;
+        function build(const handler : IRequestHandler) : IRouteHandler;
     end;
 
 implementation
@@ -52,7 +53,7 @@ uses
         inherited destroy();
     end
 
-    function TRouteHandlerFactory.build(const handler : IRequestHandler) : IRequestHandler;
+    function TRouteHandlerFactory.build(const handler : IRequestHandler) : IRouteHandler;
     begin
         result := TRouteHandler.create(fMiddlewareCollectionFactory.build(), handler);
     end;
