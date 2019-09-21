@@ -17,6 +17,7 @@ uses
     DependencyIntf,
     DependencyContainerIntf,
     MiddlewareCollectionAwareFactoryIntf,
+    MiddlewareCollectionAwareIntf,
     FactoryImpl;
 
 type
