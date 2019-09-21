@@ -15,7 +15,7 @@ interface
 uses
     DependencyIntf,
     DependencyContainerIntf,
-    FactoryImpl;
+    AbstractRouterFactoryImpl;
 
 type
 
@@ -25,7 +25,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TRouterFactory = class(TFactory, IDependencyFactory)
+    TRouterFactory = class(TAbstractRouterFactory)
     public
         function build(const container : IDependencyContainer) : IDependency; override;
     end;
@@ -33,12 +33,17 @@ type
 implementation
 
 uses
+
     RouterImpl,
-    RouteListImpl;
+    RouteListImpl,
+    RouteHandlerFactoryImpl;
 
     function TRouterFactory.build(const container : IDependencyContainer) : IDependency;
     begin
-        result := TRouter.create(TRouteList.create());
+        result := TRouter.create(
+            TRouteList.create(),
+            TRouteHandlerFactory.create(getMiddlewareFactory())
+        );
     end;
 
 end.

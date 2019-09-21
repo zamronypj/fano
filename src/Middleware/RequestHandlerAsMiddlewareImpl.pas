@@ -16,6 +16,7 @@ uses
     RequestIntf,
     ResponseIntf,
     RequestHandlerIntf,
+    RouteArgsReaderIntf,
     MiddlewareIntf;
 
 type
@@ -30,35 +31,39 @@ type
     private
         requestHandler : IRequestHandler;
     public
-        constructor create(requestHandlerInst : IRequestHandler);
+        constructor create(const requestHandlerInst : IRequestHandler);
         destructor destroy(); override;
         function handleRequest(
             const request : IRequest;
             const response : IResponse;
+            const routeArgs : IRouteArgsReader;
             var canContinue : boolean
         ) : IResponse;
     end;
 
 implementation
 
-    constructor TRequestHandlerAsMiddleware.create(requestHandlerInst : IRequestHandler);
+    constructor TRequestHandlerAsMiddleware.create(
+        const requestHandlerInst : IRequestHandler
+    );
     begin
         requestHandler := requestHandlerInst;
     end;
 
     destructor TRequestHandlerAsMiddleware.destroy();
     begin
-        inherited destroy();
         requestHandler := nil;
+        inherited destroy();
     end;
 
     function TRequestHandlerAsMiddleware.handleRequest(
         const request : IRequest;
         const response : IResponse;
+        const routeArgs : IRouteArgsReader;
         var canContinue : boolean
     ) : IResponse;
     begin
         canContinue := true;
-        result := requestHandler.handleRequest(request, response);
+        result := requestHandler.handleRequest(request, response, routeArgs);
     end;
 end.

@@ -17,6 +17,8 @@ uses
     MiddlewareIntf,
     MiddlewareChainIntf,
     RequestHandlerIntf,
+    RouteHandlerIntf,
+    RouteArgsReaderIntf,
     RequestIntf,
     ResponseIntf,
     MiddlewareCollectionIntf;
@@ -47,18 +49,21 @@ type
             const middlewares : IMiddlewareCollection;
             const request : IRequest;
             const response : IResponse;
+            const routeArgs : IRouteArgsReader;
             var canContinue : boolean
         ) : IResponse;
 
         function executeBeforeMiddlewares(
             const request : IRequest;
             const response : IResponse;
+            const routeArgs : IRouteArgsReader;
             var canContinue : boolean
         ) : IResponse;
 
         function executeAfterMiddlewares(
             const request : IRequest;
             const response : IResponse;
+            const routeArgs : IRouteArgsReader;
             var canContinue : boolean
         ) : IResponse;
     public
@@ -74,7 +79,7 @@ type
         function execute(
             const request : IRequest;
             const response : IResponse;
-            const requestHandler : IRequestHandler
+            const routeHandler : IRouteHandler
         ) : IResponse;
     end;
 
@@ -107,6 +112,7 @@ implementation
         const middlewares : IMiddlewareCollection;
         const request : IRequest;
         const response : IResponse;
+        const routeArgs : IRouteArgsReader;
         var canContinue : boolean
     ) : IResponse;
     var i, len : integer;
@@ -118,7 +124,7 @@ implementation
         for i := 0 to len-1 do
         begin
             middleware := middlewares.get(i);
-            newResponse := middleware.handleRequest(request, newResponse, canContinue);
+            newResponse := middleware.handleRequest(request, newResponse, routeArgs, canContinue);
             if (not canContinue) then
             begin
                 result := newResponse;
@@ -131,39 +137,45 @@ implementation
     function TMiddlewareChain.executeBeforeMiddlewares(
         const request : IRequest;
         const response : IResponse;
+        const routeArgs : IRouteArgsReader;
         var canContinue : boolean
     ) : IResponse;
     var beforeMiddlewares : IMiddlewareCollection;
     begin
         beforeMiddlewares := appBeforeMiddlewareList.merge(routeBeforeMiddlewareList);
-        result := executeMiddlewares(beforeMiddlewares, request, response, canContinue);
+        result := executeMiddlewares(beforeMiddlewares, request, response, routeArgs, canContinue);
     end;
 
     function TMiddlewareChain.executeAfterMiddlewares(
         const request : IRequest;
         const response : IResponse;
+        const routeArgs : IRouteArgsReader;
         var canContinue : boolean
     ) : IResponse;
     var afterMiddlewares : IMiddlewareCollection;
     begin
         afterMiddlewares := appAfterMiddlewareList.merge(routeAfterMiddlewareList);
-        result := executeMiddlewares(afterMiddlewares, request, response, canContinue);
+        result := executeMiddlewares(afterMiddlewares, request, response, routeArgs, canContinue);
     end;
 
     function TMiddlewareChain.execute(
         const request : IRequest;
         const response : IResponse;
-        const requestHandler : IRequestHandler
+        const routeHandler : IRouteHandler
     ) : IResponse;
     var canContinue : boolean;
         newResponse : IResponse;
+        reqHandler : IRequestHandler;
+        routeArgs : IRouteArgsReader;
     begin
         canContinue := true;
-        newResponse := executeBeforeMiddlewares(request, response, canContinue);
+        routeArgs := routeHandler.argsReader();
+        newResponse := executeBeforeMiddlewares(request, response, routeArgs, canContinue);
         if (canContinue) then
         begin
-            newResponse := requestHandler.handleRequest(request, newResponse);
-            newResponse := executeAfterMiddlewares(request, newResponse, canContinue);
+            reqHandler := routeHandler.handler();
+            newResponse := reqHandler.handleRequest(request, newResponse, routeArgs);
+            newResponse := executeAfterMiddlewares(request, newResponse, routeArgs, canContinue);
         end;
         result := newResponse;
     end;

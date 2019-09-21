@@ -21,6 +21,7 @@ TAlphaNumValidator = AlphaNumValidatorImpl.TAlphaNumValidator;
 TAlphaNumDashValidator = AlphaNumDashValidatorImpl.TAlphaNumDashValidator;
 TAlphaValidator = AlphaValidatorImpl.TAlphaValidator;
 TEmailValidator = EmailValidatorImpl.TEmailValidator;
+TUrlValidator = UrlValidatorImpl.TUrlValidator;
 
 TBaseCompositeValidator = BaseCompositeValidatorImpl.TBaseCompositeValidator;
 TCompositeValidator = CompositeValidatorImpl.TCompositeValidator;
@@ -40,8 +41,10 @@ TNotInValidator = NotInValidatorImpl.TNotInValidator;
 TBooleanValidator = BooleanValidatorImpl.TBooleanValidator;
 TAcceptedValidator = AcceptedValidatorImpl.TAcceptedValidator;
 TConfirmedValidator = ConfirmedValidatorImpl.TConfirmedValidator;
+TSameValidator = SameValidatorImpl.TSameValidator;
 
 TRequiredValidator = RequiredValidatorImpl.TRequiredValidator;
+TRequiredIfValidator = RequiredIfValidatorImpl.TRequiredIfValidator;
 TPresentValidator = PresentValidatorImpl.TPresentValidator;
 
 TDateValidator = DateValidatorImpl.TDateValidator;
@@ -51,6 +54,8 @@ TCompareDateTimeValidator = CompareDateTimeValidatorImpl.TCompareDateTimeValidat
 TAfterDateTimeValidator = AfterDateTimeValidatorImpl.TAfterDateTimeValidator;
 TBeforeDateTimeValidator = BeforeDateTimeValidatorImpl.TBeforeDateTimeValidator;
 TEqualDateTimeValidator = EqualDateTimeValidatorImpl.TEqualDateTimeValidator;
+TAfterDateTimeFieldValidator = AfterDateTimeFieldValidatorImpl.TAfterDateTimeFieldValidator;
+TBeforeDateTimeFieldValidator = BeforeDateTimeFieldValidatorImpl.TBeforeDateTimeFieldValidator;
 
 TUuidValidator = UuidValidatorImpl.TUuidValidator;
 
@@ -63,3 +68,6 @@ TUploadedMimeValidator = UploadedMimeValidatorImpl.TUploadedMimeValidator;
 TUploadedSizeValidator = UploadedSizeValidatorImpl.TUploadedSizeValidator;
 
 TNotValidator = NotValidatorImpl.TNotValidator;
+TAlwaysPassValidator = AlwaysPassValidatorImpl.TAlwaysPassValidator;
+TCompareFieldValidator = CompareFieldValidatorImpl.TCompareFieldValidator;
+TExistsValidator = ExistsValidatorImpl.TExistsValidator;

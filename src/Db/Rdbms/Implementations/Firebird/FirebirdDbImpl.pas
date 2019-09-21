@@ -26,6 +26,8 @@ type
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
     TFirebirdDb = class(TRdbms)
+    public
+        constructor create();
     end;
 
 implementation
@@ -34,4 +36,8 @@ uses
 
     IBConnection;
 
+    constructor TFirebirdDb.create();
+    begin
+        inherited create('Firebird');
+    end;
 end.

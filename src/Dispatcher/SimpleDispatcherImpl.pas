@@ -16,6 +16,7 @@ uses
     EnvironmentIntf,
     ResponseIntf,
     StdInIntf,
+    RouteHandlerIntf,
     BaseDispatcherImpl;
 
 type
@@ -41,10 +42,13 @@ implementation
         const env: ICGIEnvironment;
         const stdIn : IStdIn
     ) : IResponse;
+    var routeHandler : IRouteHandler;
     begin
-        result := getRouteHandler(env).handleRequest(
+        routeHandler := getRouteHandler(env);
+        result := routeHandler.handler().handleRequest(
             requestFactory.build(env, stdIn),
-            responseFactory.build(env)
+            responseFactory.build(env),
+            routeHandler.argsReader()
         );
     end;
 end.
