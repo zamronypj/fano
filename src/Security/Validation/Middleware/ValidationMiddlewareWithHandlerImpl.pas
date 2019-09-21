@@ -111,7 +111,7 @@ implementation
         end else
         begin
             //validation failed, let validation error handler take care
-            result := fValidationErrorHandler.handleRequest(request, response, fRouteArgs);
+            result := fValidationErrorHandler.handleRequest(request, response, args);
         end;
     end;
 
