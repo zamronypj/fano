@@ -51,7 +51,7 @@ uses
     begin
         fMiddlewareCollectionFactory := nil;
         inherited destroy();
-    end
+    end;
 
     function TRouteHandlerFactory.build(const handler : IRequestHandler) : IRouteHandler;
     begin
