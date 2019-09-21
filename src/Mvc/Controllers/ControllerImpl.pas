@@ -63,7 +63,7 @@ type
             const request : IRequest;
             const response : IResponse;
             const args : IRouteArgsReader
-        ) : IResponse; virtual;
+        ) : IResponse; override;
     end;
 
 implementation
