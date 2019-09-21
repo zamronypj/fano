@@ -17,7 +17,7 @@ uses
     RequestIntf,
     ResponseIntf,
     MiddlewareIntf,
-    RouterArgsReaderIntf,
+    RouteArgsReaderIntf,
     InjectableObjectImpl;
 
 type
