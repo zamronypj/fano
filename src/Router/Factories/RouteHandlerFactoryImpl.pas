@@ -40,7 +40,7 @@ implementation
 
 uses
 
-    RouterHandlerImpl;
+    RouteHandlerImpl;
 
     constructor TRouteHandlerFactory.create(const middlewareCollectionFactory : IMiddlewareCollectionFactory);
     begin
