@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit MiddlewareChainIntf;
+unit MiddlewareCollectionAwareFactoryIntf;
 
 interface
 
@@ -14,26 +14,22 @@ interface
 
 uses
 
-    RequestIntf,
-    ResponseIntf,
-    RouteHandlerIntf;
+   MiddlewareCollectionAwareIntf;
 
 type
 
     (*!------------------------------------------------
-     * interface for any class having capability to
-     * stack several middlewares and call
+     * interface for any class having capability to create
+     * middleware collection aware instance
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    IMiddlewareChain = interface
-        ['{47B9A178-4A0A-4599-AD67-C73B8E42B82A}']
-        function execute(
-            const request : IRequest;
-            const response : IResponse;
-            const routeHandler : IRouteHandler
-        ) : IResponse;
+    IMiddlewareCollectionAwareFactory = interface
+        ['{E935B73E-41B5-4C75-9940-EF6ABF5428D1}']
+
+        function build() : IMiddlewareCollectionAware;
     end;
 
 implementation
+
 end.

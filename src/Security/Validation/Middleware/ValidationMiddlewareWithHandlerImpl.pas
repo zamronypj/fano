@@ -21,6 +21,7 @@ uses
     RequestValidatorintf,
     MiddlewareIntf,
     RequestHandlerIntf,
+    RouteArgsReaderIntf,
     InjectableObjectImpl;
 
 type
@@ -48,6 +49,7 @@ type
          *----------------------------------------
          * @param request request instance
          * @param response response instance
+         * @param route arguments
          * @param canContinue return true if execution
          *        can continue to next middleware or false
          *        to stop execution
@@ -59,6 +61,7 @@ type
         function handleRequest(
             const request : IRequest;
             const response : IResponse;
+            const args : IRouteArgsReader;
             var canContinue : boolean
         ) : IResponse;
 
@@ -88,6 +91,7 @@ implementation
      *----------------------------------------
      * @param request request instance
      * @param response response instance
+     * @param route arguments
      * @param canContinue return true if execution
      *        can continue to next middleware or false
      *        to stop execution
@@ -96,6 +100,7 @@ implementation
     function TValidationMiddlewareWithHandler.handleRequest(
         const request : IRequest;
         const response : IResponse;
+        const args : IRouteArgsReader;
         var canContinue : boolean
     ) : IResponse;
     begin
@@ -106,7 +111,7 @@ implementation
         end else
         begin
             //validation failed, let validation error handler take care
-            result := fValidationErrorHandler.handleRequest(request, response);
+            result := fValidationErrorHandler.handleRequest(request, response, args);
         end;
     end;
 

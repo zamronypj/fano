@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit RequestHandlerIntf;
+unit AbstractControllerImpl;
 
 interface
 
@@ -14,19 +14,21 @@ interface
 
 uses
 
-    RequestIntf,
     ResponseIntf,
-    RouteArgsReaderIntf;
+    RequestIntf,
+    RequestHandlerIntf,
+    RouteArgsReaderIntf,
+    InjectableObjectImpl;
 
 type
-    {------------------------------------------------
-     interface for any class having capability handle
-     request and return new response
-     @author Zamrony P. Juhara <zamronypj@yahoo.com>
-    -----------------------------------------------}
-    IRequestHandler = interface
-        ['{483E0FAB-E1E6-4B8C-B193-F8615E039369}']
 
+    (*!------------------------------------------------
+     * abstract controller implementation class
+     *
+     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+     *-----------------------------------------------*)
+    TAbstractController = class(TInjectableObject, IRequestHandler)
+    public
         (*!-------------------------------------------
          * handle request
          *--------------------------------------------
@@ -39,9 +41,8 @@ type
             const request : IRequest;
             const response : IResponse;
             const args : IRouteArgsReader
-        ) : IResponse;
+        ) : IResponse; virtual; abstract;
     end;
 
 implementation
-
 end.

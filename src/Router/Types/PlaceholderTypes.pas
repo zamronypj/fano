@@ -21,9 +21,9 @@ type
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      * -----------------------------------------------*)
     TPlaceholder = record
-        phName : string;
-        phValue : string;
-        phFormatRegex : string;
+        name : string;
+        value : string;
+        formatRegex : string;
     end;
     TArrayOfPlaceholders = array of TPlaceholder;
 

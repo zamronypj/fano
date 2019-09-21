@@ -6,33 +6,30 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit MiddlewareChainIntf;
+unit RouteHandlerFactoryIntf;
 
 interface
 
 {$MODE OBJFPC}
+{$H+}
 
 uses
 
-    RequestIntf,
-    ResponseIntf,
+    RequestHandlerIntf,
     RouteHandlerIntf;
 
 type
 
     (*!------------------------------------------------
      * interface for any class having capability to
-     * stack several middlewares and call
+     * create route handler
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
-     *-----------------------------------------------*)
-    IMiddlewareChain = interface
-        ['{47B9A178-4A0A-4599-AD67-C73B8E42B82A}']
-        function execute(
-            const request : IRequest;
-            const response : IResponse;
-            const routeHandler : IRouteHandler
-        ) : IResponse;
+     *-------------------------------------------------*)
+    IRouteHandlerFactory = interface
+        ['{1EBACEAD-A5EB-4754-A7D5-531F969088D1}']
+
+        function build(const handler : IRequestHandler) : IRouteHandler;
     end;
 
 implementation
