@@ -14,7 +14,7 @@ interface
 
 uses
 
-    MiddlewareCollectionFactory,
+    MiddlewareCollectionAwareFactoryIntf,
     RequestHandlerIntf,
     RouteHandlerFactoryIntf;
 
@@ -28,9 +28,9 @@ type
      *-------------------------------------------------*)
     TRouteHandlerFactory = class(TInterfacedObject, IRouteHandlerFactory)
     private
-        fMiddlewareCollectionFactory : IMiddlewareCollectionFactory;
+        fMiddlewareCollectionFactory : IMiddlewareCollectionAwareFactory;
     public
-        constructor create(const middlewareCollectionFactory : IMiddlewareCollectionFactory);
+        constructor create(const middlewareCollectionFactory : IMiddlewareCollectionAwareFactory);
         destructor destroy(); override;
         function build(const handler : IRequestHandler) : IRequestHandler;
     end;

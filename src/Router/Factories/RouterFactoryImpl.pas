@@ -25,7 +25,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TRouterFactory = class(TFactory, IDependencyFactory)
+    TRouterFactory = class(TAbstractRouterFactory)
     public
         function build(const container : IDependencyContainer) : IDependency; override;
     end;
@@ -42,7 +42,7 @@ uses
     begin
         result := TRouter.create(
             TRouteList.create(),
-            TRouteHandlerFactory.create()
+            TRouteHandlerFactory.create(getMiddlewareFactory())
         );
     end;
 

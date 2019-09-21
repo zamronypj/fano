@@ -16,7 +16,7 @@ uses
 
     DependencyIntf,
     DependencyContainerIntf,
-    FactoryImpl;
+    AbstractRouterFactoryImpl;
 
 type
 
@@ -26,7 +26,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TSimpleRouterFactory = class(TFactory, IDependencyFactory)
+    TSimpleRouterFactory = class(TAbstractRouterFactory)
     public
         function build(const container : IDependencyContainer) : IDependency; override;
     end;
@@ -48,7 +48,7 @@ uses
                 TRegex.create(),
                 THashList.create()
             ),
-            TRouteHandlerFactory.create()
+            TRouteHandlerFactory.create(getMiddlewareCollectionAwareFactory)
         );
     end;
 
