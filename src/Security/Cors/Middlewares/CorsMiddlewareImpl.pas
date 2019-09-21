@@ -18,6 +18,7 @@ uses
     RequestIntf,
     ResponseIntf,
     HeadersIntf,
+    RouteArgsReaderIntf,
     InjectableObjectImpl,
     CorsIntf;
 
@@ -43,6 +44,7 @@ type
         function handleRequest(
             const request : IRequest;
             const response : IResponse;
+            const args : IRouteArgsReader;
             var canContinue : boolean
         ) : IResponse;
     end;
@@ -66,9 +68,9 @@ uses
     end;
 
     function TCorsMiddleware.handlePreflightRequest(
-          const request : IRequest;
-          const response : IResponse;
-          var canContinue : boolean
+        const request : IRequest;
+        const response : IResponse;
+        var canContinue : boolean
     ) : IResponse;
     begin
         if (fCors.isPreflightRequest(request)) then
@@ -89,9 +91,10 @@ uses
     end;
 
     function TCorsMiddleware.handleRequest(
-          const request : IRequest;
-          const response : IResponse;
-          var canContinue : boolean
+        const request : IRequest;
+        const response : IResponse;
+        const args : IRouteArgsReader;
+        var canContinue : boolean
     ) : IResponse;
     begin
         if (not fCors.isCorsRequest(request)) then

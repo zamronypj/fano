@@ -156,18 +156,18 @@ const
      *
      * [
      *  {
-     *    phName : 'name',
-     *    phValue : '',
+     *    name : 'name',
+     *    value : '',
      *  }
      *  {
-     *    phName : 'unitId',
-     *    phValue : '',
+     *    name : 'unitId',
+     *    value : '',
      *  }
      * ]
      *
      * This method will be called when a route pattern is
      * added to route collection. At this time,
-     * placeholder value is not yet known ,so phValue field
+     * placeholder value is not yet known ,so value field
      * will always be empty
      *
      *---------------------------------------------------*)
@@ -212,8 +212,8 @@ const
         setLength(result, totalPlaceholder);
         for i:=0 to totalPlaceholder-1 do
         begin
-            result[i].phName := matches.matches[i][1];
-            result[i].phValue := '';
+            result[i].name := matches.matches[i][1];
+            result[i].value := '';
         end;
     end;
 
@@ -231,12 +231,12 @@ const
      *
      * [
      *  {
-     *    phName : 'name'
-     *    phValue : 'juhara'
+     *    name : 'name'
+     *    value : 'juhara'
      *  }
      *  {
-     *    phName : 'unitId'
-     *    phValue : 'nice'
+     *    name : 'unitId'
+     *    value : 'nice'
      *  }
      * ]
      *
@@ -288,9 +288,9 @@ const
          ----------------------------*)
         for i:=0 to totalPlaceholders-1 do
         begin
-            //placeholders[i].phName already contain variable name
+            //placeholders[i].name already contain variable name
             //so our concern only to fill its value
-            placeholders[i].phValue := matches.matches[0][i+1];
+            placeholders[i].value := matches.matches[0][i+1];
         end;
         result := placeHolders;
     end;
@@ -334,12 +334,12 @@ const
      *     into array of placeholder
      *     [
      *         {
-     *             phName : 'name',
-     *             phValue : ''
+     *             name : 'name',
+     *             value : ''
      *         },
      *         {
-     *             phName : 'unitId'
-     *             phValue : ''
+     *             name : 'unitId'
+     *             value : ''
      *         }
      *     ]
      * (2) replace route name into new regex string (transformed route name) as

@@ -36,4 +36,6 @@ NullViewImpl,
 NullViewFactoryImpl,
 ViewPartialImpl,
 ViewPartialFactoryImpl,
+
+AbstractControllerImpl,
 ControllerImpl,

@@ -16,7 +16,7 @@ uses
 
     RequestIntf,
     ResponseIntf,
-    RequestHandlerIntf,
+    RouteHandlerIntf,
     SessionManagerIntf,
     CookieFactoryIntf,
     SessionIntf,
@@ -45,7 +45,7 @@ type
         function executeAndAddCookie(
             const request : IRequest;
             const response : IResponse;
-            const requestHandler : IRequestHandler;
+            const routeHandler : IRouteHandler;
             sess : ISession
         ) : IResponse;
     public
@@ -60,7 +60,7 @@ type
         function execute(
             const request : IRequest;
             const response : IResponse;
-            const requestHandler : IRequestHandler
+            const routeHandler : IRouteHandler
         ) : IResponse;
     end;
 
@@ -111,12 +111,12 @@ uses
     function TSessionMiddlewareChain.executeAndAddCookie(
         const request : IRequest;
         const response : IResponse;
-        const requestHandler : IRequestHandler;
+        const routeHandler : IRouteHandler;
         sess : ISession
     ) : IResponse;
     var newResp : IResponse;
     begin
-        newResp := fActualMiddlewareChain.execute(request, response, requestHandler);
+        newResp := fActualMiddlewareChain.execute(request, response, routeHandler);
         try
             result := addCookieHeader(newResp, sess, fCookieFactory);
         finally
@@ -127,13 +127,13 @@ uses
     function TSessionMiddlewareChain.execute(
         const request : IRequest;
         const response : IResponse;
-        const requestHandler : IRequestHandler
+        const routeHandler : IRouteHandler
     ) : IResponse;
     var sess : ISession;
     begin
         sess := fSessionMgr.beginSession(request, fExpiresInSec);
         try
-            result := executeAndAddCookie(request, response, requestHandler, sess);
+            result := executeAndAddCookie(request, response, routeHandler, sess);
         finally
             fSessionMgr.endSession(sess);
             sess := nil;

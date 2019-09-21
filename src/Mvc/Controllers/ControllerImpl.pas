@@ -16,20 +16,20 @@ uses
 
     ResponseIntf,
     RequestIntf,
-    RouteHandlerIntf,
-    RouteHandlerImpl,
-    MiddlewareCollectionAwareIntf,
+    RequestHandlerIntf,
+    RouteArgsReaderIntf,
     ViewIntf,
-    ViewParametersIntf;
+    ViewParametersIntf,
+    AbstractControllerImpl;
 
 type
 
     (*!------------------------------------------------
-     * basic controller implementation class
+     * basic controller implementation class with view
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TController = class(TRouteHandler)
+    TController = class(TAbstractController)
     protected
         gView : IView;
         viewParams : IViewParameters;
@@ -38,12 +38,10 @@ type
         (*!-------------------------------------------
          * constructor
          *--------------------------------------------
-         * @param amiddlewares object represent middlewares
          * @param viewInst view instance to use
          * @param viewParamsInt view parameters
          *--------------------------------------------*)
         constructor create(
-            const amiddlewares : IMiddlewareCollectionAware;
             const viewInst : IView;
             const viewParamsInst : IViewParameters
         );
@@ -58,11 +56,13 @@ type
          *--------------------------------------------
          * @param request object represent current request
          * @param response object represent current response
+         * @param args object represent current route arguments
          * @return new response
          *--------------------------------------------*)
         function handleRequest(
-              const request : IRequest;
-              const response : IResponse
+            const request : IRequest;
+            const response : IResponse;
+            const args : IRouteArgsReader
         ) : IResponse; override;
     end;
 
@@ -76,12 +76,10 @@ implementation
      * @param viewParamsInt view parameters
      *--------------------------------------------*)
     constructor TController.create(
-        const amiddlewares : IMiddlewareCollectionAware;
         const viewInst : IView;
         const viewParamsInst : IViewParameters
     );
     begin
-        inherited create(amiddlewares);
         gView := viewInst;
         viewParams := viewParamsInst;
     end;
@@ -104,8 +102,9 @@ implementation
      * @return new response
      *--------------------------------------------*)
     function TController.handleRequest(
-          const request : IRequest;
-          const response : IResponse
+        const request : IRequest;
+        const response : IResponse;
+        const args : IRouteArgsReader
     ) : IResponse;
     begin
         result := gView.render(viewParams, response);

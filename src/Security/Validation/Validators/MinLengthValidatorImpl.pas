@@ -17,6 +17,7 @@ uses
 
     ListIntf,
     ValidatorIntf,
+    RequestIntf,
     BaseValidatorImpl;
 
 type
@@ -37,7 +38,11 @@ type
          * @param dataToValidate input data
          * @return true if data is valid otherwise false
          *-------------------------------------------------*)
-        function isValidData(const dataToValidate : string) : boolean; override;
+        function isValidData(
+            const dataToValidate : string;
+            const dataCollection : IList;
+            const request : IRequest
+        ) : boolean; override;
     public
         (*!------------------------------------------------
          * constructor
@@ -72,7 +77,11 @@ resourcestring
      * @param dataToValidate input data
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
-    function TMinLengthValidator.isValidData(const dataToValidate : string) : boolean;
+    function TMinLengthValidator.isValidData(
+        const dataToValidate : string;
+        const dataCollection : IList;
+        const request : IRequest
+    ) : boolean;
     begin
         result := (length(dataToValidate) >= fMinimumValue);
     end;

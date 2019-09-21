@@ -34,13 +34,17 @@ type
 
 implementation
 
+const
+
+    REGEX_ALPHANUMSPACE = '^[a-zA-Z0-9\s]+$';
+
 resourcestring
 
     sErrNotValidAlphaNumSpace = 'Field %s must be alpha numeric whitespace characters';
 
     constructor TAlphaNumSpaceValidator.create(const regexInst : IRegex);
     begin
-        inherited create(regexInst, '^[a-zA-Z0-9\s]+$', sErrNotValidAlphaNumSpace);
+        inherited create(regexInst, REGEX_ALPHANUMSPACE, sErrNotValidAlphaNumSpace);
     end;
 
 end.

@@ -132,7 +132,7 @@ uses
     ) : IResponse;
     var routeMiddlewares : IMiddlewareCollectionAware;
     begin
-        routeMiddlewares := routeHandler as IMiddlewareCollectionAware;
+        routeMiddlewares := routeHandler.middlewares();
         try
             result := executeMiddlewareChain(env, stdIn, routeHandler, routeMiddlewares);
         finally
