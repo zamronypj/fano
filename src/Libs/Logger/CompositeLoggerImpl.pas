@@ -21,24 +21,26 @@ uses
 
 type
 
+    TLoggerArray = array of ILogger;
+
     (*!------------------------------------------------
-     * logger class that is composed from two other loggers
+     * logger class that is composed from several loggers
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
     TCompositeLogger = class(TAbstractLogger)
     private
-        firstLogger : ILogger;
-        secondLogger : ILogger;
+        fLoggers : TLoggerArray;
+        procedure freeLoggers(var loggers : TLoggerArray);
+        function initLoggers(const loggers : array of ILogger) : TLoggerArray;
     public
 
         (*!--------------------------------------
          * constructor
          * --------------------------------------
-         * @param aLogger1 first logger
-         * @param aLogger2 second logger
+         * @param loggers array of loggers
          *---------------------------------------*)
-        constructor create(const aLogger1 : ILogger; const aLogger2 : ILogger);
+        constructor create(const loggers : array of ILogger);
 
         (*!--------------------------------------
          * destructor
@@ -66,13 +68,11 @@ implementation
     (*!--------------------------------------
      * constructor
      * --------------------------------------
-     * @param aLogger1 first logger
-     * @param aLogger2 second logger
+     * @param loggers array of loggers
      *---------------------------------------*)
-    constructor TCompositeLogger.create(const aLogger1 : ILogger; const aLogger2 : ILogger);
+    constructor TCompositeLogger.create(const loggers : array of ILogger);
     begin
-        firstLogger  := aLogger1;
-        secondLogger := aLogger2;
+        fLoggers := initLoggers(loggers);
     end;
 
     (*!--------------------------------------
@@ -80,9 +80,31 @@ implementation
      *---------------------------------------*)
     destructor TCompositeLogger.destroy();
     begin
+        freeLoggers(fLoggers);
         inherited destroy();
-        firstLogger := nil;
-        secondLogger := nil;
+    end;
+
+    function TCompositeLogger.initLoggers(const loggers : array of ILogger) : TLoggerArray;
+    var i, totLoggers : integer;
+    begin
+        totLoggers := high(loggers) - low(loggers) + 1;
+        setLength(result, totLoggers);
+        for i := 0 to totLoggers - 1 do
+        begin
+            result[i] := loggers[i];
+        end;
+    end;
+
+    procedure TCompositeLogger.freeLoggers(var loggers : TLoggerArray);
+    var i, totLoggers : integer;
+    begin
+        totLoggers := length(loggers);
+        for i := 0 to totLoggers - 1 do
+        begin
+            loggers[i] := nil;
+        end;
+        setLength(loggers, 0);
+        loggers := nil;
     end;
 
     (*!--------------------------------------
@@ -99,9 +121,13 @@ implementation
         const msg : string;
         const context : ISerializeable = nil
     ) : ILogger;
+    var i, totLoggers : integer;
     begin
-        firstLogger.log(level, msg, context);
-        secondLogger.log(level, msg, context);
+        totLoggers := length(fLoggers);
+        for i:= 0 to totLoggers - 1 do
+        begin
+            fLoggers[i].log(level, msg, context);
+        end;
         result := self;
     end;
 

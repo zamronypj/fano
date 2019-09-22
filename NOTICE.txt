@@ -32,8 +32,13 @@ Copyright Zamrony P. Juhara
 - Code formatting
 
 
-
 Original Delphi-Redis
 https://bitbucket.org/Gloegg/delphi-redis
 
 Copyright Nils Achterholt (Gloegg)
+
+
+ClamAV header translation
+author reyjieroque https://github.com/reyjieroque
+author GuvaCode https://github.com/GuvaCode
+https://github.com/reyjieroque/delphi-clamav

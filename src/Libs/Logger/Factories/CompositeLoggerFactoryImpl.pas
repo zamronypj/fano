@@ -65,7 +65,7 @@ uses
     begin
         logger1 := firstFactory.build(container) as ILogger;
         logger2 := secondFactory.build(container) as ILogger;
-        result := TCompositeLogger.create(logger1, logger2);
+        result := TCompositeLogger.create([logger1, logger2]);
     end;
 
 end.
