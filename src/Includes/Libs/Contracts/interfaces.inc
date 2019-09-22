@@ -44,3 +44,5 @@ ProtocolProcessorIntf,
 ReadyListenerIntf,
 
 RegexIntf,
+AntivirusIntf,
+ScanResultIntf,

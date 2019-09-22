@@ -71,3 +71,4 @@ TNotValidator = NotValidatorImpl.TNotValidator;
 TAlwaysPassValidator = AlwaysPassValidatorImpl.TAlwaysPassValidator;
 TCompareFieldValidator = CompareFieldValidatorImpl.TCompareFieldValidator;
 TExistsValidator = ExistsValidatorImpl.TExistsValidator;
+TAntivirusValidator = AntivirusValidatorImpl.TAntivirusValidator;
