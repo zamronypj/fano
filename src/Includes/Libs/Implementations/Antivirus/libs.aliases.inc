@@ -6,9 +6,9 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-{------------ ClamAV antivirus related------------------}
+{------------ Begin ClamAV antivirus related------------------}
 {$IFDEF LIBCLAMAV}
-ClamAvImpl,
-EClamAvImpl,
+TClamAv = ClamAvImpl.TClamAv;
+EClamAv = EClamAvImpl.EClamAv;
 {$ENDIF}
 {------------ End ClamAV antivirus related------------------}

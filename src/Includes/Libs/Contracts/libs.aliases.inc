@@ -29,3 +29,6 @@ IProtocolProcessor = ProtocolProcessorIntf.IProtocolProcessor;
 IReadyListener = ReadyListenerIntf.IReadyListener;
 
 IRegex = RegexIntf.IRegex;
+
+IAntivirus = AntivirusIntf.IAntivirus;
+IScanResult = ScanResultIntf.IScanResult;
