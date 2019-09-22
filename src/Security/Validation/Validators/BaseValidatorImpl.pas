@@ -37,7 +37,11 @@ type
          * @param dataToValidate input data
          * @return true if data is valid otherwise false
          *-------------------------------------------------*)
-        function isValidData(const dataToValidate : string) : boolean; virtual; abstract;
+        function isValidData(
+            const dataToValidate : string;
+            const dataCollection : IList;
+            const request : IRequest
+        ) : boolean; virtual; abstract;
 
     public
         (*!------------------------------------------------
@@ -130,7 +134,7 @@ uses
             result := true;
         end else
         begin
-            result := isValidData(val^.value);
+            result := isValidData(val^.value, dataToValidate, request);
         end;
     end;
 end.

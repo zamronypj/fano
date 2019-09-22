@@ -17,6 +17,7 @@ uses
     RequestIntf,
     ResponseIntf,
     MiddlewareIntf,
+    RouteArgsReaderIntf,
     InjectableObjectImpl;
 
 type
@@ -31,6 +32,7 @@ type
         function handleRequest(
             const request : IRequest;
             const response : IResponse;
+            const args : IRouteArgsReader;
             var canContinue : boolean
         ) : IResponse;
     end;
@@ -40,6 +42,7 @@ implementation
     function TNullMiddleware.handleRequest(
         const request : IRequest;
         const response : IResponse;
+        const args : IRouteArgsReader;
         var canContinue : boolean
     ) : IResponse;
     begin

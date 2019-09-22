@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit MaxIntegerValidatorImpl;
+unit ExistsValidatorImpl;
 
 interface
 
@@ -18,19 +18,22 @@ uses
     ListIntf,
     ValidatorIntf,
     RequestIntf,
+    RdbmsIntf,
     BaseValidatorImpl;
 
 type
 
     (*!------------------------------------------------
      * basic class having capability to
-     * validate if data does not greater than a reference value
+     * validate data must be exists in RDBMS database
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TMaxIntegerValidator = class(TBaseValidator)
+    TExistsValidator = class(TBaseValidator)
     private
-        fMaximumValue : integer;
+        fRdbms : IRdbms;
+        fTableName : shortstring;
+        fPrimaryKey : shortstring;
     protected
         (*!------------------------------------------------
          * actual data validation
@@ -46,10 +49,17 @@ type
     public
         (*!------------------------------------------------
          * constructor
-         *-------------------------------------------------
-         * @param maxValue maximum value allowed
          *-------------------------------------------------*)
-        constructor create(const maxValue : integer);
+        constructor create(
+            const rdbms : IRdbms;
+            const tableName : shortstring;
+            const primaryKey : shortstring
+        );
+
+        (*!------------------------------------------------
+         * destructor
+         *-------------------------------------------------*)
+        destructor destroy(); override;
     end;
 
 implementation
@@ -60,15 +70,30 @@ uses
 
 resourcestring
 
-    sErrFieldMustBeIntegerWithMaxValue = 'Field %s must be integer with maximum value of ';
+    sErrFieldMustBeInteger = 'Field %s must be exists in database';
 
     (*!------------------------------------------------
      * constructor
      *-------------------------------------------------*)
-    constructor TMaxIntegerValidator.create(const maxValue : integer);
+    constructor TExistsValidator.create(
+        const rdbms : IRdbms;
+        const tableName : shortstring;
+        const primaryKey : shortstring
+    );
     begin
-        inherited create(sErrFieldMustBeIntegerWithMaxValue + intToStr(maxValue));
-        fMaximumValue := maxValue;
+        inherited create(sErrFieldMustBeInteger);
+        fRdbms := rdbms;
+        fTableName := tableName;
+        fPrimaryKey := primaryKey;
+    end;
+
+    (*!------------------------------------------------
+     * destructor
+     *-------------------------------------------------*)
+    destructor TExistsValidator.destroy();
+    begin
+        fRdbms := nil;
+        inherited destroy();
     end;
 
     (*!------------------------------------------------
@@ -77,13 +102,18 @@ resourcestring
      * @param dataToValidate input data
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
-    function TMaxIntegerValidator.isValidData(
+    function TExistsValidator.isValidData(
         const dataToValidate : string;
         const dataCollection : IList;
         const request : IRequest
     ) : boolean;
-    var intValue : integer;
+    var sql : string;
     begin
-        result := tryStrToInt(dataToValidate, intValue) and (intValue <= fMaximumValue);
-    end;
-end.
+        sql := 'SELECT `' + fPrimaryKey + '` FROM `' + fTableName + '`' +
+            'WHERE `' + fPrimaryKey + '` = :primaryId LIMIT 1';
+        result := (fRdbms
+            .prepare(sql)
+            .paramStr('primaryId', dataToValidate)
+            .execute()
+            .resultCount() > 0);
+    end;end.

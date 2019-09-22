@@ -54,6 +54,8 @@ TCompareDateTimeValidator = CompareDateTimeValidatorImpl.TCompareDateTimeValidat
 TAfterDateTimeValidator = AfterDateTimeValidatorImpl.TAfterDateTimeValidator;
 TBeforeDateTimeValidator = BeforeDateTimeValidatorImpl.TBeforeDateTimeValidator;
 TEqualDateTimeValidator = EqualDateTimeValidatorImpl.TEqualDateTimeValidator;
+TAfterDateTimeFieldValidator = AfterDateTimeFieldValidatorImpl.TAfterDateTimeFieldValidator;
+TBeforeDateTimeFieldValidator = BeforeDateTimeFieldValidatorImpl.TBeforeDateTimeFieldValidator;
 
 TUuidValidator = UuidValidatorImpl.TUuidValidator;
 
@@ -67,3 +69,5 @@ TUploadedSizeValidator = UploadedSizeValidatorImpl.TUploadedSizeValidator;
 
 TNotValidator = NotValidatorImpl.TNotValidator;
 TAlwaysPassValidator = AlwaysPassValidatorImpl.TAlwaysPassValidator;
+TCompareFieldValidator = CompareFieldValidatorImpl.TCompareFieldValidator;
+TExistsValidator = ExistsValidatorImpl.TExistsValidator;

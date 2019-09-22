@@ -26,6 +26,8 @@ type
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
     TSQLiteDb = class(TRdbms)
+    public
+        constructor create();
     end;
 
 implementation
@@ -33,5 +35,10 @@ implementation
 uses
 
     SQLite3Connection;
+
+    constructor TSQLiteDb.create();
+    begin
+        inherited create('SQLite3');
+    end;
 
 end.

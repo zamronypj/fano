@@ -17,6 +17,7 @@ uses
 
     ListIntf,
     ValidatorIntf,
+    RequestIntf,
     RequiredValidatorImpl;
 
 type
@@ -36,7 +37,11 @@ type
          * @param dataToValidate input data
          * @return true if data is valid otherwise false
          *-------------------------------------------------*)
-        function isValidData(const dataToValidate : string) : boolean; override;
+        function isValidData(
+            const dataToValidate : string;
+            const dataCollection : IList;
+            const request : IRequest
+        ) : boolean; override;
     public
         (*!------------------------------------------------
          * constructor
@@ -69,7 +74,11 @@ resourcestring
      * @param dataToValidate input data
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
-    function TPresentValidator.isValidData(const dataToValidate : string) : boolean;
+    function TPresentValidator.isValidData(
+        const dataToValidate : string;
+        const dataCollection : IList;
+        const request : IRequest
+    ) : boolean;
     begin
         //we only need that key is present but it can be empty
         //so just return true here

@@ -18,6 +18,7 @@ uses
     ListIntf,
     RegexIntf,
     ValidatorIntf,
+    RequestIntf,
     BaseValidatorImpl;
 
 type
@@ -39,7 +40,11 @@ type
          * @param dataToValidate input data
          * @return true if data is valid otherwise false
          *-------------------------------------------------*)
-        function isValidData(const dataToValidate : string) : boolean; override;
+        function isValidData(
+            const dataToValidate : string;
+            const dataCollection : IList;
+            const request : IRequest
+        ) : boolean; override;
     public
         (*!------------------------------------------------
          * constructor
@@ -96,7 +101,11 @@ implementation
      * @param dataToValidate input data
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
-    function TRegexValidator.isValidData(const dataToValidate : string) : boolean;
+    function TRegexValidator.isValidData(
+        const dataToValidate : string;
+        const dataCollection : IList;
+        const request : IRequest
+    ) : boolean;
     begin
         result := regex.match(regexPattern, dataToValidate).matched;
     end;

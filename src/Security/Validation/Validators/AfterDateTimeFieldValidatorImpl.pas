@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit MaxIntegerValidatorImpl;
+unit AfterDateTimeFieldValidatorImpl;
 
 interface
 
@@ -16,74 +16,72 @@ interface
 uses
 
     ListIntf,
-    ValidatorIntf,
     RequestIntf,
-    BaseValidatorImpl;
+    ValidatorIntf,
+    CompareFieldValidatorImpl;
 
 type
 
     (*!------------------------------------------------
      * basic class having capability to
-     * validate if data does not greater than a reference value
+     * validate date time field that must be after than
+     * other datetime field
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TMaxIntegerValidator = class(TBaseValidator)
-    private
-        fMaximumValue : integer;
+    TAfterDateTimeFieldValidator = class(TCompareFieldValidator)
     protected
+
         (*!------------------------------------------------
-         * actual data validation
+         * compare data with other data from field
          *-------------------------------------------------
          * @param dataToValidate input data
          * @return true if data is valid otherwise false
          *-------------------------------------------------*)
-        function isValidData(
+        function compare(
             const dataToValidate : string;
-            const dataCollection : IList;
-            const request : IRequest
+            const otherFieldData : string
         ) : boolean; override;
     public
         (*!------------------------------------------------
          * constructor
-         *-------------------------------------------------
-         * @param maxValue maximum value allowed
          *-------------------------------------------------*)
-        constructor create(const maxValue : integer);
+        constructor create(const comparedField : shortstring);
     end;
 
 implementation
 
 uses
 
-    SysUtils;
+    SysUtils,
+    DateUtils;
 
 resourcestring
 
-    sErrFieldMustBeIntegerWithMaxValue = 'Field %s must be integer with maximum value of ';
+    sErrFieldMustBeAfterDateTimeField = 'Field %s must be after field ';
 
     (*!------------------------------------------------
      * constructor
      *-------------------------------------------------*)
-    constructor TMaxIntegerValidator.create(const maxValue : integer);
+    constructor TAfterDateTimeFieldValidator.create(const comparedField : shortstring);
     begin
-        inherited create(sErrFieldMustBeIntegerWithMaxValue + intToStr(maxValue));
-        fMaximumValue := maxValue;
+        inherited create(sErrFieldMustBeAfterDateTimeField + comparedField, comparedField);
     end;
 
     (*!------------------------------------------------
-     * actual data validation
+     * compare data with data from other field
      *-------------------------------------------------
      * @param dataToValidate input data
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
-    function TMaxIntegerValidator.isValidData(
+    function TAfterDateTimeFieldValidator.compare(
         const dataToValidate : string;
-        const dataCollection : IList;
-        const request : IRequest
+        const otherFieldData : string
     ) : boolean;
-    var intValue : integer;
+    var adateTime, otherDateTime : TDateTime;
     begin
-        result := tryStrToInt(dataToValidate, intValue) and (intValue <= fMaximumValue);
+        result := tryStrTodateTime(dataToValidate, adateTime) and
+            tryStrToDateTime(otherFieldData, otherDateTime) and
+            (compareDateTime(adateTime, otherDateTime) > 0);
     end;
 end.

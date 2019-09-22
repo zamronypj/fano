@@ -36,7 +36,11 @@ type
          * @param dataToValidate input data
          * @return true if data is valid otherwise false
          *-------------------------------------------------*)
-        function isValidData(const dataToValidate : string) : boolean; override;
+        function isValidData(
+            const dataToValidate : string;
+            const dataCollection : IList;
+            const request : IRequest
+        ) : boolean; override;
     public
         (*!------------------------------------------------
          * constructor
@@ -97,7 +101,11 @@ resourcestring
      * @param dataToValidate input data
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
-    function TUploadedFileValidator.isValidData(const dataToValidate : string) : boolean;
+    function TUploadedFileValidator.isValidData(
+        const dataToValidate : string;
+        const dataCollection : IList;
+        const request : IRequest
+    ) : boolean;
     begin
         //not used here but we must implement, as this is abstract method
         result := true;

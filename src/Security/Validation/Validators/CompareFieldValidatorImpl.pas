@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit MaxIntegerValidatorImpl;
+unit CompareFieldValidatorImpl;
 
 interface
 
@@ -16,28 +16,33 @@ interface
 uses
 
     ListIntf,
-    ValidatorIntf,
     RequestIntf,
+    ValidatorIntf,
     BaseValidatorImpl;
 
 type
 
     (*!------------------------------------------------
-     * basic class having capability to
-     * validate if data does not greater than a reference value
+     * basic abstract class having capability to
+     * validate data that must be compared with other field
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TMaxIntegerValidator = class(TBaseValidator)
-    private
-        fMaximumValue : integer;
+    TCompareFieldValidator = class(TBaseValidator)
     protected
+        fComparedField : shortstring;
+
         (*!------------------------------------------------
-         * actual data validation
+         * compare data with other data from field
          *-------------------------------------------------
          * @param dataToValidate input data
          * @return true if data is valid otherwise false
          *-------------------------------------------------*)
+        function compare(
+            const dataToValidate : string;
+            const otherFieldData : string
+        ) : boolean; virtual; abstract;
+
         function isValidData(
             const dataToValidate : string;
             const dataCollection : IList;
@@ -46,29 +51,29 @@ type
     public
         (*!------------------------------------------------
          * constructor
-         *-------------------------------------------------
-         * @param maxValue maximum value allowed
          *-------------------------------------------------*)
-        constructor create(const maxValue : integer);
+        constructor create(
+            const errorMsg : string;
+            const comparedField : shortstring
+        );
     end;
 
 implementation
 
 uses
 
-    SysUtils;
-
-resourcestring
-
-    sErrFieldMustBeIntegerWithMaxValue = 'Field %s must be integer with maximum value of ';
+    KeyValueTypes;
 
     (*!------------------------------------------------
      * constructor
      *-------------------------------------------------*)
-    constructor TMaxIntegerValidator.create(const maxValue : integer);
+    constructor TCompareFieldValidator.create(
+        const errorMsg : string;
+        const comparedField : shortstring
+    );
     begin
-        inherited create(sErrFieldMustBeIntegerWithMaxValue + intToStr(maxValue));
-        fMaximumValue := maxValue;
+        inherited create(errorMsg);
+        fComparedField := comparedField;
     end;
 
     (*!------------------------------------------------
@@ -77,13 +82,21 @@ resourcestring
      * @param dataToValidate input data
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
-    function TMaxIntegerValidator.isValidData(
+    function TCompareFieldValidator.isValidData(
         const dataToValidate : string;
         const dataCollection : IList;
         const request : IRequest
     ) : boolean;
-    var intValue : integer;
+    var comparedVal : PKeyValue;
     begin
-        result := tryStrToInt(dataToValidate, intValue) and (intValue <= fMaximumValue);
+        comparedVal := dataCollection.find(fComparedField);
+        if (comparedVal = nil) then
+        begin
+            //no field to compared, so assumed fails
+            result := false;
+        end else
+        begin
+            result := compare(dataToValidate, comparedVal^.value);
+        end;
     end;
 end.

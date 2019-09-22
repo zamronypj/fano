@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit RouteHandlerIntf;
+unit RouteIntf;
 
 interface
 
@@ -15,11 +15,7 @@ interface
 
 uses
 
-    RouteIntf,
-    RequestHandlerIntf,
-    RouteArgsWriterIntf,
-    RouteArgsReaderIntf,
-    MiddlewareCollectionAwareIntf;
+    MiddlewareIntf;
 
 type
 
@@ -29,43 +25,37 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    IRouteHandler = interface
-        ['{BD3ACEAB-F00B-4102-A344-8014893279BF}']
+    IRoute = interface
+        ['{1AE2D1F8-8B20-4B68-9094-07A2B6706F2C}']
 
         (*!-------------------------------------------
-         * get middlewares collection
+         * Set route name
          *--------------------------------------------
-         * @return middleware collections
+         * @param routeName name of route
+         * @return current instance
          *--------------------------------------------*)
-        function middlewares() : IMiddlewareCollectionAware;
+        function setName(const routeName : shortstring) : IRoute;
 
         (*!-------------------------------------------
-         * get route instance
+         * get route name
          *--------------------------------------------
-         * @return route instance
+         * @return current route name
          *--------------------------------------------*)
-        function route() : IRoute;
+        function getName() : shortstring;
 
         (*!-------------------------------------------
-         * get request handler
+         * attach middleware before route
          *--------------------------------------------
-         * @return request handler
+         * @return current route instance
          *--------------------------------------------*)
-        function handler() : IRequestHandler;
+        function before(const amiddleware : IMiddleware) : IRoute;
 
         (*!-------------------------------------------
-         * get router arguments writer
+         * attach middleware after route
          *--------------------------------------------
-         * @return route arguments writer instance
+         * @return current route instance
          *--------------------------------------------*)
-        function argsWriter() : IRouteArgsWriter;
-
-        (*!-------------------------------------------
-         * get router arguments reader
-         *--------------------------------------------
-         * @return route arguments writer instance
-         *--------------------------------------------*)
-        function argsReader() : IRouteArgsReader;
+        function after(const amiddleware : IMiddleware) : IRoute;
     end;
 
 implementation

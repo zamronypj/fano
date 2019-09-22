@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit PostgreSqlDbImpl;
+unit RouteHandlerFactoryIntf;
 
 interface
 
@@ -15,30 +15,22 @@ interface
 
 uses
 
-    RdbmsImpl;
+    RequestHandlerIntf,
+    RouteHandlerIntf;
 
 type
 
     (*!------------------------------------------------
-     * basic class having capability to
-     * handle PostgreSql relational database operation
+     * interface for any class having capability to
+     * create route handler
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TPostgreSqlDb = class(TRdbms)
-    public
-        constructor create();
+    IRouteHandlerFactory = interface
+        ['{1EBACEAD-A5EB-4754-A7D5-531F969088D1}']
+
+        function build(const handler : IRequestHandler) : IRouteHandler;
     end;
 
 implementation
-
-uses
-
-    PqConnection;
-
-    constructor TPostgreSqlDb.create();
-    begin
-        inherited create('PostgreSQL');
-    end;
-
 end.

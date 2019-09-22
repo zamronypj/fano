@@ -16,7 +16,7 @@ uses
 
     DependencyIntf,
     DependencyContainerIntf,
-    FactoryImpl;
+    AbstractRouterFactoryImpl;
 
 type
 
@@ -26,7 +26,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TCombineRouterFactory = class(TFactory, IDependencyFactory)
+    TCombineRouterFactory = class(TAbstractRouterFactory)
     public
         function build(const container : IDependencyContainer) : IDependency; override;
     end;
@@ -37,7 +37,8 @@ uses
     RouterImpl,
     CombineRegexRouteListImpl,
     RegexImpl,
-    HashListImpl;
+    HashListImpl,
+    RouteHandlerFactoryImpl;
 
     function TCombineRouterFactory.build(const container : IDependencyContainer) : IDependency;
     begin
@@ -45,7 +46,8 @@ uses
             TCombineRegexRouteList.create(
                 TRegex.create(),
                 THashList.create()
-            )
+            ),
+            TRouteHandlerFactory.create(getMiddlewareFactory())
         );
     end;
 

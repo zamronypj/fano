@@ -6,39 +6,30 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit PostgreSqlDbImpl;
+unit MiddlewareCollectionAwareFactoryIntf;
 
 interface
 
 {$MODE OBJFPC}
-{$H+}
 
 uses
 
-    RdbmsImpl;
+   MiddlewareCollectionAwareIntf;
 
 type
 
     (*!------------------------------------------------
-     * basic class having capability to
-     * handle PostgreSql relational database operation
+     * interface for any class having capability to create
+     * middleware collection aware instance
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
-     *-------------------------------------------------*)
-    TPostgreSqlDb = class(TRdbms)
-    public
-        constructor create();
+     *-----------------------------------------------*)
+    IMiddlewareCollectionAwareFactory = interface
+        ['{E935B73E-41B5-4C75-9940-EF6ABF5428D1}']
+
+        function build() : IMiddlewareCollectionAware;
     end;
 
 implementation
-
-uses
-
-    PqConnection;
-
-    constructor TPostgreSqlDb.create();
-    begin
-        inherited create('PostgreSQL');
-    end;
 
 end.
