@@ -16,7 +16,7 @@ interface
 uses
 
     SysUtils,
-    ListIntf,
+    ReadOnlyListIntf,
     RequestIntf,
     ValidatorIntf,
     UploadedFileValidatorImpl;
@@ -50,7 +50,7 @@ type
          *-------------------------------------------------*)
          function isValid(
              const fieldName : shortstring;
-             const dataToValidate : IList;
+             const dataToValidate : IReadOnlyList;
              const request : IRequest
          ) : boolean; override;
     end;
@@ -135,7 +135,7 @@ resourcestring
      *-------------------------------------------------*)
     function TUploadedMimeValidator.isValid(
         const fieldName : shortstring;
-        const dataToValidate : IList;
+        const dataToValidate : IReadOnlyList;
         const request : IRequest
     ) : boolean;
     begin
