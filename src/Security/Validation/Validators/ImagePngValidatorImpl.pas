@@ -36,7 +36,7 @@ const
 
     PNG_ID = $A1A0A0D474E5089;
 
-    function TImagePngValidator.isValidFormat(const buffer; const buffSize : int64) : boolean; override;
+    function TImagePngValidator.isValidFormat(const buffer; const buffSize : int64) : boolean;
     begin
         result := (buffSize = MinBuffSize) and (int64(buffer) = PNG_ID);
     end;

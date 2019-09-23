@@ -32,7 +32,7 @@ type
 
 implementation
 
-    function TImageGifValidator.isValidFormat(const buffer; const buffSize : int64) : boolean; override;
+    function TImageGifValidator.isValidFormat(const buffer; const buffSize : int64) : boolean;
     begin
         result := (buffSize = MinBuffSize) and
             (strlcomp(PAnsiChar(@buffer), 'GIF', 3) = 0);

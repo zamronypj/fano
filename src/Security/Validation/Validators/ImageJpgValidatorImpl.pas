@@ -36,7 +36,7 @@ const
 
     JPEG_ID = $D8FF;
 
-    function TImageJpgValidator.isValidFormat(const buffer; const buffSize : int64) : boolean; override;
+    function TImageJpgValidator.isValidFormat(const buffer; const buffSize : int64) : boolean;
     var
         words: array[byte] of word absolute buffer;
     begin
