@@ -16,7 +16,7 @@ interface
 uses
 
     SysUtils,
-    ListIntf,
+    ReadOnlyListIntf,
     ValidatorIntf,
     RequestIntf,
     BaseValidatorImpl;
@@ -41,7 +41,7 @@ type
          *-------------------------------------------------*)
         function isValidData(
             const dataToValidate : string;
-            const dataCollection : IList;
+            const dataCollection : IReadOnlyList;
             const request : IRequest
         ) : boolean; override;
     public
@@ -99,7 +99,7 @@ resourcestring
      *-------------------------------------------------*)
     function TInValidator.isValidData(
         const dataToValidate : string;
-        const dataCollection : IList;
+        const dataCollection : IReadOnlyList;
         const request : IRequest
     ) : boolean;
     var i, len : integer;

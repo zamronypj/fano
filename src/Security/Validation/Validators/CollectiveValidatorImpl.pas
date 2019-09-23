@@ -15,7 +15,7 @@ interface
 
 uses
 
-    ListIntf,
+    ReadOnlyListIntf,
     RequestIntf,
     ValidatorIntf,
     BaseCompositeValidatorImpl,
@@ -43,7 +43,7 @@ type
          *-------------------------------------------------*)
         function isValid(
             const fieldName : shortstring;
-            const dataToValidate : IList;
+            const dataToValidate : IReadOnlyList;
             const request : IRequest
         ) : boolean; override;
 
@@ -62,7 +62,7 @@ implementation
      *-------------------------------------------------*)
     function TCollectiveValidator.isValid(
         const fieldName : shortstring;
-        const dataToValidate : IList;
+        const dataToValidate : IReadOnlyList;
         const request : IRequest
     ) : boolean;
     var i, len, totFail : integer;

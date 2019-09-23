@@ -15,7 +15,7 @@ interface
 
 uses
 
-    ListIntf,
+    ReadOnlyListIntf,
     ValidatorIntf,
     RequestIntf,
     BaseValidatorImpl;
@@ -45,7 +45,7 @@ type
          *-------------------------------------------------*)
         function isValidData(
             const dataToValidate : string;
-            const dataCollection : IList;
+            const dataCollection : IReadOnlyList;
             const request : IRequest
         ) : boolean; override;
     end;
@@ -64,7 +64,7 @@ uses
      *-------------------------------------------------*)
     function TCompareDateTimeValidator.isValidData(
         const dataToValidate : string;
-        const dataCollection : IList;
+        const dataCollection : IReadOnlyList;
         const request : IRequest
     ) : boolean;
     var actualVal : TDateTime;
