@@ -15,7 +15,7 @@ interface
 
 uses
 
-    ListIntf,
+    ReadOnlyListIntf,
     ValidatorIntf,
     RequestIntf,
     BaseValidatorImpl;
