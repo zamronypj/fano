@@ -42,6 +42,13 @@ type
          * @return placeholder
          *--------------------------------------------*)
         function getArg(const key : shortstring) : TPlaceholder;
+
+        (*!-------------------------------------------
+         * get route name
+         *--------------------------------------------
+         * @return current route name
+         *--------------------------------------------*)
+        function getName() : shortstring;
     end;
 
 implementation
