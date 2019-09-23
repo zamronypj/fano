@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit BaseValidatorImpl;
+unit FileFormatValidatorImpl;
 
 interface
 
@@ -19,30 +19,25 @@ uses
     RequestIntf,
     ValidatorIntf;
 
+const
+
+    MinBuffSize = 64;
+
 type
 
     (*!------------------------------------------------
-     * base abstract class having capability to
-     * validate input data
+     * bastract class which validate content of uploaded file
+     * to match certain format
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TBaseValidator = class(TInterfacedObject, IValidator)
-    protected
+    TFileFormatValidator = class(TInterfacedObject, IValidator)
+    private
         errorMsgFormat : string;
-
-        (*!------------------------------------------------
-         * actual data validation
-         *-------------------------------------------------
-         * @param dataToValidate input data
-         * @return true if data is valid otherwise false
-         *-------------------------------------------------*)
-        function isValidData(
-            const dataToValidate : string;
-            const dataCollection : IReadOnlyList;
-            const request : IRequest
-        ) : boolean; virtual; abstract;
-
+        function verifyFileFormat(const fname :  string) : boolean;
+        function verifyUploadedFiles(const uploadedFiles : IUploadedFileArray) : boolean;
+    protected
+        function isValidFormat(const buffer; const buffSize : int64) : boolean; virtual; abstract;
     public
         (*!------------------------------------------------
          * constructor
@@ -67,7 +62,7 @@ type
             const fieldName : shortstring;
             const dataToValidate : IReadOnlyList;
             const request : IRequest
-        ) : boolean; virtual;
+        ) : boolean;
 
         (*!------------------------------------------------
          * Get validation error message
@@ -82,8 +77,8 @@ implementation
 
 uses
 
-    KeyValueTypes,
-    SysUtils;
+    SysUtils,
+    Classes;
 
     (*!------------------------------------------------
      * constructor
@@ -94,7 +89,7 @@ uses
      * errMsgFormat can use format that is support by
      * SysUtils.Format() function
      *-------------------------------------------------*)
-    constructor TBaseValidator.create(const errMsgFormat : string);
+    constructor TFileFormatValidator.create(const errMsgFormat : string);
     begin
         errorMsgFormat := errMsgFormat;
     end;
@@ -104,9 +99,44 @@ uses
      *-------------------------------------------------
      * @return validation error message
      *-------------------------------------------------*)
-    function TBaseValidator.errorMessage(const fieldName : shortstring) : string;
+    function TFileFormatValidator.errorMessage(const fieldName : shortstring) : string;
     begin
         result := format(errorMsgFormat, [fieldName]);
+    end;
+
+    function TFileFormatValidator.verifyFileFormat(const fname :  string) : boolean;
+    var fstream : TFileStream;
+        buf : pointer;
+    begin
+        //file may big in size. We need to do fast reading
+        fstream := TFileStream.create(fname, fmOpenRead or fmShareDenyWrite);
+        try
+            getMem(buf, MinBuffSize);
+            try
+                fstream.readBuffer(buf^, MinBuffSize);
+                result := isValidFormat(buf^, MinBuffSize);
+            finally
+                freeMem(buf);
+            end;
+        finally
+            fstream.free();
+        end;
+    end;
+
+    function TFileFormatValidator.verifyUploadedFiles(const uploadedFiles : IUploadedFileArray) : boolean;
+    var uploadedFiles :  IUploadedFileArray;
+        i, len : integer;
+    begin
+        result := true;
+        len := length(uploadedFiles);
+        for i := 0 to len - 1 do
+        begin
+            result := verifyFileFormat(uploadedFiles[i].getTmpFilename());
+            if not result then
+            begin
+                exit;
+            end;
+        end;
     end;
 
     (*!------------------------------------------------
@@ -117,22 +147,21 @@ uses
      * @param request request object
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
-    function TBaseValidator.isValid(
+    function TFileFormatValidator.isValid(
         const fieldName : shortstring;
         const dataToValidate : IReadOnlyList;
         const request : IRequest
     ) : boolean;
-    var val : PKeyValue;
+    var uploadedFiles :  IUploadedFileArray;
     begin
-        val := dataToValidate.find(fieldName);
-        if (val = nil) then
+        uploadedFiles := request.getUploadedFile(fieldName);
+        if (uploadedFiles <> nil) then
         begin
-            //if we get here it means there is no field with that name
-            //so assume that validation is success
-            result := true;
+            result := verifyUploadedFiles(uploadedFiles);
         end else
         begin
-            result := isValidData(val^.value, dataToValidate, request);
+            //no file upload for this field. Assume success
+            result := true;
         end;
     end;
 end.
