@@ -32,6 +32,10 @@ type
 
 implementation
 
+uses
+
+    SysUtils;
+
     function TImageGifValidator.isValidFormat(const buffer; const buffSize : int64) : boolean;
     begin
         result := (buffSize = MinBuffSize) and
