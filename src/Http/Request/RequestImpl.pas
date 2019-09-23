@@ -17,6 +17,7 @@ uses
 
     EnvironmentIntf,
     RequestIntf,
+    ReadOnlyListIntf,
     ListIntf,
     MultipartFormDataParserIntf,
     KeyValueTypes,
@@ -168,7 +169,7 @@ type
          *-------------------------------------------------
          * @return array of TKeyValue
          *------------------------------------------------*)
-        function getQueryParams() : IList;
+        function getQueryParams() : IReadOnlyList;
 
         (*!------------------------------------------------
          * get single cookie param value by its name
@@ -202,7 +203,7 @@ type
          *-------------------------------------------------
          * @return array of TKeyValue
          *------------------------------------------------*)
-        function getParsedBodyParams() : IList;
+        function getParsedBodyParams() : IReadOnlyList;
 
         (*!------------------------------------------------
          * get request uploaded file by name
@@ -243,7 +244,7 @@ type
          *-------------------------------------------------
          * @return array of query string and parsed body params
          *------------------------------------------------*)
-        function getParams() : IList;
+        function getParams() : IReadOnlyList;
 
         (*!------------------------------------------------
          * test if current request is coming from AJAX request
@@ -521,7 +522,7 @@ resourcestring
      *-------------------------------------------------
      * @return list of request query string parameters
      *------------------------------------------------*)
-    function TRequest.getQueryParams() : IList;
+    function TRequest.getQueryParams() : IReadOnlyList;
     begin
         result := queryParams;
     end;
@@ -544,7 +545,7 @@ resourcestring
      *-------------------------------------------------
      * @return list of request cookies parameters
      *------------------------------------------------*)
-    function TRequest.getCookieParams() : IList;
+    function TRequest.getCookieParams() : IReadOnlyList;
     begin
         result := cookieParams;
     end;
@@ -567,7 +568,7 @@ resourcestring
      *-------------------------------------------------
      * @return list of request body parameters
      *------------------------------------------------*)
-    function TRequest.getParsedBodyParams() : IList;
+    function TRequest.getParsedBodyParams() : IReadOnlyList;
     begin
         result := bodyParams;
     end;
@@ -642,7 +643,7 @@ resourcestring
      *-------------------------------------------------
      * @return list of request query string parameters
      *------------------------------------------------*)
-    function TRequest.getParams() : IList;
+    function TRequest.getParams() : IReadOnlyList;
     begin
         result := queryAndBodyParams;
     end;
