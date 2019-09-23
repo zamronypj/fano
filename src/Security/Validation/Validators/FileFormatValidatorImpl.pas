@@ -17,7 +17,8 @@ uses
 
     ReadOnlyListIntf,
     RequestIntf,
-    ValidatorIntf;
+    ValidatorIntf,
+    UploadedFileCollectionIntf;
 
 const
 
