@@ -186,7 +186,7 @@ type
          *-------------------------------------------------
          * @return array of TKeyValue
          *------------------------------------------------*)
-        function getCookieParams() : IList;
+        function getCookieParams() : IReadOnlyList;
 
         (*!------------------------------------------------
          * get request body data
