@@ -125,8 +125,7 @@ uses
     end;
 
     function TFileFormatValidator.verifyUploadedFiles(const uploadedFiles : IUploadedFileArray) : boolean;
-    var uploadedFiles :  IUploadedFileArray;
-        i, len : integer;
+    var i, len : integer;
     begin
         result := true;
         len := length(uploadedFiles);
