@@ -26,3 +26,4 @@ TValidationResult = ValidationResultTypes.TValidationResult;
 
 TValidationMiddleware = ValidationMiddlewareImpl.TValidationMiddleware;
 TValidationMiddlewareWithHandler = ValidationMiddlewareWithHandlerImpl.TValidationMiddlewareWithHandler;
+TValidationCollectionMiddlewareWithHandler = TValidationCollectionMiddlewareWithHandlerImpl.TValidationCollectionMiddlewareWithHandler;
