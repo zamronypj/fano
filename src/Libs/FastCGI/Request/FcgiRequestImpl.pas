@@ -15,7 +15,7 @@ interface
 uses
 
     RequestIntf,
-    ListIntf,
+    ReadOnlyListIntf,
     FcgiRequestIntf,
     EnvironmentIntf,
     UploadedFileIntf,
@@ -93,7 +93,7 @@ type
          *-------------------------------------------------
          * @return list of query string params
          *------------------------------------------------*)
-        function getQueryParams() : IList;
+        function getQueryParams() : IReadOnlyList;
 
         (*!------------------------------------------------
          * get single cookie param value by its name
@@ -110,7 +110,7 @@ type
          *-------------------------------------------------
          * @return list of cookie params
          *------------------------------------------------*)
-        function getCookieParams() : IList;
+        function getCookieParams() : IReadOnlyList;
 
         (*!------------------------------------------------
          * get request body data
@@ -127,7 +127,7 @@ type
          *-------------------------------------------------
          * @return array of parsed body params
          *------------------------------------------------*)
-        function getParsedBodyParams() : IList;
+        function getParsedBodyParams() : IReadOnlyList;
 
         (*!------------------------------------------------
          * get request uploaded file by name
@@ -168,7 +168,7 @@ type
          *-------------------------------------------------
          * @return array of query string and parsed body params
          *------------------------------------------------*)
-        function getParams() : IList;
+        function getParams() : IReadOnlyList;
 
         (*!------------------------------------------------
          * test if current request is coming from AJAX request
@@ -256,7 +256,7 @@ implementation
      *-------------------------------------------------
      * @return list of query string params
      *------------------------------------------------*)
-    function TFcgiRequest.getQueryParams() : IList;
+    function TFcgiRequest.getQueryParams() : IReadOnlyList;
     begin
         result := fRequest.getQueryParams();
     end;
@@ -279,7 +279,7 @@ implementation
      *-------------------------------------------------
      * @return list of cookie params
      *------------------------------------------------*)
-    function TFcgiRequest.getCookieParams() : IList;
+    function TFcgiRequest.getCookieParams() : IReadOnlyList;
     begin
         result := fRequest.getCookieParams();
     end;
@@ -302,7 +302,7 @@ implementation
      *-------------------------------------------------
      * @return array of parsed body params
      *------------------------------------------------*)
-    function TFcgiRequest.getParsedBodyParams() : IList;
+    function TFcgiRequest.getParsedBodyParams() : IReadOnlyList;
     begin
         result := fRequest.getParsedBodyParams();
     end;
@@ -358,7 +358,7 @@ implementation
      *-------------------------------------------------
      * @return list of request query string parameters
      *------------------------------------------------*)
-    function TFcgiRequest.getParams() : IList;
+    function TFcgiRequest.getParams() : IReadOnlyList;
     begin
         result := fRequest.getParams();
     end;
