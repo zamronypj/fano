@@ -108,11 +108,11 @@ uses
     var fstream : TFileStream;
         buf : pointer;
     begin
-        //file may big in size. We need to do fast reading
         fstream := TFileStream.create(fname, fmOpenRead or fmShareDenyWrite);
         try
             getMem(buf, MinBuffSize);
             try
+                //just read few bytes of header
                 fstream.readBuffer(buf^, MinBuffSize);
                 result := isValidFormat(buf^, MinBuffSize);
             finally
