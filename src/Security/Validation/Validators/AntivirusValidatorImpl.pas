@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit UploadedFileValidatorImpl;
+unit AntivirusValidatorImpl;
 
 interface
 
@@ -18,17 +18,24 @@ uses
     ReadOnlyListIntf,
     RequestIntf,
     ValidatorIntf,
+    AntivirusIntf,
+    UploadedFileCollectionIntf,
+    UploadedFileIntf,
     BaseValidatorImpl;
 
 type
 
     (*!------------------------------------------------
      * basic class having capability to
-     * validate field that is a valid uploaded file
+     * validate field that uploaded file must be free from virus
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TUploadedFileValidator = class(TBaseValidator)
+    TAntivirusValidator = class(TBaseValidator)
+    private
+        fAntivirus : IAntivirus;
+        fOriginalErrMsg : string;
+        function scanUploadedFiles(const uploadedFiles : IUploadedFileArray) : boolean;
     protected
         (*!------------------------------------------------
          * actual data validation
@@ -45,7 +52,12 @@ type
         (*!------------------------------------------------
          * constructor
          *-------------------------------------------------*)
-        constructor create();
+        constructor create(const antivirus : IAntivirus);
+
+        (*!------------------------------------------------
+         * destructor
+         *-------------------------------------------------*)
+        destructor destroy(); override;
 
         (*!------------------------------------------------
          * Validate data
@@ -64,16 +76,51 @@ type
 
 implementation
 
+uses
+
+    ScanResultIntf;
+
 resourcestring
 
-    sErrFieldIsUploadedFile = 'Field %s must be a valid uploaded file';
+    sErrFieldIsMustBeFreeFromVirus = 'Field %s must be a free from virus. ';
 
     (*!------------------------------------------------
      * constructor
      *-------------------------------------------------*)
-    constructor TUploadedFileValidator.create();
+    constructor TAntivirusValidator.create(const antivirus : IAntivirus);
     begin
-        inherited create(sErrFieldIsUploadedFile);
+        inherited create(sErrFieldIsMustBeFreeFromVirus);
+        fOriginalErrMsg := sErrFieldIsMustBeFreeFromVirus;
+        fAntivirus := antivirus;
+        fAntivirus.beginScan();
+    end;
+
+    (*!------------------------------------------------
+     * destructor
+     *-------------------------------------------------*)
+    destructor TAntivirusValidator.destroy();
+    begin
+        fAntivirus := nil;
+        inherited destroy();
+    end;
+
+    function TAntivirusValidator.scanUploadedFiles(const uploadedFiles : IUploadedFileArray) : boolean;
+    var scanRes : IScanResult;
+        i, len : integer;
+    begin
+        result := true;
+        len := length(uploadedFiles);
+        for i := 0 to len -1 do
+        begin
+            scanRes := fAntivirus.scanFile(uploadedFiles[i].getTmpFilename());
+            result := result and scanRes.isCleaned();
+            if not result then
+            begin
+                //virus detected, exit loop early
+                errorMsgFormat := fOriginalErrMsg + ' Virus detected: ' + scanRes.virusName();
+                exit;
+            end;
+        end;
     end;
 
     (*!------------------------------------------------
@@ -86,13 +133,22 @@ resourcestring
      *-------------------------------------------------
      * We assume dataToValidate <> nil
      *-------------------------------------------------*)
-    function TUploadedFileValidator.isValid(
+    function TAntivirusValidator.isValid(
         const fieldName : shortstring;
         const dataToValidate : IReadOnlyList;
         const request : IRequest
     ) : boolean;
+    var uploadedFiles : IUploadedFileArray;
     begin
-        result := (request.getUploadedFile(fieldName) <> nil);
+        uploadedFiles := request.getUploadedFile(fieldName);
+        if (uploadedFiles <> nil) then
+        begin
+            result := scanUploadedFiles(uploadedFiles);
+        end else
+        begin
+            //assume validation pass
+            result := true;
+        end;
     end;
 
     (*!------------------------------------------------
@@ -101,7 +157,7 @@ resourcestring
      * @param dataToValidate input data
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
-    function TUploadedFileValidator.isValidData(
+    function TAntivirusValidator.isValidData(
         const dataToValidate : string;
         const dataCollection : IReadOnlyList;
         const request : IRequest

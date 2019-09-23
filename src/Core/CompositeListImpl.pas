@@ -14,7 +14,9 @@ interface
 {$H+}
 
 uses
+
     contnrs,
+    ReadOnlyListIntf,
     ListIntf;
 
 type
@@ -25,7 +27,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TCompositeList = class(TInterfacedObject, IList)
+    TCompositeList = class(TInterfacedObject, IReadonlyList, IList)
     private
         fFirstList : IList;
         fSecondList : IList;

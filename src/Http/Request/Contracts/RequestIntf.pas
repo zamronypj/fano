@@ -16,7 +16,7 @@ interface
 uses
 
     AjaxAwareIntf,
-    ListIntf,
+    ReadOnlyListIntf,
     UploadedFileIntf,
     UploadedFileCollectionIntf,
     ReadonlyHeadersIntf,
@@ -71,8 +71,8 @@ type
          *-------------------------------------------------
          * @return list of query string params
          *------------------------------------------------*)
-        function getQueryParams() : IList;
-        property queryParams : IList read getQueryParams;
+        function getQueryParams() : IReadOnlyList;
+        property queryParams : IReadOnlyList read getQueryParams;
 
         (*!------------------------------------------------
          * get single cookie param value by its name
@@ -89,8 +89,8 @@ type
          *-------------------------------------------------
          * @return list of cookie params
          *------------------------------------------------*)
-        function getCookieParams() : IList;
-        property cookieParams : IList read getCookieParams;
+        function getCookieParams() : IReadOnlyList;
+        property cookieParams : IReadOnlyList read getCookieParams;
 
         (*!------------------------------------------------
          * get request body data
@@ -107,8 +107,8 @@ type
          *-------------------------------------------------
          * @return array of parsed body params
          *------------------------------------------------*)
-        function getParsedBodyParams() : IList;
-        property parsedBodyParams : IList read getParsedBodyParams;
+        function getParsedBodyParams() : IReadOnlyList;
+        property parsedBodyParams : IReadOnlyList read getParsedBodyParams;
 
         (*!------------------------------------------------
          * get request uploaded file by name
@@ -151,8 +151,8 @@ type
          *-------------------------------------------------
          * @return array of query string and parsed body params
          *------------------------------------------------*)
-        function getParams() : IList;
-        property params : IList read getParams;
+        function getParams() : IReadOnlyList;
+        property params : IReadOnlyList read getParams;
     end;
 
 implementation

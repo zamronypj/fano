@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit ListIntf;
+unit AntivirusIntf;
 
 interface
 
@@ -15,39 +15,41 @@ interface
 
 uses
 
-    ReadOnlyListIntf;
+    ScanResultIntf;
 
 type
 
-    (*!------------------------------------------------
-     * interface for any class having capability store
-     * list of item
+    (*!-----------------------------------------------
+     * Interface for any class having capability to
+     * scan for computer virus
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    IList = interface(IReadOnlyList)
-        ['{7EEE23CC-9713-49E2-BE92-CC63BDEA17F3}']
+    IAntivirus = interface
+        ['{64EEC494-9B6A-4494-9466-9A58AF82C860}']
 
         (*!------------------------------------------------
-         * delete item by index
+         * setup antivirus engine
          *-----------------------------------------------
-         * @param indx index of item
-         *-----------------------------------------------
-         * implementor is free to decide whether delete
-         * item in list only or also free item memory
+         * @return current instance
          *-----------------------------------------------*)
-        procedure delete(const indx : integer);
+        function beginScan() : IAntivirus;
 
         (*!------------------------------------------------
-         * add item and associate it with key name
+         * scan file for virus
          *-----------------------------------------------
-         * @param aKey name to use to associate item
-         * @param item item to be added
-         * @return index of item
+         * @return scan result
          *-----------------------------------------------*)
-        function add(const aKey : shortstring; const item : pointer) : integer;
+        function scanFile(const filePath : string) : IScanResult;
 
+        (*!------------------------------------------------
+         * free antivirus engine resources
+         *-----------------------------------------------
+         * @return current instance
+         *-----------------------------------------------*)
+        function endScan() : IAntivirus;
     end;
 
 implementation
+
 end.
