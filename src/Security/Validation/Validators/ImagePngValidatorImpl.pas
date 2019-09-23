@@ -28,6 +28,11 @@ type
     TImagePngValidator = class(TFileFormatValidator)
     protected
         function isValidFormat(const buffer; const buffSize : int64) : boolean; override;
+    public
+        (*!------------------------------------------------
+         * constructor
+         *-------------------------------------------------*)
+        constructor create();
     end;
 
 implementation
@@ -35,6 +40,18 @@ implementation
 const
 
     PNG_ID = $A1A0A0D474E5089;
+
+resourcestring
+
+    sErrFieldMustBePngImage = 'Field %s must be PNG image file';
+
+    (*!------------------------------------------------
+     * constructor
+     *-------------------------------------------------*)
+    constructor TImagePngValidator.create();
+    begin
+        inherited create(sErrFieldMustBePngImage);
+    end;
 
     function TImagePngValidator.isValidFormat(const buffer; const buffSize : int64) : boolean;
     begin

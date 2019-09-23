@@ -28,6 +28,11 @@ type
     TImageGifValidator = class(TFileFormatValidator)
     protected
         function isValidFormat(const buffer; const buffSize : int64) : boolean; override;
+    public
+        (*!------------------------------------------------
+         * constructor
+         *-------------------------------------------------*)
+        constructor create();
     end;
 
 implementation
@@ -35,6 +40,18 @@ implementation
 uses
 
     SysUtils;
+
+resourcestring
+
+    sErrFieldMustBeGifImage = 'Field %s must be GIF image file';
+
+    (*!------------------------------------------------
+     * constructor
+     *-------------------------------------------------*)
+    constructor TImageGifValidator.create();
+    begin
+        inherited create(sErrFieldMustBeGifImage);
+    end;
 
     function TImageGifValidator.isValidFormat(const buffer; const buffSize : int64) : boolean;
     begin

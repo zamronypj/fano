@@ -28,6 +28,11 @@ type
     TImageJpgValidator = class(TFileFormatValidator)
     protected
         function isValidFormat(const buffer; const buffSize : int64) : boolean; override;
+    public
+        (*!------------------------------------------------
+         * constructor
+         *-------------------------------------------------*)
+        constructor create();
     end;
 
 implementation
@@ -35,6 +40,18 @@ implementation
 const
 
     JPEG_ID = $D8FF;
+
+resourcestring
+
+    sErrFieldMustBeJpegImage = 'Field %s must be JPEG image file';
+
+    (*!------------------------------------------------
+     * constructor
+     *-------------------------------------------------*)
+    constructor TImageJpgValidator.create();
+    begin
+        inherited create(sErrFieldMustBeJpegImage);
+    end;
 
     function TImageJpgValidator.isValidFormat(const buffer; const buffSize : int64) : boolean;
     var
