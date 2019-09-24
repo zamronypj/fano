@@ -19,7 +19,7 @@ uses
     RequestHandlerIntf,
     RouteArgsWriterIntf,
     RouteArgsReaderIntf,
-    MiddlewareCollectionAwareIntf;
+    MiddlewareListIntf;
 
 type
 
@@ -33,11 +33,11 @@ type
         ['{BD3ACEAB-F00B-4102-A344-8014893279BF}']
 
         (*!-------------------------------------------
-         * get middlewares collection
+         * get middlewares list
          *--------------------------------------------
-         * @return middleware collections
+         * @return middleware list
          *--------------------------------------------*)
-        function middlewares() : IMiddlewareCollectionAware;
+        function middlewares() : IMiddlewareList;
 
         (*!-------------------------------------------
          * get route instance

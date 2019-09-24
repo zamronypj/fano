@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit MiddlewareChainFactoryIntf;
+unit MiddlewareExecutorIntf;
 
 interface
 
@@ -14,26 +14,26 @@ interface
 
 uses
 
-   MiddlewareChainIntf,
-   MiddlewareCollectionAwareIntf;
+    RequestIntf,
+    ResponseIntf,
+    RouteHandlerIntf;
 
 type
 
     (*!------------------------------------------------
-     * interface for any class having capability to create
-     * middleware chain instance
+     * interface for any class having capability to
+     * execute middlewares stack
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    IMiddlewareChainFactory = interface
-        ['{3D57F1EB-46CD-4D63-B77B-D51C656139EE}']
-
-        function build(
-            const appMiddlewares : IMiddlewareCollectionAware;
-            const routeMiddlewares : IMiddlewareCollectionAware
-        ) : IMiddlewareChain;
+    IMiddlewareExecutor = interface
+        ['{47B9A178-4A0A-4599-AD67-C73B8E42B82A}']
+        function execute(
+            const request : IRequest;
+            const response : IResponse;
+            const routeHandler : IRouteHandler
+        ) : IResponse;
     end;
 
 implementation
-
 end.

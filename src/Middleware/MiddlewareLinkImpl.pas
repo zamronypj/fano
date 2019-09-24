@@ -24,8 +24,8 @@ uses
 type
 
     (*!------------------------------------------------
-     * adapter class that wrap request handler so it can
-     * act as a middleware
+     * internal class which wrap a middleware to be able
+     * be linked with others
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)

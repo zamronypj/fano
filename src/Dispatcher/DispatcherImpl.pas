@@ -20,10 +20,8 @@ uses
     ResponseFactoryIntf,
     RequestFactoryIntf,
     RouteMatcherIntf,
-    MiddlewareCollectionIntf,
-    MiddlewareChainFactoryIntf,
     RouteHandlerIntf,
-    MiddlewareCollectionAwareIntf,
+    MiddlewareExecutorIntf,
     StdInIntf,
     InjectableObjectImpl,
     BaseDispatcherImpl;
@@ -38,15 +36,7 @@ type
      *---------------------------------------------------*)
     TDispatcher = class(TBaseDispatcher)
     private
-        applicationMiddlewares : IMiddlewareCollectionAware;
-        middlewareChainFactory : IMiddlewareChainFactory;
-
-        function executeMiddlewareChain(
-            const env: ICGIEnvironment;
-            const stdIn : IStdIn;
-            const routeHandler : IRouteHandler;
-            const routeMiddlewares : IMiddlewareCollectionAware
-        ) : IResponse;
+        fMiddlewareExecutor : IMiddlewareExecutor;
 
         function executeMiddlewares(
             const env: ICGIEnvironment;
@@ -55,8 +45,7 @@ type
         ) : IResponse;
     public
         constructor create(
-            const appMiddlewares : IMiddlewareCollectionAware;
-            const chainFactory : IMiddlewareChainFactory;
+            const middlewareExecutor : IMiddlewareExecutor;
             const routes : IRouteMatcher;
             const respFactory : IResponseFactory;
             const reqFactory : IRequestFactory
@@ -78,66 +67,34 @@ type
 
 implementation
 
-uses
-
-    MiddlewareChainIntf;
-
     constructor TDispatcher.create(
-        const appMiddlewares : IMiddlewareCollectionAware;
-        const chainFactory : IMiddlewareChainFactory;
+        const middlewareExecutor : IMiddlewareExecutor;
         const routes : IRouteMatcher;
         const respFactory : IResponseFactory;
         const reqFactory : IRequestFactory
     );
     begin
         inherited create(routes, respFactory, reqFactory);
-        applicationMiddlewares := appMiddlewares;
-        middlewareChainFactory := chainFactory;
+        fMiddlewareExecutor := middlewareExecutor;
     end;
 
     destructor TDispatcher.destroy();
     begin
-        applicationMiddlewares := nil;
-        middlewareChainFactory := nil;
+        fMiddlewareExecutor := nil;
         inherited destroy();
-    end;
-
-    function TDispatcher.executeMiddlewareChain(
-        const env: ICGIEnvironment;
-        const stdIn : IStdIn;
-        const routeHandler : IRouteHandler;
-        const routeMiddlewares : IMiddlewareCollectionAware
-    ) : IResponse;
-    var middlewareChain : IMiddlewareChain;
-    begin
-        middlewareChain := middlewareChainFactory.build(
-            applicationMiddlewares,
-            routeMiddlewares
-        );
-        try
-            result := middlewareChain.execute(
-                requestFactory.build(env, stdIn),
-                responseFactory.build(env),
-                routeHandler
-            );
-        finally
-            middlewareChain := nil;
-        end;
     end;
 
     function TDispatcher.executeMiddlewares(
         const env: ICGIEnvironment;
         const stdIn : IStdIn;
-        const routeHandler : IRouteHandler
+        const routeHandler : IRouteHandler;
     ) : IResponse;
-    var routeMiddlewares : IMiddlewareCollectionAware;
     begin
-        routeMiddlewares := routeHandler.middlewares();
-        try
-            result := executeMiddlewareChain(env, stdIn, routeHandler, routeMiddlewares);
-        finally
-            routeMiddlewares := nil;
-        end;
+        result := middlewareExecutor.execute(
+            requestFactory.build(env, stdIn),
+            responseFactory.build(env),
+            routeHandler
+        );
     end;
 
     function TDispatcher.dispatchRequest(
