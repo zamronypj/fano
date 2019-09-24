@@ -52,7 +52,8 @@ implementation
 uses
 
     StringFileReaderImpl,
-    JsonFileSessionManagerImpl,
+    FileSessionManagerImpl,
+    JsonSessionFactoryImpl,
     GuidSessionIdGeneratorImpl;
 
     constructor TJsonFileSessionManagerFactory.create(
@@ -73,8 +74,9 @@ uses
      *---------------------------------------------------*)
     function TJsonFileSessionManagerFactory.build(const container : IDependencyContainer) : IDependency;
     begin
-        result := TJsonFileSessionManager.create(
+        result := TFileSessionManager.create(
             TGuidSessionIdGenerator.create(),
+            TJsonSessionFactory.create(),
             fCookieName,
             TStringFileReader.create(),
             fBaseDir,
