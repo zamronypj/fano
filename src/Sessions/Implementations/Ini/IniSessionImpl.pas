@@ -16,7 +16,7 @@ interface
 uses
 
     Classes,
-    Inifiles,
+    IniFiles,
     SessionIntf;
 
 type
