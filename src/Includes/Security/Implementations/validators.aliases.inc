@@ -72,3 +72,8 @@ TAlwaysPassValidator = AlwaysPassValidatorImpl.TAlwaysPassValidator;
 TCompareFieldValidator = CompareFieldValidatorImpl.TCompareFieldValidator;
 TExistsValidator = ExistsValidatorImpl.TExistsValidator;
 TAntivirusValidator = AntivirusValidatorImpl.TAntivirusValidator;
+
+TFileFormatValidator = FileFormatValidatorImpl.TFileFormatValidator;
+TImagePngValidator = ImagePngValidatorImpl.TImagePngValidator;
+TImageJpgValidator = ImageJpgValidatorImpl.TImageJpgValidator;
+TImageGifValidator = ImageGifValidatorImpl.TImageGifValidator;

@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit ValidationMiddlewareWithHandlerImpl;
+unit ValidationCollectionMiddlewareWithHandlerImpl;
 
 interface
 
@@ -19,6 +19,7 @@ uses
     RequestIntf,
     ResponseIntf,
     RequestValidatorIntf,
+    ValidatorCollectionIntf,
     MiddlewareIntf,
     RequestHandlerIntf,
     RouteArgsReaderIntf,
@@ -33,13 +34,13 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TValidationMiddlewareWithHandler = class(TInjectableObject, IMiddleware)
+    TValidationCollectionMiddlewareWithHandler = class(TInjectableObject, IMiddleware)
     private
-        fValidation : IRequestValidator;
+        fValidation : IValidatorCollection;
         fValidationErrorHandler : IRequestHandler;
     public
         constructor create(
-            const validationInst : IRequestValidator;
+            const validationInst : IValidatorCollection;
             const validationErrorHandler : IRequestHandler
         );
         destructor destroy(); override;
@@ -70,8 +71,8 @@ type
 implementation
 
 
-    constructor TValidationMiddlewareWithHandler.create(
-        const validationInst : IRequestValidator;
+    constructor TValidationCollectionMiddlewareWithHandler.create(
+        const validationInst : IValidatorCollection;
         const validationErrorHandler : IRequestHandler
     );
     begin
@@ -79,7 +80,7 @@ implementation
         fValidationErrorHandler := validationErrorHandler;
     end;
 
-    destructor TValidationMiddlewareWithHandler.destroy();
+    destructor TValidationCollectionMiddlewareWithHandler.destroy();
     begin
         fValidation := nil;
         fValidationErrorHandler := nil;
@@ -97,14 +98,16 @@ implementation
      *        to stop execution
      * @return response
      *----------------------------------------*)
-    function TValidationMiddlewareWithHandler.handleRequest(
+    function TValidationCollectionMiddlewareWithHandler.handleRequest(
         const request : IRequest;
         const response : IResponse;
         const args : IRouteArgsReader;
         var canContinue : boolean
     ) : IResponse;
+    var requestValidator : IRequestValidator;
     begin
-        canContinue := fValidation.validate(request).isValid;
+        requestValidator := fValidation.get(args.getName());
+        canContinue := requestValidator.validate(request).isValid;
         if (canContinue) then
         begin
             result := response;
