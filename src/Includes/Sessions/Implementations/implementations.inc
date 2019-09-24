@@ -23,8 +23,11 @@ Md5SessionIdGeneratorImpl,
 Sha1SessionIdGeneratorImpl,
 
 FileSessionManagerImpl,
+
 JsonSessionImpl,
 JsonFileSessionManagerFactoryImpl,
+IniSessionImpl,
+IniFileSessionManagerFactoryImpl,
 
 SessionMiddlewareChainFactoryImpl,
 SessionMiddlewareChainImpl,

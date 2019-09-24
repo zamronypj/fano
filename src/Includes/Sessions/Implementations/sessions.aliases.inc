@@ -25,6 +25,8 @@ TSha1SessionIdGenerator = Sha1SessionIdGeneratorImpl.TSha1SessionIdGenerator;
 TFileSessionManager = FileSessionManagerImpl.TFileSessionManager;
 TJsonSession = JsonSessionImpl.TJsonSession;
 TJsonFileSessionManagerFactory = JsonFileSessionManagerFactoryImpl.TJsonFileSessionManagerFactory;
+TIniSession = IniSessionImpl.TIniSession;
+TIniFileSessionManagerFactory = IniFileSessionManagerFactoryImpl.TIniFileSessionManagerFactory;
 
 TSessionMiddlewareChainFactory = SessionMiddlewareChainFactoryImpl.TSessionMiddlewareChainFactory;
 TSessionMiddlewareChain = SessionMiddlewareChainImpl.TSessionMiddlewareChain;
