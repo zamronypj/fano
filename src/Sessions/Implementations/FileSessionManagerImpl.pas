@@ -107,6 +107,8 @@ type
          *-------------------------------------
          * @param sessionIdGenerator helper class
          *           which can generate session id
+         * @param sessionFactory helper class
+         *           which create ISession object
          * @param cookieName name of cookie to use
          * @param fileReader helper class
          *           which can read file to string
@@ -117,6 +119,7 @@ type
          *-------------------------------------*)
         constructor create(
             const sessionIdGenerator : ISessionIdGenerator;
+            const sessionFactory : ISessionFactory;
             const cookieName : string;
             const fileReader : IFileReader;
             const baseDir : string;
