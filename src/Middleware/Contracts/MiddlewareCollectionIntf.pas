@@ -27,9 +27,6 @@ type
     IMiddlewareCollection = interface
         ['{DF2C4336-6849-4A50-AACE-3676CD9FB395}']
         function add(const middleware : IMiddleware) : IMiddlewareCollection;
-        function count() : integer;
-        function get(const indx : integer) : IMiddleware;
-        function merge(const middlewares : IMiddlewareCollection) : IMiddlewareCollection;
     end;
 
 implementation

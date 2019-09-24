@@ -36,8 +36,8 @@ type
         function handleRequest(
             const request : IRequest;
             const response : IResponse;
-            const routeArgs : IRouteArgsReader;
-            var canContinue : boolean
+            const args : IRouteArgsReader;
+            const nextMdlwr : IMiddleware
         ) : IResponse;
     end;
 
@@ -59,11 +59,12 @@ implementation
     function TRequestHandlerAsMiddleware.handleRequest(
         const request : IRequest;
         const response : IResponse;
-        const routeArgs : IRouteArgsReader;
-        var canContinue : boolean
+        const args : IRouteArgsReader;
+        const nextMdlwr : IRequestHandler
     ) : IResponse;
+    var newResp : IResponse;
     begin
-        canContinue := true;
-        result := requestHandler.handleRequest(request, response, routeArgs);
+        newResp := requestHandler.handleRequest(request, response, args);
+        result := nextMdlwr.handleRequest(request, newResp, args);
     end;
 end.
