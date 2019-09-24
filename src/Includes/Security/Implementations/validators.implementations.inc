@@ -63,3 +63,8 @@ AlwaysPassValidatorImpl,
 CompareFieldValidatorImpl,
 ExistsValidatorImpl,
 AntivirusValidatorImpl,
+
+FileFormatValidatorImpl,
+ImagePngValidatorImpl,
+ImageJpgValidatorImpl,
+ImageGifValidatorImpl,

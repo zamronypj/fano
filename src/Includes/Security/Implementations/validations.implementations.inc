@@ -23,3 +23,4 @@ ValidationCollectionImpl,
 
 ValidationMiddlewareImpl,
 ValidationMiddlewareWithHandlerImpl,
+ValidationCollectionMiddlewareWithHandlerImpl,
