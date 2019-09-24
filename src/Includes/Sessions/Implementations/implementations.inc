@@ -22,8 +22,8 @@ RawSessionIdGeneratorImpl,
 Md5SessionIdGeneratorImpl,
 Sha1SessionIdGeneratorImpl,
 
+FileSessionManagerImpl,
 JsonSessionImpl,
-JsonFileSessionManagerImpl,
 JsonFileSessionManagerFactoryImpl,
 
 SessionMiddlewareChainFactoryImpl,
