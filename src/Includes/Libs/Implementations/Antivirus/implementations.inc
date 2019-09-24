@@ -6,31 +6,9 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-{------------ Begin LibCurl-related------------------}
-{$IFDEF LIBCURL}
-HttpCurlImpl,
-HttpCurlFactoryImpl,
-
-HttpClientHeadersImpl,
-
-HttpGetImpl,
-HttpGetFactoryImpl,
-
-HttpGetLogFactoryImpl,
-
-HttpPostImpl,
-HttpPostFactoryImpl,
-
-HttpPutImpl,
-HttpPutFactoryImpl,
-
-HttpDeleteImpl,
-HttpDeleteFactoryImpl,
-
-HttpHeadImpl,
-HttpHeadFactoryImpl,
-
-HttpClientImpl,
-HttpClientFactoryImpl,
+{------------ ClamAV antivirus related------------------}
+{$IFDEF LIBCLAMAV}
+ClamAvImpl,
+EClamAvImpl,
 {$ENDIF}
-{------------ End LibCurl-related------------------}
+{------------ End ClamAV antivirus related------------------}

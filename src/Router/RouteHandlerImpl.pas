@@ -40,6 +40,13 @@ type
         varPlaceholders : TArrayOfPlaceholders;
         fActualHandler : IRequestHandler;
         fRouteName : shortstring;
+
+        (*!-------------------------------------------
+         * get route name
+         *--------------------------------------------
+         * @return current route name
+         *--------------------------------------------*)
+        function getName() : shortstring;
     public
 
         (*!-------------------------------------------
@@ -102,12 +109,8 @@ type
          *--------------------------------------------*)
         function setName(const routeName : shortstring) : IRoute;
 
-        (*!-------------------------------------------
-         * get route name
-         *--------------------------------------------
-         * @return current route name
-         *--------------------------------------------*)
-        function getName() : shortstring;
+        function IRouteArgsReader.getName = getName;
+        function IRoute.getName = getName;
 
         (*!-------------------------------------------
          * attach middleware before route
