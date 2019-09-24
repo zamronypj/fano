@@ -33,6 +33,12 @@ type
             const sessId : shortstring;
             const sessData : string
         ) : ISession;
+
+        function createNewSession(
+            const sessName : shortstring;
+            const sessId : shortstring;
+            const expiredDate : TDateTime
+        ) : ISession;
     end;
 
 implementation
@@ -48,6 +54,24 @@ uses
     ) : ISession;
     begin
         result := TIniSession.create(sessName, sessId, sessData);
+    end;
+
+    function TIniSessionFactory.createNewSession(
+        const sessName : shortstring;
+        const sessId : shortstring;
+        const expiredDate : TDateTime
+    ) : ISession;
+    begin
+        result := TIniSession.create(
+            sessName,
+            sessId,
+            format(
+                '[expiry]' + LineEnding +
+                'expire=%s' + LineEnding +
+                '[sessionVars]' + LineEnding,
+                [ formatDateTime('dd-mm-yyyy hh:nn:ss', expiredDate) ]
+            )
+        );
     end;
 
 end.
