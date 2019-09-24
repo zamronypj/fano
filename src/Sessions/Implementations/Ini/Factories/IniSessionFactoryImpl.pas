@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit SessionFactoryIntf;
+unit IniSessionFactoryImpl;
 
 interface
 
@@ -15,31 +15,39 @@ interface
 
 uses
 
-    SessionIntf;
+    SessionIntf,
+    SessionFactoryIntf;
 
 type
 
     (*!------------------------------------------------
-     * interface for any class having capability to
-     * create session object
+     * factory class having capability to
+     * create TIniSession object
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    ISessionFactory = interface
-        ['{CA38E991-6A66-4BE5-89DF-540885088F76}']
-
+    TIniSessionFactory = class(TInterfacedObject, ISessionFactory)
+    public
         function createSession(
             const sessName : shortstring;
             const sessId : shortstring;
             const sessData : string
         ) : ISession;
-
-        function createNewSession(
-            const sessName : shortstring;
-            const sessId : shortstring;
-            const expiredDate : TDateTime
-        ) : ISession;
     end;
 
 implementation
+
+uses
+
+    IniSessionImpl;
+
+    function TIniSessionFactory.createSession(
+        const sessName : shortstring;
+        const sessId : shortstring;
+        const sessData : string
+    ) : ISession;
+    begin
+        result := TIniSession.create(sessName, sessId, sessData);
+    end;
+
 end.

@@ -307,20 +307,15 @@ type
         const lifeTimeInSec : integer
     ) : ISession;
     var sess : ISession;
-        expiredDate : TDateTime;
     begin
         sess := findSession(sessionId);
 
         if sess = nil then
         begin
-            expiredDate := incSecond(now(), lifeTimeInSec);
-            sess := fSessionFactory.createSession(
+            sess := fSessionFactory.createNewSession(
                 fCookieName,
                 fSessionIdGenerator.getSessionId(),
-                format(
-                    '{"expire": "%s", "sessionVars" : {}}',
-                    [ formatDateTime('dd-mm-yyyy hh:nn:ss', expiredDate) ]
-                )
+                incSecond(now(), lifeTimeInSec)
             );
         end;
 

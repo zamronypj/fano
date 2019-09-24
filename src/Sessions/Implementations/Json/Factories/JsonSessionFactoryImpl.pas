@@ -33,12 +33,20 @@ type
             const sessId : shortstring;
             const sessData : string
         ) : ISession;
+
+        function createNewSession(
+            const sessName : shortstring;
+            const sessId : shortstring;
+            const expiredDate : TDateTime
+        ) : ISession;
     end;
 
 implementation
 
 uses
 
+    SysUtils,
+    DateUtils,
     JsonSessionImpl;
 
     function TJsonSessionFactory.createSession(
@@ -48,6 +56,22 @@ uses
     ) : ISession;
     begin
         result := TJsonSession.create(sessName, sessId, sessData);
+    end;
+
+    function TJsonSessionFactory.createNewSession(
+        const sessName : shortstring;
+        const sessId : shortstring;
+        const expiredDate : TDateTime
+    ) : ISession;
+    begin
+        result := TJsonSession.create(
+            sessName,
+            sessId,
+            format(
+                '{"expire": "%s", "sessionVars" : {}}',
+                [ formatDateTime('dd-mm-yyyy hh:nn:ss', expiredDate) ]
+            )
+        );
     end;
 
 end.

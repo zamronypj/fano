@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit JsonSessionImpl;
+unit IniSessionImpl;
 
 interface
 
@@ -15,22 +15,24 @@ interface
 
 uses
 
-    fpjson,
+    Classes,
+    Inifiles,
     SessionIntf;
 
 type
 
     (*!------------------------------------------------
      * class having capability to manage
-     * session variables in JSON file
+     * session variables in INI file
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TJsonSession = class(TInterfacedObject, ISession)
+    TIniSession = class(TInterfacedObject, ISession)
     private
         fSessionName : shortstring;
         fSessionId : shortstring;
-        fSessionData : TJsonData;
+        fSessionData : TIniFile;
+        fSessionStream : TStringStream;
 
         procedure raiseExceptionIfAlreadyTerminated();
         procedure raiseExceptionIfExpired();
@@ -170,7 +172,6 @@ uses
 
     Classes,
     SysUtils,
-    jsonParser,
     DateUtils,
     SessionConsts,
     ESessionExpiredImpl;
@@ -182,7 +183,7 @@ uses
      * @param sessId session id
      * @param sessData session data
      *-------------------------------------*)
-    constructor TJsonSession.create(
+    constructor TIniSession.create(
         const sessName : shortstring;
         const sessId : shortstring;
         const sessData : string
@@ -191,22 +192,24 @@ uses
         inherited create();
         fSessionName := sessName;
         fSessionId := sessId;
-        fSessionData := getJSON(sessData);
+        fSessionStream := TStringStream.create(sessData);
+        fSessionData := TIniFile.create(fSessionStream);
         raiseExceptionIfExpired();
     end;
 
-    destructor TJsonSession.destroy();
+    destructor TIniSession.destroy();
     begin
         cleanUp();
         inherited destroy();
     end;
 
-    procedure TJsonSession.cleanUp();
+    procedure TIniSession.cleanUp();
     begin
+        fSessionStream.free();
         fSessionData.free();
     end;
 
-    function TJsonSession.name() : shortstring;
+    function TIniSession.name() : shortstring;
     begin
         result := fSessionName;
     end;
@@ -216,7 +219,7 @@ uses
      *-------------------------------------
      * @return session id string
      *-------------------------------------*)
-    function TJsonSession.id() : shortstring;
+    function TIniSession.id() : shortstring;
     begin
         result := fSessionId;
     end;
@@ -226,9 +229,9 @@ uses
      *-------------------------------------
      * @return session id string
      *-------------------------------------*)
-    function TJsonSession.has(const sessionVar : shortstring) : boolean;
+    function TIniSession.has(const sessionVar : shortstring) : boolean;
     begin
-        result := (fSessionData.findPath('sessionVars.' + sessionVar) <> nil);
+        result := (fSessionData.readString('sessionVars', sessionVar, '') <> '');
     end;
 
     (*!------------------------------------
@@ -238,31 +241,13 @@ uses
      * @param sessionVal value of session variable
      * @return current instance
      *-------------------------------------*)
-    function TJsonSession.internalSetVar(const sessionVar : shortstring; const sessionVal : string) : ISession;
-    var sessValue : TJsonData;
-        tmpObj : TJsonObject;
+    function TIniSession.internalSetVar(const sessionVar : shortstring; const sessionVal : string) : ISession;
     begin
-        sessValue := fSessionData.findPath('sessionVars.' + sessionVar);
-        if (sessValue <> nil) then
-        begin
-            sessValue.asString := sessionVal;
-        end else
-        begin
-            sessValue := fSessionData.findPath('sessionVars');
-            if (sessValue <> nil) then
-            begin
-                tmpObj := TJsonObject(sessValue);
-            end else
-            begin
-                tmpObj := TJsonObject.create();
-                TJsonObject(fSessionData).add('sessionVars', tmpObj);
-            end;
-            tmpObj.add(sessionVar, sessionVal);
-        end;
+        fSessionData.writeString('sessionVars', sessionVar, sessionVal);
         result := self;
     end;
 
-    procedure TJsonSession.raiseExceptionIfAlreadyTerminated();
+    procedure TIniSession.raiseExceptionIfAlreadyTerminated();
     begin
         //TODO: raise ESessionTerminated.create()
     end;
@@ -274,7 +259,7 @@ uses
      * @param sessionVal value of session variable
      * @return current instance
      *-------------------------------------*)
-    function TJsonSession.setVar(const sessionVar : shortstring; const sessionVal : string) : ISession;
+    function TIniSession.setVar(const sessionVar : shortstring; const sessionVal : string) : ISession;
     begin
         raiseExceptionIfExpired();
         result := internalSetVar(sessionVar, sessionVal);
@@ -286,11 +271,9 @@ uses
      * @return session value
      * @throws EJSON exception when not found
      *-------------------------------------*)
-    function TJsonSession.internalGetVar(const sessionVar : shortstring) : string;
-    var sessValue : TJsonData;
+    function TIniSession.internalGetVar(const sessionVar : shortstring) : string;
     begin
-        sessValue := fSessionData.getPath('sessionVars.' + sessionVar);
-        result := sessValue.asString;
+        result := fSessionData.readString('sessionVars', sessionVar, '');
     end;
 
     (*!------------------------------------
@@ -299,7 +282,7 @@ uses
      * @return session value
      * @throws EJSON exception when not found
      *-------------------------------------*)
-    function TJsonSession.getVar(const sessionVar : shortstring) : string;
+    function TIniSession.getVar(const sessionVar : shortstring) : string;
     begin
         raiseExceptionIfAlreadyTerminated();
         raiseExceptionIfExpired();
@@ -312,14 +295,9 @@ uses
      * @param sessionVar name of session variable
      * @return current instance
      *-------------------------------------*)
-    function TJsonSession.internalDelete(const sessionVar : shortstring) : ISession;
-    var sessValue : TJsonData;
+    function TIniSession.internalDelete(const sessionVar : shortstring) : ISession;
     begin
-        sessValue := fSessionData.getPath('sessionVars');
-        if (sessValue <> nil) then
-        begin
-            TJsonObject(sessValue).delete(sessionVar);
-        end;
+        fSessionData.deleteKey('sessionVars', sessionVar);
         result := self;
     end;
 
@@ -329,7 +307,7 @@ uses
      * @param sessionVar name of session variable
      * @return current instance
      *-------------------------------------*)
-    function TJsonSession.delete(const sessionVar : shortstring) : ISession;
+    function TIniSession.delete(const sessionVar : shortstring) : ISession;
     begin
         raiseExceptionIfExpired();
         result := internalDelete(sessionVar);
@@ -343,14 +321,9 @@ uses
      *-------------------------------------
      * @return current instance
      *-------------------------------------*)
-    function TJsonSession.internalClear() : ISession;
-    var sessValue : TJsonData;
+    function TIniSession.internalClear() : ISession;
     begin
-        sessValue := fSessionData.getPath('sessionVars');
-        if (sessValue <> nil) then
-        begin
-            sessValue.clear();
-        end;
+        fSessionData.eraseSection('sessionVars');
         result := self;
     end;
 
@@ -362,7 +335,7 @@ uses
      *-------------------------------------
      * @return current instance
      *-------------------------------------*)
-    function TJsonSession.clear() : ISession;
+    function TIniSession.clear() : ISession;
     begin
         raiseExceptionIfExpired();
         result := internalClear();
@@ -373,26 +346,26 @@ uses
      *-------------------------------------
      * @return true if session is expired
      *-------------------------------------*)
-    function TJsonSession.expired() : boolean;
+    function TIniSession.expired() : boolean;
     var expiredDateTime : TDateTime;
     begin
-        expiredDateTime := strToDateTime(fSessionData.getPath('expire').asString);
+        expiredDateTime := strToDateTime(fSessionData.readString('expiry', 'expire'));
         //value > 0, means now() is later than expiredDateTime i.e,
         //expireddateTime is in past
         result := (compareDateTime(now(), expiredDateTime) > 0);
     end;
 
     (*!------------------------------------
-     * set expiration date
+     * get expiration date
      *-------------------------------------
      * @return current session instance
      *-------------------------------------*)
-    function TJsonSession.expiresAt() : TDateTime;
+    function TIniSession.expiresAt() : TDateTime;
     begin
-        result := strToDateTime(fSessionData.getPath('expire').asString);
+        result := strToDateTime(fSessionData.readString('expiry', 'expire'));
     end;
 
-    procedure TJsonSession.raiseExceptionIfExpired();
+    procedure TIniSession.raiseExceptionIfExpired();
     begin
         if (expired()) then
         begin
@@ -405,8 +378,9 @@ uses
      *-------------------------------------
      * @return string of session data
      *-------------------------------------*)
-    function TJsonSession.serialize() : string;
+    function TIniSession.serialize() : string;
     begin
-        result := fSessionData.asJSON;
+        fSessionData.updateFile();
+        result := fSessionStream.dataString;
     end;
 end.
