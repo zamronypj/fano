@@ -348,7 +348,7 @@ uses
     function TIniSession.expired() : boolean;
     var expiredDateTime : TDateTime;
     begin
-        expiredDateTime := strToDateTime(fSessionData.readString('expiry', 'expire'));
+        expiredDateTime := strToDateTime(fSessionData.readString('expiry', 'expire', '01-01-1970 00:00:00'));
         //value > 0, means now() is later than expiredDateTime i.e,
         //expireddateTime is in past
         result := (compareDateTime(now(), expiredDateTime) > 0);
@@ -361,7 +361,7 @@ uses
      *-------------------------------------*)
     function TIniSession.expiresAt() : TDateTime;
     begin
-        result := strToDateTime(fSessionData.readString('expiry', 'expire'));
+        result := strToDateTime(fSessionData.readString('expiry', 'expire', '01-01-1970 00:00:00'));
     end;
 
     procedure TIniSession.raiseExceptionIfExpired();
