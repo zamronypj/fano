@@ -44,6 +44,10 @@ type
 
 implementation
 
+uses
+
+    MiddlewareLinkIntf;
+
     constructor TMiddlewareStack.create(
         const appMiddlewares : IMiddlewareLinkList;
         const routeMiddlewares : IMiddlewareLinkList;
