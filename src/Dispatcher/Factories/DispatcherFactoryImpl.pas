@@ -77,7 +77,7 @@ uses
     function TDispatcherFactory.build(const container : IDependencyContainer) : IDependency;
     begin
         result := TDispatcher.create(
-            TMiddlewareExecutor.create(appMiddlewares),
+            createMiddlewareExecutor(),
             fRouteMatcher,
             fRequestResponseFactory.responseFactory,
             fRequestResponseFactory.requestFactory
