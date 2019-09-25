@@ -82,22 +82,29 @@ uses
     end;
 
     destructor TMiddlewareStack.destroy();
-    //var appLastLink, routeFirstLink, routeLastLink : IMiddlewareLink;
+    var appLastLink, routeFirstLink, routeLastLink : IMiddlewareLink;
     begin
         if (fAppMiddlewares.count() > 0) then
         begin
-            //appLastLink := fAppMiddlewares.get(fAppMiddlewares.count() - 1);
+            appLastLink := fAppMiddlewares.get(fAppMiddlewares.count() - 1);
             if (fRouteMiddlewares.count() > 0) then
             begin
-                //routeFirstLink := fRouteMiddlewares.get(0);
-                //appLastLink.next := nil;
-                // routeLastLink := fRouteMiddlewares.get(fRouteMiddlewares.count() - 1);
-                // routeLastLink.next := fHandler;
+                routeFirstLink := fRouteMiddlewares.get(0);
+                appLastLink.next := nil;
+                routeLastLink := fRouteMiddlewares.get(fRouteMiddlewares.count() - 1);
+                routeLastLink.next := nil;
             end else
             begin
-                //appLastLink.next := nil;
+                appLastLink.next := nil;
             end;
         end else
+        begin
+            if (fRouteMiddlewares.count() > 0) then
+            begin
+                routeLastLink := fRouteMiddlewares.get(fRouteMiddlewares.count() - 1);
+                routeLastLink.next := nil;
+            end;
+        end;
 
         fAppMiddlewares := nil;
         fRouteMiddlewares := nil;
