@@ -19,7 +19,7 @@ uses
     RequestHandlerIntf,
     RouteArgsWriterIntf,
     RouteArgsReaderIntf,
-    MiddlewareListIntf;
+    MiddlewareLinkListIntf;
 
 type
 
@@ -37,7 +37,7 @@ type
          *--------------------------------------------
          * @return middleware list
          *--------------------------------------------*)
-        function middlewares() : IMiddlewareList;
+        function middlewares() : IMiddlewareLinkList;
 
         (*!-------------------------------------------
          * get route instance

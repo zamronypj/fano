@@ -16,7 +16,7 @@ uses
 
     RequestIntf,
     ResponseIntf,
-    MiddlewareListIntf,
+    MiddlewareLinkListIntf,
     MiddlewareExecutorIntf,
     RouteArgsReaderIntf,
     RouteHandlerIntf;
@@ -32,7 +32,7 @@ type
     private
         fAppMiddlewares : IMiddlewareList;
     public
-        constructor create(const appMiddlewares : IMiddlewareList);
+        constructor create(const appMiddlewares : IMiddlewareLinkList);
         destructor destroy(); override;
         function execute(
             const request : IRequest;
@@ -48,7 +48,7 @@ uses
     MiddlewareStackIntf,
     MiddlewareStackImpl;
 
-    constructor TMiddlewareExecutor.create(const appMiddlewares : IMiddlewareList);
+    constructor TMiddlewareExecutor.create(const appMiddlewares : IMiddlewareLinkList);
     begin
         fAppMiddlewares := appMiddlewares;
     end;
