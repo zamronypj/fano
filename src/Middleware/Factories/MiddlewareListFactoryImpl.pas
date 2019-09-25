@@ -14,8 +14,11 @@ interface
 
 uses
 
+    DependencyIntf,
+    DependencyContainerIntf,
     MiddlewareListFactoryIntf,
-    MiddlewareListItemIntf;
+    MiddlewareListItemIntf,
+    FactoryImpl;
 
 type
 
@@ -25,9 +28,10 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TMiddlewareListFactory = class(TInterfacedObject, IMiddlewareListFactory)
+    TMiddlewareListFactory = class(TFactory, IMiddlewareListFactory)
     public
-        function build() : IMiddlewareListItem;
+        function build() : IMiddlewareListItem; overload;
+        function build(const container : IDependencyContainer) : IDependency; override;
     end;
 
 implementation
@@ -39,5 +43,10 @@ uses
     function TMiddlewareListFactory.build() : IMiddlewareListItem;
     begin
         result := TMiddlewareList.create();
+    end;
+
+    function TMiddlewareListFactory.build(const container : IDependencyContainer) : IDependency;
+    begin
+        result := build() as IDependency;
     end;
 end.
