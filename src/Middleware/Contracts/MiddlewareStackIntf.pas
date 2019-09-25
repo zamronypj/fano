@@ -14,7 +14,7 @@ interface
 
 uses
 
-    MiddlewareStackIntf;
+    RequestHandlerIntf;
 
 type
 
