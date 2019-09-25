@@ -14,3 +14,4 @@
 
 MiddlewareIntf,
 MiddlewareListIntf,
+MiddlewareListItemIntf,
