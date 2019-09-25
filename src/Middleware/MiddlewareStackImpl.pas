@@ -87,17 +87,16 @@ uses
         begin
             if (totAppMiddleware > 0) then
             begin
-                alink := fAppMiddlewares.get(0);
+                result := fAppMiddlewares.get(0);
             end else
             if (totRouteMiddleware > 0) then
             begin
-                alink := fRouteMiddlewares.get(0);
+                result := fRouteMiddlewares.get(0);
             end else
             begin
                 //this should not happened
-                alink := fHandler;
+                result := fHandler;
             end;
-            result := alink;
         end else
         begin
             result := fHandler;
