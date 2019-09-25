@@ -75,8 +75,11 @@ uses
     var prevLink, newLink : IMiddlewareLink;
     begin
         newLink := TMiddlewareLink.create(middleware);
-        prevLink := middlewareList[middlewareList.count - 1] as IMiddlewareLink;
-        prevLink.next := newLink;
+        if (middlewareList.count > 0) then
+        begin
+            prevLink := middlewareList[middlewareList.count - 1] as IMiddlewareLink;
+            prevLink.next := newLink;
+        end;
         middlewareList.add(newLink);
         result := self;
     end;
