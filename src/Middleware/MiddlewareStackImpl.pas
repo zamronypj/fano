@@ -67,17 +67,17 @@ uses
                 routeFirstLink := fRouteMiddlewares.get(0);
                 appLastLink.next := routeFirstLink;
                 routeLastLink := fRouteMiddlewares.get(fRouteMiddlewares.count() - 1);
-                routeLastLink.next := TDefaultMiddlewareLink.create(fHandler);
+                routeLastLink.next := fHandler;
             end else
             begin
-                appLastLink.next := TDefaultMiddlewareLink.create(fHandler);
+                appLastLink.next := fHandler;
             end;
         end else
         begin
             if (fRouteMiddlewares.count() > 0) then
             begin
                 routeLastLink := fRouteMiddlewares.get(fRouteMiddlewares.count() - 1);
-                routeLastLink.next := TDefaultMiddlewareLink.create(fHandler);
+                routeLastLink.next := fHandler;
             end;
         end;
     end;

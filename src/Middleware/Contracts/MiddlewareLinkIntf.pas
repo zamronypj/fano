@@ -27,9 +27,9 @@ type
     IMiddlewareLink = interface(IRequestHandler)
         ['{275E4EC5-8ACB-40C5-8606-5D8AE1EE1594}']
 
-        procedure setNext(const next : IMiddlewareLink);
-        function getNext() : IMiddlewareLink;
-        property next : IMiddlewareLink read getNext write setNext;
+        procedure setNext(const next : IRequestHandler);
+        function getNext() : IRequestHandler;
+        property next : IRequestHandler read getNext write setNext;
     end;
 
 implementation

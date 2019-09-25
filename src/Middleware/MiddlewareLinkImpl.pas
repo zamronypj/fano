@@ -32,7 +32,7 @@ type
     TMiddlewareLink = class(TInterfacedObject, IMiddlewareLink, IRequestHandler)
     private
         fMiddleware : IMiddleware;
-        fNextLink : IMiddlewareLink;
+        fNextLink : IRequestHandler;
         fDefaultHandler : IRequestHandler;
     public
         constructor create(const middlewareInst : IMiddleware);
@@ -44,8 +44,8 @@ type
             const routeArgs : IRouteArgsReader
         ) : IResponse;
 
-        procedure setNext(const next : IMiddlewareLink);
-        function getNext() : IMiddlewareLink;
+        procedure setNext(const next : IRequestHandler);
+        function getNext() : IRequestHandler;
 
     end;
 
