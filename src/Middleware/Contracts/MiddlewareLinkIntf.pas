@@ -29,7 +29,7 @@ type
 
         procedure setNext(const next : IMiddlewareLink);
         function getNext() : IMiddlewareLink;
-        property next : IMiddlewareLink;
+        property next : IMiddlewareLink read getNext write setNext;
     end;
 
 implementation
