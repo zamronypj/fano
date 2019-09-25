@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit MiddlewareLinkListIntf;
+unit MiddlewareListItemIntf;
 
 interface
 
@@ -14,7 +14,8 @@ interface
 
 uses
 
-    MiddlewareLinkIntf;
+    MiddlewareListIntf
+    MiddlewareLinkListIntf;
 
 type
 
@@ -24,10 +25,10 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    IMiddlewareLinkList = interface
-        ['{B2F20BDE-CDE9-4EBC-8439-0817B31F3E5D}']
-        function get(const indx : integer) : IMiddlewareLink;
-        function count() : integer;
+    IMiddlewareListItem = interface
+        ['{711194A7-630F-46E9-AE06-A5D5B384E5A0}']
+        function asLinkList() : IMiddlewareLinkList;
+        function asList() : IMiddlewareList;
     end;
 
 implementation

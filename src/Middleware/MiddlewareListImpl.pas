@@ -15,9 +15,11 @@ interface
 uses
 
     classes,
-    DependencyIntf,
     MiddlewareIntf,
+    MiddlewareLinkIntf,
     MiddlewareListIntf,
+    MiddlewareLinkListIntf,
+    MiddlewareListItemIntf,
     InjectableObjectImpl;
 
 type
@@ -28,7 +30,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TMiddlewareList = class(TInjectableObject, IMiddlewareList, IMiddlewareLinkList)
+    TMiddlewareList = class(TInjectableObject, IMiddlewareList, IMiddlewareLinkList, IMiddlewareListItem)
     private
         middlewareList : TInterfaceList;
     public
@@ -37,13 +39,14 @@ type
         function add(const middleware : IMiddleware) : IMiddlewareList;
         function get(const indx : integer) : IMiddlewareLink;
         function count() : integer;
+        function asLinkList() : IMiddlewareLinkList;
+        function asList() : IMiddlewareList;
     end;
 
 implementation
 
 uses
 
-    MiddlewareLinkIntf,
     MiddlewareLinkImpl;
 
     constructor TMiddlewareList.create();
@@ -86,5 +89,15 @@ uses
     function TMiddlewareList.count() : integer;
     begin
         result := middlewareList.count;
+    end;
+
+    function TMiddlewareList.asLinkList() : IMiddlewareLinkList;
+    begin
+        result := self;
+    end;
+
+    function TMiddlewareList.asList() : IMiddlewareList;
+    begin
+        result := self;
     end;
 end.

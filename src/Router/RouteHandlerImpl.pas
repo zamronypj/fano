@@ -17,7 +17,8 @@ uses
 
     RequestIntf,
     ResponseIntf,
-    MiddlewareCollectionIntf,
+    MiddlewareListIntf,
+    MiddlewareLinkListIntf,
     MiddlewareIntf,
     RequestHandlerIntf,
     RouteHandlerIntf,
@@ -37,6 +38,7 @@ type
     TRouteHandler = class(TInjectableObject, IRouteHandler, IRequestHandler, IRouteArgsReader, IRouteArgsWriter, IRoute)
     private
         fMiddlewares : IMiddlewareList;
+        fMiddlewareLinkList : IMiddlewareLinkList;
         varPlaceholders : TArrayOfPlaceholders;
         fActualHandler : IRequestHandler;
         fRouteName : shortstring;
@@ -55,7 +57,8 @@ type
          * @param amiddlewares object represent middlewares
          *--------------------------------------------*)
         constructor create(
-            const amiddlewares : IMiddlewareCollection;
+            const amiddlewares : IMiddlewareList;
+            const amiddlewareLinkList : IMiddlewareLinkList;
             const actualHandler : IRequestHandler
         );
 
@@ -152,7 +155,7 @@ type
          *--------------------------------------------
          * @return middleware collections
          *--------------------------------------------*)
-        function middlewares() : IMiddlewareList;
+        function middlewares() : IMiddlewareLinkList;
     end;
 
 implementation
@@ -170,12 +173,14 @@ uses
      * @param viewParamsInt view parameters
      *--------------------------------------------*)
     constructor TRouteHandler.create(
-        const amiddlewares : IMiddlewareCollectionAware;
+        const amiddlewares : IMiddlewareList;
+        const amiddlewareLinkList : IMiddlewareLinkList;
         const actualHandler : IRequestHandler
     );
     begin
         inherited create();
         fMiddlewares := amiddlewares;
+        fMiddlewareLinkList := amiddlewareLinkList;
         fActualHandler := actualHandler;
         varPlaceholders := nil;
     end;
@@ -183,6 +188,7 @@ uses
     destructor TRouteHandler.destroy();
     begin
         fMiddlewares := nil;
+        fMiddlewareLinkList := nil;
         fActualHandler := nil;
         varPlaceholders := nil;
         inherited destroy();
@@ -320,6 +326,6 @@ uses
      *--------------------------------------------*)
     function TRouteHandler.middlewares() : IMiddlewareList;
     begin
-        result := fMiddlewares;
+        result := fMiddlewareLinkList;
     end;
 end.
