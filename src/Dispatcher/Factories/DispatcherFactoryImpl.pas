@@ -16,8 +16,7 @@ uses
     DependencyIntf,
     DependencyContainerIntf,
     RouteMatcherIntf,
-    MiddlewareCollectionAwareIntf,
-    MiddlewareChainFactoryIntf,
+    MiddlewareListIntf,
     RequestResponseFactoryIntf,
     SimpleDispatcherFactoryImpl;
 
@@ -31,28 +30,28 @@ type
      *---------------------------------------------------*)
     TDispatcherFactory = class(TSimpleDispatcherFactory)
     private
-        appMiddlewares : IMiddlewareCollectionAware;
-    protected
-        function createMiddlewareChainFactory() : IMiddlewareChainFactory; virtual;
+        appMiddlewares : IMiddlewareList;
     public
         constructor create (
-            const appMiddlewaresInst : IMiddlewareCollectionAware;
+            const appMiddlewaresInst : IMiddlewareList;
             const routeMatcher : IRouteMatcher;
             const requestResponseFactory : IRequestResponseFactory
         );
         destructor destroy(); override;
+
         function build(const container : IDependencyContainer) : IDependency; override;
     end;
 
 implementation
 
 uses
+
     DispatcherImpl,
     RequestResponseFactoryImpl,
-    MiddlewareChainFactoryImpl;
+    MiddlewareExecutorImpl;
 
     constructor TDispatcherFactory.create(
-        const appMiddlewaresInst : IMiddlewareCollectionAware;
+        const appMiddlewaresInst : IMiddlewareList;
         const routeMatcher : IRouteMatcher;
         const requestResponseFactory : IRequestResponseFactory
     );
@@ -67,16 +66,10 @@ uses
         inherited destroy();
     end;
 
-    function TDispatcherFactory.createMiddlewareChainFactory() : IMiddlewareChainFactory;
-    begin
-        result := TMiddlewareChainFactory.create();
-    end;
-
     function TDispatcherFactory.build(const container : IDependencyContainer) : IDependency;
     begin
         result := TDispatcher.create(
-            appMiddlewares,
-            createMiddlewareChainFactory(),
+            TMiddlewareExecutor.create(appMiddlewares),
             fRouteMatcher,
             fRequestResponseFactory.responseFactory,
             fRequestResponseFactory.requestFactory
