@@ -31,6 +31,7 @@ type
     TDefaultMiddlewareLink = class(TInterfacedObject, IMiddlewareLink, IRequestHandler)
     private
         fDefaultHandler : IRequestHandler;
+        fNext : IMiddlewareLink;
     public
         constructor create(const handler : IRequestHandler);
         destructor destroy(); override;
@@ -70,10 +71,11 @@ implementation
 
     procedure TDefaultMiddlewareLink.setNext(const next : IMiddlewareLink);
     begin
+        fNext := next;
     end;
 
     function TDefaultMiddlewareLink.getNext() : IMiddlewareLink;
     begin
-        result := nil;
+        result := fNext;
     end;
 end.
