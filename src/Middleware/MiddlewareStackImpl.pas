@@ -78,8 +78,7 @@ uses
     end;
 
     function TMiddlewareStack.getFirst() : IRequestHandler;
-    var alink : IMiddlewareLink;
-        totAppMiddleware, totRouteMiddleware : integer;
+    var totAppMiddleware, totRouteMiddleware : integer;
     begin
         totAppMiddleware := fAppMiddlewares.count();
         totRouteMiddleware := fRouteMiddlewares.count();
