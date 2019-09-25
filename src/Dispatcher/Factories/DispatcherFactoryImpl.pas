@@ -16,7 +16,7 @@ uses
     DependencyIntf,
     DependencyContainerIntf,
     RouteMatcherIntf,
-    MiddlewareListIntf,
+    MiddlewareLinkListIntf,
     RequestResponseFactoryIntf,
     SimpleDispatcherFactoryImpl;
 
@@ -30,10 +30,10 @@ type
      *---------------------------------------------------*)
     TDispatcherFactory = class(TSimpleDispatcherFactory)
     private
-        appMiddlewares : IMiddlewareList;
+        appMiddlewares : IMiddlewareLinkList;
     public
         constructor create (
-            const appMiddlewaresInst : IMiddlewareList;
+            const appMiddlewaresInst : IMiddlewareLinkList;
             const routeMatcher : IRouteMatcher;
             const requestResponseFactory : IRequestResponseFactory
         );
@@ -51,7 +51,7 @@ uses
     MiddlewareExecutorImpl;
 
     constructor TDispatcherFactory.create(
-        const appMiddlewaresInst : IMiddlewareList;
+        const appMiddlewaresInst : IMiddlewareLinkList;
         const routeMatcher : IRouteMatcher;
         const requestResponseFactory : IRequestResponseFactory
     );
