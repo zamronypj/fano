@@ -324,7 +324,7 @@ uses
      *--------------------------------------------
      * @return middleware collections
      *--------------------------------------------*)
-    function TRouteHandler.middlewares() : IMiddlewareList;
+    function TRouteHandler.middlewares() : IMiddlewareLinkList;
     begin
         result := fMiddlewareLinkList;
     end;
