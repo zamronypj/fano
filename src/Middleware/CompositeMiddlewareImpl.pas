@@ -18,6 +18,7 @@ uses
     ResponseIntf,
     MiddlewareIntf,
     RouteArgsReaderIntf,
+    RequestHandlerIntf,
     InjectableObjectImpl;
 
 type
@@ -43,7 +44,7 @@ type
             const request : IRequest;
             const response : IResponse;
             const routeArgs : IRouteArgsReader;
-            var canContinue : boolean
+            const next : IRequestHandler
         ) : IResponse;
     end;
 
