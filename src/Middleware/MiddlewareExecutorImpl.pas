@@ -30,7 +30,7 @@ type
      *-------------------------------------------------*)
     TMiddlewareExecutor = class(TInterfacedObject, IMiddlewareExecutor)
     private
-        fAppMiddlewares : IMiddlewareList;
+        fAppMiddlewares : IMiddlewareLinkList;
     public
         constructor create(const appMiddlewares : IMiddlewareLinkList);
         destructor destroy(); override;
