@@ -80,7 +80,7 @@ uses
     function TMiddlewareStack.getFirst() : IRequestHandler;
     var alink : IMiddlewareLink;
     begin
-        if (fAppMiddlewares.count() > 0) and (fRouteMiddlewares.count() > 0) then
+        if (fAppMiddlewares.count() > 0) or (fRouteMiddlewares.count() > 0) then
         begin
             if (fAppMiddlewares.count() > 0) then
             begin
