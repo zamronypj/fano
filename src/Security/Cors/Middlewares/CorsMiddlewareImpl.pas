@@ -36,7 +36,8 @@ type
         function handlePreflightRequest(
             const request : IRequest;
             const response : IResponse;
-            var canContinue : boolean
+            const args : IRouteArgsReader;
+            const next : IRequestHandler
         ) : IResponse;
     public
         constructor create(const cors : ICors);
@@ -71,22 +72,27 @@ uses
     function TCorsMiddleware.handlePreflightRequest(
         const request : IRequest;
         const response : IResponse;
-        var canContinue : boolean
+        const args : IRouteArgsReader;
+        const next : IRequestHandler
     ) : IResponse;
     begin
         if (fCors.isPreflightRequest(request)) then
         begin
-            canContinue := false;
+            //preflight request, no need to continue, we handle it from here
             result := fCors.handlePreflightRequest(request, response);
         end else
         begin
             if (not fCors.isAllowed(request)) then
             begin
-                canContinue := false;
                 result := THttpCodeResponse.create(403, 'Not allowed', response.headers());
             end else
             begin
-                result := fCors.addCorsResponseHeaders(request, response);
+                //add CORS header and continue to next middleware/request handler
+                result := next.handleRequest(
+                    request,
+                    fCors.addCorsResponseHeaders(request, response),
+                    args
+                );
             end;
         end;
     end;
@@ -100,10 +106,11 @@ uses
     begin
         if (not fCors.isCorsRequest(request)) then
         begin
-            result := response;
+            //do nothing and just continue to next middleware
+            result := next.handleRequest(rrequest, response, args);
         end else
         begin
-            result := handlePreflightRequest(request, response, canContinue);
+            result := handlePreflightRequest(request, response, next);
         end;
     end;
 
