@@ -76,7 +76,7 @@ uses
             if (fRouteMiddlewares.count() > 0) then
             begin
                 routeLastLink := fRouteMiddlewares.get(fRouteMiddlewares.count() - 1);
-                routeLastLink.next := fHandler;
+                //routeLastLink.next := fHandler;
             end;
         end;
     end;
