@@ -72,7 +72,7 @@ uses
             routeHandler.handler()
         );
 
-        result := mddlwr.first.handleRequest(
+        result := mdlwr.first.handleRequest(
             request,
             response,
             routeHandler.argsReader()
