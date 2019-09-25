@@ -16,7 +16,8 @@ uses
 
     RequestIntf,
     ResponseIntf,
-    RouteArgsReaderIntf;
+    RouteArgsReaderIntf,
+    RequestHandlerIntf;
 
 type
 
