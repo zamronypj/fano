@@ -89,12 +89,12 @@ uses
         result := fMiddleware.handleRequest(request, response, routeArgs, nextHandler);
     end;
 
-    procedure TMiddlewareLink.setNext(const next : IMiddlewareLink);
+    procedure TMiddlewareLink.setNext(const next : IRequestHandler);
     begin
         fNextLink := next;
     end;
 
-    function TMiddlewareLink.getNext() : IMiddlewareLink;
+    function TMiddlewareLink.getNext() : IRequestHandler;
     begin
         result := fNextLink;
     end;
