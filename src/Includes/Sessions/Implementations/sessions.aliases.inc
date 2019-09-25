@@ -28,7 +28,6 @@ TJsonFileSessionManagerFactory = JsonFileSessionManagerFactoryImpl.TJsonFileSess
 TIniSession = IniSessionImpl.TIniSession;
 TIniFileSessionManagerFactory = IniFileSessionManagerFactoryImpl.TIniFileSessionManagerFactory;
 
-TSessionMiddlewareChainFactory = SessionMiddlewareChainFactoryImpl.TSessionMiddlewareChainFactory;
-TSessionMiddlewareChain = SessionMiddlewareChainImpl.TSessionMiddlewareChain;
+TSessionMiddlewareExecutor = SessionMiddlewareExecutorImpl.TSessionMiddlewareExecutor;
 
 TSessionResponse = SessionResponseImpl.TSessionResponse;

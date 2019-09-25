@@ -29,7 +29,6 @@ JsonFileSessionManagerFactoryImpl,
 IniSessionImpl,
 IniFileSessionManagerFactoryImpl,
 
-SessionMiddlewareChainFactoryImpl,
-SessionMiddlewareChainImpl,
+SessionMiddlewareExecutorImpl,
 
 SessionResponseImpl,
