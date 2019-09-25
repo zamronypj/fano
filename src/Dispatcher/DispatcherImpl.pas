@@ -87,7 +87,7 @@ implementation
     function TDispatcher.executeMiddlewares(
         const env: ICGIEnvironment;
         const stdIn : IStdIn;
-        const routeHandler : IRouteHandler;
+        const routeHandler : IRouteHandler
     ) : IResponse;
     begin
         result := middlewareExecutor.execute(
