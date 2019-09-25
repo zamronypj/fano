@@ -19,7 +19,7 @@ uses
     MiddlewareListIntf,
     MiddlewareExecutorIntf,
     RouteArgsReaderIntf,
-    RequestHandlerIntf;
+    RouteHandlerIntf;
 
 type
 
