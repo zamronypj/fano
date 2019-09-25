@@ -46,7 +46,8 @@ implementation
 
 uses
 
-    MiddlewareLinkIntf;
+    MiddlewareLinkIntf,
+    DefaultMiddlewareLinkImpl;
 
     constructor TMiddlewareStack.create(
         const appMiddlewares : IMiddlewareLinkList;
