@@ -14,7 +14,7 @@ interface
 
 uses
 
-    MiddlewareListIntf
+    MiddlewareListIntf,
     MiddlewareLinkListIntf;
 
 type
