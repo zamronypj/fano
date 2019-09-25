@@ -90,7 +90,7 @@ implementation
         const routeHandler : IRouteHandler
     ) : IResponse;
     begin
-        result := middlewareExecutor.execute(
+        result := fMiddlewareExecutor.execute(
             requestFactory.build(env, stdIn),
             responseFactory.build(env),
             routeHandler
