@@ -20,6 +20,7 @@ uses
     ResponseIntf,
     RequestValidatorIntf,
     RouteArgsReaderIntf,
+    RequestHandlerIntf,
     MiddlewareIntf,
     InjectableObjectImpl;
 
