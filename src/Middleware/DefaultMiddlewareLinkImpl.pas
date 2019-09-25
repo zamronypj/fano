@@ -41,8 +41,8 @@ type
             const routeArgs : IRouteArgsReader
         ) : IResponse;
 
-        procedure setNext(const next : IMiddlewareLink);
-        function getNext() : IMiddlewareLink;
+        procedure setNext(const next : IRequestHandler);
+        function getNext() : IRequestHandler;
 
     end;
 
@@ -68,11 +68,11 @@ implementation
         result := fDefaultHandler.handleRequest(request, response, routeArgs);
     end;
 
-    procedure TDefaultMiddlewareLink.setNext(const next : IMiddlewareLink);
+    procedure TDefaultMiddlewareLink.setNext(const next : IRequestHandler);
     begin
     end;
 
-    function TDefaultMiddlewareLink.getNext() : IMiddlewareLink;
+    function TDefaultMiddlewareLink.getNext() : IRequestHandler;
     begin
         result := nil;
     end;
