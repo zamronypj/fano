@@ -17,6 +17,7 @@ uses
     DependencyContainerIntf,
     RouteMatcherIntf,
     MiddlewareLinkListIntf,
+    MiddlewareExecutorIntf,
     RequestResponseFactoryIntf,
     SimpleDispatcherFactoryImpl;
 
