@@ -17,6 +17,7 @@ uses
     RequestIntf,
     ResponseIntf,
     MiddlewareListIntf,
+    MiddlewareExecutorIntf,
     RouteArgsReaderIntf,
     RequestHandlerIntf;
 
