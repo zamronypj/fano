@@ -37,12 +37,6 @@ type
     TDispatcher = class(TBaseDispatcher)
     private
         fMiddlewareExecutor : IMiddlewareExecutor;
-
-        function executeMiddlewares(
-            const env: ICGIEnvironment;
-            const stdIn : IStdIn;
-            const routeHandler : IRouteHandler
-        ) : IResponse;
     public
         constructor create(
             const middlewareExecutor : IMiddlewareExecutor;
@@ -84,19 +78,6 @@ implementation
         inherited destroy();
     end;
 
-    function TDispatcher.executeMiddlewares(
-        const env: ICGIEnvironment;
-        const stdIn : IStdIn;
-        const routeHandler : IRouteHandler
-    ) : IResponse;
-    begin
-        result := fMiddlewareExecutor.execute(
-            requestFactory.build(env, stdIn),
-            responseFactory.build(env),
-            routeHandler
-        );
-    end;
-
     function TDispatcher.dispatchRequest(
         const env: ICGIEnvironment;
         const stdIn : IStdIn
@@ -105,7 +86,11 @@ implementation
     begin
         routeHandler := getRouteHandler(env);
         try
-            result := executeMiddlewares(env, stdIn, routeHandler);
+            result := fMiddlewareExecutor.execute(
+                requestFactory.build(env, stdIn),
+                responseFactory.build(env),
+                routeHandler
+            );
         finally
             routeHandler := nil;
         end;
