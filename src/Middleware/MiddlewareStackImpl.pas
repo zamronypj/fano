@@ -90,12 +90,12 @@ uses
             if (fRouteMiddlewares.count() > 0) then
             begin
                 //routeFirstLink := fRouteMiddlewares.get(0);
-                appLastLink.next := nil;
+                //appLastLink.next := nil;
                 // routeLastLink := fRouteMiddlewares.get(fRouteMiddlewares.count() - 1);
                 // routeLastLink.next := fHandler;
             end else
             begin
-                appLastLink.next := nil;
+                //appLastLink.next := nil;
             end;
         end else
 
