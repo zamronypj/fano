@@ -25,7 +25,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TMiddlewareListFactory = class(TInterfacedObject IMiddlewareListFactory)
+    TMiddlewareListFactory = class(TInterfacedObject, IMiddlewareListFactory)
     public
         function build() : IMiddlewareListItem;
     end;
