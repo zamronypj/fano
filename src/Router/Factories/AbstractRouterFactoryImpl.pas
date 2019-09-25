@@ -61,7 +61,7 @@ uses
         begin
             fMiddlewareListFactory := TMiddlewareListFactory.create();
         end;
-        result := fMiddlewareCollectionAwareFactory;
+        result := fMiddlewareListFactory;
     end;
 
     function TAbstractRouterFactory.middlewareListFactory(const aFactory : IMiddlewareListFactory) : TAbstractRouterFactory;
