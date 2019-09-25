@@ -107,7 +107,7 @@ uses
         if (not fCors.isCorsRequest(request)) then
         begin
             //do nothing and just continue to next middleware
-            result := next.handleRequest(rrequest, response, args);
+            result := next.handleRequest(request, response, args);
         end else
         begin
             result := handlePreflightRequest(request, response, next);
