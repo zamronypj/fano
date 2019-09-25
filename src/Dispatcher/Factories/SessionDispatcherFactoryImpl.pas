@@ -17,9 +17,8 @@ uses
     DependencyContainerIntf,
     FactoryImpl,
     RouteMatcherIntf,
-    MiddlewareCollectionAwareIntf,
-    MiddlewareChainFactoryIntf,
     RequestResponseFactoryIntf,
+    MiddlewareLinkListIntf,
     SessionManagerIntf,
     CookieFactoryIntf,
     DispatcherFactoryImpl;
@@ -42,7 +41,7 @@ type
         function createMiddlewareChainFactory() : IMiddlewareChainFactory; override;
     public
         constructor create (
-            const appMiddlewaresInst : IMiddlewareCollectionAware;
+            const appMiddlewaresInst : IMiddlewareLinkList;
             const routeMatcherInst : IRouteMatcher;
             const requestResponseFactory : IRequestResponseFactory;
             const sessionMgr : ISessionManager;
@@ -60,7 +59,7 @@ uses
     SessionMiddlewareChainFactoryImpl;
 
     constructor TSessionDispatcherFactory.create (
-        const appMiddlewaresInst : IMiddlewareCollectionAware;
+        const appMiddlewaresInst : IMiddlewareLinkList;
         const routeMatcherInst : IRouteMatcher;
         const requestResponseFactory : IRequestResponseFactory;
         const sessionMgr : ISessionManager;
