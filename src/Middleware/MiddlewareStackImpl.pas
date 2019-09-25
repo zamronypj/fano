@@ -70,7 +70,7 @@ uses
                 routeLastLink.next := TDefaultMiddlewareLink.create(fHandler);
             end else
             begin
-                appLastLink.next = TDefaultMiddlewareLink.create(fHandler);
+                appLastLink.next := TDefaultMiddlewareLink.create(fHandler);
             end;
         end else
         begin
