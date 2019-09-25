@@ -43,7 +43,7 @@ type
         function handleRequest(
             const request : IRequest;
             const response : IResponse;
-            const routeArgs : IRouteArgsReader;
+            const args : IRouteArgsReader;
             const next : IRequestHandler
         ) : IResponse;
     end;
@@ -100,7 +100,7 @@ implementation
             newResponse := fMiddlewares[i].handleRequest(
                 request,
                 newResponse,
-                routeArgs,
+                args,
                 next
             );
         end;
