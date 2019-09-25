@@ -32,6 +32,9 @@ type
         fAppMiddlewares : IMiddlewareLinkList;
         fRouteMiddlewares : IMiddlewareLinkList;
         fHandler : IRequestHandler;
+
+        procedure linkAppAndRouteMiddlewares();
+        procedure unlinkAppAndRouteMiddlewares();
     public
         constructor create(
             const appMiddlewares : IMiddlewareLinkList;
@@ -53,11 +56,26 @@ uses
         const routeMiddlewares : IMiddlewareLinkList;
         const handler : IRequestHandler
     );
-    var appLastLink, routeFirstLink, routeLastLink : IMiddlewareLink;
     begin
         fAppMiddlewares := appMiddlewares;
         fRouteMiddlewares := routeMiddlewares;
         fHandler := handler;
+        linkAppAndRouteMiddlewares();
+    end;
+
+    destructor TMiddlewareStack.destroy();
+    begin
+        //remove reference to avoid memory leak
+        unlinkAppAndRouteMiddlewares();
+        fAppMiddlewares := nil;
+        fRouteMiddlewares := nil;
+        fHandler := nil;
+        inherited destroy();
+    end;
+
+    procedure TMiddlewareStack.linkAppAndRouteMiddlewares();
+    var appLastLink, routeFirstLink, routeLastLink : IMiddlewareLink;
+    begin
         if (fAppMiddlewares.count() > 0) then
         begin
             appLastLink := fAppMiddlewares.get(fAppMiddlewares.count() - 1);
@@ -81,15 +99,14 @@ uses
         end;
     end;
 
-    destructor TMiddlewareStack.destroy();
-    var appLastLink{, routeFirstLink}, routeLastLink : IMiddlewareLink;
+    procedure TMiddlewareStack.unlinkAppAndRouteMiddlewares();
+    var appLastLink, routeLastLink : IMiddlewareLink;
     begin
         if (fAppMiddlewares.count() > 0) then
         begin
             appLastLink := fAppMiddlewares.get(fAppMiddlewares.count() - 1);
             if (fRouteMiddlewares.count() > 0) then
             begin
-                //routeFirstLink := fRouteMiddlewares.get(0);
                 appLastLink.next := nil;
                 routeLastLink := fRouteMiddlewares.get(fRouteMiddlewares.count() - 1);
                 routeLastLink.next := nil;
@@ -105,11 +122,6 @@ uses
                 routeLastLink.next := nil;
             end;
         end;
-
-        fAppMiddlewares := nil;
-        fRouteMiddlewares := nil;
-        fHandler := nil;
-        inherited destroy();
     end;
 
     function TMiddlewareStack.getFirst() : IRequestHandler;
