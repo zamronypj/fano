@@ -45,6 +45,7 @@ implementation
 
 uses
 
+    MiddlewareStackIntf,
     MiddlewareStackImpl;
 
     constructor TMiddlewareExecutor.create(const appMiddlewares : IMiddlewareList);
