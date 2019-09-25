@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit MiddlewareStackIntf;
+unit MiddlewareLinkListIntf;
 
 interface
 
@@ -14,22 +14,22 @@ interface
 
 uses
 
-    MiddlewareStackIntf;
+   MiddlewareLinkIntf;
 
 type
 
     (*!------------------------------------------------
-     * interface for any class having capability
-     * as middleware stack
+     * interface for any class having capability to
+     * manage one or more middleware links
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    IMiddlewareStack = interface
-        ['{39FCE1D4-0B0D-4F02-92D2-019583DC6663}']
-
-        function getFirst() : IRequestHandler;
-        property first : IRequestHandler read getFirst;
+    IMiddlewareLinkList = interface
+        ['{B2F20BDE-CDE9-4EBC-8439-0817B31F3E5D}']
+        function get(const indx : integer) : IMiddlewareLink;
+        function count() : integer;
     end;
 
 implementation
+
 end.

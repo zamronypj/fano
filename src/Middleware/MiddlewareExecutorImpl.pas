@@ -44,7 +44,7 @@ implementation
 
 uses
 
-    CompositeMiddlewareListImpl;
+    MiddlewareStackImpl;
 
     constructor TMiddlewareExecutor.create(const appMiddlewares : IMiddlewareList);
     begin
@@ -64,9 +64,10 @@ uses
     ) : IResponse;
     var mdlwr : IMiddlewareStack;
     begin
-        mdlwr := TCompositeMiddlewareList.create(
+        mdlwr := TMiddlewareStack.create(
             fAppMiddlewares,
-            routeHandler.middlewares()
+            routeHandler.middlewares(),
+            routeHandler.handler()
         );
 
         result := mddlwr.first.handleRequest(
