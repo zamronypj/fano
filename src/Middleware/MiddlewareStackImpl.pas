@@ -82,7 +82,7 @@ uses
     end;
 
     destructor TMiddlewareStack.destroy();
-    var {appLastLink, routeFirstLink, routeLastLink} : IMiddlewareLink;
+    //var appLastLink, routeFirstLink, routeLastLink : IMiddlewareLink;
     begin
         if (fAppMiddlewares.count() > 0) then
         begin
