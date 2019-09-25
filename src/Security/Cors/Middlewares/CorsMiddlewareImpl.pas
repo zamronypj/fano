@@ -110,7 +110,7 @@ uses
             result := next.handleRequest(request, response, args);
         end else
         begin
-            result := handlePreflightRequest(request, response, next);
+            result := handlePreflightRequest(request, response, args, next);
         end;
     end;
 
