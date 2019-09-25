@@ -53,7 +53,7 @@ uses
         const routeMiddlewares : IMiddlewareLinkList;
         const handler : IRequestHandler
     );
-    var appLastLink, routeFirstLink{, routeLastLink} : IMiddlewareLink;
+    var appLastLink, routeFirstLink, routeLastLink : IMiddlewareLink;
     begin
         fAppMiddlewares := appMiddlewares;
         fRouteMiddlewares := routeMiddlewares;
@@ -65,8 +65,8 @@ uses
             begin
                 routeFirstLink := fRouteMiddlewares.get(0);
                 appLastLink.next := routeFirstLink;
-                // routeLastLink := fRouteMiddlewares.get(fRouteMiddlewares.count() - 1);
-                // routeLastLink.next := fHandler;
+                routeLastLink := fRouteMiddlewares.get(fRouteMiddlewares.count() - 1);
+                routeLastLink.next := fHandler;
             end else
             begin
                 appLastLink.next := fHandler;
@@ -75,8 +75,8 @@ uses
         begin
             if (fRouteMiddlewares.count() > 0) then
             begin
-                //routeLastLink := fRouteMiddlewares.get(fRouteMiddlewares.count() - 1);
-                //routeLastLink.next := fHandler;
+                routeLastLink := fRouteMiddlewares.get(fRouteMiddlewares.count() - 1);
+                routeLastLink.next := fHandler;
             end;
         end;
     end;
