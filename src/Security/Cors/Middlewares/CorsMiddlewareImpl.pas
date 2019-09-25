@@ -19,6 +19,7 @@ uses
     ResponseIntf,
     HeadersIntf,
     RouteArgsReaderIntf,
+    RequestHandlerIntf,
     InjectableObjectImpl,
     CorsIntf;
 
@@ -45,7 +46,7 @@ type
             const request : IRequest;
             const response : IResponse;
             const args : IRouteArgsReader;
-            var canContinue : boolean
+            const next : IRequestHandler
         ) : IResponse;
     end;
 
@@ -94,7 +95,7 @@ uses
         const request : IRequest;
         const response : IResponse;
         const args : IRouteArgsReader;
-        var canContinue : boolean
+        const next : IRequestHandler
     ) : IResponse;
     begin
         if (not fCors.isCorsRequest(request)) then
