@@ -18,6 +18,7 @@ uses
     FactoryImpl,
     RouteMatcherIntf,
     RequestResponseFactoryIntf,
+    MiddlewareExecutorIntf,
     MiddlewareLinkListIntf,
     SessionManagerIntf,
     CookieFactoryIntf,
@@ -38,7 +39,7 @@ type
         fCookieFactory : ICookieFactory;
         fExpiresInSec : integer;
     protected
-        function createMiddlewareChainFactory() : IMiddlewareChainFactory; override;
+        function createMiddlewareExecutor() : IMiddlewareExecutor; override;
     public
         constructor create (
             const appMiddlewaresInst : IMiddlewareLinkList;
@@ -56,7 +57,7 @@ implementation
 
 uses
 
-    SessionMiddlewareChainFactoryImpl;
+    SessionMiddlewareExecutorImpl;
 
     constructor TSessionDispatcherFactory.create (
         const appMiddlewaresInst : IMiddlewareLinkList;
@@ -80,11 +81,11 @@ uses
         inherited destroy();
     end;
 
-    function TSessionDispatcherFactory.createMiddlewareChainFactory() : IMiddlewareChainFactory;
-    var actualFactory : IMiddlewareChainFactory;
+    function TSessionDispatcherFactory.createMiddlewareExecutor() : IMiddlewareExecutor;
+    var actualFactory : IMiddlewareExecutor;
     begin
-        actualFactory := inherited createMiddlewareChainFactory();
-        result := TSessionMiddlewareChainFactory.create(
+        actualFactory := inherited createMiddlewareExecutor();
+        result := TSessionMiddlewareExecutor.create(
             actualFactory,
             fSessionMgr,
             fCookieFactory,

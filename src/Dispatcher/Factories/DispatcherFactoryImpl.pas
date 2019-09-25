@@ -31,6 +31,8 @@ type
     TDispatcherFactory = class(TSimpleDispatcherFactory)
     private
         appMiddlewares : IMiddlewareLinkList;
+    protected
+        function createMiddlewareExecutor() : IMiddlewareExecutor; virtual;
     public
         constructor create (
             const appMiddlewaresInst : IMiddlewareLinkList;
@@ -64,6 +66,11 @@ uses
     begin
         appMiddlewares := nil;
         inherited destroy();
+    end;
+
+    function TDispatcherFactory.createMiddlewareExecutor() : IMiddlewareExecutor;
+    begin
+        result := TMiddlewareExecutor.create(appMiddlewares);
     end;
 
     function TDispatcherFactory.build(const container : IDependencyContainer) : IDependency;
