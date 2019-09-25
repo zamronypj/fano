@@ -26,7 +26,7 @@ type
      *-------------------------------------------------*)
     IMiddlewareList = interface
         ['{DF2C4336-6849-4A50-AACE-3676CD9FB395}']
-        function add(const middleware : IMiddleware) : IMiddlewareCollection;
+        function add(const middleware : IMiddleware) : IMiddlewareList;
     end;
 
 implementation
