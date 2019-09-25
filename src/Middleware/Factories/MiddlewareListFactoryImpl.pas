@@ -15,7 +15,7 @@ interface
 uses
 
     MiddlewareListFactoryIntf,
-    MiddlewareListItemFactoryIntf;
+    MiddlewareListItemIntf;
 
 type
 
