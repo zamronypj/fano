@@ -79,15 +79,23 @@ uses
 
     function TMiddlewareStack.getFirst() : IRequestHandler;
     var alink : IMiddlewareLink;
+        totAppMiddleware, totRouteMiddleware : integer;
     begin
-        if (fAppMiddlewares.count() > 0) or (fRouteMiddlewares.count() > 0) then
+        totAppMiddleware := fAppMiddlewares.count();
+        totRouteMiddleware := fRouteMiddlewares.count();
+        if (totAppMiddleware > 0) or (totRouteMiddleware > 0) then
         begin
-            if (fAppMiddlewares.count() > 0) then
+            if (totAppMiddleware > 0) then
             begin
                 alink := fAppMiddlewares.get(0);
             end else
+            if (totRouteMiddleware > 0) then
             begin
                 alink := fRouteMiddlewares.get(0);
+            end else
+            begin
+                //this should not happened
+                alink := fHandler;
             end;
             result := alink;
         end else
