@@ -54,7 +54,7 @@ uses
         const routeMiddlewares : IMiddlewareLinkList;
         const handler : IRequestHandler
     );
-    var appLastLink, routeFirstLink, routeLastLink : IMiddlewareLink;
+    var appLastLink, routeFirstLink{, routeLastLink} : IMiddlewareLink;
     begin
         fAppMiddlewares := appMiddlewares;
         fRouteMiddlewares := routeMiddlewares;
