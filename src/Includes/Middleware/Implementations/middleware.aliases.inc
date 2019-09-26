@@ -3,3 +3,4 @@ TMiddlewareListFactory = MiddlewareListFactoryImpl.TMiddlewareListFactory;
 
 TNullMiddleware = NullMiddlewareImpl.TNullMiddleware;
 TCompositeMiddleware = CompositeMiddlewareImpl.TCompositeMiddleware;
+TRequestHandlerAsMiddleware = RequestHandlerAsMiddlewareImpl.TRequestHandlerAsMiddleware;
