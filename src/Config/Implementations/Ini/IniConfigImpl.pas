@@ -96,14 +96,14 @@ uses
     var section, ident : string;
     begin
         getSectionIdentFromConfigName(configName, section, ident);
-        result := strToInt(fIniConfig.readString(section, ident, intToStr(defaultValue)));
+        result := fIniConfig.readInteger(section, ident, defaultValue);
     end;
 
     function TIniConfig.getBool(const configName : string; const defaultValue : boolean = false) : boolean;
     var section, ident : string;
     begin
         getSectionIdentFromConfigName(configName, section, ident);
-        result := strToBool(fIniConfig.readString(section, ident, boolToStr(defaultValue)));
+        result := fIniConfig.readBool(section, ident, defaultValue);
     end;
 
 end.
