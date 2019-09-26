@@ -31,23 +31,21 @@ type
     private
         requestHandler : IRequestHandler;
     public
-        constructor create(const requestHandlerInst : IRequestHandler);
+        constructor create(const handler : IRequestHandler);
         destructor destroy(); override;
         function handleRequest(
             const request : IRequest;
             const response : IResponse;
-            const routeArgs : IRouteArgsReader;
-            var canContinue : boolean
+            const args : IRouteArgsReader;
+            const nextMdlwr : IRequestHandler
         ) : IResponse;
     end;
 
 implementation
 
-    constructor TRequestHandlerAsMiddleware.create(
-        const requestHandlerInst : IRequestHandler
-    );
+    constructor TRequestHandlerAsMiddleware.create(const handler : IRequestHandler);
     begin
-        requestHandler := requestHandlerInst;
+        requestHandler := handler;
     end;
 
     destructor TRequestHandlerAsMiddleware.destroy();
@@ -59,11 +57,12 @@ implementation
     function TRequestHandlerAsMiddleware.handleRequest(
         const request : IRequest;
         const response : IResponse;
-        const routeArgs : IRouteArgsReader;
-        var canContinue : boolean
+        const args : IRouteArgsReader;
+        const nextMdlwr : IRequestHandler
     ) : IResponse;
+    var newResp : IResponse;
     begin
-        canContinue := true;
-        result := requestHandler.handleRequest(request, response, routeArgs);
+        newResp := requestHandler.handleRequest(request, response, args);
+        result := nextMdlwr.handleRequest(request, newResp, args);
     end;
 end.

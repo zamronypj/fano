@@ -211,7 +211,6 @@ uses
         result := fSessionName;
     end;
 
-
     (*!------------------------------------
      * get current session id
      *-------------------------------------

@@ -48,14 +48,8 @@ type
          *--------------------------------------------
          * @return current route instance
          *--------------------------------------------*)
-        function before(const amiddleware : IMiddleware) : IRoute;
+        function add(const amiddleware : IMiddleware) : IRoute;
 
-        (*!-------------------------------------------
-         * attach middleware after route
-         *--------------------------------------------
-         * @return current route instance
-         *--------------------------------------------*)
-        function after(const amiddleware : IMiddleware) : IRoute;
     end;
 
 implementation

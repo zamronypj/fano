@@ -17,9 +17,9 @@ uses
     DependencyContainerIntf,
     FactoryImpl,
     RouteMatcherIntf,
-    MiddlewareCollectionAwareIntf,
-    MiddlewareChainFactoryIntf,
     RequestResponseFactoryIntf,
+    MiddlewareExecutorIntf,
+    MiddlewareLinkListIntf,
     SessionManagerIntf,
     CookieFactoryIntf,
     DispatcherFactoryImpl;
@@ -39,10 +39,10 @@ type
         fCookieFactory : ICookieFactory;
         fExpiresInSec : integer;
     protected
-        function createMiddlewareChainFactory() : IMiddlewareChainFactory; override;
+        function createMiddlewareExecutor() : IMiddlewareExecutor; override;
     public
         constructor create (
-            const appMiddlewaresInst : IMiddlewareCollectionAware;
+            const appMiddlewaresInst : IMiddlewareLinkList;
             const routeMatcherInst : IRouteMatcher;
             const requestResponseFactory : IRequestResponseFactory;
             const sessionMgr : ISessionManager;
@@ -57,10 +57,10 @@ implementation
 
 uses
 
-    SessionMiddlewareChainFactoryImpl;
+    SessionMiddlewareExecutorImpl;
 
     constructor TSessionDispatcherFactory.create (
-        const appMiddlewaresInst : IMiddlewareCollectionAware;
+        const appMiddlewaresInst : IMiddlewareLinkList;
         const routeMatcherInst : IRouteMatcher;
         const requestResponseFactory : IRequestResponseFactory;
         const sessionMgr : ISessionManager;
@@ -81,11 +81,11 @@ uses
         inherited destroy();
     end;
 
-    function TSessionDispatcherFactory.createMiddlewareChainFactory() : IMiddlewareChainFactory;
-    var actualFactory : IMiddlewareChainFactory;
+    function TSessionDispatcherFactory.createMiddlewareExecutor() : IMiddlewareExecutor;
+    var actualFactory : IMiddlewareExecutor;
     begin
-        actualFactory := inherited createMiddlewareChainFactory();
-        result := TSessionMiddlewareChainFactory.create(
+        actualFactory := inherited createMiddlewareExecutor();
+        result := TSessionMiddlewareExecutor.create(
             actualFactory,
             fSessionMgr,
             fCookieFactory,

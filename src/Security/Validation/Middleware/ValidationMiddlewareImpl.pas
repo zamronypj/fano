@@ -20,6 +20,7 @@ uses
     ResponseIntf,
     RequestValidatorIntf,
     RouteArgsReaderIntf,
+    RequestHandlerIntf,
     MiddlewareIntf,
     InjectableObjectImpl;
 
@@ -60,7 +61,7 @@ type
             const request : IRequest;
             const response : IResponse;
             const args : IRouteArgsReader;
-            var canContinue : boolean
+            const next : IRequestHandler
         ) : IResponse;
 
     end;
@@ -93,25 +94,24 @@ uses
      * @param request request instance
      * @param response response instance
      * @param args route arguments
-     * @param canContinue return true if execution
-     *        can continue to next middleware or false
-     *        to stop execution
+     * @param next next middleware to execute
      * @return response
      *----------------------------------------*)
     function TValidationMiddleware.handleRequest(
         const request : IRequest;
         const response : IResponse;
         const args : IRouteArgsReader;
-        var canContinue : boolean
+        const next : IRequestHandler
     ) : IResponse;
     var validationRes : TValidationResult;
+        canContinue : boolean;
     begin
         validationRes := fValidation.validate(request);
         canContinue := (not fStopOnValidationError) or validationRes.isValid;
 
         if (canContinue) then
         begin
-            result := response;
+            result := next.handleRequest(request, response, args);
         end else
         begin
             result := THttpCodeResponse.create(

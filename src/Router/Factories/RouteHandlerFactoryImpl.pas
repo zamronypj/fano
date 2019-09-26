@@ -14,7 +14,7 @@ interface
 
 uses
 
-    MiddlewareCollectionAwareFactoryIntf,
+    MiddlewareListFactoryIntf,
     RequestHandlerIntf,
     RouteHandlerIntf,
     RouteHandlerFactoryIntf;
@@ -29,9 +29,9 @@ type
      *-------------------------------------------------*)
     TRouteHandlerFactory = class(TInterfacedObject, IRouteHandlerFactory)
     private
-        fMiddlewareCollectionFactory : IMiddlewareCollectionAwareFactory;
+        fMiddlewareListFactory : IMiddlewareListFactory;
     public
-        constructor create(const middlewareCollectionFactory : IMiddlewareCollectionAwareFactory);
+        constructor create(const middlewareListFactory : IMiddlewareListFactory);
         destructor destroy(); override;
         function build(const handler : IRequestHandler) : IRouteHandler;
     end;
@@ -40,22 +40,29 @@ implementation
 
 uses
 
+    MiddlewareListItemIntf,
     RouteHandlerImpl;
 
-    constructor TRouteHandlerFactory.create(const middlewareCollectionFactory : IMiddlewareCollectionAwareFactory);
+    constructor TRouteHandlerFactory.create(const middlewareListFactory : IMiddlewareListFactory);
     begin
-        fMiddlewareCollectionFactory := middlewareCollectionFactory;
+        fMiddlewareListFactory := middlewareListFactory;
     end;
 
     destructor TRouteHandlerFactory.destroy();
     begin
-        fMiddlewareCollectionFactory := nil;
+        fMiddlewareListFactory := nil;
         inherited destroy();
     end;
 
     function TRouteHandlerFactory.build(const handler : IRequestHandler) : IRouteHandler;
+    var middlewareList : IMiddlewareListItem;
     begin
-        result := TRouteHandler.create(fMiddlewareCollectionFactory.build(), handler);
+        middlewareList := fMiddlewareListFactory.build();
+        result := TRouteHandler.create(
+            middlewareList.asList(),
+            middlewareList.asLinkList,
+            handler
+        );
     end;
 
 end.
