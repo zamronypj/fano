@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit SessionMiddlewareChainImpl;
+unit SessionMiddlewareExecutorImpl;
 
 interface
 
@@ -20,18 +20,18 @@ uses
     SessionManagerIntf,
     CookieFactoryIntf,
     SessionIntf,
-    MiddlewareChainIntf;
+    MiddlewareExecutorIntf;
 
 type
 
     (*!------------------------------------------------
-     * decorator middleware chain that support session
+     * decorator middleware executor that support session
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TSessionMiddlewareChain = class(TInterfacedObject, IMiddlewareChain)
+    TSessionMiddlewareExecutor = class(TInterfacedObject, IMiddlewareExecutor)
     private
-        fActualMiddlewareChain : IMiddlewareChain;
+        fActualMiddlewareExecutor : IMiddlewareExecutor;
         fSessionMgr : ISessionManager;
         fCookieFactory : ICookieFactory;
         fExpiresInSec : integer;
@@ -50,7 +50,7 @@ type
         ) : IResponse;
     public
         constructor create(
-            const actualMiddlewareChain : IMiddlewareChain;
+            const actualMiddlewareExecutor : IMiddlewareExecutor;
             const sessionMgr : ISessionManager;
             const cookieFactory : ICookieFactory;
             const expireInSec : integer
@@ -70,29 +70,29 @@ uses
 
     CookieIntf;
 
-    constructor TSessionMiddlewareChain.create(
-        const actualMiddlewareChain : IMiddlewareChain;
+    constructor TSessionMiddlewareExecutor.create(
+        const actualMiddlewareExecutor : IMiddlewareExecutor;
         const sessionMgr : ISessionManager;
         const cookieFactory : ICookieFactory;
         const expireInSec : integer
     );
     begin
         inherited create();
-        fActualMiddlewareChain := actualMiddlewareChain;
+        fActualMiddlewareExecutor := actualMiddlewareExecutor;
         fSessionMgr := sessionMgr;
         fCookieFactory := cookieFactory;
         fExpiresInSec := expireInSec;
     end;
 
-    destructor TSessionMiddlewareChain.destroy();
+    destructor TSessionMiddlewareExecutor.destroy();
     begin
-        fActualMiddlewareChain := nil;
+        fActualMiddlewareExecutor := nil;
         fSessionMgr := nil;
         fCookieFactory := nil;
         inherited destroy();
     end;
 
-    function TSessionMiddlewareChain.addCookieHeader(
+    function TSessionMiddlewareExecutor.addCookieHeader(
         const resp : IResponse;
         const sess : ISession;
         const cookieFactory : ICookieFactory
@@ -108,7 +108,7 @@ uses
         end;
     end;
 
-    function TSessionMiddlewareChain.executeAndAddCookie(
+    function TSessionMiddlewareExecutor.executeAndAddCookie(
         const request : IRequest;
         const response : IResponse;
         const routeHandler : IRouteHandler;
@@ -116,7 +116,7 @@ uses
     ) : IResponse;
     var newResp : IResponse;
     begin
-        newResp := fActualMiddlewareChain.execute(request, response, routeHandler);
+        newResp := fActualMiddlewareExecutor.execute(request, response, routeHandler);
         try
             result := addCookieHeader(newResp, sess, fCookieFactory);
         finally
@@ -124,7 +124,7 @@ uses
         end;
     end;
 
-    function TSessionMiddlewareChain.execute(
+    function TSessionMiddlewareExecutor.execute(
         const request : IRequest;
         const response : IResponse;
         const routeHandler : IRouteHandler

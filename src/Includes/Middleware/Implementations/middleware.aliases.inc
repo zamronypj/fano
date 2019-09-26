@@ -1,10 +1,5 @@
-TMiddlewareCollection = MiddlewareCollectionImpl.TMiddlewareCollection;
-TNullMiddlewareCollection = NullMiddlewareCollectionImpl.TNullMiddlewareCollection;
-
-TMiddlewareCollectionAware = MiddlewareCollectionAwareImpl.TMiddlewareCollectionAware;
-
-TMiddlewareCollectionAwareFactory = MiddlewareCollectionAwareFactoryImpl.TMiddlewareCollectionAwareFactory;
-TNullMiddlewareCollectionAwareFactory = NullMiddlewareCollectionAwareFactoryImpl.TNullMiddlewareCollectionAwareFactory;
+TMiddlewareList = MiddlewareListImpl.TMiddlewareList;
+TMiddlewareListFactory = MiddlewareListFactoryImpl.TMiddlewareListFactory;
 
 TNullMiddleware = NullMiddlewareImpl.TNullMiddleware;
 TCompositeMiddleware = CompositeMiddlewareImpl.TCompositeMiddleware;

@@ -16,7 +16,8 @@ uses
 
     RequestIntf,
     ResponseIntf,
-    RouteArgsReaderIntf;
+    RouteArgsReaderIntf,
+    RequestHandlerIntf;
 
 type
 
@@ -34,17 +35,16 @@ type
          * @param request request instance
          * @param response response instance
          * @param args route arguments
-         * @param canContinue return true if execution
-         *        can continue to next middleware or false
-         *        to stop execution
+         * @param next next middleware to execute
          * @return response
          *----------------------------------------*)
         function handleRequest(
             const request : IRequest;
             const response : IResponse;
             const args : IRouteArgsReader;
-            var canContinue : boolean
+            const next : IRequestHandler
         ) : IResponse;
+
     end;
 
 implementation

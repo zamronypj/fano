@@ -16,8 +16,8 @@ uses
     DependencyIntf,
     DependencyContainerIntf,
     RouteMatcherIntf,
-    MiddlewareCollectionAwareIntf,
-    MiddlewareChainFactoryIntf,
+    MiddlewareLinkListIntf,
+    MiddlewareExecutorIntf,
     RequestResponseFactoryIntf,
     SimpleDispatcherFactoryImpl;
 
@@ -31,28 +31,30 @@ type
      *---------------------------------------------------*)
     TDispatcherFactory = class(TSimpleDispatcherFactory)
     private
-        appMiddlewares : IMiddlewareCollectionAware;
+        appMiddlewares : IMiddlewareLinkList;
     protected
-        function createMiddlewareChainFactory() : IMiddlewareChainFactory; virtual;
+        function createMiddlewareExecutor() : IMiddlewareExecutor; virtual;
     public
         constructor create (
-            const appMiddlewaresInst : IMiddlewareCollectionAware;
+            const appMiddlewaresInst : IMiddlewareLinkList;
             const routeMatcher : IRouteMatcher;
             const requestResponseFactory : IRequestResponseFactory
         );
         destructor destroy(); override;
+
         function build(const container : IDependencyContainer) : IDependency; override;
     end;
 
 implementation
 
 uses
+
     DispatcherImpl,
     RequestResponseFactoryImpl,
-    MiddlewareChainFactoryImpl;
+    MiddlewareExecutorImpl;
 
     constructor TDispatcherFactory.create(
-        const appMiddlewaresInst : IMiddlewareCollectionAware;
+        const appMiddlewaresInst : IMiddlewareLinkList;
         const routeMatcher : IRouteMatcher;
         const requestResponseFactory : IRequestResponseFactory
     );
@@ -67,16 +69,15 @@ uses
         inherited destroy();
     end;
 
-    function TDispatcherFactory.createMiddlewareChainFactory() : IMiddlewareChainFactory;
+    function TDispatcherFactory.createMiddlewareExecutor() : IMiddlewareExecutor;
     begin
-        result := TMiddlewareChainFactory.create();
+        result := TMiddlewareExecutor.create(appMiddlewares);
     end;
 
     function TDispatcherFactory.build(const container : IDependencyContainer) : IDependency;
     begin
         result := TDispatcher.create(
-            appMiddlewares,
-            createMiddlewareChainFactory(),
+            createMiddlewareExecutor(),
             fRouteMatcher,
             fRequestResponseFactory.responseFactory,
             fRequestResponseFactory.requestFactory

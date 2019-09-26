@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit JsonFileSessionManagerFactoryImpl;
+unit IniFileSessionManagerFactoryImpl;
 
 interface
 
@@ -21,11 +21,11 @@ uses
 
 type
     (*!------------------------------------------------
-     * TJsonFileSessionManager factory class
+     * TIniFileSessionManager factory class
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TJsonFileSessionManagerFactory = class(TFactory)
+    TIniFileSessionManagerFactory = class(TFactory)
     private
         fCookieName : string;
         fBaseDir : string;
@@ -52,10 +52,11 @@ implementation
 uses
 
     StringFileReaderImpl,
-    JsonFileSessionManagerImpl,
+    FileSessionManagerImpl,
+    IniSessionFactoryImpl,
     GuidSessionIdGeneratorImpl;
 
-    constructor TJsonFileSessionManagerFactory.create(
+    constructor TIniFileSessionManagerFactory.create(
         const cookieName : string = FANO_COOKIE_NAME;
         const baseDir : string = '/tmp';
         const prefix : string = ''
@@ -71,10 +72,11 @@ uses
      *----------------------------------------------------
      * @param container dependency container instance
      *---------------------------------------------------*)
-    function TJsonFileSessionManagerFactory.build(const container : IDependencyContainer) : IDependency;
+    function TIniFileSessionManagerFactory.build(const container : IDependencyContainer) : IDependency;
     begin
-        result := TJsonFileSessionManager.create(
+        result := TFileSessionManager.create(
             TGuidSessionIdGenerator.create(),
+            TIniSessionFactory.create(),
             fCookieName,
             TStringFileReader.create(),
             fBaseDir,

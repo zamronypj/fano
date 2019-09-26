@@ -50,9 +50,7 @@ type
          * @param request request instance
          * @param response response instance
          * @param route arguments
-         * @param canContinue return true if execution
-         *        can continue to next middleware or false
-         *        to stop execution
+         * @param next next middleware to execute
          * @return response
          *----------------------------------------
          * Status of validation result will be store
@@ -62,7 +60,7 @@ type
             const request : IRequest;
             const response : IResponse;
             const args : IRouteArgsReader;
-            var canContinue : boolean
+            const next : IRequestHandler
         ) : IResponse;
 
     end;
@@ -92,22 +90,19 @@ implementation
      * @param request request instance
      * @param response response instance
      * @param route arguments
-     * @param canContinue return true if execution
-     *        can continue to next middleware or false
-     *        to stop execution
+     * @param next next middleware to execute
      * @return response
      *----------------------------------------*)
     function TValidationMiddlewareWithHandler.handleRequest(
         const request : IRequest;
         const response : IResponse;
         const args : IRouteArgsReader;
-        var canContinue : boolean
+        const next : IRequestHandler
     ) : IResponse;
     begin
-        canContinue := fValidation.validate(request).isValid;
-        if (canContinue) then
+        if (fValidation.validate(request).isValid) then
         begin
-            result := response;
+            result := next.handleRequest(request, response, args);
         end else
         begin
             //validation failed, let validation error handler take care

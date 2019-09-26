@@ -22,11 +22,13 @@ RawSessionIdGeneratorImpl,
 Md5SessionIdGeneratorImpl,
 Sha1SessionIdGeneratorImpl,
 
-JsonSessionImpl,
-JsonFileSessionManagerImpl,
-JsonFileSessionManagerFactoryImpl,
+FileSessionManagerImpl,
 
-SessionMiddlewareChainFactoryImpl,
-SessionMiddlewareChainImpl,
+JsonSessionImpl,
+JsonFileSessionManagerFactoryImpl,
+IniSessionImpl,
+IniFileSessionManagerFactoryImpl,
+
+SessionMiddlewareExecutorImpl,
 
 SessionResponseImpl,

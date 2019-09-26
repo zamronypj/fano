@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit MiddlewareChainIntf;
+unit MiddlewareLinkListIntf;
 
 interface
 
@@ -14,26 +14,22 @@ interface
 
 uses
 
-    RequestIntf,
-    ResponseIntf,
-    RouteHandlerIntf;
+    MiddlewareLinkIntf;
 
 type
 
     (*!------------------------------------------------
      * interface for any class having capability to
-     * stack several middlewares and call
+     * manage one or more middleware links
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
-     *-----------------------------------------------*)
-    IMiddlewareChain = interface
-        ['{47B9A178-4A0A-4599-AD67-C73B8E42B82A}']
-        function execute(
-            const request : IRequest;
-            const response : IResponse;
-            const routeHandler : IRouteHandler
-        ) : IResponse;
+     *-------------------------------------------------*)
+    IMiddlewareLinkList = interface
+        ['{B2F20BDE-CDE9-4EBC-8439-0817B31F3E5D}']
+        function get(const indx : integer) : IMiddlewareLink;
+        function count() : integer;
     end;
 
 implementation
+
 end.
