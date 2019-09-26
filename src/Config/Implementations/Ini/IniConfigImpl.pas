@@ -31,7 +31,7 @@ type
         fDefaultSection : string;
 
         procedure getSectionIdentFromConfigName(
-            const configName;
+            const configName : string;
             var section : string;
             var ident : string
         );
@@ -66,7 +66,7 @@ uses
     end;
 
     procedure TIniConfig.getSectionIdentFromConfigName(
-        const configName;
+        const configName : string;
         var section : string;
         var ident : string
     );
