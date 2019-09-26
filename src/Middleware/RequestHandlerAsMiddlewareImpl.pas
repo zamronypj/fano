@@ -31,23 +31,21 @@ type
     private
         requestHandler : IRequestHandler;
     public
-        constructor create(const requestHandlerInst : IRequestHandler);
+        constructor create(const handler : IRequestHandler);
         destructor destroy(); override;
         function handleRequest(
             const request : IRequest;
             const response : IResponse;
             const args : IRouteArgsReader;
-            const nextMdlwr : IMiddleware
+            const nextMdlwr : IRequestHandler
         ) : IResponse;
     end;
 
 implementation
 
-    constructor TRequestHandlerAsMiddleware.create(
-        const requestHandlerInst : IRequestHandler
-    );
+    constructor TRequestHandlerAsMiddleware.create(const handler : IRequestHandler);
     begin
-        requestHandler := requestHandlerInst;
+        requestHandler := handler;
     end;
 
     destructor TRequestHandlerAsMiddleware.destroy();

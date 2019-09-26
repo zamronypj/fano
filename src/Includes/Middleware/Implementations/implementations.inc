@@ -19,3 +19,4 @@ MiddlewareListFactoryImpl,
 
 NullMiddlewareImpl,
 CompositeMiddlewareImpl,
+RequestHandlerAsMiddlewareImpl,
