@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit MiddlewareCollectionAwareFactoryImpl;
+unit MiddlewareListFactoryImpl;
 
 interface
 
@@ -16,8 +16,8 @@ uses
 
     DependencyIntf,
     DependencyContainerIntf,
-    MiddlewareCollectionAwareFactoryIntf,
-    MiddlewareCollectionAwareIntf,
+    MiddlewareListFactoryIntf,
+    MiddlewareListItemIntf,
     FactoryImpl;
 
 type
@@ -28,9 +28,9 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TMiddlewareCollectionAwareFactory = class(TFactory, IMiddlewareCollectionAwareFactory)
+    TMiddlewareListFactory = class(TFactory, IMiddlewareListFactory)
     public
-        function build() : IMiddlewareCollectionAware; overload;
+        function build() : IMiddlewareListItem; overload;
         function build(const container : IDependencyContainer) : IDependency; override;
     end;
 
@@ -38,18 +38,14 @@ implementation
 
 uses
 
-    MiddlewareCollectionAwareImpl,
-    MiddlewareCollectionImpl;
+    MiddlewareListImpl;
 
-    function TMiddlewareCollectionAwareFactory.build() : IMiddlewareCollectionAware;
+    function TMiddlewareListFactory.build() : IMiddlewareListItem;
     begin
-        result := TMiddlewareCollectionAware.create(
-            TMiddlewareCollection.create(),
-            TMiddlewareCollection.create()
-        );
+        result := TMiddlewareList.create();
     end;
 
-    function TMiddlewareCollectionAwareFactory.build(const container : IDependencyContainer) : IDependency;
+    function TMiddlewareListFactory.build(const container : IDependencyContainer) : IDependency;
     begin
         result := build() as IDependency;
     end;

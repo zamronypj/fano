@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit MiddlewareCollectionIntf;
+unit MiddlewareListIntf;
 
 interface
 
@@ -24,12 +24,9 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    IMiddlewareCollection = interface
+    IMiddlewareList = interface
         ['{DF2C4336-6849-4A50-AACE-3676CD9FB395}']
-        function add(const middleware : IMiddleware) : IMiddlewareCollection;
-        function count() : integer;
-        function get(const indx : integer) : IMiddleware;
-        function merge(const middlewares : IMiddlewareCollection) : IMiddlewareCollection;
+        function add(const middleware : IMiddleware) : IMiddlewareList;
     end;
 
 implementation

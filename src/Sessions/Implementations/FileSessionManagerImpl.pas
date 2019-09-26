@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit JsonFileSessionManagerImpl;
+unit FileSessionManagerImpl;
 
 interface
 
@@ -20,6 +20,7 @@ uses
     SessionIntf,
     SessionIdGeneratorIntf,
     SessionManagerIntf,
+    SessionFactoryIntf,
     RequestIntf,
     FileReaderIntf,
     ListIntf,
@@ -29,18 +30,19 @@ type
 
     (*!------------------------------------------------
      * class having capability to manage
-     * session variables in JSON file
+     * session variables in file
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TJsonFileSessionManager = class(TAbstractSessionManager)
+    TFileSessionManager = class(TAbstractSessionManager)
     private
         fSessionFilename : string;
         fFileReader : IFileReader;
         fSessionList : IList;
         fCurrentSession : ISession;
+        fSessionFactory : ISessionFactory;
 
-        procedure writeJsonFile(const jsonFile : string; const jsonData : string);
+        procedure writeSessionFile(const jsonFile : string; const jsonData : string);
 
         (*!------------------------------------
          * create session from session id
@@ -105,6 +107,8 @@ type
          *-------------------------------------
          * @param sessionIdGenerator helper class
          *           which can generate session id
+         * @param sessionFactory helper class
+         *           which create ISession object
          * @param cookieName name of cookie to use
          * @param fileReader helper class
          *           which can read file to string
@@ -115,6 +119,7 @@ type
          *-------------------------------------*)
         constructor create(
             const sessionIdGenerator : ISessionIdGenerator;
+            const sessionFactory : ISessionFactory;
             const cookieName : string;
             const fileReader : IFileReader;
             const baseDir : string;
@@ -167,7 +172,6 @@ uses
     jsonParser,
     DateUtils,
     SessionConsts,
-    JsonSessionImpl,
     HashListImpl,
     ESessionExpiredImpl;
 
@@ -191,8 +195,9 @@ type
      * @param prefix strung to be prefix to
      *                session filename
      *-------------------------------------*)
-    constructor TJsonFileSessionManager.create(
+    constructor TFileSessionManager.create(
         const sessionIdGenerator : ISessionIdGenerator;
+        const sessionFactory : ISessionFactory;
         const cookieName : string;
         const fileReader : IFileReader;
         const baseDir : string;
@@ -200,6 +205,7 @@ type
     );
     begin
         inherited create(sessionIdGenerator, cookieName);
+        fSessionFactory := sessionFactory;
         fSessionFilename := baseDir + prefix;
         fFileReader := fileReader;
         fSessionList := THashList.create();
@@ -208,15 +214,16 @@ type
     (*!------------------------------------
      * destructor
      *-------------------------------------*)
-    destructor TJsonFileSessionManager.destroy();
+    destructor TFileSessionManager.destroy();
     begin
         cleanUpSessionList();
         fFileReader := nil;
         fSessionList := nil;
+        fSessionFactory := nil;
         inherited destroy();
     end;
 
-    procedure TJsonFileSessionManager.cleanUpSessionList();
+    procedure TFileSessionManager.cleanUpSessionList();
     var indx : integer;
         item : PSessionItem;
     begin
@@ -229,7 +236,7 @@ type
         end;
     end;
 
-    procedure TJsonFileSessionManager.writeJsonFile(const jsonFile : string; const jsonData : string);
+    procedure TFileSessionManager.writeSessionFile(const jsonFile : string; const jsonData : string);
     var fs : TFileStream;
     begin
         fs := TFileStream.create(jsonFile, fmCreate);
@@ -255,7 +262,7 @@ type
      * or expired, new ISession is created with empty
      * data, session life time is set to lifeTime value
      *-------------------------------------*)
-    function TJsonFileSessionManager.findSession(const sessionId : string) : ISession;
+    function TFileSessionManager.findSession(const sessionId : string) : ISession;
     var sess : ISession;
         sessFile : string;
     begin
@@ -263,7 +270,7 @@ type
         sessFile := fSessionFilename + sessionId;
         if (sessionId <> '') and (fileExists(sessFile)) then
         begin
-            sess := TJsonSession.create(
+            sess := fSessionFactory.createSession(
                 fCookieName,
                 sessionId,
                 fFileReader.readFile(sessFile)
@@ -295,25 +302,20 @@ type
      * or expired, new ISession is created with empty
      * data, session life time is set to lifeTime value
      *-------------------------------------*)
-    function TJsonFileSessionManager.createSession(
+    function TFileSessionManager.createSession(
         const sessionId : string;
         const lifeTimeInSec : integer
     ) : ISession;
     var sess : ISession;
-        expiredDate : TDateTime;
     begin
         sess := findSession(sessionId);
 
         if sess = nil then
         begin
-            expiredDate := incSecond(now(), lifeTimeInSec);
-            sess := TJsonSession.create(
+            sess := fSessionFactory.createNewSession(
                 fCookieName,
                 fSessionIdGenerator.getSessionId(),
-                format(
-                    '{"expire": "%s", "sessionVars" : {}}',
-                    [ formatDateTime('dd-mm-yyyy hh:nn:ss', expiredDate) ]
-                )
+                incSecond(now(), lifeTimeInSec)
             );
         end;
 
@@ -327,7 +329,7 @@ type
      * @param lifeTimeInSec life time of session in seconds
      * @return session instance
      *-------------------------------------*)
-    function TJsonFileSessionManager.beginSession(
+    function TFileSessionManager.beginSession(
         const request : IRequest;
         const lifeTimeInSec : integer
     ) : ISession;
@@ -352,7 +354,7 @@ type
      * @param request current request instance
      * @return session instance or nil if not found
      *-------------------------------------*)
-    function TJsonFileSessionManager.getSession(const request : IRequest) : ISession;
+    function TFileSessionManager.getSession(const request : IRequest) : ISession;
     var sessionId : shortstring;
         item : PSessionItem;
     begin
@@ -379,7 +381,7 @@ type
      * @param session session instance
      * @return current instance
      *-------------------------------------*)
-    function TJsonFileSessionManager.endSession(const session : ISession) : ISessionManager;
+    function TFileSessionManager.endSession(const session : ISession) : ISessionManager;
     var indx : integer;
         item : PSessionItem;
     begin
@@ -409,11 +411,11 @@ type
      * @param session session instance
      * @return current instance
      *-------------------------------------*)
-    function TJsonFileSessionManager.persistSession(const session : ISession) : ISessionManager;
+    function TFileSessionManager.persistSession(const session : ISession) : ISessionManager;
     var sessFilename : string;
     begin
         sessFilename := fSessionFilename + session.id();
-        writeJsonFile(sessFilename, session.serialize());
+        writeSessionFile(sessFilename, session.serialize());
         session.clear();
         result := self;
     end;
@@ -425,7 +427,7 @@ type
      * @param session session instance
      * @return current instance
      *-------------------------------------*)
-    function TJsonFileSessionManager.destroySession(const session : ISession) : ISessionManager;
+    function TFileSessionManager.destroySession(const session : ISession) : ISessionManager;
     var sessFilename : string;
     begin
         session.clear();
