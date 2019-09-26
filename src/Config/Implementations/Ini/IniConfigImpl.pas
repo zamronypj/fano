@@ -83,7 +83,6 @@ uses
             section := copy(configName, 1, sectionPos - 1);
             ident := copy(configName, sectionPos + 1, length(configName) - sectionPos);
         end;
-        result := fIniConfig.readString(section, ident, defaultValue);
     end;
 
     function TIniConfig.getString(const configName : string; const defaultValue : string = '') : string;
