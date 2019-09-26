@@ -76,7 +76,7 @@ uses
         if sectionPos = 0 then
         begin
             //no section found, use default section
-            section := 'default';
+            section := fDefaultSection;
             ident := configName;
         end else
         begin
