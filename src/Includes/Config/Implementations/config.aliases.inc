@@ -1,1 +1,2 @@
 TJsonFileConfigFactory = JsonFileConfigFactoryImpl.TJsonFileConfigFactory;
+TIniFileConfigFactory = IniConfigFactoryImpl.TIniFileConfigFactory;

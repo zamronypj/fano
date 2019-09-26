@@ -15,3 +15,5 @@
 
 JsonFileConfigImpl,
 JsonFileConfigFactoryImpl,
+IniFileConfigImpl,
+IniFileConfigFactoryImpl,
