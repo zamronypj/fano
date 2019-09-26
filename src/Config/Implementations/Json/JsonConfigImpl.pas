@@ -51,8 +51,8 @@ uses
 
     destructor TJsonConfig.destroy();
     begin
-        inherited destroy();
         json.free();
+        inherited destroy();
     end;
 
     function TJsonConfig.getString(const configName : string; const defaultValue : string = '') : string;
