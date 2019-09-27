@@ -59,6 +59,11 @@ type
 
 implementation
 
+uses
+
+    SysUtils,
+    sha1;
+
     (*!------------------------------------------------
      * generate token name and value
      *-------------------------------------------------
