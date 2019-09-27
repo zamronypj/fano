@@ -298,7 +298,7 @@ const
         except
             on e : EJson do
             begin
-               e.message := e.message + fSessionName.asJson;
+               e.message := e.message + fSessionData.asJson;
                raise;
             end;
         end;
