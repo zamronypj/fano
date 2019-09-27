@@ -158,7 +158,7 @@ implementation
 
         if isCsrfMethod then
         begin
-            handleCsrfRequest(sess, request, response, args, next);
+            result := handleCsrfRequest(sess, request, response, args, next);
         end else
         begin
             generateNewToken(sess);
