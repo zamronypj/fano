@@ -83,6 +83,7 @@ uses
         createGUID(id);
         //convert GUID to string and remove { and } part
         tokenName := copy(GUIDToString(id), 2, 36);
+        result := self;
     end;
 
     (*!------------------------------------------------
