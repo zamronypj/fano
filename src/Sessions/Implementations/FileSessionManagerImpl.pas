@@ -209,6 +209,7 @@ type
         fSessionFilename := baseDir + prefix;
         fFileReader := fileReader;
         fSessionList := THashList.create();
+        fCurrentSession := nil;
     end;
 
     (*!------------------------------------
@@ -216,6 +217,7 @@ type
      *-------------------------------------*)
     destructor TFileSessionManager.destroy();
     begin
+        fCurrentSession := nil;
         cleanUpSessionList();
         fFileReader := nil;
         fSessionList := nil;
@@ -249,7 +251,7 @@ type
     end;
 
     (*!------------------------------------
-     * create session from session id
+     * find session from session id
      *-------------------------------------
      * @param sessionId session id
      * @return session instance or nil if not found
@@ -259,8 +261,7 @@ type
      * from storage. lifeTimeInSec parameter is ignored
      *
      * if sessionId is empty string or invalid
-     * or expired, new ISession is created with empty
-     * data, session life time is set to lifeTime value
+     * or expired, return nil
      *-------------------------------------*)
     function TFileSessionManager.findSession(const sessionId : string) : ISession;
     var sess : ISession;
