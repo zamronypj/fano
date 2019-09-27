@@ -319,7 +319,7 @@ const
     function TJsonSession.internalDelete(const sessionVar : shortstring) : ISession;
     var sessValue : TJsonData;
     begin
-        sessValue := fSessionData.getPath(SESSION_VARS);
+        sessValue := fSessionData.findPath(SESSION_VARS);
         if (sessValue <> nil) then
         begin
             TJsonObject(sessValue).delete(sessionVar);
@@ -350,7 +350,7 @@ const
     function TJsonSession.internalClear() : ISession;
     var sessValue : TJsonData;
     begin
-        sessValue := fSessionData.getPath(SESSION_VARS);
+        sessValue := fSessionData.findPath(SESSION_VARS);
         if (sessValue <> nil) then
         begin
             sessValue.clear();
