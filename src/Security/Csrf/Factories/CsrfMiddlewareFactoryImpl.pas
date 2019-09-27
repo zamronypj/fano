@@ -193,7 +193,7 @@ uses
         result := TCsrfMiddleware.create(
             TCsrf.create(),
             fSessionManager,
-            fFailerHandler,
+            fFailureHandler,
             fCsrfName,
             fCsrfValue
         );
