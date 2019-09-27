@@ -49,7 +49,9 @@ type
             const args : IRouteArgsReader;
             const next : IRequestHandler
         ) : IResponse;
+
         procedure generateNewToken(const sess : ISession);
+
     public
         constructor create(
             const csrf : ICsrf;
@@ -68,9 +70,6 @@ type
          * @param route arguments
          * @param next next middleware to execute
          * @return response
-         *----------------------------------------
-         * Status of validation result will be store
-         * in request with attribute name 'validation'
          *----------------------------------------*)
         function handleRequest(
             const request : IRequest;
