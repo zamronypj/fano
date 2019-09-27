@@ -96,6 +96,7 @@ implementation
 
 uses
 
+    SysUtils,
     CsrfImpl,
     CsrfMiddlewareImpl,
     DefaultFailCsrfHandlerImpl;
