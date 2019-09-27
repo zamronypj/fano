@@ -293,7 +293,15 @@ const
     function TJsonSession.internalGetVar(const sessionVar : shortstring) : string;
     var sessValue : TJsonData;
     begin
+        try
         sessValue := fSessionData.getPath(SESSION_VARS + '.' + sessionVar);
+        except
+            on e : EJson do
+            begin
+               e.message := e.message + fSessionName.asJson;
+               raise;
+            end;
+        end;
         result := sessValue.asString;
     end;
 
