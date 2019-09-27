@@ -370,9 +370,13 @@ type
             //so cookie is not yet set
             result := fCurrentSession;
         end else
+        if (item <> nil) then
         begin
             result := item^.sessionObj;
-        end
+        end else
+        begin
+            raise ESessionInvalid.create('Invalid session. Cannot get valid session');
+        end;
     end;
 
     (*!------------------------------------
