@@ -15,3 +15,4 @@
 
 {$INCLUDE validations.aliases.inc}
 {$INCLUDE cors.aliases.inc}
+{$INCLUDE csrf.aliases.inc}
