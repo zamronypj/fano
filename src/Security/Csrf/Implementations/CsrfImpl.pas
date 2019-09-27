@@ -44,14 +44,14 @@ type
          * test if request has valid token
          *-------------------------------------------------
          * @param request current request
-         * @param session current session
+         * @param sess current session
          * @param nameKey key contains name of token
          * @param valueKey key contains value of token
          * @return current instance
          *-------------------------------------------------*)
         function hasValidToken(
             const request : IRequest;
-            const session : ISession;
+            const sess : ISession;
             const nameKey : shortstring;
             const valueKey : shortstring
         ) : boolean;
@@ -96,7 +96,7 @@ uses
      *-------------------------------------------------*)
     function TCsrf.hasValidToken(
         const request : IRequest;
-        const session : ISession;
+        const sess : ISession;
         const nameKey : shortstring;
         const valueKey : shortstring
     ) : boolean;
