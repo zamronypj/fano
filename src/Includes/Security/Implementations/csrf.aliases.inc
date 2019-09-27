@@ -15,5 +15,5 @@
 
 TCsrf = CsrfImpl.TCsrf;
 TCsrfMiddleware = CsrfMiddlewareImpl.TCsrfMiddleware;
-TCsrgMiddlewareFactory = CsrfMiddlewareFactoryImpl.TCsrfMiddlewareFactory;
+TCsrfMiddlewareFactory = CsrfMiddlewareFactoryImpl.TCsrfMiddlewareFactory;
 TDefaultFailCsrfHandler = DefaultFailCsrfHandlerImpl.TDefaultFailCsrfHandler;
