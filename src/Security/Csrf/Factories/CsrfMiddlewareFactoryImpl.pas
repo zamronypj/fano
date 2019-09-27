@@ -190,7 +190,7 @@ uses
             fFailureHandler := TDefaultFailCsrfHandler.create();
         end;
 
-        result := TCsrfMiddlware.create(
+        result := TCsrfMiddleware.create(
             TCsrf.create(),
             fSessionManager,
             fFailerHandler,
