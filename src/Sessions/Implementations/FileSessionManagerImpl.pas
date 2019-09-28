@@ -272,12 +272,12 @@ type
         sessFile := fSessionFilename + sessionId;
         if (sessionId <> '') and (fileExists(sessFile)) then
         begin
-            sess := fSessionFactory.createSession(
-                fCookieName,
-                sessionId,
-                fFileReader.readFile(sessFile)
-            );
             try
+                sess := fSessionFactory.createSession(
+                    fCookieName,
+                    sessionId,
+                    fFileReader.readFile(sessFile)
+                );
                 result := sess;
             except
                 on ESessionExpired do
