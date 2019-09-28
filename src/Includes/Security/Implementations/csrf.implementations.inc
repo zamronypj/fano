@@ -14,6 +14,7 @@
  *-----------------------------------------------*)
 
 CsrfImpl,
+UrandomCsrfImpl,
 CsrfMiddlewareImpl,
 CsrfMiddlewareFactoryImpl,
 DefaultFailCsrfHandlerImpl,

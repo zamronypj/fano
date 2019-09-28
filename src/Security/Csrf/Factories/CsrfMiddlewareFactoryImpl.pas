@@ -18,6 +18,7 @@ uses
     DependencyContainerIntf,
     FactoryImpl,
     RequestHandlerIntf,
+    CsrfIntf,
     SessionManagerIntf;
 
 type
@@ -31,11 +32,20 @@ type
     private
         fSessionManager : ISessionManager;
         fFailureHandler : IRequestHandler;
+        fCsrf : ICsrf;
         fCsrfName : shortstring;
         fCsrfToken : shortstring;
     public
         constructor create();
         destructor destroy(); override;
+
+        (*!---------------------------------------
+         * set CSRF helper
+         *----------------------------------------
+         * @param csrfHelper
+         * @return current instance
+         *----------------------------------------*)
+        function csrf(const csrfHelper : ICsrf) : TCsrfMiddlewareFactory;
 
         (*!---------------------------------------
          * set session manager to use
@@ -106,6 +116,7 @@ uses
     begin
         fSessionManager := nil;
         fFailureHandler := nil;
+        fCsrf := nil;
         fCsrfName := CSRF_NAME;
         fCsrfToken := CSRF_TOKEN;
     end;
@@ -114,7 +125,20 @@ uses
     begin
         fSessionManager := nil;
         fFailureHandler := nil;
+        fCsrf := nil;
         inherited destroy();
+    end;
+
+    (*!---------------------------------------
+     * set CSRF helper
+     *----------------------------------------
+     * @param csrfHelper
+     * @return current instance
+     *----------------------------------------*)
+    function TCsrfMiddlewareFactory.csrf(const csrfHelper : ICsrf) : TCsrfMiddlewareFactory;
+    begin
+        fCsrf := csrfHelper;
+        result := self;
     end;
 
     (*!---------------------------------------
@@ -191,8 +215,13 @@ uses
             fFailureHandler := TDefaultFailCsrfHandler.create();
         end;
 
+        if fCsrf = nil then
+        begin
+            fCsrf := TCsrf.create();
+        end;
+
         result := TCsrfMiddleware.create(
-            TCsrf.create(),
+            fCsrf,
             fSessionManager,
             fFailureHandler,
             fCsrfName,
