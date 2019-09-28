@@ -173,7 +173,8 @@ uses
     DateUtils,
     SessionConsts,
     HashListImpl,
-    ESessionExpiredImpl;
+    ESessionExpiredImpl,
+    ESessionInvalidImpl;
 
 type
 
