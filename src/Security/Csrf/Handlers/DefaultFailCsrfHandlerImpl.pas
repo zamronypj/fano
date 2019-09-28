@@ -67,7 +67,7 @@ uses
     begin
         result := THttpCodeResponse.create(
             400,
-            'Failed CSRF check.',
+            'Failed CSRF check',
             response.headers().clone() as IHeaders
         );
     end;
