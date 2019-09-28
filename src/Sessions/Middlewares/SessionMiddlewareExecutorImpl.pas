@@ -50,7 +50,10 @@ type
         ) : IResponse;
 
         function tryExecuteMiddlewareExecutor(
-            const actualMiddlewareExecutor : IMiddlewareExecutor
+            const executor : IMiddlewareExecutor;
+            const request : IRequest;
+            const response : IResponse;
+            const routeHandler : IRouteHandler
         ) : IResponse;
     public
         constructor create(
@@ -114,11 +117,14 @@ uses
     end;
 
     function TSessionMiddlewareExecutor.tryExecuteMiddlewareExecutor(
-        const actualMiddlewareExecutor : IMiddlewareExecutor
+        const executor : IMiddlewareExecutor;
+        const request : IRequest;
+        const response : IResponse;
+        const routeHandler : IRouteHandler
     ) : IResponse;
     begin
         try
-            result := fActualMiddlewareExecutor.execute(request, response, routeHandler);
+            result := executor.execute(request, response, routeHandler);
         except
             on e : ESessionExpired do
             begin
@@ -136,7 +142,13 @@ uses
     ) : IResponse;
     var newResp : IResponse;
     begin
-        newResp := fActualMiddlewareExecutor.execute(request, response, routeHandler);
+        //newResp := fActualMiddlewareExecutor.execute(request, response, routeHandler);
+        newResp := tryExecuteMiddlewareExecutor(
+            fActualMiddlewareExecutor,
+            request,
+            response,
+            routeHandler
+        );
         try
             result := addCookieHeader(newResp, sess, fCookieFactory);
         finally
