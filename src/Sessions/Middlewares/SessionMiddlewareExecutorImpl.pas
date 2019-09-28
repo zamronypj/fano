@@ -48,6 +48,10 @@ type
             const routeHandler : IRouteHandler;
             sess : ISession
         ) : IResponse;
+
+        function tryExecuteMiddlewareExecutor(
+            const actualMiddlewareExecutor : IMiddlewareExecutor
+        ) : IResponse;
     public
         constructor create(
             const actualMiddlewareExecutor : IMiddlewareExecutor;
@@ -68,7 +72,8 @@ implementation
 
 uses
 
-    CookieIntf;
+    CookieIntf,
+    ESessionInvalidImpl;
 
     constructor TSessionMiddlewareExecutor.create(
         const actualMiddlewareExecutor : IMiddlewareExecutor;
@@ -105,6 +110,21 @@ uses
             result := resp;
         finally
             cookie := nil;
+        end;
+    end;
+
+    function TSessionMiddlewareExecutor.tryExecuteMiddlewareExecutor(
+        const actualMiddlewareExecutor : IMiddlewareExecutor
+    ) : IResponse;
+    begin
+        try
+            result := fActualMiddlewareExecutor.execute(request, response, routeHandler);
+        except
+            on e : ESessionExpired do
+            begin
+                e.message := e.message + ' try executor';
+                raise;
+            end;
         end;
     end;
 

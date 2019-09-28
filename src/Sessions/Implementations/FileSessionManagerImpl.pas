@@ -339,6 +339,7 @@ type
         sess : ISession;
         item : PSessionItem;
     begin
+        try
         sessionId := request.getCookieParam(fCookieName);
         sess := createSession(sessionId, lifeTimeInSec);
 
@@ -348,6 +349,13 @@ type
 
         fCurrentSession := sess;
         result := sess;
+        except
+          on e: ESessionExpired do
+          begin
+               e.message := e.message + ' at begin session';
+               raise;
+          end;
+        end;
     end;
 
     (*!------------------------------------
