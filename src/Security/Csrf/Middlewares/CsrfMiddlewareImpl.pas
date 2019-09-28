@@ -87,8 +87,8 @@ implementation
         const csrf : ICsrf;
         const sessionMgr : ISessionManager;
         const failureHandler : IRequestHandler;
-        const nameKey : shortstring = 'csrf_name';
-        const valueKey : shortstring = 'csrf_value'
+        const nameKey : shortstring = CSRF_NAME;
+        const valueKey : shortstring = CSRF_TOKEN
     );
     begin
         fCsrf := csrf;
