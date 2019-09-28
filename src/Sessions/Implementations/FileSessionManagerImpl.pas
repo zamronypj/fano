@@ -367,7 +367,7 @@ type
         if (item = nil) and (fCurrentSession <> nil) then
         begin
             //if we get here, it means, this is the first request
-            //so cookie is not yet set
+            //so cookie is not yet set but it is initialized
             result := fCurrentSession;
         end else
         if (item <> nil) then

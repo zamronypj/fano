@@ -32,7 +32,7 @@ type
         fSessionManager : ISessionManager;
         fFailureHandler : IRequestHandler;
         fCsrfName : shortstring;
-        fCsrfValue : shortstring;
+        fCsrfToken : shortstring;
     public
         constructor create();
         destructor destroy(); override;
@@ -74,14 +74,14 @@ type
          * @param fvalue name of field
          * @return current instance
          *----------------------------------------
-         * if you set fvalue = 'csrf_value' then
+         * if you set fvalue = 'csrf_token' then
          * request is expected to have that field
          * <form method="post">
-         *    <input type="hidden" name="csrf_value" value="some_random_token" >
+         *    <input type="hidden" name="csrf_token" value="some_random_token" >
          *    ...
          * </form>
          *----------------------------------------*)
-        function valueField(const fvalue : shortstring) : TCsrfMiddlewareFactory;
+        function tokenField(const fvalue : shortstring) : TCsrfMiddlewareFactory;
 
         (*!---------------------------------------
          * build middleware instance
@@ -97,6 +97,7 @@ implementation
 uses
 
     SysUtils,
+    CsrfConsts,
     CsrfImpl,
     CsrfMiddlewareImpl,
     DefaultFailCsrfHandlerImpl;
@@ -105,8 +106,8 @@ uses
     begin
         fSessionManager := nil;
         fFailureHandler := nil;
-        fCsrfName := 'csrf_name';
-        fCsrfValue := 'csrf_value';
+        fCsrfName := CSRF_TOKEN;
+        fCsrfToken := CSRF_TOKEN;
     end;
 
     destructor TCsrfMiddlewareFactory.destroy();
@@ -165,16 +166,16 @@ uses
      * @param fvalue name of field
      * @return current instance
      *----------------------------------------
-     * if you set fvalue = 'csrf_value' then
+     * if you set fvalue = 'csrf_token' then
      * request is expected to have that field
      * <form method="post">
      *    <input type="hidden" name="csrf_value" value="some_random_token" >
      *    ...
      * </form>
      *----------------------------------------*)
-    function TCsrfMiddlewareFactory.valueField(const fvalue : shortstring) : TCsrfMiddlewareFactory;
+    function TCsrfMiddlewareFactory.tokenField(const fvalue : shortstring) : TCsrfMiddlewareFactory;
     begin
-        fCsrfValue := fvalue;
+        fCsrfToken := fvalue;
         result := self;
     end;
 
@@ -195,7 +196,7 @@ uses
             fSessionManager,
             fFailureHandler,
             fCsrfName,
-            fCsrfValue
+            fCsrfToken
         );
     end;
 
