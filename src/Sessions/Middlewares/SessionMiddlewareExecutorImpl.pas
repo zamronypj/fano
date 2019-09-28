@@ -143,7 +143,6 @@ uses
     ) : IResponse;
     var newResp : IResponse;
     begin
-        //newResp := fActualMiddlewareExecutor.execute(request, response, routeHandler);
         newResp := tryExecuteMiddlewareExecutor(
             fActualMiddlewareExecutor,
             request,

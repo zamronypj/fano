@@ -340,21 +340,21 @@ type
         item : PSessionItem;
     begin
         try
-        sessionId := request.getCookieParam(fCookieName);
-        sess := createSession(sessionId, lifeTimeInSec);
+            sessionId := request.getCookieParam(fCookieName);
+            sess := createSession(sessionId, lifeTimeInSec);
 
-        new(item);
-        item^.sessionObj := sess;
-        fSessionList.add(sess.id(), item);
+            new(item);
+            item^.sessionObj := sess;
+            fSessionList.add(sess.id(), item);
 
-        fCurrentSession := sess;
-        result := sess;
+            fCurrentSession := sess;
+            result := sess;
         except
-          on e: ESessionExpired do
-          begin
-               e.message := e.message + ' at begin session';
-               raise;
-          end;
+            on e: ESessionExpired do
+            begin
+                e.message := e.message + ' at begin session';
+                raise;
+            end;
         end;
     end;
 
