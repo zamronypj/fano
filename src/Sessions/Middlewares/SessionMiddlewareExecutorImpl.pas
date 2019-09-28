@@ -76,7 +76,8 @@ implementation
 uses
 
     CookieIntf,
-    ESessionInvalidImpl;
+    ESessionInvalidImpl,
+    ESessionExpiredImpl;
 
     constructor TSessionMiddlewareExecutor.create(
         const actualMiddlewareExecutor : IMiddlewareExecutor;
