@@ -106,7 +106,7 @@ uses
     begin
         fSessionManager := nil;
         fFailureHandler := nil;
-        fCsrfName := CSRF_TOKEN;
+        fCsrfName := CSRF_NAME;
         fCsrfToken := CSRF_TOKEN;
     end;
 
