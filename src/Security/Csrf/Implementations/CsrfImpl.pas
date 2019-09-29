@@ -29,7 +29,7 @@ type
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
     TCsrf = class(TInterfacedObject, ICsrf)
-    private
+    protected
         fSecretKey : string;
     public
         constructor create(const secretKey : string);
@@ -41,7 +41,7 @@ type
          * @param tokenValue token value
          * @return current instance
          *-------------------------------------------------*)
-        function generateToken(out tokenName : string; out tokenValue : string) : ICsrf;
+        function generateToken(out tokenName : string; out tokenValue : string) : ICsrf; virtual;
 
         (*!------------------------------------------------
          * test if request has valid token
@@ -57,7 +57,7 @@ type
             const sess : ISession;
             const nameKey : shortstring;
             const valueKey : shortstring
-        ) : boolean;
+        ) : boolean; virtual;
     end;
 
 implementation
