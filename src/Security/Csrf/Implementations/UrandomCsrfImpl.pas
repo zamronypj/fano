@@ -103,7 +103,7 @@ uses
     var id : TGUID;
         strId : string;
     begin
-        strId := TEncoding.UTF8.getBytes(fRandom.randomBytes(fStrength));
+        strId := TEncoding.UTF8.getString(fRandom.randomBytes(fStrength));
         tokenValue := HMACSHA1(strId);
 
         createGUID(id);
