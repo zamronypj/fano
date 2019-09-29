@@ -40,7 +40,7 @@ uses
     function TDevUrandom.randomBytes(const totalBytes : integer) : TBytes;
     var fstream : TFileStream;
     begin
-        fstream := TFileStream.create('/dev/urandom', fmReadOnly);
+        fstream := TFileStream.create('/dev/urandom', fmOpenRead);
         try
             setLength(result, totalBytes);
             fstream.readBuffer(result[0], totalBytes);
