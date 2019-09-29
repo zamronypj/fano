@@ -65,7 +65,8 @@ implementation
 uses
 
     SysUtils,
-    hmac;
+    hmac,
+    sha1;
 
     constructor TCsrf.create(const secretKey : string);
     begin
@@ -122,7 +123,7 @@ uses
         currTokenValue := sess.getVar(valueKey);
         currTokenValueDigest := HMACSHA1Digest(fSecretKey, currTokenValue);
         result := (tokenName = currTokenName) and
-            HMACSHA1Match(tokenValueDigest, currTokenValueDigest);
+            SHA1Match(tokenValueDigest, currTokenValueDigest);
     end;
 
 end.
