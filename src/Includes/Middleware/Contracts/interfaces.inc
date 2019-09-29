@@ -13,5 +13,5 @@
  *-----------------------------------------------*)
 
 MiddlewareIntf,
-MiddlewareCollectionAwareIntf,
-MiddlewareCollectionIntf,
+MiddlewareListIntf,
+MiddlewareLinkListIntf,

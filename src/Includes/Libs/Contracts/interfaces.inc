@@ -46,3 +46,5 @@ ReadyListenerIntf,
 RegexIntf,
 AntivirusIntf,
 ScanResultIntf,
+
+RandomIntf,

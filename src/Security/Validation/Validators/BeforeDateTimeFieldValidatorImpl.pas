@@ -15,9 +15,6 @@ interface
 
 uses
 
-    ListIntf,
-    RequestIntf,
-    ValidatorIntf,
     CompareFieldValidatorImpl;
 
 type

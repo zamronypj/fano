@@ -15,7 +15,7 @@ interface
 
 uses
 
-    ListIntf,
+    ReadOnlyListIntf,
     RequestIntf,
     ValidatorIntf,
     BaseValidatorImpl;
@@ -45,7 +45,7 @@ type
 
         function isValidData(
             const dataToValidate : string;
-            const dataCollection : IList;
+            const dataCollection : IReadOnlyList;
             const request : IRequest
         ) : boolean; override;
     public
@@ -84,7 +84,7 @@ uses
      *-------------------------------------------------*)
     function TCompareFieldValidator.isValidData(
         const dataToValidate : string;
-        const dataCollection : IList;
+        const dataCollection : IReadOnlyList;
         const request : IRequest
     ) : boolean;
     var comparedVal : PKeyValue;

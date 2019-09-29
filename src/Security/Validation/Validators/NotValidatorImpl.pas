@@ -15,7 +15,7 @@ interface
 
 uses
 
-    ListIntf,
+    ReadOnlyListIntf,
     RequestIntf,
     ValidatorIntf,
     BaseValidatorImpl;
@@ -39,7 +39,7 @@ type
          *-------------------------------------------------*)
         function isValidData(
             const dataToValidate : string;
-            const dataCollection : IList;
+            const dataCollection : IReadOnlyList;
             const request : IRequest
         ) : boolean; override;
 
@@ -70,7 +70,7 @@ type
          *-------------------------------------------------*)
         function isValid(
             const fieldName : shortstring;
-            const dataToValidate : IList;
+            const dataToValidate : IReadOnlyList;
             const request : IRequest
         ) : boolean; override;
     end;
@@ -116,7 +116,7 @@ uses
      *-------------------------------------------------*)
     function TNotValidator.isValid(
         const fieldName : shortstring;
-        const dataToValidate : IList;
+        const dataToValidate : IReadOnlyList;
         const request : IRequest
     ) : boolean;
     begin
@@ -131,7 +131,7 @@ uses
      *-------------------------------------------------*)
     function TNotValidator.isValidData(
         const dataToValidate : string;
-        const dataCollection : IList;
+        const dataCollection : IReadOnlyList;
         const request : IRequest
     ) : boolean;
     begin

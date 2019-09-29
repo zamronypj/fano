@@ -39,3 +39,4 @@ KeyValuePairFactoryImpl,
 {$INCLUDE LibCurl/implementations.inc}
 {$INCLUDE FastCGI/implementations.inc}
 {$INCLUDE SCGI/implementations.inc}
+{$INCLUDE Random/implementations.inc}

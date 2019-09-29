@@ -14,7 +14,9 @@ interface
 {$H+}
 
 uses
+
     contnrs,
+    ReadOnlyListIntf,
     ListIntf;
 
 type
@@ -24,7 +26,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    THashList = class(TInterfacedObject, IList)
+    THashList = class(TInterfacedObject, IReadOnlyList, IList)
     private
         hashes : TFPHashList;
     public

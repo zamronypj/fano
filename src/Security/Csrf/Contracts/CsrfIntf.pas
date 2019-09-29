@@ -13,6 +13,11 @@ interface
 {$MODE OBJFPC}
 {$H+}
 
+uses
+
+    SessionIntf,
+    RequestIntf;
+
 type
 
     (*!------------------------------------------------
@@ -32,16 +37,23 @@ type
          * @param tokenValue token value
          * @return current instance
          *-------------------------------------------------*)
-        function generateToken(out tokenName : string; out tokenValue :string) : ICsrf;
+        function generateToken(out tokenName : string; out tokenValue : string) : ICsrf;
 
         (*!------------------------------------------------
-         * validate token name and value
+         * test if request has valid token
          *-------------------------------------------------
-         * @param tokenName token name
-         * @param tokenValue token value
-         * @return true if token match with previously generated
+         * @param request current request
+         * @param sess current session
+         * @param nameKey key contains name of token
+         * @param valueKey key contains value of token
+         * @return current instance
          *-------------------------------------------------*)
-        function isTokenValid(const tokenName : string; const tokenValue :string) : boolean;
+        function hasValidToken(
+            const request : IRequest;
+            const sess : ISession;
+            const nameKey : shortstring;
+            const valueKey : shortstring
+        ) : boolean;
     end;
 
 implementation
