@@ -15,7 +15,7 @@ interface
 
 uses
 
-    ListIntf,
+    ReadOnlyListIntf,
     RequestIntf,
     ValidatorIntf,
     BaseValidatorImpl;
@@ -38,7 +38,7 @@ type
          *-------------------------------------------------*)
         function isValidData(
             const dataToValidate : string;
-            const dataCollection : IList;
+            const dataCollection : IReadOnlyList;
             const request : IRequest
         ) : boolean; override;
     public
@@ -57,7 +57,7 @@ type
          *-------------------------------------------------*)
         function isValid(
             const fieldName : shortstring;
-            const dataToValidate : IList;
+            const dataToValidate : IReadOnlyList;
             const request : IRequest
         ) : boolean; override;
     end;
@@ -88,7 +88,7 @@ resourcestring
      *-------------------------------------------------*)
     function TUploadedFileValidator.isValid(
         const fieldName : shortstring;
-        const dataToValidate : IList;
+        const dataToValidate : IReadOnlyList;
         const request : IRequest
     ) : boolean;
     begin
@@ -103,7 +103,7 @@ resourcestring
      *-------------------------------------------------*)
     function TUploadedFileValidator.isValidData(
         const dataToValidate : string;
-        const dataCollection : IList;
+        const dataCollection : IReadOnlyList;
         const request : IRequest
     ) : boolean;
     begin

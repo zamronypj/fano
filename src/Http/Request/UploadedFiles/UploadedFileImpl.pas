@@ -130,8 +130,11 @@ resourcestring
     sErrInvalidUploadedFile = 'Invalid uploaded file. You can move uploaded file only once';
 
     function makeRandomStr(const prefix : string; const suffix : string) : string;
+    var id : TGUID;
     begin
-        result := prefix + inttostr(random(MAXINT)) + suffix;
+        createGUID(id);
+        //convert GUID to string and remove { and } part and add prefix suffix
+        result := prefix + copy(GUIDToString(id), 2, 36) + suffix;
     end;
 
     (*!----------------------------------------
@@ -182,12 +185,15 @@ resourcestring
     var srcStream, dstStream : TFileStream;
     begin
         srcStream := TFileStream.create(srcFilename, fmOpenRead);
-        dstStream := TFileStream.create(dstFilename, fmCreate);
         try
-            dstStream.copyFrom(srcStream, srcStream.size);
+            dstStream := TFileStream.create(dstFilename, fmCreate);
+            try
+                dstStream.copyFrom(srcStream, srcStream.size);
+            finally
+                dstStream.free();
+            end;
         finally
-            freeAndNil(srcStream);
-            freeAndNil(dstStream);
+            srcStream.free();
         end;
     end;
 

@@ -15,7 +15,7 @@ interface
 
 uses
 
-    ListIntf,
+    ReadOnlyListIntf,
     RequestIntf,
     ValidatorIntf;
 
@@ -39,7 +39,7 @@ type
          *-------------------------------------------------*)
         function isValid(
             const fieldName : shortstring;
-            const dataToValidate : IList;
+            const dataToValidate : IReadOnlyList;
             const request : IRequest
         ) : boolean;
 
@@ -75,7 +75,7 @@ implementation
      *-------------------------------------------------*)
     function TAlwaysPassValidator.isValid(
         const fieldName : shortstring;
-        const dataToValidate : IList;
+        const dataToValidate : IReadOnlyList;
         const request : IRequest
     ) : boolean;
     begin

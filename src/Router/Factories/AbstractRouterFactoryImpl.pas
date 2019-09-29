@@ -17,7 +17,7 @@ uses
     DependencyIntf,
     DependencyContainerIntf,
     FactoryImpl,
-    MiddlewareCollectionAwareFactoryIntf;
+    MiddlewareListFactoryIntf;
 
 type
 
@@ -29,44 +29,44 @@ type
      *-------------------------------------------------*)
     TAbstractRouterFactory = class(TFactory, IDependencyFactory)
     private
-        fMiddlewareCollectionAwareFactory : IMiddlewareCollectionAwareFactory;
+        fMiddlewareListFactory : IMiddlewareListFactory;
     protected
-        function getMiddlewareFactory() : IMiddlewareCollectionAwareFactory;
+        function getMiddlewareFactory() : IMiddlewareListFactory;
     public
         constructor create();
         destructor destroy(); override;
-        function middlewareCollectionAwareFactory(const aFactory : IMiddlewareCollectionAwareFactory) : TAbstractRouterFactory;
+        function middlewareListFactory(const aFactory : IMiddlewareListFactory) : TAbstractRouterFactory;
     end;
 
 implementation
 
 uses
 
-    MiddlewareCollectionAwareFactoryImpl;
+    MiddlewareListFactoryImpl;
 
     constructor TAbstractRouterFactory.create();
     begin
-        fMiddlewareCollectionAwareFactory := nil;
+        fMiddlewareListFactory := nil;
     end;
 
     destructor TAbstractRouterFactory.destroy();
     begin
-        fMiddlewareCollectionAwareFactory := nil;
+        fMiddlewareListFactory := nil;
         inherited destroy();
     end;
 
-    function TAbstractRouterFactory.getMiddlewareFactory() : IMiddlewareCollectionAwareFactory;
+    function TAbstractRouterFactory.getMiddlewareFactory() : IMiddlewareListFactory;
     begin
-        if (fMiddlewareCollectionAwareFactory = nil) then
+        if (fMiddlewareListFactory = nil) then
         begin
-            fMiddlewareCollectionAwareFactory := TMiddlewareCollectionAwareFactory.create();
+            fMiddlewareListFactory := TMiddlewareListFactory.create();
         end;
-        result := fMiddlewareCollectionAwareFactory;
+        result := fMiddlewareListFactory;
     end;
 
-    function TAbstractRouterFactory.middlewareCollectionAwareFactory(const aFactory : IMiddlewareCollectionAwareFactory) : TAbstractRouterFactory;
+    function TAbstractRouterFactory.middlewareListFactory(const aFactory : IMiddlewareListFactory) : TAbstractRouterFactory;
     begin
-        fMiddlewareCollectionAwareFactory := aFactory;
+        fMiddlewareListFactory := aFactory;
         result := self;
     end;
 end.

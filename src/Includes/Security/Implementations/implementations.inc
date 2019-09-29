@@ -15,3 +15,4 @@
 
 {$INCLUDE validations.implementations.inc}
 {$INCLUDE cors.implementations.inc}
+{$INCLUDE csrf.implementations.inc}

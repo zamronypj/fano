@@ -1,3 +1,3 @@
 IMiddleware = MiddlewareIntf.IMiddleware;
-IMiddlewareCollection = MiddlewareCollectionIntf.IMiddlewareCollection;
-IMiddlewareCollectionAware = MiddlewareCollectionAwareIntf.IMiddlewareCollectionAware;
+IMiddlewareList = MiddlewareListIntf.IMiddlewareList;
+IMiddlewareLinkList = MiddlewareLinkListIntf.IMiddlewareLinkList;

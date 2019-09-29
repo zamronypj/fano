@@ -13,6 +13,10 @@ interface
 {$MODE OBJFPC}
 {$H+}
 
+uses
+
+    ReadOnlyListIntf;
+
 type
 
     (*!------------------------------------------------
@@ -21,23 +25,8 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    IList = interface
+    IList = interface(IReadOnlyList)
         ['{7EEE23CC-9713-49E2-BE92-CC63BDEA17F3}']
-
-        (*!------------------------------------------------
-         * get number of item in list
-         *-----------------------------------------------
-         * @return number of item in list
-         *-----------------------------------------------*)
-        function count() : integer;
-
-        (*!------------------------------------------------
-         * get item by index
-         *-----------------------------------------------
-         * @param indx index of item
-         * @return item instance
-         *-----------------------------------------------*)
-        function get(const indx : integer) : pointer;
 
         (*!------------------------------------------------
          * delete item by index
@@ -58,29 +47,6 @@ type
          *-----------------------------------------------*)
         function add(const aKey : shortstring; const item : pointer) : integer;
 
-        (*!------------------------------------------------
-         * find by its key name
-         *-----------------------------------------------
-         * @param aKey name to use to find item
-         * @return item instance
-         *-----------------------------------------------*)
-        function find(const aKey : shortstring) : pointer;
-
-        (*!------------------------------------------------
-         * get key name by using its index
-         *-----------------------------------------------
-         * @param indx index to find
-         * @return key name
-         *-----------------------------------------------*)
-        function keyOfIndex(const indx : integer) : shortstring;
-
-        (*!------------------------------------------------
-         * get index by key name
-         *-----------------------------------------------
-         * @param aKey name
-         * @return index of key
-         *-----------------------------------------------*)
-        function indexOf(const aKey : shortstring) : integer;
     end;
 
 implementation

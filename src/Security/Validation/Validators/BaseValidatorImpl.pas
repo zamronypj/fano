@@ -15,7 +15,7 @@ interface
 
 uses
 
-    ListIntf,
+    ReadOnlyListIntf,
     RequestIntf,
     ValidatorIntf;
 
@@ -39,7 +39,7 @@ type
          *-------------------------------------------------*)
         function isValidData(
             const dataToValidate : string;
-            const dataCollection : IList;
+            const dataCollection : IReadOnlyList;
             const request : IRequest
         ) : boolean; virtual; abstract;
 
@@ -65,7 +65,7 @@ type
          *-------------------------------------------------*)
         function isValid(
             const fieldName : shortstring;
-            const dataToValidate : IList;
+            const dataToValidate : IReadOnlyList;
             const request : IRequest
         ) : boolean; virtual;
 
@@ -88,8 +88,6 @@ uses
     (*!------------------------------------------------
      * constructor
      *-------------------------------------------------
-     * @param regexInst instance of IRegex
-     * @param pattern regex pattern to use for matching
      * @param errMsgFormat message that is used as template
      *                    for error message
      *-------------------------------------------------
@@ -121,7 +119,7 @@ uses
      *-------------------------------------------------*)
     function TBaseValidator.isValid(
         const fieldName : shortstring;
-        const dataToValidate : IList;
+        const dataToValidate : IReadOnlyList;
         const request : IRequest
     ) : boolean;
     var val : PKeyValue;

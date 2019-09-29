@@ -16,6 +16,7 @@ interface
 uses
 
     DependencyIntf,
+    ReadOnlyListIntf,
     ListIntf,
     RequestIntf,
     ValidatorIntf,
@@ -37,7 +38,7 @@ type
         validationResult : TValidationResult;
         validatorList : IList;
         procedure clearValidator();
-        function validateKeyValue(const inputData : IList; const request : IRequest) : TValidationResult;
+        function validateKeyValue(const inputData : IReadOnlyList; const request : IRequest) : TValidationResult;
     public
 
         constructor create(const validators : IList);
@@ -131,7 +132,7 @@ type
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
     function TValidation.validateKeyValue(
-        const inputData : IList;
+        const inputData : IReadOnlyList;
         const request : IRequest
     ) : TValidationResult;
     var i, len, numFailValidation : integer;

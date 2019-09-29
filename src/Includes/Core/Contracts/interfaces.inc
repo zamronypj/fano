@@ -17,4 +17,5 @@
 CloneableIntf,
 RunnableIntf,
 SerializeableIntf,
+ReadOnlyListIntf,
 ListIntf,

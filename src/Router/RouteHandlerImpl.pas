@@ -17,7 +17,8 @@ uses
 
     RequestIntf,
     ResponseIntf,
-    MiddlewareCollectionAwareIntf,
+    MiddlewareListIntf,
+    MiddlewareLinkListIntf,
     MiddlewareIntf,
     RequestHandlerIntf,
     RouteHandlerIntf,
@@ -36,10 +37,18 @@ type
      * -----------------------------------------------*)
     TRouteHandler = class(TInjectableObject, IRouteHandler, IRequestHandler, IRouteArgsReader, IRouteArgsWriter, IRoute)
     private
-        fMiddlewares : IMiddlewareCollectionAware;
+        fMiddlewares : IMiddlewareList;
+        fMiddlewareLinkList : IMiddlewareLinkList;
         varPlaceholders : TArrayOfPlaceholders;
         fActualHandler : IRequestHandler;
         fRouteName : shortstring;
+
+        (*!-------------------------------------------
+         * get route name
+         *--------------------------------------------
+         * @return current route name
+         *--------------------------------------------*)
+        function getName() : shortstring;
     public
 
         (*!-------------------------------------------
@@ -48,7 +57,8 @@ type
          * @param amiddlewares object represent middlewares
          *--------------------------------------------*)
         constructor create(
-            const amiddlewares : IMiddlewareCollectionAware;
+            const amiddlewares : IMiddlewareList;
+            const amiddlewareLinkList : IMiddlewareLinkList;
             const actualHandler : IRequestHandler
         );
 
@@ -102,26 +112,15 @@ type
          *--------------------------------------------*)
         function setName(const routeName : shortstring) : IRoute;
 
-        (*!-------------------------------------------
-         * get route name
-         *--------------------------------------------
-         * @return current route name
-         *--------------------------------------------*)
-        function getName() : shortstring;
+        function IRouteArgsReader.getName = getName;
+        function IRoute.getName = getName;
 
         (*!-------------------------------------------
-         * attach middleware before route
+         * attach middleware
          *--------------------------------------------
          * @return current route instance
          *--------------------------------------------*)
-        function before(const amiddleware : IMiddleware) : IRoute;
-
-        (*!-------------------------------------------
-         * attach middleware after route
-         *--------------------------------------------
-         * @return current route instance
-         *--------------------------------------------*)
-        function after(const amiddleware : IMiddleware) : IRoute;
+        function add(const amiddleware : IMiddleware) : IRoute;
 
         (*!-------------------------------------------
          * get route instance
@@ -156,7 +155,7 @@ type
          *--------------------------------------------
          * @return middleware collections
          *--------------------------------------------*)
-        function middlewares() : IMiddlewareCollectionAware;
+        function middlewares() : IMiddlewareLinkList;
     end;
 
 implementation
@@ -174,12 +173,14 @@ uses
      * @param viewParamsInt view parameters
      *--------------------------------------------*)
     constructor TRouteHandler.create(
-        const amiddlewares : IMiddlewareCollectionAware;
+        const amiddlewares : IMiddlewareList;
+        const amiddlewareLinkList : IMiddlewareLinkList;
         const actualHandler : IRequestHandler
     );
     begin
         inherited create();
         fMiddlewares := amiddlewares;
+        fMiddlewareLinkList := amiddlewareLinkList;
         fActualHandler := actualHandler;
         varPlaceholders := nil;
     end;
@@ -187,6 +188,7 @@ uses
     destructor TRouteHandler.destroy();
     begin
         fMiddlewares := nil;
+        fMiddlewareLinkList := nil;
         fActualHandler := nil;
         varPlaceholders := nil;
         inherited destroy();
@@ -267,24 +269,13 @@ uses
     end;
 
     (*!-------------------------------------------
-     * attach middleware before route
+     * attach middleware
      *--------------------------------------------
      * @return current route instance
      *--------------------------------------------*)
-    function TRouteHandler.before(const amiddleware : IMiddleware) : IRoute;
+    function TRouteHandler.add(const amiddleware : IMiddleware) : IRoute;
     begin
-        fMiddlewares.addBefore(amiddleware);
-        result := self;
-    end;
-
-    (*!-------------------------------------------
-     * attach middleware after route
-     *--------------------------------------------
-     * @return current route instance
-     *--------------------------------------------*)
-    function TRouteHandler.after(const amiddleware : IMiddleware) : IRoute;
-    begin
-        fMiddlewares.addAfter(amiddleware);
+        fMiddlewares.add(amiddleware);
         result := self;
     end;
 
@@ -333,8 +324,8 @@ uses
      *--------------------------------------------
      * @return middleware collections
      *--------------------------------------------*)
-    function TRouteHandler.middlewares() : IMiddlewareCollectionAware;
+    function TRouteHandler.middlewares() : IMiddlewareLinkList;
     begin
-        result := fMiddlewares;
+        result := fMiddlewareLinkList;
     end;
 end.
