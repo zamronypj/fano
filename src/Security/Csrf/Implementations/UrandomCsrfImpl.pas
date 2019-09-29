@@ -101,7 +101,7 @@ uses
      *-------------------------------------------------*)
     function TUrandomCsrf.generateToken(out tokenName : string; out tokenValue : string) : ICsrf;
     var id : TGUID;
-        strId : string;
+        strId : UTF8String;
     begin
         strId := TEncoding.UTF8.getString(fRandom.randomBytes(fStrength));
         tokenValue := HMACSHA1(fSecretKey, strId);
