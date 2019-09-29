@@ -14,6 +14,7 @@
  *-----------------------------------------------*)
 
 TCsrf = CsrfImpl.TCsrf;
+TUrandomCsrf = UrandomCsrfImpl.TUrandomCsrf;
 TCsrfMiddleware = CsrfMiddlewareImpl.TCsrfMiddleware;
 TCsrfMiddlewareFactory = CsrfMiddlewareFactoryImpl.TCsrfMiddlewareFactory;
 TDefaultFailCsrfHandler = DefaultFailCsrfHandlerImpl.TDefaultFailCsrfHandler;

@@ -32,3 +32,4 @@ IRegex = RegexIntf.IRegex;
 
 IAntivirus = AntivirusIntf.IAntivirus;
 IScanResult = ScanResultIntf.IScanResult;
+IRandom = RandomIntf.IRandom;
