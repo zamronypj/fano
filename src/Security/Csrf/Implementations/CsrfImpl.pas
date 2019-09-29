@@ -123,6 +123,8 @@ uses
         currTokenValue := sess.getVar(valueKey);
         currTokenValueDigest := HMACSHA1Digest(fSecretKey, currTokenValue);
         result := (tokenName = currTokenName) and
+            //we should use HMACSHA1Match(), but we can't because of infinite
+            //recursion bug in this function in Free Pascal 3.04
             SHA1Match(tokenValueDigest, currTokenValueDigest);
     end;
 
