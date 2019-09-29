@@ -15,7 +15,8 @@ interface
 
 uses
 
-    SysUtils;
+    SysUtils,
+    RandomIntf;
 
 type
 
