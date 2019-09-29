@@ -104,7 +104,7 @@ uses
         strId : string;
     begin
         strId := TEncoding.UTF8.getString(fRandom.randomBytes(fStrength));
-        tokenValue := HMACSHA1(strId);
+        tokenValue := HMACSHA1(fSecretKey, strId);
 
         createGUID(id);
         //convert GUID to string and remove { and } part
