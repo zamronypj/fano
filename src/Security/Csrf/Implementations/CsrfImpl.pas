@@ -29,7 +29,10 @@ type
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
     TCsrf = class(TInterfacedObject, ICsrf)
+    private
+        fSecretKey : string;
     public
+        constructor create(const secretKey : string);
 
         (*!------------------------------------------------
          * generate token name and value
@@ -62,7 +65,13 @@ implementation
 uses
 
     SysUtils,
-    sha1;
+    hmac;
+
+    constructor TCsrf.create(const secretKey : string);
+    begin
+        fSecretKey := secretKey;
+    end;
+
 
     (*!------------------------------------------------
      * generate token name and value
@@ -78,7 +87,7 @@ uses
         createGUID(id);
         //convert GUID to string and remove { and } part
         strId := copy(GUIDToString(id), 2, 36);
-        tokenValue := SHA1Print(SHA1String(strId));
+        tokenValue := HMACSHA1(fSecretKey, strId);
 
         createGUID(id);
         //convert GUID to string and remove { and } part
@@ -103,12 +112,17 @@ uses
     ) : boolean;
     var tokenName, tokenValue : string;
         currTokenName, currTokenValue : string;
+        tokenValueDigest : THMACSHA1Digest;
+        currtokenValueDigest : THMACSHA1Digest;
     begin
         tokenName := request.getParsedBodyParam(nameKey);
         tokenValue := request.getParsedBodyParam(valueKey);
+        tokenValueDigest := HMACSHA1Digest(fSecretKey, tokenValue);
         currTokenName := sess.getVar(nameKey);
         currTokenValue := sess.getVar(valueKey);
-        result := (tokenName = currTokenName) and (tokenValue = currTokenValue);
+        currTokenValueDigest := HMACSHA1Digest(fSecretKey, currTokenValue);
+        result := (tokenName = currTokenName) and
+            HMACSHA1Match(tokenValueDigest, currTokenValueDigest);
     end;
 
 end.

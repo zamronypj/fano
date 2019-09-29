@@ -35,8 +35,9 @@ type
         fCsrf : ICsrf;
         fCsrfName : shortstring;
         fCsrfToken : shortstring;
+        fSecretKey : string;
     public
-        constructor create();
+        constructor create(const secretKey : string);
         destructor destroy(); override;
 
         (*!---------------------------------------
@@ -112,11 +113,12 @@ uses
     CsrfMiddlewareImpl,
     DefaultFailCsrfHandlerImpl;
 
-    constructor TCsrfMiddlewareFactory.create();
+    constructor TCsrfMiddlewareFactory.create(const secretKey : string);
     begin
         fSessionManager := nil;
         fFailureHandler := nil;
         fCsrf := nil;
+        fSecretKey := secretKey;
         fCsrfName := CSRF_NAME;
         fCsrfToken := CSRF_TOKEN;
     end;
@@ -217,7 +219,7 @@ uses
 
         if fCsrf = nil then
         begin
-            fCsrf := TCsrf.create();
+            fCsrf := TCsrf.create(fSecretKey);
         end;
 
         result := TCsrfMiddleware.create(
