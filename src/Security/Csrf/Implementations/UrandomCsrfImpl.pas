@@ -17,6 +17,7 @@ uses
 
     RequestIntf,
     CsrfIntf,
+    RandomIntf,
     SessionIntf;
 
 type
