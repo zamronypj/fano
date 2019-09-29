@@ -101,9 +101,9 @@ uses
      *-------------------------------------------------*)
     function TUrandomCsrf.generateToken(out tokenName : string; out tokenValue : string) : ICsrf;
     var id : TGUID;
-        strId : UTF8String;
+        strId : string;
     begin
-        strId := TEncoding.UTF8.getString(fRandom.randomBytes(fStrength));
+        strId := TEncoding.ANSI.getString(fRandom.randomBytes(fStrength));
         tokenValue := HMACSHA1(fSecretKey, strId);
 
         createGUID(id);
