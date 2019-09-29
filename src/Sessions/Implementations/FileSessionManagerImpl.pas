@@ -272,12 +272,12 @@ type
         sessFile := fSessionFilename + sessionId;
         if (sessionId <> '') and (fileExists(sessFile)) then
         begin
-            sess := fSessionFactory.createSession(
-                fCookieName,
-                sessionId,
-                fFileReader.readFile(sessFile)
-            );
             try
+                sess := fSessionFactory.createSession(
+                    fCookieName,
+                    sessionId,
+                    fFileReader.readFile(sessFile)
+                );
                 result := sess;
             except
                 on ESessionExpired do
@@ -339,15 +339,23 @@ type
         sess : ISession;
         item : PSessionItem;
     begin
-        sessionId := request.getCookieParam(fCookieName);
-        sess := createSession(sessionId, lifeTimeInSec);
+        try
+            sessionId := request.getCookieParam(fCookieName);
+            sess := createSession(sessionId, lifeTimeInSec);
 
-        new(item);
-        item^.sessionObj := sess;
-        fSessionList.add(sess.id(), item);
+            new(item);
+            item^.sessionObj := sess;
+            fSessionList.add(sess.id(), item);
 
-        fCurrentSession := sess;
-        result := sess;
+            fCurrentSession := sess;
+            result := sess;
+        except
+            on e: ESessionExpired do
+            begin
+                e.message := e.message + ' at begin session';
+                raise;
+            end;
+        end;
     end;
 
     (*!------------------------------------
