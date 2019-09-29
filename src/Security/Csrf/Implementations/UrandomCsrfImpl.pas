@@ -66,7 +66,6 @@ implementation
 uses
 
     SysUtils,
-    Base64,
     hmac;
 
     (*!------------------------------------------------
@@ -102,8 +101,10 @@ uses
     function TUrandomCsrf.generateToken(out tokenName : string; out tokenValue : string) : ICsrf;
     var id : TGUID;
         strId : string;
+        rndBytes : TBytes;
     begin
-        strId := TEncoding.ANSI.getString(fRandom.randomBytes(fStrength));
+        rndBytes := fRandom.randomBytes(fStrength);
+        setString(strId, PAnsiChar(@rndBytes[0]), length(rndBytes));
         tokenValue := HMACSHA1(fSecretKey, strId);
 
         createGUID(id);
