@@ -113,7 +113,7 @@ type
          * @return string value
          *------------------------------------------------*)
         function getSingleParam(
-            const src :IList;
+            const src :IReadOnlyList;
             const key: string;
             const defValue : string = ''
         ) : string;
@@ -459,8 +459,10 @@ resourcestring
         const env : ICGIEnvironment;
         const body : IList
     );
+    var amethod : string;
     begin
-        if (env.requestMethod() = 'POST') then
+        amethod := env.requestMethod();
+        if (amethod = 'POST') or (amethod = 'PUT') or (amethod = 'PATCH') then
         begin
             initPostBodyParamsFromStdInput(env, body);
         end;
@@ -488,7 +490,7 @@ resourcestring
      * @return string value
      *------------------------------------------------*)
     function TRequest.getSingleParam(
-        const src : IList;
+        const src : IReadOnlyList;
         const key: string;
         const defValue : string = ''
     ) : string;
