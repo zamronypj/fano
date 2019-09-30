@@ -446,8 +446,8 @@ resourcestring
             uploadedFiles := uploadedFilesWriter as IUploadedFileCollection;
         end else
         begin
-            //if POST but different contentType save it as it is
-            //with its contentType as key
+            //if POST/PUT/PATCH but different contentType such as 'application/json'
+            //save it as it is with its contentType as key and let developer deals with it
             new(param);
             param^.key := contentType;
             param^.value := bodyStr;
@@ -459,8 +459,10 @@ resourcestring
         const env : ICGIEnvironment;
         const body : IList
     );
+    var amethod : string;
     begin
-        if (env.requestMethod() = 'POST') then
+        amethod := upperCase(env.requestMethod());
+        if (amethod = 'POST') or (amethod = 'PUT') or (amethod = 'PATCH') then
         begin
             initPostBodyParamsFromStdInput(env, body);
         end;
