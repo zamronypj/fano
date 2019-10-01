@@ -22,7 +22,8 @@ uses
     StreamAdapterIntf,
     BaseUnix,
     Unix,
-    LruConnectionQueueImpl;
+    LruConnectionQueueImpl,
+    DateUtils;
 
 type
 
@@ -498,8 +499,16 @@ uses
     end;
 
     procedure TSocketSvr.closeIdleConnections();
+    var lruFds : TLruFileDesc;
+        nowTimestamp : int64;
     begin
-        fLruConnectionQueue.pop();
+        nowTimestamp := dateTimeToUnix(now());
+        lruFds := fLruConnectionQueue.top();
+        if (nowTimestamp - lruFds.timestamp > 60 * 1000) then
+        begin
+            fLruConnectionQueue.pop();
+            close(lruFds.fds);
+        end;
     end;
 
     (*!-----------------------------------------------
