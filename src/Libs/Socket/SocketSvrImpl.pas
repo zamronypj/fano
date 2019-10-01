@@ -21,7 +21,8 @@ uses
     DataAvailListenerIntf,
     StreamAdapterIntf,
     BaseUnix,
-    Unix;
+    Unix,
+    LruConnectionQueueImpl;
 
 type
 
@@ -37,6 +38,8 @@ type
      *-----------------------------------------------*)
     TSocketSvr = class(TInterfacedObject, IRunnable, IRunnableWithDataNotif)
     private
+        fLruConnectionQueue : TLruConnectionQueue;
+
         procedure raiseExceptionIfAny();
 
         (*!-----------------------------------------------
@@ -227,7 +230,8 @@ uses
     StreamAdapterImpl,
     SockStreamImpl,
     CloseableStreamImpl,
-    TermSignalImpl;
+    TermSignalImpl,
+    DateUtils;
 
     (*!-----------------------------------------------
      * constructor
@@ -241,6 +245,7 @@ uses
         timeout : integer = 30
     );
     begin
+        fLruConnectionQueue := TLruConnectionQueue.create();
         fListenSocket := listenSocket;
         fQueueSize := queueSize;
         fTimeout := timeout;
@@ -254,6 +259,7 @@ uses
     destructor TSocketSvr.destroy();
     begin
         shutdown();
+        fLruConnectionQueue.free();
         inherited destroy();
     end;
 
@@ -405,6 +411,7 @@ uses
         var origFds : TFDSet
     );
     var clientSocket : longint;
+        lruFds : TLruFileDesc;
     begin
         repeat
             //we have something with listening socket, it means there is
@@ -419,6 +426,10 @@ uses
                 makeNonBlockingSocket(clientSocket);
                 //add client socket to be monitored for I/O
                 addToMonitoredSet(clientSocket, maxHandle, origFds);
+
+                lruFds.fds := clientSocket;
+                lruFds.timestamp := DateTimeToUnix(now());
+                fLruConnectionQueue.push(lruFds);
             end;
         until (clientSocket < 0);
     end;
@@ -488,7 +499,7 @@ uses
 
     procedure TSocketSvr.closeIdleConnections();
     begin
-        //TODO close all idle connections
+        fLruConnectionQueue.pop();
     end;
 
     (*!-----------------------------------------------
