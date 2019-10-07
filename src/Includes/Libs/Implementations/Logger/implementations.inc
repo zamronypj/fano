@@ -26,4 +26,6 @@ StdOutLoggerFactoryImpl,
 
 SysLogLoggerImpl,
 SysLogLoggerFactoryImpl,
+
+ThreadSafeLoggerImpl,
 {------------ End logger-related------------------}
