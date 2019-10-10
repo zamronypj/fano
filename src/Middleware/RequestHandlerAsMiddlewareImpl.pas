@@ -37,7 +37,7 @@ type
             const request : IRequest;
             const response : IResponse;
             const args : IRouteArgsReader;
-            const nextMdlwr : IRequestHandler
+            const next : IRequestHandler
         ) : IResponse;
     end;
 
@@ -58,11 +58,11 @@ implementation
         const request : IRequest;
         const response : IResponse;
         const args : IRouteArgsReader;
-        const nextMdlwr : IRequestHandler
+        const next : IRequestHandler
     ) : IResponse;
     var newResp : IResponse;
     begin
         newResp := requestHandler.handleRequest(request, response, args);
-        result := nextMdlwr.handleRequest(request, newResp, args);
+        result := next.handleRequest(request, newResp, args);
     end;
 end.

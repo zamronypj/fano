@@ -19,3 +19,4 @@ TStdOutLogger = StdOutLoggerImpl.TStdOutLogger;
 TStdOutLoggerFactory = StdOutLoggerFactoryImpl.TStdOutLoggerFactory;
 TSysLogLogger = SysLogLoggerImpl.TSysLogLogger;
 TSysLogLoggerFactory = SysLogLoggerFactoryImpl.TSysLogLoggerFactory;
+TThreadSafeLogger = ThreadSafeLoggerImpl.TThreadSafeLogger;

@@ -173,7 +173,8 @@ uses
     DateUtils,
     SessionConsts,
     HashListImpl,
-    ESessionExpiredImpl;
+    ESessionExpiredImpl,
+    ESessionInvalidImpl;
 
 type
 
@@ -209,6 +210,7 @@ type
         fSessionFilename := baseDir + prefix;
         fFileReader := fileReader;
         fSessionList := THashList.create();
+        fCurrentSession := nil;
     end;
 
     (*!------------------------------------
@@ -216,6 +218,7 @@ type
      *-------------------------------------*)
     destructor TFileSessionManager.destroy();
     begin
+        fCurrentSession := nil;
         cleanUpSessionList();
         fFileReader := nil;
         fSessionList := nil;
@@ -249,7 +252,7 @@ type
     end;
 
     (*!------------------------------------
-     * create session from session id
+     * find session from session id
      *-------------------------------------
      * @param sessionId session id
      * @return session instance or nil if not found
@@ -259,8 +262,7 @@ type
      * from storage. lifeTimeInSec parameter is ignored
      *
      * if sessionId is empty string or invalid
-     * or expired, new ISession is created with empty
-     * data, session life time is set to lifeTime value
+     * or expired, return nil
      *-------------------------------------*)
     function TFileSessionManager.findSession(const sessionId : string) : ISession;
     var sess : ISession;
@@ -270,12 +272,12 @@ type
         sessFile := fSessionFilename + sessionId;
         if (sessionId <> '') and (fileExists(sessFile)) then
         begin
-            sess := fSessionFactory.createSession(
-                fCookieName,
-                sessionId,
-                fFileReader.readFile(sessFile)
-            );
             try
+                sess := fSessionFactory.createSession(
+                    fCookieName,
+                    sessionId,
+                    fFileReader.readFile(sessFile)
+                );
                 result := sess;
             except
                 on ESessionExpired do
@@ -337,15 +339,23 @@ type
         sess : ISession;
         item : PSessionItem;
     begin
-        sessionId := request.getCookieParam(fCookieName);
-        sess := createSession(sessionId, lifeTimeInSec);
+        try
+            sessionId := request.getCookieParam(fCookieName);
+            sess := createSession(sessionId, lifeTimeInSec);
 
-        new(item);
-        item^.sessionObj := sess;
-        fSessionList.add(sess.id(), item);
+            new(item);
+            item^.sessionObj := sess;
+            fSessionList.add(sess.id(), item);
 
-        fCurrentSession := sess;
-        result := sess;
+            fCurrentSession := sess;
+            result := sess;
+        except
+            on e: ESessionExpired do
+            begin
+                e.message := e.message + ' at begin session';
+                raise;
+            end;
+        end;
     end;
 
     (*!------------------------------------
@@ -366,12 +376,16 @@ type
         if (item = nil) and (fCurrentSession <> nil) then
         begin
             //if we get here, it means, this is the first request
-            //so cookie is not yet set
+            //so cookie is not yet set but it is initialized
             result := fCurrentSession;
         end else
+        if (item <> nil) then
         begin
             result := item^.sessionObj;
-        end
+        end else
+        begin
+            raise ESessionInvalid.create('Invalid session. Cannot get valid session');
+        end;
     end;
 
     (*!------------------------------------

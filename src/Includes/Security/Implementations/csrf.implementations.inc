@@ -7,12 +7,14 @@
  *}
 
 (*! ---------------------------------------------
- * implementation units for security
- * that is included in fano.pas unit
+ * list of csrf units in security
+ * that is included in implementations.inc
  *
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
  *-----------------------------------------------*)
 
-{$INCLUDE validations.implementations.inc}
-{$INCLUDE cors.implementations.inc}
-{$INCLUDE csrf.implementations.inc}
+CsrfImpl,
+UrandomCsrfImpl,
+CsrfMiddlewareImpl,
+CsrfMiddlewareFactoryImpl,
+DefaultFailCsrfHandlerImpl,

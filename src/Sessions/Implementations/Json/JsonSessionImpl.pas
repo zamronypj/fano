@@ -175,6 +175,10 @@ uses
     SessionConsts,
     ESessionExpiredImpl;
 
+const
+
+    SESSION_VARS = 'sessionVars';
+
     (*!------------------------------------
      * constructor
      *-------------------------------------
@@ -228,7 +232,7 @@ uses
      *-------------------------------------*)
     function TJsonSession.has(const sessionVar : shortstring) : boolean;
     begin
-        result := (fSessionData.findPath('sessionVars.' + sessionVar) <> nil);
+        result := (fSessionData.findPath(SESSION_VARS + '.' + sessionVar) <> nil);
     end;
 
     (*!------------------------------------
@@ -242,20 +246,20 @@ uses
     var sessValue : TJsonData;
         tmpObj : TJsonObject;
     begin
-        sessValue := fSessionData.findPath('sessionVars.' + sessionVar);
+        sessValue := fSessionData.findPath(SESSION_VARS + '.' + sessionVar);
         if (sessValue <> nil) then
         begin
             sessValue.asString := sessionVal;
         end else
         begin
-            sessValue := fSessionData.findPath('sessionVars');
+            sessValue := fSessionData.findPath(SESSION_VARS);
             if (sessValue <> nil) then
             begin
                 tmpObj := TJsonObject(sessValue);
             end else
             begin
                 tmpObj := TJsonObject.create();
-                TJsonObject(fSessionData).add('sessionVars', tmpObj);
+                TJsonObject(fSessionData).add(SESSION_VARS, tmpObj);
             end;
             tmpObj.add(sessionVar, sessionVal);
         end;
@@ -289,7 +293,15 @@ uses
     function TJsonSession.internalGetVar(const sessionVar : shortstring) : string;
     var sessValue : TJsonData;
     begin
-        sessValue := fSessionData.getPath('sessionVars.' + sessionVar);
+        try
+        sessValue := fSessionData.getPath(SESSION_VARS + '.' + sessionVar);
+        except
+            on e : EJson do
+            begin
+               e.message := e.message + fSessionData.asJson;
+               raise;
+            end;
+        end;
         result := sessValue.asString;
     end;
 
@@ -315,7 +327,7 @@ uses
     function TJsonSession.internalDelete(const sessionVar : shortstring) : ISession;
     var sessValue : TJsonData;
     begin
-        sessValue := fSessionData.getPath('sessionVars');
+        sessValue := fSessionData.findPath(SESSION_VARS);
         if (sessValue <> nil) then
         begin
             TJsonObject(sessValue).delete(sessionVar);
@@ -346,7 +358,7 @@ uses
     function TJsonSession.internalClear() : ISession;
     var sessValue : TJsonData;
     begin
-        sessValue := fSessionData.getPath('sessionVars');
+        sessValue := fSessionData.findPath(SESSION_VARS);
         if (sessValue <> nil) then
         begin
             sessValue.clear();
