@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit CommandLineParamsIntf;
+unit CliParamsIntf;
 
 interface
 
@@ -21,7 +21,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    ICommandLineParameters = interface
+    ICliParameters = interface
         ['{7EBAA6AB-7A5A-4839-B06F-E66F521FF156}']
 
         (*!------------------------------------------------
