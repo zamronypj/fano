@@ -92,8 +92,27 @@ implementation
     end;
 
     procedure TGetOptsParams.buildOptions();
+    var c : char;
+        optionIndex : longint;
     begin
-
+        c:=#0;
+        repeat
+            c := getLongOpts('', @fOpts[0], optionIndex);
+            if c = #0 then
+            begin
+                if (fOpts[optionIndex].has_arg > 0) then
+                begin
+                    fOptions.add(fOpts[optionIndex].name + '=' + optarg);
+                end else
+                begin
+                    fOptions.add(fOpts[optionIndex].name);
+                end;
+            end;
+            if (c = '?') or (c = ':') then
+            begin
+                raise Exception.createFmt('Error with option %s', [optopt]);
+            end;
+        until c = EndOfOptions;
     end;
 
     (*!------------------------------------------------
