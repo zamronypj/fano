@@ -160,7 +160,7 @@ implementation
         const aFlag : pchar = nil;
         const aValue: char = #0
     ) : ICliParametersFactory;
-    var curLen : integer;
+    var currLen : integer;
     begin
         currLen := length(fOpts);
         if (fOptCount < currLen - 1) then
@@ -173,7 +173,13 @@ implementation
     end;
 
     function TGetOptsParams.build() : ICliParameters;
+    var currLen : integer;
     begin
+        currLen := length(fOpts);
+        if (fOptCount < currLen) then
+        begin
+            setLength(fOpts, fOptCount);
+        end;
         buildOptions();
         result := self;
     end;
