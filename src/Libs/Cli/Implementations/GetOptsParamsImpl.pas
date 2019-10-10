@@ -17,8 +17,8 @@ uses
 
     getopts,
     Classes,
-    CommandLineParamsIntf,
-    CommandLineParamsFactoryIntf;
+    CliParamsIntf,
+    CliParamsFactoryIntf;
 
 type
 
@@ -28,9 +28,11 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TGetOptsParams = class(TInterfacedObject, ICommandLineParameters, ICommandLineParametersFactory)
+    TGetOptsParams = class(TInterfacedObject, ICliParameters, ICliParametersFactory)
     private
         fOptions : TStringList;
+        fOpts : array of TOption;
+        fOptCount : integer;
         procedure buildOptions();
     public
         constructor create();
@@ -66,9 +68,9 @@ type
             const hasArg: integer = 0;
             const aFlag : pchar = nil;
             const aValue: char = #0
-        ) : ICommandLineParametersFactory;
+        ) : ICliParametersFactory;
 
-        function build() : ICommandLineParameters;
+        function build() : ICliParameters;
     end;
 
 implementation
@@ -76,12 +78,16 @@ implementation
     constructor TGetOptsParams.create();
     begin
         fOptions := TStringList.create();
-        buildOptions();
+        setLength(fOpts, 10);
+        fOptCount := 0;
     end;
 
     destructor TGetOptsParams.destroy();
     begin
         fOptions.free();
+        setLength(fOpts, 0);
+        fOpts := nil;
+        fOptCount := 0;
         inherited destroy();
     end;
 
@@ -134,15 +140,22 @@ implementation
         const hasArg: integer = 0;
         const aFlag : pchar = nil;
         const aValue: char = #0
-    ) : ICommandLineParametersFactory;
-    var opt : TOption;
+    ) : ICliParametersFactory;
+    var curLen : integer;
     begin
-        opt.setOption(aName, hasArg, aFlag, aValue);
+        currLen := length(fOpts);
+        if (fOptCount < currLen - 1) then
+        begin
+            setLength(fOpts, currLen + 10);
+        end;
+        fOpts[fOptCount].setOption(aName, hasArg, aFlag, aValue);
+        inc(fOptCount);
         result := self;
     end;
 
-    function TGetOptsParams.build() : ICommandLineParameters;
+    function TGetOptsParams.build() : ICliParameters;
     begin
+        buildOptions();
         result := self;
     end;
 end.
