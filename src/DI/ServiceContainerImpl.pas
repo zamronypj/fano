@@ -14,6 +14,7 @@ interface
 
 uses
 
+    DependencyIntf,
     DependencyContainerIntf,
     ServiceContainerIntf,
     ServiceFactoryIntf,
