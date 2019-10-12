@@ -131,7 +131,7 @@ uses
         indx := fOptions.indexOfName(opt);
         if indx > -1 then
         begin
-            result := fOptions.valueFromIndex(indx);
+            result := fOptions.valueFromIndex[indx];
         end else
         begin
             result := defValue;
