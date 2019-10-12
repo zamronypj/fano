@@ -30,7 +30,31 @@ type
          * @param opt option
          * @return value
          *-----------------------------------------------*)
-        function getOption(const opt : string; const defValue : string) : string;
+        function getOption(const opt : string; const defValue : string) : string; overload;
+
+        (*!------------------------------------------------
+         * get option from command line parameters as integer
+         *-----------------------------------------------
+         * @param opt option
+         * @return value
+         *-----------------------------------------------*)
+        function getOption(const opt : string; const defValue : integer) : integer; overload;
+
+        (*!------------------------------------------------
+         * get option from command line parameters as word
+         *-----------------------------------------------
+         * @param opt option
+         * @return value
+         *-----------------------------------------------*)
+        function getOption(const opt : string; const defValue : word) : word; overload;
+
+        (*!------------------------------------------------
+         * get option from command line parameters as boolean
+         *-----------------------------------------------
+         * @param opt option
+         * @return value
+         *-----------------------------------------------*)
+        function getOption(const opt : string; const defValue : boolean) : boolean; overload;
 
         (*!------------------------------------------------
          * test if option is set

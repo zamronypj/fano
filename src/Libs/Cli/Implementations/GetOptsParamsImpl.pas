@@ -44,7 +44,31 @@ type
          * @param opt option
          * @return value
          *-----------------------------------------------*)
-        function getOption(const opt : string; const defValue : string) : string;
+        function getOption(const opt : string; const defValue : string) : string; overload;
+
+        (*!------------------------------------------------
+         * get option from command line parameters as integer
+         *-----------------------------------------------
+         * @param opt option
+         * @return value
+         *-----------------------------------------------*)
+        function getOption(const opt : string; const defValue : integer) : integer; overload;
+
+        (*!------------------------------------------------
+         * get option from command line parameters as word
+         *-----------------------------------------------
+         * @param opt option
+         * @return value
+         *-----------------------------------------------*)
+        function getOption(const opt : string; const defValue : word) : word; overload;
+
+        (*!------------------------------------------------
+         * get option from command line parameters as boolean
+         *-----------------------------------------------
+         * @param opt option
+         * @return value
+         *-----------------------------------------------*)
+        function getOption(const opt : string; const defValue : boolean) : boolean; overload;
 
         (*!------------------------------------------------
          * test if option is set
@@ -77,6 +101,7 @@ implementation
 
 uses
 
+    SysUtils,
     ECliParamsImpl;
 
     constructor TGetOptsParams.create();
@@ -132,6 +157,63 @@ uses
         if indx > -1 then
         begin
             result := fOptions.valueFromIndex[indx];
+        end else
+        begin
+            result := defValue;
+        end;
+    end;
+
+    (*!------------------------------------------------
+     * get option from command line parameters as integer
+     *-----------------------------------------------
+     * @param opt option
+     * @return value
+     *-----------------------------------------------*)
+    function TGetOptsParams.getOption(const opt : string; const defValue : integer) : integer;
+    var indx : integer;
+    begin
+        indx := fOptions.indexOfName(opt);
+        if indx > -1 then
+        begin
+            result := strToInt(fOptions.valueFromIndex[indx]);
+        end else
+        begin
+            result := defValue;
+        end;
+    end;
+
+    (*!------------------------------------------------
+     * get option from command line parameters as word
+     *-----------------------------------------------
+     * @param opt option
+     * @return value
+     *-----------------------------------------------*)
+    function TGetOptsParams.getOption(const opt : string; const defValue : word) : word;
+    var indx : integer;
+    begin
+        indx := fOptions.indexOfName(opt);
+        if indx > -1 then
+        begin
+            result := word(strToInt(fOptions.valueFromIndex[indx]));
+        end else
+        begin
+            result := defValue;
+        end;
+    end;
+
+    (*!------------------------------------------------
+     * get option from command line parameters as boolean
+     *-----------------------------------------------
+     * @param opt option
+     * @return value
+     *-----------------------------------------------*)
+    function TGetOptsParams.getOption(const opt : string; const defValue : boolean) : boolean;
+    var indx : integer;
+    begin
+        indx := fOptions.indexOfName(opt);
+        if indx > -1 then
+        begin
+            result := strToBool(fOptions.valueFromIndex[indx]);
         end else
         begin
             result := defValue;
