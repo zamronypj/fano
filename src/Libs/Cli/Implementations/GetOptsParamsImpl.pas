@@ -163,7 +163,7 @@ uses
         const hasArg: integer = 0;
         const aFlag : pchar = nil;
         const aValue: char = #0
-    ) : ICliParametersFactory;
+    ) : ICliParamsFactory;
     var currLen : integer;
     begin
         currLen := length(fOpts);
@@ -176,7 +176,7 @@ uses
         result := self;
     end;
 
-    function TGetOptsParams.build() : ICliParameters;
+    function TGetOptsParams.build() : ICliParams;
     var currLen : integer;
     begin
         currLen := length(fOpts);
