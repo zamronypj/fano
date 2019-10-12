@@ -33,3 +33,4 @@ TKeyValuePairFactory = KeyValuePairFactoryImpl.TKeyValuePairFactory;
 {$INCLUDE FastCGI/libs.aliases.inc}
 {$INCLUDE SCGI/libs.aliases.inc}
 {$INCLUDE Random/libs.aliases.inc}
+{$INCLUDE Cli/libs.aliases.inc}

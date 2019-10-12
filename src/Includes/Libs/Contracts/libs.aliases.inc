@@ -33,3 +33,6 @@ IRegex = RegexIntf.IRegex;
 IAntivirus = AntivirusIntf.IAntivirus;
 IScanResult = ScanResultIntf.IScanResult;
 IRandom = RandomIntf.IRandom;
+
+ICliParams = CliParamsIntf.ICliParams;
+ICliParamsFactory = CliParamsFactoryIntf.ICliParamsFactory;
