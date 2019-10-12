@@ -171,7 +171,13 @@ uses
         begin
             setLength(fOpts, currLen + 10);
         end;
-        fOpts[fOptCount].setOption(aName, hasArg, aFlag, aValue);
+        with fOpts[fOptCount] do
+        begin
+            name := aName;
+            has_arg := hasArg;
+            flag := aFlag;
+            value := aValue;
+        end;
         inc(fOptCount);
         result := self;
     end;
