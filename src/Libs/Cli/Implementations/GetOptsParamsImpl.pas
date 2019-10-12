@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit GetOptsParamsIntf;
+unit GetOptsParamsImpl;
 
 interface
 
@@ -28,7 +28,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TGetOptsParams = class(TInterfacedObject, ICliParameters, ICliParametersFactory)
+    TGetOptsParams = class(TInterfacedObject, ICliParams, ICliParamsFactory)
     private
         fOptions : TStringList;
         fOpts : array of TOption;
@@ -68,9 +68,9 @@ type
             const hasArg: integer = 0;
             const aFlag : pchar = nil;
             const aValue: char = #0
-        ) : ICliParametersFactory;
+        ) : ICliParamsFactory;
 
-        function build() : ICliParameters;
+        function build() : ICliParams;
     end;
 
 implementation
