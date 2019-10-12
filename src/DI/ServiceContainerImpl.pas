@@ -14,6 +14,7 @@ interface
 
 uses
 
+    DependencyIntf,
     DependencyContainerIntf,
     ServiceContainerIntf,
     ServiceFactoryIntf,
@@ -30,7 +31,6 @@ type
     TServiceContainer = class(TInterfacedObject, IDependencyContainer, IServiceContainer)
     private
         dependencyContainer : IDependencyContainer;
-
     public
         (*!--------------------------------------------------------
          * constructor
@@ -43,6 +43,57 @@ type
          * destructor
          *---------------------------------------------------------*)
         destructor destroy(); override;
+
+        (*!--------------------------------------------------------
+         * Add factory instance to service registration as
+         * single instance
+         *---------------------------------------------------------
+         * @param serviceName name of service
+         * @param serviceFactory factory instance
+         * @return current dependency container instance
+         *---------------------------------------------------------*)
+        function add(const serviceName : shortstring; const serviceFactory : IDependencyFactory) : IDependencyContainer;
+
+        (*!--------------------------------------------------------
+         * Add factory instance to service registration as
+         * multiple instance
+         *---------------------------------------------------------
+         * @param serviceName name of service
+         * @param serviceFactory factory instance
+         * @return current dependency container instance
+         *---------------------------------------------------------*)
+        function factory(const serviceName : shortstring; const serviceFactory : IDependencyFactory) : IDependencyContainer;
+
+        (*!--------------------------------------------------------
+         * Add alias name to existing service
+         *---------------------------------------------------------
+         * @param aliasName alias name of service
+         * @param serviceName actual name of service
+         * @return current dependency container instance
+         *---------------------------------------------------------*)
+        function alias(const aliasName: shortstring; const serviceName : shortstring) : IDependencyContainer;
+
+        (*!--------------------------------------------------------
+         * get instance from service registration using its name.
+         *---------------------------------------------------------
+         * @param serviceName name of service
+         * @return dependency instance
+         * @throws EDependencyNotFoundImpl exception when name is not registered
+         *---------------------------------------------------------
+         * if serviceName is registered with add(), then this method
+         * will always return same instance. If serviceName is
+         * registered using factory(), this method will return
+         * different instance everytime get() is called.
+         *---------------------------------------------------------*)
+        function get(const serviceName : shortstring) : IDependency;
+
+        (*!--------------------------------------------------------
+         * test if service is already registered or not.
+         *---------------------------------------------------------
+         * @param serviceName name of service
+         * @return boolean true if service is registered otherwise false
+         *---------------------------------------------------------*)
+        function has(const serviceName : shortstring) : boolean;
 
         (*!--------------------------------------------------------
          * register factory instance to service registration as
@@ -95,7 +146,6 @@ type
          *---------------------------------------------------------*)
         function isRegistered(const service : IInterface) : boolean;
 
-        property container : IDependencyContainer read dependencyContainer implements IDependencyContainer;
     end;
 
 implementation
@@ -104,7 +154,7 @@ uses
 
     SysUtils;
 
-    constructor TServiceContainer.create(const di :IDependencyContainer);
+    constructor TServiceContainer.create(const di : IDependencyContainer);
     begin
         inherited create();
         dependencyContainer := di;
@@ -117,6 +167,87 @@ uses
     end;
 
     (*!--------------------------------------------------------
+     * Add factory instance to service registration as
+     * single instance
+     *---------------------------------------------------------
+     * @param serviceName name of service
+     * @param service factory instance
+     * @return current dependency container instance
+     *---------------------------------------------------------*)
+    function TServiceContainer.add(
+        const serviceName : shortstring;
+        const serviceFactory : IDependencyFactory
+    ) : IDependencyContainer;
+    begin
+        dependencyContainer.add(serviceName, serviceFactory);
+        result := self;
+    end;
+
+    (*!--------------------------------------------------------
+     * Add factory instance to service registration as
+     * multiple instance
+     *---------------------------------------------------------
+     * @param serviceName name of service
+     * @param serviceFactory factory instance
+     * @return current dependency container instance
+     *---------------------------------------------------------*)
+    function TServiceContainer.factory(
+        const serviceName : shortstring;
+        const serviceFactory : IDependencyFactory
+    ) : IDependencyContainer;
+    begin
+        dependencyContainer.factory(serviceName, serviceFactory);
+        result := self;
+    end;
+
+    (*!--------------------------------------------------------
+     * Add alias name to existing service
+     *---------------------------------------------------------
+     * @param aliasName alias name of service
+     * @param serviceName actual name of service
+     * @return current dependency container instance
+     *---------------------------------------------------------*)
+    function TServiceContainer.alias(const aliasName: shortstring; const serviceName : shortstring) : IDependencyContainer;
+    begin
+        dependencyContainer.alias(aliasName, serviceName);
+        result := self;
+    end;
+
+    (*!--------------------------------------------------------
+     * get instance from service registration using its name or alias.
+     *---------------------------------------------------------
+     * @param serviceName name of service
+     * @return dependency instance
+     * @throws EDependencyNotFound
+     * @throws EInvalidFactory
+     *---------------------------------------------------------
+     * if serviceName is registered with add(), then this method
+     * will always return same instance. If serviceName is
+     * registered using factory(), this method will return
+     * different instance everytime it is called.
+     *---------------------------------------------------------*)
+    function TServiceContainer.get(const serviceName : shortstring) : IDependency;
+    begin
+        result := dependencyContainer.get(serviceName);
+    end;
+
+    (*!--------------------------------------------------------
+     * test if service is already registered or not.
+     *---------------------------------------------------------
+     * @param serviceName name of service
+     * @return boolean true if service is registered otherwise false
+     *---------------------------------------------------------
+     * if serviceName is registered with add(), then this method
+     * will always return same instance. If serviceName is
+     * registered using factory(), this method will return
+     * different instance everytim get() is called.s
+     *---------------------------------------------------------*)
+    function TServiceContainer.has(const serviceName : shortstring) : boolean;
+    begin
+        result := dependencyContainer.has(serviceName);
+    end;
+
+    (*!--------------------------------------------------------
      * register factory instance to service registration as
      * single instance
      *---------------------------------------------------------
@@ -126,7 +257,7 @@ uses
      *---------------------------------------------------------*)
     function TServiceContainer.register(const service : IInterface; const serviceFactory : IServiceFactory) : IServiceContainer;
     begin
-        dependencyContainer.add(GUIDToString(service), serviceFactory);
+        add(GUIDToString(service), serviceFactory);
         result := self;
     end;
 
@@ -140,7 +271,7 @@ uses
      *---------------------------------------------------------*)
     function TServiceContainer.registerMultiple(const service : IInterface; const serviceFactory : IServiceFactory) : IServiceContainer;
     begin
-        dependencyContainer.factory(GUIDToString(service), serviceFactory);
+        factory(GUIDToString(service), serviceFactory);
         result := self;
     end;
 
@@ -153,7 +284,7 @@ uses
      *---------------------------------------------------------*)
     function TServiceContainer.registerAlias(const aliasService: IInterface; const service : IInterface) : IServiceContainer;
     begin
-        dependencyContainer.alias(GUIDToString(aliasService), GUIDToString(service));
+        alias(GUIDToString(aliasService), GUIDToString(service));
         result := self;
     end;
 
@@ -171,7 +302,7 @@ uses
      *---------------------------------------------------------*)
     function TServiceContainer.resolve(const service : IInterface) : IService;
     begin
-        result := dependencyContainer.get(GUIDToString(service)) as IService;
+        result := get(GUIDToString(service)) as IService;
     end;
 
     (*!--------------------------------------------------------
@@ -182,7 +313,7 @@ uses
      *---------------------------------------------------------*)
     function TServiceContainer.isRegistered(const service : IInterface) : boolean;
     begin
-        result := dependencyContainer.has(GUIDToString(service));
+        result := has(GUIDToString(service));
     end;
 
 end.
