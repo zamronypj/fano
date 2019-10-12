@@ -21,7 +21,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    ICliParametersFactory = interface
+    ICliParamsFactory = interface
         ['{E32F0BEC-C606-4601-8AC3-2F3ADAB3D466}z']
 
         (*!------------------------------------------------

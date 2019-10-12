@@ -21,7 +21,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    ICliParameters = interface
+    ICliParams = interface
         ['{7EBAA6AB-7A5A-4839-B06F-E66F521FF156}']
 
         (*!------------------------------------------------
