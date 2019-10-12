@@ -146,7 +146,7 @@ uses
      *-----------------------------------------------*)
     function TGetOptsParams.hasOption(const opt : string) : boolean;
     begin
-        result (fOptions.indexOfName(opt) > -1);
+        result := (fOptions.indexOfName(opt) > -1);
     end;
 
     (*!------------------------------------------------
