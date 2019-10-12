@@ -129,12 +129,13 @@ uses
             c := getLongOpts('', @fOpts[0], optionIndex);
             if c = #0 then
             begin
-                if (fOpts[optionIndex].has_arg > 0) then
+                //optionIndex will be start from 1 instead of zero
+                if (fOpts[optionIndex - 1].has_arg > 0) then
                 begin
-                    fOptions.add(fOpts[optionIndex].name + '=' + optarg);
+                    fOptions.add(fOpts[optionIndex - 1].name + '=' + optarg);
                 end else
                 begin
-                    fOptions.add(fOpts[optionIndex].name);
+                    fOptions.add(fOpts[optionIndex - 1].name);
                 end;
             end;
             if (c = '?') or (c = ':') then
