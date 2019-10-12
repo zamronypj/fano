@@ -75,6 +75,10 @@ type
 
 implementation
 
+uses
+
+    ECliParamsImpl;
+
     constructor TGetOptsParams.create();
     begin
         fOptions := TStringList.create();
@@ -110,7 +114,7 @@ implementation
             end;
             if (c = '?') or (c = ':') then
             begin
-                raise Exception.createFmt('Error with option %s', [optopt]);
+                raise ECliParams.createFmt('Error with option %s', [optopt]);
             end;
         until c = EndOfOptions;
     end;
