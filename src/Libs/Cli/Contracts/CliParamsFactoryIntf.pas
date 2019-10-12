@@ -13,6 +13,10 @@ interface
 {$MODE OBJFPC}
 {$H+}
 
+uses
+
+    CliParamsIntf;
+
 type
 
     (*!------------------------------------------------
@@ -38,9 +42,9 @@ type
             const hasArg: integer = 0;
             const aFlag : pchar = nil;
             const aValue: char = #0
-        ) : ICommandLineParametersFactory;
+        ) : ICliParamsFactory;
 
-        function build() : ICommandLineParameters;
+        function build() : ICliParams;
     end;
 
 implementation
