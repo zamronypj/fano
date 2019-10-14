@@ -45,8 +45,6 @@ uses
 
     fastcgi,
 
-    FcgiRecordFactoryIntf,
-
     FcgiBeginRequestFactory,
     FcgiAbortRequestFactory,
     FcgiEndRequestFactory,
