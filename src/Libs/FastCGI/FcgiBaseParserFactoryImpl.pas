@@ -17,7 +17,8 @@ uses
 
     InjectableObjectImpl,
     FcgiFrameParserIntf,
-    FcgiFrameParserFactoryIntf;
+    FcgiFrameParserFactoryIntf,
+    FcgiRecordFactoryIntf;
 
 type
 
