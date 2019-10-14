@@ -528,7 +528,7 @@ uses
         if (nowTimestamp - lruFds.timestamp > fIdleTimeout) then
         begin
             fLruConnectionQueue.pop();
-            close(lruFds.fds);
+            fpClose(lruFds.fds);
         end;
     end;
 
