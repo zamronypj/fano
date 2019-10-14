@@ -26,7 +26,7 @@ type
      *-----------------------------------------------*)
     TSockStream = class(THandleStream)
     private
-        procedure raiseExceptionIfAny();
+        procedure raiseExceptionIfAny(const msgFormat : string);
     public
         function read(var buffer; count: longint): longint; override;
         function write(const buffer; count: longint): longint; override;
@@ -37,18 +37,20 @@ implementation
 uses
 
     sockets,
-    BaseUnix;
+    BaseUnix,
+    ESockStreamImpl,
+    SocketConsts;
 
-    procedure TSockStream.raiseExceptionIfAny();
-    var errno : longint;
+    procedure TSockStream.raiseExceptionIfAny(const msgFormat : string);
+    var errCode : longint;
     begin
-        errno := socketError();
-        if (errno = ESockEWOULDBLOCK) or (errno = ESysEAGAIN) then
+        errCode := socketError();
+        if (errCode = ESockEWOULDBLOCK) or (errCode = ESysEAGAIN) then
         begin
-            //not ready for read, do nothing, we will retry
+            //not ready for I/O without blocking, do nothing, we will retry
         end else
         begin
-            //TODO handle other error code
+            raise ESockStream.createFmt(msgFormat, [ strError(errCode), errCode ]);
         end;
     end;
 
@@ -58,7 +60,7 @@ uses
         result := fpRecv(Handle, @buffer, count, MSG_NOSIGNAL);
         if result < 0 then
         begin
-            raiseExceptionIfAny();
+            raiseExceptionIfAny(rsSocketReadFailed);
         end;
     end;
 
@@ -66,6 +68,10 @@ uses
     begin
         //disable signal such as SIGPIPE, we will handle error ourselves
         result := fpSend(Handle, @buffer, count, MSG_NOSIGNAL);
+        if result < 0 then
+        begin
+            raiseExceptionIfAny(rsSocketWriteFailed);
+        end;
     end;
 
 end.
