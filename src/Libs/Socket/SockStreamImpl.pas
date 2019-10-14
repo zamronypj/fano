@@ -38,6 +38,7 @@ uses
 
     sockets,
     BaseUnix,
+    errors,
     ESockStreamImpl,
     SocketConsts;
 
