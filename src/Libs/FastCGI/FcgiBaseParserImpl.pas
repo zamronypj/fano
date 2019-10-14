@@ -85,8 +85,21 @@ type
          *-----------------------------------------------*)
         function parseFrame(const buffer : pointer; const bufferSize : ptrUint) : IFcgiRecord;
 
-        property allocator : IMemoryAllocator read fMemAlloc implements IMemoryAllocator;
-        property deallocator : IMemoryDellocator read fMemDelloc implements IMemoryDeallocator;
+        (*!------------------------------------------------
+         * allocate memory
+         *-----------------------------------------------
+         * @param requestedSize, number of bytes to allocate
+         * @return pointer of allocated memory
+         *-----------------------------------------------*)
+        function allocate(const requestedSize : PtrUint) : pointer;
+
+        (*!------------------------------------------------
+         * deallocate memory
+         *-----------------------------------------------
+         * @param ptr, pointer of memory to be allocated
+         * @param requestedSize, number of bytes to deallocate
+         *-----------------------------------------------*)
+        procedure deallocate(const ptr : pointer; const requestedSize : PtrUint);
     end;
 
 implementation
@@ -216,4 +229,25 @@ uses
         end;
     end;
 
+    (*!------------------------------------------------
+     * allocate memory
+     *-----------------------------------------------
+     * @param requestedSize, number of bytes to allocate
+     * @return pointer of allocated memory
+     *-----------------------------------------------*)
+    function TFcgiBaseParser.allocate(const requestedSize : PtrUint) : pointer;
+    begin
+        result := fMemAlloc.allocate(requestedSize);
+    end;
+
+    (*!------------------------------------------------
+     * deallocate memory
+     *-----------------------------------------------
+     * @param ptr, pointer of memory to be allocated
+     * @param requestedSize, number of bytes to deallocate
+     *-----------------------------------------------*)
+    procedure TFcgiBaseParser.deallocate(const ptr : pointer; const requestedSize : PtrUint);
+    begin
+        fMemDealloc.deallocate(ptr, requestedSize);
+    end;
 end.
