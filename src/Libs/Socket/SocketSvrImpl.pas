@@ -22,8 +22,7 @@ uses
     StreamAdapterIntf,
     BaseUnix,
     Unix,
-    LruConnectionQueueImpl,
-    DateUtils;
+    LruConnectionQueueImpl;
 
 type
 
