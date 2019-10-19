@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit ScgiEnvironmentFactoryImpl;
+unit UwsgiEnvironmentFactoryImpl;
 
 interface
 
@@ -24,11 +24,11 @@ uses
 type
     (*!------------------------------------------------
      * factory class to create class having capability
-     * to retrieve SCGI environment variable
+     * to retrieve environment variable from uwsgi data
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *--------------------------------------------------*)
-    TSCGIEnvironmentFactory = class(TFactory, IDependencyFactory, ICGIEnvironmentFactory)
+    TUwsgiEnvironmentFactory = class(TFactory, IDependencyFactory, ICGIEnvironmentFactory)
     private
         fParamStr : string;
     public
@@ -42,23 +42,23 @@ implementation
 uses
 
     classes,
-    ScgiParamKeyValuePairImpl,
+    UwsgiParamKeyValuePairImpl,
     KeyValueEnvironmentImpl;
 
-    constructor TSCGIEnvironmentFactory.create(const paramStr : string);
+    constructor TUwsgiEnvironmentFactory.create(const paramStr : string);
     begin
         fParamStr := paramStr;
     end;
 
-    function TFCGIEnvironmentFactory.build(const container : IDependencyContainer) : IDependency;
+    function TUwsgiEnvironmentFactory.build(const container : IDependencyContainer) : IDependency;
     begin
         result := build() as IDependency;
     end;
 
-    function TFCGIEnvironmentFactory.build() : ICGIEnvironment;
+    function TUwsgiEnvironmentFactory.build() : ICGIEnvironment;
     begin
         result := TKeyValueEnvironment.create(
-            TScgiParamKeyValuePair.create(fParamStr)
+            TUwsgiParamKeyValuePair.create(fParamStr)
         );
     end;
 

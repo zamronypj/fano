@@ -5,7 +5,7 @@
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
-unit ScgiStdOutWriterImpl;
+unit UwsgiStdOutWriterImpl;
 
 interface
 
@@ -22,11 +22,11 @@ type
 
     (*!-----------------------------------------------
      * IStdOut implementation having capability to write
-     * SCGI response to web server
+     * uwsgi response to web server
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TScgiStdOutWriter = class(TStreamStdOut)
+    TUwsgiStdOutWriter = class(TStreamStdOut)
     protected
 
         (*!------------------------------------------------
@@ -34,6 +34,7 @@ type
          *-----------------------------------------------
          * @param stream, stream to write
          * @param str, string to write
+         * @param markEnd, if true, add FCGI_END_REQUEST
          * @return current instance
          *-----------------------------------------------*)
         function writeStream(const stream : IStreamAdapter; const str : string) : IStdOut; override;
@@ -48,7 +49,7 @@ implementation
      * @param str, string to write
      * @return current instance
      *-----------------------------------------------*)
-    function TScgiStdOutWriter.writeStream(const stream : IStreamAdapter; const str : string) : IStdOut;
+    function TUwsgiStdOutWriter.writeStream(const stream : IStreamAdapter; const str : string) : IStdOut;
     begin
         stream.writeBuffer(str[1], length(str));
         result:= self;
