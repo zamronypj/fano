@@ -100,7 +100,7 @@ uses
                 fStdIn
             );
         end;
-        //SCGI protocol requires always close socket connection
+        //close socket connection
         streamCloser.close();
     end;
 

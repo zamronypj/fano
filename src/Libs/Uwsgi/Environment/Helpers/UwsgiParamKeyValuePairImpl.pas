@@ -28,57 +28,59 @@ type
      *--------------------------------------------------*)
     TUwsgiParamKeyValuePair = class(TKeyValuePair)
     private
-        procedure readKeyValueFromString(const aStr : string);
-        procedure extractKeyValue(var tmpStr : string; var akey : string; var avalue : string);
+        procedure readKeyValueFromBuffer(const stream : IStreamAdapter);
+        procedure extractKeyValue(
+            const stream : IStreamAdapter;
+            var akey : string;
+            var avalue : string;
+            var totalRead : integer
+        );
     public
-        constructor create(const paramStr : string);
+        constructor create(stream : IStreamAdapter);
     end;
 
 implementation
 
-uses
-
-    StrUtils;
-
-    constructor TUwsgiParamKeyValuePair.create(const paramStr : string);
+    constructor TUwsgiParamKeyValuePair.create(stream : IStreamAdapter);
     begin
         inherited create();
-        readKeyValueFromString(paramStr);
+        readKeyValueFromBuffer(stream);
     end;
 
     procedure TUwsgiParamKeyValuePair.extractKeyValue(
-        var tmpStr : string;
+        const stream : IStreamAdapter;
         var akey : string;
-        var avalue : string
+        var avalue : string;
+        var totalRead : integer
     );
-    var separator0, separator1 : integer;
-        lenValue : integer;
+    var keyLen, valueLen : word;
     begin
-        //environment variable will be pass in tmpStr as
-        //key#0value#0key#0value#0key#0value#0 ....
-        separator0 := pos(#0, tmpStr);
-        separator1 := posEx(#0, tmpStr, separator0 + 1);
-        akey := copy(tmpStr, 1, separator0 - 1);
-        lenValue := separator1 - separator0 - 1;
-        if (lenValue > 0) then
-        begin
-            avalue := copy(tmpStr, separator0 + 1, lenValue);
-        end else
-        begin
-            avalue := '';
-        end;
-        delete(tmpStr, 1, separator1);
+        //environment variable will be pass in tmp as
+        //[keyLen][key][valueLen][value] ....
+        stream.readBuffer(keyLen, 2);
+        setLength(akey, keyLen);
+        stream.readBuffer(akey[1], keyLen);
+
+        stream.readBuffer(valueLen, 2);
+        setLength(avalue, valueLen);
+        stream.readBuffer(avalue[1], valueLen);
+
+        totalRead := 4 + keyLen + valueLen;
     end;
 
-    procedure TUwsgiParamKeyValuePair.readKeyValueFromString(const aStr : string);
+    procedure TUwsgiParamKeyValuePair.readKeyValueFromBuffer(
+        const stream : IStreamAdapter
+    );
     var akey, avalue : string;
-        tmpStr : string;
+        streamSize, accuRead, totalRead : integer;
     begin
-        tmpStr := aStr;
-        while (length(tmpStr) > 0) do
+        streamSize := stream.size();
+        accuRead := 0;
+        while (accuRead < streamSize) do
         begin
-            extractKeyValue(tmpStr, akey, avalue);
+            extractKeyValue(stream, akey, avalue, totalRead);
             setValue(akey, avalue);
+            inc(accuRead, totalRead);
         end;
     end;
 

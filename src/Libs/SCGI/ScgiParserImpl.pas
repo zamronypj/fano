@@ -97,9 +97,9 @@ resourcestring
 
     destructor TScgiParser.destroy();
     begin
-        inherited destroy();
         fStdIn := nil;
         fEnv := nil;
+        inherited destroy();
     end;
 
     function TScgiParser.isDigit(const ch : char) : boolean;

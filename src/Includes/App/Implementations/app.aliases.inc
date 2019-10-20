@@ -43,3 +43,13 @@ TEpollSimpleScgiWebApplication = EpollSimpleScgiAppImpl.TEpollSimpleScgiWebAppli
 TEpollSimpleUnixScgiWebApplication = EpollSimpleUnixScgiAppImpl.TEpollSimpleUnixScgiWebApplication;
 {$ENDIF}
 {----------------End SCGI related-----------------------------}
+
+{----------------Begin uwsgi related-----------------------------}
+TSimpleUwsgiWebApplication = SimpleUwsgiAppImpl.TSimpleUwsgiWebApplication;
+TSimpleUnixUwsgiWebApplication = SimpleUnixUwsgiAppImpl.TSimpleUnixUwsgiWebApplication;
+
+{$IFDEF LINUX}
+TEpollSimpleUwsgiWebApplication = EpollSimpleUwsgiAppImpl.TEpollSimpleUwsgiWebApplication;
+TEpollSimpleUnixUwsgiWebApplication = EpollSimpleUnixUwsgiAppImpl.TEpollSimpleUnixUwsgiWebApplication;
+{$ENDIF}
+{----------------End uwsgi related-----------------------------}
