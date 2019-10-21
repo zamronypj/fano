@@ -303,7 +303,8 @@ uses
             errCode := socketError();
             raise ESockListen.createFmt(
                 rsSocketListenFailed,
-                [ strError(errCode), errCode ]
+                errCode,
+                strError(errCode)
             );
         end;
     end;
@@ -364,7 +365,8 @@ uses
         begin
             raise ESockError.createFmt(
                 rsSocketError,
-                [ strError(errCode), errCode ]
+                errCode,
+                strError(errCode)
             );
         end;
     end;
