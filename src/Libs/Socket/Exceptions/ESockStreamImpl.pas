@@ -19,7 +19,7 @@ uses
 
 type
 
-    ESockStream = class(ESockErrror)
+    ESockStream = class(ESockError)
     end;
 
 implementation
