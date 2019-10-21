@@ -43,7 +43,7 @@ type
             const dst : IStreamAdapter
         ) : longint;
 
-        function nonBlockingReadBuffer(
+        function nonBlockingCopyBuffer(
             const src : IStreamAdapter;
             const dst : IStreamAdapter;
             const buff : pointer;
@@ -124,7 +124,7 @@ type
         end;
     end;
 
-    function TNonBlockingProtocolProcessor.nonBlockingReadBuffer(
+    function TNonBlockingProtocolProcessor.nonBlockingCopyBuffer(
         const src : IStreamAdapter;
         const dst : IStreamAdapter;
         const buff : pointer;
