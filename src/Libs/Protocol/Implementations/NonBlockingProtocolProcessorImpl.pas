@@ -188,7 +188,7 @@ type
         buff : PBuffInfo;
         res : longint;
     begin
-        streamId := intToHex(PtrInt(stream));
+        streamId := intToHex(PtrInt(stream), 16);
         buff := fBuffLists.find(streamId);
         if (buff = nil) then
         begin
