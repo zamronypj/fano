@@ -74,7 +74,9 @@ uses
     StdInIntf,
     StdInFromStreamImpl,
     NullStreamAdapterImpl,
-    RequestResponseFactoryImpl;
+    RequestResponseFactoryImpl,
+    NonBlockingProtocolProcessorImpl,
+    HashListImpl;
 
     (*!-----------------------------------------------
      * constructor
@@ -114,7 +116,10 @@ uses
             appErr := TErrorHandler.create();
         end;
 
-        appProcessor := TUwsgiProcessor.create(TUwsgiParser.create());
+        appProcessor := TNonBlockingProtocolProcessor.create(
+            TUwsgiProcessor.create(TUwsgiParser.create()),
+            THashList.create()
+        );
         appOutputBuffer := TOutputBuffer.create();
         appStdOutWriter := TUwsgiStdOutWriter.create();
         appStdIn := TStdInFromStream.create(TNullStreamAdapter.create());
