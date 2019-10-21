@@ -27,7 +27,7 @@ type
      * @link https://uwsgi-docs.readthedocs.io/en/latest/Protocol.html
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TUwsgiParser = class(TInterfacedObject, IScgiParser)
+    TUwsgiParser = class(TInterfacedObject, IUwsgiParser)
     private
         fStdIn : IStreamAdapter;
         fEnv : ICGIEnvironment;
