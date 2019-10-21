@@ -79,6 +79,7 @@ implementation
 
 uses
 
+    SysUtils,
     NullStreamAdapterImpl,
     ESockStreamImpl,
     ESockWouldBlockImpl;
