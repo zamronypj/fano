@@ -34,6 +34,8 @@ type
      * We implement our own socket server because TSocketServer
      * from fcl-net not suitable for handling graceful shutdown
      *-------------------------------------------------
+     * @todo Refactor as this class similar to TEpollSocketSvr
+     *-------------------------------------------------
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
     TSocketSvr = class(TInterfacedObject, IRunnable, IRunnableWithDataNotif)
