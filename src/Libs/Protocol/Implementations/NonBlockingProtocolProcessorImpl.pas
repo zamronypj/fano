@@ -82,6 +82,7 @@ uses
     SysUtils,
     Classes,
     BaseUnix,
+    Sockets,
     StreamAdapterImpl,
     ESockStreamImpl,
     ESockWouldBlockImpl;
