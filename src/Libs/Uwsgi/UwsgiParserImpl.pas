@@ -157,7 +157,6 @@ type
     var hdr : uwsgi_packet_header;
         bytesRead : integer;
     begin
-        streamEmpty := false;
         bytesRead := stream.read(hdr, sizeof(hdr));
         if (bytesRead = sizeof(hdr)) then
         begin
