@@ -22,7 +22,8 @@ uses
     StreamAdapterIntf,
     BaseUnix,
     Unix,
-    Linux;
+    Linux,
+    LruConnectionQueueImpl;
 
 type
 
@@ -35,10 +36,13 @@ type
      * We implement our own socket server because TSocketServer
      * from fcl-net not suitable for handling graceful shutdown
      *-------------------------------------------------
+     * @todo Refactor as this class similar to TSocketSvr
+     *-------------------------------------------------
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
     TEpollSocketSvr = class(TInterfacedObject, IRunnable, IRunnableWithDataNotif)
     private
+        fLruConnectionQueue : TLruConnectionQueue;
         procedure raiseExceptionIfAny();
 
         (*!-----------------------------------------------
@@ -134,6 +138,8 @@ type
         fDataAvailListener : IDataAvailListener;
         fListenSocket : longint;
         fQueueSize : longint;
+        fIdleTimeout : longint;
+        fTimeoutVal : longint;
 
         (*!-----------------------------------------------
          * bind socket to an socket address
@@ -177,8 +183,15 @@ type
          *-------------------------------------------------
          * @param listenSocket, socket handle created with fpSocket()
          * @param queueSize, number of queue when listen, 5 = default of Berkeley Socket
+         * @param timeoutInMs, waiting for I/O timeout in millisecond, default 30 seconds
+         * @param idleTimeoutInMs, connection idle timeout in millisecond, default 60 seconds
          *-----------------------------------------------*)
-        constructor create(listenSocket : longint; queueSize : longint = 5);
+        constructor create(
+            listenSocket : longint;
+            queueSize : longint = 5;
+            timeoutInMs : integer = 30000;
+            idleTimeoutInMs : longint = 60000
+        );
 
         (*!-----------------------------------------------
          * destructor
@@ -233,8 +246,15 @@ uses
      *-------------------------------------------------
      * @param listenSocket, socket handle created with fpSocket()
      * @param queueSize, number of queue when listen, 5 = default of Berkeley Socket
+     * @param timeoutInMs, waiting for I/O timeout in millisecond, default 30 seconds
+     * @param idleTimeoutInMs, connection idle timeout in millisecond, default 60 seconds
      *-----------------------------------------------*)
-    constructor TEpollSocketSvr.create(listenSocket : longint; queueSize : integer = 5);
+    constructor TEpollSocketSvr.create(
+        listenSocket : longint;
+        queueSize : integer = 5;
+        timeoutInMs : integer = 30000;
+        idleTimeoutInMs : longint = 60000
+    );
     begin
         fListenSocket := listenSocket;
         fQueueSize := queueSize;
@@ -337,6 +357,7 @@ uses
         const listenSocket : longint
     );
     var clientSocket : longint;
+        lruFds : TLruFileDesc;
     begin
         repeat
             //we have something with listening socket, it means there is
@@ -357,6 +378,10 @@ uses
                 //note that before client socket is closed,
                 //we will remove it from monitored set (see TEpollCloseable class)
                 addToMonitoredSet(epollFd, clientSocket, EPOLLIN {or EPOLLET});
+
+                lruFds.fds := clientSocket;
+                lruFds.timestamp := DateTimeToUnix(now());
+                fLruConnectionQueue.push(lruFds);
             end;
         until (clientSocket < 0);
     end;
@@ -424,6 +449,19 @@ uses
         end;
     end;
 
+    procedure TEpollSocketSvr.closeIdleConnections();
+    var lruFds : TLruFileDesc;
+        nowTimestamp : int64;
+    begin
+        nowTimestamp := dateTimeToUnix(now());
+        lruFds := fLruConnectionQueue.top();
+        if (nowTimestamp - lruFds.timestamp > fIdleTimeout) then
+        begin
+            fLruConnectionQueue.pop();
+            fpClose(lruFds.fds);
+        end;
+    end;
+
     (*!-----------------------------------------------
      * wait for connection
      *-------------------------------------------------
@@ -448,7 +486,7 @@ uses
         terminated := false;
         repeat
             //wait indefinitely until something happen in fListenSocket or epollTerminatePipeIn
-            totFd := epoll_wait(epollFd, events, maxEvents, -1);
+            totFd := epoll_wait(epollFd, events, maxEvents, fTimeoutVal);
             if totFd > 0 then
             begin
                 //one or more file descriptors is ready for I/O, check further
@@ -471,6 +509,7 @@ uses
                 //we have error just terminate
                 terminated := true;
             end;
+            closeIdleConnections();
         until terminated;
         removeFromMonitoredSet(epollFd, termPipeIn);
         removeFromMonitoredSet(epollFd, listenSocket);
