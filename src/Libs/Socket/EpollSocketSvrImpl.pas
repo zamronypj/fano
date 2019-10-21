@@ -283,7 +283,8 @@ uses
             errCode := socketError();
             raise ESockListen.createFmt(
                 rsSocketListenFailed,
-                [ strError(errCode), errCode ]
+                errCode,
+                strError(errCode)
             );
         end;
     end;
