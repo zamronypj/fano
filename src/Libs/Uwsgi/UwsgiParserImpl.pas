@@ -116,7 +116,7 @@ type
             result := TKeyValueEnvironment.create(
                 TUwsgiParamKeyValuePair.create(
                     TStreamAdapter.create(
-                        TMappedMemoryStream(
+                        TMappedMemoryStream.create(
                             buff,
                             size,
                             TNullMemoryDeallocator.create()
