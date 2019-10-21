@@ -198,7 +198,7 @@ type
         end;
 
         res := nonBlockingCopyStream(stream, buff^.buffer);
-        if (res = EAGAIN) or (res = EWOULDBLOCK) then
+        if (res = ESysEAGAIN) or (res = ESockEWOULDBLOCK) then
         begin
             //no more data in socket stream without blocking it, retry next time
         end else
