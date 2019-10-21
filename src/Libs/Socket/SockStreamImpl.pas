@@ -48,10 +48,11 @@ uses
         errCode := socketError();
         if (errCode = ESockEWOULDBLOCK) or (errCode = ESysEAGAIN) then
         begin
-            //not ready for I/O without blocking, do nothing, we will retry
+            //not ready for I/O without blocking,
+            raise ESockWouldBlock.createFmt(msgFormat, errCode, strError(errCode));
         end else
         begin
-            raise ESockStream.createFmt(msgFormat, [ strError(errCode), errCode ]);
+            raise ESockStream.createFmt(msgFormat, errCode, strError(errCode));
         end;
     end;
 

@@ -15,11 +15,11 @@ interface
 
 uses
 
-    SysUtils;
+    ESockErrorImpl;
 
 type
 
-    EEpollCtl = class(Exception)
+    EEpollCtl = class(ESockError)
     end;
 
 implementation

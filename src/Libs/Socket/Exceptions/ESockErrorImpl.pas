@@ -20,8 +20,31 @@ uses
 type
 
     ESockError = class(Exception)
+    private
+        fSocketErrMsg : string;
+        fSocketErrCode : longint;
+    public
+        constructor create(const errCode : longint; const errMsg : string);
+        constructor createFmt(const msgFmt : string; const errCode : longint; const errMsg : string);
+
+        property errCode : longint read fSocketErrCode;
+        property errMsg : string read fSocketErrMsg;
     end;
 
 implementation
+
+    constructor ESockError.create(const errCode : longint; const errMsg : string);
+    begin
+        inherited create(errMsg);
+        fSocketErrCode := errCode;
+        fSocketErrMsg := errMsg;
+    end;
+
+    constructor ESockError.createFmt(const msgFmt : string; const errCode : longint; const errMsg : string);
+    begin
+        inherited createFmt(msgFmt, [errMsg, errCode]);
+        fSocketErrCode := errCode;
+        fSocketErrMsg := errMsg;
+    end;
 
 end.

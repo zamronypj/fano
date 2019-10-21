@@ -15,11 +15,11 @@ interface
 
 uses
 
-    SysUtils;
+    ESockErrorImpl;
 
 type
 
-    ESockStream = class(Exception)
+    ESockStream = class(ESockErrror)
     end;
 
 implementation
