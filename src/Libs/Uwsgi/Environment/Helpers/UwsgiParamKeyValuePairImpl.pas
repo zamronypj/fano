@@ -58,12 +58,24 @@ implementation
         //environment variable will be pass in tmp as
         //[keyLen][key][valueLen][value] ....
         stream.readBuffer(keyLen, 2);
-        setLength(akey, keyLen);
-        stream.readBuffer(akey[1], keyLen);
+        if (keyLen > 0) then
+        begin
+            setLength(akey, keyLen);
+            stream.readBuffer(akey[1], keyLen);
+        end else
+        begin
+            akey := '';
+        end;
 
         stream.readBuffer(valueLen, 2);
-        setLength(avalue, valueLen);
-        stream.readBuffer(avalue[1], valueLen);
+        if valueLen > 0 then
+        begin
+            setLength(avalue, valueLen);
+            stream.readBuffer(avalue[1], valueLen);
+        end else
+        begin
+            avalue := '';
+        end;
 
         totalRead := 4 + keyLen + valueLen;
     end;

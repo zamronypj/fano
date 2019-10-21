@@ -86,7 +86,7 @@ resourcestring
 
 type
 
-    uwsgi_packet_header = record
+    uwsgi_packet_header = packed record
         modifier1 : byte;
         datasize : word;
         modifier2 : byte;
@@ -154,11 +154,12 @@ type
      * process request stream
      *-----------------------------------------------*)
     function TUwsgiParser.parse(const stream : IStreamAdapter) : boolean;
+    const HDR_SIZE = sizeof(uwsgi_packet_header);
     var hdr : uwsgi_packet_header;
         bytesRead : integer;
     begin
-        bytesRead := stream.read(hdr, sizeof(hdr));
-        if (bytesRead = sizeof(hdr)) then
+        bytesRead := stream.read(hdr, HDR_SIZE);
+        if (bytesRead = HDR_SIZE) then
         begin
             if (hdr.modifier1 = 0) and ((hdr.modifier2 = 0)) then
             begin
@@ -170,7 +171,7 @@ type
         begin
             raise EInvalidUwsgiHeader.create(sInvalidUwsgiHeader);
         end;
-        result := (bytesRead = sizeof(hdr));
+        result := (bytesRead = HDR_SIZE);
     end;
 
     (*!------------------------------------------------
