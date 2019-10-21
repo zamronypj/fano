@@ -80,7 +80,7 @@ implementation
 uses
 
     SysUtils,
-    NullStreamAdapterImpl,
+    StreamAdapterImpl,
     ESockStreamImpl,
     ESockWouldBlockImpl;
 
