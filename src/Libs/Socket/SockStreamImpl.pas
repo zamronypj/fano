@@ -40,13 +40,14 @@ uses
     BaseUnix,
     errors,
     ESockStreamImpl,
+    ESockWouldBlockImpl,
     SocketConsts;
 
     procedure TSockStream.raiseExceptionIfAny(const msgFormat : string);
     var errCode : longint;
     begin
         errCode := socketError();
-        if (errCode = ESockEWOULDBLOCK) or (errCode = ESysEAGAIN) then
+        if (errCode = ESysEWOULDBLOCK) or (errCode = ESysEAGAIN) then
         begin
             //not ready for I/O without blocking,
             raise ESockWouldBlock.createFmt(msgFormat, errCode, strError(errCode));
