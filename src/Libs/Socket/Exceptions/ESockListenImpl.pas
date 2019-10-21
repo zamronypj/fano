@@ -15,11 +15,11 @@ interface
 
 uses
 
-    SysUtils;
+    ESockErrorImpl;
 
 type
 
-    ESockListen = class(Exception)
+    ESockListen = class(ESockError)
     end;
 
 implementation

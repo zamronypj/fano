@@ -21,7 +21,8 @@ uses
     DataAvailListenerIntf,
     StreamAdapterIntf,
     BaseUnix,
-    Unix;
+    Unix,
+    LruConnectionQueueImpl;
 
 type
 
@@ -37,6 +38,8 @@ type
      *-----------------------------------------------*)
     TSocketSvr = class(TInterfacedObject, IRunnable, IRunnableWithDataNotif)
     private
+        fLruConnectionQueue : TLruConnectionQueue;
+
         procedure raiseExceptionIfAny();
 
         (*!-----------------------------------------------
@@ -133,10 +136,18 @@ type
             var origFds : TFDSet
         );
 
+        (*!-----------------------------------------------
+         * convert timeout in millisecond to TTimeVal record
+         *-------------------------------------------------
+         * @param timeoutInMs, timeout in millisecond
+        *-----------------------------------------------*)
+        function getTimeout(const timeoutInMs : integer) : TTimeVal;
     protected
         fDataAvailListener : IDataAvailListener;
         fListenSocket : longint;
         fQueueSize : longint;
+        fIdleTimeout : longint;
+        fTimeoutVal : TTimeVal;
 
         (*!-----------------------------------------------
          * bind socket to an socket address
@@ -173,6 +184,8 @@ type
          * @return stream of socket
          *-----------------------------------------------*)
         function getSockStream(clientSocket : longint) : IStreamAdapter; virtual;
+
+        procedure closeIdleConnections();
     public
 
         (*!-----------------------------------------------
@@ -180,8 +193,15 @@ type
          *-------------------------------------------------
          * @param listenSocket, socket handle created with fpSocket()
          * @param queueSize, number of queue when listen, 5 = default of Berkeley Socket
+         * @param timeoutInMs, waiting for I/O timeout in millisecond, default 30 seconds
+         * @param idleTimeoutInMs, connection idle timeout in millisecond, default 60 seconds
          *-----------------------------------------------*)
-        constructor create(listenSocket : longint; queueSize : longint = 5);
+        constructor create(
+            listenSocket : longint;
+            queueSize : longint = 5;
+            timeoutInMs : integer = 30000;
+            idleTimeoutInMs : longint = 60000
+        );
 
         (*!-----------------------------------------------
          * destructor
@@ -210,6 +230,7 @@ implementation
 
 uses
 
+    SysUtils,
     Errors,
     SocketConsts,
     ESockListenImpl,
@@ -218,18 +239,29 @@ uses
     StreamAdapterImpl,
     SockStreamImpl,
     CloseableStreamImpl,
-    TermSignalImpl;
+    TermSignalImpl,
+    DateUtils;
 
     (*!-----------------------------------------------
      * constructor
      *-------------------------------------------------
      * @param listenSocket, socket handle created with fpSocket()
      * @param queueSize, number of queue when listen, 5 = default of Berkeley Socket
+     * @param timeoutInMs, waiting for I/O timeout in millisecond, default 30 seconds
+     * @param idleTimeoutInMs, connection idle timeout in millisecond, default 60 seconds
      *-----------------------------------------------*)
-    constructor TSocketSvr.create(listenSocket : longint; queueSize : integer = 5);
+    constructor TSocketSvr.create(
+        listenSocket : longint;
+        queueSize : longint = 5;
+        timeoutInMs : integer = 30000;
+        idleTimeoutInMs : longint = 60000
+    );
     begin
+        fLruConnectionQueue := TLruConnectionQueue.create();
         fListenSocket := listenSocket;
         fQueueSize := queueSize;
+        fTimeoutVal := getTimeOut(timeoutInMs);
+        fIdleTimeout := idleTimeoutInMs;
         fDataAvailListener := nil;
         makeNonBlockingSocket(listenSocket);
     end;
@@ -240,6 +272,7 @@ uses
     destructor TSocketSvr.destroy();
     begin
         shutdown();
+        fLruConnectionQueue.free();
         inherited destroy();
     end;
 
@@ -370,6 +403,8 @@ uses
         fpFD_CLR(fds, origFds);
         if (fds = maxHandle) then
         begin
+            //if we get here then we remove biggest file descriptor,
+            //update maxHandle to lower biggest file descriptor in set
             while (fpFD_ISSET(maxHandle, origFds) = 0) do
             begin
                 dec(maxHandle);
@@ -391,6 +426,7 @@ uses
         var origFds : TFDSet
     );
     var clientSocket : longint;
+        lruFds : TLruFileDesc;
     begin
         repeat
             //we have something with listening socket, it means there is
@@ -402,8 +438,13 @@ uses
                 raiseExceptionIfAny();
             end else
             begin
+                makeNonBlockingSocket(clientSocket);
                 //add client socket to be monitored for I/O
                 addToMonitoredSet(clientSocket, maxHandle, origFds);
+
+                lruFds.fds := clientSocket;
+                lruFds.timestamp := DateTimeToUnix(now());
+                fLruConnectionQueue.push(lruFds);
             end;
         until (clientSocket < 0);
     end;
@@ -466,6 +507,32 @@ uses
     end;
 
     (*!-----------------------------------------------
+     * convert timeout in millisecond to TTimeVal record
+     *-------------------------------------------------
+     * @param timeoutInMs, timeout in millisecond
+     *-----------------------------------------------*)
+    function TSocketSvr.getTimeout(const timeoutInMs : integer) : TTimeVal;
+    begin
+        //get microsecond from millisecond
+        result.tv_usec := (timeoutInMs mod 1000) * 1000;
+        //get seconds from millisecond
+        result.tv_sec := timeoutInMs div 1000;
+    end;
+
+    procedure TSocketSvr.closeIdleConnections();
+    var lruFds : TLruFileDesc;
+        nowTimestamp : int64;
+    begin
+        nowTimestamp := dateTimeToUnix(now());
+        lruFds := fLruConnectionQueue.top();
+        if (nowTimestamp - lruFds.timestamp > fIdleTimeout) then
+        begin
+            fLruConnectionQueue.pop();
+            fpClose(lruFds.fds);
+        end;
+    end;
+
+    (*!-----------------------------------------------
      * handle incoming connection until terminated
      *-----------------------------------------------*)
     procedure TSocketSvr.handleConnection();
@@ -480,9 +547,9 @@ uses
         terminated := false;
         repeat
             readfds := origfds;
-
-            //wait indefinitely until something happen in fListenSocket or terminatePipeIn
-            totDesc := fpSelect(highestHandle + 1, @readfds, nil, nil, nil);
+            //wait until something happen in
+            //fListenSocket or terminatePipeIn or client connection or timeout
+            totDesc := fpSelect(highestHandle + 1, @readfds, nil, nil, @fTimeoutVal);
             if totDesc > 0 then
             begin
                 //one or more file descriptors is ready for I/O, check further
@@ -496,6 +563,7 @@ uses
                     terminated
                 );
             end;
+            closeIdleConnections();
         until terminated;
     end;
 

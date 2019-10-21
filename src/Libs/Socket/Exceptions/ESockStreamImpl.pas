@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit EEpollCreateImpl;
+unit ESockStreamImpl;
 
 interface
 
@@ -19,7 +19,7 @@ uses
 
 type
 
-    EEpollCreate = class(ESockError)
+    ESockStream = class(ESockErrror)
     end;
 
 implementation

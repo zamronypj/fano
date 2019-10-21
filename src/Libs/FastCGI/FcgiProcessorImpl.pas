@@ -48,6 +48,19 @@ type
             const buffer : pointer;
             const bufferSize : ptrUint
         );
+
+        (*!-----------------------------------------------
+         * handle FCGI request with complete records
+         *------------------------------------------------
+         * @param requestId id of complete request
+         * @param stream socket stream
+         * @param streamClose, instance which can close stream
+         *-----------------------------------------------*)
+        procedure handleCompleteRequest(
+            const requestId : word;
+            const stream : IStreamAdapter;
+            const streamCloser : ICloseable
+        );
     public
         (*!-----------------------------------------------
          * constructor
@@ -136,14 +149,44 @@ uses
     end;
 
     (*!-----------------------------------------------
+     * handle FCGI request with complete records
+     *------------------------------------------------
+     * @param requestId id of complete request
+     * @param stream socket stream
+     * @param streamClose, instance which can close stream
+     *-----------------------------------------------*)
+    procedure TFcgiProcessor.handleCompleteRequest(
+        const requestId : word;
+        const stream : IStreamAdapter;
+        const streamCloser : ICloseable
+    );
+    begin
+        fCompleteRequestId := requestId;
+
+        if assigned(fcgiRequestReadyListener) then
+        begin
+            fcgiRequestReadyListener.ready(
+                stream,
+                fcgiRequestMgr.getEnvironment(requestId),
+                fcgiRequestMgr.getStdInStream(requestId)
+            );
+        end;
+
+        if not fcgiRequestMgr.keepConnection(requestId) then
+        begin
+            streamCloser.close();
+        end;
+
+        fcgiRequestMgr.remove(requestId);
+    end;
+
+    (*!-----------------------------------------------
      * parse stream for FCGI records
      *------------------------------------------------
      * @param stream socket stream
      * @param streamClose, instance which can close stream
      * @param buffer, buffer where data from socket is stored
      * @param bufferSize, size of buffer where data from socket is stored
-     * @return boolean true when FCGI_PARAMS and FCGI_STDIN
-     *         stream is complete otherwise false
      *-----------------------------------------------*)
     procedure TFcgiProcessor.processBuffer(
         const stream : IStreamAdapter;
@@ -161,23 +204,7 @@ uses
             requestId := afcgiRec.getRequestId();
             if fcgiRequestMgr.complete(requestId) then
             begin
-                fCompleteRequestId := requestId;
-
-                if assigned(fcgiRequestReadyListener) then
-                begin
-                    fcgiRequestReadyListener.ready(
-                        stream,
-                        fcgiRequestMgr.getEnvironment(requestId),
-                        fcgiRequestMgr.getStdInStream(requestId)
-                    );
-                end;
-
-                if not fcgiRequestMgr.keepConnection(requestId) then
-                begin
-                    streamCloser.close();
-                end;
-
-                fcgiRequestMgr.remove(requestId);
+                handleCompleteRequest(requestId, stream, streamCloser);
             end;
         end;
     end;
