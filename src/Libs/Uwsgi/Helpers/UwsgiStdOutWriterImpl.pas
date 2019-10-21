@@ -51,6 +51,7 @@ implementation
      *-----------------------------------------------*)
     function TUwsgiStdOutWriter.writeStream(const stream : IStreamAdapter; const str : string) : IStdOut;
     begin
+        stream.write('HTTP/1.1 200 OK' + LineEnding);
         stream.writeBuffer(str[1], length(str));
         result:= self;
     end;
