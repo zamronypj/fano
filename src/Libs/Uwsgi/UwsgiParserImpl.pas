@@ -77,7 +77,8 @@ uses
     NullEnvironmentImpl,
     UwsgiParamKeyValuePairImpl,
     EInvalidUwsgiHeaderImpl,
-    MappedMemoryStreamImpl;
+    MappedMemoryStreamImpl,
+    NullMemoryDeallocatorImpl;
 
 resourcestring
 
