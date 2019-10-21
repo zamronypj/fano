@@ -35,13 +35,13 @@ type
         (*!------------------------------------------------
          * parse string and return CGI environment variable
          *-----------------------------------------------*)
-        function parseEnv(const buffer : IStreamAdapter; const size : integer) : ICGIEnvironment;
+        function parseEnv(const stream : IStreamAdapter; const size : integer) : ICGIEnvironment;
 
         (*!------------------------------------------------
          * parse string and return POST data as stream
          *-----------------------------------------------*)
         procedure readRequestBodyIfAny(
-            const buffer : IStreamAdapter;
+            const stream : IStreamAdapter;
             const stdIn : IStreamAdapter
         );
     public
@@ -106,7 +106,7 @@ type
         inherited destroy();
     end;
 
-    function TUwsgiParser.parseEnv(const buffer : IStreamAdapter; const size : integer) : ICGIEnvironment;
+    function TUwsgiParser.parseEnv(const stream : IStreamAdapter; const size : integer) : ICGIEnvironment;
     var buff : pointer;
     begin
         //we get uwsgi block vars, read total data
@@ -130,7 +130,7 @@ type
     end;
 
     procedure TUwsgiParser.readRequestBodyIfAny(
-        const buffer : IStreamAdapter;
+        const stream : IStreamAdapter;
         const stdIn : IStreamAdapter
     );
     const BUFF_SIZE = 4096;
