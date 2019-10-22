@@ -214,7 +214,7 @@ type
         if (res = 0) then
         begin
             //all data is complete, let actual protocol processor handle
-            fActualProcessor.process(buff^.buffer, streamCloser);
+            fActualProcessor.process(buff^.buffer, streamCloser, streamId);
             //data has been processed, remove buffer.
             fBuffLists.delete(fBuffLists.indexOf(buff^.id));
             buff^.buffer := nil;
