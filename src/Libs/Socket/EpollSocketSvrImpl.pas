@@ -134,6 +134,7 @@ type
          *-----------------------------------------------*)
         procedure removeFromMonitoredSet(const epollFd : longint; const fd : longint);
 
+        procedure closeIdleConnections();
     protected
         fDataAvailListener : IDataAvailListener;
         fListenSocket : longint;
