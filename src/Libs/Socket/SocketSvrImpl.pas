@@ -40,6 +40,12 @@ type
      *-----------------------------------------------*)
     TSocketSvr = class(TInterfacedObject, IRunnable, IRunnableWithDataNotif)
     private
+        {$IFDEF CLOSE_IDLE_CONNECTIONS}
+        fLruConnectionQueue : TLruConnectionQueue;
+        procedure addToConnectionsQueue(fd : longint);
+        procedure closeIdleConnections();
+        {$ENDIF}
+
 
         procedure raiseExceptionIfAny();
 
@@ -143,12 +149,6 @@ type
          * @param timeoutInMs, timeout in millisecond
         *-----------------------------------------------*)
         function getTimeout(const timeoutInMs : integer) : TTimeVal;
-
-        {$IFDEF CLOSE_IDLE_CONNECTIONS}
-        fLruConnectionQueue : TLruConnectionQueue;
-        procedure addToConnectionsQueue(fd : longint);
-        procedure closeIdleConnections();
-        {$ENDIF}
 
     protected
         fDataAvailListener : IDataAvailListener;
