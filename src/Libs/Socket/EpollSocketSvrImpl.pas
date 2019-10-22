@@ -234,7 +234,8 @@ uses
     SocketConsts,
     DateUtils,
     SysUtils,
-    Errors;
+    Errors,
+    StreamIdIntf;
 
     procedure makeNonBlocking(fd: longint);
     var flags : integer;
@@ -593,7 +594,12 @@ uses
                 //from epoll monitoring and after that close socket
                 streamCloser := TEpollCloseable.create(epollFd, clientSocket);
                 try
-                    fDataAvailListener.handleData(astream, self, streamCloser);
+                    fDataAvailListener.handleData(
+                        astream,
+                        self,
+                        streamCloser,
+                        streamCloser as IStreamId
+                    );
                 finally
                     streamCloser := nil;
                 end;
