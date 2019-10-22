@@ -42,6 +42,12 @@ type
      *-----------------------------------------------*)
     TEpollSocketSvr = class(TInterfacedObject, IRunnable, IRunnableWithDataNotif)
     private
+        {$IFDEF CLOSE_IDLE_CONNECTIONS}
+        fLruConnectionQueue : TLruConnectionQueue;
+        procedure addToConnectionsQueue(fd : longint);
+        procedure closeIdleConnections();
+        {$ENDIF}
+
         procedure raiseExceptionIfAny();
 
         (*!-----------------------------------------------
@@ -133,11 +139,6 @@ type
          *-----------------------------------------------*)
         procedure removeFromMonitoredSet(const epollFd : longint; const fd : longint);
 
-        {$IFDEF CLOSE_IDLE_CONNECTIONS}
-        fLruConnectionQueue : TLruConnectionQueue;
-        procedure addToConnectionsQueue(fd : longint);
-        procedure closeIdleConnections();
-        {$ENDIF}
     protected
         fDataAvailListener : IDataAvailListener;
         fListenSocket : longint;
