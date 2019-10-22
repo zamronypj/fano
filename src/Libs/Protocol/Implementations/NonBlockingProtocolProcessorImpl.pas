@@ -56,6 +56,7 @@ type
             const dst : IStreamAdapter;
             const buff : pointer;
             const buffSize : integer;
+            const minBytes : integer;
             var keepReading : boolean
         ) : longint;
 
@@ -143,7 +144,7 @@ uses
     (*!------------------------------------------------
      * get minimum bytes of data to process
      * for example, a FCGI record at least require 8 bytes
-     * to be able to be processed.
+     * to be usable to be processed.
      *-----------------------------------------------*)
     function TNonBlockingProtocolProcessor.getMinimumBytes() : integer;
     begin
@@ -155,6 +156,7 @@ uses
         const dst : IStreamAdapter;
         const buff : pointer;
         const buffSize : integer;
+        const minBytes : integer;
         var keepReading : boolean
     ) : longint;
     var bytesRead : longint;
@@ -164,7 +166,7 @@ uses
             if (bytesRead > 0) then
             begin
                 dst.write(buff^, bytesRead);
-                if (bytesRead >= getMinimumBytes()) then
+                if (bytesRead >= minBytes) then
                 begin
                     processBuffer(dst, stream, streamCloser, streamId);
                 end;
@@ -192,14 +194,16 @@ uses
     const BUFF_SIZE = 4096;
     var buff : pointer;
         keepReading : boolean;
+        minBytes : integer;
     begin
         getMem(buff, BUFF_SIZE);
         try
             keepReading := true;
             result := 0;
+            minBytes := getMinimumBytes();
             while keepReading do
             begin
-                result := nonBlockingCopyBuffer(src, dst, buff, BUFF_SIZE, keepReading);
+                result := nonBlockingCopyBuffer(src, dst, buff, BUFF_SIZE, minBytes, keepReading);
             end;
         finally
             freeMem(buff);
