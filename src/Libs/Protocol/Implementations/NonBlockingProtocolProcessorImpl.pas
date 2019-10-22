@@ -179,11 +179,11 @@ uses
             end;
             result := bytesRead;
         except
-            on e : ESockStream do
-            begin
-                result := -1;
-                keepReading := false;
-            end;
+            // on e : ESockStream do
+            // begin
+            //     result := -1;
+            //     keepReading := false;
+            // end;
 
             on e : ESockWouldBlock do
             begin
@@ -283,11 +283,7 @@ uses
         begin
             //socket is closed, process remaining data if any
             processBuffer(buff, stream, streamCloser, streamId);
-        end else
-        begin
-            //TODO : improve exception
-            raise Exception.create('Something bad happen to socket');
-        end
+        end;
     end;
 
     (*!------------------------------------------------
