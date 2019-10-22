@@ -241,9 +241,8 @@ uses
         if (res = ESysEAGAIN) or (res = ESysEWOULDBLOCK) then
         begin
             //no more data in socket stream without blocking it, retry next time
-            processBuffer(buff, stream, streamCloser, streamId);
         end else
-        if (res = 0) then
+        if (res = 0) or (buff^.buffer.size() > 0) then
         begin
             //all data is complete, let actual protocol processor handle
             processBuffer(buff, stream, streamCloser, streamId);
