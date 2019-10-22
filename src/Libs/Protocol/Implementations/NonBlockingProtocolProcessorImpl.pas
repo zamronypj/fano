@@ -149,7 +149,7 @@ uses
     function TNonBlockingProtocolProcessor.getMinimumBytes() : integer;
     begin
         result := 0;
-    end
+    end;
 
     function TNonBlockingProtocolProcessor.nonBlockingCopyBuffer(
         const src : IStreamAdapter;
