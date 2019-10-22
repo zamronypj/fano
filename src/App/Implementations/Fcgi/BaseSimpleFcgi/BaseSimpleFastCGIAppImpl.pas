@@ -79,7 +79,7 @@ uses
     NullStreamAdapterImpl,
     StdInFromStreamImpl,
     StdInIntf,
-    NonBlockingProtocolProcessorImpl,
+    FcgiNonBlockingProcessorImpl,
     HashListImpl;
 
     (*!-----------------------------------------------
@@ -128,9 +128,10 @@ uses
             TFcgiRequestManager.create(TStreamAdapterCollectionFactory.create())
         );
 
-        appProcessor := TNonBlockingProtocolProcessor.create(
+        appProcessor := TFcgiNonBlockingProcessor.create(
             fcgiProc,
-            THashList.create()
+            THashList.create(),
+            fcgiProc
         );
 
         appOutputBuffer := TOutputBuffer.create();
