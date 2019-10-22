@@ -42,7 +42,7 @@ type
         constructor create(
             const actualProcessor : IProtocolProcessor;
             const buffList : IList;
-            const reqIdAware : IFcgiRequestIdAware;
+            const reqIdAware : IFcgiRequestIdAware
         );
         destructor destroy(); override;
 
@@ -60,7 +60,7 @@ implementation
     constructor TFcgiNonBlockingProcessor.create(
         const actualProcessor : IProtocolProcessor;
         const buffList : IList;
-        const reqIdAware : IFcgiRequestIdAware;
+        const reqIdAware : IFcgiRequestIdAware
     );
     begin
         inherited create(actualProcessor, buffList);
