@@ -134,7 +134,10 @@ type
          *-----------------------------------------------*)
         procedure removeFromMonitoredSet(const epollFd : longint; const fd : longint);
 
+        {$IFDEF CLOSE_IDLE_CONNECTIONS}
+        procedure addToConnectionsQueue(fd : longint);
         procedure closeIdleConnections();
+        {$ENDIF}
     protected
         fDataAvailListener : IDataAvailListener;
         fListenSocket : longint;
@@ -350,6 +353,30 @@ uses
         epoll_ctl(epollFd, EPOLL_CTL_DEL, fd, @ev);
     end;
 
+    {$IFDEF CLOSE_IDLE_CONNECTIONS}
+    //turn off for now as this cause weird access violation sometime
+    procedure TEpollSocketSvr.addToConnectionsQueue(fd : longint);
+    var lruFds : TLruFileDesc;
+    begin
+        lruFds.fds := fd;
+        lruFds.timestamp := DateTimeToUnix(now());
+        fLruConnectionQueue.push(lruFds);
+    end;
+
+    procedure TEpollSocketSvr.closeIdleConnections();
+    var lruFds : TLruFileDesc;
+        nowTimestamp : int64;
+    begin
+        nowTimestamp := dateTimeToUnix(now());
+        lruFds := fLruConnectionQueue.top();
+        if (nowTimestamp - lruFds.timestamp > fIdleTimeout) then
+        begin
+            fLruConnectionQueue.pop();
+            fpClose(lruFds.fds);
+        end;
+    end;
+    {$ENDIF}
+
     (*!-----------------------------------------------
      * accept all incoming connection until no more pending
      * connection available
@@ -382,11 +409,11 @@ uses
                 //add client socket to be monitored for I/O read
                 //note that before client socket is closed,
                 //we will remove it from monitored set (see TEpollCloseable class)
-                addToMonitoredSet(epollFd, clientSocket, EPOLLIN {or EPOLLET});
+                addToMonitoredSet(epollFd, clientSocket, EPOLLIN or EPOLLET);
 
-                lruFds.fds := clientSocket;
-                lruFds.timestamp := DateTimeToUnix(now());
-                fLruConnectionQueue.push(lruFds);
+                {$IFDEF CLOSE_IDLE_CONNECTIONS}
+                addToConnectionsQueue(clientSocket);
+                {$ENDIF}
             end;
         until (clientSocket < 0);
     end;
@@ -454,19 +481,6 @@ uses
         end;
     end;
 
-    procedure TEpollSocketSvr.closeIdleConnections();
-    var lruFds : TLruFileDesc;
-        nowTimestamp : int64;
-    begin
-        nowTimestamp := dateTimeToUnix(now());
-        lruFds := fLruConnectionQueue.top();
-        if (nowTimestamp - lruFds.timestamp > fIdleTimeout) then
-        begin
-            fLruConnectionQueue.pop();
-            fpClose(lruFds.fds);
-        end;
-    end;
-
     (*!-----------------------------------------------
      * wait for connection
      *-------------------------------------------------
@@ -514,7 +528,9 @@ uses
                 //we have error just terminate
                 terminated := true;
             end;
+            {$IFDEF CLOSE_IDLE_CONNECTIONS}
             closeIdleConnections();
+            {$ENDIF}
         until terminated;
         removeFromMonitoredSet(epollFd, termPipeIn);
         removeFromMonitoredSet(epollFd, listenSocket);
