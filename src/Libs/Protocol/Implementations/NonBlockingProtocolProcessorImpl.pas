@@ -18,6 +18,7 @@ uses
     ListIntf,
     StreamAdapterIntf,
     CloseableIntf,
+    StreamIdIntf,
     ReadyListenerIntf,
     ProtocolProcessorIntf;
 
@@ -60,7 +61,11 @@ type
         (*!------------------------------------------------
          * process request stream
          *-----------------------------------------------*)
-        procedure process(const stream : IStreamAdapter; const streamCloser : ICloseable);
+        procedure process(
+            const stream : IStreamAdapter;
+            const streamCloser : ICloseable;
+            const streamId : IStreamId
+        );
 
         (*!------------------------------------------------
          * get StdIn stream for complete request
@@ -187,18 +192,18 @@ type
         const streamCloser : ICloseable;
         const streamId : IStreamId
     );
-    var streamId : shortString;
+    var id : shortString;
         buff : PBuffInfo;
         res : longint;
     begin
-        streamId := intToHex(PtrInt(stream), 16);
-        buff := fBuffLists.find(streamId);
+        id := streamId.getId();
+        buff := fBuffLists.find(id);
         if (buff = nil) then
         begin
             new(buff);
-            buff^.id := streamId;
+            buff^.id := id;
             buff^.buffer := TStreamAdapter.create(TMemoryStream.create());
-            fBuffLists.add(streamId, buff);
+            fBuffLists.add(id, buff);
         end;
 
         res := nonBlockingCopyStream(stream, buff^.buffer);
@@ -216,7 +221,8 @@ type
             dispose(buff);
         end else
         begin
-            raise Exception.create('somthing bad happen to socket');
+            //TODO : improve exception
+            raise Exception.create('Something bad happen to socket');
         end
     end;
 

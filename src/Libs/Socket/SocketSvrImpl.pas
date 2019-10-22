@@ -597,7 +597,7 @@ uses
                 getSockStream(clientSocket)
             );
             try
-                fDataAvailListener.handleData(aStream, self, astream);
+                fDataAvailListener.handleData(aStream, self, astream, astream);
             finally
                 aStream.free();
             end;
