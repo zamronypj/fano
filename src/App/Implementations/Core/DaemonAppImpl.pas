@@ -89,7 +89,8 @@ type
         function handleData(
             const stream : IStreamAdapter;
             const context : TObject;
-            const streamCloser : ICloseable
+            const streamCloser : ICloseable;
+            const streamId : IStreamId
         ) : boolean;
 
         (*!------------------------------------------------
@@ -254,7 +255,8 @@ uses
     function TDaemonWebApplication.handleData(
         const stream : IStreamAdapter;
         const context : TObject;
-        const streamCloser : ICloseable
+        const streamCloser : ICloseable;
+        const streamId : IStreamId
     ) : boolean;
     begin
         fProcessor.process(stream, streamCloser);

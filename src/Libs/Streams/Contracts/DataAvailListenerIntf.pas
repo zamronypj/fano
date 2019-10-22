@@ -40,7 +40,8 @@ type
         function handleData(
             const stream : IStreamAdapter;
             const context : TObject;
-            const streamCloser : ICloseable
+            const streamCloser : ICloseable;
+            const streamId : IStreamId
         ) : boolean;
 
     end;
