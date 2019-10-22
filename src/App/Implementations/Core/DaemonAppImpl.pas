@@ -28,6 +28,7 @@ uses
     ProtocolProcessorIntf,
     ReadyListenerIntf,
     StreamAdapterIntf,
+    StreamIdIntf,
     CoreAppConsts,
     CoreAppImpl;
 
@@ -259,7 +260,7 @@ uses
         const streamId : IStreamId
     ) : boolean;
     begin
-        fProcessor.process(stream, streamCloser);
+        fProcessor.process(stream, streamCloser, streamId);
         result := true;
     end;
 

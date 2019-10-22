@@ -16,7 +16,8 @@ interface
 uses
 
     Classes,
-    CloseableIntf;
+    CloseableIntf,
+    StreamIdIntf;
 
 type
 
@@ -26,19 +27,21 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TEpollCloseable = class(TInterfacedObject, ICloseable)
+    TEpollCloseable = class(TInterfacedObject, ICloseable, IStreamId)
     private
         fEpollHandle : longint;
         fHandle : THandle;
     public
         constructor create(const epollHandle : longint; const ahandle: THandle);
         function close() : boolean;
+        function getId() : shortstring;
     end;
 
 implementation
 
 uses
 
+    SysUtils,
     sockets,
     baseunix,
     unix,
@@ -69,4 +72,8 @@ uses
         result := true;
     end;
 
+    function TEpollCloseable.getId() : shortstring;
+    begin
+        result := intToHex(fHandle, 16);
+    end;
 end.

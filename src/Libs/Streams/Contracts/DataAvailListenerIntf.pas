@@ -16,7 +16,8 @@ interface
 uses
 
     CloseableIntf,
-    StreamAdapterIntf;
+    StreamAdapterIntf,
+    StreamIdIntf;
 
 type
 
