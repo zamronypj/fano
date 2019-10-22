@@ -61,6 +61,7 @@ type
 
         procedure processBuffer(
             buff : PBuffInfo;
+            const stream : IStreamAdapter;
             const streamCloser : ICloseable;
             const streamId : IStreamId
         );
@@ -194,14 +195,19 @@ uses
      *-----------------------------------------------*)
     procedure TNonBlockingProtocolProcessor.processBuffer(
         buff : PBuffInfo;
+        const stream : IStreamAdapter;
         const streamCloser : ICloseable;
         const streamId : IStreamId
     );
+    var segStream : IStreamAdapter;
     begin
         if (buff^.buffer.size() > 0) then
         begin
+            //we use segregated stream, so that we can read from data in memory
+            //but write to socket
+            segStream := TSegregatedStreamAdapter.create(buff^.buffer, stream);
             buff^.buffer.seek(0, soFromBeginning);
-            fActualProcessor.process(buff^.buffer, streamCloser, streamId);
+            fActualProcessor.process(segStream, streamCloser, streamId);
             //data has been processed, remove buffer.
             fBuffLists.delete(fBuffLists.indexOf(buff^.id));
             buff^.buffer := nil;
@@ -227,12 +233,7 @@ uses
         begin
             new(buff);
             buff^.id := id;
-            //we use segregated stream, so that we can read from data in memory
-            //but write to socket
-            buff^.buffer := TSegregatedStreamAdapter.create(
-                TStreamAdapter.create(TMemoryStream.create()),
-                stream
-            );
+            buff^.buffer := TStreamAdapter.create(TMemoryStream.create());
             fBuffLists.add(id, buff);
         end;
 
@@ -240,12 +241,12 @@ uses
         if (res = ESysEAGAIN) or (res = ESysEWOULDBLOCK) then
         begin
             //no more data in socket stream without blocking it, retry next time
-            processBuffer(buff, streamCloser, streamId);
+            processBuffer(buff, stream, streamCloser, streamId);
         end else
         if (res = 0) then
         begin
             //all data is complete, let actual protocol processor handle
-            processBuffer(buff, streamCloser, streamId);
+            processBuffer(buff, stream, streamCloser, streamId);
         end else
         begin
             //TODO : improve exception
