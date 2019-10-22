@@ -45,11 +45,11 @@ type
         procedure raiseExceptionIfAny();
 
         (*!-----------------------------------------------
-         * make listen socket non blocking
+         * make socket non blocking
          *-------------------------------------------------
-         * @param listenSocket, listen socket handle
+         * @param aSocket, socket handle
          *-----------------------------------------------*)
-        procedure makeNonBlockingSocket(listenSocket : longint);
+        procedure makeNonBlockingSocket(aSocket : longint);
 
         (*!-----------------------------------------------
          * accept all incoming connection until no more pending
@@ -279,16 +279,16 @@ uses
     end;
 
     (*!-----------------------------------------------
-     * make listen socket non blocking
+     * make socket non blocking
      *-------------------------------------------------
      * @param listenSocket, listen socket handle
      *-----------------------------------------------*)
-    procedure TSocketSvr.makeNonBlockingSocket(listenSocket : longint);
+    procedure TSocketSvr.makeNonBlockingSocket(aSocket : longint);
     var flags : longint;
     begin
-        //read control flag and set listen socket to be non blocking
-        flags := fpFcntl(listenSocket, F_GETFL, 0);
-        fpFcntl(listenSocket, F_SETFl, flags or O_NONBLOCK);
+        //read control flag and set socket to be non blocking
+        flags := fpFcntl(aSocket, F_GETFL, 0);
+        fpFcntl(aSocket, F_SETFl, flags or O_NONBLOCK);
     end;
 
     (*!-----------------------------------------------
@@ -357,7 +357,7 @@ uses
     var errCode : longint;
     begin
         errCode := socketError();
-        if (errCode = EsockEWOULDBLOCK) or (errCode = EsysEAGAIN) then
+        if (errCode = ESysEWOULDBLOCK) or (errCode = ESysEAGAIN) then
         begin
             //if we get here, it mostly because socket is non blocking
             //but no pending connection, so just do nothing
