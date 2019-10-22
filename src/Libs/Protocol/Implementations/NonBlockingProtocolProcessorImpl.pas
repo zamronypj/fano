@@ -105,7 +105,6 @@ uses
     ESockStreamImpl,
     ESockWouldBlockImpl;
 
-
     constructor TNonBlockingProtocolProcessor.create(
         const actualProcessor : IProtocolProcessor;
         const buffList : IList
