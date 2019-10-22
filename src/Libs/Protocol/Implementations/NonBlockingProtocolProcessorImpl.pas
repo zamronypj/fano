@@ -240,12 +240,12 @@ uses
         if (res = ESysEAGAIN) or (res = ESysEWOULDBLOCK) then
         begin
             //no more data in socket stream without blocking it, retry next time
-            processBuffer(buff, streanCloser, streamId);
+            processBuffer(buff, streamCloser, streamId);
         end else
         if (res = 0) then
         begin
             //all data is complete, let actual protocol processor handle
-            processBuffer(buff, streanCloser, streamId);
+            processBuffer(buff, streamCloser, streamId);
         end else
         begin
             //TODO : improve exception
