@@ -40,7 +40,6 @@ type
      *-----------------------------------------------*)
     TSocketSvr = class(TInterfacedObject, IRunnable, IRunnableWithDataNotif)
     private
-        fLruConnectionQueue : TLruConnectionQueue;
 
         procedure raiseExceptionIfAny();
 
@@ -146,6 +145,7 @@ type
         function getTimeout(const timeoutInMs : integer) : TTimeVal;
 
         {$IFDEF CLOSE_IDLE_CONNECTIONS}
+        fLruConnectionQueue : TLruConnectionQueue;
         procedure addToConnectionsQueue(fd : longint);
         procedure closeIdleConnections();
         {$ENDIF}
@@ -264,7 +264,9 @@ uses
         idleTimeoutInMs : longint = 60000
     );
     begin
+        {$IFDEF CLOSE_IDLE_CONNECTIONS}
         fLruConnectionQueue := TLruConnectionQueue.create();
+        {$ENDIF}
         fListenSocket := listenSocket;
         fQueueSize := queueSize;
         fTimeoutVal := getTimeOut(timeoutInMs);
@@ -279,7 +281,9 @@ uses
     destructor TSocketSvr.destroy();
     begin
         shutdown();
+        {$IFDEF CLOSE_IDLE_CONNECTIONS}
         fLruConnectionQueue.free();
+        {$ENDIF}
         inherited destroy();
     end;
 
