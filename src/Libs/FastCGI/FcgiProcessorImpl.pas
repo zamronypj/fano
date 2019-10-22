@@ -23,7 +23,8 @@ uses
     StdInStreamAwareIntf,
     FcgiRequestManagerIntf,
     FcgiRequestIdAwareIntf,
-    FcgiFrameParserIntf;
+    FcgiFrameParserIntf,
+    StreamIdIntf;
 
 type
 
@@ -87,7 +88,8 @@ type
          *-----------------------------------------------*)
         procedure process(
             const stream : IStreamAdapter;
-            const streamCloser : ICloseable
+            const streamCloser : ICloseable;
+            const streamId : IStreamId
         );
 
         (*!------------------------------------------------
