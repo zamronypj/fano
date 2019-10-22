@@ -24,8 +24,8 @@ type
         fSocketErrMsg : string;
         fSocketErrCode : longint;
     public
-        constructor create(const errCode : longint; const errMsg : string);
-        constructor createFmt(const msgFmt : string; const errCode : longint; const errMsg : string);
+        constructor create(const errCode : longint; const errMsg : string); overload;
+        constructor createFmt(const msgFmt : string; const errCode : longint; const errMsg : string); overload;
 
         property errCode : longint read fSocketErrCode;
         property errMsg : string read fSocketErrMsg;
