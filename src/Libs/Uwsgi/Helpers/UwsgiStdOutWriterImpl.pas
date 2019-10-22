@@ -50,9 +50,10 @@ implementation
      * @return current instance
      *-----------------------------------------------*)
     function TUwsgiStdOutWriter.writeStream(const stream : IStreamAdapter; const str : string) : IStdOut;
+    var tmpStr : string;
     begin
-        stream.write('HTTP/1.1 200 OK' + LineEnding);
-        stream.writeBuffer(str[1], length(str));
+        tmpStr := 'HTTP/1.1 200 OK' + LineEnding + str;
+        stream.writeBuffer(tmpStr[1], length(tmpStr));
         result:= self;
     end;
 end.
