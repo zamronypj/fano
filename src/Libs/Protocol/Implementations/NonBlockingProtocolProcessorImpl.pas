@@ -59,7 +59,11 @@ type
             var keepReading : boolean
         ) : longint;
 
-        procedure processBuffer();
+        procedure processBuffer(
+            buff : PBuffInfo;
+            const streamCloser : ICloseable;
+            const streamId : IStreamId
+        );
     public
         constructor create(
             const actualProcessor : IProtocolProcessor;
@@ -100,7 +104,6 @@ uses
     SegregatedStreamAdapterImpl,
     ESockStreamImpl,
     ESockWouldBlockImpl;
-
 
     constructor TNonBlockingProtocolProcessor.create(
         const actualProcessor : IProtocolProcessor;
