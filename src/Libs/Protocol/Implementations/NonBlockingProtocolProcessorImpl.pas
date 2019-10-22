@@ -48,14 +48,14 @@ type
 
         function nonBlockingCopyStream(
             const sockStream : IStreamAdapter;
-            const dst : IStreamAdapter;
+            const buffInfo : PBuffInfo;
             const streamCloser : ICloseable;
             const streamId : IStreamId
         ) : longint;
 
         function nonBlockingCopyBuffer(
             const sockStream : IStreamAdapter;
-            const dst : IStreamAdapter;
+            const buffInfo : PBuffInfo;
             const streamCloser : ICloseable;
             const streamId : IStreamId;
             const buff : pointer;
@@ -157,7 +157,7 @@ uses
 
     function TNonBlockingProtocolProcessor.nonBlockingCopyBuffer(
         const sockStream : IStreamAdapter;
-        const dst : IStreamAdapter;
+        const buffInfo : PBuffInfo;
         const streamCloser : ICloseable;
         const streamId : IStreamId;
         const buff : pointer;
@@ -171,10 +171,10 @@ uses
             bytesRead := sockStream.read(buff^, buffSize);
             if (bytesRead > 0) then
             begin
-                dst.write(buff^, bytesRead);
+                buffInfo.buffer.write(buff^, bytesRead);
                 if (bytesRead >= minBytes) then
                 begin
-                    processBuffer(dst, sockStream, streamCloser, streamId);
+                    processBuffer(buffInfo, sockStream, streamCloser, streamId);
                 end;
             end;
             result := bytesRead;
@@ -195,7 +195,7 @@ uses
 
     function TNonBlockingProtocolProcessor.nonBlockingCopyStream(
         const sockStream : IStreamAdapter;
-        const dst : IStreamAdapter;
+        const buffInfo : PBuffInfo;
         const streamCloser : ICloseable;
         const streamId : IStreamId
     ) : longint;
@@ -213,7 +213,7 @@ uses
             begin
                 result := nonBlockingCopyBuffer(
                     sockStream,
-                    dst,
+                    buffInfo,
                     streamCloser,
                     streamId,
                     buff,
