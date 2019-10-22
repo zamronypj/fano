@@ -24,6 +24,13 @@ uses
 
 type
 
+    TBuffInfo = record
+        id : shortstring;
+        buffer : IStreamAdapter;
+    end;
+
+    PBuffInfo = ^TBuffInfo;
+
     (*!-----------------------------------------------
      * class having capability to process
      * stream from web server in non-blocking fashion
@@ -51,6 +58,8 @@ type
             const buffSize : integer;
             var keepReading : boolean
         ) : longint;
+
+        procedure processBuffer();
     public
         constructor create(
             const actualProcessor : IProtocolProcessor;
@@ -88,17 +97,10 @@ uses
     Classes,
     BaseUnix,
     StreamAdapterImpl,
+    SegregatedStreamAdapterImpl,
     ESockStreamImpl,
     ESockWouldBlockImpl;
 
-type
-
-    TBuffInfo = record
-        id : shortstring;
-        buffer : IStreamAdapter;
-    end;
-
-    PBuffInfo = ^TBuffInfo;
 
     constructor TNonBlockingProtocolProcessor.create(
         const actualProcessor : IProtocolProcessor;
@@ -187,6 +189,26 @@ type
     (*!------------------------------------------------
      * process request stream
      *-----------------------------------------------*)
+    procedure TNonBlockingProtocolProcessor.processBuffer(
+        buff : PBuffInfo;
+        const streamCloser : ICloseable;
+        const streamId : IStreamId
+    );
+    begin
+        if (buff^.buffer.size() > 0) then
+        begin
+            buff^.buffer.seek(0, soFromBeginning);
+            fActualProcessor.process(buff^.buffer, streamCloser, streamId);
+            //data has been processed, remove buffer.
+            fBuffLists.delete(fBuffLists.indexOf(buff^.id));
+            buff^.buffer := nil;
+            dispose(buff);
+        end;
+    end;
+
+    (*!------------------------------------------------
+     * process request stream
+     *-----------------------------------------------*)
     procedure TNonBlockingProtocolProcessor.process(
         const stream : IStreamAdapter;
         const streamCloser : ICloseable;
@@ -202,7 +224,12 @@ type
         begin
             new(buff);
             buff^.id := id;
-            buff^.buffer := TStreamAdapter.create(TMemoryStream.create());
+            //we use segregated stream, so that we can read from data in memory
+            //but write to socket
+            buff^.buffer := TSegregatedStreamAdapter.create(
+                TStreamAdapter.create(TMemoryStream.create()),
+                stream
+            );
             fBuffLists.add(id, buff);
         end;
 
@@ -210,15 +237,12 @@ type
         if (res = ESysEAGAIN) or (res = ESysEWOULDBLOCK) then
         begin
             //no more data in socket stream without blocking it, retry next time
+            processBuffer(buff, streanCloser, streamId);
         end else
         if (res = 0) then
         begin
             //all data is complete, let actual protocol processor handle
-            fActualProcessor.process(buff^.buffer, streamCloser, streamId);
-            //data has been processed, remove buffer.
-            fBuffLists.delete(fBuffLists.indexOf(buff^.id));
-            buff^.buffer := nil;
-            dispose(buff);
+            processBuffer(buff, streanCloser, streamId);
         end else
         begin
             //TODO : improve exception
