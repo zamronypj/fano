@@ -65,6 +65,8 @@ type
             const streamCloser : ICloseable;
             const streamId : IStreamId
         );
+    protected
+        function getMinimumBytes() : integer;
     public
         constructor create(
             const actualProcessor : IProtocolProcessor;
@@ -138,6 +140,16 @@ uses
         end;
     end;
 
+    (*!------------------------------------------------
+     * get minimum bytes of data to process
+     * for example, a FCGI record at least require 8 bytes
+     * to be able to be processed.
+     *-----------------------------------------------*)
+    function TNonBlockingProtocolProcessor.getMinimumBytes() : integer;
+    begin
+        result := 0;
+    end
+
     function TNonBlockingProtocolProcessor.nonBlockingCopyBuffer(
         const src : IStreamAdapter;
         const dst : IStreamAdapter;
@@ -152,6 +164,10 @@ uses
             if (bytesRead > 0) then
             begin
                 dst.write(buff^, bytesRead);
+                if (bytesRead >= getMinimumBytes()) then
+                begin
+                    processBuffer(dst, stream, streamCloser, streamId);
+                end;
             end;
             result := bytesRead;
         except
@@ -242,9 +258,9 @@ uses
         begin
             //no more data in socket stream without blocking it, retry next time
         end else
-        if (res = 0) or (buff^.buffer.size() > 0) then
+        if (res = 0) then
         begin
-            //all data is complete, let actual protocol processor handle
+            //socket is closed, process remaining data if any
             processBuffer(buff, stream, streamCloser, streamId);
         end else
         begin
