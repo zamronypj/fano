@@ -218,7 +218,11 @@ uses
      * @param stream socket stream
      * @param streamClose, instance which can close stream
      *-----------------------------------------------*)
-    procedure TFcgiProcessor.process(const stream : IStreamAdapter; const streamCloser : ICloseable);
+    procedure TFcgiProcessor.process(
+        const stream : IStreamAdapter;
+        const streamCloser : ICloseable;
+        const streamId : IStreamId
+    );
     var bufPtr : pointer;
         bufSize  : ptrUint;
         streamEmpty : boolean;
