@@ -274,7 +274,7 @@ uses
             fBuffLists.add(id, buff);
         end;
 
-        res := nonBlockingCopyStream(stream, buff^.buffer, streamCloser, streamId);
+        res := nonBlockingCopyStream(stream, buff, streamCloser, streamId);
         if (res = ESysEAGAIN) or (res = ESysEWOULDBLOCK) then
         begin
             //no more data in socket stream without blocking it, retry next time
