@@ -171,7 +171,7 @@ uses
             bytesRead := sockStream.read(buff^, buffSize);
             if (bytesRead > 0) then
             begin
-                buffInfo.buffer.write(buff^, bytesRead);
+                buffInfo^.buffer.write(buff^, bytesRead);
                 if (bytesRead >= minBytes) then
                 begin
                     processBuffer(buffInfo, sockStream, streamCloser, streamId);
