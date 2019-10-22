@@ -47,13 +47,17 @@ type
         procedure clearBuffers();
 
         function nonBlockingCopyStream(
-            const src : IStreamAdapter;
-            const dst : IStreamAdapter
+            const sockStream : IStreamAdapter;
+            const dst : IStreamAdapter;
+            const streamCloser : ICloseable;
+            const streamId : IStreamId
         ) : longint;
 
         function nonBlockingCopyBuffer(
-            const src : IStreamAdapter;
+            const sockStream : IStreamAdapter;
             const dst : IStreamAdapter;
+            const streamCloser : ICloseable;
+            const streamId : IStreamId;
             const buff : pointer;
             const buffSize : integer;
             const minBytes : integer;
@@ -152,8 +156,10 @@ uses
     end;
 
     function TNonBlockingProtocolProcessor.nonBlockingCopyBuffer(
-        const src : IStreamAdapter;
+        const sockStream : IStreamAdapter;
         const dst : IStreamAdapter;
+        const streamCloser : ICloseable;
+        const streamId : IStreamId;
         const buff : pointer;
         const buffSize : integer;
         const minBytes : integer;
@@ -162,13 +168,13 @@ uses
     var bytesRead : longint;
     begin
         try
-            bytesRead := src.read(buff^, buffSize);
+            bytesRead := sockStream.read(buff^, buffSize);
             if (bytesRead > 0) then
             begin
                 dst.write(buff^, bytesRead);
                 if (bytesRead >= minBytes) then
                 begin
-                    processBuffer(dst, stream, streamCloser, streamId);
+                    processBuffer(dst, sockStream, streamCloser, streamId);
                 end;
             end;
             result := bytesRead;
@@ -188,8 +194,10 @@ uses
     end;
 
     function TNonBlockingProtocolProcessor.nonBlockingCopyStream(
-        const src : IStreamAdapter;
-        const dst : IStreamAdapter
+        const sockStream : IStreamAdapter;
+        const dst : IStreamAdapter;
+        const streamCloser : ICloseable;
+        const streamId : IStreamId
     ) : longint;
     const BUFF_SIZE = 4096;
     var buff : pointer;
@@ -203,7 +211,16 @@ uses
             minBytes := getMinimumBytes();
             while keepReading do
             begin
-                result := nonBlockingCopyBuffer(src, dst, buff, BUFF_SIZE, minBytes, keepReading);
+                result := nonBlockingCopyBuffer(
+                    sockStream,
+                    dst,
+                    streamCloser,
+                    streamId,
+                    buff,
+                    BUFF_SIZE,
+                    minBytes,
+                    keepReading
+                );
             end;
         finally
             freeMem(buff);
@@ -257,7 +274,7 @@ uses
             fBuffLists.add(id, buff);
         end;
 
-        res := nonBlockingCopyStream(stream, buff^.buffer);
+        res := nonBlockingCopyStream(stream, buff^.buffer, streamCloser, streamId);
         if (res = ESysEAGAIN) or (res = ESysEWOULDBLOCK) then
         begin
             //no more data in socket stream without blocking it, retry next time
