@@ -25,6 +25,7 @@ uses
     ProtocolProcessorIntf,
     NonBlockingProtocolProcessorImpl;
 
+type
 
     (*!-----------------------------------------------
      * class having capability to process
