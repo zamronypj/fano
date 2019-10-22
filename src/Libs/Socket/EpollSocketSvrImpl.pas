@@ -395,7 +395,6 @@ uses
         const listenSocket : longint
     );
     var clientSocket : longint;
-        lruFds : TLruFileDesc;
     begin
         repeat
             //we have something with listening socket, it means there is
