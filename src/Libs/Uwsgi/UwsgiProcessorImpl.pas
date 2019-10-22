@@ -17,6 +17,7 @@ uses
 
     StreamAdapterIntf,
     CloseableIntf,
+    StreamIdIntf,
     UwsgiParserIntf,
     ProtocolProcessorIntf,
     ReadyListenerIntf;
@@ -43,7 +44,11 @@ type
         (*!------------------------------------------------
          * process request stream
          *-----------------------------------------------*)
-        procedure process(const stream : IStreamAdapter; const streamCloser : ICloseable);
+        procedure process(
+            const stream : IStreamAdapter;
+            const streamCloser : ICloseable;
+            const streamId : IStreamId
+        );
 
         (*!------------------------------------------------
          * get StdIn stream for complete request
@@ -88,7 +93,11 @@ uses
     (*!------------------------------------------------
      * process request stream
      *-----------------------------------------------*)
-    procedure TUwsgiProcessor.process(const stream : IStreamAdapter; const streamCloser : ICloseable);
+    procedure TUwsgiProcessor.process(
+        const stream : IStreamAdapter;
+        const streamCloser : ICloseable;
+        const streamId : IStreamId
+    );
     begin
         fParser.parse(stream);
         fStdIn := fParser.getStdIn();
