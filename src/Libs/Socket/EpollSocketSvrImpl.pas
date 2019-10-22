@@ -232,6 +232,7 @@ uses
     TermSignalImpl,
     SocketConsts,
     DateUtils,
+    SysUtils,
     Errors;
 
     procedure makeNonBlocking(fd: longint);
