@@ -231,6 +231,7 @@ uses
     EEpollCtlImpl,
     TermSignalImpl,
     SocketConsts,
+    DateUtils,
     Errors;
 
     procedure makeNonBlocking(fd: longint);
