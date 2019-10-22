@@ -19,6 +19,7 @@ uses
     CloseableIntf,
     ScgiParserIntf,
     ProtocolProcessorIntf,
+    StreamIdIntf,
     ReadyListenerIntf;
 
 type
@@ -43,7 +44,11 @@ type
         (*!------------------------------------------------
          * process request stream
          *-----------------------------------------------*)
-        procedure process(const stream : IStreamAdapter; const streamCloser : ICloseable);
+        procedure process(
+            const stream : IStreamAdapter;
+            const streamCloser : ICloseable;
+            const streamId : IStreamId
+        );
 
         (*!------------------------------------------------
          * get StdIn stream for complete request
@@ -88,7 +93,11 @@ uses
     (*!------------------------------------------------
      * process request stream
      *-----------------------------------------------*)
-    procedure TScgiProcessor.process(const stream : IStreamAdapter; const streamCloser : ICloseable);
+    procedure TScgiProcessor.process(
+        const stream : IStreamAdapter;
+        const streamCloser : ICloseable;
+        const streamId : IStreamId
+    );
     begin
         fParser.parse(stream);
         fStdIn := fParser.getStdIn();

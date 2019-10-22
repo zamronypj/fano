@@ -26,14 +26,14 @@ type
 
     TLruComparator = class
     public
-        class function c(a,b: TLruFileDesc):boolean; inline;
+        class function c(a,b: TLruFileDesc) : boolean; inline;
     end;
 
     TLruConnectionQueue = specialize TPriorityQueue<TLruFileDesc, TLruComparator>;
 
 implementation
 
-    class function TLruComparator.c(a,b: TLruFileDesc):boolean;inline;
+    class function TLruComparator.c(a,b: TLruFileDesc) : boolean; inline;
     begin
         //last recent used file descriptor will have bigger timestamp
         //and should have bigger priority

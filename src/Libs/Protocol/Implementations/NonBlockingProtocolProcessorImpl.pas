@@ -184,7 +184,8 @@ type
      *-----------------------------------------------*)
     procedure TNonBlockingProtocolProcessor.process(
         const stream : IStreamAdapter;
-        const streamCloser : ICloseable
+        const streamCloser : ICloseable;
+        const streamId : IStreamId
     );
     var streamId : shortString;
         buff : PBuffInfo;

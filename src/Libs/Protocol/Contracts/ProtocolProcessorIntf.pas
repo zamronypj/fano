@@ -17,6 +17,7 @@ uses
 
     StreamAdapterIntf,
     CloseableIntf,
+    StreamIdIntf,
     ReadyListenerIntf;
 
 type
@@ -33,7 +34,11 @@ type
         (*!------------------------------------------------
          * process request stream
          *-----------------------------------------------*)
-        procedure process(const stream : IStreamAdapter; const streamCloser : ICloseable);
+        procedure process(
+            const stream : IStreamAdapter;
+            const streamCloser : ICloseable;
+            const streamId : IStreamId
+        );
 
         (*!------------------------------------------------
          * get StdIn stream for complete request
