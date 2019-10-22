@@ -144,6 +144,12 @@ type
          * @param timeoutInMs, timeout in millisecond
         *-----------------------------------------------*)
         function getTimeout(const timeoutInMs : integer) : TTimeVal;
+
+        {$IFDEF CLOSE_IDLE_CONNECTIONS}
+        procedure addToConnectionsQueue(fd : longint);
+        procedure closeIdleConnections();
+        {$ENDIF}
+
     protected
         fDataAvailListener : IDataAvailListener;
         fListenSocket : longint;
@@ -187,7 +193,6 @@ type
          *-----------------------------------------------*)
         function getSockStream(clientSocket : longint) : IStreamAdapter; virtual;
 
-        procedure closeIdleConnections();
     public
 
         (*!-----------------------------------------------
@@ -416,6 +421,30 @@ uses
         end;
     end;
 
+    {$IFDEF CLOSE_IDLE_CONNECTIONS}
+    //we turn off for now as this cause weird access violation sometime
+    procedure TSocketSvr.addToConnectionsQueue(fd : longint);
+    var lruFds : TLruFileDesc;
+    begin
+        lruFds.fds := fd;
+        lruFds.timestamp := DateTimeToUnix(now());
+        fLruConnectionQueue.push(lruFds);
+    end;
+
+    procedure TSocketSvr.closeIdleConnections();
+    var lruFds : TLruFileDesc;
+        nowTimestamp : int64;
+    begin
+        nowTimestamp := dateTimeToUnix(now());
+        lruFds := fLruConnectionQueue.top();
+        if (nowTimestamp - lruFds.timestamp > fIdleTimeout) then
+        begin
+            fLruConnectionQueue.pop();
+            fpClose(lruFds.fds);
+        end;
+    end;
+    {$ENDIF}
+
     (*!-----------------------------------------------
      * accept all incoming connection until no more pending
      * connection available
@@ -430,7 +459,6 @@ uses
         var origFds : TFDSet
     );
     var clientSocket : longint;
-        lruFds : TLruFileDesc;
     begin
         repeat
             //we have something with listening socket, it means there is
@@ -445,10 +473,9 @@ uses
                 makeNonBlockingSocket(clientSocket);
                 //add client socket to be monitored for I/O
                 addToMonitoredSet(clientSocket, maxHandle, origFds);
-
-                lruFds.fds := clientSocket;
-                lruFds.timestamp := DateTimeToUnix(now());
-                fLruConnectionQueue.push(lruFds);
+                {$IFDEF CLOSE_IDLE_CONNECTIONS}
+                addToConnectionsQueue(clientSocket);
+                {$ENDIF}
             end;
         until (clientSocket < 0);
     end;
@@ -523,19 +550,6 @@ uses
         result.tv_sec := timeoutInMs div 1000;
     end;
 
-    procedure TSocketSvr.closeIdleConnections();
-    var lruFds : TLruFileDesc;
-        nowTimestamp : int64;
-    begin
-        nowTimestamp := dateTimeToUnix(now());
-        lruFds := fLruConnectionQueue.top();
-        if (nowTimestamp - lruFds.timestamp > fIdleTimeout) then
-        begin
-            fLruConnectionQueue.pop();
-            fpClose(lruFds.fds);
-        end;
-    end;
-
     (*!-----------------------------------------------
      * handle incoming connection until terminated
      *-----------------------------------------------*)
@@ -567,7 +581,9 @@ uses
                     terminated
                 );
             end;
+            {$IFDEF CLOSE_IDLE_CONNECTIONS}
             closeIdleConnections();
+            {$ENDIF}
         until terminated;
     end;
 
