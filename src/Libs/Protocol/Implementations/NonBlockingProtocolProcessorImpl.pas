@@ -56,11 +56,8 @@ type
         function nonBlockingCopyBuffer(
             const sockStream : IStreamAdapter;
             const buffInfo : PBuffInfo;
-            const streamCloser : ICloseable;
-            const streamId : IStreamId;
             const buff : pointer;
             const buffSize : integer;
-            const minBytes : integer;
             var keepReading : boolean
         ) : longint;
 
@@ -158,11 +155,8 @@ uses
     function TNonBlockingProtocolProcessor.nonBlockingCopyBuffer(
         const sockStream : IStreamAdapter;
         const buffInfo : PBuffInfo;
-        const streamCloser : ICloseable;
-        const streamId : IStreamId;
         const buff : pointer;
         const buffSize : integer;
-        const minBytes : integer;
         var keepReading : boolean
     ) : longint;
     var bytesRead : longint;
@@ -172,28 +166,9 @@ uses
             if (bytesRead > 0) then
             begin
                 buffInfo^.buffer.write(buff^, bytesRead);
-                if (bytesRead >= minBytes) then
-                begin
-                    processBuffer(buffInfo, sockStream, streamCloser, streamId);
-                end;
             end;
             result := bytesRead;
         except
-            on e : ESockStream do
-            begin
-                if e.errCode = ESysEBADF then
-                begin
-                    //we get bad file descriptor, it means socket already been closed
-                    //by streamCloser, for example when handling FastCGI
-                    result := -1;
-                    keepReading := false;
-                end else
-                begin
-                    //else re-raise exception
-                    raise;
-                end;
-            end;
-
             on e : ESockWouldBlock do
             begin
                 result := e.errCode;
@@ -211,23 +186,18 @@ uses
     const BUFF_SIZE = 4096;
     var buff : pointer;
         keepReading : boolean;
-        minBytes : integer;
     begin
         getMem(buff, BUFF_SIZE);
         try
             keepReading := true;
             result := 0;
-            minBytes := getMinimumBytes();
             while keepReading do
             begin
                 result := nonBlockingCopyBuffer(
                     sockStream,
                     buffInfo,
-                    streamCloser,
-                    streamId,
                     buff,
                     BUFF_SIZE,
-                    minBytes,
                     keepReading
                 );
             end;
@@ -247,7 +217,7 @@ uses
     );
     var segStream : IStreamAdapter;
     begin
-        if (buff^.buffer.size() > 0) then
+        if (buff^.buffer.size() > getMinimumBytes()) then
         begin
             //we use segregated stream, so that we can read from data in memory
             //but write to socket
@@ -271,7 +241,6 @@ uses
     );
     var id : shortString;
         buff : PBuffInfo;
-        res : longint;
     begin
         id := streamId.getId();
         buff := fBuffLists.find(id);
@@ -283,16 +252,8 @@ uses
             fBuffLists.add(id, buff);
         end;
 
-        res := nonBlockingCopyStream(stream, buff, streamCloser, streamId);
-        if (res = ESysEAGAIN) or (res = ESysEWOULDBLOCK) then
-        begin
-            //no more data in socket stream without blocking it, retry next time
-        end else
-        if (res = 0) then
-        begin
-            //socket is closed, process remaining data if any
-            processBuffer(buff, stream, streamCloser, streamId);
-        end;
+        nonBlockingCopyStream(stream, buff, streamCloser, streamId);
+        processBuffer(buff, sockStream, streamCloser, streamId);
     end;
 
     (*!------------------------------------------------
