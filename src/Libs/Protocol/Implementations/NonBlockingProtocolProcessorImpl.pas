@@ -253,7 +253,7 @@ uses
         end;
 
         nonBlockingCopyStream(stream, buff, streamCloser, streamId);
-        processBuffer(buff, sockStream, streamCloser, streamId);
+        processBuffer(buff, stream, streamCloser, streamId);
     end;
 
     (*!------------------------------------------------
