@@ -179,11 +179,20 @@ uses
             end;
             result := bytesRead;
         except
-            // on e : ESockStream do
-            // begin
-            //     result := -1;
-            //     keepReading := false;
-            // end;
+            on e : ESockStream do
+            begin
+                if e.errCode = ESysEBADF then
+                begin
+                    //we get bad file descriptor, it means socket already been closed
+                    //by streamCloser, for example when handling FastCGI
+                    result := -1;
+                    keepReading := false;
+                end else
+                begin
+                    //else re-raise exception
+                    raise;
+                end;
+            end;
 
             on e : ESockWouldBlock do
             begin
