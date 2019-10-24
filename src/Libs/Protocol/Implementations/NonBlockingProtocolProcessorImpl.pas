@@ -27,6 +27,7 @@ type
     TBuffInfo = record
         id : shortstring;
         buffer : IStreamAdapter;
+        expectedSize : int64;
     end;
 
     PBuffInfo = ^TBuffInfo;
@@ -46,12 +47,18 @@ type
 
         procedure clearBuffers();
 
+
+        (*!------------------------------------------------
+         * read socket stream to memory
+         *-----------------------------------------------
+         * @param sockStream socket stream adapter
+         * @param buffInfo temporary buffer
+         * @return true if all data is complete
+         *-----------------------------------------------*)
         function nonBlockingCopyStream(
             const sockStream : IStreamAdapter;
-            const buffInfo : PBuffInfo;
-            const streamCloser : ICloseable;
-            const streamId : IStreamId
-        ) : longint;
+            const buffInfo : PBuffInfo
+        ) : boolean;
 
         function nonBlockingCopyBuffer(
             const sockStream : IStreamAdapter;
@@ -67,8 +74,6 @@ type
             const streamCloser : ICloseable;
             const streamId : IStreamId
         );
-    protected
-        function getMinimumBytes() : integer;
     public
         constructor create(
             const actualProcessor : IProtocolProcessor;
@@ -96,6 +101,14 @@ type
          * @return current instance
          *-----------------------------------------------*)
         function setReadyListener(const listener : IReadyListener) : IProtocolProcessor;
+
+        (*!------------------------------------------------
+         * get number of bytes of complete request based
+         * on information buffer
+         *-----------------------------------------------
+         * @return number of bytes of complete request
+         *-----------------------------------------------*)
+        function expectedSize(const buff : IStreamAdapter) : int64;
     end;
 
 implementation
@@ -109,6 +122,9 @@ uses
     SegregatedStreamAdapterImpl,
     ESockStreamImpl,
     ESockWouldBlockImpl;
+
+const
+    UNKNOWN_SIZE = -1;
 
     constructor TNonBlockingProtocolProcessor.create(
         const actualProcessor : IProtocolProcessor;
@@ -142,23 +158,13 @@ uses
         end;
     end;
 
-    (*!------------------------------------------------
-     * get minimum bytes of data to process
-     * for example, a FCGI record at least require 8 bytes
-     * to be usable to be processed.
-     *-----------------------------------------------*)
-    function TNonBlockingProtocolProcessor.getMinimumBytes() : integer;
-    begin
-        result := 0;
-    end;
-
-    function TNonBlockingProtocolProcessor.nonBlockingCopyBuffer(
+    procedure TNonBlockingProtocolProcessor.nonBlockingCopyBuffer(
         const sockStream : IStreamAdapter;
         const buffInfo : PBuffInfo;
         const buff : pointer;
         const buffSize : integer;
         var keepReading : boolean
-    ) : longint;
+    );
     var bytesRead : longint;
     begin
         try
@@ -166,17 +172,22 @@ uses
             if (bytesRead > 0) then
             begin
                 buffInfo^.buffer.write(buff^, bytesRead);
+                if (buffInfo^.expectedNumberOfBytes = UNKNOWN_SIZE) then
+                begin
+                    //try to peek number of expected bytes if any available
+                    buffInfo^.expectedSize := fActualProcessor.expectedNumberOfBytes(
+                        buffInfo^.buffer
+                    );
+                end;
             end else
             if (bytesRead = 0) then
             begin
                 //end of file
                 keepReading := false;
             end;
-            result := bytesRead;
         except
             on e : ESockWouldBlock do
             begin
-                result := e.errCode;
                 keepReading := false;
             end;
         end;
@@ -184,10 +195,8 @@ uses
 
     function TNonBlockingProtocolProcessor.nonBlockingCopyStream(
         const sockStream : IStreamAdapter;
-        const buffInfo : PBuffInfo;
-        const streamCloser : ICloseable;
-        const streamId : IStreamId
-    ) : longint;
+        const buffInfo : PBuffInfo
+    ) : boolean;
     const BUFF_SIZE = 4096;
     var buff : pointer;
         keepReading : boolean;
@@ -195,10 +204,9 @@ uses
         getMem(buff, BUFF_SIZE);
         try
             keepReading := true;
-            result := 0;
             while keepReading do
             begin
-                result := result + nonBlockingCopyBuffer(
+                nonBlockingCopyBuffer(
                     sockStream,
                     buffInfo,
                     buff,
@@ -206,6 +214,8 @@ uses
                     keepReading
                 );
             end;
+            result := (buffInfo^.expectedSize <> UNKNOWN_SIZE) and
+                (buffInfo ^.buffer.size() = buffInfo^.expectedSize);
         finally
             freeMem(buff);
         end;
@@ -222,18 +232,15 @@ uses
     );
     var segStream : IStreamAdapter;
     begin
-        if (buff^.buffer.size() > getMinimumBytes()) then
-        begin
-            //we use segregated stream, so that we can read from data in memory
-            //but write to socket
-            segStream := TSegregatedStreamAdapter.create(buff^.buffer, stream);
-            buff^.buffer.seek(0, soFromBeginning);
-            fActualProcessor.process(segStream, streamCloser, streamId);
-            //data has been processed, remove buffer.
-            fBuffLists.delete(fBuffLists.indexOf(buff^.id));
-            buff^.buffer := nil;
-            dispose(buff);
-        end;
+        //we use segregated stream, so that we can read from data in memory
+        //but write to socket
+        segStream := TSegregatedStreamAdapter.create(buff^.buffer, stream);
+        buff^.buffer.seek(0, soFromBeginning);
+        fActualProcessor.process(segStream, streamCloser, streamId);
+        //data has been processed, remove buffer.
+        fBuffLists.delete(fBuffLists.indexOf(buff^.id));
+        buff^.buffer := nil;
+        dispose(buff);
     end;
 
     (*!------------------------------------------------
@@ -254,11 +261,15 @@ uses
             new(buff);
             buff^.id := id;
             buff^.buffer := TStreamAdapter.create(TMemoryStream.create());
+            buff^.expectedSize := UNKNOWN_SIZE;
             fBuffLists.add(id, buff);
         end;
 
-        nonBlockingCopyStream(stream, buff, streamCloser, streamId);
-        processBuffer(buff, stream, streamCloser, streamId);
+        if nonBlockingCopyStream(stream, buff) then
+        begin
+            //all data is complete, process it
+            processBuffer(buff, stream, streamCloser, streamId);
+        end;
     end;
 
     (*!------------------------------------------------
@@ -280,4 +291,14 @@ uses
         result := self;
     end;
 
+    (*!------------------------------------------------
+     * get number of bytes of complete request based
+     * on information buffer
+     *-----------------------------------------------
+     * @return number of bytes of complete request
+     *-----------------------------------------------*)
+    function TNonBlockingProtocolProcessor.expectedSize(const buff : IStreamAdapter) : int64;
+    begin
+        result := fActualProcessor.expectedSize(buff);
+    end;
 end.

@@ -110,6 +110,14 @@ type
         * get FastCGI StdIn stream for complete request
         *-----------------------------------------------*)
         function getStdIn() : IStreamAdapter;
+
+        (*!------------------------------------------------
+         * get number of bytes of complete request based
+         * on information buffer
+         *-----------------------------------------------
+         * @return number of bytes of complete request
+         *-----------------------------------------------*)
+        function expectedSize(const buff : IStreamAdapter) : int64;
     end;
 
 implementation
@@ -263,5 +271,16 @@ uses
     function TFcgiProcessor.getStdIn() : IStreamAdapter;
     begin
         result := fcgiRequestMgr.getStdInStream(fCompleteRequestId);
+    end;
+
+    (*!------------------------------------------------
+     * get number of bytes of complete request based
+     * on information buffer
+     *-----------------------------------------------
+     * @return number of bytes of complete request
+     *-----------------------------------------------*)
+    function TFcgiProcessor.expectedSize(const buff : IStreamAdapter) : int64;
+    begin
+        result := fParser.expectedSize(buff);
     end;
 end.

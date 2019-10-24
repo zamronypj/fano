@@ -61,6 +61,14 @@ type
          * @return current instance
          *-----------------------------------------------*)
         function setReadyListener(const listener : IReadyListener) : IProtocolProcessor;
+
+        (*!------------------------------------------------
+         * get number of bytes of complete request based
+         * on information buffer
+         *-----------------------------------------------
+         * @return number of bytes of complete request
+         *-----------------------------------------------*)
+        function expectedSize(const buff : IStreamAdapter) : int64;
     end;
 
 implementation
@@ -132,4 +140,14 @@ uses
         result := self;
     end;
 
+    (*!------------------------------------------------
+     * get number of bytes of complete request based
+     * on information buffer
+     *-----------------------------------------------
+     * @return number of bytes of complete request
+     *-----------------------------------------------*)
+    function TScgiProcessor.expectedSize(const buff : IStreamAdapter) : int64;
+    begin
+        result := fParser.expectedSize(buff);
+    end;
 end.
