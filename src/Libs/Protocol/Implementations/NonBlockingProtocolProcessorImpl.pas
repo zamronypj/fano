@@ -166,6 +166,11 @@ uses
             if (bytesRead > 0) then
             begin
                 buffInfo^.buffer.write(buff^, bytesRead);
+            end else
+            if (bytesRead = 0) then
+            begin
+                //end of file
+                keepReading := false;
             end;
             result := bytesRead;
         except
@@ -193,7 +198,7 @@ uses
             result := 0;
             while keepReading do
             begin
-                result := nonBlockingCopyBuffer(
+                result := result + nonBlockingCopyBuffer(
                     sockStream,
                     buffInfo,
                     buff,

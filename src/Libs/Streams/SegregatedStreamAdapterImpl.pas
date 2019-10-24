@@ -203,7 +203,7 @@ resourcestring
      *-----------------------------------------------*)
     function TSegregatedStreamAdapter.size() : int64;
     begin
-        result := fReadStream.size;
+        result := fReadStream.size();
     end;
 
     (*!------------------------------------------------
