@@ -169,10 +169,10 @@ uses
             if (bytesRead > 0) then
             begin
                 buffInfo^.buffer.write(buff^, bytesRead);
-                if (buffInfo^.expectedNumberOfBytes = UNKNOWN_SIZE) then
+                if (buffInfo^.expectedSize = UNKNOWN_SIZE) then
                 begin
                     //try to peek number of expected bytes if any available
-                    buffInfo^.expectedSize := fActualProcessor.expectedNumberOfBytes(
+                    buffInfo^.expectedSize := fActualProcessor.expectedSize(
                         buffInfo^.buffer
                     );
                 end;
