@@ -241,15 +241,17 @@ resourcestring
      *-----------------------------------------------
      * @return number of bytes
      *-----------------------------------------------*)
-    function TScgiParser.expectedSize(const stream : IStreamAdapter) : int64;
+    function TScgiParser.expectedSize(const buff : IStreamAdapter) : int64;
     var str : string;
         regex : TRegex;
         res : TRegexMatchResult;
     begin
         result := -1;
-        if stream.size() > 0 then
+        if buff.size() > 0 then
         begin
-            setLength(str, stream.size());
+            setLength(str, buff.size());
+            buff.seek(0, FROM_BEGINNING);
+            buff.read(str[1], length(str));
             regex := TRegex.create();
             try
                 res := regex.match('^(\d+)\:.*CONTENT_LENGTH\x00(\d+)\x00', str);
