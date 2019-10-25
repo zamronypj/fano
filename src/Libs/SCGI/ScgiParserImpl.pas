@@ -86,6 +86,7 @@ uses
     ScgiParamKeyValuePairImpl,
     EInvalidScgiHeaderImpl,
     EInvalidScgiBodyImpl,
+    RegExpr,
     RegexImpl;
 
 resourcestring
