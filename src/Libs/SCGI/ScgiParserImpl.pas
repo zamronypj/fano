@@ -259,8 +259,10 @@ resourcestring
                 if (res.matched) then
                 begin
                     //total bytes of SCGI request is
-                    //length of env vars + one termination char (coma) + content length of body
-                    result := strToInt(res.matches[0][1]) + strToInt(res.matches[0][2]) + 1;
+                    //lengh + 1 (char :)+length of env vars + content length of body
+                    result := length(res.matches[0][1]) + 1 +
+                        strToInt(res.matches[0][1]) +
+                        strToInt(res.matches[0][2]);
                 end;
             finally
                 regex.free();
