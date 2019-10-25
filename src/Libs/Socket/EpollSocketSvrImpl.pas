@@ -98,10 +98,10 @@ type
          * @param epollFd, file descriptor returned from epoll_create()
          * @param clientSocket, socket handle where data can be read
          *-----------------------------------------------*)
-        procedure handleClientConnection(
+        function handleClientConnection(
             const epollFd : longint;
             const clientSocket : longint
-        );
+        ) : boolean;
 
         (*!-----------------------------------------------
          * handle when one or more file descriptor is ready for I/O
@@ -601,13 +601,14 @@ uses
      * @param epollFd, file descriptor returned from epoll_create()
      * @param clientSocket, socket handle where data can be read
      *-----------------------------------------------*)
-    procedure TEpollSocketSvr.handleClientConnection(
+    function TEpollSocketSvr.handleClientConnection(
         const epollFd : longint;
         const clientSocket : longint
-    );
+    ) : boolean;
     var astream : IStreamAdapter;
         streamCloser : ICloseable;
     begin
+        result := true;
         if (assigned(fDataAvailListener)) then
         begin
             astream := getSockStream(clientSocket);

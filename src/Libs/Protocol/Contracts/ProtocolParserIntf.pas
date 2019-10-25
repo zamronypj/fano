@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit ProtocolProcessorIntf;
+unit ProtocolParserIntf;
 
 interface
 
@@ -15,54 +15,45 @@ interface
 
 uses
 
-    StreamAdapterIntf,
-    CloseableIntf,
-    StreamIdIntf,
-    ReadyListenerIntf;
-
-const
-    UNKNOWN_SIZE = -1;
+    EnvironmentIntf,
+    StreamAdapterIntf;
 
 type
 
     (*!-----------------------------------------------
-     * Interface for any class having capability to process
-     * stream from web server
+     * Interface for any class having capability to parse
+     * protocol data
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    IProtocolProcessor = interface
-        ['{877EACC4-9DC6-4C66-9F73-E3C835B2C786}']
+    IProtocolParser = interface
+        ['{B4950FD9-2E60-4E11-8A32-8802AB7244CB}']
 
         (*!------------------------------------------------
-         * process request stream
+         * parse stream
          *-----------------------------------------------*)
-        function process(
-            const stream : IStreamAdapter;
-            const streamCloser : ICloseable;
-            const streamId : IStreamId
-        ) : boolean;
+        function parse(const stream : IStreamAdapter) : boolean;
 
         (*!------------------------------------------------
-         * get StdIn stream for complete request
+         * get POST data
+         *-----------------------------------------------
+         * @return IStreamAdapter instance
          *-----------------------------------------------*)
         function getStdIn() : IStreamAdapter;
 
         (*!------------------------------------------------
-         * set listener to be notified when request is ready
+         * get environment variable from request
          *-----------------------------------------------
-         * @return current instance
+         * @return ICGIEnvironment instance
          *-----------------------------------------------*)
-        function setReadyListener(const listener : IReadyListener) : IProtocolProcessor;
+        function getEnv() : ICGIEnvironment;
 
         (*!------------------------------------------------
-         * get number of bytes of complete request based
-         * on information buffer
+         * get total expected data in bytes in buffer
          *-----------------------------------------------
-         * @return number of bytes of complete request
+         * @return number of bytes
          *-----------------------------------------------*)
-        function expectedSize(const buff : IStreamAdapter) : int64;
-
+        function expectedSize(const stream : IStreamAdapter) : int64;
     end;
 
 implementation

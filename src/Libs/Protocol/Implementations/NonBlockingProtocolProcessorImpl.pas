@@ -27,6 +27,7 @@ type
     TBuffInfo = record
         id : shortstring;
         buffer : IStreamAdapter;
+        expectedSize : int64;
     end;
 
     PBuffInfo = ^TBuffInfo;
@@ -46,18 +47,26 @@ type
 
         procedure clearBuffers();
 
-        function nonBlockingCopyStream(
-            const src : IStreamAdapter;
-            const dst : IStreamAdapter
-        ) : longint;
 
-        function nonBlockingCopyBuffer(
-            const src : IStreamAdapter;
-            const dst : IStreamAdapter;
+        (*!------------------------------------------------
+         * read socket stream to memory
+         *-----------------------------------------------
+         * @param sockStream socket stream adapter
+         * @param buffInfo temporary buffer
+         * @return true if all data is complete
+         *-----------------------------------------------*)
+        function nonBlockingCopyStream(
+            const sockStream : IStreamAdapter;
+            const buffInfo : PBuffInfo
+        ) : boolean;
+
+        procedure nonBlockingCopyBuffer(
+            const sockStream : IStreamAdapter;
+            const buffInfo : PBuffInfo;
             const buff : pointer;
             const buffSize : integer;
             var keepReading : boolean
-        ) : longint;
+        );
 
         procedure processBuffer(
             buff : PBuffInfo;
@@ -75,11 +84,11 @@ type
         (*!------------------------------------------------
          * process request stream
          *-----------------------------------------------*)
-        procedure process(
+        function process(
             const stream : IStreamAdapter;
             const streamCloser : ICloseable;
             const streamId : IStreamId
-        );
+        ) : boolean;
 
         (*!------------------------------------------------
          * get StdIn stream for complete request
@@ -92,6 +101,14 @@ type
          * @return current instance
          *-----------------------------------------------*)
         function setReadyListener(const listener : IReadyListener) : IProtocolProcessor;
+
+        (*!------------------------------------------------
+         * get number of bytes of complete request based
+         * on information buffer
+         *-----------------------------------------------
+         * @return number of bytes of complete request
+         *-----------------------------------------------*)
+        function expectedSize(const buff : IStreamAdapter) : int64;
     end;
 
 implementation
@@ -138,41 +155,62 @@ uses
         end;
     end;
 
-    function TNonBlockingProtocolProcessor.nonBlockingCopyBuffer(
-        const src : IStreamAdapter;
-        const dst : IStreamAdapter;
+    procedure TNonBlockingProtocolProcessor.nonBlockingCopyBuffer(
+        const sockStream : IStreamAdapter;
+        const buffInfo : PBuffInfo;
         const buff : pointer;
         const buffSize : integer;
         var keepReading : boolean
-    ) : longint;
+    );
     var bytesRead : longint;
+        remainingSize, tmpSize : int64;
     begin
         try
-            bytesRead := src.read(buff^, buffSize);
-            if (bytesRead > 0) then
+            tmpSize := buffSize;
+            if (buffInfo^.expectedSize <> UNKNOWN_SIZE) then
             begin
-                dst.write(buff^, bytesRead);
-            end;
-            result := bytesRead;
-        except
-            on e : ESockStream do
-            begin
-                result := -1;
-                keepReading := false;
+                remainingSize := buffInfo^.expectedSize - buffInfo^.buffer.size();
+                if remainingSize < buffSize then
+                begin
+                    tmpSize := remainingSize;
+                end;
             end;
 
+            bytesRead := sockStream.read(buff^, tmpSize);
+            if (bytesRead > 0) then
+            begin
+                buffInfo^.buffer.write(buff^, bytesRead);
+                if (buffInfo^.expectedSize = UNKNOWN_SIZE) then
+                begin
+                    //try to get number of expected bytes if any available
+                    buffInfo^.expectedSize := fActualProcessor.expectedSize(
+                        buffInfo^.buffer
+                    );
+                end else
+                begin
+                    if (buffInfo^.buffer.size() = buffInfo^.expectedSize) then
+                    begin
+                        keepReading := false;
+                    end;
+                end;
+            end else
+            if (bytesRead = 0) then
+            begin
+                //end of file
+                keepReading := false;
+            end;
+        except
             on e : ESockWouldBlock do
             begin
-                result := e.errCode;
                 keepReading := false;
             end;
         end;
     end;
 
     function TNonBlockingProtocolProcessor.nonBlockingCopyStream(
-        const src : IStreamAdapter;
-        const dst : IStreamAdapter
-    ) : longint;
+        const sockStream : IStreamAdapter;
+        const buffInfo : PBuffInfo
+    ) : boolean;
     const BUFF_SIZE = 4096;
     var buff : pointer;
         keepReading : boolean;
@@ -180,11 +218,18 @@ uses
         getMem(buff, BUFF_SIZE);
         try
             keepReading := true;
-            result := 0;
             while keepReading do
             begin
-                result := nonBlockingCopyBuffer(src, dst, buff, BUFF_SIZE, keepReading);
+                nonBlockingCopyBuffer(
+                    sockStream,
+                    buffInfo,
+                    buff,
+                    BUFF_SIZE,
+                    keepReading
+                );
             end;
+            result := (buffInfo^.expectedSize <> UNKNOWN_SIZE) and
+                (buffInfo ^.buffer.size() = buffInfo^.expectedSize);
         finally
             freeMem(buff);
         end;
@@ -201,32 +246,29 @@ uses
     );
     var segStream : IStreamAdapter;
     begin
-        if (buff^.buffer.size() > 0) then
-        begin
-            //we use segregated stream, so that we can read from data in memory
-            //but write to socket
-            segStream := TSegregatedStreamAdapter.create(buff^.buffer, stream);
-            buff^.buffer.seek(0, soFromBeginning);
-            fActualProcessor.process(segStream, streamCloser, streamId);
-            //data has been processed, remove buffer.
-            fBuffLists.delete(fBuffLists.indexOf(buff^.id));
-            buff^.buffer := nil;
-            dispose(buff);
-        end;
+        //we use segregated stream, so that we can read from data in memory
+        //but write to socket
+        segStream := TSegregatedStreamAdapter.create(buff^.buffer, stream);
+        buff^.buffer.seek(0, soFromBeginning);
+        fActualProcessor.process(segStream, streamCloser, streamId);
+        //data has been processed, remove buffer.
+        fBuffLists.delete(fBuffLists.indexOf(buff^.id));
+        buff^.buffer := nil;
+        dispose(buff);
     end;
 
     (*!------------------------------------------------
      * process request stream
      *-----------------------------------------------*)
-    procedure TNonBlockingProtocolProcessor.process(
+    function TNonBlockingProtocolProcessor.process(
         const stream : IStreamAdapter;
         const streamCloser : ICloseable;
         const streamId : IStreamId
-    );
+    ) : boolean;
     var id : shortString;
         buff : PBuffInfo;
-        res : longint;
     begin
+        result := false;
         id := streamId.getId();
         buff := fBuffLists.find(id);
         if (buff = nil) then
@@ -234,23 +276,16 @@ uses
             new(buff);
             buff^.id := id;
             buff^.buffer := TStreamAdapter.create(TMemoryStream.create());
+            buff^.expectedSize := UNKNOWN_SIZE;
             fBuffLists.add(id, buff);
         end;
 
-        res := nonBlockingCopyStream(stream, buff^.buffer);
-        if (res = ESysEAGAIN) or (res = ESysEWOULDBLOCK) then
+        if nonBlockingCopyStream(stream, buff) then
         begin
-            //no more data in socket stream without blocking it, retry next time
-        end else
-        if (res = 0) or (buff^.buffer.size() > 0) then
-        begin
-            //all data is complete, let actual protocol processor handle
+            //all data is complete, process it
             processBuffer(buff, stream, streamCloser, streamId);
-        end else
-        begin
-            //TODO : improve exception
-            raise Exception.create('Something bad happen to socket');
-        end
+            result := true;
+        end;
     end;
 
     (*!------------------------------------------------
@@ -272,4 +307,14 @@ uses
         result := self;
     end;
 
+    (*!------------------------------------------------
+     * get number of bytes of complete request based
+     * on information buffer
+     *-----------------------------------------------
+     * @return number of bytes of complete request
+     *-----------------------------------------------*)
+    function TNonBlockingProtocolProcessor.expectedSize(const buff : IStreamAdapter) : int64;
+    begin
+        result := fActualProcessor.expectedSize(buff);
+    end;
 end.

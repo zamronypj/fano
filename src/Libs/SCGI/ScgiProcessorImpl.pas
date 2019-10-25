@@ -44,11 +44,11 @@ type
         (*!------------------------------------------------
          * process request stream
          *-----------------------------------------------*)
-        procedure process(
+        function process(
             const stream : IStreamAdapter;
             const streamCloser : ICloseable;
             const streamId : IStreamId
-        );
+        ) : boolean;
 
         (*!------------------------------------------------
          * get StdIn stream for complete request
@@ -61,6 +61,14 @@ type
          * @return current instance
          *-----------------------------------------------*)
         function setReadyListener(const listener : IReadyListener) : IProtocolProcessor;
+
+        (*!------------------------------------------------
+         * get number of bytes of complete request based
+         * on information buffer
+         *-----------------------------------------------
+         * @return number of bytes of complete request
+         *-----------------------------------------------*)
+        function expectedSize(const buff : IStreamAdapter) : int64;
     end;
 
 implementation
@@ -93,12 +101,13 @@ uses
     (*!------------------------------------------------
      * process request stream
      *-----------------------------------------------*)
-    procedure TScgiProcessor.process(
+    function TScgiProcessor.process(
         const stream : IStreamAdapter;
         const streamCloser : ICloseable;
         const streamId : IStreamId
-    );
+    ) : boolean;
     begin
+        result := true;
         fParser.parse(stream);
         fStdIn := fParser.getStdIn();
         if assigned(fRequestReadyListener) then
@@ -132,4 +141,14 @@ uses
         result := self;
     end;
 
+    (*!------------------------------------------------
+     * get number of bytes of complete request based
+     * on information buffer
+     *-----------------------------------------------
+     * @return number of bytes of complete request
+     *-----------------------------------------------*)
+    function TScgiProcessor.expectedSize(const buff : IStreamAdapter) : int64;
+    begin
+        result := fParser.expectedSize(buff);
+    end;
 end.
