@@ -260,7 +260,7 @@ resourcestring
                 begin
                     //total bytes of SCGI request is
                     //length of env vars + one termination char (coma) + content length of body
-                    result := strToInt(res[0][1]) + strToInt(res[0][2]) + 1;
+                    result := strToInt(res.matches[0][1]) + strToInt(res.matches[0][2]) + 1;
                 end;
             finally
                 regex.free();
