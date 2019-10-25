@@ -60,13 +60,13 @@ type
             const buffInfo : PBuffInfo
         ) : boolean;
 
-        function nonBlockingCopyBuffer(
+        procedure nonBlockingCopyBuffer(
             const sockStream : IStreamAdapter;
             const buffInfo : PBuffInfo;
             const buff : pointer;
             const buffSize : integer;
             var keepReading : boolean
-        ) : longint;
+        );
 
         procedure processBuffer(
             buff : PBuffInfo;
