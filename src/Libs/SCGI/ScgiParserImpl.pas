@@ -85,7 +85,8 @@ uses
     NullEnvironmentImpl,
     ScgiParamKeyValuePairImpl,
     EInvalidScgiHeaderImpl,
-    EInvalidScgiBodyImpl;
+    EInvalidScgiBodyImpl,
+    RegexImpl;
 
 resourcestring
 
@@ -235,5 +236,33 @@ resourcestring
         result := fEnv;
     end;
 
+    (*!------------------------------------------------
+     * get total expected data in bytes in buffer
+     *-----------------------------------------------
+     * @return number of bytes
+     *-----------------------------------------------*)
+    function TScgiParser.expectedSize(const stream : IStreamAdapter) : int64;
+    var str : string;
+        regex : TRegex;
+        res : TRegexMatchResult;
+    begin
+        result := -1;
+        if stream.size() > 0 then
+        begin
+            setLength(str, stream.size());
+            regex := TRegex.create();
+            try
+                res := regex.match('^(\d+)\:.*CONTENT_LENGTH\x00(\d+)\x00', str);
+                if (res.matched) then
+                begin
+                    //total bytes of SCGI request is
+                    //length of env vars + one termination char (coma) + content length of body
+                    result := strToInt(res[0][1]) + strToInt(res[0][2]) + 1;
+                end;
+            finally
+                regex.free();
+            end;
+        end;
+    end;
 
 end.

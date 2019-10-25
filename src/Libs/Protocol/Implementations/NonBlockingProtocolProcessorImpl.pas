@@ -123,9 +123,6 @@ uses
     ESockStreamImpl,
     ESockWouldBlockImpl;
 
-const
-    UNKNOWN_SIZE = -1;
-
     constructor TNonBlockingProtocolProcessor.create(
         const actualProcessor : IProtocolProcessor;
         const buffList : IList
