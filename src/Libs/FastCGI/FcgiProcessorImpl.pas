@@ -281,6 +281,6 @@ uses
      *-----------------------------------------------*)
     function TFcgiProcessor.expectedSize(const buff : IStreamAdapter) : int64;
     begin
-        result := fParser.expectedSize(buff);
+        result := -1;
     end;
 end.
