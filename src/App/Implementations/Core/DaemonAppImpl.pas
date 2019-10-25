@@ -260,8 +260,7 @@ uses
         const streamId : IStreamId
     ) : boolean;
     begin
-        fProcessor.process(stream, streamCloser, streamId);
-        result := true;
+        result := fProcessor.process(stream, streamCloser, streamId);
     end;
 
     (*!------------------------------------------------

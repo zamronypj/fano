@@ -84,11 +84,11 @@ type
         (*!------------------------------------------------
          * process request stream
          *-----------------------------------------------*)
-        procedure process(
+        function process(
             const stream : IStreamAdapter;
             const streamCloser : ICloseable;
             const streamId : IStreamId
-        );
+        ) : boolean;
 
         (*!------------------------------------------------
          * get StdIn stream for complete request
@@ -163,18 +163,35 @@ uses
         var keepReading : boolean
     );
     var bytesRead : longint;
+        remainingSize, tmpSize : int64;
     begin
         try
-            bytesRead := sockStream.read(buff^, buffSize);
+            tmpSize := buffSize;
+            if (buffInfo^.expectedSize <> UNKNOWN_SIZE) then
+            begin
+                remainingSize := buffInfo^.expectedSize - buffInfo^.buffer.size();
+                if remainingSize < buffSize then
+                begin
+                    tmpSize := remainingSize;
+                end;
+            end;
+
+            bytesRead := sockStream.read(buff^, tmpSize);
             if (bytesRead > 0) then
             begin
                 buffInfo^.buffer.write(buff^, bytesRead);
                 if (buffInfo^.expectedSize = UNKNOWN_SIZE) then
                 begin
-                    //try to peek number of expected bytes if any available
+                    //try to get number of expected bytes if any available
                     buffInfo^.expectedSize := fActualProcessor.expectedSize(
                         buffInfo^.buffer
                     );
+                end else
+                begin
+                    if (buffInfo^.buffer.size() = buffInfo^.expectedSize) then
+                    begin
+                        keepReading := false;
+                    end;
                 end;
             end else
             if (bytesRead = 0) then
@@ -243,14 +260,15 @@ uses
     (*!------------------------------------------------
      * process request stream
      *-----------------------------------------------*)
-    procedure TNonBlockingProtocolProcessor.process(
+    function TNonBlockingProtocolProcessor.process(
         const stream : IStreamAdapter;
         const streamCloser : ICloseable;
         const streamId : IStreamId
-    );
+    ) : boolean;
     var id : shortString;
         buff : PBuffInfo;
     begin
+        result := false;
         id := streamId.getId();
         buff := fBuffLists.find(id);
         if (buff = nil) then
@@ -266,6 +284,7 @@ uses
         begin
             //all data is complete, process it
             processBuffer(buff, stream, streamCloser, streamId);
+            result := true;
         end;
     end;
 

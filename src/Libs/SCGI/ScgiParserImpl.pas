@@ -45,6 +45,7 @@ type
         function parseStdIn(const str : string) : IStreamAdapter;
 
         function parseNetstring(const ch : char; var lenStr : string; const stream : IStreamAdapter) :  boolean;
+        function readBufferToStr(const buff : IStreamAdapter) : string;
     public
         constructor create();
         destructor destroy(); override;
@@ -79,15 +80,14 @@ uses
 
     Classes,
     SysUtils,
+    StrUtils,
     StreamAdapterImpl,
     NullStreamAdapterImpl,
     KeyValueEnvironmentImpl,
     NullEnvironmentImpl,
     ScgiParamKeyValuePairImpl,
     EInvalidScgiHeaderImpl,
-    EInvalidScgiBodyImpl,
-    RegexIntf,
-    RegexImpl;
+    EInvalidScgiBodyImpl;
 
 resourcestring
 
@@ -237,6 +237,21 @@ resourcestring
         result := fEnv;
     end;
 
+    function TScgiParser.readBufferToStr(const buff : IStreamAdapter) : string;
+    var totSize : integer;
+    begin
+        totSize := buff.size();
+        if totSize > 0 then
+        begin
+            setLength(result, totSize);
+            buff.seek(0, FROM_BEGINNING);
+            buff.read(result[1], totSize);
+        end else
+        begin
+            result := '';
+        end;
+    end;
+
     (*!------------------------------------------------
      * get total expected data in bytes in buffer
      *-----------------------------------------------
@@ -244,28 +259,72 @@ resourcestring
      *-----------------------------------------------*)
     function TScgiParser.expectedSize(const buff : IStreamAdapter) : int64;
     var str : string;
-        regex : TRegex;
-        res : TRegexMatchResult;
+        envLenFound : boolean;
+        contentLenFound : boolean;
+        envLenStr : string;
+        contentLenStr : string;
+        envLen : integer;
+        idx : integer;
+        contentLength : integer;
+        contentLenPos : integer;
+        lenValue : integer;
+        separator0, separator1 : integer;
     begin
         result := -1;
-        if buff.size() > 0 then
+        str := readBufferToStr(buff);
+        if length(str) > 0 then
         begin
-            setLength(str, buff.size());
-            buff.seek(0, FROM_BEGINNING);
-            buff.read(str[1], length(str));
-            regex := TRegex.create();
-            try
-                res := regex.match('^(\d+)\:.*CONTENT_LENGTH\x00(\d+)\x00', str);
-                if (res.matched) then
+            idx := 1;
+            envLenStr := '';
+            contentLenStr := '';
+            envLenFound := false;
+            contentLenFound := false;
+            repeat
+                if isDigit(str[idx]) then
                 begin
-                    //total bytes of SCGI request is
-                    //lengh + 1 (char :)+length of env vars + content length of body
-                    result := length(res.matches[0][1]) + 1 +
-                        strToInt(res.matches[0][1]) +
-                        strToInt(res.matches[0][2]);
+                    envLenStr :=  envLenStr + str[idx];
                 end;
-            finally
-                regex.free();
+                if str[idx] = ':' then
+                begin
+                    envLen := strToInt(envLenStr);
+                    envLenFound := true;
+                end;
+
+                inc(idx);
+
+                if (envLenFound) then
+                begin
+                    contentLenPos := pos('CONTENT_LENGTH', str);
+                    if contentLenPos > 0 then
+                    begin
+                        separator0 := posEx(#0, str, contentLenPos + 14);
+                        separator1 := posEx(#0, str, separator0 + 1);
+                        if (separator0 > 0) and (separator1 > 0) then
+                        begin
+                            lenValue := separator1 - separator0 - 1;
+                            if (lenValue > 0) then
+                            begin
+                                contentLenStr := copy(str, separator0 + 1, lenValue);
+                                contentLength := strtoint(contentLenStr);
+                            end else
+                            begin
+                                contentLength := 0;
+                            end;
+                            contentLenFound := true;
+                        end;
+                    end;
+                end;
+            until
+                //all information not found but string is exhausted
+                (idx > length(str)) or
+                //env vars len found but content lenght not yet found
+                (envLenFound and (contentLenPos = 0)) or
+                //all information found
+                (envLenFound and contentLenFound);
+
+            if (envLenFound and contentLenFound) then
+            begin
+                result := length(envLenStr) + 2 + envLen + contentLength;
             end;
         end;
     end;

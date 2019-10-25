@@ -86,11 +86,11 @@ type
          * @param stream socket stream
          * @param streamClose, instance which can close stream
          *-----------------------------------------------*)
-        procedure process(
+        function process(
             const stream : IStreamAdapter;
             const streamCloser : ICloseable;
             const streamId : IStreamId
-        );
+        ) : boolean;
 
         (*!------------------------------------------------
          * set listener to be notified weh request is ready
@@ -226,11 +226,11 @@ uses
      * @param stream socket stream
      * @param streamClose, instance which can close stream
      *-----------------------------------------------*)
-    procedure TFcgiProcessor.process(
+    function TFcgiProcessor.process(
         const stream : IStreamAdapter;
         const streamCloser : ICloseable;
         const streamId : IStreamId
-    );
+    ) : boolean;
     var bufPtr : pointer;
         bufSize  : ptrUint;
         streamEmpty : boolean;
@@ -242,6 +242,7 @@ uses
                 processBuffer(stream, streamCloser, bufPtr, bufSize);
             end;
         until streamEmpty;
+        result := true;
     end;
 
     (*!------------------------------------------------

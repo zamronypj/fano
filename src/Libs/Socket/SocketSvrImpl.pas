@@ -75,7 +75,7 @@ type
          *-------------------------------------------------
          * @param clientSocket, socket handle where data can be read
          *-----------------------------------------------*)
-        procedure handleClientConnection(clientSocket : longint);
+        function handleClientConnection(clientSocket : longint) : boolean;
 
         (*!-----------------------------------------------
          * initialize file descriptor set for listening
@@ -526,8 +526,10 @@ uses
                 begin
                     //if we get here then it must be from one or
                     //more client connections
-                    handleClientConnection(fds);
-                    removeFromMonitoredSet(fds, maxHandle, origFds);
+                    if handleClientConnection(fds) then
+                    begin
+                        removeFromMonitoredSet(fds, maxHandle, origFds);
+                    end;
                 end;
 
                 dec(totDesc);
@@ -607,9 +609,10 @@ uses
      *-------------------------------------------------
      * @param clientSocket, socket handle where data can be read
      *-----------------------------------------------*)
-    procedure TSocketSvr.handleClientConnection(clientSocket : longint);
+    function TSocketSvr.handleClientConnection(clientSocket : longint) : boolean;
     var aStream : TCloseableStream;
     begin
+        result := true;
         if (assigned(fDataAvailListener)) then
         begin
             aStream := TCloseableStream.create(
@@ -617,7 +620,7 @@ uses
                 getSockStream(clientSocket)
             );
             try
-                fDataAvailListener.handleData(aStream, self, astream, astream);
+                result := fDataAvailListener.handleData(aStream, self, astream, astream);
             finally
                 aStream.free();
             end;
