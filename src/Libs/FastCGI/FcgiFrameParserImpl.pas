@@ -62,7 +62,8 @@ uses
     fastcgi,
     EInvalidFcgiBufferImpl,
     EInvalidFcgiRecordTypeImpl,
-    EInvalidFcgiHeaderLenImpl;
+    EInvalidFcgiHeaderLenImpl,
+    ESockWouldBlockImpl;
 
     (*!------------------------------------------------
      * read stream and return found record in memory buffer
@@ -126,15 +127,22 @@ uses
 
         streamEmpty := false;
         repeat
-            bytesRead := stream.read(buf^, amountToRead);
-            if (bytesRead > 0) then
-            begin
-                dec(amountToRead, bytesRead);
-                inc(buf, bytesRead);
-                inc(result, bytesRead);
-            end else
-            begin
-                streamEmpty := true;
+            try
+                bytesRead := stream.read(buf^, amountToRead);
+                if (bytesRead > 0) then
+                begin
+                    dec(amountToRead, bytesRead);
+                    inc(buf, bytesRead);
+                    inc(result, bytesRead);
+                end else
+                begin
+                    streamEmpty := true;
+                end;
+            except
+                on e : ESockWouldBlock do
+                begin
+                    streamEmpty := true;
+                end;
             end;
         until (amountToRead = 0) or streamEmpty;
     end;

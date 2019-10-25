@@ -43,12 +43,12 @@ type
         //store request id that is ready to be served
         fCompleteRequestId : word;
 
-        procedure processBuffer(
+        function processBuffer(
             const stream : IStreamAdapter;
             const streamCloser : ICloseable;
             const buffer : pointer;
             const bufferSize : ptrUint
-        );
+        ) : boolean;
 
         (*!-----------------------------------------------
          * handle FCGI request with complete records
@@ -198,15 +198,16 @@ uses
      * @param buffer, buffer where data from socket is stored
      * @param bufferSize, size of buffer where data from socket is stored
      *-----------------------------------------------*)
-    procedure TFcgiProcessor.processBuffer(
+    function TFcgiProcessor.processBuffer(
         const stream : IStreamAdapter;
         const streamCloser : ICloseable;
         const buffer : pointer;
         const bufferSize : ptrUint
-    );
+    ) : boolean;
     var afcgiRec : IFcgiRecord;
         requestId : word;
     begin
+        result := false;
         if (fcgiParser.hasFrame(buffer, bufferSize)) then
         begin
             afcgiRec := fcgiParser.parseFrame(buffer, bufferSize);
@@ -215,6 +216,7 @@ uses
             if fcgiRequestMgr.complete(requestId) then
             begin
                 handleCompleteRequest(requestId, stream, streamCloser);
+                result := true;
             end;
         end;
     end;
@@ -235,14 +237,14 @@ uses
         bufSize  : ptrUint;
         streamEmpty : boolean;
     begin
+        result := false;
         repeat
             streamEmpty := fcgiParser.readRecord(stream, bufPtr, bufSize);
             if (bufPtr <> nil) and (bufSize > 0) then
             begin
-                processBuffer(stream, streamCloser, bufPtr, bufSize);
+                result := processBuffer(stream, streamCloser, bufPtr, bufSize);
             end;
-        until streamEmpty;
-        result := true;
+        until streamEmpty or result;
     end;
 
     (*!------------------------------------------------

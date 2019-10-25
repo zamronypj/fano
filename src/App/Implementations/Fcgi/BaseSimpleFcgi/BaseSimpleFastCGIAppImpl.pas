@@ -78,9 +78,7 @@ uses
     RequestResponseFactoryImpl,
     NullStreamAdapterImpl,
     StdInFromStreamImpl,
-    StdInIntf,
-    FcgiNonBlockingProcessorImpl,
-    HashListImpl;
+    StdInIntf;
 
     (*!-----------------------------------------------
      * constructor
@@ -128,12 +126,7 @@ uses
             TFcgiRequestManager.create(TStreamAdapterCollectionFactory.create())
         );
 
-        appProcessor := TFcgiNonBlockingProcessor.create(
-            fcgiProc,
-            THashList.create(),
-            fcgiProc
-        );
-
+        appProcessor := fcgiProc;
         appOutputBuffer := TOutputBuffer.create();
         appStdOutWriter := TFcgiStdOutWriter.create(fcgiProc);
         appStdIn := TStdInFromStream.create(TNullStreamAdapter.create());
