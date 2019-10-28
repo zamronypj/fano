@@ -23,7 +23,8 @@ uses
     StdInStreamAwareIntf,
     FcgiRequestManagerIntf,
     FcgiRequestIdAwareIntf,
-    FcgiFrameParserIntf;
+    FcgiFrameParserIntf,
+    StreamIdIntf;
 
 type
 
@@ -42,11 +43,24 @@ type
         //store request id that is ready to be served
         fCompleteRequestId : word;
 
-        procedure processBuffer(
+        function processBuffer(
             const stream : IStreamAdapter;
             const streamCloser : ICloseable;
             const buffer : pointer;
             const bufferSize : ptrUint
+        ) : boolean;
+
+        (*!-----------------------------------------------
+         * handle FCGI request with complete records
+         *------------------------------------------------
+         * @param requestId id of complete request
+         * @param stream socket stream
+         * @param streamClose, instance which can close stream
+         *-----------------------------------------------*)
+        procedure handleCompleteRequest(
+            const requestId : word;
+            const stream : IStreamAdapter;
+            const streamCloser : ICloseable
         );
     public
         (*!-----------------------------------------------
@@ -72,10 +86,11 @@ type
          * @param stream socket stream
          * @param streamClose, instance which can close stream
          *-----------------------------------------------*)
-        procedure process(
+        function process(
             const stream : IStreamAdapter;
-            const streamCloser : ICloseable
-        );
+            const streamCloser : ICloseable;
+            const streamId : IStreamId
+        ) : boolean;
 
         (*!------------------------------------------------
          * set listener to be notified weh request is ready
@@ -95,6 +110,14 @@ type
         * get FastCGI StdIn stream for complete request
         *-----------------------------------------------*)
         function getStdIn() : IStreamAdapter;
+
+        (*!------------------------------------------------
+         * get number of bytes of complete request based
+         * on information buffer
+         *-----------------------------------------------
+         * @return number of bytes of complete request
+         *-----------------------------------------------*)
+        function expectedSize(const buff : IStreamAdapter) : int64;
     end;
 
 implementation
@@ -136,24 +159,55 @@ uses
     end;
 
     (*!-----------------------------------------------
+     * handle FCGI request with complete records
+     *------------------------------------------------
+     * @param requestId id of complete request
+     * @param stream socket stream
+     * @param streamClose, instance which can close stream
+     *-----------------------------------------------*)
+    procedure TFcgiProcessor.handleCompleteRequest(
+        const requestId : word;
+        const stream : IStreamAdapter;
+        const streamCloser : ICloseable
+    );
+    begin
+        fCompleteRequestId := requestId;
+
+        if assigned(fcgiRequestReadyListener) then
+        begin
+            fcgiRequestReadyListener.ready(
+                stream,
+                fcgiRequestMgr.getEnvironment(requestId),
+                fcgiRequestMgr.getStdInStream(requestId)
+            );
+        end;
+
+        if not fcgiRequestMgr.keepConnection(requestId) then
+        begin
+            streamCloser.close();
+        end;
+
+        fcgiRequestMgr.remove(requestId);
+    end;
+
+    (*!-----------------------------------------------
      * parse stream for FCGI records
      *------------------------------------------------
      * @param stream socket stream
      * @param streamClose, instance which can close stream
      * @param buffer, buffer where data from socket is stored
      * @param bufferSize, size of buffer where data from socket is stored
-     * @return boolean true when FCGI_PARAMS and FCGI_STDIN
-     *         stream is complete otherwise false
      *-----------------------------------------------*)
-    procedure TFcgiProcessor.processBuffer(
+    function TFcgiProcessor.processBuffer(
         const stream : IStreamAdapter;
         const streamCloser : ICloseable;
         const buffer : pointer;
         const bufferSize : ptrUint
-    );
+    ) : boolean;
     var afcgiRec : IFcgiRecord;
         requestId : word;
     begin
+        result := false;
         if (fcgiParser.hasFrame(buffer, bufferSize)) then
         begin
             afcgiRec := fcgiParser.parseFrame(buffer, bufferSize);
@@ -161,23 +215,8 @@ uses
             requestId := afcgiRec.getRequestId();
             if fcgiRequestMgr.complete(requestId) then
             begin
-                fCompleteRequestId := requestId;
-
-                if assigned(fcgiRequestReadyListener) then
-                begin
-                    fcgiRequestReadyListener.ready(
-                        stream,
-                        fcgiRequestMgr.getEnvironment(requestId),
-                        fcgiRequestMgr.getStdInStream(requestId)
-                    );
-                end;
-
-                if not fcgiRequestMgr.keepConnection(requestId) then
-                begin
-                    streamCloser.close();
-                end;
-
-                fcgiRequestMgr.remove(requestId);
+                handleCompleteRequest(requestId, stream, streamCloser);
+                result := true;
             end;
         end;
     end;
@@ -189,18 +228,23 @@ uses
      * @param stream socket stream
      * @param streamClose, instance which can close stream
      *-----------------------------------------------*)
-    procedure TFcgiProcessor.process(const stream : IStreamAdapter; const streamCloser : ICloseable);
+    function TFcgiProcessor.process(
+        const stream : IStreamAdapter;
+        const streamCloser : ICloseable;
+        const streamId : IStreamId
+    ) : boolean;
     var bufPtr : pointer;
         bufSize  : ptrUint;
         streamEmpty : boolean;
     begin
+        result := false;
         repeat
             streamEmpty := fcgiParser.readRecord(stream, bufPtr, bufSize);
             if (bufPtr <> nil) and (bufSize > 0) then
             begin
-                processBuffer(stream, streamCloser, bufPtr, bufSize);
+                result := processBuffer(stream, streamCloser, bufPtr, bufSize);
             end;
-        until streamEmpty;
+        until streamEmpty or result;
     end;
 
     (*!------------------------------------------------
@@ -230,5 +274,16 @@ uses
     function TFcgiProcessor.getStdIn() : IStreamAdapter;
     begin
         result := fcgiRequestMgr.getStdInStream(fCompleteRequestId);
+    end;
+
+    (*!------------------------------------------------
+     * get number of bytes of complete request based
+     * on information buffer
+     *-----------------------------------------------
+     * @return number of bytes of complete request
+     *-----------------------------------------------*)
+    function TFcgiProcessor.expectedSize(const buff : IStreamAdapter) : int64;
+    begin
+        result := -1;
     end;
 end.
