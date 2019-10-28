@@ -49,9 +49,9 @@ uses
     RegExpr;
 
     function extractStatusLineHeaderIfAny(const str : string) : string;
-    var regx : TRegExp;
+    var regx : TRegExpr;
     begin
-        regx := TRegExp.create();
+        regx := TRegExpr.create();
         try
             regx.expression := 'Status\s*\:\s*(\d+\s+[a-zA-Z\s]+)\x0d\x0a';
             if RegexObj.Exec(str) then
