@@ -17,7 +17,8 @@ uses
 
     InjectableObjectImpl,
     FcgiFrameParserIntf,
-    FcgiFrameParserFactoryIntf;
+    FcgiFrameParserFactoryIntf,
+    FcgiBaseParserFactoryImpl;
 
 type
 
@@ -26,37 +27,21 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TFcgiFrameParserFactory = class (TInjectableObject, IFcgiFrameParserFactory)
-    private
+    TFcgiFrameParserFactory = class (TFcgiBaseParserFactory)
     public
         (*!------------------------------------------------
          * build frame parser instance
          *-----------------------------------------------
          * @return frame parser instance
          *-----------------------------------------------*)
-        function build() : IFcgiFrameParser;
+        function build() : IFcgiFrameParser; override;
     end;
 
 implementation
 
 uses
 
-    fastcgi,
-
-    FcgiRecordFactoryIntf,
-
-    FcgiBeginRequestFactory,
-    FcgiAbortRequestFactory,
-    FcgiEndRequestFactory,
-    FcgiParamsFactory,
-    FcgiStdInFactory,
-    FcgiStdOutFactory,
-    FcgiStdErrFactory,
-    FcgiDataFactory,
-    FcgiGetValuesFactory,
-    FcgiGetValuesResultFactory,
-    FcgiUnknownTypeFactory,
-
+    MemAllocatorImpl,
     FcgiFrameParserImpl;
 
     (*!------------------------------------------------
@@ -65,29 +50,10 @@ uses
      * @return frame parser instance
      *-----------------------------------------------*)
     function TFcgiFrameParserFactory.build() : IFcgiFrameParser;
-    var factories : TFcgiRecordFactoryArray;
+    var mem : TMemAllocator;
     begin
-        setLength(factories, FCGI_MAXTYPE + 1);
-
-        //FCGI_BEGIN_REQUEST = 1, FCGI_ABORT_REQUEST =2, and so on
-        //this is provided so we can get factory by record type on zero-based array
-        //without having to offset
-        //so to access correct factory by record type, it simply factories[fcgiRec.reqtype]
-        factories[0] := nil;
-
-        factories[FCGI_BEGIN_REQUEST] := TFcgiBeginRequestFactory.create();
-        factories[FCGI_ABORT_REQUEST] := TFcgiAbortRequestFactory.create();
-        factories[FCGI_END_REQUEST] := TFcgiEndRequestFactory.create();
-        factories[FCGI_PARAMS] := TFcgiParamsFactory.create();
-        factories[FCGI_STDIN] := TFcgiStdInFactory.create();
-        factories[FCGI_STDOUT] := TFcgiStdOutFactory.create();
-        factories[FCGI_STDERR] := TFcgiStdErrFactory.create();
-        factories[FCGI_DATA] := TFcgiDataFactory.create();
-        factories[FCGI_GET_VALUES] := TFcgiGetValuesFactory.create();
-        factories[FCGI_GET_VALUES_RESULT] := TFcgiGetValuesResultFactory.create();
-        factories[FCGI_UNKNOWN_TYPE] := TFcgiUnknownTypeFactory.create();
-
-        result := TFcgiFrameParser.create(factories);
+        mem := TMemAllocator.create();
+        result := TFcgiFrameParser.create(createRecordFactories(), mem, mem);
     end;
 
 end.

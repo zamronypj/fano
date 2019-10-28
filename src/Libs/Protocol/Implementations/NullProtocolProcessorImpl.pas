@@ -18,6 +18,7 @@ uses
     StreamAdapterIntf,
     CloseableIntf,
     ReadyListenerIntf,
+    StreamIdIntf,
     ProtocolProcessorIntf;
 
 type
@@ -38,7 +39,11 @@ type
         (*!------------------------------------------------
          * process request stream
          *-----------------------------------------------*)
-        procedure process(const stream : IStreamAdapter; const streamCloser : ICloseable);
+        procedure process(
+            const stream : IStreamAdapter;
+            const streamCloser : ICloseable;
+            const streamId : IStreamId
+        );
 
         (*!------------------------------------------------
          * get StdIn stream for complete request
@@ -74,7 +79,11 @@ uses
     (*!------------------------------------------------
      * process request stream
      *-----------------------------------------------*)
-    procedure TNullProtocolProcessor.process(const stream : IStreamAdapter; const streamCloser : ICloseable);
+    procedure TNullProtocolProcessor.process(
+        const stream : IStreamAdapter;
+        const streamCloser : ICloseable;
+        const streamId : IStreamId
+    );
     begin
         //intentionally does nothing
     end;

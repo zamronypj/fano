@@ -17,7 +17,11 @@ uses
 
     StreamAdapterIntf,
     CloseableIntf,
+    StreamIdIntf,
     ReadyListenerIntf;
+
+const
+    UNKNOWN_SIZE = -1;
 
 type
 
@@ -33,7 +37,11 @@ type
         (*!------------------------------------------------
          * process request stream
          *-----------------------------------------------*)
-        procedure process(const stream : IStreamAdapter; const streamCloser : ICloseable);
+        function process(
+            const stream : IStreamAdapter;
+            const streamCloser : ICloseable;
+            const streamId : IStreamId
+        ) : boolean;
 
         (*!------------------------------------------------
          * get StdIn stream for complete request
@@ -46,6 +54,15 @@ type
          * @return current instance
          *-----------------------------------------------*)
         function setReadyListener(const listener : IReadyListener) : IProtocolProcessor;
+
+        (*!------------------------------------------------
+         * get number of bytes of complete request based
+         * on information buffer
+         *-----------------------------------------------
+         * @return number of bytes of complete request
+         *-----------------------------------------------*)
+        function expectedSize(const buff : IStreamAdapter) : int64;
+
     end;
 
 implementation

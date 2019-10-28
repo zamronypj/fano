@@ -48,3 +48,6 @@ AntivirusIntf,
 ScanResultIntf,
 
 RandomIntf,
+
+CliParamsIntf,
+CliParamsFactoryIntf,
