@@ -54,7 +54,7 @@ uses
         regx := TRegExpr.create();
         try
             regx.expression := 'Status\s*\:\s*(\d+\s+[a-zA-Z\s]+)\x0d\x0a';
-            if RegexObj.Exec(str) then
+            if regx.Exec(str) then
             begin
                 result := regx.match[1];
             end else
