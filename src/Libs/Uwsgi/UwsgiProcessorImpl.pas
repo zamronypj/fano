@@ -44,11 +44,11 @@ type
         (*!------------------------------------------------
          * process request stream
          *-----------------------------------------------*)
-        procedure process(
+        function process(
             const stream : IStreamAdapter;
             const streamCloser : ICloseable;
             const streamId : IStreamId
-        );
+        ) : boolean;
 
         (*!------------------------------------------------
          * get StdIn stream for complete request
@@ -61,6 +61,14 @@ type
          * @return current instance
          *-----------------------------------------------*)
         function setReadyListener(const listener : IReadyListener) : IProtocolProcessor;
+
+        (*!------------------------------------------------
+         * get number of bytes of complete request based
+         * on information buffer
+         *-----------------------------------------------
+         * @return number of bytes of complete request
+         *-----------------------------------------------*)
+        function expectedSize(const buff : IStreamAdapter) : int64;
     end;
 
 implementation
@@ -93,11 +101,11 @@ uses
     (*!------------------------------------------------
      * process request stream
      *-----------------------------------------------*)
-    procedure TUwsgiProcessor.process(
+    function TUwsgiProcessor.process(
         const stream : IStreamAdapter;
         const streamCloser : ICloseable;
         const streamId : IStreamId
-    );
+    ) : boolean;
     begin
         fParser.parse(stream);
         fStdIn := fParser.getStdIn();
@@ -111,6 +119,7 @@ uses
         end;
         //close socket connection
         streamCloser.close();
+        result := true;
     end;
 
     (*!------------------------------------------------
@@ -130,6 +139,17 @@ uses
     begin
         fRequestReadyListener := listener;
         result := self;
+    end;
+
+    (*!------------------------------------------------
+     * get number of bytes of complete request based
+     * on information buffer
+     *-----------------------------------------------
+     * @return number of bytes of complete request
+     *-----------------------------------------------*)
+    function TUwsgiProcessor.expectedSize(const buff : IStreamAdapter) : int64;
+    begin
+        result := fParser.expectedSize(buff);
     end;
 
 end.

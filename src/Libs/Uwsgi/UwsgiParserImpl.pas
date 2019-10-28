@@ -44,6 +44,9 @@ type
             const stream : IStreamAdapter;
             const stdIn : IStreamAdapter
         );
+
+        function getContentLength(const buff : IStreamAdapter) : int64;
+        function readBufferToStr(const buff : IStreamAdapter) : string;
     public
         constructor create();
         destructor destroy(); override;
@@ -63,6 +66,12 @@ type
          *-----------------------------------------------*)
         function getEnv() : ICGIEnvironment;
 
+        (*!------------------------------------------------
+         * get total expected data in bytes in buffer
+         *-----------------------------------------------
+         * @return number of bytes
+         *-----------------------------------------------*)
+        function expectedSize(const buff : IStreamAdapter) : int64;
     end;
 
 implementation
@@ -91,6 +100,9 @@ type
         datasize : word;
         modifier2 : byte;
     end;
+
+const
+    HDR_SIZE = sizeof(uwsgi_packet_header);
 
     constructor TUwsgiParser.create();
     begin
@@ -145,6 +157,7 @@ type
                 bodyRead := stream.read(buff^, BUFF_SIZE);
                 stdIn.write(buff^, bodyRead);
             until (bodyRead = -1) or (bodyRead < BUFF_SIZE);
+            stdIn.seek(0, FROM_BEGINNING);
         finally
             freeMem(buff);
         end;
@@ -154,7 +167,6 @@ type
      * process request stream
      *-----------------------------------------------*)
     function TUwsgiParser.parse(const stream : IStreamAdapter) : boolean;
-    const HDR_SIZE = sizeof(uwsgi_packet_header);
     var hdr : uwsgi_packet_header;
         bytesRead : integer;
     begin
@@ -188,6 +200,95 @@ type
     function TUwsgiParser.getEnv() : ICGIEnvironment;
     begin
         result := fEnv;
+    end;
+
+    function TUwsgiParser.readBufferToStr(const buff : IStreamAdapter) : string;
+    var totSize : integer;
+    begin
+        totSize := buff.size();
+        if totSize > 0 then
+        begin
+            setLength(result, totSize);
+            buff.seek(0, FROM_BEGINNING);
+            buff.read(result[1], totSize);
+        end else
+        begin
+            result := '';
+        end;
+    end;
+
+    function TUwsgiParser.getContentLength(const buff : IStreamAdapter) : int64;
+    var envvars : string;
+        contentLenPos : integer;
+        varLen : word;
+        contentLenStr : string;
+    begin
+        result := -1;
+        envvars := readBufferToStr(buff);
+        contentLenPos := pos('CONTENT_LENGTH', envvars);
+        if contentLenPos > 0 then
+        begin
+            //this request has request body, find total body in bytes
+            //14 is length of CONTENT_LENGTH string. so we basically seek to read
+            //number of character. Need to decrease 1 byte because pos() is start from 1
+            //while buff.seek() is zero-based.
+            buff.seek(contentLenPos + 14 - 1, FROM_BEGINNING);
+            buff.read(varLen, 2);
+            setLength(contentLenStr, varLen);
+            buff.read(contentLenStr[1], varLen);
+            result := strToInt(contentLenStr);
+        end else
+        begin
+            //this request does not have request body
+            result := 0;
+        end
+    end;
+
+    (*!------------------------------------------------
+     * get total expected data in bytes in buffer
+     *-----------------------------------------------
+     * @return number of bytes
+     *-----------------------------------------------*)
+    function TUwsgiParser.expectedSize(const buff : IStreamAdapter) : int64;
+    var hdr : uwsgi_packet_header;
+        envLenFound : boolean;
+        contentLenFound : boolean;
+        contentLen : integer;
+        lenValue : integer;
+        bytesRead : integer;
+    begin
+        result := -1;
+        envLenFound := false;
+        lenValue := -1;
+        contentLenFound := false;
+        contentLen := -1;
+        if buff.size() >= HDR_SIZE then
+        begin
+            buff.seek(0, FROM_BEGINNING);
+            bytesRead := buff.read(hdr, HDR_SIZE);
+            if (bytesRead = HDR_SIZE) and
+               (hdr.modifier1 = 0) and
+               (hdr.modifier2 = 0) then
+            begin
+                envLenFound := true;
+                lenValue := hdr.dataSize;
+
+                if buff.size() >= (HDR_SIZE + lenValue) then
+                begin
+                    //all env vars  is available, get content length if any
+                    contentLen := getContentLength(buff);
+                    if contentLen >= 0 then
+                    begin
+                        contentLenFound := true;
+                    end;
+                end;
+            end;
+            buff.seek(0, FROM_END);
+        end;
+        if (envLenFound) and (contentLenFound) then
+        begin
+            result := HDR_SIZE + lenValue + contentLen;
+        end;
     end;
 
 end.

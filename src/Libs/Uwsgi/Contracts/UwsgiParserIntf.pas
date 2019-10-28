@@ -16,7 +16,8 @@ interface
 uses
 
     EnvironmentIntf,
-    StreamAdapterIntf;
+    StreamAdapterIntf,
+    ProtocolParserIntf;
 
 type
 
@@ -26,27 +27,8 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    IUwsgiParser = interface
+    IUwsgiParser = interface(IProtocolParser)
         ['{A678943F-AE7A-4A5F-BD74-505B859E9CE0}']
-
-        (*!------------------------------------------------
-         * parse stream
-         *-----------------------------------------------*)
-        function parse(const stream : IStreamAdapter) : boolean;
-
-        (*!------------------------------------------------
-         * get POST data
-         *-----------------------------------------------
-         * @return IStreamAdapter instance
-         *-----------------------------------------------*)
-        function getStdIn() : IStreamAdapter;
-
-        (*!------------------------------------------------
-         * get environment variable from request
-         *-----------------------------------------------
-         * @return ICGIEnvironment instance
-         *-----------------------------------------------*)
-        function getEnv() : ICGIEnvironment;
     end;
 
 implementation
