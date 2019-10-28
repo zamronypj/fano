@@ -17,7 +17,8 @@ uses
 
     Classes,
     StreamAdapterIntf,
-    CloseableIntf;
+    CloseableIntf,
+    StreamIdIntf;
 
 type
 
@@ -27,7 +28,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TCloseableStream = class(TInterfacedObject, IStreamAdapter, ICloseable)
+    TCloseableStream = class(TInterfacedObject, IStreamAdapter, ICloseable, IStreamId)
     private
         fHandle : THandle;
         fStream : IStreamAdapter;
@@ -36,6 +37,8 @@ type
         destructor destroy(); override;
         function close() : boolean;
 
+        function getId() : shortstring;
+
         property stream : IStreamAdapter read fStream implements IStreamAdapter;
     end;
 
@@ -43,6 +46,7 @@ implementation
 
 uses
 
+    SysUtils,
     sockets;
 
     constructor TCloseableStream.create(const ahandle: THandle; const aStream : IStreamAdapter);
@@ -65,6 +69,11 @@ uses
     begin
         closeSocket(fHandle);
         result := true;
+    end;
+
+    function TCloseableStream.getId() : shortstring;
+    begin
+        result := intToHex(fHandle, 16);
     end;
 
 end.

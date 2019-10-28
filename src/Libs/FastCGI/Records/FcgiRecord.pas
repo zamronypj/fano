@@ -147,8 +147,8 @@ implementation
 
     destructor TFcgiRecord.destroy();
     begin
-        inherited destroy();
         fContentData := nil;
+        inherited destroy();
     end;
 
     (*!------------------------------------------------
