@@ -44,8 +44,6 @@ implementation
 
 uses
 
-    SysUtils,
-    StrUtils,
     RegExpr;
 
     function extractStatusLineHeaderIfAny(const str : string) : string;
@@ -53,7 +51,7 @@ uses
     begin
         regx := TRegExpr.create();
         try
-            regx.expression := 'Status\s*\:\s*(\d+\s+[a-zA-Z\s]+)\x0d\x0a';
+            regx.expression := 'Status\s*\:\s*(\d+\s+[a-zA-Z\s]+)\x0d*\x0a';
             if regx.Exec(str) then
             begin
                 result := regx.match[1];
