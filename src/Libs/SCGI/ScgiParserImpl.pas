@@ -274,6 +274,9 @@ resourcestring
         str := readBufferToStr(buff);
         if length(str) > 0 then
         begin
+            envLen := 0;
+            contentLength := 0;
+            contentLenPos := 0;
             idx := 1;
             envLenStr := '';
             contentLenStr := '';
