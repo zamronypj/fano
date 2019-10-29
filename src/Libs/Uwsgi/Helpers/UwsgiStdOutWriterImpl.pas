@@ -44,6 +44,7 @@ implementation
 
 uses
 
+    SysUtils,
     RegExpr;
 
     function extractStatusLineHeaderIfAny(const str : string) : string;
