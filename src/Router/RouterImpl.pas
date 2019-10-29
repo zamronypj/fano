@@ -44,7 +44,8 @@ type
         function findRoute(
             const routePattern: shortstring;
             const handler : IRequestHandler;
-            out routeData : PRouteRec
+            out routeData : PRouteRec;
+            out routeHandler : IRouteHandler
         ) : IRoute;
     public
         constructor create(
@@ -248,9 +249,9 @@ uses
     function TRouter.findRoute(
         const routePattern: shortstring;
         const handler : IRequestHandler;
-        out routeData : PRouteRec
+        out routeData : PRouteRec;
+        out routeHandler : IRouteHandler
     ) : IRoute;
-    var routeHandler : IRouteHandler;
     begin
         routeHandler := fRouteHandlerFactory.build(handler);
         routeData := findRouteData(routePattern);
@@ -269,8 +270,9 @@ uses
         const handler : IRequestHandler
     ) : IRoute;
     var routeData : PRouteRec;
+        routeHandler : IRouteHandler;
     begin
-        result := findRoute(routePattern, handler, routeData);
+        result := findRoute(routePattern, handler, routeData, routeHandler);
         routeData^.getRoute := routeHandler;
     end;
 
@@ -286,8 +288,9 @@ uses
         const handler : IRequestHandler
     ) : IRoute;
     var routeData : PRouteRec;
+        routeHandler : IRouteHandler;
     begin
-        result := findRoute(routePattern, handler, routeData);
+        result := findRoute(routePattern, handler, routeData, routeHandler);
         routeData^.postRoute := routeHandler;
     end;
 
@@ -303,8 +306,9 @@ uses
         const handler : IRequestHandler
     ) : IRoute;
     var routeData : PRouteRec;
+        routeHandler : IRouteHandler;
     begin
-        result := findRoute(routePattern, handler, routeData);
+        result := findRoute(routePattern, handler, routeData, routeHandler);
         routeData^.putRoute := routeHandler;
     end;
 
@@ -320,8 +324,9 @@ uses
         const handler : IRequestHandler
     ) : IRoute;
     var routeData : PRouteRec;
+        routeHandler : IRouteHandler;
     begin
-        result := findRoute(routePattern, handler, routeData);
+        result := findRoute(routePattern, handler, routeData, routeHandler);
         routeData^.patchRoute := routeHandler;
     end;
 
@@ -337,8 +342,9 @@ uses
         const handler : IRequestHandler
     ) : IRoute;
     var routeData : PRouteRec;
+        routeHandler : IRouteHandler;
     begin
-        result := findRoute(routePattern, handler, routeData);
+        result := findRoute(routePattern, handler, routeData, routeHandler);
         routeData^.deleteRoute := routeHandler;
     end;
 
@@ -354,8 +360,9 @@ uses
         const handler : IRequestHandler
     ) : IRoute;
     var routeData : PRouteRec;
+        routeHandler : IRouteHandler;
     begin
-        result := findRoute(routePattern, handler, routeData);
+        result := findRoute(routePattern, handler, routeData, routeHandler);
         routeData^.headRoute := routeHandler;
     end;
 
@@ -371,8 +378,9 @@ uses
         const handler : IRequestHandler
     ) : IRoute;
     var routeData : PRouteRec;
+        routeHandler : IRouteHandler;
     begin
-        result := findRoute(routePattern, handler, routeData);
+        result := findRoute(routePattern, handler, routeData, routeHandler);
         routeData^.optionsRoute := routeHandler;
     end;
 
@@ -393,10 +401,11 @@ uses
         const handler : IRequestHandler
     ) : IRoute;
     var routeData : PRouteRec;
+        routeHandler : IRouteHandler;
         i, len : integer;
         averb : shortstring;
     begin
-        result := findRoute(routePattern, handler, routeData);
+        result := findRoute(routePattern, handler, routeData, routeHandler);
         len := high(verbs) - low(verbs) + 1;
         for i := 0 to len - 1 do
         begin
@@ -427,7 +436,7 @@ uses
     var routeData : PRouteRec;
         routeHandler : IRouteHandler;
     begin
-        result := findRoute(routePattern, handler, routeData);
+        result := findRoute(routePattern, handler, routeData, routeHandler);
         routeData^.getRoute := routeHandler;
         routeData^.postRoute := routeHandler;
         routeData^.putRoute := routeHandler;
