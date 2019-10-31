@@ -36,3 +36,5 @@ IRandom = RandomIntf.IRandom;
 
 ICliParams = CliParamsIntf.ICliParams;
 ICliParamsFactory = CliParamsFactoryIntf.ICliParamsFactory;
+
+IEncypter = EncrypterIntf.IEncypter;

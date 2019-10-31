@@ -16,14 +16,13 @@ interface
 uses
 
     Classes,
-    fpjson,
     SessionIntf,
     SessionIdGeneratorIntf,
     SessionManagerIntf,
     SessionFactoryIntf,
     RequestIntf,
-    FileReaderIntf,
     ListIntf,
+    EncrypterIntf,
     AbstractSessionManagerImpl;
 
 type
@@ -40,8 +39,30 @@ type
         fSessionList : IList;
         fCurrentSession : ISession;
         fSessionFactory : ISessionFactory;
+        fEncrypter : IEncrypter;
+        fCookie : ICookie;
 
+        procedure writeSessionFile(const sessFile : string; const sessData : string);
 
+        (*!------------------------------------
+         * end session and persist to storage
+         *-------------------------------------
+         * @param session session instance
+         * @return current instance
+         *-------------------------------------*)
+        function persistSession(
+            const session : ISession
+        ) : ISessionManager;
+
+        (*!------------------------------------
+         * end session and remove its storage
+         *-------------------------------------
+         * @param session session instance
+         * @return current instance
+         *-------------------------------------*)
+        function destroySession(
+            const session : ISession
+        ) : ISessionManager;
 
     public
 
@@ -64,6 +85,7 @@ type
             const sessionIdGenerator : ISessionIdGenerator;
             const sessionFactory : ISessionFactory;
             const cookieName : string;
+            const cookie : ICookie;
             const encrypter : IEncrypter
         );
 
@@ -110,7 +132,6 @@ implementation
 uses
 
     SysUtils,
-    jsonParser,
     DateUtils,
     SessionConsts,
     HashListImpl,
@@ -119,10 +140,6 @@ uses
 
 type
 
-    TSessionItem = record
-        sessionObj : ISession;
-    end;
-    PSessionItem = ^TSessionItem;
 
     (*!------------------------------------
      * constructor
@@ -137,132 +154,34 @@ type
      * @param prefix strung to be prefix to
      *                session filename
      *-------------------------------------*)
-    constructor TFileSessionManager.create(
+    constructor TCookieSessionManager.create(
         const sessionIdGenerator : ISessionIdGenerator;
         const sessionFactory : ISessionFactory;
         const cookieName : string;
-        const fileReader : IFileReader;
-        const baseDir : string;
-        const prefix : string
+        const encrypter : IEncrypter
     );
     begin
         inherited create(sessionIdGenerator, cookieName);
         fSessionFactory := sessionFactory;
         fSessionFilename := baseDir + prefix;
-        fFileReader := fileReader;
-        fSessionList := THashList.create();
         fCurrentSession := nil;
+        fEncrypter := encrypter;
     end;
 
     (*!------------------------------------
      * destructor
      *-------------------------------------*)
-    destructor TFileSessionManager.destroy();
+    destructor TCookieSessionManager.destroy();
     begin
+        fEncrypter := nil;
         fCurrentSession := nil;
-        cleanUpSessionList();
-        fFileReader := nil;
-        fSessionList := nil;
         fSessionFactory := nil;
         inherited destroy();
     end;
 
-    procedure TFileSessionManager.cleanUpSessionList();
-    var indx : integer;
-        item : PSessionItem;
+    procedure TCookieSessionManager.writeSessionFile(const sessFile : string; const sessData : string);
     begin
-        for indx := fSessionList.count()-1  downto 0 do
-        begin
-            item := fSessionList.get(indx);
-            item^.sessionObj := nil;
-            dispose(item);
-            fSessionList.delete(indx);
-        end;
-    end;
-
-    procedure TFileSessionManager.writeSessionFile(const jsonFile : string; const jsonData : string);
-    var fs : TFileStream;
-    begin
-        fs := TFileStream.create(jsonFile, fmCreate);
-        try
-            fs.seek(0, soFromBeginning);
-            fs.writeBuffer(jsonData[1], length(jsonData));
-        finally
-            fs.free();
-        end;
-    end;
-
-    (*!------------------------------------
-     * find session from session id
-     *-------------------------------------
-     * @param sessionId session id
-     * @return session instance or nil if not found
-     *-------------------------------------
-     * if sessionId point to valid session id in storage,
-     * then new ISession is created with is data populated
-     * from storage. lifeTimeInSec parameter is ignored
-     *
-     * if sessionId is empty string or invalid
-     * or expired, return nil
-     *-------------------------------------*)
-    function TFileSessionManager.findSession(const sessionId : string) : ISession;
-    var sess : ISession;
-        sessFile : string;
-    begin
-        sess := nil;
-        sessFile := fSessionFilename + sessionId;
-        if (sessionId <> '') and (fileExists(sessFile)) then
-        begin
-            try
-                sess := fSessionFactory.createSession(
-                    fCookieName,
-                    sessionId,
-                    fFileReader.readFile(sessFile)
-                );
-                result := sess;
-            except
-                on ESessionExpired do
-                begin
-                    freeAndNil(sess);
-                end;
-            end;
-        end;
-        result := sess;
-    end;
-
-    (*!------------------------------------
-     * create session from session id
-     *-------------------------------------
-     * @param sessionId session id
-     * @param lifeTimeInSec life time of session in seconds
-     * @return session instance
-     *-------------------------------------
-     * if sessionId point to valid session id in storage,
-     * then new ISession is created with is data populated
-     * from storage. lifeTimeInSec parameter is ignored
-     *
-     * if sessionId is empty string or invalid
-     * or expired, new ISession is created with empty
-     * data, session life time is set to lifeTime value
-     *-------------------------------------*)
-    function TFileSessionManager.createSession(
-        const sessionId : string;
-        const lifeTimeInSec : integer
-    ) : ISession;
-    var sess : ISession;
-    begin
-        sess := findSession(sessionId);
-
-        if sess = nil then
-        begin
-            sess := fSessionFactory.createNewSession(
-                fCookieName,
-                fSessionIdGenerator.getSessionId(),
-                incSecond(now(), lifeTimeInSec)
-            );
-        end;
-
-        result := sess;
+        fEncrypter.encrypt();
     end;
 
     (*!------------------------------------
@@ -272,22 +191,16 @@ type
      * @param lifeTimeInSec life time of session in seconds
      * @return session instance
      *-------------------------------------*)
-    function TFileSessionManager.beginSession(
+    function TCookieSessionManager.beginSession(
         const request : IRequest;
         const lifeTimeInSec : integer
     ) : ISession;
-    var sessionId : string;
+    var encryptedSession : string;
         sess : ISession;
-        item : PSessionItem;
     begin
         try
-            sessionId := request.getCookieParam(fCookieName);
-            sess := createSession(sessionId, lifeTimeInSec);
-
-            new(item);
-            item^.sessionObj := sess;
-            fSessionList.add(sess.id(), item);
-
+            encryptedSession := request.getCookieParam(fCookieName);
+            sess := createSession(encryptedSession, lifeTimeInSec);
             fCurrentSession := sess;
             result := sess;
         except
@@ -305,24 +218,11 @@ type
      * @param request current request instance
      * @return session instance or nil if not found
      *-------------------------------------*)
-    function TFileSessionManager.getSession(const request : IRequest) : ISession;
-    var sessionId : shortstring;
-        item : PSessionItem;
+    function TCookieSessionManager.getSession(const request : IRequest) : ISession;
     begin
-        sessionId := request.getCookieParam(fCookieName);
-        item := fSessionList.find(sessionId);
-        //it is assumed that getSession will be called between
-        //beginSession() and endSession()
-        //so fCurrentSession MUST NOT nil
-        if (item = nil) and (fCurrentSession <> nil) then
+        if fCurrentSession <> nil then
         begin
-            //if we get here, it means, this is the first request
-            //so cookie is not yet set but it is initialized
             result := fCurrentSession;
-        end else
-        if (item <> nil) then
-        begin
-            result := item^.sessionObj;
         end else
         begin
             raise ESessionInvalid.create('Invalid session. Cannot get valid session');
@@ -336,9 +236,7 @@ type
      * @param session session instance
      * @return current instance
      *-------------------------------------*)
-    function TFileSessionManager.endSession(const session : ISession) : ISessionManager;
-    var indx : integer;
-        item : PSessionItem;
+    function TCookieSessionManager.endSession(const session : ISession) : ISessionManager;
     begin
         if session.expired() then
         begin
@@ -347,15 +245,7 @@ type
         begin
             persistSession(session);
         end;
-
-        indx := fSessionList.indexOf(session.id());
-        item := fSessionList.get(indx);
-        item^.sessionObj := nil;
-        dispose(item);
-        fSessionList.delete(indx);
-
         fCurrentSession := nil;
-
         result := self;
     end;
 
@@ -366,11 +256,9 @@ type
      * @param session session instance
      * @return current instance
      *-------------------------------------*)
-    function TFileSessionManager.persistSession(const session : ISession) : ISessionManager;
-    var sessFilename : string;
+    function TCookieSessionManager.persistSession(const session : ISession) : ISessionManager;
     begin
-        sessFilename := fSessionFilename + session.id();
-        writeSessionFile(sessFilename, session.serialize());
+        writeSessionFile(fCookieName, session.serialize());
         session.clear();
         result := self;
     end;
@@ -382,15 +270,9 @@ type
      * @param session session instance
      * @return current instance
      *-------------------------------------*)
-    function TFileSessionManager.destroySession(const session : ISession) : ISessionManager;
-    var sessFilename : string;
+    function TCookieSessionManager.destroySession(const session : ISession) : ISessionManager;
     begin
         session.clear();
-        sessFilename := fSessionFilename + session.id();
-        if (fileExists(sessFilename)) then
-        begin
-            deleteFile(sessFilename);
-        end;
         result := self;
     end;
 end.
