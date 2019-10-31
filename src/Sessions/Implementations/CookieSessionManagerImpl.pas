@@ -36,70 +36,13 @@ type
      *-----------------------------------------------*)
     TCookieSessionManager = class(TAbstractSessionManager)
     private
-        fSessionFilename : string;
-        fFileReader : IFileReader;
+        fEncryptedSession : string;
         fSessionList : IList;
         fCurrentSession : ISession;
         fSessionFactory : ISessionFactory;
 
-        procedure writeSessionFile(const jsonFile : string; const jsonData : string);
 
-        (*!------------------------------------
-         * create session from session id
-         *-------------------------------------
-         * @param sessionId session id
-         * @return session instance or nil if not found
-         *-------------------------------------
-         * if sessionId point to valid session id in storage,
-         * then new ISession is created with is data populated
-         * from storage.
-         *
-         * if sessionId is empty string or invalid
-         * or expired, returns nil
-         *-------------------------------------*)
-        function findSession(const sessionId : string) : ISession;
 
-        (*!------------------------------------
-         * create session from session id
-         *-------------------------------------
-         * @param sessionId session id
-         * @param lifeTimeInSec life time of session in seconds
-         * @return session instance
-         *-------------------------------------
-         * if sessionId point to valid session id in storage,
-         * then new ISession is created with is data populated
-         * from storage. lifeTimeInSec parameter is ignored
-         *
-         * if sessionId is empty string or invalid
-         * or expired, new ISession is created with empty
-         * data, session life time is set to lifeTime value
-         *-------------------------------------*)
-        function createSession(
-            const sessionId : string;
-            const lifeTimeInSec : integer
-        ) : ISession;
-
-        (*!------------------------------------
-         * end session and persist to storage
-         *-------------------------------------
-         * @param session session instance
-         * @return current instance
-         *-------------------------------------*)
-        function persistSession(
-            const session : ISession
-        ) : ISessionManager;
-
-        (*!------------------------------------
-         * end session and remove its storage
-         *-------------------------------------
-         * @param session session instance
-         * @return current instance
-         *-------------------------------------*)
-        function destroySession(
-            const session : ISession
-        ) : ISessionManager;
-
-        procedure cleanUpSessionList();
     public
 
         (*!------------------------------------
@@ -121,9 +64,7 @@ type
             const sessionIdGenerator : ISessionIdGenerator;
             const sessionFactory : ISessionFactory;
             const cookieName : string;
-            const fileReader : IFileReader;
-            const baseDir : string;
-            const prefix : string
+            const encrypter : IEncrypter
         );
 
         (*!------------------------------------
