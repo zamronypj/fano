@@ -16,7 +16,6 @@ interface
 uses
 
     Classes,
-    fpjson,
     SessionIntf,
     SessionIdGeneratorIntf,
     SessionManagerIntf,
@@ -42,7 +41,7 @@ type
         fCurrentSession : ISession;
         fSessionFactory : ISessionFactory;
 
-        procedure writeSessionFile(const jsonFile : string; const jsonData : string);
+        procedure writeSessionFile(const sessFile : string; const sessData : string);
 
         (*!------------------------------------
          * create session from session id
@@ -169,7 +168,6 @@ implementation
 uses
 
     SysUtils,
-    jsonParser,
     DateUtils,
     SessionConsts,
     HashListImpl,
@@ -239,13 +237,13 @@ type
         end;
     end;
 
-    procedure TFileSessionManager.writeSessionFile(const jsonFile : string; const jsonData : string);
+    procedure TFileSessionManager.writeSessionFile(const sessFile : string; const sessData : string);
     var fs : TFileStream;
     begin
-        fs := TFileStream.create(jsonFile, fmCreate);
+        fs := TFileStream.create(sessFile, fmCreate);
         try
             fs.seek(0, soFromBeginning);
-            fs.writeBuffer(jsonData[1], length(jsonData));
+            fs.writeBuffer(sessData[1], length(sessData));
         finally
             fs.free();
         end;
