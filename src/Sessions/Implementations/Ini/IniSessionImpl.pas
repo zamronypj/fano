@@ -198,18 +198,6 @@ uses
     end;
 
     (*!------------------------------------
-     * delete session variable
-     *-------------------------------------
-     * @param sessionVar name of session variable
-     * @return current instance
-     *-------------------------------------*)
-    function TIniSession.delete(const sessionVar : shortstring) : ISession;
-    begin
-        raiseExceptionIfExpired();
-        result := internalDelete(sessionVar);
-    end;
-
-    (*!------------------------------------
      * clear all session variables
      *-------------------------------------
      * This is only remove session data, but
@@ -219,22 +207,8 @@ uses
      *-------------------------------------*)
     function TIniSession.internalClear() : ISession;
     begin
-        fSessionData.eraseSection('sessionVars');
+        fSessionData.eraseSection(SESSION_VARS);
         result := self;
-    end;
-
-    (*!------------------------------------
-     * clear all session variables
-     *-------------------------------------
-     * This is only remove session data, but
-     * underlying storage is kept
-     *-------------------------------------
-     * @return current instance
-     *-------------------------------------*)
-    function TIniSession.clear() : ISession;
-    begin
-        raiseExceptionIfExpired();
-        result := internalClear();
     end;
 
     (*!------------------------------------
@@ -259,14 +233,6 @@ uses
     function TIniSession.expiresAt() : TDateTime;
     begin
         result := strToDateTime(fSessionData.readString('expiry', 'expire', '01-01-1970 00:00:00'));
-    end;
-
-    procedure TIniSession.raiseExceptionIfExpired();
-    begin
-        if (expired()) then
-        begin
-            raise ESessionExpired.createFmt(rsSessionExpired, [fSessionId]);
-        end;
     end;
 
     (*!------------------------------------
