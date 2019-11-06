@@ -117,7 +117,15 @@ type
          * @param sessionVal value of session variable
          * @return current instance
          *-------------------------------------*)
-        function setVar(const sessionVar : shortstring; const sessionVal : string) : ISession;
+        function setVar(const sessionVar : shortstring; const sessionVal : string) : ISession; overload;
+
+        (*!------------------------------------
+         * set session variable
+         *-------------------------------------
+         * @param sessionVar name of session variable
+         * @param sessionVal value of session variable
+         *-------------------------------------*)
+        procedure setVar(const sessionVar : shortstring; const sessionVal : string); overload;
 
         (*!------------------------------------
          * get session variable
