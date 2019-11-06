@@ -94,6 +94,8 @@ type
          * @return date time when session is expired
          *-------------------------------------*)
         function expiresAt() : TDateTime;
+
+        property vars[const key : shortstring] : string read getVar write setVar; default;
     end;
 
 implementation
