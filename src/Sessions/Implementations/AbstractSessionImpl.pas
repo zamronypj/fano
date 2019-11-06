@@ -119,7 +119,18 @@ type
          * @param sessionVal value of session variable
          * @return current instance
          *-------------------------------------*)
-        function setVar(const sessionVar : shortstring; const sessionVal : string) : ISession;
+        function setVar(
+            const sessionVar : shortstring;
+            const sessionVal : string
+        ) : ISession; overload;
+
+        (*!------------------------------------
+         * set session variable
+         *-------------------------------------
+         * @param sessionVar name of session variable
+         * @param sessionVal value of session variable
+         *-------------------------------------*)
+        procedure setVar(const sessionVar : shortstring; const sessionVal : string); overload;
 
         (*!------------------------------------
          * get session variable
@@ -231,6 +242,18 @@ uses
     begin
         raiseExceptionIfExpired();
         result := internalSetVar(sessionVar, sessionVal);
+    end;
+
+    (*!------------------------------------
+     * set session variable
+     *-------------------------------------
+     * @param sessionVar name of session variable
+     * @param sessionVal value of session variable
+     *-------------------------------------*)
+    procedure TAbstractSession.setVar(const sessionVar : shortstring; const sessionVal : string);
+    begin
+        raiseExceptionIfExpired();
+        internalSetVar(sessionVar, sessionVal);
     end;
 
     (*!------------------------------------
