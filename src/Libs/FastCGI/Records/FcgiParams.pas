@@ -142,8 +142,8 @@ uses
      *-----------------------------------------------*)
     destructor TFcgiParams.destroy();
     begin
-        inherited destroy();
         fKeyValues := nil;
+        inherited destroy();
     end;
 
     (*!------------------------------------------------

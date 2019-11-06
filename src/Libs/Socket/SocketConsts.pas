@@ -24,6 +24,8 @@ resourcestring
     raEpollAddFileDescriptorFailed = 'Fail to add file descriptor';
 
     rsSocketError = 'Socket error: %s (%d)';
+    rsSocketReadFailed = 'Read socket failed, error: %s (%d)';
+    rsSocketWriteFailed = 'Write socket failed, error: %s (%d)';
 
 implementation
 

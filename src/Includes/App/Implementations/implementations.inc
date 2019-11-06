@@ -44,3 +44,13 @@ EpollSimpleScgiAppImpl,
 EpollSimpleUnixScgiAppImpl,
 {$ENDIF}
 {---------------- End SCGI related-----------------------------}
+
+{----------------Begin uwsgi related-----------------------------}
+SimpleUwsgiAppImpl,
+SimpleUnixUwsgiAppImpl,
+
+{$IFDEF LINUX}
+EpollSimpleUwsgiAppImpl,
+EpollSimpleUnixUwsgiAppImpl,
+{$ENDIF}
+{---------------- End uwsgi related-----------------------------}

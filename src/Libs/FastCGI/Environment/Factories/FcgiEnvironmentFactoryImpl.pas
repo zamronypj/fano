@@ -53,8 +53,8 @@ uses
 
     destructor TFCGIEnvironmentFactory.destroy();
     begin
-        inherited destroy();
         fParamStream := nil;
+        inherited destroy();
     end;
 
     function TFCGIEnvironmentFactory.build(const container : IDependencyContainer) : IDependency;
