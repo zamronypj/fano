@@ -15,7 +15,6 @@ interface
 
 uses
 
-    ListIntf,
     ValidatorIntf,
     CompareDateTimeValidatorImpl;
 

@@ -17,6 +17,7 @@ uses
 
     EnvironmentIntf,
     RequestIntf,
+    ReadOnlyListIntf,
     ListIntf,
     MultipartFormDataParserIntf,
     KeyValueTypes,
@@ -168,7 +169,7 @@ type
          *-------------------------------------------------
          * @return array of TKeyValue
          *------------------------------------------------*)
-        function getQueryParams() : IList;
+        function getQueryParams() : IReadOnlyList;
 
         (*!------------------------------------------------
          * get single cookie param value by its name
@@ -185,7 +186,7 @@ type
          *-------------------------------------------------
          * @return array of TKeyValue
          *------------------------------------------------*)
-        function getCookieParams() : IList;
+        function getCookieParams() : IReadOnlyList;
 
         (*!------------------------------------------------
          * get request body data
@@ -202,7 +203,7 @@ type
          *-------------------------------------------------
          * @return array of TKeyValue
          *------------------------------------------------*)
-        function getParsedBodyParams() : IList;
+        function getParsedBodyParams() : IReadOnlyList;
 
         (*!------------------------------------------------
          * get request uploaded file by name
@@ -243,7 +244,7 @@ type
          *-------------------------------------------------
          * @return array of query string and parsed body params
          *------------------------------------------------*)
-        function getParams() : IList;
+        function getParams() : IReadOnlyList;
 
         (*!------------------------------------------------
          * test if current request is coming from AJAX request
@@ -445,8 +446,8 @@ resourcestring
             uploadedFiles := uploadedFilesWriter as IUploadedFileCollection;
         end else
         begin
-            //if POST but different contentType save it as it is
-            //with its contentType as key
+            //if POST/PUT/PATCH but different contentType such as 'application/json'
+            //save it as it is with its contentType as key and let developer deals with it
             new(param);
             param^.key := contentType;
             param^.value := bodyStr;
@@ -458,8 +459,10 @@ resourcestring
         const env : ICGIEnvironment;
         const body : IList
     );
+    var amethod : string;
     begin
-        if (env.requestMethod() = 'POST') then
+        amethod := upperCase(env.requestMethod());
+        if (amethod = 'POST') or (amethod = 'PUT') or (amethod = 'PATCH') then
         begin
             initPostBodyParamsFromStdInput(env, body);
         end;
@@ -521,7 +524,7 @@ resourcestring
      *-------------------------------------------------
      * @return list of request query string parameters
      *------------------------------------------------*)
-    function TRequest.getQueryParams() : IList;
+    function TRequest.getQueryParams() : IReadOnlyList;
     begin
         result := queryParams;
     end;
@@ -544,7 +547,7 @@ resourcestring
      *-------------------------------------------------
      * @return list of request cookies parameters
      *------------------------------------------------*)
-    function TRequest.getCookieParams() : IList;
+    function TRequest.getCookieParams() : IReadOnlyList;
     begin
         result := cookieParams;
     end;
@@ -567,7 +570,7 @@ resourcestring
      *-------------------------------------------------
      * @return list of request body parameters
      *------------------------------------------------*)
-    function TRequest.getParsedBodyParams() : IList;
+    function TRequest.getParsedBodyParams() : IReadOnlyList;
     begin
         result := bodyParams;
     end;
@@ -642,7 +645,7 @@ resourcestring
      *-------------------------------------------------
      * @return list of request query string parameters
      *------------------------------------------------*)
-    function TRequest.getParams() : IList;
+    function TRequest.getParams() : IReadOnlyList;
     begin
         result := queryAndBodyParams;
     end;

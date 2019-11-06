@@ -18,6 +18,7 @@ uses
     ResponseIntf,
     MiddlewareIntf,
     RouteArgsReaderIntf,
+    RequestHandlerIntf,
     InjectableObjectImpl;
 
 type
@@ -42,8 +43,8 @@ type
         function handleRequest(
             const request : IRequest;
             const response : IResponse;
-            const routeArgs : IRouteArgsReader;
-            var canContinue : boolean
+            const args : IRouteArgsReader;
+            const next : IRequestHandler
         ) : IResponse;
     end;
 
@@ -86,8 +87,8 @@ implementation
     function TCompositeMiddleware.handleRequest(
         const request : IRequest;
         const response : IResponse;
-        const routeArgs : IRouteArgsReader;
-        var canContinue : boolean
+        const args : IRouteArgsReader;
+        const next : IRequestHandler
     ) : IResponse;
     var i, totMiddlewares : integer;
         newResponse : IResponse;
@@ -96,15 +97,11 @@ implementation
         newResponse := response;
         for i:= 0 to totMiddlewares - 1 do
         begin
-            if not canContinue then
-            begin
-                break;
-            end;
             newResponse := fMiddlewares[i].handleRequest(
                 request,
                 newResponse,
-                routeArgs,
-                canContinue
+                args,
+                next
             );
         end;
         result := newResponse;

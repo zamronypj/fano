@@ -18,6 +18,7 @@ uses
     ResponseIntf,
     MiddlewareIntf,
     RouteArgsReaderIntf,
+    RequestHandlerIntf,
     InjectableObjectImpl;
 
 type
@@ -33,7 +34,7 @@ type
             const request : IRequest;
             const response : IResponse;
             const args : IRouteArgsReader;
-            var canContinue : boolean
+            const nextMdlwr : IRequestHandler
         ) : IResponse;
     end;
 
@@ -43,10 +44,10 @@ implementation
         const request : IRequest;
         const response : IResponse;
         const args : IRouteArgsReader;
-        var canContinue : boolean
+        const nextMdlwr : IRequestHandler
     ) : IResponse;
     begin
         //intentionally does nothing
-        result := response;
+        result := nextMdlwr.handleRequest(request, response, args);
     end;
 end.

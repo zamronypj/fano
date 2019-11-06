@@ -22,7 +22,8 @@ uses
     StreamAdapterIntf,
     BaseUnix,
     Unix,
-    Linux;
+    Linux,
+    LruConnectionQueueImpl;
 
 type
 
@@ -35,10 +36,18 @@ type
      * We implement our own socket server because TSocketServer
      * from fcl-net not suitable for handling graceful shutdown
      *-------------------------------------------------
+     * @todo Refactor as this class similar to TSocketSvr
+     *-------------------------------------------------
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
     TEpollSocketSvr = class(TInterfacedObject, IRunnable, IRunnableWithDataNotif)
     private
+        {$IFDEF CLOSE_IDLE_CONNECTIONS}
+        fLruConnectionQueue : TLruConnectionQueue;
+        procedure addToConnectionsQueue(fd : longint);
+        procedure closeIdleConnections();
+        {$ENDIF}
+
         procedure raiseExceptionIfAny();
 
         (*!-----------------------------------------------
@@ -86,9 +95,13 @@ type
         (*!-----------------------------------------------
          * called when client connection is established
          *-------------------------------------------------
+         * @param epollFd, file descriptor returned from epoll_create()
          * @param clientSocket, socket handle where data can be read
          *-----------------------------------------------*)
-        procedure handleClientConnection(clientSocket : longint);
+        function handleClientConnection(
+            const epollFd : longint;
+            const clientSocket : longint
+        ) : boolean;
 
         (*!-----------------------------------------------
          * handle when one or more file descriptor is ready for I/O
@@ -130,6 +143,8 @@ type
         fDataAvailListener : IDataAvailListener;
         fListenSocket : longint;
         fQueueSize : longint;
+        fIdleTimeout : longint;
+        fTimeoutVal : longint;
 
         (*!-----------------------------------------------
          * bind socket to an socket address
@@ -173,8 +188,15 @@ type
          *-------------------------------------------------
          * @param listenSocket, socket handle created with fpSocket()
          * @param queueSize, number of queue when listen, 5 = default of Berkeley Socket
+         * @param timeoutInMs, waiting for I/O timeout in millisecond, default 30 seconds
+         * @param idleTimeoutInMs, connection idle timeout in millisecond, default 60 seconds
          *-----------------------------------------------*)
-        constructor create(listenSocket : longint; queueSize : longint = 5);
+        constructor create(
+            listenSocket : longint;
+            queueSize : longint = 5;
+            timeoutInMs : integer = 30000;
+            idleTimeoutInMs : longint = 60000
+        );
 
         (*!-----------------------------------------------
          * destructor
@@ -203,16 +225,21 @@ implementation
 
 uses
 
+    CloseableIntf,
     ESockListenImpl,
     ESockWouldBlockImpl,
     EEpollCreateImpl,
     StreamAdapterImpl,
     SockStreamImpl,
     CloseableStreamImpl,
+    EpollCloseableImpl,
     EEpollCtlImpl,
     TermSignalImpl,
     SocketConsts,
-    Errors;
+    DateUtils,
+    SysUtils,
+    Errors,
+    StreamIdIntf;
 
     procedure makeNonBlocking(fd: longint);
     var flags : integer;
@@ -227,9 +254,19 @@ uses
      *-------------------------------------------------
      * @param listenSocket, socket handle created with fpSocket()
      * @param queueSize, number of queue when listen, 5 = default of Berkeley Socket
+     * @param timeoutInMs, waiting for I/O timeout in millisecond, default 30 seconds
+     * @param idleTimeoutInMs, connection idle timeout in millisecond, default 60 seconds
      *-----------------------------------------------*)
-    constructor TEpollSocketSvr.create(listenSocket : longint; queueSize : integer = 5);
+    constructor TEpollSocketSvr.create(
+        listenSocket : longint;
+        queueSize : integer = 5;
+        timeoutInMs : integer = 30000;
+        idleTimeoutInMs : longint = 60000
+    );
     begin
+        {$IFDEF CLOSE_IDLE_CONNECTIONS}
+        fLruConnectionQueue := TLruConnectionQueue.create();
+        {$ENDIF}
         fListenSocket := listenSocket;
         fQueueSize := queueSize;
         fDataAvailListener := nil;
@@ -242,6 +279,9 @@ uses
     destructor TEpollSocketSvr.destroy();
     begin
         shutdown();
+        {$IFDEF CLOSE_IDLE_CONNECTIONS}
+        fLruConnectionQueue.free();
+        {$ENDIF}
         inherited destroy();
     end;
 
@@ -257,7 +297,8 @@ uses
             errCode := socketError();
             raise ESockListen.createFmt(
                 rsSocketListenFailed,
-                [ strError(errCode), errCode ]
+                errCode,
+                strError(errCode)
             );
         end;
     end;
@@ -319,6 +360,30 @@ uses
         epoll_ctl(epollFd, EPOLL_CTL_DEL, fd, @ev);
     end;
 
+    {$IFDEF CLOSE_IDLE_CONNECTIONS}
+    //turn off for now as this cause weird access violation sometime
+    procedure TEpollSocketSvr.addToConnectionsQueue(fd : longint);
+    var lruFds : TLruFileDesc;
+    begin
+        lruFds.fds := fd;
+        lruFds.timestamp := DateTimeToUnix(now());
+        fLruConnectionQueue.push(lruFds);
+    end;
+
+    procedure TEpollSocketSvr.closeIdleConnections();
+    var lruFds : TLruFileDesc;
+        nowTimestamp : int64;
+    begin
+        nowTimestamp := dateTimeToUnix(now());
+        lruFds := fLruConnectionQueue.top();
+        if (nowTimestamp - lruFds.timestamp > fIdleTimeout) then
+        begin
+            fLruConnectionQueue.pop();
+            fpClose(lruFds.fds);
+        end;
+    end;
+    {$ENDIF}
+
     (*!-----------------------------------------------
      * accept all incoming connection until no more pending
      * connection available
@@ -345,10 +410,16 @@ uses
                 //TODO : improve FCGI parser so we can use non blocking socket
                 //Turn off for now as our FCGI parser not suitable for
                 //handling non blocking socket
-                //makeNonBlocking(clientSocket);
+                makeNonBlocking(clientSocket);
 
                 //add client socket to be monitored for I/O read
-                addToMonitoredSet(epollFd, clientSocket, EPOLLIN {or EPOLLET});
+                //note that before client socket is closed,
+                //we will remove it from monitored set (see TEpollCloseable class)
+                addToMonitoredSet(epollFd, clientSocket, EPOLLIN or EPOLLET);
+
+                {$IFDEF CLOSE_IDLE_CONNECTIONS}
+                addToConnectionsQueue(clientSocket);
+                {$ENDIF}
             end;
         until (clientSocket < 0);
     end;
@@ -411,8 +482,7 @@ uses
             begin
                 //if we get here then it must be from one or
                 //more client connections
-                handleClientConnection(fd);
-                removeFromMonitoredSet(epollFd, fd);
+                handleClientConnection(epollFd, fd);
             end;
         end;
     end;
@@ -441,7 +511,7 @@ uses
         terminated := false;
         repeat
             //wait indefinitely until something happen in fListenSocket or epollTerminatePipeIn
-            totFd := epoll_wait(epollFd, events, maxEvents, -1);
+            totFd := epoll_wait(epollFd, events, maxEvents, fTimeoutVal);
             if totFd > 0 then
             begin
                 //one or more file descriptors is ready for I/O, check further
@@ -464,7 +534,12 @@ uses
                 //we have error just terminate
                 terminated := true;
             end;
+            {$IFDEF CLOSE_IDLE_CONNECTIONS}
+            closeIdleConnections();
+            {$ENDIF}
         until terminated;
+        removeFromMonitoredSet(epollFd, termPipeIn);
+        removeFromMonitoredSet(epollFd, listenSocket);
     end;
 
     (*!-----------------------------------------------
@@ -523,21 +598,36 @@ uses
     (*!-----------------------------------------------
      * called when client connection is allowed
      *-------------------------------------------------
+     * @param epollFd, file descriptor returned from epoll_create()
      * @param clientSocket, socket handle where data can be read
      *-----------------------------------------------*)
-    procedure TEpollSocketSvr.handleClientConnection(clientSocket : longint);
-    var aStream : TCloseableStream;
+    function TEpollSocketSvr.handleClientConnection(
+        const epollFd : longint;
+        const clientSocket : longint
+    ) : boolean;
+    var astream : IStreamAdapter;
+        streamCloser : ICloseable;
     begin
+        result := true;
         if (assigned(fDataAvailListener)) then
         begin
-            aStream := TCloseableStream.create(
-                clientSocket,
-                getSockStream(clientSocket)
-            );
+            astream := getSockStream(clientSocket);
             try
-                fDataAvailListener.handleData(aStream, self, astream);
+                //create instance which can remove client socket
+                //from epoll monitoring and after that close socket
+                streamCloser := TEpollCloseable.create(epollFd, clientSocket);
+                try
+                    fDataAvailListener.handleData(
+                        astream,
+                        self,
+                        streamCloser,
+                        streamCloser as IStreamId
+                    );
+                finally
+                    streamCloser := nil;
+                end;
             finally
-                aStream.free();
+                astream := nil;
             end;
         end;
     end;

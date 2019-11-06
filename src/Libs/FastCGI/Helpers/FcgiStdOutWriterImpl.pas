@@ -57,7 +57,6 @@ type
          *-----------------------------------------------
          * @param stream, stream to write
          * @param str, string to write
-         * @param markEnd, if true, add FCGI_END_REQUEST
          * @return current instance
          *-----------------------------------------------
          * very long string may be splitted into several
@@ -139,7 +138,6 @@ uses
      *-----------------------------------------------
      * @param stream, stream to write
      * @param str, string to write
-     * @param markEnd, if true, add FCGI_END_REQUEST
      * @return current instance
      *-----------------------------------------------
      * very long string may be splitted into several
