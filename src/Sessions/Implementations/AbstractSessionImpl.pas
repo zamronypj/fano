@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit JsonSessionImpl;
+unit AbstractSessionImpl;
 
 interface
 
@@ -15,24 +15,27 @@ interface
 
 uses
 
-    fpjson,
-    SessionIntf,
-    AbstractSessionImpl;
+    SessionIntf;
+
+const
+
+    SESSION_VARS = 'sessionVars';
 
 type
 
     (*!------------------------------------------------
-     * class having capability to manage
-     * session variables in JSON file
+     * base class having capability to manage
+     * session variables
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TJsonSession = class(TAbstractSession)
-    private
-
-        fSessionData : TJsonData;
-
+    TAbstractSession = class(TInterfacedObject, ISession)
     protected
+        fSessionName : shortstring;
+        fSessionId : shortstring;
+
+        procedure raiseExceptionIfAlreadyTerminated();
+        procedure raiseExceptionIfExpired();
 
         (*!------------------------------------
          * set session variable
@@ -41,14 +44,17 @@ type
          * @param sessionVal value of session variable
          * @return current instance
          *-------------------------------------*)
-        function internalSetVar(const sessionVar : shortstring; const sessionVal : string) : ISession; override;
+        function internalSetVar(
+            const sessionVar : shortstring;
+            const sessionVal : string
+        ) : ISession; virtual; abstract;
 
         (*!------------------------------------
          * get session variable
          *-------------------------------------
          * @return session value
          *-------------------------------------*)
-        function internalGetVar(const sessionVar : shortstring) : string; override;
+        function internalGetVar(const sessionVar : shortstring) : string; virtual; abstract;
 
         (*!------------------------------------
          * delete session variable
@@ -56,7 +62,7 @@ type
          * @param sessionVar name of session variable
          * @return current instance
          *-------------------------------------*)
-        function internalDelete(const sessionVar : shortstring) : ISession; override;
+        function internalDelete(const sessionVar : shortstring) : ISession; virtual; abstract;
 
         (*!------------------------------------
          * clear all session variables
@@ -66,9 +72,9 @@ type
          *-------------------------------------
          * @return current instance
          *-------------------------------------*)
-        function internalClear() : ISession; override;
+        function internalClear() : ISession; virtual; abstract;
 
-        procedure cleanUp(); override;
+        procedure cleanUp(); virtual; abstract;
     public
 
         (*!------------------------------------
@@ -80,37 +86,86 @@ type
          *-------------------------------------*)
         constructor create(
             const sessName : shortstring;
-            const sessId : shortstring;
-            const sessData : string
+            const sessId : shortstring
         );
+
+        destructor destroy(); override;
+
+        (*!------------------------------------
+         * get session name
+         *-------------------------------------
+         * @return session name
+         *-------------------------------------*)
+        function name() : shortstring;
 
         (*!------------------------------------
          * get current session id
          *-------------------------------------
          * @return session id string
          *-------------------------------------*)
-        function has(const sessionVar : shortstring) : boolean; override;
+        function id() : shortstring;
+
+        (*!------------------------------------
+         * get current session id
+         *-------------------------------------
+         * @return session id string
+         *-------------------------------------*)
+        function has(const sessionVar : shortstring) : boolean; virtual; abstract;
+
+        (*!------------------------------------
+         * set session variable
+         *-------------------------------------
+         * @param sessionVar name of session variable
+         * @param sessionVal value of session variable
+         * @return current instance
+         *-------------------------------------*)
+        function setVar(const sessionVar : shortstring; const sessionVal : string) : ISession;
+
+        (*!------------------------------------
+         * get session variable
+         *-------------------------------------
+         * @return session value
+         *-------------------------------------*)
+        function getVar(const sessionVar : shortstring) : string;
+
+        (*!------------------------------------
+         * delete session variable
+         *-------------------------------------
+         * @param sessionVar name of session variable
+         * @return current instance
+         *-------------------------------------*)
+        function delete(const sessionVar : shortstring) : ISession;
+
+        (*!------------------------------------
+         * clear all session variables
+         *-------------------------------------
+         * This is only remove session data, but
+         * underlying storage is kept
+         *-------------------------------------
+         * @return current instance
+         *-------------------------------------*)
+        function clear() : ISession;
 
         (*!------------------------------------
          * test if current session is expired
          *-------------------------------------
          * @return true if session is expired
          *-------------------------------------*)
-        function expired() : boolean; override;
+        function expired() : boolean; virtual; abstract;
 
         (*!------------------------------------
          * get session expiration date
          *-------------------------------------
          * @return date time when session is expired
          *-------------------------------------*)
-        function expiresAt() : TDateTime; override;
+        function expiresAt() : TDateTime; virtual; abstract;
 
         (*!------------------------------------
          * serialize session data to string
          *-------------------------------------
          * @return string of session data
          *-------------------------------------*)
-        function serialize() : string; override;
+        function serialize() : string; virtual; abstract;
     end;
 
 implementation
@@ -119,8 +174,6 @@ uses
 
     Classes,
     SysUtils,
-    jsonParser,
-    DateUtils,
     SessionConsts,
     ESessionExpiredImpl;
 
@@ -131,20 +184,25 @@ uses
      * @param sessId session id
      * @param sessData session data
      *-------------------------------------*)
-    constructor TJsonSession.create(
+    constructor TAbstractSession.create(
         const sessName : shortstring;
-        const sessId : shortstring;
-        const sessData : string
+        const sessId : shortstring
     );
     begin
-        inherited create(sessName, sessId);
-        fSessionData := getJSON(sessData);
-        raiseExceptionIfExpired();
+        inherited create();
+        fSessionName := sessName;
+        fSessionId := sessId;
     end;
 
-    procedure TJsonSession.cleanUp();
+    destructor TAbstractSession.destroy();
     begin
-        fSessionData.free();
+        cleanUp();
+        inherited destroy();
+    end;
+
+    function TAbstractSession.name() : shortstring;
+    begin
+        result := fSessionName;
     end;
 
     (*!------------------------------------
@@ -152,9 +210,14 @@ uses
      *-------------------------------------
      * @return session id string
      *-------------------------------------*)
-    function TJsonSession.has(const sessionVar : shortstring) : boolean;
+    function TAbstractSession.id() : shortstring;
     begin
-        result := (fSessionData.findPath(SESSION_VARS + '.' + sessionVar) <> nil);
+        result := fSessionId;
+    end;
+
+    procedure TAbstractSession.raiseExceptionIfAlreadyTerminated();
+    begin
+        //TODO: raise ESessionTerminated.create()
     end;
 
     (*!------------------------------------
@@ -164,28 +227,10 @@ uses
      * @param sessionVal value of session variable
      * @return current instance
      *-------------------------------------*)
-    function TJsonSession.internalSetVar(const sessionVar : shortstring; const sessionVal : string) : ISession;
-    var sessValue : TJsonData;
-        tmpObj : TJsonObject;
+    function TAbstractSession.setVar(const sessionVar : shortstring; const sessionVal : string) : ISession;
     begin
-        sessValue := fSessionData.findPath(SESSION_VARS + '.' + sessionVar);
-        if (sessValue <> nil) then
-        begin
-            sessValue.asString := sessionVal;
-        end else
-        begin
-            sessValue := fSessionData.findPath(SESSION_VARS);
-            if (sessValue <> nil) then
-            begin
-                tmpObj := TJsonObject(sessValue);
-            end else
-            begin
-                tmpObj := TJsonObject.create();
-                TJsonObject(fSessionData).add(SESSION_VARS, tmpObj);
-            end;
-            tmpObj.add(sessionVar, sessionVal);
-        end;
-        result := self;
+        raiseExceptionIfExpired();
+        result := internalSetVar(sessionVar, sessionVal);
     end;
 
     (*!------------------------------------
@@ -194,19 +239,11 @@ uses
      * @return session value
      * @throws EJSON exception when not found
      *-------------------------------------*)
-    function TJsonSession.internalGetVar(const sessionVar : shortstring) : string;
-    var sessValue : TJsonData;
+    function TAbstractSession.getVar(const sessionVar : shortstring) : string;
     begin
-        try
-        sessValue := fSessionData.getPath(SESSION_VARS + '.' + sessionVar);
-        except
-            on e : EJson do
-            begin
-               e.message := e.message + fSessionData.asJson;
-               raise;
-            end;
-        end;
-        result := sessValue.asString;
+        raiseExceptionIfAlreadyTerminated();
+        raiseExceptionIfExpired();
+        result := internalGetVar(sessionVar);
     end;
 
     (*!------------------------------------
@@ -215,15 +252,10 @@ uses
      * @param sessionVar name of session variable
      * @return current instance
      *-------------------------------------*)
-    function TJsonSession.internalDelete(const sessionVar : shortstring) : ISession;
-    var sessValue : TJsonData;
+    function TAbstractSession.delete(const sessionVar : shortstring) : ISession;
     begin
-        sessValue := fSessionData.findPath(SESSION_VARS);
-        if (sessValue <> nil) then
-        begin
-            TJsonObject(sessValue).delete(sessionVar);
-        end;
-        result := self;
+        raiseExceptionIfExpired();
+        result := internalDelete(sessionVar);
     end;
 
     (*!------------------------------------
@@ -234,48 +266,17 @@ uses
      *-------------------------------------
      * @return current instance
      *-------------------------------------*)
-    function TJsonSession.internalClear() : ISession;
-    var sessValue : TJsonData;
+    function TAbstractSession.clear() : ISession;
     begin
-        sessValue := fSessionData.findPath(SESSION_VARS);
-        if (sessValue <> nil) then
+        raiseExceptionIfExpired();
+        result := internalClear();
+    end;
+
+    procedure TAbstractSession.raiseExceptionIfExpired();
+    begin
+        if (expired()) then
         begin
-            sessValue.clear();
+            raise ESessionExpired.createFmt(rsSessionExpired, [fSessionId]);
         end;
-        result := self;
-    end;
-
-    (*!------------------------------------
-     * test if current session is expired
-     *-------------------------------------
-     * @return true if session is expired
-     *-------------------------------------*)
-    function TJsonSession.expired() : boolean;
-    var expiredDateTime : TDateTime;
-    begin
-        expiredDateTime := strToDateTime(fSessionData.getPath('expire').asString);
-        //value > 0, means now() is later than expiredDateTime i.e,
-        //expireddateTime is in past
-        result := (compareDateTime(now(), expiredDateTime) > 0);
-    end;
-
-    (*!------------------------------------
-     * set expiration date
-     *-------------------------------------
-     * @return current session instance
-     *-------------------------------------*)
-    function TJsonSession.expiresAt() : TDateTime;
-    begin
-        result := strToDateTime(fSessionData.getPath('expire').asString);
-    end;
-
-    (*!------------------------------------
-     * serialize session data to string
-     *-------------------------------------
-     * @return string of session data
-     *-------------------------------------*)
-    function TJsonSession.serialize() : string;
-    begin
-        result := fSessionData.asJSON;
     end;
 end.
