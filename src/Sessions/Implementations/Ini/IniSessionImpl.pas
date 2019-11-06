@@ -273,6 +273,18 @@ uses
     end;
 
     (*!------------------------------------
+     * set session variable
+     *-------------------------------------
+     * @param sessionVar name of session variable
+     * @param sessionVal value of session variable
+     *-------------------------------------*)
+    procedure TIniSession.setVar(const sessionVar : shortstring; const sessionVal : string);
+    begin
+        raiseExceptionIfExpired();
+        internalSetVar(sessionVar, sessionVal);
+    end;
+
+    (*!------------------------------------
      * get session variable
      *-------------------------------------
      * @return session value
