@@ -17,7 +17,8 @@ uses
 
     Classes,
     IniFiles,
-    SessionIntf;
+    SessionIntf,
+    AbstractSessionImpl;
 
 type
 
@@ -27,15 +28,12 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TIniSession = class(TInterfacedObject, ISession)
+    TIniSession = class(TAbstractSession)
     private
-        fSessionName : shortstring;
-        fSessionId : shortstring;
         fSessionData : TIniFile;
         fSessionStream : TStringStream;
 
-        procedure raiseExceptionIfAlreadyTerminated();
-        procedure raiseExceptionIfExpired();
+    protected
 
         (*!------------------------------------
          * set session variable
@@ -44,14 +42,17 @@ type
          * @param sessionVal value of session variable
          * @return current instance
          *-------------------------------------*)
-        function internalSetVar(const sessionVar : shortstring; const sessionVal : string) : ISession;
+        function internalSetVar(
+            const sessionVar : shortstring;
+            const sessionVal : string
+        ) : ISession; override;
 
         (*!------------------------------------
          * get session variable
          *-------------------------------------
          * @return session value
          *-------------------------------------*)
-        function internalGetVar(const sessionVar : shortstring) : string;
+        function internalGetVar(const sessionVar : shortstring) : string; override;
 
         (*!------------------------------------
          * delete session variable
@@ -59,7 +60,7 @@ type
          * @param sessionVar name of session variable
          * @return current instance
          *-------------------------------------*)
-        function internalDelete(const sessionVar : shortstring) : ISession;
+        function internalDelete(const sessionVar : shortstring) : ISession; override;
 
         (*!------------------------------------
          * clear all session variables
@@ -69,9 +70,9 @@ type
          *-------------------------------------
          * @return current instance
          *-------------------------------------*)
-        function internalClear() : ISession;
+        function internalClear() : ISession; override;
 
-        procedure cleanUp();
+        procedure cleanUp(); override;
     public
 
         (*!------------------------------------
@@ -87,83 +88,33 @@ type
             const sessData : string
         );
 
-        destructor destroy(); override;
-
-        (*!------------------------------------
-         * get session name
-         *-------------------------------------
-         * @return session name
-         *-------------------------------------*)
-        function name() : shortstring;
-
         (*!------------------------------------
          * get current session id
          *-------------------------------------
          * @return session id string
          *-------------------------------------*)
-        function id() : shortstring;
-
-        (*!------------------------------------
-         * get current session id
-         *-------------------------------------
-         * @return session id string
-         *-------------------------------------*)
-        function has(const sessionVar : shortstring) : boolean;
-
-        (*!------------------------------------
-         * set session variable
-         *-------------------------------------
-         * @param sessionVar name of session variable
-         * @param sessionVal value of session variable
-         * @return current instance
-         *-------------------------------------*)
-        function setVar(const sessionVar : shortstring; const sessionVal : string) : ISession;
-
-        (*!------------------------------------
-         * get session variable
-         *-------------------------------------
-         * @return session value
-         *-------------------------------------*)
-        function getVar(const sessionVar : shortstring) : string;
-
-        (*!------------------------------------
-         * delete session variable
-         *-------------------------------------
-         * @param sessionVar name of session variable
-         * @return current instance
-         *-------------------------------------*)
-        function delete(const sessionVar : shortstring) : ISession;
-
-        (*!------------------------------------
-         * clear all session variables
-         *-------------------------------------
-         * This is only remove session data, but
-         * underlying storage is kept
-         *-------------------------------------
-         * @return current instance
-         *-------------------------------------*)
-        function clear() : ISession;
+        function has(const sessionVar : shortstring) : boolean; override;
 
         (*!------------------------------------
          * test if current session is expired
          *-------------------------------------
          * @return true if session is expired
          *-------------------------------------*)
-        function expired() : boolean;
+        function expired() : boolean; override;
 
         (*!------------------------------------
          * get session expiration date
          *-------------------------------------
          * @return date time when session is expired
          *-------------------------------------*)
-        function expiresAt() : TDateTime;
+        function expiresAt() : TDateTime; override;
 
         (*!------------------------------------
          * serialize session data to string
          *-------------------------------------
          * @return string of session data
          *-------------------------------------*)
-        function serialize() : string;
+        function serialize() : string; override;
     end;
 
 implementation
@@ -188,39 +139,16 @@ uses
         const sessData : string
     );
     begin
-        inherited create();
-        fSessionName := sessName;
-        fSessionId := sessId;
+        inherited create(sessName, sessId);
         fSessionStream := TStringStream.create(sessData);
         fSessionData := TIniFile.create(fSessionStream);
         raiseExceptionIfExpired();
-    end;
-
-    destructor TIniSession.destroy();
-    begin
-        cleanUp();
-        inherited destroy();
     end;
 
     procedure TIniSession.cleanUp();
     begin
         fSessionStream.free();
         fSessionData.free();
-    end;
-
-    function TIniSession.name() : shortstring;
-    begin
-        result := fSessionName;
-    end;
-
-    (*!------------------------------------
-     * get current session id
-     *-------------------------------------
-     * @return session id string
-     *-------------------------------------*)
-    function TIniSession.id() : shortstring;
-    begin
-        result := fSessionId;
     end;
 
     (*!------------------------------------
@@ -230,7 +158,7 @@ uses
      *-------------------------------------*)
     function TIniSession.has(const sessionVar : shortstring) : boolean;
     begin
-        result := (fSessionData.readString('sessionVars', sessionVar, '') <> '');
+        result := (fSessionData.readString(SESSION_VARS, sessionVar, '') <> '');
     end;
 
     (*!------------------------------------
@@ -242,26 +170,8 @@ uses
      *-------------------------------------*)
     function TIniSession.internalSetVar(const sessionVar : shortstring; const sessionVal : string) : ISession;
     begin
-        fSessionData.writeString('sessionVars', sessionVar, sessionVal);
+        fSessionData.writeString(SESSION_VARS, sessionVar, sessionVal);
         result := self;
-    end;
-
-    procedure TIniSession.raiseExceptionIfAlreadyTerminated();
-    begin
-        //TODO: raise ESessionTerminated.create()
-    end;
-
-    (*!------------------------------------
-     * set session variable
-     *-------------------------------------
-     * @param sessionVar name of session variable
-     * @param sessionVal value of session variable
-     * @return current instance
-     *-------------------------------------*)
-    function TIniSession.setVar(const sessionVar : shortstring; const sessionVal : string) : ISession;
-    begin
-        raiseExceptionIfExpired();
-        result := internalSetVar(sessionVar, sessionVal);
     end;
 
     (*!------------------------------------
@@ -272,20 +182,7 @@ uses
      *-------------------------------------*)
     function TIniSession.internalGetVar(const sessionVar : shortstring) : string;
     begin
-        result := fSessionData.readString('sessionVars', sessionVar, '');
-    end;
-
-    (*!------------------------------------
-     * get session variable
-     *-------------------------------------
-     * @return session value
-     * @throws EJSON exception when not found
-     *-------------------------------------*)
-    function TIniSession.getVar(const sessionVar : shortstring) : string;
-    begin
-        raiseExceptionIfAlreadyTerminated();
-        raiseExceptionIfExpired();
-        result := internalGetVar(sessionVar);
+        result := fSessionData.readString(SESSION_VARS, sessionVar, '');
     end;
 
     (*!------------------------------------
@@ -296,20 +193,8 @@ uses
      *-------------------------------------*)
     function TIniSession.internalDelete(const sessionVar : shortstring) : ISession;
     begin
-        fSessionData.deleteKey('sessionVars', sessionVar);
+        fSessionData.deleteKey(SESSION_VARS, sessionVar);
         result := self;
-    end;
-
-    (*!------------------------------------
-     * delete session variable
-     *-------------------------------------
-     * @param sessionVar name of session variable
-     * @return current instance
-     *-------------------------------------*)
-    function TIniSession.delete(const sessionVar : shortstring) : ISession;
-    begin
-        raiseExceptionIfExpired();
-        result := internalDelete(sessionVar);
     end;
 
     (*!------------------------------------
@@ -322,22 +207,8 @@ uses
      *-------------------------------------*)
     function TIniSession.internalClear() : ISession;
     begin
-        fSessionData.eraseSection('sessionVars');
+        fSessionData.eraseSection(SESSION_VARS);
         result := self;
-    end;
-
-    (*!------------------------------------
-     * clear all session variables
-     *-------------------------------------
-     * This is only remove session data, but
-     * underlying storage is kept
-     *-------------------------------------
-     * @return current instance
-     *-------------------------------------*)
-    function TIniSession.clear() : ISession;
-    begin
-        raiseExceptionIfExpired();
-        result := internalClear();
     end;
 
     (*!------------------------------------
@@ -362,14 +233,6 @@ uses
     function TIniSession.expiresAt() : TDateTime;
     begin
         result := strToDateTime(fSessionData.readString('expiry', 'expire', '01-01-1970 00:00:00'));
-    end;
-
-    procedure TIniSession.raiseExceptionIfExpired();
-    begin
-        if (expired()) then
-        begin
-            raise ESessionExpired.createFmt(rsSessionExpired, [fSessionId]);
-        end;
     end;
 
     (*!------------------------------------

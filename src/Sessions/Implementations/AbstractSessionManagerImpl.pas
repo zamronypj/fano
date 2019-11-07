@@ -17,6 +17,7 @@ uses
 
     SessionIntf,
     SessionIdGeneratorIntf,
+    ReadOnlySessionManagerIntf,
     SessionManagerIntf,
     RequestIntf,
     InjectableObjectImpl;
@@ -29,7 +30,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TAbstractSessionManager = class(TInjectableObject, ISessionManager)
+    TAbstractSessionManager = class(TInjectableObject, ISessionManager, IReadOnlySessionManager)
     protected
 
         fCookieName : string;
