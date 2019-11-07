@@ -7,7 +7,7 @@
  *}
 
 (*! ---------------------------------------------
- * alias for interface in security
+ * alias for interface in sessions
  * that is included in fano.pas unit
  *
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
@@ -17,4 +17,4 @@ ISessionIdGenerator = SessionIdGeneratorIntf.ISessionIdGenerator;
 ISession = SessionIntf.ISession;
 ISessionFactory = SessionFactoryIntf.ISessionFactory;
 ISessionManager = SessionManagerIntf.ISessionManager;
-IReadOnlySessionManager = SessionManagerIntf.IReadOnlySessionManager;
+IReadOnlySessionManager = ReadOnlySessionManagerIntf.IReadOnlySessionManager;
