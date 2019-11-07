@@ -181,7 +181,7 @@ type
 
     procedure TCookieSessionManager.writeSessionFile(const sessFile : string; const sessData : string);
     begin
-        fEncrypter.encrypt();
+        fEncrypter.encrypt(fSecretKey, sessData);
     end;
 
     (*!------------------------------------
@@ -200,7 +200,11 @@ type
     begin
         try
             encryptedSession := request.getCookieParam(fCookieName);
-            sess := createSession(encryptedSession, lifeTimeInSec);
+            sess := fSessionFactory.createNewSession(
+                fCookieName,
+                encryptedSession,
+                incSecond(now(), lifeTimeInSec)
+            );
             fCurrentSession := sess;
             result := sess;
         except
