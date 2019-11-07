@@ -15,4 +15,5 @@
 SessionIdGeneratorIntf,
 SessionIntf,
 SessionFactoryIntf,
+ReadOnlySessionManagerIntf,
 SessionManagerIntf,

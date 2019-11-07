@@ -16,7 +16,8 @@ interface
 uses
 
     SessionIntf,
-    RequestIntf;
+    RequestIntf,
+    ReadOnlySessionManagerIntf;
 
 type
 
@@ -26,7 +27,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    ISessionManager = interface
+    ISessionManager = interface(IReadOnlySessionManager)
         ['{F6526BF2-538B-46CC-AF49-D5F373B6E2F5}']
 
         (*!------------------------------------
@@ -40,14 +41,6 @@ type
             const request : IRequest;
             const lifeTimeInSec : integer
         ) : ISession;
-
-        (*!------------------------------------
-         * get session from request
-         *-------------------------------------
-         * @param request current request instance
-         * @return session instance or nil if not found
-         *-------------------------------------*)
-        function getSession(const request : IRequest) : ISession;
 
         (*!------------------------------------
          * end session and save session data to

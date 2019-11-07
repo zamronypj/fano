@@ -17,3 +17,4 @@ ISessionIdGenerator = SessionIdGeneratorIntf.ISessionIdGenerator;
 ISession = SessionIntf.ISession;
 ISessionFactory = SessionFactoryIntf.ISessionFactory;
 ISessionManager = SessionManagerIntf.ISessionManager;
+IReadOnlySessionManager = SessionManagerIntf.IReadOnlySessionManager;
