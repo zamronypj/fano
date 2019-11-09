@@ -132,6 +132,8 @@ type
         function httpCookie() : string;
 
         function getEnumerator() : ICGIEnvironmentEnumerator;
+
+        property vars[const keyName : string] : string read env; default;
         property enumerator : ICGIEnvironmentEnumerator read getEnumerator;
     end;
 
