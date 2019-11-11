@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit EncrypterIntf;
+unit DecrypterIntf;
 
 interface
 
@@ -17,20 +17,20 @@ type
 
     (*!------------------------------------------------
      * interface for any class having capability to
-     * encrypt string
+     * decrypt string
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    IEncrypter = interface
-        ['{0655F1C5-687C-4E84-B291-7F3E124D19D5}']
+    IDecrypter = interface
+        ['{6E566A5C-E6AC-45CD-85E0-AE0A2DE2279D}']
 
         (*!------------------------------------------------
-         * encrypt string
+         * decrypt string
          *-----------------------------------------------
-         * @param originalStr original string
-         * @return encrypted string
+         * @param encryptedStr encrypted string
+         * @return original string
          *-----------------------------------------------*)
-        function encrypt(const originalStr : string) : string;
+        function decrypt(const encryptedStr : string) : string;
 
     end;
 

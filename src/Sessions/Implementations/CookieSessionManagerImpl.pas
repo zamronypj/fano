@@ -74,18 +74,12 @@ type
          * @param sessionFactory helper class
          *           which create ISession object
          * @param cookieName name of cookie to use
-         * @param fileReader helper class
-         *           which can read file to string
-         * @param baseDir base directory where
-         *                session files store
-         * @param prefix string to be prefix to
-         *                session filename
+         * @param encrypter
          *-------------------------------------*)
         constructor create(
             const sessionIdGenerator : ISessionIdGenerator;
             const sessionFactory : ISessionFactory;
             const cookieName : string;
-            const cookie : ICookie;
             const encrypter : IEncrypter
         );
 
@@ -151,21 +145,19 @@ type
      *           which can read file to string
      * @param baseDir base directory where
      *                session files store
-     * @param prefix strung to be prefix to
-     *                session filename
+     * @param decrypter decrypter instance
      *-------------------------------------*)
     constructor TCookieSessionManager.create(
         const sessionIdGenerator : ISessionIdGenerator;
         const sessionFactory : ISessionFactory;
         const cookieName : string;
-        const encrypter : IEncrypter
+        const decrypter : IDecrypter
     );
     begin
         inherited create(sessionIdGenerator, cookieName);
         fSessionFactory := sessionFactory;
-        fSessionFilename := baseDir + prefix;
         fCurrentSession := nil;
-        fEncrypter := encrypter;
+        fDecrypter := decrypter;
     end;
 
     (*!------------------------------------
@@ -173,15 +165,10 @@ type
      *-------------------------------------*)
     destructor TCookieSessionManager.destroy();
     begin
-        fEncrypter := nil;
+        fDecrypter := nil;
         fCurrentSession := nil;
         fSessionFactory := nil;
         inherited destroy();
-    end;
-
-    procedure TCookieSessionManager.writeSessionFile(const sessFile : string; const sessData : string);
-    begin
-        fEncrypter.encrypt(fSecretKey, sessData);
     end;
 
     (*!------------------------------------
@@ -200,10 +187,11 @@ type
     begin
         try
             encryptedSession := request.getCookieParam(fCookieName);
-            sess := fSessionFactory.createNewSession(
+            sess := fSessionFactory.createSession(
                 fCookieName,
                 encryptedSession,
-                incSecond(now(), lifeTimeInSec)
+                //session data is encrypted in cookie value
+                fDecrypter.decrypt(encryptedSession)
             );
             fCurrentSession := sess;
             result := sess;
@@ -245,25 +233,8 @@ type
         if session.expired() then
         begin
             destroySession(session);
-        end else
-        begin
-            persistSession(session);
         end;
         fCurrentSession := nil;
-        result := self;
-    end;
-
-    (*!------------------------------------
-     * end session and delete session data from
-     * persistent storage
-     *-------------------------------------
-     * @param session session instance
-     * @return current instance
-     *-------------------------------------*)
-    function TCookieSessionManager.persistSession(const session : ISession) : ISessionManager;
-    begin
-        writeSessionFile(fCookieName, session.serialize());
-        session.clear();
         result := self;
     end;
 

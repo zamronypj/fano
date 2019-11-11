@@ -32,7 +32,7 @@ type
     TAbstractSession = class(TInterfacedObject, ISession)
     protected
         fSessionName : shortstring;
-        fSessionId : shortstring;
+        fSessionId : string;
 
         procedure raiseExceptionIfAlreadyTerminated();
         procedure raiseExceptionIfExpired();
@@ -86,7 +86,7 @@ type
          *-------------------------------------*)
         constructor create(
             const sessName : shortstring;
-            const sessId : shortstring
+            const sessId : string
         );
 
         destructor destroy(); override;
@@ -103,7 +103,7 @@ type
          *-------------------------------------
          * @return session id string
          *-------------------------------------*)
-        function id() : shortstring;
+        function id() : string;
 
         (*!------------------------------------
          * get current session id
@@ -185,7 +185,7 @@ uses
      *-------------------------------------*)
     constructor TAbstractSession.create(
         const sessName : shortstring;
-        const sessId : shortstring
+        const sessId : string
     );
     begin
         inherited create();
@@ -209,7 +209,7 @@ uses
      *-------------------------------------
      * @return session id string
      *-------------------------------------*)
-    function TAbstractSession.id() : shortstring;
+    function TAbstractSession.id() : string;
     begin
         result := fSessionId;
     end;

@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit IniSessionImpl;
+unit CookieSessionImpl;
 
 interface
 
@@ -15,44 +15,71 @@ interface
 
 uses
 
-    Classes,
-    IniFiles,
     SessionIntf,
-    AbstractSessionImpl;
+    EncrypterIntf;
 
 type
 
     (*!------------------------------------------------
-     * class having capability to manage
-     * session variables in INI file
+     * class having capability to manage encrypt
+     * session variables as encrypted session id
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TIniSession = class(TAbstractSession)
+    TCookieSession = class(TInterfacedObject, ISession)
     private
-        fSessionData : TIniFile;
-        fSessionStream : TStringStream;
+        fActualSession : ISession;
+        fEncrypter : IEncrypter;
+    public
 
-    protected
+        (*!------------------------------------
+         * constructor
+         *-------------------------------------
+         * @param actualSession actual session instance;
+         * @param encrypter instance data encrypter
+         *-------------------------------------*)
+        constructor create(
+            const actualSession : ISession;
+            const encrypter : IEncrypter
+        );
+
+        destructor destroy(); override;
+
+        (*!------------------------------------
+         * get session name
+         *-------------------------------------
+         * @return session name
+         *-------------------------------------*)
+        function name() : shortstring;
+
+        (*!------------------------------------
+         * get current session id
+         *-------------------------------------
+         * @return session id string
+         *-------------------------------------*)
+        function id() : string;
+
+        (*!------------------------------------
+         * get current session id
+         *-------------------------------------
+         * @return session id string
+         *-------------------------------------*)
+        function has(const sessionVar : shortstring) : boolean; virtual; abstract;
 
         (*!------------------------------------
          * set session variable
          *-------------------------------------
          * @param sessionVar name of session variable
          * @param sessionVal value of session variable
-         * @return current instance
          *-------------------------------------*)
-        function internalSetVar(
-            const sessionVar : shortstring;
-            const sessionVal : string
-        ) : ISession; override;
+        procedure setVar(const sessionVar : shortstring; const sessionVal : string);
 
         (*!------------------------------------
          * get session variable
          *-------------------------------------
          * @return session value
          *-------------------------------------*)
-        function internalGetVar(const sessionVar : shortstring) : string; override;
+        function getVar(const sessionVar : shortstring) : string;
 
         (*!------------------------------------
          * delete session variable
@@ -60,7 +87,7 @@ type
          * @param sessionVar name of session variable
          * @return current instance
          *-------------------------------------*)
-        function internalDelete(const sessionVar : shortstring) : ISession; override;
+        function delete(const sessionVar : shortstring) : ISession;
 
         (*!------------------------------------
          * clear all session variables
@@ -70,85 +97,64 @@ type
          *-------------------------------------
          * @return current instance
          *-------------------------------------*)
-        function internalClear() : ISession; override;
-
-        procedure cleanUp(); override;
-    public
-
-        (*!------------------------------------
-         * constructor
-         *-------------------------------------
-         * @param sessName session name
-         * @param sessId session id
-         * @param sessData session data
-         *-------------------------------------*)
-        constructor create(
-            const sessName : shortstring;
-            const sessId : string;
-            const sessData : string
-        );
-
-        (*!------------------------------------
-         * get current session id
-         *-------------------------------------
-         * @return session id string
-         *-------------------------------------*)
-        function has(const sessionVar : shortstring) : boolean; override;
+        function clear() : ISession;
 
         (*!------------------------------------
          * test if current session is expired
          *-------------------------------------
          * @return true if session is expired
          *-------------------------------------*)
-        function expired() : boolean; override;
+        function expired() : boolean;
 
         (*!------------------------------------
          * get session expiration date
          *-------------------------------------
          * @return date time when session is expired
          *-------------------------------------*)
-        function expiresAt() : TDateTime; override;
+        function expiresAt() : TDateTime;
 
         (*!------------------------------------
          * serialize session data to string
          *-------------------------------------
          * @return string of session data
          *-------------------------------------*)
-        function serialize() : string; override;
+        function serialize() : string;
     end;
 
 implementation
 
 uses
 
+    Classes,
     SysUtils,
-    DateUtils,
     SessionConsts,
     ESessionExpiredImpl;
 
     (*!------------------------------------
      * constructor
      *-------------------------------------
-     * @param sessName session name
-     * @param sessId session id
-     * @param sessData session data
+     * @param actualSession actual session instance;
+     * @param encrypter instance data encrypter
      *-------------------------------------*)
-    constructor TIniSession.create(
-        const sessName : shortstring;
-        const sessId : string;
-        const sessData : string
+    constructor TCookieSession.create(
+        const actualSession : ISession;
+        const encrypter : IEncrypter
     );
     begin
-        inherited create(sessName, sessId);
-        fSessionStream := TStringStream.create(sessData);
-        fSessionData := TIniFile.create(fSessionStream);
-        raiseExceptionIfExpired();
+        fActualSession := actualSession;
+        fEncrypter := encrypter;
     end;
 
-    procedure TIniSession.cleanUp();
+    destructor TCookieSession.destroy();
     begin
-        fSessionStream.free();
-        fSessionData.free();
+        fActualSession := nil;
+        fEncrypter := nil;
+        inherited destroy();
+    end;
+
+    function TCookieSession.name() : shortstring;
+    begin
+        result := fActualSession.name();
     end;
 
     (*!------------------------------------
@@ -156,9 +162,19 @@ uses
      *-------------------------------------
      * @return session id string
      *-------------------------------------*)
-    function TIniSession.has(const sessionVar : shortstring) : boolean;
+    function TCookieSession.id() : string;
     begin
-        result := (fSessionData.readString(SESSION_VARS, sessionVar, '') <> '');
+        result := fActualSession.id();
+    end;
+
+    (*!------------------------------------
+     * get current session id
+     *-------------------------------------
+     * @return session id string
+     *-------------------------------------*)
+    function TCookieSession.has(const sessionVar : shortstring) : boolean;
+    begin
+        result := fActualSession.has(sessionVar);
     end;
 
     (*!------------------------------------
@@ -166,11 +182,10 @@ uses
      *-------------------------------------
      * @param sessionVar name of session variable
      * @param sessionVal value of session variable
-     * @return current instance
      *-------------------------------------*)
-    function TIniSession.internalSetVar(const sessionVar : shortstring; const sessionVal : string) : ISession;
+    procedure TCookieSession.setVar(const sessionVar : shortstring; const sessionVal : string);
     begin
-        fSessionData.writeString(SESSION_VARS, sessionVar, sessionVal);
+        fActualSession.setVar(sessionVar, sessionVal);
         result := self;
     end;
 
@@ -180,9 +195,9 @@ uses
      * @return session value
      * @throws EJSON exception when not found
      *-------------------------------------*)
-    function TIniSession.internalGetVar(const sessionVar : shortstring) : string;
+    function TCookieSession.getVar(const sessionVar : shortstring) : string;
     begin
-        result := fSessionData.readString(SESSION_VARS, sessionVar, '');
+        result := fActualSession.getVar(sessionVar);
     end;
 
     (*!------------------------------------
@@ -191,9 +206,9 @@ uses
      * @param sessionVar name of session variable
      * @return current instance
      *-------------------------------------*)
-    function TIniSession.internalDelete(const sessionVar : shortstring) : ISession;
+    function TCookieSession.delete(const sessionVar : shortstring) : ISession;
     begin
-        fSessionData.deleteKey(SESSION_VARS, sessionVar);
+        fActualSession.delete(sessionVar);
         result := self;
     end;
 
@@ -205,9 +220,9 @@ uses
      *-------------------------------------
      * @return current instance
      *-------------------------------------*)
-    function TIniSession.internalClear() : ISession;
+    function TCookieSession.clear() : ISession;
     begin
-        fSessionData.eraseSection(SESSION_VARS);
+        fActualSession.clear();
         result := self;
     end;
 
@@ -216,23 +231,19 @@ uses
      *-------------------------------------
      * @return true if session is expired
      *-------------------------------------*)
-    function TIniSession.expired() : boolean;
-    var expiredDateTime : TDateTime;
+    function TCookieSession.expired() : boolean;
     begin
-        expiredDateTime := strToDateTime(fSessionData.readString('expiry', 'expire', '01-01-1970 00:00:00'));
-        //value > 0, means now() is later than expiredDateTime i.e,
-        //expireddateTime is in past
-        result := (compareDateTime(now(), expiredDateTime) > 0);
+        result := fActualSession.expired();
     end;
 
     (*!------------------------------------
-     * get expiration date
+     * set expiration date
      *-------------------------------------
      * @return current session instance
      *-------------------------------------*)
-    function TIniSession.expiresAt() : TDateTime;
+    function TCookieSession.expiresAt() : TDateTime;
     begin
-        result := strToDateTime(fSessionData.readString('expiry', 'expire', '01-01-1970 00:00:00'));
+        result := fActualSession.expiresAt();
     end;
 
     (*!------------------------------------
@@ -240,9 +251,9 @@ uses
      *-------------------------------------
      * @return string of session data
      *-------------------------------------*)
-    function TIniSession.serialize() : string;
+    function TCookieSession.serialize() : string;
     begin
-        fSessionData.updateFile();
-        result := fSessionStream.dataString;
+        result := fEncrypter.encrypt(fActualSession.serialize());
     end;
+
 end.

@@ -53,3 +53,4 @@ CliParamsIntf,
 CliParamsFactoryIntf,
 
 EncrypterIntf,
+DecrypterIntf,

@@ -38,3 +38,4 @@ ICliParams = CliParamsIntf.ICliParams;
 ICliParamsFactory = CliParamsFactoryIntf.ICliParamsFactory;
 
 IEncypter = EncrypterIntf.IEncypter;
+IDecypter = DecrypterIntf.IDecypter;

@@ -41,7 +41,7 @@ type
          *-------------------------------------
          * @return session id string
          *-------------------------------------*)
-        function id() : shortstring;
+        function id() : string;
 
         (*!------------------------------------
          * test if session variable is set

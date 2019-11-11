@@ -80,7 +80,7 @@ type
          *-------------------------------------*)
         constructor create(
             const sessName : shortstring;
-            const sessId : shortstring;
+            const sessId : string;
             const sessData : string
         );
 
@@ -133,7 +133,7 @@ uses
      *-------------------------------------*)
     constructor TJsonSession.create(
         const sessName : shortstring;
-        const sessId : shortstring;
+        const sessId : string;
         const sessData : string
     );
     begin

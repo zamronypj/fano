@@ -15,7 +15,8 @@ interface
 
 uses
 
-    EncrypterIntf;
+    EncrypterIntf,
+    DecrypterIntf;
 
 type
 
@@ -25,7 +26,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TBlowfishEncrypter = class(TInterfacedObject, IEncrypter)
+    TBlowfishEncrypter = class(TInterfacedObject, IEncrypter, IDecrypter)
     private
         fSecretKey : string;
     public
