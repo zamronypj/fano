@@ -105,6 +105,14 @@ type
         function getArg(const key : shortstring) : TPlaceholder;
 
         (*!-------------------------------------------
+         * get single route argument value
+         *--------------------------------------------
+         * @param key name of argument
+         * @return argument value
+         *--------------------------------------------*)
+        function getValue(const key : shortstring) : string;
+
+        (*!-------------------------------------------
          * Set route name
          *--------------------------------------------
          * @param routeName name of route
@@ -227,6 +235,19 @@ uses
             end;
         end;
         raise ERouteArgNotFound.createFmt(sRouteArgNotFound, [key]);
+    end;
+
+    (*!-------------------------------------------
+     * get single route argument value
+     *--------------------------------------------
+     * @param key name of argument
+     * @return argument value
+     *--------------------------------------------*)
+    function TRouteHandler.getValue(const key : shortstring) : string;
+    var ph : TPlaceholder;
+    begin
+        ph := getArg(key);
+        result := ph.value;
     end;
 
     (*!-------------------------------------------
