@@ -93,7 +93,7 @@ uses
     begin
         result := TCookieSessionManager.create(
             TGuidSessionIdGenerator.create(),
-            TCookieSessionFactory.create(fActualSessionFactory, fEncrypter),
+            TCookieSessionFactory.create(fActualSessFactory, fEncrypter),
             fCookieName,
             fDecrypter
         );
