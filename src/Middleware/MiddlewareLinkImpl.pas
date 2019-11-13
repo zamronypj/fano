@@ -34,6 +34,7 @@ type
         fMiddleware : IMiddleware;
         fNextLink : IRequestHandler;
         fDefaultHandler : IRequestHandler;
+        procedure cleanUp();
     public
         constructor create(const middlewareInst : IMiddleware);
         destructor destroy(); override;
@@ -64,11 +65,16 @@ uses
         fDefaultHandler := TNullRequestHandler.create();
     end;
 
-    destructor TMiddlewareLink.destroy();
+    procedure TMiddlewareLink.cleanUp();
     begin
         fMiddleware := nil;
         fNextLink := nil;
         fDefaultHandler := nil;
+    end;
+
+    destructor TMiddlewareLink.destroy();
+    begin
+        cleanUp();
         inherited destroy();
     end;
 
@@ -79,14 +85,20 @@ uses
     ) : IResponse;
     var nextHandler : IRequestHandler;
     begin
-        if (fNextLink = nil) then
-        begin
-            nextHandler := fDefaultHandler;
-        end else
-        begin
-            nextHandler := fNextLink;
+        try
+            if (fNextLink = nil) then
+            begin
+                nextHandler := fDefaultHandler;
+            end else
+            begin
+                nextHandler := fNextLink;
+            end;
+            result := fMiddleware.handleRequest(request, response, routeArgs, nextHandler);
+        except
+            cleanUp();
+            nextHandler := nil;
+            raise;
         end;
-        result := fMiddleware.handleRequest(request, response, routeArgs, nextHandler);
     end;
 
     procedure TMiddlewareLink.setNext(const next : IRequestHandler);
