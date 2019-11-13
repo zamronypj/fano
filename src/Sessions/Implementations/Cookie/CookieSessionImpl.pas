@@ -64,7 +64,7 @@ type
          *-------------------------------------
          * @return session id string
          *-------------------------------------*)
-        function has(const sessionVar : shortstring) : boolean; virtual; abstract;
+        function has(const sessionVar : shortstring) : boolean;
 
         (*!------------------------------------
          * set session variable
