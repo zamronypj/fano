@@ -22,8 +22,8 @@ uses
 type
 
     (*!------------------------------------------------
-     * Factory class for route collection using
-     * TSimpleRouteList
+     * Factory class that wrap request handler as route handler
+     * so it can be chained with middlewares
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
@@ -57,12 +57,18 @@ uses
     function TRouteHandlerFactory.build(const handler : IRequestHandler) : IRouteHandler;
     var middlewareList : IMiddlewareListItem;
     begin
-        middlewareList := fMiddlewareListFactory.build();
-        result := TRouteHandler.create(
-            middlewareList.asList(),
-            middlewareList.asLinkList,
-            handler
-        );
+        try
+            middlewareList := fMiddlewareListFactory.build();
+            result := TRouteHandler.create(
+                middlewareList.asList(),
+                middlewareList.asLinkList,
+                handler
+            );
+        except
+            middlewareList := nil;
+            result := nil;
+            raise;
+        end;
     end;
 
 end.
