@@ -36,10 +36,10 @@ type
         fDecrypter : IDecrypter;
     public
         constructor create(
-            const cookieName : string = FANO_COOKIE_NAME;
             const actualSessFactory : ISessionFactory;
             const encrypter : IEncrypter;
-            const decrypter : IDecrypter
+            const decrypter : IDecrypter;
+            const cookieName : string = FANO_COOKIE_NAME
         );
 
         destructor destroy(); override;
@@ -64,10 +64,10 @@ uses
     GuidSessionIdGeneratorImpl;
 
     constructor TCookieSessionManagerFactory.create(
-        const cookieName : string = FANO_COOKIE_NAME;
         const actualSessFactory : ISessionFactory;
         const encrypter : IEncrypter;
-        const decrypter : IDecrypter
+        const decrypter : IDecrypter;
+        const cookieName : string = FANO_COOKIE_NAME
     );
     begin
         fCookieName := cookieName;
