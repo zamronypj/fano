@@ -22,7 +22,7 @@ uses
     SessionFactoryIntf,
     RequestIntf,
     ListIntf,
-    EncrypterIntf,
+    DecrypterIntf,
     AbstractSessionManagerImpl;
 
 type
@@ -39,20 +39,7 @@ type
         fSessionList : IList;
         fCurrentSession : ISession;
         fSessionFactory : ISessionFactory;
-        fEncrypter : IEncrypter;
-        fCookie : ICookie;
-
-        procedure writeSessionFile(const sessFile : string; const sessData : string);
-
-        (*!------------------------------------
-         * end session and persist to storage
-         *-------------------------------------
-         * @param session session instance
-         * @return current instance
-         *-------------------------------------*)
-        function persistSession(
-            const session : ISession
-        ) : ISessionManager;
+        fDecrypter : IDecrypter;
 
         (*!------------------------------------
          * end session and remove its storage
@@ -80,7 +67,7 @@ type
             const sessionIdGenerator : ISessionIdGenerator;
             const sessionFactory : ISessionFactory;
             const cookieName : string;
-            const encrypter : IEncrypter
+            const decrypter : IDecrypter
         );
 
         (*!------------------------------------
