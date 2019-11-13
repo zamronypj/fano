@@ -253,9 +253,17 @@ uses
         out routeHandler : IRouteHandler
     ) : IRoute;
     begin
-        routeHandler := fRouteHandlerFactory.build(handler);
-        routeData := findRouteData(routePattern);
-        result := routeHandler.route();
+        try
+            routeHandler := fRouteHandlerFactory.build(handler);
+            routeData := findRouteData(routePattern);
+            result := routeHandler.route();
+        except
+            routeHandler := nil;
+            resetRouteData(routeData);
+            dispose(routeData);
+            result := nil;
+            raise;
+        end;
     end;
 
     (*!------------------------------------------
