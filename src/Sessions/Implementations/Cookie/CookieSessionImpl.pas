@@ -186,7 +186,6 @@ uses
     procedure TCookieSession.setVar(const sessionVar : shortstring; const sessionVal : string);
     begin
         fActualSession.setVar(sessionVar, sessionVal);
-        result := self;
     end;
 
     (*!------------------------------------
