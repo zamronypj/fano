@@ -35,7 +35,6 @@ type
      *-----------------------------------------------*)
     TCookieSessionManager = class(TAbstractSessionManager)
     private
-        fEncryptedSession : string;
         fSessionList : IList;
         fCurrentSession : ISession;
         fSessionFactory : ISessionFactory;
