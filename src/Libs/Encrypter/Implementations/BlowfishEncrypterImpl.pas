@@ -99,6 +99,9 @@ uses
      *-----------------------------------------------
      * @param encryptedStr encrypted string
      * @return original string
+     *-----------------------------------------------
+     * @author : leledumbo
+     * @credit : http://pascalgeek.blogspot.com/2012/06/encryption-decryption-and-asynchronous.html
      *-----------------------------------------------*)
     function TBlowfishEncrypter.decrypt(const encryptedStr : string) : string;
     var blowfishDecryptor: TBlowFishDeCryptStream;
