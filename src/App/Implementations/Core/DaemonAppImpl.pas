@@ -159,6 +159,7 @@ uses
         fProcessor := nil;
         fOutputBuffer := nil;
         fStdOutWriter := nil;
+        reset();
     end;
 
     destructor TDaemonWebApplication.destroy();
