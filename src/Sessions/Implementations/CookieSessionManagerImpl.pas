@@ -169,12 +169,22 @@ uses
     begin
         try
             encryptedSession := request.getCookieParam(fCookieName);
-            sess := fSessionFactory.createSession(
-                fCookieName,
-                encryptedSession,
-                //session data is encrypted in cookie value
-                fDecrypter.decrypt(encryptedSession)
-            );
+            if encryptedSession = '' then
+            begin
+                sess := fSessionFactory.createNewSession(
+                    fCookieName,
+                    encryptedSession,
+                    incSecond(now(), lifeTimeInSec)
+                );
+            end else
+            begin
+                sess := fSessionFactory.createSession(
+                    fCookieName,
+                    encryptedSession,
+                    //session data is encrypted in cookie value
+                    fDecrypter.decrypt(encryptedSession)
+                );
+            end;
             fCurrentSession := sess;
             result := sess;
         except
