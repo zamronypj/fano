@@ -164,7 +164,9 @@ uses
      *-------------------------------------*)
     function TCookieSession.id() : string;
     begin
-        result := fActualSession.id();
+        //for session data encoded in cookie, id will be encrypted session data
+        //so we just call our serialize() method
+        result := serialize();
     end;
 
     (*!------------------------------------
