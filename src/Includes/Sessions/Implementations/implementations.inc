@@ -26,10 +26,18 @@ FileSessionManagerImpl,
 CookieSessionManagerImpl,
 
 JsonSessionImpl,
+JsonSessionFactoryImpl,
+
 JsonFileSessionManagerFactoryImpl,
+
 IniSessionImpl,
+IniSessionFactoryImpl,
+
 IniFileSessionManagerFactoryImpl,
+
 CookieSessionImpl,
+CookieSessionFactoryImpl,
+
 CookieSessionManagerFactoryImpl,
 
 SessionMiddlewareExecutorImpl,

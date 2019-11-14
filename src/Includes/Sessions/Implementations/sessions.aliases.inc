@@ -23,14 +23,22 @@ TMd5SessionIdGenerator = Md5SessionIdGeneratorImpl.TMd5SessionIdGenerator;
 TSha1SessionIdGenerator = Sha1SessionIdGeneratorImpl.TSha1SessionIdGenerator;
 
 TFileSessionManager = FileSessionManagerImpl.TFileSessionManager;
+
 TJsonSession = JsonSessionImpl.TJsonSession;
+TJsonSessionFactory = JsonSessionFactoryImpl.TJsonSessionFactory;
+
 TJsonFileSessionManagerFactory = JsonFileSessionManagerFactoryImpl.TJsonFileSessionManagerFactory;
+
 TIniSession = IniSessionImpl.TIniSession;
+TIniSessionFactory = IniSessionFactoryImpl.TIniSessionFactory;
+
 TIniFileSessionManagerFactory = IniFileSessionManagerFactoryImpl.TIniFileSessionManagerFactory;
 
 TCookieSessionManager = CookieSessionManagerImpl.TCookieSessionManager;
-TCookieSession = CookieSessionImpl.TCookieSession;
 TCookieSessionManagerFactory = CookieSessionManagerFactoryImpl.TCookieSessionManagerFactory;
+
+TCookieSession = CookieSessionImpl.TCookieSession;
+TCookieSessionFactory = CookieSessionFactoryImpl.TCookieSessionFactory;
 
 TSessionMiddlewareExecutor = SessionMiddlewareExecutorImpl.TSessionMiddlewareExecutor;
 
