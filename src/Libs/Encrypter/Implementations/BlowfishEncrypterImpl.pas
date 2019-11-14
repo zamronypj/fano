@@ -15,6 +15,7 @@ interface
 
 uses
 
+    InjectableObjectImpl,
     EncrypterIntf,
     DecrypterIntf;
 
@@ -26,7 +27,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TBlowfishEncrypter = class(TInterfacedObject, IEncrypter, IDecrypter)
+    TBlowfishEncrypter = class(TInjectableObject, IEncrypter, IDecrypter)
     private
         fSecretKey : string;
     public

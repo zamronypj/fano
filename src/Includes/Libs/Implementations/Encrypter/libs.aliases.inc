@@ -7,3 +7,4 @@
  *}
 
 TBlowfishEncrypter = BlowfishEncrypterImpl.TBlowfishEncrypter;
+TBlowfishEncrypterFactory = BlowfishEncrypterFactoryImpl.TBlowfishEncrypterFactory;

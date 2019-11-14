@@ -9,4 +9,6 @@
 {------------ Begin encrypter-related------------------}
 BlowfishEncrypterImpl,
 
+BlowfishEncrypterFactoryImpl,
+
 {------------ End encrypter-related------------------}
