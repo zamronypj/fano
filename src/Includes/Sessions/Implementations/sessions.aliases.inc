@@ -28,6 +28,10 @@ TJsonFileSessionManagerFactory = JsonFileSessionManagerFactoryImpl.TJsonFileSess
 TIniSession = IniSessionImpl.TIniSession;
 TIniFileSessionManagerFactory = IniFileSessionManagerFactoryImpl.TIniFileSessionManagerFactory;
 
+TCookieSessionManager = CookieSessionManagerImpl.TCookieSessionManager;
+TCookieSession = CookieSessionImpl.TCookieSession;
+TCookieSessionManagerFactory = CookieSessionManagerFactoryImpl.TCookieSessionManagerFactory;
+
 TSessionMiddlewareExecutor = SessionMiddlewareExecutorImpl.TSessionMiddlewareExecutor;
 
 TSessionResponse = SessionResponseImpl.TSessionResponse;
