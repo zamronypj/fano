@@ -25,7 +25,7 @@ type
         ['{4E58C0BF-FD8C-48AC-AF77-B01A31B1CDC8}']
 
         (*!------------------------------------------------
-         * generate token name and value
+         * sanitize input string
          *-------------------------------------------------
          * @param dataToSanitize input data to sanitize
          * @return sanitized output
