@@ -7,13 +7,10 @@
  *}
 
 (*! ---------------------------------------------
- * alias for implementation in security
- * that is included in implementations.aliases.inc
+ * list of validation units for sanitation
+ * that is included in implementations.inc
  *
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
  *-----------------------------------------------*)
 
-{$INCLUDE validations.aliases.inc}
-{$INCLUDE sanitations.aliases.inc}
-{$INCLUDE cors.aliases.inc}
-{$INCLUDE csrf.aliases.inc}
+HtmlEntitiesSanitizerImpl,
