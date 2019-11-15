@@ -14,5 +14,6 @@
  *-----------------------------------------------*)
 
 {$INCLUDE validations.implementations.inc}
+{$INCLUDE sanitations.implementations.inc}
 {$INCLUDE cors.implementations.inc}
 {$INCLUDE csrf.implementations.inc}
