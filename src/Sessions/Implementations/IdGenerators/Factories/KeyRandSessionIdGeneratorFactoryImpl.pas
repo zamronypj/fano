@@ -46,7 +46,7 @@ uses
 
     DevUrandomImpl,
     KeySessionIdGeneratorImpl,
-    GuidSessionIdGeneratorImpl,
+    RawSessionIdGeneratorImpl,
     Sha1SessionIdGeneratorImpl;
 
     constructor TKeyRandSessionIdGeneratorFactory.create(const secretKey : string);
