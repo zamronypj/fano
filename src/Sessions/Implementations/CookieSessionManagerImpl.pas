@@ -181,7 +181,7 @@ uses
             begin
                 result := fSessionFactory.createSession(
                     fCookieName,
-                    fSessionIdGenerator.getSessionId(),
+                    encryptedSession,
                     sessData
                 );
             end;
