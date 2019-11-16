@@ -174,7 +174,7 @@ uses
                 //oops something is not right, ignore and just create new session
                 result := fSessionFactory.createNewSession(
                     fCookieName,
-                    fSessionIdGenerator.getSessionId(),
+                    encryptedSession,
                     incSecond(now(), lifeTimeInSec)
                 );
             end else
