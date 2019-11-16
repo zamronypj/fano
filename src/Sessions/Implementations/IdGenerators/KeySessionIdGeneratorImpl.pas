@@ -37,7 +37,7 @@ type
          *-------------------------------------
          * @return session id string
          *-------------------------------------*)
-        function getSessionId() : string; override;
+        function getSessionId(const request : IRequest) : string; override;
     end;
 
 implementation
