@@ -22,7 +22,8 @@ type
 
     (*!------------------------------------------------
      * class having capability to
-     * create session id generator which use SHA1 of secret key + guid
+     * create session id generator which use SHA1 of
+     * secret key + IP address + time + random bytes
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
