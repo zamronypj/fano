@@ -24,6 +24,7 @@ Sha1SessionIdGeneratorImpl,
 KeySessionIdGeneratorImpl,
 
 KeyGuidSessionIdGeneratorFactoryImpl,
+KeyRandSessionIdGeneratorFactoryImpl,
 GuidSessionIdGeneratorFactoryImpl,
 
 FileSessionManagerImpl,

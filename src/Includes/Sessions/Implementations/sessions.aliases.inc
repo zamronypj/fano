@@ -24,6 +24,7 @@ TSha1SessionIdGenerator = Sha1SessionIdGeneratorImpl.TSha1SessionIdGenerator;
 TKeySessionIdGenerator = KeySessionIdGeneratorImpl.TKeySessionIdGenerator;
 
 TKeyGuidSessionIdGeneratorFactory = KeyGuidSessionIdGeneratorFactoryImpl.TKeyGuidSessionIdGeneratorFactory;
+TKeyRandSessionIdGeneratorFactory = KeyRandSessionIdGeneratorFactoryImpl.TKeyRandSessionIdGeneratorFactory;
 TGuidSessionIdGeneratorFactory = GuidSessionIdGeneratorFactoryImpl.TGuidSessionIdGeneratorFactory;
 
 TFileSessionManager = FileSessionManagerImpl.TFileSessionManager;
