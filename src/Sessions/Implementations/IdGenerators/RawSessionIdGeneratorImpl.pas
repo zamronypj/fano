@@ -27,12 +27,11 @@ type
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
     TRawSessionIdGenerator = class(TInterfacedObject, ISessionIdGenerator)
-    protected
-        fEnv : ICGIEnvironment;
+    private
         fRandom : IRandom;
-
+        fNumBytes : integer;
     public
-        constructor create(const env : ICGIEnvironment; const randInst : IRandom);
+        constructor create(const randInst : IRandom; const numBytes : integer = 32);
         destructor destroy(); override;
 
         (*!------------------------------------
@@ -40,7 +39,7 @@ type
          *-------------------------------------
          * @return session id string
          *-------------------------------------*)
-        function getSessionId() : string;
+        function getSessionId(const request : IRequest) : string;
     end;
 
 implementation
@@ -51,16 +50,18 @@ uses
     SysUtils,
     BaseUnix;
 
-    constructor TRawSessionIdGenerator.create(const env : ICGIEnvironment; const randInst : IRandom);
+    constructor TRawSessionIdGenerator.create(
+        const randInst : IRandom;
+        const numBytes : integer = 32
+    );
     begin
         inherited create();
-        fEnv := env;
         fRandom := randInst;
+        fNumBytes := numBytes;
     end;
 
     destructor TRawSessionIdGenerator.destroy();
     begin
-        fEnv := nil;
         fRandom := nil;
         inherited destroy();
     end;
@@ -70,17 +71,17 @@ uses
      *-------------------------------------
      * @return session id string
      *-------------------------------------*)
-    function TRawSessionIdGenerator.getSessionId() : string;
+    function TRawSessionIdGenerator.getSessionId(const request : IRequest) : string;
     var tv: TTimeVal;
     begin
         fpGetTimeOfDay (@tv, nil);
         result := format(
             '%s%d%d%s',
             [
-                fEnv.remoteAddr(),
+                request.env.remoteAddr(),
                 tv.tv_sec,
                 tv.tv_usec,
-                stringOf(fRandom.randomBytes(32))
+                stringOf(fRandom.randomBytes(fNumBytes))
             ]
         );
     end;

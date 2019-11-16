@@ -74,6 +74,7 @@ type
          * data, session life time is set to lifeTime value
          *-------------------------------------*)
         function createSession(
+            const request : IRequest;
             const sessionId : string;
             const lifeTimeInSec : integer
         ) : ISession;
@@ -301,6 +302,7 @@ type
      * data, session life time is set to lifeTime value
      *-------------------------------------*)
     function TFileSessionManager.createSession(
+        const request : IRequest;
         const sessionId : string;
         const lifeTimeInSec : integer
     ) : ISession;
@@ -312,7 +314,7 @@ type
         begin
             sess := fSessionFactory.createNewSession(
                 fCookieName,
-                fSessionIdGenerator.getSessionId(),
+                fSessionIdGenerator.getSessionId(request),
                 incSecond(now(), lifeTimeInSec)
             );
         end;

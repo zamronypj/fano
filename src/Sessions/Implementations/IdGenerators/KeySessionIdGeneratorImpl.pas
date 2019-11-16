@@ -14,6 +14,7 @@ interface
 
 uses
 
+    RequestIntf,
     SessionIdGeneratorIntf,
     DecoratorSessionIdGeneratorImpl;
 
@@ -53,9 +54,9 @@ implementation
      *-------------------------------------
      * @return session id string
      *-------------------------------------*)
-    function TKeySessionIdGenerator.getSessionId() : string;
+    function TKeySessionIdGenerator.getSessionId(const request : IRequest) : string;
     begin
-        result := fSecretKey + fActualGenerator.getSessionId();
+        result := fSecretKey + fActualGenerator.getSessionId(request);
     end;
 
 end.
