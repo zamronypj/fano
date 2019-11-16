@@ -17,7 +17,8 @@ uses
     DependencyIntf,
     DependencyContainerIntf,
     FactoryImpl,
-    SessionConsts;
+    SessionConsts,
+    SessionIdGeneratorIntf;
 
 type
     (*!------------------------------------------------
@@ -30,6 +31,8 @@ type
         fCookieName : string;
         fBaseDir : string;
         fPrefix : string;
+    protected
+        function getIdGenerator() : ISessionIdGenerator; virtual;
     public
         constructor create(
             const cookieName : string = FANO_COOKIE_NAME;
@@ -67,6 +70,11 @@ uses
         fPrefix := prefix;
     end;
 
+    function TJsonFileSessionManagerFactory.getIdGenerator() : ISessionIdGenerator;
+    begin
+        result := TGuidSessionIdGenerator.create();
+    end;
+
     (*!---------------------------------------------------
      * build class instance
      *----------------------------------------------------
@@ -75,7 +83,7 @@ uses
     function TJsonFileSessionManagerFactory.build(const container : IDependencyContainer) : IDependency;
     begin
         result := TFileSessionManager.create(
-            TGuidSessionIdGenerator.create(),
+            getIdGenerator(),
             TJsonSessionFactory.create(),
             fCookieName,
             TStringFileReader.create(),
