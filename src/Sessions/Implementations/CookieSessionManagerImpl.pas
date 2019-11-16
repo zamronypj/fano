@@ -51,7 +51,8 @@ type
 
         function createNewSessionIfExpired(
             const request : IRequest;
-            const lifeTimeInSec : integer
+            const lifeTimeInSec : integer;
+            const encryptedSession : string
         ) : ISession;
     public
 
@@ -159,7 +160,8 @@ uses
 
     function TCookieSessionManager.createNewSessionIfExpired(
         const request : IRequest;
-        const lifeTimeInSec : integer
+        const lifeTimeInSec : integer;
+        const encryptedSession : string;
     ) : ISession;
     begin
         result := nil;
@@ -207,7 +209,11 @@ uses
                 );
             end else
             begin
-                result := createNewSessionIfExpired(request, lifeTimeInSec);
+                result := createNewSessionIfExpired(
+                    request,
+                    lifeTimeInSec,
+                    encryptedSession
+                );
             end;
             fCurrentSession := result;
         except
