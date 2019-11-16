@@ -188,6 +188,8 @@ uses
         except
             on EReadError do
             begin
+                //if we get here, it means decrypting encrypted session is failed
+                //maybe it has been tampered. just ignore and create new session
                 result := fSessionFactory.createNewSession(
                     fCookieName,
                     encryptedSession,
