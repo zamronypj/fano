@@ -41,7 +41,7 @@ type
             const prefix : string = ''
         );
 
-        function sessionIdGenerator(const factory : ISessionIdGeneratorFactory) : TAbstractFileSessionManagerFactory;
+        function sessionIdGenerator(const factory : ISessionIdGeneratorFactory) : TAbstractSessionManagerFactory;
 
     end;
 
@@ -63,7 +63,7 @@ uses
         fSessionIdGeneratorFactory := TGuidSessionIdGeneratorFactory.create();
     end;
 
-    function TAbstractSessionManagerFactory.sessionIdGenerator(const factory : ISessionIdGeneratorFactory) : TAbstractFileSessionManagerFactory;
+    function TAbstractSessionManagerFactory.sessionIdGenerator(const factory : ISessionIdGeneratorFactory) : TAbstractSessionManagerFactory;
     begin
         fSessionIdGeneratorFactory := factory;
         result := self;
