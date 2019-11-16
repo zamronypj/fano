@@ -68,10 +68,12 @@ uses
             sessName,
             sessId,
             format(
+                '[session]' + LineEnding +
+                'id=%s' + LineEnding +
                 '[expiry]' + LineEnding +
                 'expire=%s' + LineEnding +
                 '[sessionVars]' + LineEnding,
-                [ formatDateTime('dd-mm-yyyy hh:nn:ss', expiredDate) ]
+                [ sessId, formatDateTime('dd-mm-yyyy hh:nn:ss', expiredDate) ]
             )
         );
     end;
