@@ -22,6 +22,7 @@ uses
     JsonFileSessionManagerFactoryImpl;
 
 type
+
     (*!------------------------------------------------
      * TJsonFileSessionManager factory class which uses
      * secret key to HMAC SHA1 to generate session id
