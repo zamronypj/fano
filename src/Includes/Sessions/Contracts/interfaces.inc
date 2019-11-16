@@ -13,6 +13,7 @@
  *-----------------------------------------------*)
 
 SessionIdGeneratorIntf,
+SessionIdGeneratorFactoryIntf,
 SessionIntf,
 SessionFactoryIntf,
 ReadOnlySessionManagerIntf,

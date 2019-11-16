@@ -23,14 +23,17 @@ Md5SessionIdGeneratorImpl,
 Sha1SessionIdGeneratorImpl,
 KeySessionIdGeneratorImpl,
 
+KeyGuidSessionIdGeneratorFactoryImpl,
+GuidSessionIdGeneratorFactoryImpl,
+
 FileSessionManagerImpl,
 CookieSessionManagerImpl,
 
 JsonSessionImpl,
 JsonSessionFactoryImpl,
 
+AbstractManagerFactoryImpl,
 JsonFileSessionManagerFactoryImpl,
-KeyJsonFileSessionManagerFactoryImpl,
 
 IniSessionImpl,
 IniSessionFactoryImpl,

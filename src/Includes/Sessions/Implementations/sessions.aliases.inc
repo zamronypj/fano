@@ -23,13 +23,16 @@ TMd5SessionIdGenerator = Md5SessionIdGeneratorImpl.TMd5SessionIdGenerator;
 TSha1SessionIdGenerator = Sha1SessionIdGeneratorImpl.TSha1SessionIdGenerator;
 TKeySessionIdGenerator = KeySessionIdGeneratorImpl.TKeySessionIdGenerator;
 
+TKeyGuidSessionIdGeneratorFactory = KeyGuidSessionIdGeneratorFactoryImpl.TKeyGuidSessionIdGeneratorFactory;
+TGuidSessionIdGeneratorFactory = GuidSessionIdGeneratorFactoryImpl.TGuidSessionIdGeneratorFactory;
+
 TFileSessionManager = FileSessionManagerImpl.TFileSessionManager;
 
 TJsonSession = JsonSessionImpl.TJsonSession;
 TJsonSessionFactory = JsonSessionFactoryImpl.TJsonSessionFactory;
 
+TAbstractSessionManagerFactory = AbstractSessionManagerFactoryImpl.TAbtractSessionManagerFactory;
 TJsonFileSessionManagerFactory = JsonFileSessionManagerFactoryImpl.TJsonFileSessionManagerFactory;
-TKeyJsonFileSessionManagerFactory = KeyJsonFileSessionManagerFactoryImpl.TKeyJsonFileSessionManagerFactory;
 
 TIniSession = IniSessionImpl.TIniSession;
 TIniSessionFactory = IniSessionFactoryImpl.TIniSessionFactory;

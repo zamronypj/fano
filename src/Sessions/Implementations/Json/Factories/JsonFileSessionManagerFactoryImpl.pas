@@ -18,7 +18,8 @@ uses
     DependencyContainerIntf,
     FactoryImpl,
     SessionConsts,
-    SessionIdGeneratorIntf;
+    SessionIdGeneratorFactoryIntf,
+    AbstractSessionManagerFactoryImpl;
 
 type
     (*!------------------------------------------------
@@ -26,20 +27,8 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TJsonFileSessionManagerFactory = class(TFactory)
-    private
-        fCookieName : string;
-        fBaseDir : string;
-        fPrefix : string;
-    protected
-        function getIdGenerator() : ISessionIdGenerator; virtual;
+    TJsonFileSessionManagerFactory = class(TAbstractSessionManagerFactory)
     public
-        constructor create(
-            const cookieName : string = FANO_COOKIE_NAME;
-            const baseDir : string = '/tmp';
-            const prefix : string = ''
-        );
-
         (*!---------------------------------------------------
          * build class instance
          *----------------------------------------------------
@@ -56,24 +45,7 @@ uses
 
     StringFileReaderImpl,
     FileSessionManagerImpl,
-    JsonSessionFactoryImpl,
-    GuidSessionIdGeneratorImpl;
-
-    constructor TJsonFileSessionManagerFactory.create(
-        const cookieName : string = FANO_COOKIE_NAME;
-        const baseDir : string = '/tmp';
-        const prefix : string = ''
-    );
-    begin
-        fCookieName := cookieName;
-        fBaseDir := baseDir;
-        fPrefix := prefix;
-    end;
-
-    function TJsonFileSessionManagerFactory.getIdGenerator() : ISessionIdGenerator;
-    begin
-        result := TGuidSessionIdGenerator.create();
-    end;
+    JsonSessionFactoryImpl;
 
     (*!---------------------------------------------------
      * build class instance
@@ -83,7 +55,7 @@ uses
     function TJsonFileSessionManagerFactory.build(const container : IDependencyContainer) : IDependency;
     begin
         result := TFileSessionManager.create(
-            getIdGenerator(),
+            fSessionIdGeneratorFactory.build(),
             TJsonSessionFactory.create(),
             fCookieName,
             TStringFileReader.create(),
