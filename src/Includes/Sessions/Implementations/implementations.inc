@@ -21,6 +21,7 @@ GuidSessionIdGeneratorImpl,
 RawSessionIdGeneratorImpl,
 Md5SessionIdGeneratorImpl,
 Sha1SessionIdGeneratorImpl,
+KeySessionIdGeneratorImpl,
 
 FileSessionManagerImpl,
 CookieSessionManagerImpl,
@@ -29,6 +30,7 @@ JsonSessionImpl,
 JsonSessionFactoryImpl,
 
 JsonFileSessionManagerFactoryImpl,
+KeyJsonFileSessionManagerFactoryImpl,
 
 IniSessionImpl,
 IniSessionFactoryImpl,
