@@ -49,7 +49,7 @@ uses
     GuidSessionIdGeneratorImpl,
     Sha1SessionIdGeneratorImpl;
 
-    constructor TKeyGuidSessionIdGeneratorFactory.create(const secretKey : string);
+    constructor TKeyRandSessionIdGeneratorFactory.create(const secretKey : string);
     begin
         fSecretKey := secretKey;
     end;
