@@ -163,15 +163,28 @@ uses
         const lifeTimeInSec : integer;
         const encryptedSession : string
     ) : ISession;
+    var sessData : string;
     begin
         result := nil;
         try
-            result := fSessionFactory.createSession(
-                fCookieName,
-                encryptedSession,
-                //session data is encrypted in cookie value
-                fDecrypter.decrypt(encryptedSession)
-            );
+            //session data is encrypted in cookie value
+            sessData := fDecrypter.decrypt(encryptedSession);
+            if sessData = '' then
+            begin
+                //oops something is not right, ignore and just create new session
+                result := fSessionFactory.createNewSession(
+                    fCookieName,
+                    encryptedSession,
+                    incSecond(now(), lifeTimeInSec)
+                );
+            end else
+            begin
+                result := fSessionFactory.createSession(
+                    fCookieName,
+                    encryptedSession,
+                    sessData
+                );
+            end;
         except
             on ESessionExpired do
             begin
