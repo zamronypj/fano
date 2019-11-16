@@ -32,7 +32,7 @@ CookieSessionManagerImpl,
 JsonSessionImpl,
 JsonSessionFactoryImpl,
 
-AbstractManagerFactoryImpl,
+AbstractSessionManagerFactoryImpl,
 JsonFileSessionManagerFactoryImpl,
 
 IniSessionImpl,
