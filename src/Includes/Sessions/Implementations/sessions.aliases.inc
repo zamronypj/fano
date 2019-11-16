@@ -31,7 +31,7 @@ TFileSessionManager = FileSessionManagerImpl.TFileSessionManager;
 TJsonSession = JsonSessionImpl.TJsonSession;
 TJsonSessionFactory = JsonSessionFactoryImpl.TJsonSessionFactory;
 
-TAbstractSessionManagerFactory = AbstractSessionManagerFactoryImpl.TAbtractSessionManagerFactory;
+TAbstractSessionManagerFactory = AbstractSessionManagerFactoryImpl.TAbstractSessionManagerFactory;
 TJsonFileSessionManagerFactory = JsonFileSessionManagerFactoryImpl.TJsonFileSessionManagerFactory;
 
 TIniSession = IniSessionImpl.TIniSession;
