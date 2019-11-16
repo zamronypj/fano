@@ -161,7 +161,7 @@ uses
     function TCookieSessionManager.createNewSessionIfExpired(
         const request : IRequest;
         const lifeTimeInSec : integer;
-        const encryptedSession : string;
+        const encryptedSession : string
     ) : ISession;
     begin
         result := nil;
