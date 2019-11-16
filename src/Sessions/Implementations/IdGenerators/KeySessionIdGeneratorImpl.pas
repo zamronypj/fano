@@ -14,6 +14,7 @@ interface
 
 uses
 
+    SessionIdGeneratorIntf,
     DecoratorSessionIdGeneratorImpl;
 
 type
@@ -28,7 +29,7 @@ type
     private
         fSecretKey : string;
     public
-        constructor create(const gen : ISessionIdGenerator; const secretKey ; string);
+        constructor create(const gen : ISessionIdGenerator; const secretKey : string);
 
         (*!------------------------------------
          * get session id
@@ -41,7 +42,7 @@ type
 implementation
 
 
-    constructor TKeySessionIdGenerator.create(const gen : ISessionIdGenerator; const secretKey ; string);
+    constructor TKeySessionIdGenerator.create(const gen : ISessionIdGenerator; const secretKey : string);
     begin
         inherited create(gen);
         fSecretKey := secretKey;
