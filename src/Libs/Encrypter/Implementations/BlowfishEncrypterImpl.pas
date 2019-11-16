@@ -76,7 +76,7 @@ uses
 
     function TBlowfishEncrypter.decodeBase64SpecialChars(const base64Str : string) : string;
     begin
-        result := StringReplace(base64Str, '.', '=', [rfReplaceAll]);
+        result := StringReplace(base64Str, '.', '+', [rfReplaceAll]);
         result := StringReplace(result, '_', '/', [rfReplaceAll]);
         result := StringReplace(result, '-', '=', [rfReplaceAll]);
     end;

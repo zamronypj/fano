@@ -49,6 +49,10 @@ type
             const session : ISession
         ) : ISessionManager;
 
+        function createNewSessionIfExpired(
+            const request : IRequest;
+            const lifeTimeInSec : integer
+        ) : ISession;
     public
 
         (*!------------------------------------
@@ -153,6 +157,31 @@ uses
         inherited destroy();
     end;
 
+    function TCookieSessionManager.createNewSessionIfExpired(
+        const request : IRequest;
+        const lifeTimeInSec : integer
+    ) : ISession;
+    begin
+        result := nil;
+        try
+            result := fSessionFactory.createSession(
+                fCookieName,
+                encryptedSession,
+                //session data is encrypted in cookie value
+                fDecrypter.decrypt(encryptedSession)
+            );
+        except
+            on ESessionExpired do
+            begin
+                result := fSessionFactory.createNewSession(
+                    fCookieName,
+                    encryptedSession,
+                    incSecond(now(), lifeTimeInSec)
+                );
+            end;
+        end;
+    end;
+
     (*!------------------------------------
      * create session from request
      *-------------------------------------
@@ -165,28 +194,22 @@ uses
         const lifeTimeInSec : integer
     ) : ISession;
     var encryptedSession : string;
-        sess : ISession;
     begin
+        result := nil;
         try
             encryptedSession := request.getCookieParam(fCookieName);
             if encryptedSession = '' then
             begin
-                sess := fSessionFactory.createNewSession(
+                result := fSessionFactory.createNewSession(
                     fCookieName,
                     encryptedSession,
                     incSecond(now(), lifeTimeInSec)
                 );
             end else
             begin
-                sess := fSessionFactory.createSession(
-                    fCookieName,
-                    encryptedSession,
-                    //session data is encrypted in cookie value
-                    fDecrypter.decrypt(encryptedSession)
-                );
+                result := createNewSessionIfExpired(request, lifeTimeInSec);
             end;
-            fCurrentSession := sess;
-            result := sess;
+            fCurrentSession := result;
         except
             on e: ESessionExpired do
             begin
