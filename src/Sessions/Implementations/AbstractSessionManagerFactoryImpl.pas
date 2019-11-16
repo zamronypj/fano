@@ -11,6 +11,7 @@ unit AbstractSessionManagerFactoryImpl;
 interface
 
 {$MODE OBJFPC}
+{$H+}
 
 uses
 
@@ -26,7 +27,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TAbstractFileSessionManagerFactory = class(TFactory)
+    TAbstractSessionManagerFactory = class(TFactory)
     protected
         fCookieName : string;
         fBaseDir : string;
@@ -50,7 +51,7 @@ uses
 
     GuidSessionIdGeneratorFactoryImpl;
 
-    constructor TAbstractFileSessionManagerFactory.create(
+    constructor TAbstractSessionManagerFactory.create(
         const cookieName : string = FANO_COOKIE_NAME;
         const baseDir : string = '/tmp';
         const prefix : string = ''
@@ -62,7 +63,7 @@ uses
         fSessionIdGeneratorFactory := TGuidSessionIdGeneratorFactory.create();
     end;
 
-    function TAbstractFileSessionManagerFactory.sessionIdGenerator(const factory : ISessionIdGeneratorFactory) : TAbstractFileSessionManagerFactory;
+    function TAbstractSessionManagerFactory.sessionIdGenerator(const factory : ISessionIdGeneratorFactory) : TAbstractFileSessionManagerFactory;
     begin
         fSessionIdGeneratorFactory := factory;
         result := self;

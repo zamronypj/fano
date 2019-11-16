@@ -11,6 +11,7 @@ unit JsonFileSessionManagerFactoryImpl;
 interface
 
 {$MODE OBJFPC}
+{$H+}
 
 uses
 

@@ -11,6 +11,7 @@ unit IniFileSessionManagerFactoryImpl;
 interface
 
 {$MODE OBJFPC}
+{$H+}
 
 uses
 
