@@ -17,7 +17,8 @@ uses
     DependencyIntf,
     DependencyContainerIntf,
     FactoryImpl,
-    SessionConsts;
+    SessionConsts,
+    JsonFileSessionManagerFactoryImpl;
 
 type
     (*!------------------------------------------------
