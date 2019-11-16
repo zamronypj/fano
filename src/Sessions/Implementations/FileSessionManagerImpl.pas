@@ -339,7 +339,7 @@ type
     begin
         try
             sessionId := request.getCookieParam(fCookieName);
-            sess := createSession(sessionId, lifeTimeInSec);
+            sess := createSession(sessionId, lifeTimeInSec, request);
 
             new(item);
             item^.sessionObj := sess;
