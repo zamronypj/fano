@@ -174,14 +174,14 @@ uses
                 //oops something is not right, ignore and just create new session
                 result := fSessionFactory.createNewSession(
                     fCookieName,
-                    encryptedSession,
+                    fSessionIdGenerator.getSessionId(),
                     incSecond(now(), lifeTimeInSec)
                 );
             end else
             begin
                 result := fSessionFactory.createSession(
                     fCookieName,
-                    encryptedSession,
+                    fSessionIdGenerator.getSessionId(),
                     sessData
                 );
             end;
@@ -192,7 +192,7 @@ uses
                 //maybe it has been tampered. just ignore and create new session
                 result := fSessionFactory.createNewSession(
                     fCookieName,
-                    encryptedSession,
+                    fSessionIdGenerator.getSessionId(),
                     incSecond(now(), lifeTimeInSec)
                 );
             end;
@@ -201,7 +201,7 @@ uses
             begin
                 result := fSessionFactory.createNewSession(
                     fCookieName,
-                    encryptedSession,
+                    fSessionIdGenerator.getSessionId(),
                     incSecond(now(), lifeTimeInSec)
                 );
             end;
@@ -228,7 +228,7 @@ uses
             begin
                 result := fSessionFactory.createNewSession(
                     fCookieName,
-                    encryptedSession,
+                    fSessionIdGenerator.getSessionId(),
                     incSecond(now(), lifeTimeInSec)
                 );
             end else
