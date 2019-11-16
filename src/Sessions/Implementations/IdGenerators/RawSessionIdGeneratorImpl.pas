@@ -16,7 +16,8 @@ uses
 
     SessionIdGeneratorIntf,
     EnvironmentIntf,
-    RandomIntf;
+    RandomIntf,
+    RequestIntf;
 
 type
 
