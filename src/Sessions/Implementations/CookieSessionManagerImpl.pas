@@ -186,6 +186,15 @@ uses
                 );
             end;
         except
+            on EReadError do
+            begin
+                result := fSessionFactory.createNewSession(
+                    fCookieName,
+                    encryptedSession,
+                    incSecond(now(), lifeTimeInSec)
+                );
+            end;
+
             on ESessionExpired do
             begin
                 result := fSessionFactory.createNewSession(
