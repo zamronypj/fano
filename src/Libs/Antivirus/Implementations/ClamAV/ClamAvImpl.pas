@@ -123,7 +123,7 @@ uses
     procedure TClamAv.createEngine(var engine : pointer);
     begin
         engine := cl_engine_new();
-        if (engine = nil) then
+        if (not assigned(engine)) then
         begin
             raise EClamAv.create('Engine creation failed.');
         end;
