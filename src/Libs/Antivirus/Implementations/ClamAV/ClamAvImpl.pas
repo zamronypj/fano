@@ -189,7 +189,7 @@ uses
             @fVirusName,
             scanned,
             cl_engine(fEngine^),
-            CL_SCAN_STDOPT
+            dword(CL_SCAN_STDOPT)
         );
         fCleaned := (ret = CL_CLEAN) or (ret = CL_SUCCESS);
         result := self;
