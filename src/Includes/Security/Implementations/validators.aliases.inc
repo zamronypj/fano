@@ -26,6 +26,8 @@ TUrlValidator = UrlValidatorImpl.TUrlValidator;
 TBaseCompositeValidator = BaseCompositeValidatorImpl.TBaseCompositeValidator;
 TCompositeValidator = CompositeValidatorImpl.TCompositeValidator;
 TCollectiveValidator = CollectiveValidatorImpl.TCollectiveValidator;
+TAndValidator = AndValidatorImpl.TAndValidator;
+TOrValidator = OrValidatorImpl.TOrValidator;
 
 TIntegerValidator = IntegerValidatorImpl.TIntegerValidator;
 TMinIntegerValidator = MinIntegerValidatorImpl.TMinIntegerValidator;
