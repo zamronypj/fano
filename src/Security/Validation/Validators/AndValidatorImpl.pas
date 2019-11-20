@@ -21,12 +21,12 @@ type
 
     (*!------------------------------------------------
      * basic class having capability to
-     * validate several validator with AND.
+     * validate several validator with AND boolean operator.
      * This is alias name for TCompositeValidator
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TSameValidator = TCompositeValidator;
+    TAndValidator = TCompositeValidator;
 
 implementation
 end.
