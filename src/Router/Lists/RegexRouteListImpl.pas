@@ -129,6 +129,7 @@ type
         const originalRouteWithRegex : string
     ) : TArrayOfPlaceholders;
     var matches : TRegexMatchResult;
+        i, totalPlaceholder : integer;
     begin
         matches := regex.greedyMatch(
             ROUTE_PLACEHOLDER_REGEX,
