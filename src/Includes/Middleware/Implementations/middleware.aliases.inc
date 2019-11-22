@@ -1,5 +1,7 @@
 TMiddlewareList = MiddlewareListImpl.TMiddlewareList;
+TNullMiddlewareList = NullMiddlewareListImpl.TNullMiddlewareList;
 TMiddlewareListFactory = MiddlewareListFactoryImpl.TMiddlewareListFactory;
+TNullMiddlewareListFactory = NullMiddlewareListFactoryImpl.TNullMiddlewareListFactory;
 
 TNullMiddleware = NullMiddlewareImpl.TNullMiddleware;
 TCompositeMiddleware = CompositeMiddlewareImpl.TCompositeMiddleware;
