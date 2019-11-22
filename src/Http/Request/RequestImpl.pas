@@ -461,11 +461,7 @@ resourcestring
     );
     var amethod : string;
     begin
-<<<<<<< HEAD
         amethod := env.requestMethod();
-=======
-        amethod := upperCase(env.requestMethod());
->>>>>>> master
         if (amethod = 'POST') or (amethod = 'PUT') or (amethod = 'PATCH') then
         begin
             initPostBodyParamsFromStdInput(env, body);
