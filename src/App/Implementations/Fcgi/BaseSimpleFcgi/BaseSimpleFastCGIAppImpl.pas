@@ -125,6 +125,7 @@ uses
             aParserFactory.build(),
             TFcgiRequestManager.create(TStreamAdapterCollectionFactory.create())
         );
+
         appProcessor := fcgiProc;
         appOutputBuffer := TOutputBuffer.create();
         appStdOutWriter := TFcgiStdOutWriter.create(fcgiProc);

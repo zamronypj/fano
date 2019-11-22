@@ -30,13 +30,13 @@ type
 
         function createSession(
             const sessName : shortstring;
-            const sessId : shortstring;
+            const sessId : string;
             const sessData : string
         ) : ISession;
 
         function createNewSession(
             const sessName : shortstring;
-            const sessId : shortstring;
+            const sessId : string;
             const expiredDate : TDateTime
         ) : ISession;
     end;

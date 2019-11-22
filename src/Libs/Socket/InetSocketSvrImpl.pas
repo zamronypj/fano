@@ -86,9 +86,12 @@ uses
         if socket = -1 then
         begin
             errCode := socketError();
-            raise ESockCreate.createFmt(
-                rsCreateFailed,
-                [ format('%s:%d', [host, port]), strError(errCode), errCode ]
+            raise ESockCreate.create(
+                errCode,
+                format(
+                    rsCreateFailed,
+                    [ format('%s:%d', [host, port]), strError(errCode), errCode ]
+                )
             );
         end else
         begin

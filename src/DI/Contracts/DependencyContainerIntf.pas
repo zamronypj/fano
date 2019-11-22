@@ -75,6 +75,7 @@ type
          * different instance everytime get() is called.
          *---------------------------------------------------------*)
         function get(const serviceName : shortstring) : IDependency;
+        property services[const serviceName : shortstring] : IDependency read get; default;
 
         (*!--------------------------------------------------------
          * test if service is already registered or not.

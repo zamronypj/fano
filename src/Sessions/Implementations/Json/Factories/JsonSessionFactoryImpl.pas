@@ -30,13 +30,13 @@ type
     public
         function createSession(
             const sessName : shortstring;
-            const sessId : shortstring;
+            const sessId : string;
             const sessData : string
         ) : ISession;
 
         function createNewSession(
             const sessName : shortstring;
-            const sessId : shortstring;
+            const sessId : string;
             const expiredDate : TDateTime
         ) : ISession;
     end;
@@ -51,7 +51,7 @@ uses
 
     function TJsonSessionFactory.createSession(
         const sessName : shortstring;
-        const sessId : shortstring;
+        const sessId : string;
         const sessData : string
     ) : ISession;
     begin
@@ -60,7 +60,7 @@ uses
 
     function TJsonSessionFactory.createNewSession(
         const sessName : shortstring;
-        const sessId : shortstring;
+        const sessId : string;
         const expiredDate : TDateTime
     ) : ISession;
     begin
@@ -68,8 +68,8 @@ uses
             sessName,
             sessId,
             format(
-                '{"expire": "%s", "sessionVars" : {}}',
-                [ formatDateTime('dd-mm-yyyy hh:nn:ss', expiredDate) ]
+                '{"id": "%s", "expire": "%s", "sessionVars" : {}}',
+                [ sessId, formatDateTime('dd-mm-yyyy hh:nn:ss', expiredDate) ]
             )
         );
     end;

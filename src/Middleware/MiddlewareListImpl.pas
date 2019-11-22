@@ -74,14 +74,21 @@ uses
     function TMiddlewareList.add(const middleware : IMiddleware) : IMiddlewareList;
     var prevLink, newLink : IMiddlewareLink;
     begin
-        newLink := TMiddlewareLink.create(middleware);
-        if (middlewareList.count > 0) then
-        begin
-            prevLink := middlewareList[middlewareList.count - 1] as IMiddlewareLink;
-            prevLink.next := newLink;
+        try
+            newLink := TMiddlewareLink.create(middleware);
+            if (middlewareList.count > 0) then
+            begin
+                prevLink := middlewareList[middlewareList.count - 1] as IMiddlewareLink;
+                prevLink.next := newLink;
+            end;
+            middlewareList.add(newLink);
+            result := self;
+        except
+            prevLink.next := nil;
+            prevLink := nil;
+            newLink := nil;
+            raise;
         end;
-        middlewareList.add(newLink);
-        result := self;
     end;
 
     function TMiddlewareList.get(const indx : integer) : IMiddlewareLink;

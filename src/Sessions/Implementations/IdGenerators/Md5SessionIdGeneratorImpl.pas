@@ -14,6 +14,7 @@ interface
 
 uses
 
+    RequestIntf,
     DecoratorSessionIdGeneratorImpl;
 
 type
@@ -31,7 +32,7 @@ type
          *-------------------------------------
          * @return session id string
          *-------------------------------------*)
-        function getSessionId() : string; override;
+        function getSessionId(const request : IRequest) : string; override;
     end;
 
 implementation
@@ -45,9 +46,9 @@ uses
      *-------------------------------------
      * @return session id string
      *-------------------------------------*)
-    function TMd5SessionIdGenerator.getSessionId() : string;
+    function TMd5SessionIdGenerator.getSessionId(const request : IRequest) : string;
     begin
-        result := MD5Print(MD5String(fActualGenerator.getSessionId()));
+        result := MD5Print(MD5String(fActualGenerator.getSessionId(request)));
     end;
 
 end.

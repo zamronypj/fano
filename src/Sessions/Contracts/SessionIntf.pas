@@ -41,7 +41,7 @@ type
          *-------------------------------------
          * @return session id string
          *-------------------------------------*)
-        function id() : shortstring;
+        function id() : string;
 
         (*!------------------------------------
          * test if session variable is set
@@ -57,7 +57,7 @@ type
          * @param sessionVal value of session variable
          * @return current instance
          *-------------------------------------*)
-        function setVar(const sessionVar : shortstring; const sessionVal : string) : ISession;
+        procedure setVar(const sessionVar : shortstring; const sessionVal : string);
 
         (*!------------------------------------
          * get session variable
@@ -94,6 +94,8 @@ type
          * @return date time when session is expired
          *-------------------------------------*)
         function expiresAt() : TDateTime;
+
+        property vars[const key : shortstring] : string read getVar write setVar; default;
     end;
 
 implementation

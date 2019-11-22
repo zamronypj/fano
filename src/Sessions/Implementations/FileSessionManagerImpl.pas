@@ -16,7 +16,6 @@ interface
 uses
 
     Classes,
-    fpjson,
     SessionIntf,
     SessionIdGeneratorIntf,
     SessionManagerIntf,
@@ -42,7 +41,7 @@ type
         fCurrentSession : ISession;
         fSessionFactory : ISessionFactory;
 
-        procedure writeSessionFile(const jsonFile : string; const jsonData : string);
+        procedure writeSessionFile(const sessFile : string; const sessData : string);
 
         (*!------------------------------------
          * create session from session id
@@ -75,6 +74,7 @@ type
          * data, session life time is set to lifeTime value
          *-------------------------------------*)
         function createSession(
+            const request : IRequest;
             const sessionId : string;
             const lifeTimeInSec : integer
         ) : ISession;
@@ -169,7 +169,6 @@ implementation
 uses
 
     SysUtils,
-    jsonParser,
     DateUtils,
     SessionConsts,
     HashListImpl,
@@ -239,13 +238,13 @@ type
         end;
     end;
 
-    procedure TFileSessionManager.writeSessionFile(const jsonFile : string; const jsonData : string);
+    procedure TFileSessionManager.writeSessionFile(const sessFile : string; const sessData : string);
     var fs : TFileStream;
     begin
-        fs := TFileStream.create(jsonFile, fmCreate);
+        fs := TFileStream.create(sessFile, fmCreate);
         try
             fs.seek(0, soFromBeginning);
-            fs.writeBuffer(jsonData[1], length(jsonData));
+            fs.writeBuffer(sessData[1], length(sessData));
         finally
             fs.free();
         end;
@@ -265,28 +264,26 @@ type
      * or expired, return nil
      *-------------------------------------*)
     function TFileSessionManager.findSession(const sessionId : string) : ISession;
-    var sess : ISession;
-        sessFile : string;
+    var sessFile : string;
     begin
-        sess := nil;
+        result := nil;
         sessFile := fSessionFilename + sessionId;
         if (sessionId <> '') and (fileExists(sessFile)) then
         begin
             try
-                sess := fSessionFactory.createSession(
+                result := fSessionFactory.createSession(
                     fCookieName,
                     sessionId,
                     fFileReader.readFile(sessFile)
                 );
-                result := sess;
             except
                 on ESessionExpired do
                 begin
-                    freeAndNil(sess);
+                    freeAndNil(result);
+                    deleteFile(sessFile);
                 end;
             end;
         end;
-        result := sess;
     end;
 
     (*!------------------------------------
@@ -305,6 +302,7 @@ type
      * data, session life time is set to lifeTime value
      *-------------------------------------*)
     function TFileSessionManager.createSession(
+        const request : IRequest;
         const sessionId : string;
         const lifeTimeInSec : integer
     ) : ISession;
@@ -316,7 +314,7 @@ type
         begin
             sess := fSessionFactory.createNewSession(
                 fCookieName,
-                fSessionIdGenerator.getSessionId(),
+                fSessionIdGenerator.getSessionId(request),
                 incSecond(now(), lifeTimeInSec)
             );
         end;
@@ -341,7 +339,7 @@ type
     begin
         try
             sessionId := request.getCookieParam(fCookieName);
-            sess := createSession(sessionId, lifeTimeInSec);
+            sess := createSession(request, sessionId, lifeTimeInSec);
 
             new(item);
             item^.sessionObj := sess;

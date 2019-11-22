@@ -446,8 +446,8 @@ resourcestring
             uploadedFiles := uploadedFilesWriter as IUploadedFileCollection;
         end else
         begin
-            //if POST but different contentType save it as it is
-            //with its contentType as key
+            //if POST/PUT/PATCH but different contentType such as 'application/json'
+            //save it as it is with its contentType as key and let developer deals with it
             new(param);
             param^.key := contentType;
             param^.value := bodyStr;
@@ -461,7 +461,11 @@ resourcestring
     );
     var amethod : string;
     begin
+<<<<<<< HEAD
         amethod := env.requestMethod();
+=======
+        amethod := upperCase(env.requestMethod());
+>>>>>>> master
         if (amethod = 'POST') or (amethod = 'PUT') or (amethod = 'PATCH') then
         begin
             initPostBodyParamsFromStdInput(env, body);

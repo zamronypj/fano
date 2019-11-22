@@ -34,7 +34,6 @@ type
          *-----------------------------------------------
          * @param stream, stream to write
          * @param str, string to write
-         * @param markEnd, if true, add FCGI_END_REQUEST
          * @return current instance
          *-----------------------------------------------*)
         function writeStream(const stream : IStreamAdapter; const str : string) : IStdOut; virtual; abstract;
@@ -46,7 +45,7 @@ type
         function setStream(const astream : IStreamAdapter) : IStdOut;
 
         (*!------------------------------------------------
-         * write string to STDOUT stream and
+         * write string to STDOUT stream
          *-----------------------------------------------
          * @param str, string to write
          * @return current instance
@@ -83,8 +82,7 @@ implementation
     end;
 
     (*!------------------------------------------------
-     * write string to FCGI_STDOUT stream and
-     * mark it end of request (if markEnd is true)
+     * write string to STDOUT stream
      *-----------------------------------------------
      * @param str, string to write
      * @return current instance
@@ -95,8 +93,7 @@ implementation
     end;
 
     (*!------------------------------------------------
-     * write string with newline to FCGI_STDOUT stream and
-     * mark it end of request (if markEnd is true)
+     * write string with newline to STDOUT stream
      *-----------------------------------------------
      * @param str, string to write
      * @return current instance

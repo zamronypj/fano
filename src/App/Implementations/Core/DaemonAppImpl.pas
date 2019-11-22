@@ -28,6 +28,7 @@ uses
     ProtocolProcessorIntf,
     ReadyListenerIntf,
     StreamAdapterIntf,
+    StreamIdIntf,
     CoreAppConsts,
     CoreAppImpl;
 
@@ -52,6 +53,8 @@ type
          * Note that run keeps run until application is terminated
          *-----------------------------------------------*)
         procedure attachListenerAndRunServer();
+
+        procedure cleanUp();
     protected
         procedure executeRequest(const env : ICGIEnvironment);
     public
@@ -89,7 +92,8 @@ type
         function handleData(
             const stream : IStreamAdapter;
             const context : TObject;
-            const streamCloser : ICloseable
+            const streamCloser : ICloseable;
+            const streamId : IStreamId
         ) : boolean;
 
         (*!------------------------------------------------
@@ -148,13 +152,19 @@ uses
         fStdOutWriter := stdOutWriter;
     end;
 
-    destructor TDaemonWebApplication.destroy();
+    procedure TDaemonWebApplication.cleanUp();
     begin
         dispatcher := nil;
         workerServer := nil;
         fProcessor := nil;
         fOutputBuffer := nil;
         fStdOutWriter := nil;
+        reset();
+    end;
+
+    destructor TDaemonWebApplication.destroy();
+    begin
+        cleanUp();
         inherited destroy();
     end;
 
@@ -206,11 +216,16 @@ uses
      *-----------------------------------------------*)
     function TDaemonWebApplication.run() : IRunnable;
     begin
-        if (initialize(dependencyContainer)) then
-        begin
-            attachListenerAndRunServer();
+        try
+            if (initialize(dependencyContainer)) then
+            begin
+                attachListenerAndRunServer();
+            end;
+            result := self;
+        except
+            cleanUp();
+            raise;
         end;
-        result := self;
     end;
 
     (*!-----------------------------------------------
@@ -254,11 +269,11 @@ uses
     function TDaemonWebApplication.handleData(
         const stream : IStreamAdapter;
         const context : TObject;
-        const streamCloser : ICloseable
+        const streamCloser : ICloseable;
+        const streamId : IStreamId
     ) : boolean;
     begin
-        fProcessor.process(stream, streamCloser);
-        result := true;
+        result := fProcessor.process(stream, streamCloser, streamId);
     end;
 
     (*!------------------------------------------------
