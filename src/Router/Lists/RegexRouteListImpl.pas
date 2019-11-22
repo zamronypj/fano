@@ -134,6 +134,40 @@ type
             ROUTE_PLACEHOLDER_REGEX,
             originalRouteWithRegex
         );
+
+        if (not matches.matched) then
+        begin
+            result := nil;
+            exit;
+        end;
+
+        totalPlaceholder := length(matches.matches);
+
+        (*----------------------------
+          if route is registered as:
+          /name/{name}/{unitId}/edback
+
+          matches will contain following data:
+
+          length(matches.matches) == 2
+          matches.matched = true
+          matches.matches[0][0] = '{name}'
+          matches.matches[0][1] = 'name'
+          matches.matches[1][0] = '{unidId}'
+          matches.matches[1][1] = 'unitId'
+
+          So to extract variable names, we
+          only need to extract from
+
+          matches.matches[n][1]
+          where n=0..length(matches.matches)-1
+         ----------------------------*)
+        setLength(result, totalPlaceholder);
+        for i:=0 to totalPlaceholder-1 do
+        begin
+            result[i].name := matches.matches[i][1];
+            result[i].value := '';
+        end;
     end;
 
     (*------------------------------------------------
@@ -142,7 +176,7 @@ type
      * after a route is matched, then this method will be
      * called with matched route, original uri and placeholder
      * for example for route pattern :
-     *  /name/{name:[a-zA-Z0-9\-\*\:]+}/{unitId}/edback
+     *  /name/{name}/{unitId}/edback
      * and actual Request Uri
      * /name/juhara/nice/edback
      *
@@ -150,28 +184,64 @@ type
      *
      * [
      *  {
-     *    name : 'name'
-     *    value : 'juhara'
-     *    formatRegex : '[a-zA-Z0-9\-\*\:]+',
+     *    phName : 'name'
+     *    phValue : 'juhara'
      *  }
      *  {
-     *    name : 'unitId'
-     *    value : 'nice'
-     *    formatRegex : ''
+     *    phName : 'unitId'
+     *    phValue : 'nice'
      *  }
      * ]
      *
      *---------------------------------------------------*)
-     function TRegexRouteList.getPlaceholderValuesFromUri(
-         const uri : string;
-         const placeHolders : TArrayOfPlaceholders
-     ) : TArrayOfPlaceholders;
-    var matches : TRegexMatchResult;
+    function TRegexRouteList.getPlaceholderValuesFromUri(
+        const matchIndex : integer;
+        const matches : TRegexMatchResult;
+        const placeHolders : TArrayOfPlaceholders
+    ) : TArrayOfPlaceholders;
+    var i, totalPlaceHolders : longint;
     begin
-        matches := regex.greedyMatch(
-            ROUTE_DISPATCH_REGEX,
-            originalRouteWithRegex
-        );
+        (*----------------------------
+          if request uri is
+          /name/juhara/nice/edback
+
+          and following routes pattern
+          (0) /article/([^/]+)/([^/]+)
+          (1) /nice-articles/([^/]+)/([^/]+)
+          (2) /name/([^/]+)/([^/]+)/edback
+
+          matches will contain following data:
+
+          length(placeholders) == 2
+          matches.matched = true
+          matches.matches[0][0] = '/name/juhara/nice/edback'
+          matches.matches[0][1] = ''
+          matches.matches[0][2] = ''
+          matches.matches[0][3] = ''
+          matches.matches[0][4] = ''
+          matches.matches[0][5] = ''
+          matches.matches[0][6] = ''
+          matches.matches[0][7] = '/name/juhara/nice/edback'
+          matches.matches[0][8] = 'juhara'
+          matches.matches[0][9] = 'nice'
+
+          matchIndex = 7
+
+          So to extract value names, we
+          need to extract from
+
+          matches.matches[0][matchIndex + i + 1]
+          where i=0..length(placeholders)-1
+         ----------------------------*)
+
+        totalPlaceHolders := length(placeholders);
+        for i:=0 to totalPlaceholders-1 do
+        begin
+            //placeholders[i].name already contain variable name
+            //so our concern only to fill its value
+            placeholders[i].value := matches.matches[0][matchIndex + i + 1];
+        end;
+        result := placeHolders;
     end;
 
     constructor TRegexRouteList.create(const regexInst : IRegex);
@@ -217,7 +287,7 @@ type
      *     [
      *         {
      *             name : 'name'
-     *             phFormaRegex : '[a-zA-Z0-9\-\*\:]+',
+     *             formatRegex : '[a-zA-Z0-9\-\*\:]+',
      *         },
      *         {
      *             name : 'unitId'
