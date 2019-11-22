@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit RequestIntf;
+unit JsonRequestImpl;
 
 interface
 
@@ -461,7 +461,7 @@ uses
      *-----------------------------------------------*)
     function TJsonRequest.find(const aKey : shortstring) : pointer;
     var keyvalue : PKeyValue;
-        adata := TJsonData;
+        adata : TJsonData;
     begin
         adata := fBodyJson.findPath(aKey);
         if (adata <> nil) then
@@ -482,6 +482,7 @@ uses
      *-----------------------------------------------*)
     function TJsonRequest.keyOfIndex(const indx : integer) : shortstring;
     begin
+        result :=
     end;
 
     (*!------------------------------------------------
