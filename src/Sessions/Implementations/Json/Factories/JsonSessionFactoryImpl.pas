@@ -68,8 +68,8 @@ uses
             sessName,
             sessId,
             format(
-                '{"id": "%s", "expire": "%s", "sessionVars" : {}}',
-                [ sessId, formatDateTime('dd-mm-yyyy hh:nn:ss', expiredDate) ]
+                '{"expire": "%s", "sessionVars" : {}}',
+                [ formatDateTime('dd-mm-yyyy hh:nn:ss', expiredDate) ]
             )
         );
     end;

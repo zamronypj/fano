@@ -123,7 +123,7 @@ uses
     procedure TClamAv.createEngine(var engine : pointer);
     begin
         engine := cl_engine_new();
-        if (engine <> nil) then
+        if (not assigned(engine)) then
         begin
             raise EClamAv.create('Engine creation failed.');
         end;
@@ -189,7 +189,7 @@ uses
             @fVirusName,
             scanned,
             cl_engine(fEngine^),
-            CL_SCAN_STDOPT
+            dword(CL_SCAN_STDOPT)
         );
         fCleaned := (ret = CL_CLEAN) or (ret = CL_SUCCESS);
         result := self;
