@@ -68,8 +68,6 @@ uses
             sessName,
             sessId,
             format(
-                '[session]' + LineEnding +
-                'id=%s' + LineEnding +
                 '[expiry]' + LineEnding +
                 'expire=%s' + LineEnding +
                 '[sessionVars]' + LineEnding,

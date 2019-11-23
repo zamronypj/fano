@@ -23,7 +23,7 @@ interface
 
 const
  {$IFDEF Linux}
-  External_library='libclamav.so'; {Setup as you need}
+  External_library='libclamav.so.9'; {Setup as you need}
  {$ELSE}
   External_library = 'libclamav.dll'; {Setup as you need}
  {$ENDIF}

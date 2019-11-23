@@ -417,7 +417,7 @@ type
     end;
 
     (*!------------------------------------
-     * end session and delete session data from
+     * end session and save session data to
      * persistent storage
      *-------------------------------------
      * @param session session instance
