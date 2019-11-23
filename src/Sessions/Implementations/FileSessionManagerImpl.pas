@@ -74,6 +74,7 @@ type
          * data, session life time is set to lifeTime value
          *-------------------------------------*)
         function createSession(
+            const request : IRequest;
             const sessionId : string;
             const lifeTimeInSec : integer
         ) : ISession;
@@ -263,28 +264,26 @@ type
      * or expired, return nil
      *-------------------------------------*)
     function TFileSessionManager.findSession(const sessionId : string) : ISession;
-    var sess : ISession;
-        sessFile : string;
+    var sessFile : string;
     begin
-        sess := nil;
+        result := nil;
         sessFile := fSessionFilename + sessionId;
         if (sessionId <> '') and (fileExists(sessFile)) then
         begin
             try
-                sess := fSessionFactory.createSession(
+                result := fSessionFactory.createSession(
                     fCookieName,
                     sessionId,
                     fFileReader.readFile(sessFile)
                 );
-                result := sess;
             except
                 on ESessionExpired do
                 begin
-                    freeAndNil(sess);
+                    freeAndNil(result);
+                    deleteFile(sessFile);
                 end;
             end;
         end;
-        result := sess;
     end;
 
     (*!------------------------------------
@@ -303,6 +302,7 @@ type
      * data, session life time is set to lifeTime value
      *-------------------------------------*)
     function TFileSessionManager.createSession(
+        const request : IRequest;
         const sessionId : string;
         const lifeTimeInSec : integer
     ) : ISession;
@@ -314,7 +314,7 @@ type
         begin
             sess := fSessionFactory.createNewSession(
                 fCookieName,
-                fSessionIdGenerator.getSessionId(),
+                fSessionIdGenerator.getSessionId(request),
                 incSecond(now(), lifeTimeInSec)
             );
         end;
@@ -339,7 +339,7 @@ type
     begin
         try
             sessionId := request.getCookieParam(fCookieName);
-            sess := createSession(sessionId, lifeTimeInSec);
+            sess := createSession(request, sessionId, lifeTimeInSec);
 
             new(item);
             item^.sessionObj := sess;
@@ -417,7 +417,7 @@ type
     end;
 
     (*!------------------------------------
-     * end session and delete session data from
+     * end session and save session data to
      * persistent storage
      *-------------------------------------
      * @param session session instance

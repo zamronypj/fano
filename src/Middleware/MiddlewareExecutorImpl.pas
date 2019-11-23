@@ -66,21 +66,21 @@ uses
     ) : IResponse;
     var mdlwr : IMiddlewareStack;
     begin
+        mdlwr := TMiddlewareStack.create(
+            fAppMiddlewares,
+            routeHandler.middlewares(),
+            routeHandler.handler()
+        );
         try
-            mdlwr := TMiddlewareStack.create(
-                fAppMiddlewares,
-                routeHandler.middlewares(),
-                routeHandler.handler()
-            );
 
             result := mdlwr.first.handleRequest(
                 request,
                 response,
                 routeHandler.argsReader()
             );
-        except
+
+        finally
             mdlwr := nil;
-            raise;
         end;
     end;
 end.

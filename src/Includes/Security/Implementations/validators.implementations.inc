@@ -23,6 +23,8 @@ AlphaValidatorImpl,
 BaseCompositeValidatorImpl,
 CompositeValidatorImpl,
 CollectiveValidatorImpl,
+AndValidatorImpl,
+OrValidatorImpl,
 
 IntegerValidatorImpl,
 MaxIntegerValidatorImpl,

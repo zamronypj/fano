@@ -14,6 +14,7 @@ interface
 
 uses
 
+    RequestIntf,
     SessionIdGeneratorIntf;
 
 type
@@ -36,7 +37,7 @@ type
          *-------------------------------------
          * @return session id string
          *-------------------------------------*)
-        function getSessionId() : string; virtual; abstract;
+        function getSessionId(const request : IRequest) : string; virtual; abstract;
     end;
 
 implementation

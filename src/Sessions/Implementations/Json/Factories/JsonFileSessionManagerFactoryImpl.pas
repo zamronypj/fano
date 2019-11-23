@@ -11,13 +11,16 @@ unit JsonFileSessionManagerFactoryImpl;
 interface
 
 {$MODE OBJFPC}
+{$H+}
 
 uses
 
     DependencyIntf,
     DependencyContainerIntf,
     FactoryImpl,
-    SessionConsts;
+    SessionConsts,
+    SessionIdGeneratorFactoryIntf,
+    AbstractSessionManagerFactoryImpl;
 
 type
     (*!------------------------------------------------
@@ -25,18 +28,8 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TJsonFileSessionManagerFactory = class(TFactory)
-    private
-        fCookieName : string;
-        fBaseDir : string;
-        fPrefix : string;
+    TJsonFileSessionManagerFactory = class(TAbstractSessionManagerFactory)
     public
-        constructor create(
-            const cookieName : string = FANO_COOKIE_NAME;
-            const baseDir : string = '/tmp';
-            const prefix : string = ''
-        );
-
         (*!---------------------------------------------------
          * build class instance
          *----------------------------------------------------
@@ -53,19 +46,7 @@ uses
 
     StringFileReaderImpl,
     FileSessionManagerImpl,
-    JsonSessionFactoryImpl,
-    GuidSessionIdGeneratorImpl;
-
-    constructor TJsonFileSessionManagerFactory.create(
-        const cookieName : string = FANO_COOKIE_NAME;
-        const baseDir : string = '/tmp';
-        const prefix : string = ''
-    );
-    begin
-        fCookieName := cookieName;
-        fBaseDir := baseDir;
-        fPrefix := prefix;
-    end;
+    JsonSessionFactoryImpl;
 
     (*!---------------------------------------------------
      * build class instance
@@ -75,7 +56,7 @@ uses
     function TJsonFileSessionManagerFactory.build(const container : IDependencyContainer) : IDependency;
     begin
         result := TFileSessionManager.create(
-            TGuidSessionIdGenerator.create(),
+            fSessionIdGeneratorFactory.build(),
             TJsonSessionFactory.create(),
             fCookieName,
             TStringFileReader.create(),
