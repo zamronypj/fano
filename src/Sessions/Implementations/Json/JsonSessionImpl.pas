@@ -198,7 +198,7 @@ uses
     var sessValue : TJsonData;
     begin
         try
-        sessValue := fSessionData.getPath(SESSION_VARS + '.' + sessionVar);
+            sessValue := fSessionData.getPath(SESSION_VARS + '.' + sessionVar);
         except
             on e : EJson do
             begin
