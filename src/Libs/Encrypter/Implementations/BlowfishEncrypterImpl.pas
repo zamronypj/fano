@@ -102,12 +102,15 @@ uses
             );
             try
                 blowfishEncryptor.writeAnsiString(originalStr);
-                result := encodeBase64SpecialChars(
-                    encodeStringBase64(encryptedStream.DataString)
-                );
             finally
                 blowfishEncryptor.free();
             end;
+
+            //need to read encrypted string after free
+            //see https://bugs.freepascal.org/view.php?id=36343
+            result := encodeBase64SpecialChars(
+                encodeStringBase64(encryptedStream.DataString)
+            );
         finally
             encryptedStream.free();
         end;
