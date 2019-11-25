@@ -31,8 +31,7 @@ type
     public
         constructor create();
         function secretKey(const key : string) : THmacEncrypterFactory;
-        function separator(const sep : string) : THmacfishEncrypterFactory;
-
+        function separator(const sep : string) : THmacEncrypterFactory;
     end;
 
 implementation
@@ -46,7 +45,7 @@ uses
         fSeparator := DEFAULT_SEPARATOR;
     end;
 
-    function THmacFactory.secretKey(const key : string) : THmacEncrypterFactory;
+    function THmacEncrypterFactory.secretKey(const key : string) : THmacEncrypterFactory;
     begin
         fSecretKey := key;
         result := self;
