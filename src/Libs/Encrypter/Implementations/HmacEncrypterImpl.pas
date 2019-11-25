@@ -19,6 +19,10 @@ uses
     EncrypterIntf,
     DecrypterIntf;
 
+const
+
+    DEFAULT_SEPARATOR = '||';
+
 type
 
     (*!------------------------------------------------
@@ -41,7 +45,7 @@ type
             const encrypter : IEncrypter;
             const decrypter : IDecrypter;
             const secretKey : string;
-            const separator : string = '||'
+            const separator : string = DEFAULT_SEPARATOR
         );
         destructor destroy(); override;
 
@@ -80,7 +84,7 @@ resourcestring
         const encrypter : IEncrypter;
         const decrypter : IDecrypter;
         const secretKey : string;
-        const separator : string = '||'
+        const separator : string = DEFAULT_SEPARATOR
     );
     begin
         fEncrypter := encrypter;

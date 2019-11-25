@@ -8,7 +8,13 @@
 
 {------------ Begin encrypter-related------------------}
 BlowfishEncrypterImpl,
+HmacEncrypterImpl,
+Sha1HmacEncrypterImpl,
+Md5HmacEncrypterImpl,
 
 BlowfishEncrypterFactoryImpl,
+HmacEncrypterFactoryImpl,
+Sha1HmacEncrypterFactoryImpl,
+Md5HmacEncrypterFactoryImpl,
 
 {------------ End encrypter-related------------------}
