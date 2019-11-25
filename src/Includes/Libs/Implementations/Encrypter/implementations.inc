@@ -14,7 +14,7 @@ Md5HmacEncrypterImpl,
 
 BlowfishEncrypterFactoryImpl,
 HmacEncrypterFactoryImpl,
-Sha1HmacEncrypterFactoryImpl,
-Md5HmacEncrypterFactoryImpl,
+Sha1BlowfishEncrypterFactoryImpl,
+Md5BlowfishEncrypterFactoryImpl,
 
 {------------ End encrypter-related------------------}
