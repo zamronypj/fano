@@ -30,8 +30,6 @@ type
     TBlowfishEncrypter = class(TInjectableObject, IEncrypter, IDecrypter)
     private
         fSecretKey : string;
-        function encodeBase64SpecialChars(const base64Str : string) : string;
-        function decodeBase64SpecialChars(const base64Str : string) : string;
     public
         constructor create(const secretKey : string);
 
@@ -58,27 +56,11 @@ implementation
 uses
 
     Classes,
-    Base64,
-    SysUtils,
     Blowfish;
 
     constructor TBlowfishEncrypter.create(const secretKey : string);
     begin
         fSecretKey := secretKey;
-    end;
-
-    function TBlowfishEncrypter.encodeBase64SpecialChars(const base64Str : string) : string;
-    begin
-        result := StringReplace(base64Str, '+', '.', [rfReplaceAll]);
-        result := StringReplace(result, '/', '_', [rfReplaceAll]);
-        result := StringReplace(result, '=', '-', [rfReplaceAll]);
-    end;
-
-    function TBlowfishEncrypter.decodeBase64SpecialChars(const base64Str : string) : string;
-    begin
-        result := StringReplace(base64Str, '.', '+', [rfReplaceAll]);
-        result := StringReplace(result, '_', '/', [rfReplaceAll]);
-        result := StringReplace(result, '-', '=', [rfReplaceAll]);
     end;
 
     (*!------------------------------------------------
@@ -108,9 +90,7 @@ uses
 
             //need to read encrypted string after free
             //see https://bugs.freepascal.org/view.php?id=36343
-            result := encodeBase64SpecialChars(
-                encodeStringBase64(encryptedStream.DataString)
-            );
+            result := encryptedStream.DataString;
         finally
             encryptedStream.free();
         end;
@@ -129,9 +109,7 @@ uses
     var blowfishDecryptor: TBlowFishDeCryptStream;
         decryptedStream : TStringStream;
     begin
-        decryptedStream := TStringStream.create(
-            decodeStringBase64(decodeBase64SpecialChars(encryptedStr))
-        );
+        decryptedStream := TStringStream.create(encryptedStr);
         try
             blowfishDecryptor := TBlowFishDeCryptStream.create(
                 fSecretKey,
