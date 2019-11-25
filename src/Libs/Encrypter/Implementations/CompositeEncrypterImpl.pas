@@ -44,7 +44,7 @@ type
             const decrypters : array of IDecrypter
         );
 
-        destructor destroy();
+        destructor destroy(); override;
 
         (*!------------------------------------------------
          * encrypt string
@@ -109,7 +109,7 @@ implementation
     var i, totDecrypters : integer;
     begin
         totDecrypters := length(decrypters);
-        for i := 0 to totEncrypters - 1 do
+        for i := 0 to totDecrypters - 1 do
         begin
             decrypters[i] := nil;
         end;
@@ -156,7 +156,7 @@ implementation
     begin
         result := encryptedStr;
         totDecrypters := length(fDecrypters);
-        for i:=totDecrypters - 1 downto 0 do
+        for i := totDecrypters - 1 downto 0 do
         begin
             result := fDecrypters[i].decrypt(result);
         end;
