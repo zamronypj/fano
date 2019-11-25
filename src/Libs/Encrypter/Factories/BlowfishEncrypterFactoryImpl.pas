@@ -71,8 +71,8 @@ uses
         base64Encrypter := TBase64Encrypter.create();
         base64Decrypter := base64Encrypter as IDecrypter;
         result := TCompositeEncrypter.create(
-            [ base64Encrypter, blowfishEncrypter ],
-            [ base64Decrypter, blowfishDecrypter ]
+            [ blowfishEncrypter, base64Encrypter ],
+            [ blowfishDecrypter, base64Decrypter ]
         );
     end;
 end.
