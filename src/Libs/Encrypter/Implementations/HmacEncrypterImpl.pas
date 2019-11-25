@@ -88,7 +88,7 @@ resourcestring
     );
     begin
         fEncrypter := encrypter;
-        fDecrypter := decrypters;
+        fDecrypter := decrypter;
         fSecretKey := secretKey;
         fSeparator := separator;
     end;
