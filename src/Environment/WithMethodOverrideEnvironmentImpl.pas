@@ -210,25 +210,24 @@ uses
             if (methodOverrideHeader <> '') then
             begin
                 //if we get here, header X-HTTP-Method-Override is set
-                if (methodOverrideHeader = 'GET') or
-                    (methodOverrideHeader = 'POST') or
-                    (methodOverrideHeader = 'PUT') or
-                    (methodOverrideHeader = 'DELETE') or
-                    (methodOverrideHeader = 'OPTIONS') or
-                    (methodOverrideHeader = 'PATCH') or
-                    (methodOverrideHeader = 'HEAD') then
-                begin
-                    //override actual method
-                    result := methodOverrideHeader;
-                end else
-                begin
-                    //something is not right
-                    raise EInvalidMethod.createFmt(
-                        sErrInvalidMethod,
-                        [ methodOverrideHeader ]
-                    );
-                end;
+                result := methodOverrideHeader;
             end;
+        end;
+
+        if not (
+            (result = 'GET') or
+            (result = 'POST') or
+            (result = 'PUT') or
+            (result = 'DELETE') or
+            (result = 'OPTIONS') or
+            (result = 'PATCH') or
+            (result = 'HEAD') ) then
+        begin
+            //something is not right
+            raise EInvalidMethod.createFmt(
+                sErrInvalidMethod,
+                [ methodOverrideHeader ]
+            );
         end;
     end;
 
