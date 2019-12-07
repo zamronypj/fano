@@ -95,7 +95,7 @@ uses
         end;
 
         result := fActualDispatcher.dispatchRequest(
-            TVerbTunnelingEnvironment.create(env, envEnum),
+            TVerbTunnellingEnvironment.create(env, envEnum),
             stdIn
         );
     end;
