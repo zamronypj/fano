@@ -17,6 +17,7 @@ uses
     EnvironmentIntf,
     StdInIntf,
     ResponseIntf,
+    DispatcherIntf,
     InjectableObjectImpl;
 
 type
