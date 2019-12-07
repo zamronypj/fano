@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit WithMethodOverrideEnvironmentImpl;
+unit VerbTunnellingEnvironmentImpl;
 
 interface
 
@@ -28,7 +28,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *--------------------------------------------------*)
-    TWithMethodOverrideEnvironment = class(TInjectableObject, ICGIEnvironment, ICGIEnvironmentEnumerator)
+    TVerbTunnellingEnvironment = class(TInjectableObject, ICGIEnvironment, ICGIEnvironmentEnumerator)
     private
         fEnvEnum : ICGIEnvironmentEnumerator;
         fEnv : ICGIEnvironment;
@@ -183,7 +183,7 @@ uses
     sysutils,
     EInvalidMethodImpl;
 
-    constructor TWithMethodOverrideEnvironment.create(
+    constructor TVerbTunnellingEnvironment.create(
         const aEnv : ICGIEnvironment;
         const aEnvEnum : ICGIEnvironmentEnumerator
     );
@@ -192,17 +192,18 @@ uses
         fEnvEnum := aEnvEnum;
     end;
 
-    destructor TWithMethodOverrideEnvironment.destroy();
+    destructor TVerbTunnellingEnvironment.destroy();
     begin
         fEnvEnum := nil;
         fEnv := nil;
         inherited destroy();
     end;
 
-    function TWithMethodOverrideEnvironment.overrideMethod(
+    function TVerbTunnellingEnvironment.overrideMethod(
         const originalMethod : string;
         const methodOverrideHeader : string
     ) : string;
+    var allowed : boolean;
     begin
         result := originalMethod;
         if (originalMethod = 'POST') then
@@ -214,14 +215,15 @@ uses
             end;
         end;
 
-        if not (
-            (result = 'GET') or
+        allowed := (result = 'GET') or
             (result = 'POST') or
             (result = 'PUT') or
             (result = 'DELETE') or
             (result = 'OPTIONS') or
             (result = 'PATCH') or
-            (result = 'HEAD') ) then
+            (result = 'GET');
+
+        if not allowed then
         begin
             //something is not right
             raise EInvalidMethod.createFmt(
@@ -237,7 +239,7 @@ uses
      * @param key name of variable
      * @return variable value
      *------------------------------------------*)
-    function TWithMethodOverrideEnvironment.env(const keyName : string) : string;
+    function TVerbTunnellingEnvironment.env(const keyName : string) : string;
     begin
         if (keyName = 'REQUEST_METHOD') then
         begin
@@ -254,7 +256,7 @@ uses
     {-----------------------------------------
      Retrieve GATEWAY_INTERFACE environment variable
     ------------------------------------------}
-    function TWithMethodOverrideEnvironment.gatewayInterface() : string;
+    function TVerbTunnellingEnvironment.gatewayInterface() : string;
     begin
         result := fEnv.gatewayInterface();
     end;
@@ -262,7 +264,7 @@ uses
     {-----------------------------------------
      Retrieve REMOTE_ADDR environment variable
     ------------------------------------------}
-    function TWithMethodOverrideEnvironment.remoteAddr() : string;
+    function TVerbTunnellingEnvironment.remoteAddr() : string;
     begin
         result := fEnv.remoteAddr();
     end;
@@ -270,7 +272,7 @@ uses
     {-----------------------------------------
      Retrieve REMOTE_PORT environment variable
     ------------------------------------------}
-    function TWithMethodOverrideEnvironment.remotePort() : string;
+    function TVerbTunnellingEnvironment.remotePort() : string;
     begin
         result := fEnv.remotePort();
     end;
@@ -278,7 +280,7 @@ uses
     {-----------------------------------------
      Retrieve SERVER_ADDR environment variable
     ------------------------------------------}
-    function TWithMethodOverrideEnvironment.serverAddr() : string;
+    function TVerbTunnellingEnvironment.serverAddr() : string;
     begin
         result := fEnv.serverAddr();
     end;
@@ -286,7 +288,7 @@ uses
     {-----------------------------------------
      Retrieve SERVER_PORT environment variable
     ------------------------------------------}
-    function TWithMethodOverrideEnvironment.serverPort() : string;
+    function TVerbTunnellingEnvironment.serverPort() : string;
     begin
         result := fEnv.serverPort();
     end;
@@ -294,7 +296,7 @@ uses
     {-----------------------------------------
      Retrieve DOCUMENT_ROOT environment variable
     ------------------------------------------}
-    function TWithMethodOverrideEnvironment.documentRoot() : string;
+    function TVerbTunnellingEnvironment.documentRoot() : string;
     begin
         result := fEnv.documentRoot();
     end;
@@ -302,18 +304,15 @@ uses
     {-----------------------------------------
      Retrieve REQUEST_METHOD environment variable
     ------------------------------------------}
-    function TWithMethodOverrideEnvironment.requestMethod() : string;
+    function TVerbTunnellingEnvironment.requestMethod() : string;
     begin
-        result := overrideMethod(
-            fEnv.requestMethod(),
-            uppercase(fEnv.env('HTTP_X_HTTP_METHOD_OVERRIDE'))
-        );
+        result := env('REQUEST_METHOD');
     end;
 
     {-----------------------------------------
      Retrieve REQUEST_SCHEME environment variable
     ------------------------------------------}
-    function TWithMethodOverrideEnvironment.requestScheme() : string;
+    function TVerbTunnellingEnvironment.requestScheme() : string;
     begin
         result := fEnv.requestScheme();
     end;
@@ -321,7 +320,7 @@ uses
     {-----------------------------------------
      Retrieve REQUEST_URI environment variable
     ------------------------------------------}
-    function TWithMethodOverrideEnvironment.requestUri() : string;
+    function TVerbTunnellingEnvironment.requestUri() : string;
     begin
         result := fEnv.requestUri();
     end;
@@ -329,7 +328,7 @@ uses
     {-----------------------------------------
      Retrieve QUERY_STRING environment variable
     ------------------------------------------}
-    function TWithMethodOverrideEnvironment.queryString() : string;
+    function TVerbTunnellingEnvironment.queryString() : string;
     begin
         result := fEnv.queryString();
     end;
@@ -337,7 +336,7 @@ uses
     {-----------------------------------------
      Retrieve SERVER_NAME environment variable
     ------------------------------------------}
-    function TWithMethodOverrideEnvironment.serverName() : string;
+    function TVerbTunnellingEnvironment.serverName() : string;
     begin
         result := fEnv.serverName();
     end;
@@ -345,7 +344,7 @@ uses
     {-----------------------------------------
      Retrieve CONTENT_TYPE environment variable
     ------------------------------------------}
-    function TWithMethodOverrideEnvironment.contentType() : string;
+    function TVerbTunnellingEnvironment.contentType() : string;
     begin
         result := fEnv.contentType();
     end;
@@ -353,7 +352,7 @@ uses
     {-----------------------------------------
     Retrieve CONTENT_LENGTH environment variable
     ------------------------------------------}
-    function TWithMethodOverrideEnvironment.contentLength() : string;
+    function TVerbTunnellingEnvironment.contentLength() : string;
     begin
         result := fEnv.contentType();
     end;
@@ -364,7 +363,7 @@ uses
      *------------------------------------------
      * @return content length as integer value
      *------------------------------------------*)
-    function TWithMethodOverrideEnvironment.intContentLength() : integer;
+    function TVerbTunnellingEnvironment.intContentLength() : integer;
     begin
         result := fEnv.intContentLength();
     end;
@@ -372,7 +371,7 @@ uses
     {-----------------------------------------
      Retrieve HTTP_HOST environment variable
     ------------------------------------------}
-    function TWithMethodOverrideEnvironment.httpHost() : string;
+    function TVerbTunnellingEnvironment.httpHost() : string;
     begin
         result := fEnv.httpHost();
     end;
@@ -380,7 +379,7 @@ uses
     {-----------------------------------------
      Retrieve HTTP_USER_AGENT environment variable
     ------------------------------------------}
-    function TWithMethodOverrideEnvironment.httpUserAgent() : string;
+    function TVerbTunnellingEnvironment.httpUserAgent() : string;
     begin
         result := fEnv.httpUserAgent();
     end;
@@ -388,7 +387,7 @@ uses
     {-----------------------------------------
      Retrieve HTTP_ACCEPT environment variable
     ------------------------------------------}
-    function TWithMethodOverrideEnvironment.httpAccept() : string;
+    function TVerbTunnellingEnvironment.httpAccept() : string;
     begin
         result := fEnv.httpAccept();
     end;
@@ -396,7 +395,7 @@ uses
     {-----------------------------------------
      Retrieve HTTP_ACCEPT_LANGUAGE environment variable
     ------------------------------------------}
-    function TWithMethodOverrideEnvironment.httpAcceptLanguage() : string;
+    function TVerbTunnellingEnvironment.httpAcceptLanguage() : string;
     begin
         result := fEnv.httpAcceptLanguage();
     end;
@@ -404,7 +403,7 @@ uses
     {-----------------------------------------
      Retrieve HTTP_COOKIE environment variable
     ------------------------------------------}
-    function TWithMethodOverrideEnvironment.httpCookie() : string;
+    function TVerbTunnellingEnvironment.httpCookie() : string;
     begin
         result := fEnv.httpCookie();
     end;
@@ -415,12 +414,12 @@ uses
      * @param index index to use
      * @return key name
      *-----------------------------------------------*)
-    function TWithMethodOverrideEnvironment.getValue(const indx : integer) : string;
+    function TVerbTunnellingEnvironment.getValue(const indx : integer) : string;
     begin
         result := fEnvEnum.getValue(indx);
     end;
 
-    function TWithMethodOverrideEnvironment.getEnumerator() : ICGIEnvironmentEnumerator;
+    function TVerbTunnellingEnvironment.getEnumerator() : ICGIEnvironmentEnumerator;
     begin
         result := self;
     end;
@@ -430,7 +429,7 @@ uses
      *-----------------------------------------------
      * @return number of variables
      *-----------------------------------------------*)
-    function TWithMethodOverrideEnvironment.count() : integer;
+    function TVerbTunnellingEnvironment.count() : integer;
     begin
         result := fEnvEnum.count();
     end;
@@ -441,7 +440,7 @@ uses
      * @param index index to use
      * @return key name
      *-----------------------------------------------*)
-    function TWithMethodOverrideEnvironment.getKey(const indx : integer) : shortstring;
+    function TVerbTunnellingEnvironment.getKey(const indx : integer) : shortstring;
     begin
         result := fEnvEnum.getKey(indx);
     end;
