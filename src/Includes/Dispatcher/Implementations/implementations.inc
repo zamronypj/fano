@@ -16,9 +16,12 @@
 DispatcherImpl,
 SimpleDispatcherImpl,
 VerbTunnellingDipatcherImpl,
+
 DispatcherFactoryImpl,
 SimpleDispatcherFactoryImpl,
 SessionDispatcherFactoryImpl,
+VerbTunnelingDispatcherFactoryImpl,
+
 EInvalidDispatcherImpl,
 EMethodNotAllowedImpl,
 ERouteHandlerNotFoundImpl,

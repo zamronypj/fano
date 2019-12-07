@@ -9,6 +9,7 @@ TVerbTunnelingDispatcher = VerbTunnelingDispatcherImpl.TVerbTunnelingDispatcher;
 TDispatcherFactory = DispatcherFactoryImpl.TDispatcherFactory;
 TSimpleDispatcherFactory = SimpleDispatcherFactoryImpl.TSimpleDispatcherFactory;
 TSessionDispatcherFactory = SessionDispatcherFactoryImpl.TSessionDispatcherFactory;
+TVerbTunnelingDispatcherFactory = VerbTunnelingDispatcherFactoryImpl.TVerbTunnelingDispatcherFactory;
 
 TRequestResponseFactory = RequestResponseFactoryImpl.TRequestResponseFactory;
 TFcgiRequestResponseFactory = FcgiRequestResponseFactoryImpl.TFcgiRequestResponseFactory;
