@@ -2,4 +2,4 @@ TAbstractCGIEnvironment = AbstractEnvironmentImpl.TAbstractCGIEnvironment;
 TCGIEnvironment = EnvironmentImpl.TCGIEnvironment;
 TKeyValueEnvironment = KeyValueEnvironmentImpl.TKeyValueEnvironment;
 TNullCGIEnvironment = NullEnvironmentImpl.TNullCGIEnvironment;
-TVerbTunnelingEnvironment = VerbTunnelingEnvironmentImpl.TVerbTunnelingEnvironment;
+TVerbTunnellingEnvironment = VerbTunnellingEnvironmentImpl.TVerbTunnellingEnvironment;
