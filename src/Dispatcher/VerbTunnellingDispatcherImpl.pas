@@ -56,7 +56,7 @@ implementation
 uses
 
     EnvironmentEnumeratorIntf,
-    VerbTunnelingEnvironmentImpl,
+    VerbTunnellingEnvironmentImpl,
     NullEnvironmentImpl;
 
     constructor TVerbTunnellingDispatcher.create(const actualDispatcher : IDispatcher);

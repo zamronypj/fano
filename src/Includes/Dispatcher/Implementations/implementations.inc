@@ -20,7 +20,7 @@ VerbTunnellingDipatcherImpl,
 DispatcherFactoryImpl,
 SimpleDispatcherFactoryImpl,
 SessionDispatcherFactoryImpl,
-VerbTunnelingDispatcherFactoryImpl,
+VerbTunnellingDispatcherFactoryImpl,
 
 EInvalidDispatcherImpl,
 EMethodNotAllowedImpl,
