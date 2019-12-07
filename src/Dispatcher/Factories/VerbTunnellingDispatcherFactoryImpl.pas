@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit VerbTunnelingDispatcherFactoryImpl;
+unit VerbTunnellingDispatcherFactoryImpl;
 
 interface
 
@@ -20,13 +20,13 @@ uses
 type
 
     (*!--------------------------------------------------
-     * factory class for TVerbTunnelingDispatcher,
+     * factory class for TVerbTunnellingDispatcher,
      * dispatcher implementation which support
      * http verb tunneling
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *---------------------------------------------------*)
-    TVerbTunnelingDispatcherFactory = class(TFactory, IDependencyFactory)
+    TVerbTunnellingDispatcherFactory = class(TFactory, IDependencyFactory)
     private
         fActualFactory : IDependencyFactory;
     public
@@ -42,7 +42,7 @@ uses
     DispatcherIntf,
     VerbTunnellingDispatcherImpl;
 
-    constructor TVerbTunnelingDispatcherFactory.create(
+    constructor TVerbTunnellingDispatcherFactory.create(
         const actualFactory : IDependencyFactory
     );
     begin
@@ -50,13 +50,13 @@ uses
         fActualFactory := actualFactory;
     end;
 
-    destructor TVerbTunnelingDispatcherFactory.destroy();
+    destructor TVerbTunnellingDispatcherFactory.destroy();
     begin
         fActualFactory := nil;
         inherited destroy();
     end;
 
-    function TVerbTunnelingDispatcherFactory.build(const container : IDependencyContainer) : IDependency;
+    function TVerbTunnellingDispatcherFactory.build(const container : IDependencyContainer) : IDependency;
     begin
         result := TVerbTunnellingDispatcher.create(
             fActualFactory.build(container) as IDispatcher

@@ -4,7 +4,7 @@ ERouteHandlerNotFound = ERouteHandlerNotFoundImpl.ERouteHandlerNotFound;
 
 TDispatcher = DispatcherImpl.TDispatcher;
 TSimpleDispatcher = SimpleDispatcherImpl.TSimpleDispatcher;
-TVerbTunnelingDispatcher = VerbTunnelingDispatcherImpl.TVerbTunnelingDispatcher;
+TVerbTunnellingDispatcher = VerbTunnellingDispatcherImpl.TVerbTunnellingDispatcher;
 
 TDispatcherFactory = DispatcherFactoryImpl.TDispatcherFactory;
 TSimpleDispatcherFactory = SimpleDispatcherFactoryImpl.TSimpleDispatcherFactory;
