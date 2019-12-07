@@ -15,7 +15,7 @@
 
 DispatcherImpl,
 SimpleDispatcherImpl,
-VerbTunnellingDipatcherImpl,
+VerbTunnellingDispatcherImpl,
 
 DispatcherFactoryImpl,
 SimpleDispatcherFactoryImpl,
