@@ -34,7 +34,7 @@ type
      *---------------------------------------------------*)
     TVerbTunnellingDispatcher = class(TInjectableObject, IDispatcher)
     private
-        fActualDispatcher : IDipatcher;
+        fActualDispatcher : IDispatcher;
     public
         constructor create(const actualDispatcher : IDispatcher);
         destructor destroy(); override;
