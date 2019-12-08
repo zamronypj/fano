@@ -23,7 +23,7 @@ uses
 type
 
     (*!---------------------------------------------------
-     * descorator dispatcher that wrap environment to allow
+     * decorator dispatcher that wrap environment to allow
      * HTTP verb to be override (verb tunneling).
      *
      * This class is provided so web application running behind
