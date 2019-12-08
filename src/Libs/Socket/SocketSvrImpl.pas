@@ -246,7 +246,8 @@ uses
     StreamAdapterImpl,
     SockStreamImpl,
     CloseableStreamImpl,
-    TermSignalImpl,
+    //TermSignalImpl,
+    SigTermImpl,
     DateUtils;
 
     (*!-----------------------------------------------
@@ -566,8 +567,8 @@ uses
     var totDesc : longint;
     begin
         //find file descriptor with biggest value
-        highestHandle := getHighestHandle(fListenSocket, terminatePipeIn);
-        origfds := initFileDescSet(fListenSocket, terminatePipeIn);
+        highestHandle := getHighestHandle(fListenSocket, TSigTerm.terminatePipeIn);
+        origfds := initFileDescSet(fListenSocket, TSigTerm.terminatePipeIn);
         terminated := false;
         repeat
             readfds := origfds;
@@ -579,7 +580,7 @@ uses
                 //one or more file descriptors is ready for I/O, check further
                 handleFileDescriptorIOReady(
                     fListenSocket,
-                    terminatePipeIn,
+                    TSigTerm.terminatePipeIn,
                     readfds,
                     totDesc,
                     highestHandle,
