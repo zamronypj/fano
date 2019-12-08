@@ -221,7 +221,7 @@ uses
             (result = 'DELETE') or
             (result = 'OPTIONS') or
             (result = 'PATCH') or
-            (result = 'GET');
+            (result = 'HEAD');
 
         if not allowed then
         begin
