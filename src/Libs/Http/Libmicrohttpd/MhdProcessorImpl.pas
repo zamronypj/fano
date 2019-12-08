@@ -121,7 +121,7 @@ uses
     (*!------------------------------------------------
      * get StdIn stream for complete request
      *-----------------------------------------------*)
-    function TScgiProcessor.getStdIn() : IStreamAdapter;
+    function TMhdProcessor.getStdIn() : IStreamAdapter;
     begin
         result := fStdIn;
     end;
@@ -131,7 +131,7 @@ uses
      *-----------------------------------------------
      * @return current instance
      *-----------------------------------------------*)
-    function TScgiProcessor.setReadyListener(const listener : IReadyListener) : IProtocolProcessor;
+    function TMhdProcessor.setReadyListener(const listener : IReadyListener) : IProtocolProcessor;
     begin
         fRequestReadyListener := listener;
         result := self;
@@ -143,7 +143,7 @@ uses
      *-----------------------------------------------
      * @return number of bytes of complete request
      *-----------------------------------------------*)
-    function TScgiProcessor.expectedSize(const buff : IStreamAdapter) : int64;
+    function TMhdProcessor.expectedSize(const buff : IStreamAdapter) : int64;
     begin
         result := fParser.expectedSize(buff);
     end;
