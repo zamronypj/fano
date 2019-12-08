@@ -59,7 +59,7 @@ implementation
      *-------------------------------------------------
      * Signal handler must be ordinary procedure
      *-----------------------------------------------*)
-    class procedure TSigTerm.doTerminate(sig : longint; info : PSigInfo; ctx : PSigContext); cdecl; static;
+    class procedure TSigTerm.doTerminate(sig : longint; info : PSigInfo; ctx : PSigContext); cdecl;
     var ch : char;
     begin
         //write one byte to mark termination
