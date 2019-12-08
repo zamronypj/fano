@@ -40,7 +40,7 @@ implementation
      *-------------------------------------------------
      * @param listenSocket, listen socket handle
      *-----------------------------------------------*)
-    procedure TSigTerm.makeNonBlocking(fd : longint);
+    class procedure TSigTerm.makeNonBlocking(fd : longint);
     var flags : longint;
     begin
         //read control flag and set listen socket to be non blocking
@@ -59,7 +59,7 @@ implementation
      *-------------------------------------------------
      * Signal handler must be ordinary procedure
      *-----------------------------------------------*)
-    procedure TSigTerm.doTerminate(sig : longint; info : PSigInfo; ctx : PSigContext); cdecl;
+    class procedure TSigTerm.doTerminate(sig : longint; info : PSigInfo; ctx : PSigContext); cdecl; static;
     var ch : char;
     begin
         //write one byte to mark termination
@@ -72,7 +72,7 @@ implementation
      *-------------------------------------------------
      * @param aSig, signal id i.e, SIGTERM, SIGINT or SIGQUIT
      *-----------------------------------------------*)
-    procedure TSigTerm.installTerminateSignalHandler(aSig : longint);
+    class procedure TSigTerm.installTerminateSignalHandler(aSig : longint);
     var oldAct, newAct : SigactionRec;
     begin
         fillChar(newAct, sizeOf(SigactionRec), #0);
@@ -81,7 +81,7 @@ implementation
         fpSigaction(aSig, @newAct, @oldAct);
     end;
 
-    procedure TSigTerm.makePipeNonBlocking(termPipeIn: longint; termPipeOut : longint);
+    class procedure TSigTerm.makePipeNonBlocking(termPipeIn: longint; termPipeOut : longint);
     begin
         //read control flag and set pipe in to be non blocking
         makeNonBlocking(termPipeIn);
@@ -90,7 +90,7 @@ implementation
         makeNonBlocking(termPipeOut);
     end;
 
-    procedure TSigTerm.install();
+    class procedure TSigTerm.install();
     begin
         //setup non blocking pipe to use for signal handler.
         //Need to be done before install handler to prevent race condition
@@ -103,7 +103,7 @@ implementation
         installTerminateSignalHandler(SIGQUIT);
     end;
 
-    procedure TSigTerm.uninstall();
+    class procedure TSigTerm.uninstall();
     begin
         fpClose(terminatePipeIn);
         fpClose(terminatePipeOut);
