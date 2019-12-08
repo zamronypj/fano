@@ -77,7 +77,7 @@ implementation
     begin
         fillChar(newAct, sizeOf(SigactionRec), #0);
         fillChar(oldAct, sizeOf(Sigactionrec), #0);
-        newAct.sa_handler := @doTerminate;
+        newAct.sa_handler := @TSigTerm.doTerminate;
         fpSigaction(aSig, @newAct, @oldAct);
     end;
 
