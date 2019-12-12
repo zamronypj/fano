@@ -209,9 +209,6 @@ uses
      * execute application and write response
      *------------------------------------------------
      * @return current application instance
-     *-----------------------------------------------
-     * TODO: need to think about how to execute when
-     * application is run as daemon.
      *-----------------------------------------------*)
     function TCoreWebApplication.execute() : IRunnable;
     var response : IResponse;

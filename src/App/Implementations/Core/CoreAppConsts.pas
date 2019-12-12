@@ -22,6 +22,7 @@ resourcestring
 
     sHttp404Message = 'Not Found';
     sHttp405Message = 'Method Not Allowed';
+    sHttp501Message = 'Not Implemented';
     sErrInvalidDispatcher = 'Dispatcher instance is invalid';
 
 implementation
