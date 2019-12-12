@@ -119,6 +119,7 @@ uses
     EnvironmentEnumeratorIntf,
     ERouteHandlerNotFoundImpl,
     EMethodNotAllowedImpl,
+    EInvalidMethodImpl,
     ESockBindImpl,
     ESockCreateImpl,
     ESockListenImpl;
@@ -247,6 +248,11 @@ uses
             on e : EMethodNotAllowed do
             begin
                 errorHandler.handleError(env.enumerator, e, 405, sHttp405Message);
+            end;
+
+            on e : EInvalidMethod do
+            begin
+                errorHandler.handleError(env.enumerator, e, 501, sHttp501Message);
             end;
 
             on e : Exception do
