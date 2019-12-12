@@ -14,6 +14,7 @@ interface
 
 uses
 
+    RequestIntf,
     SessionIdGeneratorIntf;
 
 type
@@ -31,7 +32,7 @@ type
          *-------------------------------------
          * @return session id string
          *-------------------------------------*)
-        function getSessionId() : string;
+        function getSessionId(const request : IRequest) : string;
     end;
 
 implementation
@@ -45,7 +46,7 @@ uses
      *-------------------------------------
      * @return session id string
      *-------------------------------------*)
-    function TGuidSessionIdGenerator.getSessionId() : string;
+    function TGuidSessionIdGenerator.getSessionId(const request : IRequest) : string;
     var id : TGUID;
     begin
         createGUID(id);

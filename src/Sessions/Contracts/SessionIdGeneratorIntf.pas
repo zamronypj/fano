@@ -13,6 +13,10 @@ interface
 {$MODE OBJFPC}
 {$H+}
 
+uses
+
+    RequestIntf;
+
 type
 
     (*!------------------------------------------------
@@ -29,7 +33,7 @@ type
          *-------------------------------------
          * @return session id string
          *-------------------------------------*)
-        function getSessionId() : string;
+        function getSessionId(const request : IRequest) : string;
     end;
 
 implementation

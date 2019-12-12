@@ -14,5 +14,6 @@
  *-----------------------------------------------*)
 
 {$INCLUDE validations.aliases.inc}
+{$INCLUDE sanitations.aliases.inc}
 {$INCLUDE cors.aliases.inc}
 {$INCLUDE csrf.aliases.inc}

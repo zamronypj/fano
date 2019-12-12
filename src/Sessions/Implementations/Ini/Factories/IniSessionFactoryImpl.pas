@@ -30,13 +30,13 @@ type
     public
         function createSession(
             const sessName : shortstring;
-            const sessId : shortstring;
+            const sessId : string;
             const sessData : string
         ) : ISession;
 
         function createNewSession(
             const sessName : shortstring;
-            const sessId : shortstring;
+            const sessId : string;
             const expiredDate : TDateTime
         ) : ISession;
     end;
@@ -51,7 +51,7 @@ uses
 
     function TIniSessionFactory.createSession(
         const sessName : shortstring;
-        const sessId : shortstring;
+        const sessId : string;
         const sessData : string
     ) : ISession;
     begin
@@ -60,7 +60,7 @@ uses
 
     function TIniSessionFactory.createNewSession(
         const sessName : shortstring;
-        const sessId : shortstring;
+        const sessId : string;
         const expiredDate : TDateTime
     ) : ISession;
     begin
@@ -71,7 +71,7 @@ uses
                 '[expiry]' + LineEnding +
                 'expire=%s' + LineEnding +
                 '[sessionVars]' + LineEnding,
-                [ formatDateTime('dd-mm-yyyy hh:nn:ss', expiredDate) ]
+                [ sessId, formatDateTime('dd-mm-yyyy hh:nn:ss', expiredDate) ]
             )
         );
     end;

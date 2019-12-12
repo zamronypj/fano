@@ -40,10 +40,15 @@ uses
 
     function TRouterFactory.build(const container : IDependencyContainer) : IDependency;
     begin
-        result := TRouter.create(
-            TRouteList.create(),
-            TRouteHandlerFactory.create(getMiddlewareFactory())
-        );
+        try
+            result := TRouter.create(
+                TRouteList.create(),
+                TRouteHandlerFactory.create(getMiddlewareFactory())
+            );
+        except
+            result := nil;
+            raise;
+        end;
     end;
 
 end.

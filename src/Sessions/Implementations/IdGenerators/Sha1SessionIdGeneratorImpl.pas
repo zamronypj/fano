@@ -14,6 +14,7 @@ interface
 
 uses
 
+    RequestIntf,
     DecoratorSessionIdGeneratorImpl;
 
 type
@@ -31,7 +32,7 @@ type
          *-------------------------------------
          * @return session id string
          *-------------------------------------*)
-        function getSessionId() : string; override;
+        function getSessionId(const request : IRequest) : string; override;
     end;
 
 implementation
@@ -45,9 +46,9 @@ uses
      *-------------------------------------
      * @return session id string
      *-------------------------------------*)
-    function TSha1SessionIdGenerator.getSessionId() : string;
+    function TSha1SessionIdGenerator.getSessionId(const request : IRequest) : string;
     begin
-        result := SHA1Print(SHA1String(fActualGenerator.getSessionId()));
+        result := SHA1Print(SHA1String(fActualGenerator.getSessionId(request)));
     end;
 
 end.

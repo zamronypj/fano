@@ -43,7 +43,7 @@ const
      * @author Chris Fryer
      * @credit https://blogs.lse.ac.uk/lti/2008/04/23/a-regular-expression-to-match-any-url
      *-------------------------------------------------*)
-    REGEX_URL = '^([A-Za-z]{3,9})://([-;:&=\+\$,\w]+@{1})?' +
+    REGEX_URL = '^([A-Za-z]{3,9})://|//|mailto:|news:([-;:&=\+\$,\w]+@{1})?' +
         '([-A-Za-z0-9\.]+)+:?(\d+)?((/[-\+~%/\.\w]+)' +
         '?\??([-\+=&;%@\.\w]+)?#?([\w]+)?)?$';
 

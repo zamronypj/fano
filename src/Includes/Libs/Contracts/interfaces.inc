@@ -51,3 +51,6 @@ RandomIntf,
 
 CliParamsIntf,
 CliParamsFactoryIntf,
+
+EncrypterIntf,
+DecrypterIntf,
