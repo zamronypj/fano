@@ -42,3 +42,5 @@ KeyValuePairFactoryImpl,
 {$INCLUDE Uwsgi/implementations.inc}
 {$INCLUDE Random/implementations.inc}
 {$INCLUDE Cli/implementations.inc}
+{$INCLUDE Encrypter/implementations.inc}
+{$INCLUDE Antivirus/implementations.inc}

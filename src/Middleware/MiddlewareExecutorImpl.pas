@@ -71,11 +71,16 @@ uses
             routeHandler.middlewares(),
             routeHandler.handler()
         );
+        try
 
-        result := mdlwr.first.handleRequest(
-            request,
-            response,
-            routeHandler.argsReader()
-        );
+            result := mdlwr.first.handleRequest(
+                request,
+                response,
+                routeHandler.argsReader()
+            );
+
+        finally
+            mdlwr := nil;
+        end;
     end;
 end.

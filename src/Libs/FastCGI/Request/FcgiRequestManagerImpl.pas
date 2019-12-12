@@ -397,13 +397,6 @@ uses
         //if we received FCGI_BEGIN_REQUEST, do some test
         if rec.getType() = FCGI_BEGIN_REQUEST then
         begin
-            if hasRequest then
-            begin
-                //something is very wrong, requestId must not exists when
-                //begin request
-                raise EInvalidFcgiRequestId.createFmt('Invalid request id %d', [requestId]);
-            end;
-
             beginReq := rec as IFcgiBeginRequest;
             fRecords[requestId].keepConnection := beginReq.keepConnection();
         end;

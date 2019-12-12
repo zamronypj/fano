@@ -21,13 +21,32 @@ GuidSessionIdGeneratorImpl,
 RawSessionIdGeneratorImpl,
 Md5SessionIdGeneratorImpl,
 Sha1SessionIdGeneratorImpl,
+KeySessionIdGeneratorImpl,
+IpTimeSessionIdGeneratorImpl,
+
+KeyGuidSessionIdGeneratorFactoryImpl,
+KeyRandSessionIdGeneratorFactoryImpl,
+GuidSessionIdGeneratorFactoryImpl,
+IpKeyGuidSessionIdGeneratorFactoryImpl,
 
 FileSessionManagerImpl,
+CookieSessionManagerImpl,
 
 JsonSessionImpl,
+JsonSessionFactoryImpl,
+
+AbstractSessionManagerFactoryImpl,
 JsonFileSessionManagerFactoryImpl,
+
 IniSessionImpl,
+IniSessionFactoryImpl,
+
 IniFileSessionManagerFactoryImpl,
+
+CookieSessionImpl,
+CookieSessionFactoryImpl,
+
+CookieSessionManagerFactoryImpl,
 
 SessionMiddlewareExecutorImpl,
 

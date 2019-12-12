@@ -42,6 +42,29 @@ type
 
 implementation
 
+uses
+
+    SysUtils,
+    RegExpr;
+
+    function extractStatusLineHeaderIfAny(const str : string) : string;
+    var regx : TRegExpr;
+    begin
+        regx := TRegExpr.create();
+        try
+            regx.expression := 'Status\s*\:\s*(\d+\s+[a-zA-Z\s]+)\x0d*\x0a';
+            if regx.Exec(str) then
+            begin
+                result := trim(regx.match[1]);
+            end else
+            begin
+                result := '';
+            end;
+        finally
+            regx.free();
+        end;
+    end;
+
     (*!------------------------------------------------
      * write string to STDOUT stream
      *-----------------------------------------------
@@ -50,9 +73,16 @@ implementation
      * @return current instance
      *-----------------------------------------------*)
     function TUwsgiStdOutWriter.writeStream(const stream : IStreamAdapter; const str : string) : IStdOut;
-    var tmpStr : string;
+    var tmpStr, statusLine : string;
     begin
-        tmpStr := 'HTTP/1.1 200 OK' + LineEnding + str;
+        statusLine := extractStatusLineHeaderIfAny(str);
+        if length(statusLine) = 0 then
+        begin
+            tmpStr := 'HTTP/1.1 200 OK' + LineEnding + str;
+        end else
+        begin
+            tmpStr :=  'HTTP/1.1 ' + statusLine + LineEnding + str;
+        end;
         stream.writeBuffer(tmpStr[1], length(tmpStr));
         result:= self;
     end;

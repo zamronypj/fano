@@ -44,6 +44,15 @@ type
         function getArg(const key : shortstring) : TPlaceholder;
 
         (*!-------------------------------------------
+         * get single route argument value
+         *--------------------------------------------
+         * @param key name of argument
+         * @return argument value
+         *--------------------------------------------*)
+        function getValue(const key : shortstring) : string;
+        property value[const key : shortstring] : string read getValue; default;
+
+        (*!-------------------------------------------
          * get route name
          *--------------------------------------------
          * @return current route name

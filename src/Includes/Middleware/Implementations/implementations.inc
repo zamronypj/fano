@@ -14,8 +14,10 @@
  *-----------------------------------------------*)
 
 MiddlewareListImpl,
+NullMiddlewareListImpl,
 
 MiddlewareListFactoryImpl,
+NullMiddlewareListFactoryImpl,
 
 NullMiddlewareImpl,
 CompositeMiddlewareImpl,
