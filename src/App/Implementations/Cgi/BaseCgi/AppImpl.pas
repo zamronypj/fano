@@ -38,6 +38,7 @@ uses
     ///exception-related units
     ERouteHandlerNotFoundImpl,
     EMethodNotAllowedImpl,
+    EInvalidMethodImpl,
     EDependencyNotFoundImpl,
     EInvalidDispatcherImpl,
     EInvalidFactoryImpl;
@@ -67,6 +68,12 @@ uses
             on e : EMethodNotAllowed do
             begin
                 errorHandler.handleError(environment.enumerator, e, 405, sHttp405Message);
+                reset();
+            end;
+
+            on e : EInvalidMethod do
+            begin
+                errorHandler.handleError(environment.enumerator, e, 501, sHttp501Message);
                 reset();
             end;
 

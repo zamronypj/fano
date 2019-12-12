@@ -10,6 +10,7 @@ TUploadedFileCollection = UploadedFileCollectionImpl.TUploadedFileCollection;
 
 EInvalidRequest = EInvalidRequestImpl.EInvalidRequest;
 EInvalidUploadedFile = EInvalidUploadedFileImpl.EInvalidUploadedFile;
+EInvalidMethod = EInvalidMethodImpl.EInvalidMethod;
 
 TCookie = CookieImpl.TCookie;
 TCookieFactory = CookieFactoryImpl.TCookieFactory;
