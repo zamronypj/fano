@@ -95,7 +95,7 @@ uses
         result := fOutputBuffer;
     end;
 
-    function TDaemonAppServiceProvider.getStdIn() : IStdIn; override;
+    function TDaemonAppServiceProvider.getStdIn() : IStdIn;
     begin
         result := fStdIn;
     end;
