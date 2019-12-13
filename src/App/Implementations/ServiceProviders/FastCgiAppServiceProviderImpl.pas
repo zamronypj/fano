@@ -54,7 +54,7 @@ uses
             aParserFactory.build(),
             TFcgiRequestManager.create(TStreamAdapterCollectionFactory.create())
         );
-        fStdOut := TFcgiStdOutWriter.create(fFcgiProtocol as IFcgiRequestIdAware);
+        fStdOut := TFcgiStdOutWriter.create(fProtocol as IFcgiRequestIdAware);
     end;
 
 end.
