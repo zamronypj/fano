@@ -36,6 +36,8 @@ implementation
 uses
 
     FcgiRequestIdAwareIntf,
+    FcgiFrameParserFactoryIntf,
+    FcgiFrameParserFactoryImpl,
     FcgiProcessorImpl,
     FcgiFrameParserImpl,
     FcgiRequestManagerImpl,
