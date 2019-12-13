@@ -16,6 +16,7 @@ interface
 uses
 
     RunnableIntf,
+    RunnableWithDataNotifIntf,
     DataAvailListenerIntf;
 
 type
