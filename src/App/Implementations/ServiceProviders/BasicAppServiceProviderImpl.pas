@@ -22,6 +22,7 @@ uses
     EnvironmentIntf,
     StdInIntf,
     RouteMatcherIntf,
+    RouteBuilderIntf,
     RouterIntf;
 
 type
