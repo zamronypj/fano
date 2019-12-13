@@ -30,9 +30,9 @@ type
         (*!----------------------------------------------
          * build application routes
          * ----------------------------------------------
-         * @param router instance of router
+         * @param rtr instance of router
          *-----------------------------------------------*)
-        procedure buildRoutes(const router : IRouter);
+        procedure buildRoutes(const rtr : IRouter);
     end;
 
 implementation

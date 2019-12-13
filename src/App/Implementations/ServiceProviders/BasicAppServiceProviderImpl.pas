@@ -66,19 +66,19 @@ type
         (*!--------------------------------------------------------
          * register all services
          *---------------------------------------------------------
-         * @param container service container
+         * @param cntr service container
          *---------------------------------------------------------
          * Descendant must implement this and registers services
          * according to their requirement
          *---------------------------------------------------------*)
-        procedure register(const container : IDependencyContainer); virtual; abstract;
+        procedure register(const cntr : IDependencyContainer); virtual; abstract;
 
         (*!----------------------------------------------
          * build application routes
          * ----------------------------------------------
          * @param router instance of router
          *-----------------------------------------------*)
-        procedure buildRoutes(const router : IRouter); virtual; abstract;
+        procedure buildRoutes(const rtr : IRouter); virtual; abstract;
     end;
 
 implementation
