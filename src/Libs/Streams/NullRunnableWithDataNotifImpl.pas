@@ -27,7 +27,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TNullRunnableWithDataNotif = class(TInterfacedObject, IRunnableWithDataNotif)
+    TNullRunnableWithDataNotif = class(TInterfacedObject, IRunnable, IRunnableWithDataNotif)
     public
 
         (*!------------------------------------------------
