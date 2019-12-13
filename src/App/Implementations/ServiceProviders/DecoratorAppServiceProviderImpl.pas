@@ -76,13 +76,6 @@ type
          * according to their requirement
          *---------------------------------------------------------*)
         procedure register(const cntr : IDependencyContainer);
-
-        (*!----------------------------------------------
-         * build application routes
-         * ----------------------------------------------
-         * @param rtr instance of router
-         *-----------------------------------------------*)
-        procedure buildRoutes(const rtr : IRouter);
     end;
 
 implementation
@@ -173,15 +166,5 @@ uses
     procedure TDecoratorAppServiceProvider.register(const cntr : IDependencyContainer);
     begin
         fDaemonSvc.register(cntr);
-    end;
-
-    (*!----------------------------------------------
-     * build application routes
-     * ----------------------------------------------
-     * @param rtr instance of router
-     *-----------------------------------------------*)
-    procedure TDecoratorAppServiceProvider.buildRoutes(const rtr : IRouter);
-    begin
-        fDaemonSvc.buildRoutes(rtr);
     end;
 end.
