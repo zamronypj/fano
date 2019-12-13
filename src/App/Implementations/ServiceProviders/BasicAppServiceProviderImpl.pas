@@ -33,8 +33,6 @@ type
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------}
     TBasicAppServiceProvider = class abstract (TInterfacedObject, IAppServiceProvider, IRouteBuilder)
-    private
-        procedure reset();
     protected
         fContainer : IDependencyContainer;
         fEnv : ICGIEnvironment;
@@ -100,7 +98,18 @@ resourcestring
 
     sErrInvalidDispatcher = 'Invalid dispatcher';
 
-    procedure TBasicAppServiceProvider.reset();
+    constructor TBasicAppServiceProvider.create();
+    begin
+        fContainer := TDependencyContainer.create(TDependencyList.create());
+        fEnv := TCGIEnvironment.create();
+        fErrHandler := TErrorHandler.create();
+        fDispatcher := nil;
+        fRouter := nil;
+        fRouteMatcher := nil;
+        fStdIn := TStdInReader.create();
+    end;
+
+    destructor TBasicAppServiceProvider.destroy();
     begin
         fContainer := nil;
         fEnv := nil;
@@ -108,34 +117,16 @@ resourcestring
         fDispatcher := nil;
         fRouter := nil;
         fRouteMatcher := nil;
-    end;
-
-    constructor TBasicAppServiceProvider.create();
-    begin
-        reset();
-    end;
-
-    destructor TBasicAppServiceProvider.destroy();
-    begin
-        reset();
         inherited destroy();
     end;
 
     function TBasicAppServiceProvider.getContainer() : IDependencyContainer;
     begin
-        if fContainer = nil then
-        begin
-            fContainer := TDependencyContainer.create(TDependencyList.create());
-        end;
         result := fContainer;
     end;
 
     function TBasicAppServiceProvider.getErrorHandler() : IErrorHandler;
     begin
-        if (fErrHandler = nil) then
-        begin
-            fErrHandler := TErrorHandler.create();
-        end;
         result := fErrHandler;
     end;
 
@@ -174,10 +165,6 @@ resourcestring
 
     function TBasicAppServiceProvider.getEnvironment() : ICGIEnvironment;
     begin
-        if (fEnv = nil) then
-        begin
-            fEnv := TCGIEnvironment.create();
-        end;
         result := fEnv;
     end;
 
@@ -215,10 +202,6 @@ resourcestring
 
     function TBasicAppServiceProvider.getStdIn() : IStdIn;
     begin
-        if (fStdIn = nil) then
-        begin
-            fStdIn := TStdInReader.create();
-        end;
         result := fStdIn;
     end;
 
