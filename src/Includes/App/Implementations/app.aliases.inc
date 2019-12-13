@@ -14,42 +14,20 @@
  *-----------------------------------------------*)
 
 TFanoWebApplication = AppImpl.TFanoWebApplication;
-TSimpleWebApplication = SimpleAppImpl.TSimpleWebApplication;
 TDaemonWebApplication = DaemonAppImpl.TDaemonWebApplication;
 
+TBasicAppServiceProvider = BasicAppServiceProviderImpl.TBasicAppServiceProvider;
+TDaemonAppServiceProvider = DaemonAppServiceProviderImpl.TDaemonAppServiceProvider;
+TServerAppServiceProvider = ServerAppServiceProviderImpl.TServerAppServiceProvider;
+
 {----------------Begin FastCGI related-----------------------------}
-TSimpleFastCGIWebApplication = SimpleFastCGIAppImpl.TSimpleFastCGIWebApplication;
-
-{$IFDEF UNIX}
-TSimpleUnixFastCGIWebApplication = SimpleUnixFastCGIAppImpl.TSimpleUnixFastCGIWebApplication;
-{$ENDIF}
-
-TSimpleSockFastCGIWebApplication = SimpleSockFastCGIAppImpl.TSimpleSockFastCGIWebApplication;
-
-
-{$IFDEF LINUX}
-TEpollSimpleFastCGIWebApplication = EpollSimpleFastCGIAppImpl.TEpollSimpleFastCGIWebApplication;
-TEpollSimpleUnixFastCGIWebApplication = EpollSimpleUnixFastCGIAppImpl.TEpollSimpleUnixFastCGIWebApplication;
-TEpollSimpleSockFastCGIWebApplication = EpollSimpleSockFastCGIAppImpl.TEpollSimpleSockFastCGIWebApplication;
-{$ENDIF}
-{----------------End FastCGI related-----------------------------}
+TFastCgiAppServiceProvider = FastCgiAppServiceProviderImpl.TFastCgiAppServiceProvider;
+{---------------- End FastCGI related-----------------------------}
 
 {----------------Begin SCGI related-----------------------------}
-TSimpleScgiWebApplication = SimpleScgiAppImpl.TSimpleScgiWebApplication;
-TSimpleUnixScgiWebApplication = SimpleUnixScgiAppImpl.TSimpleUnixScgiWebApplication;
-
-{$IFDEF LINUX}
-TEpollSimpleScgiWebApplication = EpollSimpleScgiAppImpl.TEpollSimpleScgiWebApplication;
-TEpollSimpleUnixScgiWebApplication = EpollSimpleUnixScgiAppImpl.TEpollSimpleUnixScgiWebApplication;
-{$ENDIF}
-{----------------End SCGI related-----------------------------}
+TScgiAppServiceProvider = ScgiAppServiceProviderImpl.TScgiAppServiceProvider;
+{---------------- End SCGI related-----------------------------}
 
 {----------------Begin uwsgi related-----------------------------}
-TSimpleUwsgiWebApplication = SimpleUwsgiAppImpl.TSimpleUwsgiWebApplication;
-TSimpleUnixUwsgiWebApplication = SimpleUnixUwsgiAppImpl.TSimpleUnixUwsgiWebApplication;
-
-{$IFDEF LINUX}
-TEpollSimpleUwsgiWebApplication = EpollSimpleUwsgiAppImpl.TEpollSimpleUwsgiWebApplication;
-TEpollSimpleUnixUwsgiWebApplication = EpollSimpleUnixUwsgiAppImpl.TEpollSimpleUnixUwsgiWebApplication;
-{$ENDIF}
-{----------------End uwsgi related-----------------------------}
+TUwsgiAppServiceProvider = UwsgiAppServiceProviderImpl.TUwsgiAppServiceProvider;
+{---------------- End uwsgi related-----------------------------}
