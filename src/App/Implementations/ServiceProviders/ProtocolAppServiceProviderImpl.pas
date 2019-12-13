@@ -32,6 +32,7 @@ type
         fStdOut : IStdOut;
         fProtocol : IProtocolProcessor;
     public
+        destructor destroy(); override;
         function getProtocol() : IProtocolProcessor; override;
         function getStdOut() : IStdOut; override;
     end;
