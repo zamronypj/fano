@@ -27,7 +27,8 @@ uses
     RouteMatcherIntf,
     RouterIntf,
     RunnableWithDataNotifIntf,
-    ProtocolProcessorIntf;
+    ProtocolProcessorIntf,
+    BasicAppServiceProviderImpl;
 
 type
 
@@ -37,7 +38,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------}
-    TDaemonAppServiceProvider = class abstract (TBasicAppServiceProvicer, IDaemonAppServiceProvider)
+    TDaemonAppServiceProvider = class abstract (TBasicAppServiceProvider, IDaemonAppServiceProvider)
     protected
         fServer : IRunnableWithDataNotif;
         fProtocol : IProtocolProcessor;
