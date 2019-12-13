@@ -5,7 +5,7 @@
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
-unit ServiceProviderIntf;
+unit AppServiceProviderIntf;
 
 interface
 
@@ -19,6 +19,9 @@ uses
     ErrorHandlerIntf,
     DispatcherIntf,
     EnvironmentIntf,
+    StdInIntf,
+    RouteMatcherIntf,
+    RouteBuilderIntf,
     RouterIntf;
 
 type
@@ -45,6 +48,12 @@ type
 
         function getRouter() : IRouter;
         property router : IRouter read getRouter;
+
+        function getRouteBuilder() : IRouteBuilder;
+        property routeBuilder : IRouteBuilder read getRouteBuilder;
+
+        function getStdIn() : IStdIn;
+        property stdIn : IStdIn read getStdIn;
     end;
 
 implementation

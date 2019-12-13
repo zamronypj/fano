@@ -1,0 +1,111 @@
+{*!
+ * Fano Web Framework (https://fanoframework.github.io)
+ *
+ * @link      https://github.com/fanoframework/fano
+ * @copyright Copyright (c) 2018 Zamrony P. Juhara
+ * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
+ *}
+unit DaemonAppServiceProviderImpl;
+
+interface
+
+{$MODE OBJFPC}
+{$H+}
+
+uses
+
+    AppServiceProviderIntf,
+    DependencyContainerIntf,
+    ServiceProviderIntf,
+    ErrorHandlerIntf,
+    DispatcherIntf,
+    EnvironmentIntf,
+    StdInIntf,
+    RouteMatcherIntf,
+    RouterIntf;
+
+type
+
+    {*------------------------------------------------
+     * interface for any class having capability to
+     * register one or more service factories
+     *
+     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+     *-----------------------------------------------}
+    TDaemonAppServiceProvider = class abstract (TBasicAppServiceProvicer, IDaemonAppServiceProvider)
+    protected
+        fServer : IRunnableWithDataNotif;
+        fProtocol : IProtocolProcessor;
+        fOutputBuffer : IOutputBuffer;
+        fStdOut : IStdOut;
+    public
+        constructor create();
+        destructor destroy(); override;
+
+        function getStdIn() : IStdIn; override;
+
+        function getServer() : IRunnableWithDataNotif; virtual;
+
+        function getProtocol() : IProtocolProcessor; virtual;
+
+        function getOutputBuffer() : IOutputBuffer; virtual;
+
+        function getStdOut() : IStdOut; virtual;
+
+    end;
+
+implementation
+
+uses
+
+    StdInFromStreamImpl,
+    NullStreamAdapterImpl,
+    NullStdOutImpl,
+    NullProtocolProcessorImpl,
+    NullRunnableWithDataNotifImpl,
+    OutputBufferImpl;
+
+    constructor TDaemonAppServiceProvider.create();
+    begin
+        inherited create();
+        fServer := NullRunnableWithDataNotif.create();
+        fProtocol := TNullProtocolProcessor.create();
+        fStdOut := TNullStdOut.create();
+        fOutputBuffer := TOutputBuffer.create();
+        fStdIn := TStdInFromStream.create(TNullStreamAdapter.create());
+    end;
+
+    destructor TDaemonAppServiceProvider.destroy();
+    begin
+        fServer := nil;
+        fProtocol := nil;
+        fStdOut := nil;
+        fOutputBuffer := nil;
+        inherited destroy();
+    end;
+
+    function TDaemonAppServiceProvider.getOutputBuffer() : IOutputBuffer;
+    begin
+        result := fOutputBuffer;
+    end;
+
+    function TDaemonAppServiceProvider.getStdIn() : IStdIn; override;
+    begin
+        result := fStdIn;
+    end;
+
+    function TDaemonAppServiceProvider.getServer() : IRunnableWithDataNotif;
+    begin
+        result := fServer;
+    end;
+
+    function TDaemonAppServiceProvider.getProtocol() : IProtocolProcessor;
+    begin
+        result := fProtocol;
+    end;
+
+    function TDaemonAppServiceProvider.getStdOut() : IStdOut;
+    begin
+        result := fStdOut;
+    end;
+end.

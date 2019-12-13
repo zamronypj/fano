@@ -54,32 +54,32 @@ uses
     function TFanoWebApplication.run() : IRunnable;
     begin
         try
-            if (initialize(dependencyContainer)) then
+            if (initialize(fAppSvc.container)) then
             begin
-                result := execute();
+                result := execute(fAppSvc.env);
             end;
         except
             on e : ERouteHandlerNotFound do
             begin
-                errorHandler.handleError(environment.enumerator, e, 404, sHttp404Message);
+                fAppSvc.errorHandler.handleError(fAppSvc.env.enumerator, e, 404, sHttp404Message);
                 reset();
             end;
 
             on e : EMethodNotAllowed do
             begin
-                errorHandler.handleError(environment.enumerator, e, 405, sHttp405Message);
+                fAppSvc.errorHandler.handleError(fAppSvc.env.enumerator, e, 405, sHttp405Message);
                 reset();
             end;
 
             on e : EInvalidMethod do
             begin
-                errorHandler.handleError(environment.enumerator, e, 501, sHttp501Message);
+                fAppSvc.errorHandler.handleError(fAppSvc.env.enumerator, e, 501, sHttp501Message);
                 reset();
             end;
 
             on e : Exception do
             begin
-                errorHandler.handleError(environment.enumerator, e);
+                fAppSvc.errorHandler.handleError(fAppSvc.env.enumerator, e);
                 reset();
             end;
         end;

@@ -23,6 +23,7 @@ uses
     OutputBufferIntf,
     DataAvailListenerIntf,
     RunnableWithDataNotifIntf,
+    DaemonAppServiceProviderIntf,
     StdOutIntf,
     StdInIntf,
     ProtocolProcessorIntf,
@@ -42,10 +43,7 @@ type
      *-----------------------------------------------*)
     TDaemonWebApplication = class(TCoreWebApplication, IDataAvailListener, IReadyListener)
     private
-        workerServer : IRunnableWithDataNotif;
-        fProcessor : IProtocolProcessor;
-        fOutputBuffer : IOutputBuffer;
-        fStdOutWriter : IStdOut;
+        fDaemonAppSvc : IDaemonAppServiceProvider;
 
         (*!-----------------------------------------------
          * attach ourself as listener and run socket server
@@ -68,16 +66,7 @@ type
          * This is provided to simplify thing by providing
          * default service provider
          *-----------------------------------------------*)
-        constructor create(
-            const container : IDependencyContainer;
-            const errHandler : IErrorHandler;
-            const dispatcherInst : IDispatcher;
-            const server : IRunnableWithDataNotif;
-            const aProcessor : IProtocolProcessor;
-            const outputBuffer : IOutputBuffer;
-            const stdOutWriter : IStdOut;
-            const stdInReader : IStdIn
-        );
+        constructor create(const appSvc : IDaemonAppServiceProvider);
         destructor destroy(); override;
         function run() : IRunnable; override;
 
@@ -134,32 +123,15 @@ uses
      * This is provided to simplify thing by providing
      * default service provider
      *-----------------------------------------------*)
-    constructor TDaemonWebApplication.create(
-        const container : IDependencyContainer;
-        const errHandler : IErrorHandler;
-        const dispatcherInst : IDispatcher;
-        const server : IRunnableWithDataNotif;
-        const aProcessor : IProtocolProcessor;
-        const outputBuffer : IOutputBuffer;
-        const stdOutWriter : IStdOut;
-        const stdInReader : IStdIn
-    );
+    constructor TDaemonWebApplication.create(const appSvc : IDaemonAppServiceProvider);
     begin
-        inherited create(container, nil, errHandler, stdInReader);
-        dispatcher := dispatcherInst;
-        workerServer := server;
-        fProcessor := aProcessor;
-        fOutputBuffer := outputBuffer;
-        fStdOutWriter := stdOutWriter;
+        inherited create(appSvc);
+        fDaemonAppSvc := appSvc;
     end;
 
     procedure TDaemonWebApplication.cleanUp();
     begin
-        dispatcher := nil;
-        workerServer := nil;
-        fProcessor := nil;
-        fOutputBuffer := nil;
-        fStdOutWriter := nil;
+        fDaemonAppSvc := nil;
         reset();
     end;
 
@@ -178,13 +150,13 @@ uses
     begin
         //This is to ensure that reference count of our instance
         //properly incremented/decremented so no memory leak
-        fProcessor.setReadyListener(self);
+        fDaemonAppSvc.protocol.setReadyListener(self);
         try
-            workerServer.setDataAvailListener(self);
+            fDaemonAppSvc.server.setDataAvailListener(self);
             try
                 try
                     //execute run loop until terminated
-                    workerServer.run();
+                    fDaemonAppSvc.server.run();
                 except
                     //TODO add better exception handling for ESockBind, ESockListen, ESockCreate
                     on e : ESockCreate do
@@ -201,10 +173,10 @@ uses
                     end;
                 end;
             finally
-                workerServer.setDataAvailListener(nil);
+                fDaemonAppSvc.server.setDataAvailListener(nil);
             end;
         finally
-            fProcessor.setReadyListener(nil);
+            fDaemonAppSvc.protocol.setReadyListener(nil);
         end;
     end;
 
@@ -218,7 +190,7 @@ uses
     function TDaemonWebApplication.run() : IRunnable;
     begin
         try
-            if (initialize(dependencyContainer)) then
+            if (initialize(fAppSvc.container)) then
             begin
                 attachListenerAndRunServer();
             end;
@@ -237,27 +209,26 @@ uses
     procedure TDaemonWebApplication.executeRequest(const env : ICGIEnvironment);
     begin
         try
-            environment := env;
-            execute();
+            execute(env);
         except
             on e : ERouteHandlerNotFound do
             begin
-                errorHandler.handleError(env.enumerator, e, 404, sHttp404Message);
+                fAppSvc.errorHandler.handleError(env.enumerator, e, 404, sHttp404Message);
             end;
 
             on e : EMethodNotAllowed do
             begin
-                errorHandler.handleError(env.enumerator, e, 405, sHttp405Message);
+                fAppSvc.errorHandler.handleError(env.enumerator, e, 405, sHttp405Message);
             end;
 
             on e : EInvalidMethod do
             begin
-                errorHandler.handleError(env.enumerator, e, 501, sHttp501Message);
+                fAppSvc.errorHandler.handleError(env.enumerator, e, 501, sHttp501Message);
             end;
 
             on e : Exception do
             begin
-                errorHandler.handleError(env.enumerator, e);
+                fAppSvc.errorHandler.handleError(env.enumerator, e);
             end;
         end;
     end;
@@ -279,7 +250,7 @@ uses
         const streamId : IStreamId
     ) : boolean;
     begin
-        result := fProcessor.process(stream, streamCloser, streamId);
+        result := fDaemonAppSvc.protocol.process(stream, streamCloser, streamId);
     end;
 
     (*!------------------------------------------------
@@ -297,15 +268,15 @@ uses
     ) : boolean;
     begin
         //buffer STDOUT, so any write()/writeln() will be buffered to stream
-        fOutputBuffer.beginBuffering();
+        fAppSvc.outputBuffer.beginBuffering();
         try
             //when we get here, CGI environment and any POST data are ready
-            fStdInReader.setStream(stdInStream);
+            fAppSvc.stdIn.setStream(stdInStream);
             executeRequest(env);
         finally
-            fOutputBuffer.endBuffering();
+            fAppSvc.outputBuffer.endBuffering();
             //write response back to web server (i.e FastCGI client)
-            fStdOutWriter.setStream(socketStream).write(fOutputBuffer.flush());
+            fAppSvc.stdOut.setStream(socketStream).write(fAppSvc.outputBuffer.flush());
         end;
         result := true;
     end;
