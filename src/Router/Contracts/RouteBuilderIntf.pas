@@ -15,6 +15,7 @@ interface
 
 uses
 
+    DependencyContainerIntf,
     RouterIntf;
 
 type
@@ -30,9 +31,10 @@ type
         (*!----------------------------------------------
          * build application routes
          * ----------------------------------------------
+         * @param cntr instance of dependency container
          * @param rtr instance of router
          *-----------------------------------------------*)
-        procedure buildRoutes(const rtr : IRouter);
+        procedure buildRoutes(const cntr : IDependencyContainer; const rtr : IRouter);
     end;
 
 implementation

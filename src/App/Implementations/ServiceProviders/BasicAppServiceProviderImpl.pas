@@ -78,7 +78,7 @@ type
          * ----------------------------------------------
          * @param router instance of router
          *-----------------------------------------------*)
-        procedure buildRoutes(const rtr : IRouter); virtual; abstract;
+        procedure buildRoutes(const cntr : IDependencyContainer; const rtr : IRouter); virtual; abstract;
     end;
 
 implementation
