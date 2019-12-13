@@ -117,7 +117,7 @@ uses
     function TCoreWebApplication.initialize(const container : IDependencyContainer) : boolean;
     begin
         fAppSvc.register(container);
-        fAppSvc.routeBuilder.buildRoutes(fAppSvc.router);
+        fAppSvc.routeBuilder.buildRoutes(container, fAppSvc.router);
         result := true;
     end;
 
