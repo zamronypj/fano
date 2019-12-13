@@ -22,6 +22,7 @@ uses
     DispatcherIntf,
     EnvironmentIntf,
     RunnableWithDataNotifIntf,
+    ProtocolProcessorIntf,
     StdInIntf,
     StdOutIntf,
     OutputBufferIntf,
