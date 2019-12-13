@@ -190,7 +190,7 @@ uses
     function TDaemonWebApplication.run() : IRunnable;
     begin
         try
-            if (initialize(fAppSvc.container)) then
+            if (initialize(fDaemonAppSvc.container)) then
             begin
                 attachListenerAndRunServer();
             end;
@@ -213,22 +213,22 @@ uses
         except
             on e : ERouteHandlerNotFound do
             begin
-                fAppSvc.errorHandler.handleError(env.enumerator, e, 404, sHttp404Message);
+                fDaemonAppSvc.errorHandler.handleError(env.enumerator, e, 404, sHttp404Message);
             end;
 
             on e : EMethodNotAllowed do
             begin
-                fAppSvc.errorHandler.handleError(env.enumerator, e, 405, sHttp405Message);
+                fDaemonAppSvc.errorHandler.handleError(env.enumerator, e, 405, sHttp405Message);
             end;
 
             on e : EInvalidMethod do
             begin
-                fAppSvc.errorHandler.handleError(env.enumerator, e, 501, sHttp501Message);
+                fDaemonAppSvc.errorHandler.handleError(env.enumerator, e, 501, sHttp501Message);
             end;
 
             on e : Exception do
             begin
-                fAppSvc.errorHandler.handleError(env.enumerator, e);
+                fDaemonAppSvc.errorHandler.handleError(env.enumerator, e);
             end;
         end;
     end;
@@ -268,15 +268,15 @@ uses
     ) : boolean;
     begin
         //buffer STDOUT, so any write()/writeln() will be buffered to stream
-        fAppSvc.outputBuffer.beginBuffering();
+        fDaemonAppSvc.outputBuffer.beginBuffering();
         try
             //when we get here, CGI environment and any POST data are ready
-            fAppSvc.stdIn.setStream(stdInStream);
+            fDaemonAppSvc.stdIn.setStream(stdInStream);
             executeRequest(env);
         finally
-            fAppSvc.outputBuffer.endBuffering();
+            fDaemonAppSvc.outputBuffer.endBuffering();
             //write response back to web server (i.e FastCGI client)
-            fAppSvc.stdOut.setStream(socketStream).write(fAppSvc.outputBuffer.flush());
+            fDaemonAppSvc.stdOut.setStream(socketStream).write(fDaemonAppSvc.outputBuffer.flush());
         end;
         result := true;
     end;
