@@ -41,6 +41,7 @@ type
         fDispatcher : IDispatcher;
         fRouter : IRouter;
         fRouteMatcher : IRouteMatcher;
+        fStdIn : IStdIn;
 
         function getRouteMatcher() : IRouteMatcher; virtual;
 
