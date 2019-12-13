@@ -21,6 +21,7 @@ uses
     ErrorHandlerIntf,
     DispatcherIntf,
     EnvironmentIntf,
+    RunnableWithDataNotifIntf,
     StdInIntf,
     StdOutIntf,
     OutputBufferIntf,
