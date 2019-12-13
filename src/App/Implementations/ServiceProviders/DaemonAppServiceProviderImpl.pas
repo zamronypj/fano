@@ -74,7 +74,7 @@ uses
     constructor TDaemonAppServiceProvider.create();
     begin
         inherited create();
-        fServer := NullRunnableWithDataNotif.create();
+        fServer := TNullRunnableWithDataNotif.create();
         fProtocol := TNullProtocolProcessor.create();
         fStdOut := TNullStdOut.create();
         fOutputBuffer := TOutputBuffer.create();
