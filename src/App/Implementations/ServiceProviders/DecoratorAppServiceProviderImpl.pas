@@ -55,8 +55,6 @@ type
 
         function getRouter() : IRouter;
 
-        function getRouteBuilder() : IRouteBuilder;
-
         function getStdIn() : IStdIn; virtual;
 
         function getServer() : IRunnableWithDataNotif; virtual;
