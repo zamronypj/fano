@@ -26,6 +26,7 @@ uses
     DaemonAppServiceProviderIntf,
     StdOutIntf,
     StdInIntf,
+    RouteBuilderIntf,
     ProtocolProcessorIntf,
     ReadyListenerIntf,
     StreamAdapterIntf,
@@ -59,14 +60,13 @@ type
         (*!-----------------------------------------------
          * constructor
          *------------------------------------------------
-         * @param container dependency container
-         * @param env CGI environment instance
-         * @param errHandler error handler
-         *----------------------------------------------
-         * This is provided to simplify thing by providing
-         * default service provider
+         * @param appSvc class provide essentials service
+         * @param routeBuilder class responsible to build application routes
          *-----------------------------------------------*)
-        constructor create(const appSvc : IDaemonAppServiceProvider);
+        constructor create(
+            const appSvc : IDaemonAppServiceProvider;
+            const routeBuilder : IRouteBuilder
+        );
         destructor destroy(); override;
         function run() : IRunnable; override;
 
@@ -116,16 +116,15 @@ uses
     (*!-----------------------------------------------
      * constructor
      *------------------------------------------------
-     * @param container dependency container
-     * @param env CGI environment instance
-     * @param errHandler error handler
-     *----------------------------------------------
-     * This is provided to simplify thing by providing
-     * default service provider
+     * @param appSvc class provide essentials service
+     * @param routeBuilder class responsible to build application routes
      *-----------------------------------------------*)
-    constructor TDaemonWebApplication.create(const appSvc : IDaemonAppServiceProvider);
+    constructor TDaemonWebApplication.create(
+        const appSvc : IDaemonAppServiceProvider;
+        const routeBuilder : IRouteBuilder
+    );
     begin
-        inherited create(appSvc);
+        inherited create(appSvc, routeBuilder);
         fDaemonAppSvc := appSvc;
     end;
 

@@ -22,7 +22,6 @@ uses
     EnvironmentIntf,
     StdInIntf,
     RouteMatcherIntf,
-    RouteBuilderIntf,
     RouterIntf;
 
 type
@@ -33,7 +32,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------}
-    TBasicAppServiceProvider = class abstract (TInterfacedObject, IAppServiceProvider, IRouteBuilder)
+    TBasicAppServiceProvider = class abstract (TInterfacedObject, IAppServiceProvider)
     protected
         fContainer : IDependencyContainer;
         fEnv : ICGIEnvironment;
@@ -61,8 +60,6 @@ type
 
         function getStdIn() : IStdIn; virtual;
 
-        function getRouteBuilder() : IRouteBuilder; virtual;
-
         (*!--------------------------------------------------------
          * register all services
          *---------------------------------------------------------
@@ -73,12 +70,6 @@ type
          *---------------------------------------------------------*)
         procedure register(const cntr : IDependencyContainer); virtual; abstract;
 
-        (*!----------------------------------------------
-         * build application routes
-         * ----------------------------------------------
-         * @param router instance of router
-         *-----------------------------------------------*)
-        procedure buildRoutes(const cntr : IDependencyContainer; const rtr : IRouter); virtual; abstract;
     end;
 
 implementation

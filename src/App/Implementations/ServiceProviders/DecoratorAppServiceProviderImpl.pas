@@ -125,11 +125,6 @@ uses
         result := fDaemonSvc.getRouter();
     end;
 
-    function TDecoratorAppServiceProvider.getRouteBuilder() : IRouteBuilder;
-    begin
-        result := fDaemonSvc.getRouteBuilder();
-    end;
-
     function TDecoratorAppServiceProvider.getStdIn() : IStdIn;
     begin
         result := fDaemonSvc.getStdIn();

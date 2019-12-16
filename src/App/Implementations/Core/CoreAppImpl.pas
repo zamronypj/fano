@@ -23,6 +23,7 @@ uses
     ErrorHandlerIntf,
     StdInIntf,
     RouterIntf,
+    RouteBuilderIntf,
     CoreAppConsts;
 
 type
@@ -35,6 +36,7 @@ type
     TCoreWebApplication = class abstract (TInterfacedObject, IWebApplication, IRunnable)
     protected
         fAppSvc : IAppServiceProvider;
+        fRouteBuilder : IRouteBuilder;
 
         (*!-----------------------------------------------
          * execute application and write response
@@ -62,8 +64,12 @@ type
          * constructor
          *------------------------------------------------
          * @param appSvc class provide essentials service
+         * @param routeBuilder class responsible to build application routes
          *-----------------------------------------------*)
-        constructor create(const appSvc : IAppServiceProvider);
+        constructor create(
+            const appSvc : IAppServiceProvider;
+            const routeBuilder : IRouteBuilder
+        );
         destructor destroy(); override;
         function run() : IRunnable; virtual; abstract;
     end;
@@ -78,19 +84,25 @@ uses
     procedure TCoreWebApplication.reset();
     begin
         fAppSvc := nil;
+        fRouteBuilder := nil;
     end;
 
     (*!-----------------------------------------------
      * constructor
      *------------------------------------------------
      * @param appSvc class that provide essentials services
+     * @param routeBuilder class responsible to build application routes
      *-----------------------------------------------*)
-    constructor TCoreWebApplication.create(const appSvc : IAppServiceProvider);
+    constructor TCoreWebApplication.create(
+        const appSvc : IAppServiceProvider;
+        const routeBuilder : IRouteBuilder
+    );
     begin
         inherited create();
         randomize();
         reset();
         fAppSvc := appSvc;
+        fRouteBuilder := routeBuilder;
     end;
 
     (*!-----------------------------------------------
@@ -117,7 +129,7 @@ uses
     function TCoreWebApplication.initialize(const container : IDependencyContainer) : boolean;
     begin
         fAppSvc.register(container);
-        fAppSvc.routeBuilder.buildRoutes(container, fAppSvc.router);
+        fRouteBuilder.buildRoutes(container, fAppSvc.router);
         result := true;
     end;
 
