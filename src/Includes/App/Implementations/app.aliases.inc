@@ -13,7 +13,7 @@
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
  *-----------------------------------------------*)
 
-TFanoWebApplication = AppImpl.TFanoWebApplication;
+TCgiWebApplication = AppImpl.TCgiWebApplication;
 TDaemonWebApplication = DaemonAppImpl.TDaemonWebApplication;
 
 TBasicAppServiceProvider = BasicAppServiceProviderImpl.TBasicAppServiceProvider;
