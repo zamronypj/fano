@@ -123,11 +123,6 @@ resourcestring
         result := fErrHandler;
     end;
 
-    function TBasicAppServiceProvider.getRouteBuilder() : IRouteBuilder;
-    begin
-        result := self;
-    end;
-
     function TBasicAppServiceProvider.getDispatcher() : IDispatcher;
     var dispatcherSvc : string;
     begin
