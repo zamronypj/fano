@@ -44,21 +44,25 @@ type
 
         function getRouteMatcher() : IRouteMatcher; virtual;
 
+        function buildContainer() : IDependencyContainer; virtual;
+        function buildErrorHandler() : IErrorHandler; virtual;
+        function buildEnvironment() : ICGIEnvironment; virtual;
+        function buildStdIn() : IStdIn; virtual;
     public
         constructor create();
         destructor destroy(); override;
 
-        function getContainer() : IDependencyContainer; virtual;
+        function getContainer() : IDependencyContainer;
 
-        function getErrorHandler() : IErrorHandler;  virtual;
+        function getErrorHandler() : IErrorHandler;
 
-        function getDispatcher() : IDispatcher;  virtual;
+        function getDispatcher() : IDispatcher; virtual;
 
-        function getEnvironment() : ICGIEnvironment; virtual;
+        function getEnvironment() : ICGIEnvironment;
 
         function getRouter() : IRouter; virtual;
 
-        function getStdIn() : IStdIn; virtual;
+        function getStdIn() : IStdIn;
 
         (*!--------------------------------------------------------
          * register all services
@@ -93,13 +97,13 @@ resourcestring
 
     constructor TBasicAppServiceProvider.create();
     begin
-        fContainer := TDependencyContainer.create(TDependencyList.create());
-        fEnv := TCGIEnvironment.create();
-        fErrHandler := TErrorHandler.create();
+        fContainer := buildContainer();
+        fEnv := buildEnvironment();
+        fErrHandler := buildErrorHandler();
+        fStdIn := buildStdIn();
         fDispatcher := nil;
         fRouter := nil;
         fRouteMatcher := nil;
-        fStdIn := TStdInReader.create();
     end;
 
     destructor TBasicAppServiceProvider.destroy();
@@ -111,6 +115,26 @@ resourcestring
         fRouter := nil;
         fRouteMatcher := nil;
         inherited destroy();
+    end;
+
+    function TBasicAppServiceProvider.buildContainer() : IDependencyContainer;
+    begin
+        result := TDependencyContainer.create(TDependencyList.create());
+    end;
+
+    function TBasicAppServiceProvider.buildErrorHandler() : IErrorHandler;
+    begin
+        result := TErrorHandler.create();
+    end;
+
+    function TBasicAppServiceProvider.buildEnvironment() : ICGIEnvironment;
+    begin
+        result := TCGIEnvironment.create();
+    end;
+
+    function TBasicAppServiceProvider.buildStdIn() : IStdIn;
+    begin
+        result := TStdInReader.create();
     end;
 
     function TBasicAppServiceProvider.getContainer() : IDependencyContainer;
