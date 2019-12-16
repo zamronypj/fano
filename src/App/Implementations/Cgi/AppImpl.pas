@@ -20,11 +20,11 @@ uses
 type
 
     (*!-----------------------------------------------
-     * Base abstract class that implements IWebApplication
+     * Base CGI application that implements IWebApplication
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TFanoWebApplication = class(TCoreWebApplication)
+    TCgiWebApplication = class(TCoreWebApplication)
     public
         function run() : IRunnable; override;
     end;
@@ -51,7 +51,7 @@ uses
      * TODO: need to think about how to execute when
      * application is run as daemon.
      *-----------------------------------------------*)
-    function TFanoWebApplication.run() : IRunnable;
+    function TCgiWebApplication.run() : IRunnable;
     begin
         try
             if (initialize(fAppSvc.container)) then
