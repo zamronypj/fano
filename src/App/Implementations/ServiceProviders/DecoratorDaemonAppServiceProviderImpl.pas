@@ -40,7 +40,7 @@ type
 
         function getProtocol() : IProtocolProcessor; virtual;
 
-        function getOutputBuffer() : IOutputBuffer;
+        function getOutputBuffer() : IOutputBuffer; virtual;
 
         function getStdOut() : IStdOut; virtual;
 

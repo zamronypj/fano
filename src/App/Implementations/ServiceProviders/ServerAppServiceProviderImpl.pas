@@ -16,7 +16,7 @@ uses
 
     DaemonAppServiceProviderIntf,
     RunnableWithDataNotifIntf,
-    DecoratorAppServiceProviderImpl;
+    DecoratorDaemonAppServiceProviderImpl;
 
 type
 
