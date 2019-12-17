@@ -19,6 +19,8 @@ TDaemonWebApplication = DaemonAppImpl.TDaemonWebApplication;
 TBasicAppServiceProvider = BasicAppServiceProviderImpl.TBasicAppServiceProvider;
 TDaemonAppServiceProvider = DaemonAppServiceProviderImpl.TDaemonAppServiceProvider;
 TServerAppServiceProvider = ServerAppServiceProviderImpl.TServerAppServiceProvider;
+TDecoratorAppServiceProvider = DecoratorAppServiceProviderImpl.TDecoratorAppServiceProvider;
+TDecoratorDaemonAppServiceProvider = DecoratorDaemonAppServiceProviderImpl.TDecoratorDaemonAppServiceProvider;
 
 {----------------Begin FastCGI related-----------------------------}
 TFastCgiAppServiceProvider = FastCgiAppServiceProviderImpl.TFastCgiAppServiceProvider;
