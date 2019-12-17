@@ -16,7 +16,7 @@ uses
 
     ProtocolProcessorIntf,
     StdOutIntf,
-    DecoratorAppServiceProviderImpl;
+    DecoratorDaemonAppServiceProviderImpl;
 
 type
 
@@ -27,7 +27,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------}
-    TProtocolAppServiceProvider = class (TDecoratorAppServiceProvider)
+    TProtocolAppServiceProvider = class (TDecoratorDaemonAppServiceProvider)
     protected
         fStdOut : IStdOut;
         fProtocol : IProtocolProcessor;

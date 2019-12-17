@@ -14,20 +14,12 @@ interface
 
 uses
 
-    DaemonAppServiceProviderIntf,
     AppServiceProviderIntf,
     DependencyContainerIntf,
-    ServiceProviderIntf,
     ErrorHandlerIntf,
     DispatcherIntf,
     EnvironmentIntf,
-    RunnableWithDataNotifIntf,
-    ProtocolProcessorIntf,
     StdInIntf,
-    StdOutIntf,
-    OutputBufferIntf,
-    RouteMatcherIntf,
-    RouteBuilderIntf,
     RouterIntf;
 
 type
@@ -38,32 +30,24 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------}
-    TDecoratorAppServiceProvider = class (TInterfacedObject, IDaemonAppServiceProvider)
+    TDecoratorAppServiceProvider = class (TInterfacedObject, IAppServiceProvider)
     protected
-        fDaemonSvc : IDaemonAppServiceProvider;
+        fAppSvc : IAppServiceProvider;
     public
-        constructor create(const actualSvc : IDaemonAppServiceProvider);
+        constructor create(const actualSvc : IAppServiceProvider);
         destructor destroy(); override;
 
-        function getContainer() : IDependencyContainer;
+        function getContainer() : IDependencyContainer; virtual;
 
-        function getErrorHandler() : IErrorHandler;
+        function getErrorHandler() : IErrorHandler; virtual;
 
-        function getDispatcher() : IDispatcher;
+        function getDispatcher() : IDispatcher; virtual;
 
-        function getEnvironment() : ICGIEnvironment;
+        function getEnvironment() : ICGIEnvironment; virtual;
 
-        function getRouter() : IRouter;
+        function getRouter() : IRouter; virtual;
 
         function getStdIn() : IStdIn; virtual;
-
-        function getServer() : IRunnableWithDataNotif; virtual;
-
-        function getProtocol() : IProtocolProcessor; virtual;
-
-        function getOutputBuffer() : IOutputBuffer;
-
-        function getStdOut() : IStdOut; virtual;
 
         (*!--------------------------------------------------------
          * register all services
@@ -78,74 +62,45 @@ type
 
 implementation
 
-uses
-
-    StdInFromStreamImpl,
-    NullStreamAdapterImpl,
-    NullStdOutImpl,
-    NullProtocolProcessorImpl,
-    NullRunnableWithDataNotifImpl,
-    OutputBufferImpl;
-
-    constructor TDecoratorAppServiceProvider.create(const actualSvc : IDaemonAppServiceProvider);
+    constructor TDecoratorAppServiceProvider.create(const actualSvc : IAppServiceProvider);
     begin
-        fDaemonSvc := actualSvc;
+        fAppSvc := actualSvc;
     end;
 
     destructor TDecoratorAppServiceProvider.destroy();
     begin
-        fDaemonSvc := nil;
+        fAppSvc := nil;
         inherited destroy();
     end;
 
     function TDecoratorAppServiceProvider.getContainer() : IDependencyContainer;
     begin
-        result := fDaemonSvc.getContainer();
+        result := fAppSvc.getContainer();
     end;
 
     function TDecoratorAppServiceProvider.getErrorHandler() : IErrorHandler;
     begin
-        result := fDaemonSvc.getErrorHandler();
+        result := fAppSvc.getErrorHandler();
     end;
 
     function TDecoratorAppServiceProvider.getDispatcher() : IDispatcher;
     begin
-        result := fDaemonSvc.getDispatcher();
+        result := fAppSvc.getDispatcher();
     end;
 
     function TDecoratorAppServiceProvider.getEnvironment() : ICGIEnvironment;
     begin
-        result := fDaemonSvc.getEnvironment();
+        result := fAppSvc.getEnvironment();
     end;
 
     function TDecoratorAppServiceProvider.getRouter() : IRouter;
     begin
-        result := fDaemonSvc.getRouter();
+        result := fAppSvc.getRouter();
     end;
 
     function TDecoratorAppServiceProvider.getStdIn() : IStdIn;
     begin
-        result := fDaemonSvc.getStdIn();
-    end;
-
-    function TDecoratorAppServiceProvider.getServer() : IRunnableWithDataNotif;
-    begin
-        result := fDaemonSvc.getServer();
-    end;
-
-    function TDecoratorAppServiceProvider.getProtocol() : IProtocolProcessor;
-    begin
-        result := fDaemonSvc.getProtocol();
-    end;
-
-    function TDecoratorAppServiceProvider.getOutputBuffer() : IOutputBuffer;
-    begin
-        result := fDaemonSvc.getOutputBuffer();
-    end;
-
-    function TDecoratorAppServiceProvider.getStdOut() : IStdOut;
-    begin
-        result := fDaemonSvc.getStdOut();
+        result := fAppSvc.getStdIn();
     end;
 
     (*!--------------------------------------------------------
@@ -158,6 +113,6 @@ uses
      *---------------------------------------------------------*)
     procedure TDecoratorAppServiceProvider.register(const cntr : IDependencyContainer);
     begin
-        fDaemonSvc.register(cntr);
+        fAppSvc.register(cntr);
     end;
 end.

@@ -26,7 +26,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------}
-    TServerAppServiceProvider = class (TDecoratorAppServiceProvider)
+    TServerAppServiceProvider = class (TDecoratorDaemonAppServiceProvider)
     private
         fServer : IRunnableWithDataNotif;
     public

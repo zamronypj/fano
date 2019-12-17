@@ -14,14 +14,7 @@ interface
 
 uses
 
-    AppIntf,
-    DependencyContainerIntf,
-    DispatcherIntf,
-    ErrorHandlerIntf,
-    StdInIntf,
-    StdOutIntf,
-    ProtocolProcessorIntf,
-    OutputBufferIntf;
+    AppIntf;
 
 type
 
