@@ -44,11 +44,11 @@ type
         fProtocol : IProtocolProcessor;
         fOutputBuffer : IOutputBuffer;
         fStdOut : IStdOut;
+
+        function buildStdIn() : IStdIn; override;
     public
         constructor create();
         destructor destroy(); override;
-
-        function getStdIn() : IStdIn; override;
 
         function getServer() : IRunnableWithDataNotif; virtual;
 
@@ -78,7 +78,6 @@ uses
         fProtocol := TNullProtocolProcessor.create();
         fStdOut := TNullStdOut.create();
         fOutputBuffer := TOutputBuffer.create();
-        fStdIn := TStdInFromStream.create(TNullStreamAdapter.create());
     end;
 
     destructor TDaemonAppServiceProvider.destroy();
@@ -90,14 +89,14 @@ uses
         inherited destroy();
     end;
 
+    function TDaemonAppServiceProvider.buildStdIn() : IStdIn;
+    begin
+        result := TStdInFromStream.create(TNullStreamAdapter.create());
+    end;
+
     function TDaemonAppServiceProvider.getOutputBuffer() : IOutputBuffer;
     begin
         result := fOutputBuffer;
-    end;
-
-    function TDaemonAppServiceProvider.getStdIn() : IStdIn;
-    begin
-        result := fStdIn;
     end;
 
     function TDaemonAppServiceProvider.getServer() : IRunnableWithDataNotif;
