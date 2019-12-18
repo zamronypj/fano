@@ -73,7 +73,7 @@ uses
     begin
         inherited create(actualSvc);
         fServer := buildServer();
-        fProtocol := buildProtocol());
+        fProtocol := buildProtocol();
         fStdOut := buildStdOut();
         fOutputBuffer := buildOutputBuffer();
     end;
