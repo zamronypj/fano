@@ -21,6 +21,7 @@ DaemonAppServiceProviderImpl,
 ServerAppServiceProviderImpl,
 DecoratorAppServiceProviderImpl,
 DecoratorDaemonAppServiceProviderImpl,
+AdapterDaemonAppServiceProviderImpl,
 
 {----------------Begin FastCGI related-----------------------------}
 FastCgiAppServiceProviderImpl,
