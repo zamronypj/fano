@@ -104,7 +104,7 @@ uses
 
     function TAdapterDaemonAppServiceProvider.buildStdOut() : IStdOut;
     begin
-        fStdOut := TNullStdOut.create();
+        result := TNullStdOut.create();
     end;
 
     function TAdapterDaemonAppServiceProvider.getServer() : IRunnableWithDataNotif;
