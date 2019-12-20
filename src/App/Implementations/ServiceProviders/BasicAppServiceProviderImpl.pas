@@ -162,8 +162,8 @@ resourcestring
                         TRequestResponseFactory.create()
                     )
                 );
-                fDispatcher := fContainer.get(dispatcherSvc) as IDispatcher;
             end;
+            fDispatcher := fContainer.get(dispatcherSvc) as IDispatcher;
         end;
 
         if (fDispatcher = nil) then
