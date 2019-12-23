@@ -45,9 +45,14 @@ type
         function getRouteMatcher() : IRouteMatcher; virtual;
 
         function buildContainer() : IDependencyContainer; virtual;
-        function buildErrorHandler() : IErrorHandler; virtual;
-        function buildEnvironment() : ICGIEnvironment; virtual;
-        function buildStdIn() : IStdIn; virtual;
+        function buildErrorHandler(const ctnr : IDependencyContainer) : IErrorHandler; virtual;
+        function buildEnvironment(const ctnr : IDependencyContainer) : ICGIEnvironment; virtual;
+        function buildStdIn(const ctnr : IDependencyContainer) : IStdIn; virtual;
+        function buildRouter(const ctnr : IDependencyContainer) : IRouter; virtual;
+        function buildDispatcher(
+            const ctnr : IDependencyContainer;
+            const routeMatcher : IRouteMatcher
+        ) : IDispatcher; virtual;
     public
         constructor create();
         destructor destroy(); override;
@@ -98,12 +103,11 @@ resourcestring
     constructor TBasicAppServiceProvider.create();
     begin
         fContainer := buildContainer();
-        fEnv := buildEnvironment();
-        fErrHandler := buildErrorHandler();
-        fStdIn := buildStdIn();
-        fDispatcher := nil;
-        fRouter := nil;
-        fRouteMatcher := nil;
+        fEnv := buildEnvironment(fContainer);
+        fErrHandler := buildErrorHandler(fContainer);
+        fStdIn := buildStdIn(fContainer);
+        fRouter := buildRouter(fContainer);
+        fDispatcher := buildDispatcher(fContainer, getRouteMatcher());
     end;
 
     destructor TBasicAppServiceProvider.destroy();
@@ -111,9 +115,9 @@ resourcestring
         fContainer := nil;
         fEnv := nil;
         fErrHandler := nil;
-        fDispatcher := nil;
         fRouter := nil;
         fRouteMatcher := nil;
+        fDispatcher := nil;
         inherited destroy();
     end;
 
@@ -122,19 +126,52 @@ resourcestring
         result := TDependencyContainer.create(TDependencyList.create());
     end;
 
-    function TBasicAppServiceProvider.buildErrorHandler() : IErrorHandler;
+    function TBasicAppServiceProvider.buildErrorHandler(
+        const ctnr : IDependencyContainer
+    ) : IErrorHandler;
     begin
         result := TErrorHandler.create();
     end;
 
-    function TBasicAppServiceProvider.buildEnvironment() : ICGIEnvironment;
+    function TBasicAppServiceProvider.buildEnvironment(
+        const ctnr : IDependencyContainer
+    ) : ICGIEnvironment;
     begin
         result := TCGIEnvironment.create();
     end;
 
-    function TBasicAppServiceProvider.buildStdIn() : IStdIn;
+    function TBasicAppServiceProvider.buildStdIn(const ctnr : IDependencyContainer) : IStdIn;
     begin
         result := TStdInReader.create();
+    end;
+
+    function TBasicAppServiceProvider.buildRouter(
+        const ctnr : IDependencyContainer
+    ) : IRouter;
+    var routerSvc : string;
+    begin
+        routerSvc := GuidToString(IRouter);
+        ctnr.add(routerSvc, TSimpleRouterFactory.create());
+        result := ctnr.get(routerSvc) as IRouter;
+        fRouteMatcher := result as IRouteMatcher;
+    end;
+
+
+    function TBasicAppServiceProvider.buildDispatcher(
+        const ctnr : IDependencyContainer;
+        const routeMatcher : IRouteMatcher
+    ) : IDispatcher;
+    var dispatcherSvc : string;
+    begin
+        dispatcherSvc := GuidToString(IDispatcher);
+        ctnr.add(
+            dispatcherSvc,
+            TSimpleDispatcherFactory.create(
+                routeMatcher,
+                TRequestResponseFactory.create()
+            )
+        );
+        result := ctnr.get(dispatcherSvc) as IDispatcher;
     end;
 
     function TBasicAppServiceProvider.getContainer() : IDependencyContainer;
@@ -148,31 +185,8 @@ resourcestring
     end;
 
     function TBasicAppServiceProvider.getDispatcher() : IDispatcher;
-    var dispatcherSvc : string;
     begin
-        if (fDispatcher = nil) then
-        begin
-            dispatcherSvc := GuidToString(IDispatcher);
-            if (not fContainer.has(dispatcherSvc)) then
-            begin
-                fContainer.add(
-                    dispatcherSvc,
-                    TSimpleDispatcherFactory.create(
-                        getRouteMatcher(),
-                        TRequestResponseFactory.create()
-                    )
-                );
-            end;
-            fDispatcher := fContainer.get(dispatcherSvc) as IDispatcher;
-        end;
-
-        if (fDispatcher = nil) then
-        begin
-            raise EInvalidDispatcher.create(sErrInvalidDispatcher);
-        end;
-
         result := fDispatcher;
-
     end;
 
     function TBasicAppServiceProvider.getEnvironment() : ICGIEnvironment;
@@ -181,34 +195,12 @@ resourcestring
     end;
 
     function TBasicAppServiceProvider.getRouter() : IRouter;
-    var routerSvc : string;
     begin
-        if (fRouter = nil) then
-        begin
-            routerSvc := GuidToString(IRouter);
-            if (not fContainer.has(routerSvc)) then
-            begin
-                fContainer.add(routerSvc, TSimpleRouterFactory.create());
-                fContainer.alias(GuidToString(IRouteMatcher), routerSvc);
-            end;
-            fRouter := fContainer.get(routerSvc) as IRouter;
-        end;
         result := fRouter;
     end;
 
     function TBasicAppServiceProvider.getRouteMatcher() : IRouteMatcher;
-    var routeMatcherSvc : string;
     begin
-        if (fRouteMatcher = nil) then
-        begin
-            routeMatcherSvc := GuidToString(IRouteMatcher);
-            if (not fContainer.has(routeMatcherSvc)) then
-            begin
-                fContainer.add(routeMatcherSvc, TSimpleRouterFactory.create());
-                fContainer.alias(GuidToString(IRouter), routeMatcherSvc);
-            end;
-            fRouteMatcher := fContainer.get(routeMatcherSvc) as IRouteMatcher;
-        end;
         result := fRouteMatcher;
     end;
 
