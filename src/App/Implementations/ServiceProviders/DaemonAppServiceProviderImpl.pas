@@ -45,7 +45,7 @@ type
         fOutputBuffer : IOutputBuffer;
         fStdOut : IStdOut;
 
-        function buildStdIn() : IStdIn; override;
+        function buildStdIn(const ctnr : IDependencyContainer) : IStdIn; override;
     public
         constructor create();
         destructor destroy(); override;
@@ -89,7 +89,7 @@ uses
         inherited destroy();
     end;
 
-    function TDaemonAppServiceProvider.buildStdIn() : IStdIn;
+    function TDaemonAppServiceProvider.buildStdIn(const ctnr : IDependencyContainer) : IStdIn;
     begin
         result := TStdInFromStream.create(TNullStreamAdapter.create());
     end;
