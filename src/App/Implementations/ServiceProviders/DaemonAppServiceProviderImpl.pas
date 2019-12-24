@@ -39,24 +39,33 @@ type
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------}
     TDaemonAppServiceProvider = class abstract (TBasicAppServiceProvider, IDaemonAppServiceProvider)
-    protected
+    private
         fServer : IRunnableWithDataNotif;
         fProtocol : IProtocolProcessor;
         fOutputBuffer : IOutputBuffer;
         fStdOut : IStdOut;
+    protected
+
+        function buildServer() : IRunnableWithDataNotif; virtual;
+
+        function buildProtocol() : IProtocolProcessor; virtual;
+
+        function buildOutputBuffer() : IOutputBuffer; virtual;
+
+        function buildStdOut() : IStdOut; virtual;
 
         function buildStdIn(const ctnr : IDependencyContainer) : IStdIn; override;
     public
         constructor create();
         destructor destroy(); override;
 
-        function getServer() : IRunnableWithDataNotif; virtual;
+        function getServer() : IRunnableWithDataNotif;
 
-        function getProtocol() : IProtocolProcessor; virtual;
+        function getProtocol() : IProtocolProcessor;
 
-        function getOutputBuffer() : IOutputBuffer; virtual;
+        function getOutputBuffer() : IOutputBuffer;
 
-        function getStdOut() : IStdOut; virtual;
+        function getStdOut() : IStdOut;
 
     end;
 
@@ -74,10 +83,10 @@ uses
     constructor TDaemonAppServiceProvider.create();
     begin
         inherited create();
-        fServer := TNullRunnableWithDataNotif.create();
-        fProtocol := TNullProtocolProcessor.create();
-        fStdOut := TNullStdOut.create();
-        fOutputBuffer := TOutputBuffer.create();
+        fServer := buildServer();
+        fProtocol := buildProtocol();
+        fStdOut := buildStdOut();
+        fOutputBuffer := buildOutputBuffer();
     end;
 
     destructor TDaemonAppServiceProvider.destroy();
@@ -87,6 +96,26 @@ uses
         fStdOut := nil;
         fOutputBuffer := nil;
         inherited destroy();
+    end;
+
+    function TDaemonAppServiceProvider.buildServer() : IRunnableWithDataNotif;
+    begin
+        result := TNullRunnableWithDataNotif.create();
+    end;
+
+    function TDaemonAppServiceProvider.buildProtocol() : IProtocolProcessor;
+    begin
+        result := TNullProtocolProcessor.create();
+    end;
+
+    function TDaemonAppServiceProvider.buildOutputBuffer() : IOutputBuffer;
+    begin
+        result := TOutputBuffer.create();
+    end;
+
+    function TDaemonAppServiceProvider.buildStdOut() : IStdOut;
+    begin
+        result := TNullStdOut.create();
     end;
 
     function TDaemonAppServiceProvider.buildStdIn(const ctnr : IDependencyContainer) : IStdIn;
