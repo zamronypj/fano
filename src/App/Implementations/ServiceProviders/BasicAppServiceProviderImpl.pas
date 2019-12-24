@@ -22,18 +22,18 @@ uses
     EnvironmentIntf,
     StdInIntf,
     RouteMatcherIntf,
-    RouterIntf;
+    RouterIntf,
+    ConfigIntf;
 
 type
 
     {*------------------------------------------------
-     * interface for any class having capability to
-     * register one or more service factories
+     * basic class providing basic essential services
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------}
     TBasicAppServiceProvider = class abstract (TInterfacedObject, IAppServiceProvider)
-    protected
+    private
         fContainer : IDependencyContainer;
         fEnv : ICGIEnvironment;
         fErrHandler : IErrorHandler;
@@ -41,7 +41,8 @@ type
         fRouter : IRouter;
         fRouteMatcher : IRouteMatcher;
         fStdIn : IStdIn;
-
+        fAppConfig : IAppConfiguration;
+    protected
         function getRouteMatcher() : IRouteMatcher; virtual;
 
         function buildContainer() : IDependencyContainer; virtual;
@@ -51,8 +52,10 @@ type
         function buildRouter(const ctnr : IDependencyContainer) : IRouter; virtual;
         function buildDispatcher(
             const ctnr : IDependencyContainer;
-            const routeMatcher : IRouteMatcher
+            const routeMatcher : IRouteMatcher;
+            const config : IAppConfiguration
         ) : IDispatcher; virtual;
+        function buildAppConfig(const ctnr : IDependencyContainer) : IAppConfiguration; virtual;
     public
         constructor create();
         destructor destroy(); override;
@@ -94,7 +97,8 @@ uses
     SimpleDispatcherFactoryImpl,
     StdInReaderImpl,
     RequestResponseFactoryImpl,
-    EInvalidDispatcherImpl;
+    EInvalidDispatcherImpl,
+    NullConfigFactoryImpl;
 
 resourcestring
 
@@ -103,16 +107,18 @@ resourcestring
     constructor TBasicAppServiceProvider.create();
     begin
         fContainer := buildContainer();
+        fAppConfig := buildAppConfig(fContainer);
         fEnv := buildEnvironment(fContainer);
         fErrHandler := buildErrorHandler(fContainer);
         fStdIn := buildStdIn(fContainer);
         fRouter := buildRouter(fContainer);
-        fDispatcher := buildDispatcher(fContainer, getRouteMatcher());
+        fDispatcher := buildDispatcher(fContainer, getRouteMatcher(), fAppConfig);
     end;
 
     destructor TBasicAppServiceProvider.destroy();
     begin
         fContainer := nil;
+        fAppConfig := nil;
         fEnv := nil;
         fErrHandler := nil;
         fRouter := nil;
@@ -159,7 +165,8 @@ resourcestring
 
     function TBasicAppServiceProvider.buildDispatcher(
         const ctnr : IDependencyContainer;
-        const routeMatcher : IRouteMatcher
+        const routeMatcher : IRouteMatcher;
+        const config : IAppConfiguration
     ) : IDispatcher;
     var dispatcherSvc : string;
     begin
@@ -172,6 +179,12 @@ resourcestring
             )
         );
         result := ctnr.get(dispatcherSvc) as IDispatcher;
+    end;
+
+    function TBasicAppServiceProvider.buildAppConfig(const ctnr : IDependencyContainer) : IAppConfiguration;
+    begin
+        result := ctnr.add('config', TNullConfigFactory.create())
+            .get('config') as IAppConfiguration;
     end;
 
     function TBasicAppServiceProvider.getContainer() : IDependencyContainer;
