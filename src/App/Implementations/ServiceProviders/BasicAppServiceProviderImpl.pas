@@ -64,11 +64,11 @@ type
 
         function getErrorHandler() : IErrorHandler;
 
-        function getDispatcher() : IDispatcher; virtual;
+        function getDispatcher() : IDispatcher;
 
         function getEnvironment() : ICGIEnvironment;
 
-        function getRouter() : IRouter; virtual;
+        function getRouter() : IRouter;
 
         function getStdIn() : IStdIn;
 
