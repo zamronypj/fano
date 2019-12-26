@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit StdOutImpl;
+unit NullStdOutImpl;
 
 interface
 
@@ -21,12 +21,12 @@ uses
 type
 
     (*!------------------------------------------------
-     * basic class having capability to
+     * null class having capability to
      * write string to standard output
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TStdOut = class(TInterfacedObject, IStdOut)
+    TNullStdOut = class(TInterfacedObject, IStdOut)
     public
         function setStream(const astream : IStreamAdapter) : IStdOut;
         function write(const str : string) : IStdOut;
@@ -35,21 +35,21 @@ type
 
 implementation
 
-    function TStdOut.setStream(const astream : IStreamAdapter) : IStdOut;
+    function TNullStdOut.setStream(const astream : IStreamAdapter) : IStdOut;
     begin
-        //do nothing as it is not relevant here
+        //intentionally does nothing
         result := self;
     end;
 
-    function TStdOut.write(const str : string) : IStdOut;
+    function TNullStdOut.write(const str : string) : IStdOut;
     begin
-        write(str);
+        //intentionally does nothing
         result := self;
     end;
 
-    function TStdOut.writeln(const str : string = '') : IStdOut;
+    function TNullStdOut.writeln(const str : string = '') : IStdOut;
     begin
-        writeln(str);
+        //intentionally does nothing
         result := self;
     end;
 

@@ -27,3 +27,5 @@ ServiceImpl,
 ServiceContainerImpl,
 BasicContainerFactoryImpl,
 ServiceContainerFactoryImpl,
+
+CompositeServiceProviderImpl,
