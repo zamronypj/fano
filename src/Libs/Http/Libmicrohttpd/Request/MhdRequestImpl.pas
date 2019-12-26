@@ -37,12 +37,9 @@ type
         fMethod : string;
         fHeaders : IReadOnlyHeaders;
         fUri : IUri;
-        fQueryParams : IReadOnlyList;
-        fCookieParams : IReadOnlyList;
-        fParsedBodyParams : IReadOnlyList;
-        fUploadedFiles : IUploadedFileCollection;
     public
         constructor create(
+            const connection : PMHD_Connection;
             const reqMethod : string;
             const reqUrl : string;
         );
@@ -172,20 +169,52 @@ type
 
 implementation
 
+uses
+
+    KeyValueTypes;
+
+    function makeStr(value : pchar) : string;
+    begin
+        if value <> nil then
+        begin
+            result := value;
+        end else
+        begin
+            result:='';
+        end
+    end;
+
+    function getKeyValueData(context: pointer; kind : MHD_ValueKind; key: Pcchar; value: Pcchar): cint; cdecl;
+    var kv : PKeyValue;
+    begin
+        new(kv);
+        if assigned(key) then
+        begin
+            kv^.key := key;
+            kv^.value := makeStr(value);
+            IList(context).add(strKey, kv);
+        end;
+        result := MHD_YES;
+    end;
+
     constructor TMhdRequestImpl.create(
+        const connection : PMHD_Connection;
         const reqMethod : string;
-        const reqHeaders : IReadOnlyHeaders;
-        const reqUri : IUri;
-        const reqQueryParams : IReadOnlyList;
-        const reqCookieParams : IReadOnlyList;
-        const reqParsedBodyParams : IReadOnlyList;
-        const reqUploadedFiles : IUploadedFileCollection
+        const reqUrl : string;
     );
     begin
         fMethod := reqMethod;
         fHeaders := reqHeaders;
         fUri := reqUri;
+
         fQueryParams := reqQueryParams;
+        MHD_get_connection_values(
+            connection,
+            MHD_GET_ARGUMENT_KIND,
+            @getKeyValueData,
+            fQuery
+        );
+
         fCookieParams := reqCookieParams;
         fParsedBodyParams := reqParsedBodyParams;
         fUploadedFiles := reqUploadedFiles;

@@ -45,6 +45,7 @@ type
         function getPathFromPathQuery(const pathQuery : string) : string;
     public
         constructor create(const env : ICGIEnvironment);
+        constructor create(const url : string);
         function getScheme() : string;
         function getAuthority() : string;
         function getSchemeAuthority() : string;
@@ -58,6 +59,10 @@ type
     end;
 
 implementation
+
+uses
+
+    uriparser;
 
     constructor TUri.create(const env : ICGIEnvironment);
     begin
@@ -74,6 +79,40 @@ implementation
         fFragment := '';
     end;
 
+    constructor TUri.create(const url : string);
+    var uri : uriparser.TURI;
+    begin
+        uri := parseURI(url);
+        fScheme := uri.protocol;
+        fHost := uri.host;
+        fPort := uri.port;
+        fQuery := uri.params;
+        fFragment := uri.bookmark;
+
+        fUserInfo := '';
+        if (uri.username <> '') then
+        begin
+            fUserInfo := fUserInfo + uri.username;
+            if (uri.password <> '') then
+            begin
+                fUserInfo := fUserInfo + ':' + uri.password;
+            end;
+        end;
+
+        fAuthority := fUserInfo + fHost;
+        if (fPort <> '') then
+        begin
+            fAuthority := fAuthority + ':' + fPort;
+        end;
+
+        fPath := uri.path;
+        if (uri.Document <> '') then
+        begin
+            fPath := fPath + '/' + uri.document;
+        end;
+
+        fPathQueryFragment := fPath + fQuery + fFragment;
+    end;
 
     (*!------------------------------------------------
      * get user information part from authority

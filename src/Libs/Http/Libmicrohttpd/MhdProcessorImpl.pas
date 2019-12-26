@@ -17,10 +17,12 @@ uses
 
     StreamAdapterIntf,
     CloseableIntf,
-    ScgiParserIntf,
+    RunnableIntf,
+    RunnableWithDataNotifIntf,
     ProtocolProcessorIntf,
     StreamIdIntf,
-    ReadyListenerIntf;
+    ReadyListenerIntf,
+    libmicrohttpd;
 
 type
 
@@ -29,15 +31,28 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TMhdProcessor = class(TInterfacedObject, IProtocolProcessor)
+    TMhdProcessor = class(TInterfacedObject, IProtocolProcessor, IRunnableWithData)
     private
-        fParser : IScgiParser;
+        fPort : word;
+        fHost : string;
         fRequestReadyListener : IReadyListener;
+        fDataListener : IDataAvailListener;
         fStdIn : IStreamAdapter;
 
         procedure resetInternalVars();
+        procedure waitUntilTerminate();
+
+        function handle(
+            connection : PMHD_Connection;
+            url : pcchar;
+            method : pcchar;
+            version : pcchar;
+            upload_data : pcchar;
+            upload_data_size : psize_t;
+            ptr : ppointer
+        ): cint;
     public
-        constructor create();
+        constructor create(const host : string; const port : word);
         destructor destroy(); override;
 
         (*!------------------------------------------------
@@ -68,18 +83,39 @@ type
          * @return number of bytes of complete request
          *-----------------------------------------------*)
         function expectedSize(const buff : IStreamAdapter) : int64;
+
+        (*!------------------------------------------------
+         * run it
+         *-------------------------------------------------
+         * @return current instance
+         *-------------------------------------------------*)
+        function run() : IRunnable;
+
+        (*!------------------------------------------------
+        * set instance of class that will be notified when
+        * data is available
+        *-----------------------------------------------
+        * @param dataListener, class that wish to be notified
+        * @return true current instance
+        *-----------------------------------------------*)
+        function setDataAvailListener(const dataListener : IDataAvailListener) : IRunnableWithDataNotif;
     end;
 
 implementation
 
 uses
 
-    SysUtils;
+    SysUtils,
+    BaseUnix,
+    TermSignalImpl;
 
-    constructor TMhdProcessor.create();
+    constructor TMhdProcessor.create(const host : string; const port : word);
     begin
         inherited create();
+        fHost := host;
+        fPort := port;
         fRequestReadyListener := nil;
+        fDataListener := nil;
         fStdIn := nil;
     end;
 
@@ -92,8 +128,8 @@ uses
     procedure TMhdProcessor.resetInternalVars();
     begin
         fRequestReadyListener := nil;
+        fDataListener := nil;
         fStdIn := nil;
-        fParser := nil;
     end;
 
     (*!------------------------------------------------
@@ -106,14 +142,12 @@ uses
     ) : boolean;
     begin
         result := true;
-        fParser.parse(stream);
-        fStdIn := fParser.getStdIn();
         if assigned(fRequestReadyListener) then
         begin
             fRequestReadyListener.ready(
                 stream,
-                fParser.getEnv(),
-                fStdIn
+                getEnv(),
+                getStdIn()
             );
         end;
     end;
@@ -145,6 +179,116 @@ uses
      *-----------------------------------------------*)
     function TMhdProcessor.expectedSize(const buff : IStreamAdapter) : int64;
     begin
-        result := fParser.expectedSize(buff);
+        result := 0;
+    end;
+
+    procedure TMhdProcessor.waitUntilTerminate();
+    var fds : TFDSet;
+    begin
+        fds := default(TFDSet);
+        fpfd_zero(fds);
+        //terminatePipeIn will be ready for IO when application is terminated
+        //see TermSignalImpl unit
+        fpfd_set(terminatePipeIn, FDS);
+        //wait forever until terminatePipeIn changes
+        fpSelect(terminatePipeIn + 1, @fds, nil, nil, nil);
+    end;
+
+    function handleRequestCallback(
+        context :  pointer;
+        connection : PMHD_Connection;
+        url : pcchar;
+        method : pcchar;
+        version : pcchar;
+        upload_data : pcchar;
+        upload_data_size : psize_t;
+        ptr : ppointer
+    ): cint; cdecl;
+    begin
+        result := TMhdProcessor(context).handle(
+            connection,
+            url,
+            method,
+            version,
+            upload_data,
+            upload_data_size,
+            ptr
+        );
+    end;
+
+    function TMhdProcessor.handle(
+        connection : PMHD_Connection;
+        url : pcchar;
+        method : pcchar;
+        version : pcchar;
+        upload_data : pcchar;
+        upload_data_size : psize_t;
+        ptr : ppointer
+    ): cint;
+    var request : IRequest;
+    begin
+        request := TMhdRequest.create(
+            connection,
+            method,
+            url,
+            upload_data,
+            upload_data_size
+        );
+
+        MHD_get_connection_values(
+            connection,
+            MHD_GET_ARGUMENT_KIND,
+            @getKeyValueData,
+            fQuery
+        );
+        fDataListener.handleData(
+            stream,
+            self,
+            self,
+            self
+        );
+        result := MHD_YES;
+    end;
+
+    (*!------------------------------------------------
+     * run it
+     *-------------------------------------------------
+     * @return current instance
+     *-------------------------------------------------*)
+    function TMhdProcessor.run() : IRunnable;
+    var
+        svrDaemon : PMHD_Daemon;
+    begin
+        svrDaemon := MHD_start_daemon(
+            // MHD_USE_SELECT_INTERNALLY or MHD_USE_DEBUG or MHD_USE_POLL,
+             MHD_USE_SELECT_INTERNALLY or MHD_USE_DEBUG,
+            // MHD_USE_THREAD_PER_CONNECTION or MHD_USE_DEBUG or MHD_USE_POLL,
+            // MHD_USE_THREAD_PER_CONNECTION or MHD_USE_DEBUG,
+            fPort,
+            nil,
+            nil,
+            @handleRequestCallback,
+            self,
+            MHD_OPTION_CONNECTION_TIMEOUT, cuint(120),
+            MHD_OPTION_END
+        );
+        if svrDaemon <> nil then
+        begin
+            waitUntilTerminate();
+            MHD_stop_daemon(svrDaemon);
+        end;
+
+    end;
+
+    (*!------------------------------------------------
+     * set instance of class that will be notified when
+     * data is available
+     *-----------------------------------------------
+     * @param dataListener, class that wish to be notified
+     * @return true current instance
+     *-----------------------------------------------*)
+    function TMhdProcessor.setDataAvailListener(const dataListener : IDataAvailListener) : IRunnableWithDataNotif;
+    begin
+        fDataListener := dataListener;
     end;
 end.
