@@ -33,4 +33,4 @@ CompositeErrorHandlerImpl,
 
 FileLogErrorHandlerFactoryImpl,
 ProductionErrorHandlerFactoryImpl,
-
+ProdOrDevErrorHandlerFactoryImpl,

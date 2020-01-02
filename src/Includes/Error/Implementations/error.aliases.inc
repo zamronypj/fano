@@ -9,3 +9,4 @@ TCompositeErrorHandler = CompositeErrorHandlerImpl.TCompositeErrorHandler;
 
 TFileLogErrorHandlerFactory = FileLogErrorHandlerFactoryImpl.TFileLogErrorHandlerFactory;
 TProductionErrorHandlerFactory = ProductionErrorHandlerFactoryImpl.TProductionErrorHandlerFactory;
+TProdOrDevErrorHandlerFactory = ProdOrDevErrorHandlerFactoryImpl.TProdOrDevErrorHandlerFactory;
