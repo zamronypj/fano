@@ -112,7 +112,7 @@ resourcestring
         fContainer := buildContainer();
         fAppConfig := buildAppConfig(fContainer);
         fEnv := buildEnvironment(fContainer);
-        fErrHandler := buildErrorHandler(fContainer);
+        fErrHandler := buildErrorHandler(fContainer, fAppConfig);
         fStdIn := buildStdIn(fContainer);
         fRouter := buildRouter(fContainer);
         fDispatcher := buildDispatcher(fContainer, getRouteMatcher(), fAppConfig);
