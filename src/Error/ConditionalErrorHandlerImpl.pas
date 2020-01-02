@@ -42,7 +42,7 @@ type
         constructor create(
             const firstErrHandler : IErrorHandler;
             const secondErrHandler : IErrorHandler;
-            const condition : boolean;
+            const condition : boolean
         );
 
         function handleError(
@@ -66,7 +66,7 @@ implementation
     constructor TConditionalErrorHandler.create(
         const firstErrHandler : IErrorHandler;
         const secondErrHandler : IErrorHandler;
-        const condition : boolean;
+        const condition : boolean
     );
     begin
         inherited create(firstErrHandler, secondErrHandler);
