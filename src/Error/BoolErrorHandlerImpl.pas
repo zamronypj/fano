@@ -43,13 +43,13 @@ type
          *---------------------------------------------------
          * @param firstErrHandler first error handler
          * @param secondErrHandler second error handler
-         * @param condition if true then use first handler otherwise
+         * @param boolCondition if true then use first handler otherwise
          *        use second handler
          *---------------------------------------------------*)
         constructor create(
             const firstErrHandler : IErrorHandler;
             const secondErrHandler : IErrorHandler;
-            const condition : boolean
+            const boolCondition : boolean
         );
     end;
 
@@ -66,11 +66,11 @@ implementation
     constructor TBoolErrorHandler.create(
         const firstErrHandler : IErrorHandler;
         const secondErrHandler : IErrorHandler;
-        const condition : boolean
+        const boolCondition : boolean
     );
     begin
         inherited create(firstErrHandler, secondErrHandler);
-        fCondition := condition;
+        fCondition := boolCondition;
     end;
 
     function TBoolErrorHandler.condition(
