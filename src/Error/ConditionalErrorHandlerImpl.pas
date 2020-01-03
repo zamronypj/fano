@@ -27,23 +27,15 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *---------------------------------------------------*)
-    TConditionalErrorHandler = class (TCompositeErrorHandler)
-    private
-        fCondition : boolean;
+    TConditionalErrorHandler = class abstract (TCompositeErrorHandler)
+    protected
+        function condition(
+            const env : ICGIEnvironmentEnumerator;
+            const exc : Exception;
+            const status : integer;
+            const msg : string
+        ) : boolean; virtual; abstract;
     public
-        (*!---------------------------------------------------
-         * constructor
-         *---------------------------------------------------
-         * @param firstErrHandler first error handler
-         * @param secondErrHandler second error handler
-         * @param condition if true then use first handler otherwise
-         *        use second handler
-         *---------------------------------------------------*)
-        constructor create(
-            const firstErrHandler : IErrorHandler;
-            const secondErrHandler : IErrorHandler;
-            const condition : boolean
-        );
 
         function handleError(
             const env : ICGIEnvironmentEnumerator;
@@ -55,24 +47,6 @@ type
 
 implementation
 
-    (*!---------------------------------------------------
-     * constructor
-     *---------------------------------------------------
-     * @param firstErrHandler first error handler
-     * @param secondErrHandler second error handler
-     * @param condition if true then use first handler otherwise
-     *        use second handler
-     *---------------------------------------------------*)
-    constructor TConditionalErrorHandler.create(
-        const firstErrHandler : IErrorHandler;
-        const secondErrHandler : IErrorHandler;
-        const condition : boolean
-    );
-    begin
-        inherited create(firstErrHandler, secondErrHandler);
-        fCondition := condition;
-    end;
-
     function TConditionalErrorHandler.handleError(
         const env : ICGIEnvironmentEnumerator;
         const exc : Exception;
@@ -80,7 +54,7 @@ implementation
         const msg : string  = 'Internal Server Error'
     ) : IErrorHandler;
     begin
-        if fCondition then
+        if condition(env, exc, status, msg) then
         begin
             firstErrorHandler.handleError(env, exc, status, msg);
         end else

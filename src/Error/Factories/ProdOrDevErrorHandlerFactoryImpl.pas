@@ -21,18 +21,23 @@ uses
 type
 
     (*!------------------------------------------------
-     * factory class for error handler for production setup
-     * which is to log exception to file and output
-     * nicely formatted error page
+     * factory class for error handler for that return
+     * different error handler based on production setup
+     * or development
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
     TProdOrDevErrorHandlerFactory = class(TFactory, IDependencyFactory)
     private
-        templateFilename : string;
+        err500TemplateFilename : string;
+        err404TemplateFilename : string;
         isProdEnv : boolean;
     public
-        constructor create(const templateFile : string; const isProd : boolean);
+        constructor create(
+            const err500TemplateFile : string;
+            const err404TemplateFile : string;
+            const isProd : boolean
+        );
         function build(const container : IDependencyContainer) : IDependency; override;
     end;
 
@@ -42,21 +47,26 @@ uses
 
     ErrorHandlerImpl,
     TemplateErrorHandlerImpl,
-    ConditionalErrorHandlerImpl;
+    BoolErrorHandlerImpl;
 
     constructor TProdOrDevErrorHandlerFactory.create(
-        const templateFile : string;
+        const err500TemplateFile : string;
+        const err404TemplateFile : string;
         const isProd : boolean
     );
     begin
-        templateFilename := templateFile;
+        err500TemplateFilename := err500TemplateFile;
+        err404TemplateFilename := err404TemplateFile;
         isProdEnv := isProd;
     end;
 
     function TProdOrDevErrorHandlerFactory.build(const container : IDependencyContainer) : IDependency;
     begin
-        result := TConditionalErrorHandler.create(
-            TTemplateErrorHandler.create(templateFilename),
+        result := TBoolErrorHandler.create(
+            TNotFoundHandler.create(
+                TTemplateErrorHandler.create(err404TemplateFilename),
+                TTemplateErrorHandler.create(err500TemplateFilename)
+            ),
             TErrorHandler.create(),
             isProdEnv
         );

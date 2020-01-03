@@ -28,7 +28,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *---------------------------------------------------*)
-    TBaseErrorHandler = class(TInjectableObject, IErrorHandler)
+    TBaseErrorHandler = class abstract (TInjectableObject, IErrorHandler)
     public
         (*!---------------------------------------------------
          * handle exception
