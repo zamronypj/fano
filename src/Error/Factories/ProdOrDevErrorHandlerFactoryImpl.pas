@@ -64,7 +64,7 @@ uses
     function TProdOrDevErrorHandlerFactory.build(const container : IDependencyContainer) : IDependency;
     begin
         result := TBoolErrorHandler.create(
-            TNotFoundHandler.create(
+            TNotFoundErrorHandler.create(
                 TTemplateErrorHandler.create(err404TemplateFilename),
                 TTemplateErrorHandler.create(err500TemplateFilename)
             ),
