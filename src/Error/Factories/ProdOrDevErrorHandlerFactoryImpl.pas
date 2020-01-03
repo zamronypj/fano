@@ -47,7 +47,8 @@ uses
 
     ErrorHandlerImpl,
     TemplateErrorHandlerImpl,
-    BoolErrorHandlerImpl;
+    BoolErrorHandlerImpl,
+    NotFoundErrorHandlerImpl;
 
     constructor TProdOrDevErrorHandlerFactory.create(
         const err500TemplateFile : string;
