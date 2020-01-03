@@ -34,8 +34,8 @@ type
         isProdEnv : boolean;
     public
         constructor create(
-            const err500TemplateFile : string;
             const err404TemplateFile : string;
+            const err500TemplateFile : string;
             const isProd : boolean
         );
         function build(const container : IDependencyContainer) : IDependency; override;
@@ -51,13 +51,13 @@ uses
     NotFoundErrorHandlerImpl;
 
     constructor TProdOrDevErrorHandlerFactory.create(
-        const err500TemplateFile : string;
         const err404TemplateFile : string;
+        const err500TemplateFile : string;
         const isProd : boolean
     );
     begin
-        err500TemplateFilename := err500TemplateFile;
         err404TemplateFilename := err404TemplateFile;
+        err500TemplateFilename := err500TemplateFile;
         isProdEnv := isProd;
     end;
 
