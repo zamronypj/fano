@@ -40,6 +40,10 @@ type
 
 implementation
 
+uses
+
+    ERouteHandlerNotFoundImpl;
+
     function TNotFoundErrorHandler.condition(
         const env : ICGIEnvironmentEnumerator;
         const exc : Exception;
