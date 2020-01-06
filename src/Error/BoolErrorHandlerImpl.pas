@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit CompositeErrorHandlerImpl;
+unit BoolErrorHandlerImpl;
 
 interface
 
@@ -17,39 +17,40 @@ uses
     sysutils,
     ErrorHandlerIntf,
     EnvironmentEnumeratorIntf,
-    BaseErrorHandlerImpl;
+    ConditionalErrorHandlerImpl;
 
 type
 
     (*!---------------------------------------------------
      * error handler that is composed from two error handler
+     * that is conditionally choosed based on some boolean condition
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *---------------------------------------------------*)
-    TCompositeErrorHandler = class(TBaseErrorHandler)
+    TBoolErrorHandler = class (TConditionalErrorHandler)
+    private
+        fCondition : boolean;
     protected
-        firstErrorHandler : IErrorHandler;
-        secondErrorHandler : IErrorHandler;
+        function condition(
+            const env : ICGIEnvironmentEnumerator;
+            const exc : Exception;
+            const status : integer;
+            const msg : string
+        ) : boolean; override;
     public
-
         (*!---------------------------------------------------
          * constructor
          *---------------------------------------------------
          * @param firstErrHandler first error handler
          * @param secondErrHandler second error handler
+         * @param boolCondition if true then use first handler otherwise
+         *        use second handler
          *---------------------------------------------------*)
         constructor create(
             const firstErrHandler : IErrorHandler;
-            const secondErrHandler : IErrorHandler
+            const secondErrHandler : IErrorHandler;
+            const boolCondition : boolean
         );
-        destructor destroy(); override;
-
-        function handleError(
-            const env : ICGIEnvironmentEnumerator;
-            const exc : Exception;
-            const status : integer = 500;
-            const msg : string  = 'Internal Server Error'
-        ) : IErrorHandler; override;
     end;
 
 implementation
@@ -59,32 +60,26 @@ implementation
      *---------------------------------------------------
      * @param firstErrHandler first error handler
      * @param secondErrHandler second error handler
+     * @param condition if true then use first handler otherwise
+     *        use second handler
      *---------------------------------------------------*)
-    constructor TCompositeErrorHandler.create(
+    constructor TBoolErrorHandler.create(
         const firstErrHandler : IErrorHandler;
-        const secondErrHandler : IErrorHandler
+        const secondErrHandler : IErrorHandler;
+        const boolCondition : boolean
     );
     begin
-        firstErrorHandler := firstErrHandler;
-        secondErrorHandler := secondErrHandler;
+        inherited create(firstErrHandler, secondErrHandler);
+        fCondition := boolCondition;
     end;
 
-    destructor TCompositeErrorHandler.destroy();
-    begin
-        inherited destroy();
-        firstErrorHandler := nil;
-        secondErrorHandler := nil;
-    end;
-
-    function TCompositeErrorHandler.handleError(
+    function TBoolErrorHandler.condition(
         const env : ICGIEnvironmentEnumerator;
         const exc : Exception;
-        const status : integer = 500;
-        const msg : string  = 'Internal Server Error'
-    ) : IErrorHandler;
+        const status : integer;
+        const msg : string
+    ) : boolean;
     begin
-        firstErrorHandler.handleError(env, exc, status, msg);
-        secondErrorHandler.handleError(env, exc, status, msg);
-        result := self;
+        result := fCondition;
     end;
 end.
