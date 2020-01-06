@@ -212,9 +212,6 @@ type
 
         (*!-----------------------------------------------
          * destructor
-         *-------------------------------------------------
-         * @param listenSocket, socket handle created with fpSocket()
-         * @param queueSize, number of queue when listen, 5 = default of Berkeley Socket
          *-----------------------------------------------*)
         destructor destroy(); override;
 
