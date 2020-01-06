@@ -30,6 +30,9 @@ TAndValidator = AndValidatorImpl.TAndValidator;
 TOrValidator = OrValidatorImpl.TOrValidator;
 
 TIntegerValidator = IntegerValidatorImpl.TIntegerValidator;
+TInt64Validator = Int64ValidatorImpl.TInt64Validator;
+TDwordValidator = DwordValidatorImpl.TDwordValidator;
+QwordValidator = QwordValidatorImpl.TQwordValidator;
 TMinIntegerValidator = MinIntegerValidatorImpl.TMinIntegerValidator;
 TMaxIntegerValidator = MaxIntegerValidatorImpl.TMaxIntegerValidator;
 
