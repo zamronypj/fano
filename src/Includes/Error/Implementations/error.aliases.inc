@@ -9,6 +9,7 @@ TConditionalErrorHandler = ConditionalErrorHandlerImpl.TConditionalErrorHandler;
 TDecoratorErrorHandler = DecoratorErrorHandlerImpl.TDecoratorErrorHandler;
 TBoolErrorHandler = BoolErrorHandlerImpl.TBoolErrorHandler;
 TNotFoundErrorHandler = NotFoundErrorHandlerImpl.TNotFoundErrorHandler;
+TMethodNotAllowedErrorHandler = MethodNotAllowedErrorHandlerImpl.TMethodNotAllowedErrorHandler;
 
 TFileLogErrorHandlerFactory = FileLogErrorHandlerFactoryImpl.TFileLogErrorHandlerFactory;
 TProductionErrorHandlerFactory = ProductionErrorHandlerFactoryImpl.TProductionErrorHandlerFactory;
