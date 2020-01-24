@@ -14,7 +14,10 @@ interface
 {$H+}
 
 uses
-
+    {$IFDEF UNIX}
+    cthreads,
+    cmem,
+    {$ENDIF}
     Classes,
     SyncObjs,
     fgl,
