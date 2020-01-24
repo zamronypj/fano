@@ -31,7 +31,7 @@ type
     private
         fList : TFPGObjectList<T>;
 
-        procedure stopThreads();
+        procedure terminateThreads();
         procedure waitThreads();
         procedure cleanupThreads();
     public
@@ -79,7 +79,7 @@ implementation
         end;
     end;
 
-    procedure TThreadManager<T: TThread>.stopThreads();
+    procedure TThreadManager<T: TThread>.terminateThreads();
     var threadIdx : integer;
     begin
         for threadIdx :=0 to fList.count-1 do
