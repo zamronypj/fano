@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit DataAvailListenerIntf;
+unit StreamQueueImpl;
 
 interface
 
@@ -15,6 +15,7 @@ interface
 
 uses
 
+    DataAvailListenerIntf,
     CloseableIntf,
     StreamAdapterIntf,
     StreamIdIntf;
@@ -22,13 +23,13 @@ uses
 type
 
     (*!-----------------------------------------------
-     * Interface for any class having capability to
-     * handle data availability
+     * class having capability to handle data availability
+     * and put stream in queue for later processing
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    IDataAvailListener = interface
-        ['{C8C08F35-663E-49ED-93CA-32E8345187E4}']
+    TStreamQueue = class(TInterfacedObject, IDataAvailListener)
+    public
 
         (*!------------------------------------------------
         * handle if data is available
