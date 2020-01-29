@@ -32,15 +32,12 @@ type
         fSocketAddrLen : TSockLen;
     protected
         function createSocket() : longint; override;
-<<<<<<< HEAD
-=======
 
         (*!-----------------------------------------------
          * return textual information regarding socket
          *-----------------------------------------------*)
         function getInfo() : string; override;
 
->>>>>>> experiment-refactor-socket-server
     public
         (*!-----------------------------------------------
          * constructor
@@ -50,14 +47,6 @@ type
         constructor create(const filename : string);
 
         (*!-----------------------------------------------
-<<<<<<< HEAD
-         * return textual information regarding socket
-         *-----------------------------------------------*)
-        function getInfo() : string; override;
-
-        (*!-----------------------------------------------
-=======
->>>>>>> experiment-refactor-socket-server
          * bind socket to socket address
          *-----------------------------------------------*)
         procedure bind(); override;
