@@ -324,36 +324,39 @@ uses
         totFd : longint;
     begin
         addToMonitoredSet(epollFd, termPipeIn, EPOLLIN);
-        addToMonitoredSet(epollFd, listenSocket, EPOLLIN);
-        terminated := false;
-        repeat
-            //wait indefinitely until something happen in fListenSocket or epollTerminatePipeIn
-            totFd := epoll_wait(epollFd, events, maxEvents, fTimeoutVal);
-            if totFd > 0 then
-            begin
-                //one or more file descriptors is ready for I/O, check further
-                handleFileDescriptorIOReady(
-                    epollFd,
-                    listenSocket,
-                    termPipeIn,
-                    totFd,
-                    events,
-                    terminated
-                );
-            end else
-            if (totFd = 0) then
-            begin
-                //timeout reached.
-                //For now, do nothing
-            end else
-            if (totFd < 0) then
-            begin
-                //we have error just terminate
-                terminated := true;
-            end;
-        until terminated;
-        removeFromMonitoredSet(epollFd, termPipeIn);
-        removeFromMonitoredSet(epollFd, listenSocket);
+        addToMonitoredSet(epollFd, listenSocket.fd, EPOLLIN);
+        try
+            terminated := false;
+            repeat
+                //wait indefinitely until something happen in fListenSocket or epollTerminatePipeIn
+                totFd := epoll_wait(epollFd, events, maxEvents, fTimeoutVal);
+                if totFd > 0 then
+                begin
+                    //one or more file descriptors is ready for I/O, check further
+                    handleFileDescriptorIOReady(
+                        epollFd,
+                        listenSocket,
+                        termPipeIn,
+                        totFd,
+                        events,
+                        terminated
+                    );
+                end else
+                if (totFd = 0) then
+                begin
+                    //timeout reached.
+                    //For now, do nothing
+                end else
+                if (totFd < 0) then
+                begin
+                    //we have error just terminate
+                    terminated := true;
+                end;
+            until terminated;
+        finally
+            removeFromMonitoredSet(epollFd, termPipeIn);
+            removeFromMonitoredSet(epollFd, listenSocket.fd);
+        end;
     end;
 
     (*!-----------------------------------------------
