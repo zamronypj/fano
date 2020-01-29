@@ -81,7 +81,7 @@ uses
 
     function TBoundSocket.getInfo() : string;
     begin
-        result := format('Bound socket %d', [fSocket]);
+        result := format('Bound socket %d', [fListenSocket]);
     end;
 
     (*!-----------------------------------------------
