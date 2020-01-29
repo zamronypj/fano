@@ -27,6 +27,8 @@ type
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
     TBoundSocket = class (TAbstractSocket)
+    private
+        fListenSocket : longint;
     protected
         function createSocket() : longint; override;
         (*!-----------------------------------------------
@@ -74,7 +76,7 @@ uses
 
     function TBoundSocket.createSocket() : longint;
     begin
-        result := fSocket;
+        result := fListenSocket;
     end;
 
     function TBoundSocket.getInfo() : string;
@@ -92,7 +94,7 @@ uses
         const sockOpts : ISocketOpts
     );
     begin
-        fSocket := listenSocket;
+        fListenSocket := listenSocket;
         inherited create(sockOpts);
     end;
 
