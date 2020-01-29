@@ -35,8 +35,13 @@ type
     private
         fSocket : IListenSocket;
         fIoHandler : IIoHandler;
+        fQueueSize : longint;
     public
-        constructor create(const socket : IListenSocket; const ioHandler : IIoHandler);
+        constructor create(
+            const socket : IListenSocket;
+            const ioHandler : IIoHandler;
+            const queueSize : longint = 32
+        );
         destructor destroy(); override;
 
         (*!-----------------------------------------------
@@ -53,11 +58,13 @@ uses
 
     constructor TSocket2Svr.create(
         const socket : IListenSocket;
-        const ioHandler : IIoHandler
+        const ioHandler : IIoHandler;
+        const queueSize : longint = 32
     );
     begin
         fSocket := socket;
         fIoHandler := ioHandler;
+        fQueueSize := queueSize;
     end;
 
     destructor TSocket2Svr.destroy();
@@ -70,7 +77,7 @@ uses
     function TSocket2Svr.run() : IRunnable;
     begin
         fSocket.bind();
-        fSocket.listen();
+        fSocket.listen(fQueueSize);
         fIoHandler.handleConnection(fSocket.getSocket(), terminatePipeIn);
         result := self;
     end;

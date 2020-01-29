@@ -32,15 +32,6 @@ type
         fPort : word;
     protected
         function createSocket() : longint; override;
-    public
-        (*!-----------------------------------------------
-         * constructor
-         *-------------------------------------------------
-         * @param ahost, hostname or ip
-         * @param aport, port
-         *-----------------------------------------------*)
-        constructor create(const ahost : string; const aport : word);
-
         (*!-----------------------------------------------
          * return textual information regarding socket
          *-----------------------------------------------*)
@@ -49,7 +40,15 @@ type
         (*!-----------------------------------------------
          * bind socket to socket address
          *-----------------------------------------------*)
-        procedure bind(); override;
+        function doBind() : longint; override;
+    public
+        (*!-----------------------------------------------
+         * constructor
+         *-------------------------------------------------
+         * @param ahost, hostname or ip
+         * @param aport, port
+         *-----------------------------------------------*)
+        constructor create(const ahost : string; const aport : word);
 
         (*!-----------------------------------------------
         * accept connection
@@ -88,19 +87,12 @@ implementation
     (*!-----------------------------------------------
      * bind socket to an socket address
      *-----------------------------------------------*)
-    procedure TInetSocket.bind(); override;
+    function TInetSocket.doBind() : longint; override;
     begin
         FInetAddr.sin_family := AF_INET;
         FInetAddr.sin_port := htons(FPort);
         FInetAddr.sin_addr.s_addr := LongWord(StrToNetAddr(FHost));
-        if fpBind(getSocket(), @FInetAddr, sizeof(FInetAddr)) <> 0 then
-        begin
-            errCode := socketError();
-            raise ESockBind.createFmt(
-                rsBindFailed,
-                [ getInfo(), strError(errCode), errCode ]
-            );
-        end;
+        result := fpBind(getSocket(), @FInetAddr, sizeof(FInetAddr));
     end;
 
     (*!-----------------------------------------------

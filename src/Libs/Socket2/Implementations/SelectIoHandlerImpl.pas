@@ -19,6 +19,8 @@ uses
     IoHandlerIntf,
     DataAvailListenerIntf,
     StreamAdapterIntf,
+    SocketOptsIntf,
+    AbstractIoHandlerImpl,
     BaseUnix,
     Unix;
 
@@ -29,9 +31,17 @@ type
      *-------------------------------------------------
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TSelectIoHandler = class(TInterfacedObject, IIoHandler)
+    TSelectIoHandler = class(TAbstractIoHandler)
     private
-        procedure raiseExceptionIfAny();
+        fTimeoutVal : TTimeVal;
+
+        (*!-----------------------------------------------
+         * convert timeout in millisecond to TTimeVal record
+         *-------------------------------------------------
+         * @param timeoutInMs, timeout in millisecond
+        *-----------------------------------------------*)
+        function getTimeout(const timeoutInMs : integer) : TTimeVal;
+
 
         (*!-----------------------------------------------
          * accept all incoming connection until no more pending
@@ -120,41 +130,13 @@ type
             var origFds : TFDSet
         );
 
-        (*!-----------------------------------------------
-         * convert timeout in millisecond to TTimeVal record
-         *-------------------------------------------------
-         * @param timeoutInMs, timeout in millisecond
-        *-----------------------------------------------*)
-        function getTimeout(const timeoutInMs : integer) : TTimeVal;
-
-    protected
-        fDataAvailListener : IDataAvailListener;
-        fIdleTimeout : longint;
-        fTimeoutVal : TTimeVal;
-
-
-        (*!-----------------------------------------------
-         * get stream from socket
-         *-------------------------------------------------
-         * @param clientSocket, socket handle
-         * @return stream of socket
-         *-----------------------------------------------*)
-        function getSockStream(clientSocket : longint) : IStreamAdapter; virtual;
 
     public
+
         (*!-----------------------------------------------
          * handle incoming connection until terminated
          *-----------------------------------------------*)
-        procedure handleConnection(listenSocket : longint; termPipeIn : longint);
-
-        (*!------------------------------------------------
-         * set instance of class that will be notified when
-         * data is available
-         *-----------------------------------------------
-         * @param dataListener, class that wish to be notified
-         * @return true current instance
-         *-----------------------------------------------*)
-        function setDataAvailListener(const dataListener : IDataAvailListener) : IIoHandler;
+        procedure handleConnection(listenSocket : longint; termPipeIn : longint); override;
     end;
 
 implementation
@@ -164,15 +146,34 @@ uses
     SysUtils,
     Errors,
     SocketConsts,
-    ESockListenImpl,
     ESockWouldBlockImpl,
     ESockErrorImpl,
     StreamAdapterImpl,
     SockStreamImpl,
     CloseableStreamImpl,
-    TermSignalImpl,
     DateUtils;
 
+    constructor TSelectIoHandler.create(
+        const sockOpts : ISocketOpts;
+        const timeoutInMs : integer = 30000
+    );
+    begin
+        inherited create(sockOpts);
+        fTimeoutVal := getTimeOut(timeoutInMs);
+    end;
+
+    (*!-----------------------------------------------
+     * convert timeout in millisecond to TTimeVal record
+     *-------------------------------------------------
+     * @param timeoutInMs, timeout in millisecond
+     *-----------------------------------------------*)
+    function TSelectIoHandler.getTimeout(const timeoutInMs : integer) : TTimeVal;
+    begin
+        //get microsecond from millisecond
+        result.tv_usec := (timeoutInMs mod 1000) * 1000;
+        //get seconds from millisecond
+        result.tv_sec := timeoutInMs div 1000;
+    end;
 
     (*!-----------------------------------------------
      * initialize file descriptor set for listening
@@ -215,24 +216,6 @@ uses
         if (pipeIn > result) then
         begin
             result := pipeIn;
-        end;
-    end;
-
-    procedure TSelectIoHandler.raiseExceptionIfAny();
-    var errCode : longint;
-    begin
-        errCode := socketError();
-        if (errCode = ESysEWOULDBLOCK) or (errCode = ESysEAGAIN) then
-        begin
-            //if we get here, it mostly because socket is non blocking
-            //but no pending connection, so just do nothing
-        end else
-        begin
-            raise ESockError.createFmt(
-                rsSocketError,
-                errCode,
-                strError(errCode)
-            );
         end;
     end;
 
@@ -307,12 +290,9 @@ uses
                 raiseExceptionIfAny();
             end else
             begin
-                makeNonBlockingSocket(clientSocket);
+                fSockOpts.makeNonBlocking(clientSocket);
                 //add client socket to be monitored for I/O
                 addToMonitoredSet(clientSocket, maxHandle, origFds);
-                {$IFDEF CLOSE_IDLE_CONNECTIONS}
-                addToConnectionsQueue(clientSocket);
-                {$ENDIF}
             end;
         until (clientSocket < 0);
     end;
@@ -377,19 +357,6 @@ uses
     end;
 
     (*!-----------------------------------------------
-     * convert timeout in millisecond to TTimeVal record
-     *-------------------------------------------------
-     * @param timeoutInMs, timeout in millisecond
-     *-----------------------------------------------*)
-    function TSelectIoHandler.getTimeout(const timeoutInMs : integer) : TTimeVal;
-    begin
-        //get microsecond from millisecond
-        result.tv_usec := (timeoutInMs mod 1000) * 1000;
-        //get seconds from millisecond
-        result.tv_sec := timeoutInMs div 1000;
-    end;
-
-    (*!-----------------------------------------------
      * handle incoming connection until terminated
      *-----------------------------------------------*)
     procedure TSelectIoHandler.handleConnection(listenSocket : longint; termPipeIn : longint);
@@ -420,9 +387,6 @@ uses
                     terminated
                 );
             end;
-            {$IFDEF CLOSE_IDLE_CONNECTIONS}
-            closeIdleConnections();
-            {$ENDIF}
         until terminated;
     end;
 
@@ -458,33 +422,6 @@ uses
                 aStream.free();
             end;
         end;
-    end;
-
-    (*!------------------------------------------------
-     * set instance of class that will be notified when
-     * data is available
-     *-----------------------------------------------
-     * @param dataListener, class that wish to be notified
-     * @return true current instance
-    *-----------------------------------------------*)
-    function TSelectIoHandler.setDataAvailListener(const dataListener : IDataAvailListener) : IRunnableWithDataNotif;
-    begin
-        fDataAvailListener := dataListener;
-        result := self;
-    end;
-
-    procedure TSelectIoHandler.shutdown();
-    begin
-        closeSocket(listenSocket);
-        fDataAvailListener := nil;
-    end;
-
-    function TSelectIoHandler.run() : IRunnable;
-    begin
-        bind();
-        listen();
-        handleConnection();
-        result := self;
     end;
 
 end.

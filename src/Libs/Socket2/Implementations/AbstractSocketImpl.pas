@@ -17,7 +17,8 @@ uses
 
     Sockets,
     SocketIntf,
-    ListenSocketIntf;
+    ListenSocketIntf,
+    SocketOptsIntf;
 
 type
 
@@ -28,11 +29,27 @@ type
      *-----------------------------------------------*)
     TAbstractSocket = class abstract (TInterfacedObject, IListenSocket)
     private
+        fSockOpts : ISocketOpts;
         fSocket : longint;
         procedure raiseExceptIfFailed(const socket : longint; const msg : string);
     protected
+        (*!-----------------------------------------------
+         * do actual bind socket to an socket address
+         *-----------------------------------------------*)
+        function doBind() : longint; virtual; abstract;
+
+        (*!-----------------------------------------------
+         * do actual socket creation
+         *-----------------------------------------------*)
         function createSocket() : longint; virtual; abstract;
+
+        (*!-----------------------------------------------
+         * return textual information regarding socket
+         *-----------------------------------------------*)
+        function getInfo() : string; virtual; abstract;
     public
+        constructor create(const sockOpts : ISocketOpts);
+        destructor destroy(); override;
 
         (*!-----------------------------------------------
          * return listen socket
@@ -40,14 +57,9 @@ type
         function getSocket() : longint;
 
         (*!-----------------------------------------------
-         * return textual information regarding socket
-         *-----------------------------------------------*)
-        function getInfo() : string; virtual; abstract;
-
-        (*!-----------------------------------------------
          * bind socket to an socket address
          *-----------------------------------------------*)
-        procedure bind(); virtual; abstract;
+        procedure bind();
 
         (*!-----------------------------------------------
         * accept connection
@@ -59,8 +71,10 @@ type
 
         (*!-----------------------------------------------
          * start listen for incoming connection
+         *
+         * @param queueSize number of queue
          *-----------------------------------------------*)
-        procedure listen(); virtual;
+        procedure listen(const queueSize : longint); virtual;
     end;
 
 implementation
@@ -68,7 +82,9 @@ implementation
 uses
 
     SocketConsts,
-    ESockCreateImpl;
+    ESockCreateImpl,
+    ESockBindImpl,
+    ESockListenImpl;
 
     procedure TAbstractSocket.raiseExceptIfFailed(const socket : longint; const msg : string);
     var errCode : longint;
@@ -86,10 +102,19 @@ uses
     (*!-----------------------------------------------
      * constructor
      *-----------------------------------------------*)
-    constructor TAbstractSocket.create();
+    constructor TAbstractSocket.create(const sockOpts : ISocketOpts);
     begin
+        fSockOpts := sockOpts;
         fSocket := createSocket();
         raiseExceptIfFailed(fSocket, getInfo());
+        fSockOpts.makeNonBlocking(fSocket);
+    end;
+
+    destructor TAbstractSocket.destroy();
+    begin
+        closeSocket(fSocket);
+        fSockOpts := nil;
+        inherited destroy();
     end;
 
     (*!-----------------------------------------------
@@ -101,12 +126,30 @@ uses
     end;
 
     (*!-----------------------------------------------
-     * start listen for incoming connection
+     * bind socket to an socket address
      *-----------------------------------------------*)
-    procedure TAbstractSocket.listen();
+    procedure TAbstractSocket.bind();
     var errCode : longint;
     begin
-        if fpListen(fSocket, fQueueSize) <> 0 then
+        if doBind() <> 0 then
+        begin
+            errCode := socketError();
+            raise ESockBind.createFmt(
+                rsBindFailed,
+                [ getInfo(), strError(errCode), errCode ]
+            );
+        end;
+    end;
+
+    (*!-----------------------------------------------
+     * start listen for incoming connection
+     *
+     * @param queueSize number of queue
+     *-----------------------------------------------*)
+    procedure TAbstractSocket.listen(const queueSize : longint);
+    var errCode : longint;
+    begin
+        if fpListen(fSocket, queueSize) <> 0 then
         begin
             errCode := socketError();
             raise ESockListen.createFmt(
