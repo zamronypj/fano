@@ -32,6 +32,12 @@ type
         fSocketAddrLen : TSockLen;
     protected
         function createSocket() : longint; override;
+
+        (*!-----------------------------------------------
+         * return textual information regarding socket
+         *-----------------------------------------------*)
+        function getInfo() : string; override;
+
     public
         (*!-----------------------------------------------
          * constructor
@@ -39,11 +45,6 @@ type
          * @param filename socket filename
          *-----------------------------------------------*)
         constructor create(const filename : string);
-
-        (*!-----------------------------------------------
-         * return textual information regarding socket
-         *-----------------------------------------------*)
-        function getInfo() : string; override;
 
         (*!-----------------------------------------------
          * bind socket to socket address

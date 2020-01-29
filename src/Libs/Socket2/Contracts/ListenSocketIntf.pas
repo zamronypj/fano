@@ -25,11 +25,6 @@ type
         ['{BD4BDF1B-4536-40FA-8E1D-47C94824EE23}']
 
         (*!-----------------------------------------------
-         * return textual information regarding socket
-         *-----------------------------------------------*)
-        function getInfo() : string;
-
-        (*!-----------------------------------------------
          * bind socket to an socket address
          *-----------------------------------------------*)
         procedure bind();
@@ -44,8 +39,10 @@ type
 
         (*!-----------------------------------------------
          * start listen for incoming connection
+         *
+         * @param queueSize number of queue
          *-----------------------------------------------*)
-        procedure listen();
+        procedure listen(const queueSize : longint);
     end;
 
 implementation

@@ -19,6 +19,7 @@ uses
     IoHandlerIntf,
     DataAvailListenerIntf,
     StreamAdapterIntf,
+    AbstractIoHandlerImpl,
     BaseUnix,
     Unix,
     Linux;
@@ -31,9 +32,9 @@ type
      *------------------------------------------------
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TEpollIoHandler = class(TInterfacedObject, IIoHandler)
+    TEpollIoHandler = class(TAbstractIoHandler)
     private
-        procedure raiseExceptionIfAny();
+        fTimeoutVal : longint;
 
         (*!-----------------------------------------------
          * accept all incoming connection until no more pending
@@ -124,32 +125,12 @@ type
          *-----------------------------------------------*)
         procedure removeFromMonitoredSet(const epollFd : longint; const fd : longint);
 
-    protected
-        fDataAvailListener : IDataAvailListener;
-        fIdleTimeout : longint;
-        fTimeoutVal : longint;
-
-        (*!-----------------------------------------------
-         * get stream from socket
-         *-------------------------------------------------
-         * @param clientSocket, socket handle
-         * @return stream of socket
-         *-----------------------------------------------*)
-        function getSockStream(clientSocket : longint) : IStreamAdapter; virtual;
     public
         (*!-----------------------------------------------
          * handle incoming connection until terminated
          *-----------------------------------------------*)
-        procedure handleConnection(listenSocket : longint; termPipeIn : longint);
+        procedure handleConnection(listenSocket : longint; termPipeIn : longint); override;
 
-        (*!------------------------------------------------
-         * set instance of class that will be notified when
-         * data is available
-         *-----------------------------------------------
-         * @param dataListener, class that wish to be notified
-         * @return true current instance
-         *-----------------------------------------------*)
-        function setDataAvailListener(const dataListener : IDataAvailListener) : IIoHandler;
     end;
 
 implementation
@@ -157,7 +138,6 @@ implementation
 uses
 
     CloseableIntf,
-    ESockListenImpl,
     ESockWouldBlockImpl,
     EEpollCreateImpl,
     StreamAdapterImpl,
@@ -165,27 +145,12 @@ uses
     CloseableStreamImpl,
     EpollCloseableImpl,
     EEpollCtlImpl,
-    TermSignalImpl,
     SocketConsts,
     DateUtils,
     SysUtils,
     Errors,
     StreamIdIntf;
 
-
-    procedure TEpollIoHandler.raiseExceptionIfAny();
-    var errno : longint;
-    begin
-        errno := socketError();
-        if (errno = EsockEWOULDBLOCK) or (errno = EsysEAGAIN) then
-        begin
-            //if we get here, it mostly because socket is non blocking
-            //but no pending connection, so just do nothing
-        end else
-        begin
-            //TODO handle error
-        end;
-    end;
 
     (*!-----------------------------------------------
      * add file descriptor to monitored set
@@ -428,17 +393,6 @@ uses
     end;
 
     (*!-----------------------------------------------
-     * get stream from socket
-     *-------------------------------------------------
-     * @param clientSocket, socket handle
-     * @return stream of socket
-     *-----------------------------------------------*)
-    function TEpollIoHandler.getSockStream(clientSocket : longint) : IStreamAdapter;
-    begin
-        result := TStreamAdapter.create(TSockStream.create(clientSocket));
-    end;
-
-    (*!-----------------------------------------------
      * called when client connection is allowed
      *-------------------------------------------------
      * @param epollFd, file descriptor returned from epoll_create()
@@ -473,19 +427,6 @@ uses
                 astream := nil;
             end;
         end;
-    end;
-
-    (*!------------------------------------------------
-     * set instance of class that will be notified when
-     * data is available
-     *-----------------------------------------------
-     * @param dataListener, class that wish to be notified
-     * @return true current instance
-    *-----------------------------------------------*)
-    function TEpollIoHandler.setDataAvailListener(const dataListener : IDataAvailListener) : IRunnableWithDataNotif;
-    begin
-        fDataAvailListener := dataListener;
-        result := self;
     end;
 
 end.

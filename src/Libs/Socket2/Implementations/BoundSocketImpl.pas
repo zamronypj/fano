@@ -28,6 +28,11 @@ type
     TBoundSocket = class (TAbstractSocket)
     protected
         function createSocket() : longint; override;
+        (*!-----------------------------------------------
+         * return textual information regarding socket
+         *-----------------------------------------------*)
+        function getInfo() : string; override;
+
     public
         (*!-----------------------------------------------
          * constructor
@@ -35,11 +40,6 @@ type
          * @param listenSocket bound socket
          *-----------------------------------------------*)
         constructor create(const listenSocket : longint);
-
-        (*!-----------------------------------------------
-         * return textual information regarding socket
-         *-----------------------------------------------*)
-        function getInfo() : string; override;
 
         (*!-----------------------------------------------
          * bind socket to an socket address
