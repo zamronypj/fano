@@ -133,6 +133,10 @@ type
 
 
     public
+        constructor create(
+            const sockOpts : ISocketOpts;
+            const timeoutInMs : integer = 30000
+        );
 
         (*!-----------------------------------------------
          * handle incoming connection until terminated
