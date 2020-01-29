@@ -74,12 +74,12 @@ uses
 
     function TBoundSocket.createSocket() : longint;
     begin
-        result := fListenSocket;
+        result := fSocket;
     end;
 
     function TBoundSocket.getInfo() : string;
     begin
-        result := format('Bound socket %d', [fListenSocket]);
+        result := format('Bound socket %d', [fSocket]);
     end;
 
     (*!-----------------------------------------------
@@ -92,7 +92,7 @@ uses
         const sockOpts : ISocketOpts
     );
     begin
-        fListenSocket := listenSocket;
+        fSocket := listenSocket;
         inherited create(sockOpts);
     end;
 
