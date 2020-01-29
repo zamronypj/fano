@@ -15,7 +15,8 @@ interface
 
 uses
 
-    DataAvailListenerIntf;
+    DataAvailListenerIntf,
+    ListenSocketIntf;
 
 type
 
@@ -30,8 +31,11 @@ type
 
         (*!-----------------------------------------------
          * handle incoming connection until terminated
+         *------------------------------------------------
+         * @param listenSocket listen socket
+         * @param termPipeIn termination pipe in file descriptor
          *-----------------------------------------------*)
-        procedure handleConnection(listenSocket : longint; termPipeIn : longint);
+        procedure handleConnection(const listenSocket : IListenSocket; termPipeIn : longint);
 
         (*!------------------------------------------------
          * set instance of class that will be notified when

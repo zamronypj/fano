@@ -29,6 +29,8 @@ type
          *-----------------------------------------------*)
         function getSocket() : longint;
 
+        property fd : longint read getSocket;
+
     end;
 
 implementation

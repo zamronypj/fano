@@ -78,7 +78,7 @@ uses
     begin
         fSocket.bind();
         fSocket.listen(fQueueSize);
-        fIoHandler.handleConnection(fSocket.getSocket(), terminatePipeIn);
+        fIoHandler.handleConnection(fSocket, terminatePipeIn);
         result := self;
     end;
 

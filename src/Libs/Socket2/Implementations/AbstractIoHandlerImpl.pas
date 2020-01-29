@@ -18,6 +18,7 @@ uses
     Sockets,
     IoHandlerIntf,
     DataAvailListenerIntf,
+    ListenSocketIntf,
     StreamAdapterIntf,
     SocketOptsIntf,
     BaseUnix,
@@ -51,8 +52,11 @@ type
 
         (*!-----------------------------------------------
          * handle incoming connection until terminated
+         *------------------------------------------------
+         * @param listenSocket listen socket
+         * @param termPipeIn termination pipe in file descriptor
          *-----------------------------------------------*)
-        procedure handleConnection(listenSocket : longint; termPipeIn : longint); virtual; abstract;
+        procedure handleConnection(const listenSocket : IListenSocket; termPipeIn : longint); virtual; abstract;
 
         (*!------------------------------------------------
          * set instance of class that will be notified when
