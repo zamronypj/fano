@@ -16,6 +16,7 @@ interface
 uses
 
     Sockets,
+    SocketOptsIntf,
     AbstractSocketImpl;
 
 type
