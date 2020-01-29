@@ -112,8 +112,7 @@ uses
      * bind socket to socket address
      *-----------------------------------------------*)
     function TUnixSocket.doBind() : longInt;
-    var errCode : longint;
-        addrLen  : longint;
+    var addrLen  : longint;
     begin
         StrToUnixAddr(fSocketFile, FUnixAddr, addrLen);
         result := fpBind(getSocket(), @FUnixAddr, addrLen);
