@@ -127,7 +127,7 @@ uses
      * @param dataListener, class that wish to be notified
      * @return true current instance
     *-----------------------------------------------*)
-    function TAbstractIoHandler.setDataAvailListener(const dataListener : IDataAvailListener) : IRunnableWithDataNotif;
+    function TAbstractIoHandler.setDataAvailListener(const dataListener : IDataAvailListener) : IIoHandler;
     begin
         fDataAvailListener := dataListener;
         result := self;
