@@ -16,6 +16,7 @@ interface
 uses
 
     Sockets,
+    SocketOptsIntf,
     AbstractSocketImpl;
 
 type
@@ -47,8 +48,13 @@ type
          *-------------------------------------------------
          * @param ahost, hostname or ip
          * @param aport, port
+         * @param sockOpts class that can change socket options
          *-----------------------------------------------*)
-        constructor create(const ahost : string; const aport : word);
+        constructor create(
+            const ahost : string;
+            const aport : word;
+            const sockOpts : ISocketOpts
+        );
 
         (*!-----------------------------------------------
         * accept connection
@@ -77,11 +83,15 @@ implementation
      * @param host, hostname or ip
      * @param port, port
      *-----------------------------------------------*)
-    constructor TInetSocket.create(const ahost : string; const aport : word);
+    constructor TInetSocket.create(
+        const ahost : string;
+        const aport : word;
+        const sockOpts : ISocketOpts
+    );
     begin
         fHost := ahost;
         fPort := aport;
-        inherited create();
+        inherited create(sockOpts);
     end;
 
     (*!-----------------------------------------------

@@ -48,7 +48,17 @@ type
          *-----------------------------------------------*)
         function getInfo() : string; virtual; abstract;
     public
+
+        (*!-----------------------------------------------
+         * constructor
+         *
+         * @param sockOpts class that can change socket options
+         *-----------------------------------------------*)
         constructor create(const sockOpts : ISocketOpts);
+
+        (*!-----------------------------------------------
+         * destructor
+         *-----------------------------------------------*)
         destructor destroy(); override;
 
         (*!-----------------------------------------------

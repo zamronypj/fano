@@ -35,6 +35,11 @@ type
 
 implementation
 
+uses
+
+    Sockets,
+    BaseUnix;
+
     (*!-----------------------------------------------
      * make file descriptor/socket non blocking
      *-------------------------------------------------

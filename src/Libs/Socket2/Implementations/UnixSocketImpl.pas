@@ -38,18 +38,21 @@ type
          *-----------------------------------------------*)
         function getInfo() : string; override;
 
+        (*!-----------------------------------------------
+         * bind socket to socket address
+         *-----------------------------------------------*)
+        function doBind() : longint; override;
     public
         (*!-----------------------------------------------
          * constructor
          *-------------------------------------------------
          * @param filename socket filename
+         * @param sockOpts class that can change socket options
          *-----------------------------------------------*)
-        constructor create(const filename : string);
-
-        (*!-----------------------------------------------
-         * bind socket to socket address
-         *-----------------------------------------------*)
-        procedure bind(); override;
+        constructor create(
+            const filename : string;
+            const sockOpts : ISocketOpts
+        );
 
         (*!-----------------------------------------------
         * accept connection
@@ -81,11 +84,15 @@ uses
      * constructor
      *-------------------------------------------------
      * @param filename socket filename
+     * @param sockOpts class that can change socket options
      *-----------------------------------------------*)
-    constructor TUnixSocket.create(const filename : string);
+    constructor TUnixSocket.create(
+        const filename : string;
+        const sockOpts : ISocketOpts
+    );
     begin
         fSocketFile := filename;
-        inherited create();
+        inherited create(sockOpts);
     end;
 
     (*!-----------------------------------------------
@@ -103,19 +110,12 @@ uses
     (*!-----------------------------------------------
      * bind socket to socket address
      *-----------------------------------------------*)
-    procedure TUnixSocket.bind();
+    function TUnixSocket.doBind() : longInt;
     var errCode : longint;
         addrLen  : longint;
     begin
         StrToUnixAddr(fSocketFile, FUnixAddr, addrLen);
-        if fpBind(getSocket(), @FUnixAddr, addrLen) <> 0 then
-        begin
-            errCode := socketError();
-            raise ESockBind.createFmt(
-                rsBindFailed,
-                [ FSocketFile, strError(errCode), errCode ]
-            );
-        end;
+        result := fpBind(getSocket(), @FUnixAddr, addrLen);
         fSocketAddrLen := addrLen;
     end;
 
@@ -125,7 +125,7 @@ uses
      * @param listenSocket, socket handle
      * @return client socket which data can be read
      *-----------------------------------------------*)
-    function TUnixSocket.accept(listenSocket : longint) : longint; override;
+    function TUnixSocket.accept(listenSocket : longint) : longint;
     var addrLen : TSockLen;
     begin
         addrLen := fSocketAddrLen;

@@ -33,18 +33,21 @@ type
          *-----------------------------------------------*)
         function getInfo() : string; override;
 
+        (*!-----------------------------------------------
+         * bind socket to socket address
+         *-----------------------------------------------*)
+        function doBind() : longint; override;
+
     public
         (*!-----------------------------------------------
          * constructor
          *-------------------------------------------------
          * @param listenSocket bound socket
          *-----------------------------------------------*)
-        constructor create(const listenSocket : longint);
-
-        (*!-----------------------------------------------
-         * bind socket to an socket address
-         *-----------------------------------------------*)
-        procedure bind(); override;
+        constructor create(
+            const listenSocket : longint;
+            const sockOpts : ISocketOpts
+        );
 
         (*!-----------------------------------------------
         * accept connection
@@ -56,8 +59,10 @@ type
 
         (*!-----------------------------------------------
          * start listen for incoming connection
+         *
+         * @param queueSize number of queue
          *-----------------------------------------------*)
-        procedure listen(); override;
+        procedure listen(const queueSize : longint); override;
     end;
 
 implementation
@@ -77,18 +82,22 @@ implementation
      *-------------------------------------------------
      * @param filename socket filename
      *-----------------------------------------------*)
-    constructor TBoundSocket.create(const listenSocket : longint);
+    constructor TBoundSocket.create(
+        const listenSocket : longint;
+        const sockOpts : ISocketOpts
+    );
     begin
         fListenSocket := listenSocket;
-        inherited create();
+        inherited create(sockOpts);
     end;
 
     (*!-----------------------------------------------
      * bind socket to socket address
      *-----------------------------------------------*)
-    procedure TBoundSocket.bind();
+    function TBoundSocket.doBind() : longint;
     begin
         //intentionally does nothing as listenSocket is assumed already bound
+        result := 0;
     end;
 
     (*!-----------------------------------------------
@@ -97,15 +106,17 @@ implementation
      * @param listenSocket, socket handle
      * @return client socket which data can be read
      *-----------------------------------------------*)
-    function TBoundSocket.accept(listenSocket : longint) : longint; override;
+    function TBoundSocket.accept(listenSocket : longint) : longint;
     begin
         result := fpAccept(listenSocket, nil, nil);
     end;
 
     (*!-----------------------------------------------
      * start listen for incoming connection
+     *
+     * @param queueSize number of queue
      *-----------------------------------------------*)
-    procedure TBoundSocket.listen();
+    procedure TBoundSocket.listen(const queueSize : longint);
     begin
         //intentionally does nothing as listenSocket is assumed already bound and listen
     end;
