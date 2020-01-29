@@ -42,11 +42,11 @@ type
          * connection available
          *-------------------------------------------------
          * @param epollFd, file descriptor returned from epoll_create()
-         * @param listenSocket, listen socket handle
+         * @param listenSocket, listen socket
          *-----------------------------------------------*)
         procedure acceptAllConnections(
             const epollFd : longint;
-            const listenSocket : longint
+            const listenSocket : IListenSocket
         );
 
         (*!-----------------------------------------------
@@ -76,6 +76,8 @@ type
          * run wait for connection loop
          *-------------------------------------------------
          * @param epollFd, file descriptor returned from epoll_create()
+         * @param listenSocket, listen socket
+         * @param termPipeIn, terminate pipe in
          *-----------------------------------------------*)
         procedure runWaitConnection(
             const epollFd : longint;
