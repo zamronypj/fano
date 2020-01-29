@@ -67,6 +67,10 @@ type
 
 implementation
 
+uses
+
+    SysUtils;
+
     function TInetSocket.createSocket() : longint;
     begin
         result := fpSocket(AF_INET, SOCK_STREAM, 0);

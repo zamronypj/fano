@@ -68,6 +68,10 @@ type
 
 implementation
 
+uses
+
+    SysUtils;
+
     function TBoundSocket.createSocket() : longint;
     begin
         result := fListenSocket;
