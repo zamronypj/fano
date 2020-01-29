@@ -399,17 +399,6 @@ uses
     end;
 
     (*!-----------------------------------------------
-     * get stream from socket
-     *-------------------------------------------------
-     * @param clientSocket, socket handle
-     * @return stream of socket
-     *-----------------------------------------------*)
-    function TSelectIoHandler.getSockStream(clientSocket : longint) : IStreamAdapter;
-    begin
-        result := TStreamAdapter.create(TSockStream.create(clientSocket));
-    end;
-
-    (*!-----------------------------------------------
      * called when client connection is allowed
      *-------------------------------------------------
      * @param clientSocket, socket handle where data can be read
