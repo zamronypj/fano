@@ -54,7 +54,7 @@ uses
     begin
         //read control flag and set socket to be non blocking
         flags := fpFcntl(fd, F_GETFL, 0);
-        fpFcntl(aSocket, F_SETFl, flags or O_NONBLOCK);
+        fpFcntl(fd, F_SETFl, flags or O_NONBLOCK);
     end;
 
 end.
