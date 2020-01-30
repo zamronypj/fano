@@ -26,3 +26,5 @@ TAbstractIoHandler = AbstractIoHandlerImpl.TAbstractIoHandler;
 TEpollIoHandler = EpollIoHandlerImpl.TEpollIoHandler;
 {$ENDIF}
 TSelectIoHandler = SelectIoHandlerImpl.TSelectIoHandler;
+
+TSocketOpts = SocketOptsImpl.TSocketOpts;

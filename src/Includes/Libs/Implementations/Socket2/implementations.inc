@@ -28,3 +28,5 @@ EpollIoHandlerImpl,
 {$ENDIF}
 
 SelectIoHandlerImpl,
+
+SocketOptsImpl,
