@@ -28,3 +28,8 @@ TEpollIoHandler = EpollIoHandlerImpl.TEpollIoHandler;
 TSelectIoHandler = SelectIoHandlerImpl.TSelectIoHandler;
 
 TSocketOpts = SocketOptsImpl.TSocketOpts;
+
+TInetSvrFactory = InetSvrFactoryImpl.TInetSvrFactory;
+TUnixSvrFactory = UnixSvrFactoryImpl.TUnixSvrFactory;
+TEpollInetSvrFactory = EpollInetSvrFactoryImpl.TEpollInetSvrFactory;
+TEpollUnixSvrFactory = EpollUnixSvrFactoryImpl.TEpollUnixSvrFactory;

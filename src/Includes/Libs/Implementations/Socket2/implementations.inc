@@ -30,3 +30,8 @@ EpollIoHandlerImpl,
 SelectIoHandlerImpl,
 
 SocketOptsImpl,
+
+InetSvrFactoryImpl,
+UnixSvrFactoryImpl,
+EpollInetSvrFactoryImpl,
+EpollUnixSvrFactoryImpl,

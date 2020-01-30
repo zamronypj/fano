@@ -19,7 +19,8 @@ uses
     RunnableWithDataNotifIntf,
     DataAvailListenerIntf,
     ListenSocketIntf,
-    IoHandlerIntf;
+    IoHandlerIntf,
+    InjectableObjectImpl;
 
 type
 
@@ -33,7 +34,7 @@ type
      *-------------------------------------------------
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TSocket2Svr = class (TInterfacedObject, IRunnable, IRunnableWithDataNotif)
+    TSocket2Svr = class (TInjectableObject, IRunnable, IRunnableWithDataNotif)
     private
         fSocket : IListenSocket;
         fIoHandler : IIoHandler;
