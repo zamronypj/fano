@@ -16,6 +16,7 @@ interface
 uses
 
     RunnableIntf,
+    RunnableWithDataNotifIntf,
     ListenSocketIntf,
     IoHandlerIntf;
 
@@ -31,7 +32,7 @@ type
      *-------------------------------------------------
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TSocket2Svr = class (TInterfacedObject, IRunnable)
+    TSocket2Svr = class (TInterfacedObject, IRunnable, IRunnableWithDataNotif)
     private
         fSocket : IListenSocket;
         fIoHandler : IIoHandler;
@@ -48,6 +49,15 @@ type
          * run socket server until terminated
          *-----------------------------------------------*)
         function run() : IRunnable;
+
+        (*!------------------------------------------------
+         * set instance of class that will be notified when
+         * data is available
+         *-----------------------------------------------
+         * @param dataListener, class that wish to be notified
+         * @return true current instance
+         *-----------------------------------------------*)
+        function setDataAvailListener(const dataListener : IDataAvailListener) : IRunnableWithDataNotif;
     end;
 
 implementation
@@ -79,6 +89,19 @@ uses
         fSocket.bind();
         fSocket.listen(fQueueSize);
         fIoHandler.handleConnection(fSocket, terminatePipeIn);
+        result := self;
+    end;
+
+    (*!------------------------------------------------
+     * set instance of class that will be notified when
+     * data is available
+     *-----------------------------------------------
+     * @param dataListener, class that wish to be notified
+     * @return true current instance
+     *-----------------------------------------------*)
+    function TSocket2Svr.setDataAvailListener(const dataListener : IDataAvailListener) : IRunnableWithDataNotif;
+    begin
+        fIoHandler.setDataAvailListener(dataListener);
         result := self;
     end;
 
