@@ -33,7 +33,7 @@ type
         *-------------------------------------------------
         * @param listenSocket, listen socket handle
         *-----------------------------------------------*)
-        procedure makeNonBlockingSocket(aSocket : longint);
+        procedure makeNonBlocking(aSocket : longint);
 
     end;
 
@@ -49,7 +49,7 @@ uses
      *-------------------------------------------------
      * @param fd, file descriptor or listen socket handle
      *-----------------------------------------------*)
-    procedure TSocketOpts.makeNonBlockingSocket(fd : longint);
+    procedure TSocketOpts.makeNonBlocking(fd : longint);
     var flags : longint;
     begin
         //read control flag and set socket to be non blocking
