@@ -33,5 +33,7 @@ SocketOptsImpl,
 
 InetSvrFactoryImpl,
 UnixSvrFactoryImpl,
+BoundSvrFactoryImpl,
 EpollInetSvrFactoryImpl,
 EpollUnixSvrFactoryImpl,
+EpollBoundSvrFactoryImpl,
