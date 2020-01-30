@@ -14,10 +14,8 @@ interface
 
 uses
 
-    DependencyIntf,
-    DependencyContainerIntf,
     RunnableWithDataNotifIntf,
-    FactoryImpl;
+    SocketSvrFactoryIntf;
 
 type
     (*------------------------------------------------
@@ -26,13 +24,13 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TInetSvrFactory = class(TFactory, IDependencyFactory)
+    TInetSvrFactory = class (TInterfacedObject, ISocketSvrFactory)
     private
         fHost : string;
         fPort : word;
     public
         constructor create(const aHost : string; const aPort : word);
-        function build(const container : IDependencyContainer) : IDependency; override;
+        function build() : IRunnableWithDataNotif;
     end;
 
 implementation
@@ -51,7 +49,7 @@ uses
         fPort := aPort;
     end;
 
-    function TInetSvrFactory.build(const container : IDependencyContainer) : IDependency;
+    function TInetSvrFactory.build() : IRunnableWithDataNotif;
     var sockOpts : ISocketOpts;
     begin
         sockOpts := TSocketOpts.create();

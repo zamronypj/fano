@@ -14,10 +14,8 @@ interface
 
 uses
 
-    DependencyIntf,
-    DependencyContainerIntf,
     RunnableWithDataNotifIntf,
-    FactoryImpl;
+    SocketSvrFactoryIntf;
 
 type
     (*------------------------------------------------
@@ -26,12 +24,12 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TEpollUnixSvrFactory = class(TFactory, IDependencyFactory)
+    TEpollUnixSvrFactory = class (TInterfacedObject, ISocketSvrFactory)
     private
         fFilename : string;
     public
         constructor create(const aFilename : string);
-        function build(const container : IDependencyContainer) : IDependency; override;
+        function build() : IRunnableWithDataNotif;
     end;
 
 implementation
@@ -49,7 +47,7 @@ uses
         fFilename := aFilename;
     end;
 
-    function TEpollUnixSvrFactory.build(const container : IDependencyContainer) : IDependency;
+    function TEpollUnixSvrFactory.build() : IRunnableWithDataNotif;
     var sockOpts : ISocketOpts;
     begin
         sockOpts := TSocketOpts.create();
