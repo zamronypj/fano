@@ -33,7 +33,7 @@ type
         *-------------------------------------------------
         * @param listenSocket, listen socket handle
         *-----------------------------------------------*)
-        procedure makeNonBlocking(aSocket : longint);
+        procedure makeNonBlocking(fd : longint);
 
     end;
 
