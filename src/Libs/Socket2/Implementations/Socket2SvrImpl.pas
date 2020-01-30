@@ -17,6 +17,7 @@ uses
 
     RunnableIntf,
     RunnableWithDataNotifIntf,
+    DataAvailListenerIntf,
     ListenSocketIntf,
     IoHandlerIntf;
 
