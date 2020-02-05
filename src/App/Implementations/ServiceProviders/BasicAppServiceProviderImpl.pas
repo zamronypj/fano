@@ -46,7 +46,10 @@ type
         function getRouteMatcher() : IRouteMatcher; virtual;
 
         function buildContainer() : IDependencyContainer; virtual;
-        function buildErrorHandler(const ctnr : IDependencyContainer) : IErrorHandler; virtual;
+        function buildErrorHandler(
+            const ctnr : IDependencyContainer;
+            const config : IAppConfiguration
+        ) : IErrorHandler; virtual;
         function buildEnvironment(const ctnr : IDependencyContainer) : ICGIEnvironment; virtual;
         function buildStdIn(const ctnr : IDependencyContainer) : IStdIn; virtual;
         function buildRouter(const ctnr : IDependencyContainer) : IRouter; virtual;
@@ -109,7 +112,7 @@ resourcestring
         fContainer := buildContainer();
         fAppConfig := buildAppConfig(fContainer);
         fEnv := buildEnvironment(fContainer);
-        fErrHandler := buildErrorHandler(fContainer);
+        fErrHandler := buildErrorHandler(fContainer, fAppConfig);
         fStdIn := buildStdIn(fContainer);
         fRouter := buildRouter(fContainer);
         fDispatcher := buildDispatcher(fContainer, getRouteMatcher(), fAppConfig);
@@ -133,7 +136,8 @@ resourcestring
     end;
 
     function TBasicAppServiceProvider.buildErrorHandler(
-        const ctnr : IDependencyContainer
+        const ctnr : IDependencyContainer;
+        const config : IAppConfiguration
     ) : IErrorHandler;
     begin
         result := TErrorHandler.create();

@@ -30,7 +30,12 @@ HtmlAjaxErrorHandlerFactoryImpl,
 
 LogErrorHandlerImpl,
 CompositeErrorHandlerImpl,
+ConditionalErrorHandlerImpl,
+DecoratorErrorHandlerImpl,
+BoolErrorHandlerImpl,
+NotFoundErrorHandlerImpl,
+MethodNotAllowedErrorHandlerImpl,
 
 FileLogErrorHandlerFactoryImpl,
 ProductionErrorHandlerFactoryImpl,
-
+ProdOrDevErrorHandlerFactoryImpl,

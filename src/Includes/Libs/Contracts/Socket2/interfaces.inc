@@ -7,15 +7,13 @@
  *}
 
 (*! ---------------------------------------------
- * implementation units for router that is
- * included in fano.pas unit
+ * unit interfaces that is included in fano.pas unit
  *
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
  *-----------------------------------------------*)
 
-RouteHandlerImpl,
-RouterFactoryImpl,
-SimpleRouterFactoryImpl,
-CombineRouterFactoryImpl,
-RouteBuilderImpl,
-CompositeRouteBuilderImpl,
+IoHandlerIntf,
+ListenSocketIntf,
+SocketIntf,
+SocketOptsIntf,
+SocketSvrFactoryIntf,

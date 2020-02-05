@@ -27,6 +27,7 @@ TKeyValuePair = KeyValuePairImpl.TKeyValuePair;
 TKeyValuePairFactory = KeyValuePairFactoryImpl.TKeyValuePairFactory;
 
 {$INCLUDE Socket/libs.aliases.inc}
+{$INCLUDE Socket2/libs.aliases.inc}
 {$INCLUDE Logger/libs.aliases.inc}
 {$INCLUDE Regex/libs.aliases.inc}
 {$INCLUDE LibCurl/libs.aliases.inc}

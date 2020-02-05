@@ -46,6 +46,15 @@ type
         function setHeader(const key : shortstring; const value : string) : IHeaders;
 
         (*!------------------------------------
+         * add http header
+         *-------------------------------------
+         * @param key name  of http header to set
+         * @param value value of header
+         * @return header instance
+         *-------------------------------------*)
+        function addHeader(const key : shortstring; const value : string) : IHeaders;
+
+        (*!------------------------------------
          * get http header
          *-------------------------------------
          * @param key name  of http header to get
@@ -133,6 +142,23 @@ type
         end;
         hdr^.key := key;
         hdr^.value := value;
+        result := self;
+    end;
+
+    (*!------------------------------------
+     * add http header
+     *-------------------------------------
+     * @param key name  of http header to set
+     * @param value value of header
+     * @return header instance
+     *-------------------------------------*)
+    function THeaders.addHeader(const key : shortstring; const value : string) : IHeaders;
+    var hdr : PHeaderRec;
+    begin
+        new(hdr);
+        hdr^.key := key;
+        hdr^.value := value;
+        headerList.add(key, hdr);
         result := self;
     end;
 

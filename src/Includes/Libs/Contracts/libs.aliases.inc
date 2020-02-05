@@ -1,3 +1,11 @@
+{*!
+ * Fano Web Framework (https://fanoframework.github.io)
+ *
+ * @link      https://github.com/fanoframework/fano
+ * @copyright Copyright (c) 2018 Zamrony P. Juhara
+ * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
+ *}
+
 IOutputBuffer = OutputBufferIntf.IOutputBuffer;
 ILogger = LoggerIntf.ILogger;
 IFileReader = FileReaderIntf.IFileReader;
@@ -39,3 +47,5 @@ ICliParamsFactory = CliParamsFactoryIntf.ICliParamsFactory;
 
 IEncrypter = EncrypterIntf.IEncrypter;
 IDecrypter = DecrypterIntf.IDecrypter;
+
+{$INCLUDE Socket2/libs.aliases.inc}
