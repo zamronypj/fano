@@ -13,6 +13,10 @@ interface
 {$MODE OBJFPC}
 {$H+}
 
+uses
+
+    SocketOptsIntf;
+
 type
 
     (*!------------------------------------------------
@@ -29,7 +33,7 @@ type
         *-------------------------------------------------
         * @param listenSocket, listen socket handle
         *-----------------------------------------------*)
-        procedure makeNonBlockingSocket(aSocket : longint);
+        procedure makeNonBlocking(fd : longint);
 
     end;
 
@@ -45,12 +49,12 @@ uses
      *-------------------------------------------------
      * @param fd, file descriptor or listen socket handle
      *-----------------------------------------------*)
-    procedure TSocketOpts.makeNonBlockingSocket(fd : longint);
+    procedure TSocketOpts.makeNonBlocking(fd : longint);
     var flags : longint;
     begin
         //read control flag and set socket to be non blocking
         flags := fpFcntl(fd, F_GETFL, 0);
-        fpFcntl(aSocket, F_SETFl, flags or O_NONBLOCK);
+        fpFcntl(fd, F_SETFl, flags or O_NONBLOCK);
     end;
 
 end.

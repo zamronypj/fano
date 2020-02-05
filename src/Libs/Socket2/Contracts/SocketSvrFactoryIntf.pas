@@ -6,31 +6,29 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit SocketIntf;
+unit SocketSvrFactoryIntf;
 
 interface
 
 {$MODE OBJFPC}
 {$H+}
 
+uses
+
+    RunnableWithDataNotifIntf;
+
 type
 
     (*!------------------------------------------------
      * interface for any class having capability setup
-     * socket
+     * create socket server
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    ISocket = interface
-        ['{C5F5A3EF-820D-4D73-B49B-72E24F0929D2}']
+    ISocketSvrFactory = interface
+        ['{E32719D0-ADC3-467F-955A-80178924C8B8}']
 
-        (*!-----------------------------------------------
-         * return listen socket
-         *-----------------------------------------------*)
-        function getSocket() : longint;
-
-        property fd : longint read getSocket;
-
+        function build() : IRunnableWithDataNotif;
     end;
 
 implementation

@@ -18,6 +18,7 @@ uses
     Sockets,
     IoHandlerIntf,
     DataAvailListenerIntf,
+    ListenSocketIntf,
     StreamAdapterIntf,
     SocketOptsIntf,
     AbstractIoHandlerImpl,
@@ -52,7 +53,7 @@ type
          * @param origFds, original file descriptor set
          *-----------------------------------------------*)
         procedure acceptAllConnections(
-            const listenSocket : longint;
+            const listenSocket : IListenSocket;
             var maxHandle : longint;
             var origFds : TFDSet
         );
@@ -68,11 +69,11 @@ type
          * initialize file descriptor set for listening
          * socket and also termination pipe
          *-------------------------------------------------
-         * @param listenSocket, socket handle
+         * @param listenSocketFd, socket handle
          * @param pipeIn, pipe input handle
          * @return file descriptor set
          *-----------------------------------------------*)
-        function initFileDescSet(listenSocket : longint; pipeIn : longint) : TFDSet;
+        function initFileDescSet(listenSocketFd : longint; pipeIn : longint) : TFDSet;
 
         (*!-----------------------------------------------
          * find file descriptor with biggest value
@@ -81,7 +82,7 @@ type
          * @param pipeIn, pipe input handle
          * @return highest handle
          *-----------------------------------------------*)
-        function getHighestHandle(listenSocket : longint; pipeIn : longint) : longint;
+        function getHighestHandle(listenSocketFd : longint; pipeIn : longint) : longint;
 
         (*!-----------------------------------------------
          * handle when one or more file descriptor is ready for I/O
@@ -95,7 +96,7 @@ type
          * @param terminated, set true if we should terminate
          *-----------------------------------------------*)
         procedure handleFileDescriptorIOReady(
-            listenSocket : longint;
+            listenSocket : IListenSocket;
             pipeIn : longint;
             const readfds : TFDSet;
             var totDesc : longint;
@@ -132,11 +133,18 @@ type
 
 
     public
+        constructor create(
+            const sockOpts : ISocketOpts;
+            const timeoutInMs : integer = 30000
+        );
 
         (*!-----------------------------------------------
          * handle incoming connection until terminated
+         *------------------------------------------------
+         * @param listenSocket listen socket
+         * @param termPipeIn termination pipe in file descriptor
          *-----------------------------------------------*)
-        procedure handleConnection(listenSocket : longint; termPipeIn : longint); override;
+        procedure handleConnection(const listenSocket : IListenSocket; termPipeIn : longint); override;
     end;
 
 implementation
@@ -179,11 +187,11 @@ uses
      * initialize file descriptor set for listening
      * socket and also termination pipe
      *-------------------------------------------------
-     * @param listenSocket, socket handle
+     * @param listenSocketFd, socket handle
      * @param pipeIn, pipe input handle
      * @return file descriptor set
      *-----------------------------------------------*)
-    function TSelectIoHandler.initFileDescSet(listenSocket : longint; pipeIn : longint) : TFDSet;
+    function TSelectIoHandler.initFileDescSet(listenSocketFd : longint; pipeIn : longint) : TFDSet;
     begin
         //initialize struct and reset all file descriptors
         result := default(TFDSet);
@@ -191,7 +199,7 @@ uses
 
         //add listenSocket to set of read file descriptor we need to monitor
         //so we know if there something happen with listening socket
-        fpFD_SET(listenSocket, result);
+        fpFD_SET(listenSocketFd, result);
 
         //also add termPipeIn so we get notified if we get signal to terminate
         fpFD_SET(pipeIn, result);
@@ -200,17 +208,17 @@ uses
     (*!-----------------------------------------------
      * find file descriptor with biggest value
      *-------------------------------------------------
-     * @param listenSocket, socket handle
+     * @param listenSocketFd, socket handle
      * @param pipeIn, pipe input handle
      * @return highest handle
      *-----------------------------------------------*)
-    function TSelectIoHandler.getHighestHandle(listenSocket : longint; pipeIn : longint) : longint;
+    function TSelectIoHandler.getHighestHandle(listenSocketFd : longint; pipeIn : longint) : longint;
     begin
         //find file descriptor with biggest value
         result := 0;
-        if (listenSocket > result) then
+        if (listenSocketFd > result) then
         begin
-            result := listenSocket;
+            result := listenSocketFd;
         end;
 
         if (pipeIn > result) then
@@ -274,7 +282,7 @@ uses
      * @param origFds, original file descriptor set
      *-----------------------------------------------*)
     procedure TSelectIoHandler.acceptAllConnections(
-        const listenSocket : longint;
+        const listenSocket : IListenSocket;
         var maxHandle : longint;
         var origFds : TFDSet
     );
@@ -283,7 +291,7 @@ uses
         repeat
             //we have something with listening socket, it means there is
             //new connection coming, accept it
-            clientSocket := accept(listenSocket);
+            clientSocket := listenSocket.accept(listenSocket.fd);
 
             if (clientSocket < 0) then
             begin
@@ -307,7 +315,7 @@ uses
      * @param terminated, set true if we should terminate
      *-----------------------------------------------*)
     procedure TSelectIoHandler.handleFileDescriptorIOReady(
-        listenSocket : longint;
+        listenSocket : IListenSocket;
         pipeIn : longint;
         const readfds : TFDSet;
         var totDesc : longint;
@@ -330,7 +338,7 @@ uses
                     terminated := true;
                     break;
                 end else
-                if fds = listenSocket then
+                if fds = listenSocket.fd then
                 begin
                     //we have something with listening socket, it means there is
                     //new connection coming, accept it
@@ -359,15 +367,15 @@ uses
     (*!-----------------------------------------------
      * handle incoming connection until terminated
      *-----------------------------------------------*)
-    procedure TSelectIoHandler.handleConnection(listenSocket : longint; termPipeIn : longint);
+    procedure TSelectIoHandler.handleConnection(const listenSocket : IListenSocket; termPipeIn : longint);
     var origfds, readfds : TFDSet;
         highestHandle : longint;
         terminated : boolean;
     var totDesc : longint;
     begin
         //find file descriptor with biggest value
-        highestHandle := getHighestHandle(listenSocket, termPipeIn);
-        origfds := initFileDescSet(listenSocket, termPipeIn);
+        highestHandle := getHighestHandle(listenSocket.fd, termPipeIn);
+        origfds := initFileDescSet(listenSocket.fd, termPipeIn);
         terminated := false;
         repeat
             readfds := origfds;
@@ -388,17 +396,6 @@ uses
                 );
             end;
         until terminated;
-    end;
-
-    (*!-----------------------------------------------
-     * get stream from socket
-     *-------------------------------------------------
-     * @param clientSocket, socket handle
-     * @return stream of socket
-     *-----------------------------------------------*)
-    function TSelectIoHandler.getSockStream(clientSocket : longint) : IStreamAdapter;
-    begin
-        result := TStreamAdapter.create(TSockStream.create(clientSocket));
     end;
 
     (*!-----------------------------------------------

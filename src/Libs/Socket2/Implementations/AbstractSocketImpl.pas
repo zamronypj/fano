@@ -91,6 +91,7 @@ implementation
 
 uses
 
+    Errors,
     SocketConsts,
     ESockCreateImpl,
     ESockBindImpl,

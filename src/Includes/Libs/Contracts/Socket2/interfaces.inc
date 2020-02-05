@@ -7,33 +7,13 @@
  *}
 
 (*! ---------------------------------------------
- * redeclare all class types in unit inside Libs/Socket
- * directory
+ * unit interfaces that is included in fano.pas unit
  *
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
  *-----------------------------------------------*)
 
-Socket2SvrImpl,
-
-{$IFDEF unix}
-UnixSocketImpl,
-{$ENDIF}
-InetSocketImpl,
-BoundSocketImpl,
-
-AbstractIoHandlerImpl,
-
-{$IFDEF LINUX}
-EpollIoHandlerImpl,
-{$ENDIF}
-
-SelectIoHandlerImpl,
-
-SocketOptsImpl,
-
-InetSvrFactoryImpl,
-UnixSvrFactoryImpl,
-BoundSvrFactoryImpl,
-EpollInetSvrFactoryImpl,
-EpollUnixSvrFactoryImpl,
-EpollBoundSvrFactoryImpl,
+IoHandlerIntf,
+ListenSocketIntf,
+SocketIntf,
+SocketOptsIntf,
+SocketSvrFactoryIntf,

@@ -104,7 +104,7 @@ uses
     begin
         cookie := cookieFactory.name(sess.name()).value(sess.id()).build();
         try
-            resp.headers().setHeader('Set-Cookie', cookie.serialize());
+            resp.headers().addHeader('Set-Cookie', cookie.serialize());
             result := resp;
         finally
             cookie := nil;

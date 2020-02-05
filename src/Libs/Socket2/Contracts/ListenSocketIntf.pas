@@ -6,12 +6,16 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit Socket2SvrImpl;
+unit ListenSocketIntf;
 
 interface
 
 {$MODE OBJFPC}
 {$H+}
+
+uses
+
+    SocketIntf;
 
 type
 

@@ -18,6 +18,7 @@ uses
     Sockets,
     IoHandlerIntf,
     DataAvailListenerIntf,
+    ListenSocketIntf,
     StreamAdapterIntf,
 <<<<<<< HEAD
 =======
@@ -50,11 +51,11 @@ type
          * connection available
          *-------------------------------------------------
          * @param epollFd, file descriptor returned from epoll_create()
-         * @param listenSocket, listen socket handle
+         * @param listenSocket, listen socket
          *-----------------------------------------------*)
         procedure acceptAllConnections(
             const epollFd : longint;
-            const listenSocket : longint
+            const listenSocket : IListenSocket
         );
 
         (*!-----------------------------------------------
@@ -75,7 +76,7 @@ type
         procedure waitForConnection(
             const epollFd : longint;
             const termPipeIn : longint;
-            const listenSocket : longint;
+            const listenSocket : IListenSocket;
             const events : PEpoll_Event;
             const maxEvents : longint
         );
@@ -84,8 +85,14 @@ type
          * run wait for connection loop
          *-------------------------------------------------
          * @param epollFd, file descriptor returned from epoll_create()
+         * @param listenSocket, listen socket
+         * @param termPipeIn, terminate pipe in
          *-----------------------------------------------*)
-        procedure runWaitConnection(const epollFd : longint);
+        procedure runWaitConnection(
+            const epollFd : longint;
+            const listenSocket :IListenSocket;
+            const termPipeIn : longint
+        );
 
         (*!-----------------------------------------------
          * called when client connection is established
@@ -110,7 +117,7 @@ type
          *-----------------------------------------------*)
         procedure handleFileDescriptorIOReady(
             const epollFd : longint;
-            const listenSocket : longint;
+            const listenSocket : IListenSocket;
             const pipeIn : longint;
             const totFd : longint;
             const events : PEpoll_Event;
@@ -137,8 +144,11 @@ type
     public
         (*!-----------------------------------------------
          * handle incoming connection until terminated
+         *------------------------------------------------
+         * @param listenSocket listen socket
+         * @param termPipeIn termination pipe in file descriptor
          *-----------------------------------------------*)
-        procedure handleConnection(listenSocket : longint; termPipeIn : longint); override;
+        procedure handleConnection(const listenSocket : IListenSocket; termPipeIn : longint); override;
 
     end;
 
@@ -213,14 +223,14 @@ uses
      *-----------------------------------------------*)
     procedure TEpollIoHandler.acceptAllConnections(
         const epollFd : longint;
-        const listenSocket : longint
+        const listenSocket : IListenSocket
     );
     var clientSocket : longint;
     begin
         repeat
             //we have something with listening socket, it means there is
             //new connection coming, accept it
-            clientSocket := accept(listenSocket);
+            clientSocket := listenSocket.accept(listenSocket.fd);
 
             if (clientSocket < 0) then
             begin
@@ -230,7 +240,7 @@ uses
                 //TODO : improve FCGI parser so we can use non blocking socket
                 //Turn off for now as our FCGI parser not suitable for
                 //handling non blocking socket
-                makeNonBlocking(clientSocket);
+                fSockOpts.makeNonBlocking(clientSocket);
 
                 //add client socket to be monitored for I/O read
                 //note that before client socket is closed,
@@ -272,7 +282,7 @@ uses
      *-----------------------------------------------*)
     procedure TEpollIoHandler.handleFileDescriptorIOReady(
         const epollFd : longint;
-        const listenSocket : longint;
+        const listenSocket : IListenSocket;
         const pipeIn : longint;
         const totFd : longint;
         const events : PEpoll_Event;
@@ -289,7 +299,7 @@ uses
                 terminated := true;
                 break;
             end else
-            if (fd = listenSocket) then
+            if (fd = listenSocket.fd) then
             begin
                 //we have something with listening socket, it means there is
                 //new connection coming, accept it
@@ -315,7 +325,7 @@ uses
     procedure TEpollIoHandler.waitForConnection(
         const epollFd : longint;
         const termPipeIn : longint;
-        const listenSocket : longint;
+        const listenSocket : IListenSocket;
         const events : PEpoll_Event;
         const maxEvents : longint
     );
@@ -323,36 +333,39 @@ uses
         totFd : longint;
     begin
         addToMonitoredSet(epollFd, termPipeIn, EPOLLIN);
-        addToMonitoredSet(epollFd, listenSocket, EPOLLIN);
-        terminated := false;
-        repeat
-            //wait indefinitely until something happen in fListenSocket or epollTerminatePipeIn
-            totFd := epoll_wait(epollFd, events, maxEvents, fTimeoutVal);
-            if totFd > 0 then
-            begin
-                //one or more file descriptors is ready for I/O, check further
-                handleFileDescriptorIOReady(
-                    epollFd,
-                    listenSocket,
-                    termPipeIn,
-                    totFd,
-                    events,
-                    terminated
-                );
-            end else
-            if (totFd = 0) then
-            begin
-                //timeout reached.
-                //For now, do nothing
-            end else
-            if (totFd < 0) then
-            begin
-                //we have error just terminate
-                terminated := true;
-            end;
-        until terminated;
-        removeFromMonitoredSet(epollFd, termPipeIn);
-        removeFromMonitoredSet(epollFd, listenSocket);
+        addToMonitoredSet(epollFd, listenSocket.fd, EPOLLIN);
+        try
+            terminated := false;
+            repeat
+                //wait indefinitely until something happen in fListenSocket or epollTerminatePipeIn
+                totFd := epoll_wait(epollFd, events, maxEvents, fTimeoutVal);
+                if totFd > 0 then
+                begin
+                    //one or more file descriptors is ready for I/O, check further
+                    handleFileDescriptorIOReady(
+                        epollFd,
+                        listenSocket,
+                        termPipeIn,
+                        totFd,
+                        events,
+                        terminated
+                    );
+                end else
+                if (totFd = 0) then
+                begin
+                    //timeout reached.
+                    //For now, do nothing
+                end else
+                if (totFd < 0) then
+                begin
+                    //we have error just terminate
+                    terminated := true;
+                end;
+            until terminated;
+        finally
+            removeFromMonitoredSet(epollFd, termPipeIn);
+            removeFromMonitoredSet(epollFd, listenSocket.fd);
+        end;
     end;
 
     (*!-----------------------------------------------
@@ -362,7 +375,7 @@ uses
      *-----------------------------------------------*)
     procedure TEpollIoHandler.runWaitConnection(
         const epollFd : longint;
-        const listenSocket : longint;
+        const listenSocket : IListenSocket;
         const termPipeIn : longint
     );
     const MAX_EVENTS = 64;
@@ -387,7 +400,7 @@ uses
      *-------------------------------------------------
      * @throws EEpollCreate exception
      *-----------------------------------------------*)
-    procedure TEpollIoHandler.handleConnection(listenSocket : longint; termPipeIn : longint);
+    procedure TEpollIoHandler.handleConnection(const listenSocket : IListenSocket; termPipeIn : longint);
     var epollFd : longint;
     begin
         epollFd := epoll_create(1024);
@@ -397,8 +410,11 @@ uses
             raise EEpollCreate.create(rsEpollInitFailed);
         end;
 
-        runWaitConnection(epollFd, listenSocket, termPipeIn);
-        fpClose(epollFd);
+        try
+            runWaitConnection(epollFd, listenSocket, termPipeIn);
+        finally
+            fpClose(epollFd);
+        end;
     end;
 
     (*!-----------------------------------------------

@@ -26,3 +26,12 @@ TAbstractIoHandler = AbstractIoHandlerImpl.TAbstractIoHandler;
 TEpollIoHandler = EpollIoHandlerImpl.TEpollIoHandler;
 {$ENDIF}
 TSelectIoHandler = SelectIoHandlerImpl.TSelectIoHandler;
+
+TSocketOpts = SocketOptsImpl.TSocketOpts;
+
+TInetSvrFactory = InetSvrFactoryImpl.TInetSvrFactory;
+TUnixSvrFactory = UnixSvrFactoryImpl.TUnixSvrFactory;
+TBoundSvrFactory = BoundSvrFactoryImpl.TBoundSvrFactory;
+TEpollInetSvrFactory = EpollInetSvrFactoryImpl.TEpollInetSvrFactory;
+TEpollUnixSvrFactory = EpollUnixSvrFactoryImpl.TEpollUnixSvrFactory;
+TEpollBoundSvrFactory = EpollBoundSvrFactoryImpl.TEpollBoundSvrFactory;

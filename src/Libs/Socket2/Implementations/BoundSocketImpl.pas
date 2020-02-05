@@ -16,6 +16,7 @@ interface
 uses
 
     Sockets,
+    SocketOptsIntf,
     AbstractSocketImpl;
 
 type
@@ -26,6 +27,8 @@ type
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
     TBoundSocket = class (TAbstractSocket)
+    private
+        fListenSocket : longint;
     protected
         function createSocket() : longint; override;
         (*!-----------------------------------------------
@@ -66,6 +69,10 @@ type
     end;
 
 implementation
+
+uses
+
+    SysUtils;
 
     function TBoundSocket.createSocket() : longint;
     begin

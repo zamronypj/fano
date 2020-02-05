@@ -67,6 +67,10 @@ type
 
 implementation
 
+uses
+
+    SysUtils;
+
     function TInetSocket.createSocket() : longint;
     begin
         result := fpSocket(AF_INET, SOCK_STREAM, 0);
@@ -97,7 +101,7 @@ implementation
     (*!-----------------------------------------------
      * bind socket to an socket address
      *-----------------------------------------------*)
-    function TInetSocket.doBind() : longint; override;
+    function TInetSocket.doBind() : longint;
     begin
         FInetAddr.sin_family := AF_INET;
         FInetAddr.sin_port := htons(FPort);
@@ -111,7 +115,7 @@ implementation
      * @param listenSocket, socket handle
      * @return client socket which data can be read
      *-----------------------------------------------*)
-    function TInetSocket.accept(listenSocket : longint) : longint; override;
+    function TInetSocket.accept(listenSocket : longint) : longint;
     var addrLen : TSockLen;
     begin
         addrLen := sizeof(FInetAddr);
