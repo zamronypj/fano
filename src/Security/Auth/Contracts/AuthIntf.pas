@@ -32,12 +32,12 @@ type
 
 
         (*!------------------------------------------------
-         * handle authorization
+         * handle authentication
          *-------------------------------------------------
          * @param request current request object
          * @param response current response object
          * @param args route argument reader
-         * @return boolean true if request is authorized
+         * @return boolean true if request is authenticated
          *-------------------------------------------------*)
         function auth(
             const request : IRequest;

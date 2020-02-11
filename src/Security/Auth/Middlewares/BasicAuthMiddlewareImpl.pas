@@ -36,9 +36,31 @@ type
         fRealm : string;
         fAuth : IAuth;
     public
-        constructor create(const realm : string);
+        (*!------------------------------------------------
+         * constructor
+         *-------------------------------------------------
+         * @param auth object responsible to authenticate
+         * @param realm string of realm value
+         *-------------------------------------------------*)
+        constructor create(
+            const auth : IAuth;
+            const realm : string
+        );
+
+        (*!------------------------------------------------
+         * destructor
+         *-------------------------------------------------*)
         destructor destroy(); override;
 
+        (*!------------------------------------------------
+         * handle authentication
+         *-------------------------------------------------
+         * @param request current request object
+         * @param response current response object
+         * @param args route argument reader
+         * @param next next middleware to run
+         * @return response
+         *-------------------------------------------------*)
         function handleRequest(
             const request : IRequest;
             const response : IResponse;
@@ -53,6 +75,12 @@ uses
 
     HttpCodeResponseImpl;
 
+    (*!------------------------------------------------
+     * constructor
+     *-------------------------------------------------
+     * @param auth object responsible to authenticate
+     * @param realm string of realm value
+     *-------------------------------------------------*)
     constructor TBasicAuthMiddleware.create(
         const auth : IAuth;
         const realm : string
@@ -63,12 +91,24 @@ uses
         fRealm := realm;
     end;
 
+    (*!------------------------------------------------
+     * destructor
+     *-------------------------------------------------*)
     destructor TBasicAuthMiddleware.destroy();
     begin
         fAuth := nil;
         inherited destroy();
     end;
 
+    (*!------------------------------------------------
+     * handle authentication
+     *-------------------------------------------------
+     * @param request current request object
+     * @param response current response object
+     * @param args route argument reader
+     * @param next next middleware to run
+     * @return response
+    *-------------------------------------------------*)
     function TBasicAuthMiddleware.handleRequest(
         const request : IRequest;
         const response : IResponse;
