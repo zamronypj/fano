@@ -7,21 +7,12 @@
  *}
 
 (*! ---------------------------------------------
- * unit interfaces that is included in fano.pas unit
+ * alias for implementation in auth
+ * that is included in implementations.aliases.inc
  *
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
  *-----------------------------------------------*)
 
-ValidatorIntf,
-RequestValidatorIntf,
-ValidationRulesIntf,
-ValidatorCollectionIntf,
-
-SanitizerIntf,
-
-CsrfIntf,
-
-CorsIntf,
-CorsConfigIntf,
-
-AuthIntf,
+TStaticCredentialsAuth = StaticCredentialsAuthImpl.TStaticCredentialsAuth;
+TBasicAuthMiddleware = BasicAuthMiddlewareImpl.TBasicAuthMiddleware;
+TStaticCredentialsBasicAuthMiddlewareFactory = StaticCredentialsBasicAuthMiddlewareFactoryImpl.TStaticCredentialsBasicAuthMiddlewareFactory;
