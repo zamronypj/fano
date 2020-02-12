@@ -15,9 +15,7 @@ interface
 
 uses
 
-    RequestIntf,
-    ResponseIntf,
-    RouteArgsReaderIntf;
+    CredentialTypes;
 
 type
 
@@ -30,20 +28,13 @@ type
     IAuth = interface
         ['{548202A8-76B7-404C-AB3D-3E82C8EE3B94}']
 
-
         (*!------------------------------------------------
-         * handle authentication
+         * authenticate credential
          *-------------------------------------------------
-         * @param request current request object
-         * @param response current response object
-         * @param args route argument reader
-         * @return boolean true if request is authenticated
+         * @param credential credential to authenticate
+         * @return boolean true if credential is authenticated
          *-------------------------------------------------*)
-        function auth(
-            const request : IRequest;
-            const response : IResponse;
-            const args : IRouteArgsReader
-        ) : boolean;
+        function auth(const credential : TCredential) : boolean;
 
     end;
 
