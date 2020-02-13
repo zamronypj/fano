@@ -109,6 +109,7 @@ uses
     ERouteHandlerNotFoundImpl,
     EMethodNotAllowedImpl,
     EInvalidMethodImpl,
+    EInvalidRequestImpl,
     ESockBindImpl,
     ESockCreateImpl,
     ESockListenImpl;
