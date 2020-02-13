@@ -20,6 +20,7 @@ resourcestring
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
 
+    sHttp400Message = 'Bad Request';
     sHttp404Message = 'Not Found';
     sHttp405Message = 'Method Not Allowed';
     sHttp501Message = 'Not Implemented';
