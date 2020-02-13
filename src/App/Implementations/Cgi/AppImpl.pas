@@ -39,6 +39,7 @@ uses
     ERouteHandlerNotFoundImpl,
     EMethodNotAllowedImpl,
     EInvalidMethodImpl,
+    EInvalidRequestImpl,
     EDependencyNotFoundImpl,
     EInvalidDispatcherImpl,
     EInvalidFactoryImpl;
@@ -59,6 +60,12 @@ uses
                 result := execute(fAppSvc.env);
             end;
         except
+            on e : EInvalidRequest do
+            begin
+                fAppSvc.errorHandler.handleError(fAppSvc.env.enumerator, e, 400, sHttp400Message);
+                reset();
+            end;
+
             on e : ERouteHandlerNotFound do
             begin
                 fAppSvc.errorHandler.handleError(fAppSvc.env.enumerator, e, 404, sHttp404Message);
