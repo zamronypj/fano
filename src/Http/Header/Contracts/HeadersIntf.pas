@@ -38,6 +38,15 @@ type
         function setHeader(const key : shortstring; const value : string) : IHeaders;
 
         (*!------------------------------------
+         * add http header
+         *-------------------------------------
+         * @param key name  of http header to set
+         * @param value value of header
+         * @return header instance
+         *-------------------------------------*)
+        function addHeader(const key : shortstring; const value : string) : IHeaders;
+
+        (*!------------------------------------
          * output http headers to STDOUT
          *-------------------------------------
          * Implementor must end with empty blank line

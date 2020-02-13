@@ -7,15 +7,33 @@
  *}
 
 (*! ---------------------------------------------
- * implementation units for router that is
- * included in fano.pas unit
+ * redeclare all class types in unit inside Libs/Socket
+ * directory
  *
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
  *-----------------------------------------------*)
 
-RouteHandlerImpl,
-RouterFactoryImpl,
-SimpleRouterFactoryImpl,
-CombineRouterFactoryImpl,
-RouteBuilderImpl,
-CompositeRouteBuilderImpl,
+Socket2SvrImpl,
+
+{$IFDEF unix}
+UnixSocketImpl,
+{$ENDIF}
+InetSocketImpl,
+BoundSocketImpl,
+
+AbstractIoHandlerImpl,
+
+{$IFDEF LINUX}
+EpollIoHandlerImpl,
+{$ENDIF}
+
+SelectIoHandlerImpl,
+
+SocketOptsImpl,
+
+InetSvrFactoryImpl,
+UnixSvrFactoryImpl,
+BoundSvrFactoryImpl,
+EpollInetSvrFactoryImpl,
+EpollUnixSvrFactoryImpl,
+EpollBoundSvrFactoryImpl,

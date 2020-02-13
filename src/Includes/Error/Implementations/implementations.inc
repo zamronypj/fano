@@ -34,6 +34,7 @@ ConditionalErrorHandlerImpl,
 DecoratorErrorHandlerImpl,
 BoolErrorHandlerImpl,
 NotFoundErrorHandlerImpl,
+MethodNotAllowedErrorHandlerImpl,
 
 FileLogErrorHandlerFactoryImpl,
 ProductionErrorHandlerFactoryImpl,

@@ -5,26 +5,31 @@
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
-unit CoreAppConsts;
+
+unit SocketSvrFactoryIntf;
 
 interface
 
 {$MODE OBJFPC}
+{$H+}
 
-resourcestring
+uses
 
-    (*!-----------------------------------------------
-     * Collection of resource string constants
-     * used in applications
+    RunnableWithDataNotifIntf;
+
+type
+
+    (*!------------------------------------------------
+     * interface for any class having capability setup
+     * create socket server
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
+    ISocketSvrFactory = interface
+        ['{E32719D0-ADC3-467F-955A-80178924C8B8}']
 
-    sHttp400Message = 'Bad Request';
-    sHttp404Message = 'Not Found';
-    sHttp405Message = 'Method Not Allowed';
-    sHttp501Message = 'Not Implemented';
-    sErrInvalidDispatcher = 'Dispatcher instance is invalid';
+        function build() : IRunnableWithDataNotif;
+    end;
 
 implementation
 
