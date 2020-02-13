@@ -210,6 +210,12 @@ uses
         try
             execute(env);
         except
+            on e : EInvalidRequest do
+            begin
+                fAppSvc.errorHandler.handleError(fAppSvc.env.enumerator, e, 400, sHttp400Message);
+                reset();
+            end;
+
             on e : ERouteHandlerNotFound do
             begin
                 fDaemonAppSvc.errorHandler.handleError(env.enumerator, e, 404, sHttp404Message);
