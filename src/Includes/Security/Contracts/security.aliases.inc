@@ -21,3 +21,4 @@ IValidationRules = ValidationRulesIntf.IValidationRules;
 IRequestValidator = RequestValidatorIntf.IRequestValidator;
 
 {$INCLUDE cors.aliases.inc}
+{$INCLUDE auth.aliases.inc}

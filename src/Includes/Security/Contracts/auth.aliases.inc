@@ -7,21 +7,10 @@
  *}
 
 (*! ---------------------------------------------
- * unit interfaces that is included in fano.pas unit
+ * alias for interface in auth
+ * that is included in fano.pas unit
  *
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
  *-----------------------------------------------*)
 
-ValidatorIntf,
-RequestValidatorIntf,
-ValidationRulesIntf,
-ValidatorCollectionIntf,
-
-SanitizerIntf,
-
-CsrfIntf,
-
-CorsIntf,
-CorsConfigIntf,
-
-AuthIntf,
+IAuth = AuthIntf.IAuth;

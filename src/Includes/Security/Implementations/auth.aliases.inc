@@ -7,14 +7,15 @@
  *}
 
 (*! ---------------------------------------------
- * alias for implementation in security
+ * alias for implementation in auth
  * that is included in implementations.aliases.inc
  *
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
  *-----------------------------------------------*)
 
-{$INCLUDE validations.aliases.inc}
-{$INCLUDE sanitations.aliases.inc}
-{$INCLUDE cors.aliases.inc}
-{$INCLUDE csrf.aliases.inc}
-{$INCLUDE auth.aliases.inc}
+TStaticCredentialsAuth = StaticCredentialsAuthImpl.TStaticCredentialsAuth;
+TBasicAuthMiddleware = BasicAuthMiddlewareImpl.TBasicAuthMiddleware;
+TStaticCredentialsBasicAuthMiddlewareFactory = StaticCredentialsBasicAuthMiddlewareFactoryImpl.TStaticCredentialsBasicAuthMiddlewareFactory;
+
+TCredential = CredentialTypes.TCredential;
+TCredentials = CredentialTypes.TCredentials;
