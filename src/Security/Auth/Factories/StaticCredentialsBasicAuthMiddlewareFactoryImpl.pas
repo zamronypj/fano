@@ -71,7 +71,7 @@ uses
             setlength(fAllowedCredentials, length(fAllowedCredentials) + 10);
         end;
 
-        with fAllowedCredentials[fActualCredentialLen - 1] do
+        with fAllowedCredentials[fActualCredentialLen] do
         begin
             username := usrname;
             password := passw;
@@ -86,6 +86,7 @@ uses
         const container : IDependencyContainer
     ) : IDependency;
     begin
+        setlength(fAllowedCredentials, fActualCredentialLen);
         result := TBasicAuthMiddleware.create(
             TStaticCredentialsAuth.create(fAllowedCredentials),
             fRealm
