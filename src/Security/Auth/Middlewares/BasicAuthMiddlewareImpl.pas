@@ -153,8 +153,12 @@ uses
                 colonPos := pos(':', credential);
                 if colonPos <> 0 then
                 begin
-                    foundCredential.username := copy(credential, 1, colonPos);
-                    foundCredential.password := copy(credential, colonPos, length(credential) - colonPos);
+                    foundCredential.username := copy(credential, 1, colonPos - 1);
+                    foundCredential.password := copy(
+                        credential,
+                        colonPos + 1,
+                        length(credential) - colonPos
+                    );
                     result := true;
                 end;
             end;
