@@ -16,3 +16,6 @@
 TStaticCredentialsAuth = StaticCredentialsAuthImpl.TStaticCredentialsAuth;
 TBasicAuthMiddleware = BasicAuthMiddlewareImpl.TBasicAuthMiddleware;
 TStaticCredentialsBasicAuthMiddlewareFactory = StaticCredentialsBasicAuthMiddlewareFactoryImpl.TStaticCredentialsBasicAuthMiddlewareFactory;
+
+TCredential = CredentialTypes.TCredential;
+TCredentials = CredentialTypes.TCredentials;
