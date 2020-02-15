@@ -16,4 +16,4 @@
 StaticCredentialsAuthImpl,
 BasicAuthMiddlewareImpl,
 StaticCredentialsBasicAuthMiddlewareFactoryImpl,
-CredntialTypes,
+CredentialTypes,
