@@ -89,6 +89,7 @@ implementation
 
 uses
 
+    Base64,
     HttpCodeResponseImpl;
 
     (*!------------------------------------------------
