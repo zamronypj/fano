@@ -128,6 +128,9 @@ uses
         const request : IRequest;
         out foundCredential : TCredential
     ) : boolean;
+    const
+        BASIC_STR = 'basic ';
+        BASIC_STR_LEN = length(BASIC_STR);
     var
         authHeaderLine : string;
         credential : string;
@@ -140,13 +143,13 @@ uses
         if request.headers().has('Authorization') then
         begin
             authHeaderLine := request.headers().getHeader('Authorization');
-            if pos('basic ', lowercase(authHeaderLine)) = 1 then
+            if pos(BASIC_STR, lowercase(authHeaderLine)) = 1 then
             begin
                 credential := decodeStringBase64(
                     copy(
                         authHeaderLine,
-                        7,
-                        length(authHeaderLine) - 7
+                        BASIC_STR_LEN + 1,
+                        length(authHeaderLine) - BASIC_STR_LEN
                     )
                 );
 
