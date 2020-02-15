@@ -187,7 +187,7 @@ uses
             result := THttpCodeResponse.create(
                 401,
                 'Unauthorized',
-                response.headers().clone()
+                response.headers()
             );
             result.headers().setHeader(
                 'WWW-Authenticate',
