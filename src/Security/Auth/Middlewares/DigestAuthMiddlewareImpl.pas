@@ -246,6 +246,7 @@ type
                 digestInfo := getDigestInfo(authHeaderLine);
                 foundCredential.username := digestInfo.username;
                 foundCredential.password := digestInfo.response;
+                foundCredential.data := @digestInfo;
             end;
         end;
     end;
