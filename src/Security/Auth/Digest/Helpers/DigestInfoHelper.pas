@@ -20,7 +20,7 @@ uses
     function initEmptyDigestInfo(const requestMethod : string) : TDigestInfo;
 
     function fillDigestInfo(
-        const di : TDigestInfo;
+        di : TDigestInfo;
         const key: string;
         const value : string
     ) : TDigestInfo;
@@ -54,13 +54,12 @@ uses
     end;
 
     function fillDigestInfo(
-        const di : TDigestInfo;
+        di : TDigestInfo;
         const key: string;
         const value : string
     ) : TDigestInfo;
     begin
-        result := di;
-        with result do
+        with di do
         begin
             case key of
                 'username' : username := value;
@@ -74,6 +73,7 @@ uses
                 'opaque' : opaque := value;
             end;
         end;
+        result := di;
     end;
 
     procedure extractKeyValuePair(re : TRegExpr; out key : string; out value : string);
@@ -81,7 +81,7 @@ uses
         lastMatchLen : integer;
         comaPos : integer;
     begin
-        key := re.match(1);
+        key := re.match[1];
         lastMatchLen := re.matchLen();
         value := re.match(lastMatchLen);
         if lastMatchLen < 4 then
@@ -91,7 +91,7 @@ uses
             comaPos := pos(',', value);
             if (comaPos <> 0) then
             begin
-                value := copy(value, 1, comapos);
+                value := copy(value, 1, comaPos);
             end;
         end
     end;
