@@ -34,7 +34,7 @@ type
     private
         fAllowedCredentials : TCredentials;
 
-        function calculateDigestResponse(
+        function calcDigestResponse(
             const authCredDigest : PDigestInfo;
             const allowedCred : TCredential
         ) : string;
@@ -98,7 +98,7 @@ uses
         inherited destroy();
     end;
 
-    function TDigestStaticCredentialsAuth.calculateDigestResponse(
+    function TDigestStaticCredentialsAuth.calcDigestResponse(
         const authCredDigest : PDigestInfo;
         const allowedCred : TCredential
     ) : string;
@@ -108,25 +108,25 @@ uses
         ha1 := MD5Print(
             MD5String(
                 allowedCred.username + ':' +
-                digestInfo^.realm + ':' +
+                authCredDigest^.realm + ':' +
                 allowedCred.password
             )
         );
 
         ha2 := MD5Print(
-            MD5String(digestInfo^.method + ':' + digestInfo^.uri)
+            MD5String(authCredDigest^.method + ':' + authCredDigest^.uri)
         );
 
-        if digestInfo^.qop = '' then
+        if authCredDigest^.qop = '' then
         begin
-            origResponse := ha1 + ':' + digestInfo^.nonce + ':' + ha2;
+            origResponse := ha1 + ':' + authCredDigest^.nonce + ':' + ha2;
         end else
         begin
             origResponse := ha1 + ':' +
-                digestInfo^.nonce + ':' +
-                digestInfo^.nc + ':' +
-                digestInfo^.cnonce + ':' +
-                digestInfo^.qop + ':' +
+                authCredDigest^.nonce + ':' +
+                authCredDigest^.nc + ':' +
+                authCredDigest^.cnonce + ':' +
+                authCredDigest^.qop + ':' +
                 ha2;
         end;
 
@@ -145,6 +145,7 @@ uses
         const allowedCred : TCredentials
     ) : boolean;
     var indx, totCred : integer;
+        response : string;
         digestInfo : PDigestInfo;
     begin
         result := false;
@@ -154,33 +155,7 @@ uses
         begin
             if (allowedCred[indx].username = authCred.username) then
             begin
-                ha1 := MD5Print(
-                    MD5String(
-                        allowedCred[indx].username + ':' +
-                        digestInfo^.realm + ':' +
-                        allowedCred[indx].password
-                    )
-                );
-
-                ha2 := MD5Print(
-                    MD5String(digestInfo^.method + ':' + digestInfo^.uri)
-                );
-
-                if digestInfo^.qop = '' then
-                begin
-                    origResponse := ha1 + ':' + digestInfo^.nonce + ':' + ha2;
-                end else
-                begin
-                    origResponse := ha1 + ':' +
-                        digestInfo^.nonce + ':' +
-                        digestInfo^.nc + ':' +
-                        digestInfo^.cnonce + ':' +
-                        digestInfo^.qop + ':' +
-                        ha2;
-                end;
-
-                response := MD5Print(MD5String(origResponse));
-
+                response := calcDigestResponse(digestInfo, allowedCred[indx]);
                 if response = digestInfo^.response then
                 begin
                     //response matched, so credential is correct
