@@ -19,6 +19,8 @@ uses
 
     function initEmptyDigestInfo(const requestMethod : string) : PDigestInfo;
 
+    function freeDigestInfo(di : PDigestInfo) : PDigestInfo;
+
     function fillDigestInfo(
         di : PDigestInfo;
         const key: string;
