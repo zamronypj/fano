@@ -18,6 +18,9 @@ type
     TCredential = record
         username : string;
         password : string;
+
+        //additional user-related data
+        data : pointer;
     end;
 
     TCredentials = array of TCredential;
