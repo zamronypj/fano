@@ -156,11 +156,11 @@ uses
             if pos(DIGEST_STR, trimLeft(lowercase(authHeaderLine))) = 1 then
             begin
                 digestInfo := getDigestInfo(request.method, authHeaderLine);
-                if (fRealm = digestInfo.realm) then
+                if (fRealm = digestInfo^.realm) then
                 begin
                     //only continue if realm matched
-                    foundCredential.username := digestInfo.username;
-                    foundCredential.password := digestInfo.response;
+                    foundCredential.username := digestInfo^.username;
+                    foundCredential.password := digestInfo^.response;
                     foundCredential.data := digestInfo;
                     result := true;
                 end;
