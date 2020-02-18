@@ -49,7 +49,7 @@ implementation
 uses
 
     DigestAuthMiddlewareImpl,
-    StaticCredentialsAuthImpl;
+    DigestStaticCredentialsAuthImpl;
 
     constructor TStaticCredentialsDigestAuthMiddlewareFactory.create(const realm : string);
     begin
