@@ -20,7 +20,7 @@ uses
     function initEmptyDigestInfo(const requestMethod : string) : PDigestInfo;
 
     function fillDigestInfo(
-        di : TDigestInfo;
+        di : PDigestInfo;
         const key: string;
         const value : string
     ) : PDigestInfo;
