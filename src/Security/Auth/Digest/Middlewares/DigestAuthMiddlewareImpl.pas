@@ -143,7 +143,7 @@ uses
         DIGEST_STR = 'digest ';
     var
         authHeaderLine : string;
-        digestInfo : TDigestInfo;
+        digestInfo : PDigestInfo;
     begin
         result := false;
         foundCredential.username := '';
@@ -161,7 +161,7 @@ uses
                     //only continue if realm matched
                     foundCredential.username := digestInfo.username;
                     foundCredential.password := digestInfo.response;
-                    foundCredential.data := @digestInfo;
+                    foundCredential.data := digestInfo;
                     result := true;
                 end;
             end;
