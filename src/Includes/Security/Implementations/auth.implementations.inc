@@ -13,7 +13,12 @@
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
  *-----------------------------------------------*)
 
+CredentialTypes,
+
 StaticCredentialsAuthImpl,
 BasicAuthMiddlewareImpl,
 StaticCredentialsBasicAuthMiddlewareFactoryImpl,
-CredentialTypes,
+
+DigestStaticCredentialsAuthImpl,
+DigestAuthMiddlewareImpl,
+StaticCredentialsDigestAuthMiddlewareFactoryImpl,
