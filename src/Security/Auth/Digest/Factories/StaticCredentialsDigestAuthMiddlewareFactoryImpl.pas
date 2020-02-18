@@ -48,6 +48,7 @@ implementation
 
 uses
 
+    DevUrandomImpl,
     DigestAuthMiddlewareImpl,
     DigestStaticCredentialsAuthImpl;
 
@@ -88,6 +89,7 @@ uses
     begin
         setlength(fAllowedCredentials, fActualCredentialLen);
         result := TDigestAuthMiddleware.create(
+            TDevUrandom.create(),
             TDigestStaticCredentialsAuth.create(fAllowedCredentials),
             fRealm
         );
