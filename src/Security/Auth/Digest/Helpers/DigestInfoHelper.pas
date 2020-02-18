@@ -82,7 +82,7 @@ uses
         comaPos : integer;
     begin
         key := re.match[1];
-        lastMatchLen := re.matchLen;
+        lastMatchLen := re.SubExprMatchCount;
         value := re.match[lastMatchLen];
         if lastMatchLen < 4 then
         begin
