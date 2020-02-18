@@ -155,7 +155,7 @@ uses
             authHeaderLine := request.headers().getHeader('Authorization');
             if pos(DIGEST_STR, trimLeft(lowercase(authHeaderLine))) = 1 then
             begin
-                digestInfo := getDigestInfo(authHeaderLine);
+                digestInfo := getDigestInfo(request.method, authHeaderLine);
                 if (fRealm = digestInfo.realm) then
                 begin
                     //only continue if realm matched
