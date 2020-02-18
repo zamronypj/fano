@@ -15,7 +15,8 @@ interface
 
 uses
 
-    DigestInfoTypes;
+    DigestInfoTypes,
+    CredentialTypes;
 
     function initEmptyDigestInfo(const requestMethod : string) : PDigestInfo;
 
@@ -32,10 +33,16 @@ uses
         const authHeaderLine : string
     ) : PDigestInfo;
 
+    function calcDigestResponse(
+        const authCredDigest : PDigestInfo;
+        const allowedCred : TCredential
+    ) : string;
+
 implementation
 
 uses
 
+    md5,
     regexpr;
 
     function initEmptyDigestInfo(const requestMethod : string) : PDigestInfo;
@@ -160,6 +167,41 @@ uses
         finally
             re.free();
         end;
+    end;
+
+    function calcDigestResponse(
+        const authCredDigest : PDigestInfo;
+        const allowedCred : TCredential
+    ) : string;
+    var
+        ha1, ha2, origResponse : string;
+    begin
+        ha1 := MD5Print(
+            MD5String(
+                allowedCred.username + ':' +
+                authCredDigest^.realm + ':' +
+                allowedCred.password
+            )
+        );
+
+        ha2 := MD5Print(
+            MD5String(authCredDigest^.method + ':' + authCredDigest^.uri)
+        );
+
+        if authCredDigest^.qop = '' then
+        begin
+            origResponse := ha1 + ':' + authCredDigest^.nonce + ':' + ha2;
+        end else
+        begin
+            origResponse := ha1 + ':' +
+                authCredDigest^.nonce + ':' +
+                authCredDigest^.nc + ':' +
+                authCredDigest^.cnonce + ':' +
+                authCredDigest^.qop + ':' +
+                ha2;
+        end;
+
+        result := MD5Print(MD5String(origResponse));
     end;
 
 
