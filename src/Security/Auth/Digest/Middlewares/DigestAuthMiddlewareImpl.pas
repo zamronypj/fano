@@ -21,7 +21,9 @@ uses
     RouteArgsReaderIntf,
     RequestHandlerIntf,
     AuthIntf,
+    RandomIntf,
     InjectableObjectImpl,
+    DigestInfoTypes,
     CredentialTypes;
 
 type
@@ -34,6 +36,8 @@ type
      *-------------------------------------------------*)
     TDigestAuthMiddleware = class(TInjectableObject, IMiddleware)
     private
+        fRandom : IRandom;
+
         //basic authentication realm
         fRealm : string;
 
@@ -51,8 +55,6 @@ type
             const request : IRequest;
             out foundCredential : TCredential
         ) : boolean;
-
-        function extractValue(const regex : IRegex; const key : string) : string;
     public
         (*!------------------------------------------------
          * constructor
@@ -61,6 +63,7 @@ type
          * @param realm string of realm value
          *-------------------------------------------------*)
         constructor create(
+            const randomObj : IRandom;
             const auth : IAuth;
             const realm : string
         );
@@ -91,35 +94,26 @@ implementation
 
 uses
 
-    Base64,
-    HttpCodeResponseImpl;
-
-type
-
-    TDigestInfo = record
-        username : string;
-        nonce : string;
-        realm : string;
-        uri : string;
-        qop : string;
-        nc : string;
-        cnonce : string;
-        response : string;
-        opaque : string;
-    end;
+    SysUtils,
+    Md5,
+    HttpCodeResponseImpl,
+    DigestInfoHelper;
 
     (*!------------------------------------------------
      * constructor
      *-------------------------------------------------
+     * @param randomObj object responsible to generate random bytes
      * @param auth object responsible to authenticate
      * @param realm string of realm value
      *-------------------------------------------------*)
     constructor TDigestAuthMiddleware.create(
+        const randomObj : IRandom;
         const auth : IAuth;
         const realm : string
     );
     begin
         inherited create();
+        fRandom := randomObj;
         fAuth := auth;
         fRealm := realm;
     end;
@@ -129,6 +123,7 @@ type
      *-------------------------------------------------*)
     destructor TDigestAuthMiddleware.destroy();
     begin
+        fRandom := nil;
         fAuth := nil;
         inherited destroy();
     end;
@@ -153,67 +148,6 @@ type
         end
     end;
 
-    function initEmptyDigestInfo() : TDigestInfo;
-    begin
-        with result do
-        begin
-            username := '';
-            nonce := '';
-            realm := '';
-            uri := '';
-            qop := '';
-            nc := '';
-            cnonce := '';
-            response := '';
-            opaque := '';
-        end;
-    end;
-
-    function fillDigestInfo(const di : TDigestInfo; const key: string; const value : string) : TDigestInfo;
-    begin
-        with di do
-        begin
-            case key of
-                'username' : username := value;
-                'nonce' : nonce := value;
-                'realm' : realm := value;
-                'uri' : uri := value;
-                'qop' : qop := value;
-                'nc' : nc := value;
-                'cnonce' : cnonce := value;
-                'response' : response := value;
-                'opaque' : opaque := value;
-            end;
-        end;
-        result := di;
-    end;
-
-    function getDigestInfo(const authHeaderLine : string) : TDigestInfo;
-    const REGEXPATTERN = '(\w+)[\s]*=[\s]*(([^"''\s]+)|''([^'']*)''|"([^"]*)")\s*,*';
-    var re : TRegExpr;
-        key, value : string;
-    begin
-        result := initEmptyDigestInfo();
-        re := TRegExpr.create(REGEXPATTERN);
-        try
-            re.modifierG := true;
-            re.modifierM := true;
-            setLength(result.matches, 0);
-            if re.exec(authHeaderLine) then
-            begin
-                extractKeyValuePair(re, key, value);
-                result := fillDigestInfo(result, key, value);
-                while (re.execNext()) do
-                begin
-                    extractKeyValuePair(re, key, value);
-                    result := fillDigestInfo(result, key, value);
-                end;
-            end;
-        finally
-            re.free();
-        end;
-    end;
-
     (*!------------------------------------------------
      * extract credential from Basic Authentatication
      *-------------------------------------------------
@@ -227,26 +161,29 @@ type
     ) : boolean;
     const
         DIGEST_STR = 'digest ';
-        DIGEST_STR_LEN = length(DIGEST_STR);
     var
         authHeaderLine : string;
-        credential : string;
         digestInfo : TDigestInfo;
-        HA1, HA2 : string;
     begin
         result := false;
         foundCredential.username := '';
         foundCredential.password := '';
+        foundCredential.data := nil;
 
         if request.headers().has('Authorization') then
         begin
             authHeaderLine := request.headers().getHeader('Authorization');
-            if pos(DIGEST_STR, lowercase(authHeaderLine)) = 1 then
+            if pos(DIGEST_STR, trimLeft(lowercase(authHeaderLine))) = 1 then
             begin
                 digestInfo := getDigestInfo(authHeaderLine);
-                foundCredential.username := digestInfo.username;
-                foundCredential.password := digestInfo.response;
-                foundCredential.data := @digestInfo;
+                if (fRealm = digestInfo.realm) then
+                begin
+                    //only continue if realm matched
+                    foundCredential.username := digestInfo.username;
+                    foundCredential.password := digestInfo.response;
+                    foundCredential.data := @digestInfo;
+                    result := true;
+                end;
             end;
         end;
     end;
@@ -267,6 +204,8 @@ type
         const next : IRequestHandler
     ) : IResponse;
     var cred : TCredential;
+        nonce, opaque : string;
+        rndValue : TBytes;
     begin
         if getCredential(request, cred) and fAuth.auth(cred) then
         begin
@@ -274,8 +213,11 @@ type
             result := next.handleRequest(request, response, args);
         end else
         begin
-            nonce := generateNonce();
-            opaque := generateOpaque();
+            rndValue := fRandom.randomBytes(32);
+            nonce := MD5Print(MD5Buffer(rndValue, length(rndValue));
+            rndValue := fRandom.randomBytes(32);
+            opaque := MD5Print(MD5Buffer(rndValue, length(rndValue));
+
             result := THttpCodeResponse.create(
                 401,
                 'Unauthorized',

@@ -89,6 +89,7 @@ implementation
 
 uses
 
+    SysUtils,
     Base64,
     HttpCodeResponseImpl;
 
@@ -139,11 +140,12 @@ uses
         result := false;
         foundCredential.username := '';
         foundCredential.password := '';
+        foundCredential.data := nil;
 
         if request.headers().has('Authorization') then
         begin
             authHeaderLine := request.headers().getHeader('Authorization');
-            if pos(BASIC_STR, lowercase(authHeaderLine)) = 1 then
+            if pos(BASIC_STR, trimLeft(lowercase(authHeaderLine))) = 1 then
             begin
                 credential := decodeStringBase64(
                     copy(
