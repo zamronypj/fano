@@ -189,6 +189,7 @@ uses
     begin
         if getCredential(request, cred) and fAuth.auth(cred) then
         begin
+            freeDigestInfo(PDigestInfo(cred.data));
             //continue to next middleware
             result := next.handleRequest(request, response, args);
         end else

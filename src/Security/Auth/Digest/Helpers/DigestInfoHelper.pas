@@ -17,18 +17,18 @@ uses
 
     DigestInfoTypes;
 
-    function initEmptyDigestInfo(const requestMethod : string) : TDigestInfo;
+    function initEmptyDigestInfo(const requestMethod : string) : PDigestInfo;
 
     function fillDigestInfo(
         di : TDigestInfo;
         const key: string;
         const value : string
-    ) : TDigestInfo;
+    ) : PDigestInfo;
 
     function getDigestInfo(
         const requestMethod : string;
         const authHeaderLine : string
-    ) : TDigestInfo;
+    ) : PDigestInfo;
 
 implementation
 
@@ -36,9 +36,10 @@ uses
 
     regexpr;
 
-    function initEmptyDigestInfo(const requestMethod : string) : TDigestInfo;
+    function initEmptyDigestInfo(const requestMethod : string) : PDigestInfo;
     begin
-        with result do
+        new(result);
+        with result^ do
         begin
             username := '';
             nonce := '';
@@ -53,13 +54,20 @@ uses
         end;
     end;
 
+    function freeDigestInfo(di : PDigestInfo) : PDigestInfo;
+    begin
+        dispose(di);
+        di := nil;
+        result := di;
+    end;
+
     function fillDigestInfo(
-        di : TDigestInfo;
+        di : PDigestInfo;
         const key: string;
         const value : string
-    ) : TDigestInfo;
+    ) : PDigestInfo;
     begin
-        with di do
+        with di^ do
         begin
             case key of
                 'username' : username := value;
@@ -91,7 +99,7 @@ uses
             comaPos := pos(',', value);
             if (comaPos <> 0) then
             begin
-                value := copy(value, 1, comaPos);
+                value := copy(value, 1, comaPos - 1);
             end;
         end
     end;
@@ -124,7 +132,7 @@ uses
     function getDigestInfo(
         const requestMethod : string;
         const authHeaderLine : string
-    ) : TDigestInfo;
+    ) : PDigestInfo;
     const REGEXPATTERN = '(\w+)[\s]*=[\s]*(([^"''\s]+)|''([^'']*)''|"([^"]*)")\s*,*';
     var re : TRegExpr;
         key, value : string;
