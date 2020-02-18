@@ -82,8 +82,8 @@ uses
         comaPos : integer;
     begin
         key := re.match[1];
-        lastMatchLen := re.matchLen();
-        value := re.match(lastMatchLen);
+        lastMatchLen := re.matchLen;
+        value := re.match[lastMatchLen];
         if lastMatchLen < 4 then
         begin
             //we dealing with unquoted value, value will contain trailing coma
