@@ -194,9 +194,9 @@ uses
         end else
         begin
             rndValue := fRandom.randomBytes(32);
-            nonce := MD5Print(MD5Buffer(rndValue, length(rndValue));
+            nonce := MD5Print(MD5Buffer(rndValue, length(rndValue)));
             rndValue := fRandom.randomBytes(32);
-            opaque := MD5Print(MD5Buffer(rndValue, length(rndValue));
+            opaque := MD5Print(MD5Buffer(rndValue, length(rndValue)));
 
             result := THttpCodeResponse.create(
                 401,
