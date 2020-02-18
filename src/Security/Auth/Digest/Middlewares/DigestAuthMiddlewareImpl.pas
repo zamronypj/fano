@@ -194,6 +194,8 @@ uses
             result := next.handleRequest(request, response, args);
         end else
         begin
+            freeDigestInfo(PDigestInfo(cred.data));
+
             rndValue := fRandom.randomBytes(32);
             nonce := MD5Print(MD5Buffer(rndValue, length(rndValue)));
             rndValue := fRandom.randomBytes(32);

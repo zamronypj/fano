@@ -58,8 +58,11 @@ uses
 
     function freeDigestInfo(di : PDigestInfo) : PDigestInfo;
     begin
-        dispose(di);
-        di := nil;
+        if (di <> nil) then
+        begin
+            dispose(di);
+            di := nil;
+        end;
         result := di;
     end;
 
