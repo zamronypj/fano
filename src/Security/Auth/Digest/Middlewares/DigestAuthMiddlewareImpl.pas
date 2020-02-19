@@ -55,6 +55,22 @@ type
             const request : IRequest;
             out foundCredential : TCredential
         ) : boolean;
+
+        (*!------------------------------------------------
+         * handle unauthorized request
+         *-------------------------------------------------
+         * @param response current response object
+         * @return 401 response
+         *-------------------------------------------------*)
+        function handleUnauthorized(const response : IResponse) : IResponse;
+
+        (*!------------------------------------------------
+         * handle forbidden request
+         *-------------------------------------------------
+         * @param response current response object
+         * @return 403 response
+         *-------------------------------------------------*)
+        function handleForbidden(const response : IResponse) : IResponse;
     public
         (*!------------------------------------------------
          * constructor
@@ -171,6 +187,54 @@ uses
     (*!------------------------------------------------
      * handle authentication
      *-------------------------------------------------
+     * @param response current response object
+     * @return response
+    *-------------------------------------------------*)
+    function TDigestAuthMiddleware.handleUnauthorized(
+        const response : IResponse
+    ) : IResponse;
+    var nonce, opaque : string;
+        rndValue : TBytes;
+    begin
+        rndValue := fRandom.randomBytes(32);
+        nonce := MD5Print(MD5Buffer(rndValue, length(rndValue)));
+        rndValue := fRandom.randomBytes(32);
+        opaque := MD5Print(MD5Buffer(rndValue, length(rndValue)));
+
+        result := THttpCodeResponse.create(
+            401,
+            'Unauthorized',
+            response.headers()
+        );
+        result.headers().setHeader(
+            'WWW-Authenticate',
+            format(
+                'Digest realm="%s", qop="auth,auth-int", nonce="%s", opaque="%s"',
+                [ fRealm, nonce, opaque ]
+            )
+        );
+    end;
+
+    (*!------------------------------------------------
+     * handle forbidden request
+     *-------------------------------------------------
+     * @param response current response object
+     * @return 403 response
+    *-------------------------------------------------*)
+    function TDigestAuthMiddleware.handleForbidden(
+        const response : IResponse
+    ) : IResponse;
+    begin
+        result := THttpCodeResponse.create(
+            403,
+            'Forbidden',
+            response.headers()
+        );
+    end;
+
+    (*!------------------------------------------------
+     * handle authentication
+     *-------------------------------------------------
      * @param request current request object
      * @param response current response object
      * @param args route argument reader
@@ -184,35 +248,28 @@ uses
         const next : IRequestHandler
     ) : IResponse;
     var cred : TCredential;
-        nonce, opaque : string;
-        rndValue : TBytes;
+        credentialFound : boolean;
     begin
-        if getCredential(request, cred) and fAuth.auth(cred) then
-        begin
+        credentialFound := getCredential(request, cred);
+        try
+            if credentialFound then
+            begin
+                if (fAuth.auth(cred)) then
+                begin
+                    //continue to next middleware
+                    result := next.handleRequest(request, response, args);
+                end else
+                begin
+                    result := handleForbidden(response);
+                end;
+            end else
+            begin
+                result := handleUnauthorized(response);
+            end;
+        finally
+            //getCredential() will allocate PDigestInfo in heap in cred.data
+            //need to make sure we properly free them
             freeDigestInfo(PDigestInfo(cred.data));
-            //continue to next middleware
-            result := next.handleRequest(request, response, args);
-        end else
-        begin
-            freeDigestInfo(PDigestInfo(cred.data));
-
-            rndValue := fRandom.randomBytes(32);
-            nonce := MD5Print(MD5Buffer(rndValue, length(rndValue)));
-            rndValue := fRandom.randomBytes(32);
-            opaque := MD5Print(MD5Buffer(rndValue, length(rndValue)));
-
-            result := THttpCodeResponse.create(
-                401,
-                'Unauthorized',
-                response.headers()
-            );
-            result.headers().setHeader(
-                'WWW-Authenticate',
-                format(
-                    'Digest realm="%s", qop="auth,auth-int", nonce="%s", opaque="%s"',
-                    [ fRealm, nonce, opaque ]
-                )
-            );
         end;
     end;
 
