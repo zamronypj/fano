@@ -84,13 +84,17 @@ implementation
 
     function TErrorHandler.handleError(
         const env : ICGIEnvironmentEnumerator;
-        const exc : Exception;
-        const status : integer = 500;
-        const msg : string  = 'Internal Server Error'
+        const exc : EFanoException
     ) : IErrorHandler;
     begin
         writeln('Content-Type: text/html');
-        writeln('Status: ', intToStr(status), ' ', msg);
+        writeln('Status: ', intToStr(exc.status), ' ', exc.Message);
+
+        if (exc.header <> '') then
+        begin
+            writeln(exc.header);
+        end;
+
         writeln();
         writeln(
             '<!DOCTYPE html><html><head>' +

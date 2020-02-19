@@ -128,12 +128,10 @@ implementation
      *---------------------------------------------------*)
     function THtmlAjaxErrorHandler.handleError(
         const env : ICGIEnvironmentEnumerator;
-        const exc : Exception;
-        const status : integer = 500;
-        const msg : string  = 'Internal Server Error'
+        const exc : EFanoException;
     ) : IErrorHandler;
     begin
-        getErrorHandler().handleError(env, exc, status, msg);
+        getErrorHandler().handleError(env, exc);
         result := self;
     end;
 end.

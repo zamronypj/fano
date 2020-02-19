@@ -44,9 +44,7 @@ type
 
         function handleError(
             const env : ICGIEnvironmentEnumerator;
-            const exc : Exception;
-            const status : integer = 500;
-            const msg : string  = 'Internal Server Error'
+            const exc : EFanoException
         ) : IErrorHandler; override;
     end;
 

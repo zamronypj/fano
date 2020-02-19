@@ -112,7 +112,9 @@ uses
     EInvalidRequestImpl,
     ESockBindImpl,
     ESockCreateImpl,
-    ESockListenImpl;
+    ESockListenImpl,
+    EForbiddenImpl,
+    EUnauthorizedImpl;
 
     (*!-----------------------------------------------
      * constructor
@@ -214,6 +216,18 @@ uses
             on e : EInvalidRequest do
             begin
                 fAppSvc.errorHandler.handleError(fAppSvc.env.enumerator, e, 400, sHttp400Message);
+                reset();
+            end;
+
+            on e : EUnauthorized do
+            begin
+                fAppSvc.errorHandler.handleError(fAppSvc.env.enumerator, e, 401, sHttp401Message);
+                reset();
+            end;
+
+            on e : EForbidden do
+            begin
+                fAppSvc.errorHandler.handleError(fAppSvc.env.enumerator, e, 403, sHttp403Message);
                 reset();
             end;
 

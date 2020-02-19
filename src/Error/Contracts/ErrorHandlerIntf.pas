@@ -15,7 +15,7 @@ interface
 
 uses
 
-    SysUtils,
+    EFanoExceptionImpl,
     EnvironmentEnumeratorIntf;
 
 type
@@ -34,15 +34,11 @@ type
          *----------------------------------------------------
          * @param env environment enumerator
          * @param exc exception that is to be handled
-         * @param status HTTP error status, default is HTTP error 500
-         * @param msg HTTP error message
          * @return current instance
          *---------------------------------------------------*)
         function handleError(
             const env : ICGIEnvironmentEnumerator;
-            const exc : Exception;
-            const status : integer = 500;
-            const msg : string  = 'Internal Server Error'
+            const exc : EFanoException
         ) : IErrorHandler;
     end;
 
