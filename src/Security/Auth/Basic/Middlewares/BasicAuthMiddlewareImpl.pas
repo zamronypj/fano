@@ -51,6 +51,22 @@ type
             const request : IRequest;
             out foundCredential : TCredential
         ) : boolean;
+
+        (*!------------------------------------------------
+         * handle unauthorized request
+         *-------------------------------------------------
+         * @param response current response object
+         * @return 401 response
+         *-------------------------------------------------*)
+        function handleUnauthorized(const response : IResponse) : IResponse;
+
+        (*!------------------------------------------------
+         * handle forbidden request
+         *-------------------------------------------------
+         * @param response current response object
+         * @return 403 response
+         *-------------------------------------------------*)
+        function handleForbidden(const response : IResponse) : IResponse;
     public
         (*!------------------------------------------------
          * constructor
@@ -173,6 +189,44 @@ uses
     (*!------------------------------------------------
      * handle authentication
      *-------------------------------------------------
+     * @param response current response object
+     * @return response
+    *-------------------------------------------------*)
+    function TBasicAuthMiddleware.handleUnauthorized(
+        const response : IResponse
+    ) : IResponse;
+    begin
+        result := THttpCodeResponse.create(
+            401,
+            'Unauthorized',
+            response.headers()
+        );
+        result.headers().setHeader(
+            'WWW-Authenticate',
+            'Basic realm="' + fRealm + '"'
+        );
+    end;
+
+    (*!------------------------------------------------
+     * handle forbidden request
+     *-------------------------------------------------
+     * @param response current response object
+     * @return 403 response
+    *-------------------------------------------------*)
+    function TBasicAuthMiddleware.handleForbidden(
+        const response : IResponse
+    ) : IResponse;
+    begin
+        result := THttpCodeResponse.create(
+            403,
+            'Forbidden',
+            response.headers()
+        );
+    end;
+
+    (*!------------------------------------------------
+     * handle authentication
+     *-------------------------------------------------
      * @param request current request object
      * @param response current response object
      * @param args route argument reader
@@ -187,21 +241,19 @@ uses
     ) : IResponse;
     var cred : TCredential;
     begin
-        if getCredential(request, cred) and fAuth.auth(cred) then
+        if getCredential(request, cred) then
         begin
-            //continue to next middleware
-            result := next.handleRequest(request, response, args);
+            if (fAuth.auth(cred)) then
+            begin
+                //continue to next middleware
+                result := next.handleRequest(request, response, args);
+            end else
+            begin
+                result := handleForbidden(response);
+            end;
         end else
         begin
-            result := THttpCodeResponse.create(
-                401,
-                'Unauthorized',
-                response.headers()
-            );
-            result.headers().setHeader(
-                'WWW-Authenticate',
-                'Basic realm="' + fRealm + '"'
-            );
+            result := handleUnauthorized(response);
         end;
     end;
 
