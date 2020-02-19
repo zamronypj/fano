@@ -35,6 +35,10 @@ TDwordValidator = DwordValidatorImpl.TDwordValidator;
 QwordValidator = QwordValidatorImpl.TQwordValidator;
 TMinIntegerValidator = MinIntegerValidatorImpl.TMinIntegerValidator;
 TMaxIntegerValidator = MaxIntegerValidatorImpl.TMaxIntegerValidator;
+TEvenIntValidator = EvenIntValidatorImpl.TEvenIntValidator;
+TOddIntValidator = OddIntValidatorImpl.TOddIntValidator;
+TPositiveIntValidator = PositiveIntValidatorImpl.TPositiveIntValidator;
+TNegativeIntValidator = NegativeIntValidatorImpl.TNegativeIntValidator;
 
 TFloatValidator = FloatValidatorImpl.TFloatValidator;
 TNumericValidator = NumericValidatorImpl.TNumericValidator;

@@ -13,9 +13,13 @@
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
  *-----------------------------------------------*)
 
+TCredential = CredentialTypes.TCredential;
+TCredentials = CredentialTypes.TCredentials;
+
 TStaticCredentialsAuth = StaticCredentialsAuthImpl.TStaticCredentialsAuth;
 TBasicAuthMiddleware = BasicAuthMiddlewareImpl.TBasicAuthMiddleware;
 TStaticCredentialsBasicAuthMiddlewareFactory = StaticCredentialsBasicAuthMiddlewareFactoryImpl.TStaticCredentialsBasicAuthMiddlewareFactory;
 
-TCredential = CredentialTypes.TCredential;
-TCredentials = CredentialTypes.TCredentials;
+TDigestStaticCredentialsAuth = DigestStaticCredentialsAuthImpl.TDigestStaticCredentialsAuth;
+TDigestAuthMiddleware = DigestAuthMiddlewareImpl.TDigestAuthMiddleware;
+TStaticCredentialsDigestAuthMiddlewareFactory = StaticCredentialsDigestAuthMiddlewareFactoryImpl.TStaticCredentialsDigestAuthMiddlewareFactory;
