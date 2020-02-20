@@ -51,6 +51,10 @@ type
 
 implementation
 
+uses
+
+    MiddlewareLinkImpl;
+
     constructor TCompositeMiddleware.create(const middlewares : array of IMiddleware);
     begin
         fMiddlewares := initMiddlewares(middlewares);
