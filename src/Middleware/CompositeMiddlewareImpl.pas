@@ -113,6 +113,7 @@ uses
             try
                 result := fMiddlewares[0].handleRequest(request, response, args);
             finally
+                //remove reference to avoid memory leak
                 fMiddlewares[totMiddlewares-1].next := nil;
             end;
         end else
