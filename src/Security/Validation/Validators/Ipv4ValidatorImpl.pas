@@ -72,6 +72,7 @@ resourcestring
      *-------------------------------------------------
      * @param dataToValidate input data
      * @return true if data is valid otherwise false
+     * @link https://lists.freepascal.org/pipermail/fpc-pascal/2016-July/048523.html
      *-------------------------------------------------*)
     function TIpv4Validator.isValidData(
         const dataToValidate : string;
