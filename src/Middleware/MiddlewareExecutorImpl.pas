@@ -11,6 +11,7 @@ unit MiddlewareExecutorImpl;
 interface
 
 {$MODE OBJFPC}
+{$H+}
 
 uses
 

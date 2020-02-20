@@ -11,6 +11,7 @@ unit MiddlewareStackImpl;
 interface
 
 {$MODE OBJFPC}
+{$H+}
 
 uses
 
