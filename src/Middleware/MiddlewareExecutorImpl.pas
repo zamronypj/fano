@@ -47,7 +47,7 @@ implementation
 uses
 
     RequestHandlerIntf,
-    MiddlewareStackImpl;
+    MiddlewareChainImpl;
 
     constructor TMiddlewareExecutor.create(const appMiddlewares : IMiddlewareLinkList);
     begin
@@ -67,7 +67,7 @@ uses
     ) : IResponse;
     var mdlwr : IRequestHandler;
     begin
-        mdlwr := TMiddlewareStack.create(
+        mdlwr := TMiddlewareChain.create(
             fAppMiddlewares,
             routeHandler.middlewares(),
             routeHandler.handler()

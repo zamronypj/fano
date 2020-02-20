@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit MiddlewareStackImpl;
+unit MiddlewareChainImpl;
 
 interface
 
@@ -30,7 +30,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TMiddlewareStack = class(TInterfacedObject, IRequestHandler)
+    TMiddlewareChain = class(TInterfacedObject, IRequestHandler)
     private
         fAppMiddlewares : IMiddlewareLinkList;
         fRouteMiddlewares : IMiddlewareLinkList;
@@ -61,7 +61,7 @@ uses
 
     MiddlewareLinkIntf;
 
-    constructor TMiddlewareStack.create(
+    constructor TMiddlewareChain.create(
         const appMiddlewares : IMiddlewareLinkList;
         const routeMiddlewares : IMiddlewareLinkList;
         const handler : IRequestHandler
@@ -73,7 +73,7 @@ uses
         linkAppAndRouteMiddlewares();
     end;
 
-    destructor TMiddlewareStack.destroy();
+    destructor TMiddlewareChain.destroy();
     begin
         //remove reference to avoid memory leak
         unlinkAppAndRouteMiddlewares();
@@ -83,7 +83,7 @@ uses
         inherited destroy();
     end;
 
-    procedure TMiddlewareStack.linkAppAndRouteMiddlewares();
+    procedure TMiddlewareChain.linkAppAndRouteMiddlewares();
     var appLastLink, routeFirstLink, routeLastLink : IMiddlewareLink;
     begin
         if (fAppMiddlewares.count() > 0) then
@@ -109,7 +109,7 @@ uses
         end;
     end;
 
-    procedure TMiddlewareStack.unlinkAppAndRouteMiddlewares();
+    procedure TMiddlewareChain.unlinkAppAndRouteMiddlewares();
     var appLastLink, routeLastLink : IMiddlewareLink;
     begin
         if (fAppMiddlewares.count() > 0) then
@@ -134,7 +134,7 @@ uses
         end;
     end;
 
-    function TMiddlewareStack.getFirst() : IRequestHandler;
+    function TMiddlewareChain.getFirst() : IRequestHandler;
     var totAppMiddleware, totRouteMiddleware : integer;
     begin
         totAppMiddleware := fAppMiddlewares.count();
@@ -159,7 +159,7 @@ uses
         end;
     end;
 
-    function TMiddlewareStack.handleRequest(
+    function TMiddlewareChain.handleRequest(
         const request : IRequest;
         const response : IResponse;
         const routeArgs : IRouteArgsReader
