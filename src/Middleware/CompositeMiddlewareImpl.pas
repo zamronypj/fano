@@ -109,7 +109,7 @@ uses
         if (totMiddlewares > 0) then
         begin
             fMiddlewares[totMiddlewares-1].next := next;
-            fMiddlewares[0].handleRequest(request, response, args);
+            result := fMiddlewares[0].handleRequest(request, response, args);
         end else
         begin
             result := next.handleRequest(request, response, args);
