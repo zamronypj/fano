@@ -46,6 +46,7 @@ implementation
 
 uses
 
+    RequestHandlerIntf,
     MiddlewareStackImpl;
 
     constructor TMiddlewareExecutor.create(const appMiddlewares : IMiddlewareLinkList);
