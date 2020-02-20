@@ -83,17 +83,50 @@ uses
         inherited destroy();
     end;
 
+    (*!------------------------------------------------
+     * combine application middleware list and route
+     * middleware list and controller request handler
+     * as one chain
+     *-------------------------------------------------
+     * Combine
+     * app middlewares => [mw0]--[mw1]
+     * route middlewares => [rmw0]--[rmw1]
+     * request handler => [handler]
+     * to become
+     * [mw0]--[mw1]--[rmw0]--[rmw1]--[handler]
+     *
+     * app middlewares => empty
+     * route middlewares => [rmw0]--[rmw1]
+     * request handler => [handler]
+     * to become
+     * [rmw0]--[rmw1]--[handler]
+     *
+     * app middlewares => [mw0]--[mw1]
+     * route middlewares => empty
+     * request handler => [handler]
+     * to become
+     * [mw0]--[mw1]--[handler]
+     *
+     * app middlewares => empty
+     * route middlewares => empty
+     * request handler => [handler]
+     * to become
+     * [handler]
+     *-------------------------------------------------*)
     procedure TMiddlewareChain.linkAppAndRouteMiddlewares();
     var appLastLink, routeFirstLink, routeLastLink : IMiddlewareLink;
+        totAppMiddleware, totRouteMiddleware : integer;
     begin
-        if (fAppMiddlewares.count() > 0) then
+        totAppMiddleware := fAppMiddlewares.count();
+        totRouteMiddleware := fRouteMiddlewares.count();
+        if (totAppMiddleware > 0) then
         begin
-            appLastLink := fAppMiddlewares.get(fAppMiddlewares.count() - 1);
-            if (fRouteMiddlewares.count() > 0) then
+            appLastLink := fAppMiddlewares.get(totAppMiddleware - 1);
+            if (totRouteMiddleware > 0) then
             begin
                 routeFirstLink := fRouteMiddlewares.get(0);
                 appLastLink.next := routeFirstLink;
-                routeLastLink := fRouteMiddlewares.get(fRouteMiddlewares.count() - 1);
+                routeLastLink := fRouteMiddlewares.get(totRouteMiddleware - 1);
                 routeLastLink.next := fHandler;
             end else
             begin
@@ -101,9 +134,9 @@ uses
             end;
         end else
         begin
-            if (fRouteMiddlewares.count() > 0) then
+            if (totRouteMiddleware > 0) then
             begin
-                routeLastLink := fRouteMiddlewares.get(fRouteMiddlewares.count() - 1);
+                routeLastLink := fRouteMiddlewares.get(totRouteMiddleware - 1);
                 routeLastLink.next := fHandler;
             end;
         end;
@@ -111,14 +144,17 @@ uses
 
     procedure TMiddlewareChain.unlinkAppAndRouteMiddlewares();
     var appLastLink, routeLastLink : IMiddlewareLink;
+        totAppMiddleware, totRouteMiddleware : integer;
     begin
-        if (fAppMiddlewares.count() > 0) then
+        totAppMiddleware := fAppMiddlewares.count();
+        totRouteMiddleware := fRouteMiddlewares.count();
+        if (totAppMiddleware > 0) then
         begin
-            appLastLink := fAppMiddlewares.get(fAppMiddlewares.count() - 1);
-            if (fRouteMiddlewares.count() > 0) then
+            appLastLink := fAppMiddlewares.get(totAppMiddleware - 1);
+            if (totRouteMiddleware > 0) then
             begin
                 appLastLink.next := nil;
-                routeLastLink := fRouteMiddlewares.get(fRouteMiddlewares.count() - 1);
+                routeLastLink := fRouteMiddlewares.get(totRouteMiddleware - 1);
                 routeLastLink.next := nil;
             end else
             begin
@@ -126,9 +162,9 @@ uses
             end;
         end else
         begin
-            if (fRouteMiddlewares.count() > 0) then
+            if (totRouteMiddleware > 0) then
             begin
-                routeLastLink := fRouteMiddlewares.get(fRouteMiddlewares.count() - 1);
+                routeLastLink := fRouteMiddlewares.get(totRouteMiddleware - 1);
                 routeLastLink.next := nil;
             end;
         end;
@@ -145,13 +181,8 @@ uses
             begin
                 result := fAppMiddlewares.get(0);
             end else
-            if (totRouteMiddleware > 0) then
             begin
                 result := fRouteMiddlewares.get(0);
-            end else
-            begin
-                //this should not happened
-                result := fHandler;
             end;
         end else
         begin
