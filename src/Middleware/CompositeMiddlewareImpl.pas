@@ -91,6 +91,7 @@ uses
         totMiddlewares := length(middlewares);
         for i := 0 to totMiddlewares - 1 do
         begin
+            middlewares[i].next := nil;
             middlewares[i] := nil;
         end;
         setLength(middlewares, 0);
