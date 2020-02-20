@@ -15,6 +15,9 @@ interface
 uses
 
     Classes,
+    RequestIntf,
+    ResponseIntf,
+    RouteArgsReaderIntf,
     RequestHandlerIntf,
     MiddlewareLinkListIntf;
 
