@@ -16,18 +16,17 @@ uses
 
     Classes,
     RequestHandlerIntf,
-    MiddlewareLinkListIntf,
-    MiddlewareStackIntf;
+    MiddlewareLinkListIntf;
 
 type
 
     (*!------------------------------------------------
-     * Basic class having capability to combine two middleware
-     * link list as one
+     * Internal request handler class having capability
+     * to combine two middleware link list as one
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TMiddlewareStack = class(TInterfacedObject, IMiddlewareStack)
+    TMiddlewareStack = class(TInterfacedObject, IRequestHandler)
     private
         fAppMiddlewares : IMiddlewareLinkList;
         fRouteMiddlewares : IMiddlewareLinkList;
@@ -35,6 +34,7 @@ type
 
         procedure linkAppAndRouteMiddlewares();
         procedure unlinkAppAndRouteMiddlewares();
+        function getFirst() : IRequestHandler;
     public
         constructor create(
             const appMiddlewares : IMiddlewareLinkList;
@@ -42,7 +42,13 @@ type
             const handler : IRequestHandler
         );
         destructor destroy(); override;
-        function getFirst() : IRequestHandler;
+
+        function handleRequest(
+            const request : IRequest;
+            const response : IResponse;
+            const routeArgs : IRouteArgsReader
+        ) : IResponse;
+
     end;
 
 implementation
@@ -147,6 +153,15 @@ uses
         begin
             result := fHandler;
         end;
+    end;
+
+    function TMiddlewareStack.handleRequest(
+        const request : IRequest;
+        const response : IResponse;
+        const routeArgs : IRouteArgsReader
+    ) : IResponse;
+    begin
+        result := getFirst().handleRequest(request, response, routeArgs);
     end;
 
 end.

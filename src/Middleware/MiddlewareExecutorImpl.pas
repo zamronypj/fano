@@ -45,7 +45,6 @@ implementation
 
 uses
 
-    MiddlewareStackIntf,
     MiddlewareStackImpl;
 
     constructor TMiddlewareExecutor.create(const appMiddlewares : IMiddlewareLinkList);
@@ -64,7 +63,7 @@ uses
         const response : IResponse;
         const routeHandler : IRouteHandler
     ) : IResponse;
-    var mdlwr : IMiddlewareStack;
+    var mdlwr : IRequestHandler;
     begin
         mdlwr := TMiddlewareStack.create(
             fAppMiddlewares,
@@ -73,7 +72,7 @@ uses
         );
         try
 
-            result := mdlwr.first.handleRequest(
+            result := mdlwr.handleRequest(
                 request,
                 response,
                 routeHandler.argsReader()
