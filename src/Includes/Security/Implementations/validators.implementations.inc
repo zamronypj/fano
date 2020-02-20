@@ -19,6 +19,7 @@ AlphaNumValidatorImpl,
 AlphaNumSpaceValidatorImpl,
 AlphaNumDashValidatorImpl,
 AlphaValidatorImpl,
+SlugValidatorImpl,
 
 BaseCompositeValidatorImpl,
 CompositeValidatorImpl,
