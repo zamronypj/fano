@@ -87,3 +87,5 @@ TFileFormatValidator = FileFormatValidatorImpl.TFileFormatValidator;
 TImagePngValidator = ImagePngValidatorImpl.TImagePngValidator;
 TImageJpgValidator = ImageJpgValidatorImpl.TImageJpgValidator;
 TImageGifValidator = ImageGifValidatorImpl.TImageGifValidator;
+
+TIpv4Validator = Ipv4ValidatorImpl.TIpv4Validator;

@@ -79,3 +79,5 @@ FileFormatValidatorImpl,
 ImagePngValidatorImpl,
 ImageJpgValidatorImpl,
 ImageGifValidatorImpl,
+
+Ipv4ValidatorImpl,
