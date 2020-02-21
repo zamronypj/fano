@@ -7,21 +7,18 @@
  *}
 
 (*! ---------------------------------------------
- * unit interfaces that is included in fano.pas unit
+ * list of auth units in security
+ * that is included in implementations.inc
  *
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
  *-----------------------------------------------*)
 
-ValidatorIntf,
-RequestValidatorIntf,
-ValidationRulesIntf,
-ValidatorCollectionIntf,
+CredentialTypes,
 
-SanitizerIntf,
+StaticCredentialsAuthImpl,
+BasicAuthMiddlewareImpl,
+StaticCredentialsBasicAuthMiddlewareFactoryImpl,
 
-CsrfIntf,
-
-CorsIntf,
-CorsConfigIntf,
-
-AuthIntf,
+DigestStaticCredentialsAuthImpl,
+DigestAuthMiddlewareImpl,
+StaticCredentialsDigestAuthMiddlewareFactoryImpl,

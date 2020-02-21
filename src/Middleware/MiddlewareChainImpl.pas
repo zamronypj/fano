@@ -6,28 +6,31 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit MiddlewareStackImpl;
+unit MiddlewareChainImpl;
 
 interface
 
 {$MODE OBJFPC}
+{$H+}
 
 uses
 
     Classes,
+    RequestIntf,
+    ResponseIntf,
+    RouteArgsReaderIntf,
     RequestHandlerIntf,
-    MiddlewareLinkListIntf,
-    MiddlewareStackIntf;
+    MiddlewareLinkListIntf;
 
 type
 
     (*!------------------------------------------------
-     * Basic class having capability to combine two middleware
-     * link list as one
+     * Internal request handler class having capability
+     * to combine two middleware link list as one
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TMiddlewareStack = class(TInterfacedObject, IMiddlewareStack)
+    TMiddlewareChain = class(TInterfacedObject, IRequestHandler)
     private
         fAppMiddlewares : IMiddlewareLinkList;
         fRouteMiddlewares : IMiddlewareLinkList;
@@ -35,6 +38,7 @@ type
 
         procedure linkAppAndRouteMiddlewares();
         procedure unlinkAppAndRouteMiddlewares();
+        function getFirst() : IRequestHandler;
     public
         constructor create(
             const appMiddlewares : IMiddlewareLinkList;
@@ -42,7 +46,13 @@ type
             const handler : IRequestHandler
         );
         destructor destroy(); override;
-        function getFirst() : IRequestHandler;
+
+        function handleRequest(
+            const request : IRequest;
+            const response : IResponse;
+            const routeArgs : IRouteArgsReader
+        ) : IResponse;
+
     end;
 
 implementation
@@ -51,7 +61,7 @@ uses
 
     MiddlewareLinkIntf;
 
-    constructor TMiddlewareStack.create(
+    constructor TMiddlewareChain.create(
         const appMiddlewares : IMiddlewareLinkList;
         const routeMiddlewares : IMiddlewareLinkList;
         const handler : IRequestHandler
@@ -63,7 +73,7 @@ uses
         linkAppAndRouteMiddlewares();
     end;
 
-    destructor TMiddlewareStack.destroy();
+    destructor TMiddlewareChain.destroy();
     begin
         //remove reference to avoid memory leak
         unlinkAppAndRouteMiddlewares();
@@ -73,17 +83,50 @@ uses
         inherited destroy();
     end;
 
-    procedure TMiddlewareStack.linkAppAndRouteMiddlewares();
+    (*!------------------------------------------------
+     * combine application middleware list and route
+     * middleware list and controller request handler
+     * as one chain
+     *-------------------------------------------------
+     * Combine
+     * app middlewares => [mw0]--[mw1]
+     * route middlewares => [rmw0]--[rmw1]
+     * request handler => [handler]
+     * to become
+     * [mw0]--[mw1]--[rmw0]--[rmw1]--[handler]
+     *
+     * app middlewares => empty
+     * route middlewares => [rmw0]--[rmw1]
+     * request handler => [handler]
+     * to become
+     * [rmw0]--[rmw1]--[handler]
+     *
+     * app middlewares => [mw0]--[mw1]
+     * route middlewares => empty
+     * request handler => [handler]
+     * to become
+     * [mw0]--[mw1]--[handler]
+     *
+     * app middlewares => empty
+     * route middlewares => empty
+     * request handler => [handler]
+     * to become
+     * [handler]
+     *-------------------------------------------------*)
+    procedure TMiddlewareChain.linkAppAndRouteMiddlewares();
     var appLastLink, routeFirstLink, routeLastLink : IMiddlewareLink;
+        totAppMiddleware, totRouteMiddleware : integer;
     begin
-        if (fAppMiddlewares.count() > 0) then
+        totAppMiddleware := fAppMiddlewares.count();
+        totRouteMiddleware := fRouteMiddlewares.count();
+        if (totAppMiddleware > 0) then
         begin
-            appLastLink := fAppMiddlewares.get(fAppMiddlewares.count() - 1);
-            if (fRouteMiddlewares.count() > 0) then
+            appLastLink := fAppMiddlewares.get(totAppMiddleware - 1);
+            if (totRouteMiddleware > 0) then
             begin
                 routeFirstLink := fRouteMiddlewares.get(0);
                 appLastLink.next := routeFirstLink;
-                routeLastLink := fRouteMiddlewares.get(fRouteMiddlewares.count() - 1);
+                routeLastLink := fRouteMiddlewares.get(totRouteMiddleware - 1);
                 routeLastLink.next := fHandler;
             end else
             begin
@@ -91,24 +134,27 @@ uses
             end;
         end else
         begin
-            if (fRouteMiddlewares.count() > 0) then
+            if (totRouteMiddleware > 0) then
             begin
-                routeLastLink := fRouteMiddlewares.get(fRouteMiddlewares.count() - 1);
+                routeLastLink := fRouteMiddlewares.get(totRouteMiddleware - 1);
                 routeLastLink.next := fHandler;
             end;
         end;
     end;
 
-    procedure TMiddlewareStack.unlinkAppAndRouteMiddlewares();
+    procedure TMiddlewareChain.unlinkAppAndRouteMiddlewares();
     var appLastLink, routeLastLink : IMiddlewareLink;
+        totAppMiddleware, totRouteMiddleware : integer;
     begin
-        if (fAppMiddlewares.count() > 0) then
+        totAppMiddleware := fAppMiddlewares.count();
+        totRouteMiddleware := fRouteMiddlewares.count();
+        if (totAppMiddleware > 0) then
         begin
-            appLastLink := fAppMiddlewares.get(fAppMiddlewares.count() - 1);
-            if (fRouteMiddlewares.count() > 0) then
+            appLastLink := fAppMiddlewares.get(totAppMiddleware - 1);
+            if (totRouteMiddleware > 0) then
             begin
                 appLastLink.next := nil;
-                routeLastLink := fRouteMiddlewares.get(fRouteMiddlewares.count() - 1);
+                routeLastLink := fRouteMiddlewares.get(totRouteMiddleware - 1);
                 routeLastLink.next := nil;
             end else
             begin
@@ -116,15 +162,15 @@ uses
             end;
         end else
         begin
-            if (fRouteMiddlewares.count() > 0) then
+            if (totRouteMiddleware > 0) then
             begin
-                routeLastLink := fRouteMiddlewares.get(fRouteMiddlewares.count() - 1);
+                routeLastLink := fRouteMiddlewares.get(totRouteMiddleware - 1);
                 routeLastLink.next := nil;
             end;
         end;
     end;
 
-    function TMiddlewareStack.getFirst() : IRequestHandler;
+    function TMiddlewareChain.getFirst() : IRequestHandler;
     var totAppMiddleware, totRouteMiddleware : integer;
     begin
         totAppMiddleware := fAppMiddlewares.count();
@@ -135,18 +181,22 @@ uses
             begin
                 result := fAppMiddlewares.get(0);
             end else
-            if (totRouteMiddleware > 0) then
             begin
                 result := fRouteMiddlewares.get(0);
-            end else
-            begin
-                //this should not happened
-                result := fHandler;
             end;
         end else
         begin
             result := fHandler;
         end;
+    end;
+
+    function TMiddlewareChain.handleRequest(
+        const request : IRequest;
+        const response : IResponse;
+        const routeArgs : IRouteArgsReader
+    ) : IResponse;
+    begin
+        result := getFirst().handleRequest(request, response, routeArgs);
     end;
 
 end.
