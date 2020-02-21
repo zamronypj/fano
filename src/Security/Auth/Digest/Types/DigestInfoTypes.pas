@@ -6,30 +6,35 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit MiddlewareStackIntf;
+unit DigestInfoTypes;
 
 interface
 
 {$MODE OBJFPC}
-
-uses
-
-    RequestHandlerIntf;
+{$H+}
 
 type
 
     (*!------------------------------------------------
-     * interface for any class having capability
-     * as middleware stack
+     * type to hold data from HTTP Digest Authentication (RFC 2617)
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    IMiddlewareStack = interface
-        ['{39FCE1D4-0B0D-4F02-92D2-019583DC6663}']
-
-        function getFirst() : IRequestHandler;
-        property first : IRequestHandler read getFirst;
+    TDigestInfo = record
+        username : string;
+        nonce : string;
+        realm : string;
+        uri : string;
+        qop : string;
+        nc : string;
+        cnonce : string;
+        response : string;
+        opaque : string;
+        method : string;
     end;
 
+    PDigestInfo = ^TDigestInfo;
+
 implementation
+
 end.
