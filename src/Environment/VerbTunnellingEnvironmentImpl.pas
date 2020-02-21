@@ -49,7 +49,7 @@ type
         {-----------------------------------------
          Retrieve REQUEST_METHOD environment variable
         ------------------------------------------}
-        function requestMethod() : string;
+        function requestMethod() : string; override;
 
     end;
 

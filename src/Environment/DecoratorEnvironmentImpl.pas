@@ -111,7 +111,7 @@ type
         {-----------------------------------------
          Retrieve REQUEST_METHOD environment variable
         ------------------------------------------}
-        function requestMethod() : string;
+        function requestMethod() : string; virtual;
 
         {-----------------------------------------
          Retrieve REQUEST_SCHEME environment variable
