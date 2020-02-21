@@ -37,7 +37,7 @@ type
             const methodOverrideHeader : string
         ) : string;
     public
-        constructor create(const aEnv : ICGIEnvironment);
+        constructor create(aEnv : ICGIEnvironment);
         destructor destroy(); override;
 
         (*!-----------------------------------------
@@ -179,7 +179,7 @@ uses
     sysutils,
     EInvalidMethodImpl;
 
-    constructor TVerbTunnellingEnvironment.create(const aEnv : ICGIEnvironment);
+    constructor TVerbTunnellingEnvironment.create(aEnv : ICGIEnvironment);
     begin
         fEnv := aEnv;
     end;
