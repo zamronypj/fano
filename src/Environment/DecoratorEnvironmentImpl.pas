@@ -486,7 +486,7 @@ implementation
      *-----------------------------------------------*)
     function TDecoratorEnvironment.count() : integer;
     begin
-        result := fEnv.enumerator.count();
+        result := fDecoratedEnv.enumerator.count();
     end;
 
     (*!------------------------------------------------
@@ -497,7 +497,7 @@ implementation
      *-----------------------------------------------*)
     function TDecoratorEnvironment.getKey(const indx : integer) : shortstring;
     begin
-        result := fEnv.enumerator.getKey(indx);
+        result := fDecoratedEnv.enumerator.getKey(indx);
     end;
 
 end.
