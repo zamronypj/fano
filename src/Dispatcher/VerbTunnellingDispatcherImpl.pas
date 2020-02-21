@@ -81,10 +81,13 @@ uses
         const env: ICGIEnvironment;
         const stdIn : IStdIn
     ) : IResponse;
+    var verbEnv : ICGIEnvironment;
     begin
-        result := fActualDispatcher.dispatchRequest(
-            TVerbTunnellingEnvironment.create(env),
-            stdIn
-        );
+        verbEnv := TVerbTunnellingEnvironment.create(env);
+        try
+            result := fActualDispatcher.dispatchRequest(verbEnv, stdIn);
+        finally
+            verbEnv := nil;
+        end;
     end;
 end.
