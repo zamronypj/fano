@@ -57,8 +57,7 @@ implementation
 uses
 
     EnvironmentEnumeratorIntf,
-    VerbTunnellingEnvironmentImpl,
-    NullEnvironmentImpl;
+    VerbTunnellingEnvironmentImpl;
 
     constructor TVerbTunnellingDispatcher.create(const actualDispatcher : IDispatcher);
     begin
@@ -82,20 +81,9 @@ uses
         const env: ICGIEnvironment;
         const stdIn : IStdIn
     ) : IResponse;
-    var envEnum : ICGIEnvironmentEnumerator;
     begin
-        //check if it support environment enumeration
-        if env is ICGIEnvironmentEnumerator then
-        begin
-            envEnum := env as ICGIEnvironmentEnumerator;
-        end else
-        begin
-            //not support environment enumeration, so just pass null class
-            envEnum := TNullCGIEnvironment.create();
-        end;
-
         result := fActualDispatcher.dispatchRequest(
-            TVerbTunnellingEnvironment.create(env, envEnum),
+            TVerbTunnellingEnvironment.create(env),
             stdIn
         );
     end;
