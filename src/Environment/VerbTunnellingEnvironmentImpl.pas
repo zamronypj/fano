@@ -18,7 +18,7 @@ uses
     DependencyIntf,
     EnvironmentIntf,
     EnvironmentEnumeratorIntf,
-    InjectableObjectImpl;
+    DecoratorEnvironmentImpl;
 
 type
 
@@ -28,17 +28,14 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *--------------------------------------------------*)
-    TVerbTunnellingEnvironment = class(TInjectableObject, ICGIEnvironment, ICGIEnvironmentEnumerator)
+    TVerbTunnellingEnvironment = class(TDecoratorEnvironment)
     private
-        fEnv : ICGIEnvironment;
 
         function overrideMethod(
             const originalMethod : string;
             const methodOverrideHeader : string
         ) : string;
     public
-        constructor create(const aEnv : ICGIEnvironment);
-        destructor destroy(); override;
 
         (*!-----------------------------------------
          * Retrieve an environment variable
@@ -46,130 +43,14 @@ type
          * @param key name of variable
          * @return variable value
          *------------------------------------------*)
-        function env(const keyName : string) : string;
+        function env(const keyName : string) : string; override;
 
-        {-----------------------------------------
-         Retrieve GATEWAY_INTERFACE environment variable
-        ------------------------------------------}
-        function gatewayInterface() : string;
-
-        {-----------------------------------------
-         Retrieve REMOTE_ADDR environment variable
-        ------------------------------------------}
-        function remoteAddr() : string;
-
-        {-----------------------------------------
-         Retrieve REMOTE_PORT environment variable
-        ------------------------------------------}
-        function remotePort() : string;
-
-        {-----------------------------------------
-         Retrieve SERVER_ADDR environment variable
-        ------------------------------------------}
-        function serverAddr() : string;
-
-        {-----------------------------------------
-         Retrieve SERVER_PORT environment variable
-        ------------------------------------------}
-        function serverPort() : string;
-
-        {-----------------------------------------
-         Retrieve DOCUMENT_ROOT environment variable
-        ------------------------------------------}
-        function documentRoot() : string;
 
         {-----------------------------------------
          Retrieve REQUEST_METHOD environment variable
         ------------------------------------------}
         function requestMethod() : string;
 
-        {-----------------------------------------
-         Retrieve REQUEST_SCHEME environment variable
-        ------------------------------------------}
-        function requestScheme() : string;
-
-        {-----------------------------------------
-         Retrieve REQUEST_URI environment variable
-        ------------------------------------------}
-        function requestUri() : string;
-
-        {-----------------------------------------
-         Retrieve QUERY_STRING environment variable
-        ------------------------------------------}
-        function queryString() : string;
-
-        {-----------------------------------------
-         Retrieve SERVER_NAME environment variable
-        ------------------------------------------}
-        function serverName() : string;
-
-        {-----------------------------------------
-         Retrieve CONTENT_TYPE environment variable
-        ------------------------------------------}
-        function contentType() : string;
-
-        {-----------------------------------------
-         Retrieve CONTENT_LENGTH environment variable
-        ------------------------------------------}
-        function contentLength() : string;
-
-        (*-----------------------------------------
-         * Retrieve CONTENT_LENGTH environment variable
-         * as integer value
-         *------------------------------------------
-         * @return content length as integer value
-         *------------------------------------------*)
-        function intContentLength() : integer;
-
-        {-----------------------------------------
-         Retrieve HTTP_HOST environment variable
-        ------------------------------------------}
-        function httpHost() : string;
-
-        {-----------------------------------------
-         Retrieve HTTP_USER_AGENT environment variable
-        ------------------------------------------}
-        function httpUserAgent() : string;
-
-        {-----------------------------------------
-         Retrieve HTTP_ACCEPT environment variable
-        ------------------------------------------}
-        function httpAccept() : string;
-
-        {-----------------------------------------
-         Retrieve HTTP_ACCEPT_LANGUAGE environment variable
-        ------------------------------------------}
-        function httpAcceptLanguage() : string;
-
-        {-----------------------------------------
-         Retrieve HTTP_COOKIE environment variable
-        ------------------------------------------}
-        function httpCookie() : string;
-
-        (*!------------------------------------------------
-         * get number of variables
-         *-----------------------------------------------
-         * @return number of variables
-         *-----------------------------------------------*)
-        function count() : integer;
-
-        (*!------------------------------------------------
-         * get key by index
-         *-----------------------------------------------
-         * @param index index to use
-         * @return key name
-         *-----------------------------------------------*)
-        function getKey(const indx : integer) : shortstring;
-
-        (*!------------------------------------------------
-         * get value by index
-         *-----------------------------------------------
-         * @param index index to use
-         * @return value name
-         *-----------------------------------------------*)
-        function getValue(const indx : integer) : string;
-
-        function getEnumerator() : ICGIEnvironmentEnumerator;
     end;
 
 implementation
@@ -178,17 +59,6 @@ uses
 
     sysutils,
     EInvalidMethodImpl;
-
-    constructor TVerbTunnellingEnvironment.create(const aEnv : ICGIEnvironment);
-    begin
-        fEnv := aEnv;
-    end;
-
-    destructor TVerbTunnellingEnvironment.destroy();
-    begin
-        fEnv := nil;
-        inherited destroy();
-    end;
 
     function TVerbTunnellingEnvironment.overrideMethod(
         const originalMethod : string;
@@ -245,54 +115,6 @@ uses
     end;
 
     {-----------------------------------------
-     Retrieve GATEWAY_INTERFACE environment variable
-    ------------------------------------------}
-    function TVerbTunnellingEnvironment.gatewayInterface() : string;
-    begin
-        result := fEnv.gatewayInterface();
-    end;
-
-    {-----------------------------------------
-     Retrieve REMOTE_ADDR environment variable
-    ------------------------------------------}
-    function TVerbTunnellingEnvironment.remoteAddr() : string;
-    begin
-        result := fEnv.remoteAddr();
-    end;
-
-    {-----------------------------------------
-     Retrieve REMOTE_PORT environment variable
-    ------------------------------------------}
-    function TVerbTunnellingEnvironment.remotePort() : string;
-    begin
-        result := fEnv.remotePort();
-    end;
-
-    {-----------------------------------------
-     Retrieve SERVER_ADDR environment variable
-    ------------------------------------------}
-    function TVerbTunnellingEnvironment.serverAddr() : string;
-    begin
-        result := fEnv.serverAddr();
-    end;
-
-    {-----------------------------------------
-     Retrieve SERVER_PORT environment variable
-    ------------------------------------------}
-    function TVerbTunnellingEnvironment.serverPort() : string;
-    begin
-        result := fEnv.serverPort();
-    end;
-
-    {-----------------------------------------
-     Retrieve DOCUMENT_ROOT environment variable
-    ------------------------------------------}
-    function TVerbTunnellingEnvironment.documentRoot() : string;
-    begin
-        result := fEnv.documentRoot();
-    end;
-
-    {-----------------------------------------
      Retrieve REQUEST_METHOD environment variable
     ------------------------------------------}
     function TVerbTunnellingEnvironment.requestMethod() : string;
@@ -300,139 +122,4 @@ uses
         result := env('REQUEST_METHOD');
     end;
 
-    {-----------------------------------------
-     Retrieve REQUEST_SCHEME environment variable
-    ------------------------------------------}
-    function TVerbTunnellingEnvironment.requestScheme() : string;
-    begin
-        result := fEnv.requestScheme();
-    end;
-
-    {-----------------------------------------
-     Retrieve REQUEST_URI environment variable
-    ------------------------------------------}
-    function TVerbTunnellingEnvironment.requestUri() : string;
-    begin
-        result := fEnv.requestUri();
-    end;
-
-    {-----------------------------------------
-     Retrieve QUERY_STRING environment variable
-    ------------------------------------------}
-    function TVerbTunnellingEnvironment.queryString() : string;
-    begin
-        result := fEnv.queryString();
-    end;
-
-    {-----------------------------------------
-     Retrieve SERVER_NAME environment variable
-    ------------------------------------------}
-    function TVerbTunnellingEnvironment.serverName() : string;
-    begin
-        result := fEnv.serverName();
-    end;
-
-    {-----------------------------------------
-     Retrieve CONTENT_TYPE environment variable
-    ------------------------------------------}
-    function TVerbTunnellingEnvironment.contentType() : string;
-    begin
-        result := fEnv.contentType();
-    end;
-
-    {-----------------------------------------
-    Retrieve CONTENT_LENGTH environment variable
-    ------------------------------------------}
-    function TVerbTunnellingEnvironment.contentLength() : string;
-    begin
-        result := fEnv.contentType();
-    end;
-
-    (*-----------------------------------------
-     * Retrieve CONTENT_LENGTH environment variable
-     * as integer value
-     *------------------------------------------
-     * @return content length as integer value
-     *------------------------------------------*)
-    function TVerbTunnellingEnvironment.intContentLength() : integer;
-    begin
-        result := fEnv.intContentLength();
-    end;
-
-    {-----------------------------------------
-     Retrieve HTTP_HOST environment variable
-    ------------------------------------------}
-    function TVerbTunnellingEnvironment.httpHost() : string;
-    begin
-        result := fEnv.httpHost();
-    end;
-
-    {-----------------------------------------
-     Retrieve HTTP_USER_AGENT environment variable
-    ------------------------------------------}
-    function TVerbTunnellingEnvironment.httpUserAgent() : string;
-    begin
-        result := fEnv.httpUserAgent();
-    end;
-
-    {-----------------------------------------
-     Retrieve HTTP_ACCEPT environment variable
-    ------------------------------------------}
-    function TVerbTunnellingEnvironment.httpAccept() : string;
-    begin
-        result := fEnv.httpAccept();
-    end;
-
-    {-----------------------------------------
-     Retrieve HTTP_ACCEPT_LANGUAGE environment variable
-    ------------------------------------------}
-    function TVerbTunnellingEnvironment.httpAcceptLanguage() : string;
-    begin
-        result := fEnv.httpAcceptLanguage();
-    end;
-
-    {-----------------------------------------
-     Retrieve HTTP_COOKIE environment variable
-    ------------------------------------------}
-    function TVerbTunnellingEnvironment.httpCookie() : string;
-    begin
-        result := fEnv.httpCookie();
-    end;
-
-    (*!------------------------------------------------
-     * get value by index
-     *-----------------------------------------------
-     * @param index index to use
-     * @return key name
-     *-----------------------------------------------*)
-    function TVerbTunnellingEnvironment.getValue(const indx : integer) : string;
-    begin
-        result := fEnv.enumerator.getValue(indx);
-    end;
-
-    function TVerbTunnellingEnvironment.getEnumerator() : ICGIEnvironmentEnumerator;
-    begin
-        result := self;
-    end;
-
-    (*!------------------------------------------------
-     * get number of variables
-     *-----------------------------------------------
-     * @return number of variables
-     *-----------------------------------------------*)
-    function TVerbTunnellingEnvironment.count() : integer;
-    begin
-        result := fEnv.enumerator.count();
-    end;
-
-    (*!------------------------------------------------
-     * get key by index
-     *-----------------------------------------------
-     * @param index index to use
-     * @return key name
-     *-----------------------------------------------*)
-    function TVerbTunnellingEnvironment.getKey(const indx : integer) : shortstring;
-    begin
-        result := fEnv.enumerator.getKey(indx);
-    end;
 end.

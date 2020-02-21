@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit AbstractEnvironmentImpl;
+unit DecoratorEnvironmentImpl;
 
 interface
 
@@ -23,20 +23,25 @@ uses
 type
 
     (*!------------------------------------------------
-     * base class for any class having capability to retrieve
-     * CGI environment variable
+     * base decorator class for any class having capability to retrieve
+     * CGI environment variable from external environment class
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *--------------------------------------------------*)
-    TAbstractCGIEnvironment = class(TInjectableObject, ICGIEnvironment, ICGIEnvironmentEnumerator)
+    TDecoratorEnvironment = class(TInjectableObject, ICGIEnvironment, ICGIEnvironmentEnumerator)
+    protected
+        fDecoratedEnv : ICGIEnvironment;
     public
+        constructor create(const aEnv : ICGIEnvironment);
+        destructor destroy(); override;
+
         (*!-----------------------------------------
          * Retrieve an environment variable
          *------------------------------------------
          * @param key name of variable
          * @return variable value
          *------------------------------------------*)
-        function env(const keyName : string) : string; virtual; abstract;
+        function env(const keyName : string) : string; virtual;
 
         {-----------------------------------------
          Retrieve GATEWAY_INTERFACE environment variable
@@ -186,7 +191,7 @@ type
          *-----------------------------------------------
          * @return number of variables
          *-----------------------------------------------*)
-        function count() : integer; virtual; abstract;
+        function count() : integer; virtual;
 
         (*!------------------------------------------------
          * get key by index
@@ -194,7 +199,7 @@ type
          * @param index index to use
          * @return key name
          *-----------------------------------------------*)
-        function getKey(const indx : integer) : shortstring; virtual; abstract;
+        function getKey(const indx : integer) : shortstring; virtual;
 
         (*!------------------------------------------------
          * get value by index
@@ -209,189 +214,202 @@ type
 
 implementation
 
-uses
+    constructor TDecoratorEnvironment.create(const aEnv : ICGIEnvironment);
+    begin
+        fDecoratedEnv := aEnv;
+    end;
 
-    sysutils,
-    EInvalidRequestImpl;
+    destructor TDecoratorEnvironment.destroy();
+    begin
+        fDecoratedEnv := nil;
+        inherited destroy();
+    end;
 
-resourcestring
-
-    sErrInvalidContentLength = 'Invalid content length';
+    (*!-----------------------------------------
+     * Retrieve an environment variable
+     *------------------------------------------
+     * @param key name of variable
+     * @return variable value
+     *------------------------------------------*)
+    function TDecoratorEnvironment.env(const keyName : string) : string;
+    begin
+        result := fDecoratedEnv.env(keyName);
+    end;
 
     {-----------------------------------------
      Retrieve GATEWAY_INTERFACE environment variable
     ------------------------------------------}
-    function TAbstractCGIEnvironment.gatewayInterface() : string;
+    function TDecoratorEnvironment.gatewayInterface() : string;
     begin
-        result := env('GATEWAY_INTERFACE');
+        result := fDecoratedEnv.gatewayInterface();
     end;
 
     {-----------------------------------------
      Retrieve REMOTE_ADDR environment variable
     ------------------------------------------}
-    function TAbstractCGIEnvironment.remoteAddr() : string;
+    function TDecoratorEnvironment.remoteAddr() : string;
     begin
-        result := env('REMOTE_ADDR');
+        result := fDecoratedEnv.remoteAddr();
     end;
 
     {-----------------------------------------
      Retrieve REMOTE_PORT environment variable
     ------------------------------------------}
-    function TAbstractCGIEnvironment.remotePort() : string;
+    function TDecoratorEnvironment.remotePort() : string;
     begin
-        result := env('REMOTE_PORT');
+        result := fDecoratedEnv.remotePort();
     end;
 
     {-----------------------------------------
      Retrieve REMOTE_HOST environment variable
     ------------------------------------------}
-    function TAbstractCGIEnvironment.remoteHost() : string;
+    function TDecoratorEnvironment.remoteHost() : string;
     begin
-        result := env('REMOTE_HOST');
+        result := fDecoratedEnv.remoteHost();
     end;
 
     {-----------------------------------------
      Retrieve REMOTE_USER environment variable
     ------------------------------------------}
-    function TAbstractCGIEnvironment.remoteUser() : string;
+    function TDecoratorEnvironment.remoteUser() : string;
     begin
-        result := env('REMOTE_USER');
+        result := fDecoratedEnv.remoteUser();
     end;
 
     {-----------------------------------------
      Retrieve REMOTE_IDENT environment variable
     ------------------------------------------}
-    function TAbstractCGIEnvironment.remoteIdent() : string;
+    function TDecoratorEnvironment.remoteIdent() : string;
     begin
-        result := env('REMOTE_IDENT');
+        result := fDecoratedEnv.remoteIdent();
     end;
 
     {-----------------------------------------
      Retrieve AUTH_TYPE environment variable
     ------------------------------------------}
-    function TAbstractCGIEnvironment.authType() : string;
+    function TDecoratorEnvironment.authType() : string;
     begin
-        result := env('AUTH_TYPE');
+        result := fDecoratedEnv.authType();
     end;
 
     {-----------------------------------------
      Retrieve SERVER_ADDR environment variable
     ------------------------------------------}
-    function TAbstractCGIEnvironment.serverAddr() : string;
+    function TDecoratorEnvironment.serverAddr() : string;
     begin
-        result := env('SERVER_ADDR');
+        result := fDecoratedEnv.serverAddr();
     end;
 
     {-----------------------------------------
      Retrieve SERVER_PORT environment variable
     ------------------------------------------}
-    function TAbstractCGIEnvironment.serverPort() : string;
+    function TDecoratorEnvironment.serverPort() : string;
     begin
-        result := env('SERVER_PORT');
+        result := fDecoratedEnv.serverPort();
     end;
 
     {-----------------------------------------
      Retrieve SERVER_NAME environment variable
     ------------------------------------------}
-    function TAbstractCGIEnvironment.serverName() : string;
+    function TDecoratorEnvironment.serverName() : string;
     begin
-        result := env('SERVER_NAME');
+        result := fDecoratedEnv.serverName();
     end;
 
     {-----------------------------------------
      Retrieve SERVER_SOFTWARE environment variable
     ------------------------------------------}
-    function TAbstractCGIEnvironment.serverSoftware() : string;
+    function TDecoratorEnvironment.serverSoftware() : string;
     begin
-        result := env('SERVER_SOFTWARE');
+        result := fDecoratedEnv.serverSoftware();
     end;
 
     {-----------------------------------------
      Retrieve SERVER_PROTOCOL environment variable
     ------------------------------------------}
-    function TAbstractCGIEnvironment.serverProtocol() : string;
+    function TDecoratorEnvironment.serverProtocol() : string;
     begin
-        result := env('SERVER_PROTOCOL');
+        result := fDecoratedEnv.serverProtocol();
     end;
 
     {-----------------------------------------
      Retrieve DOCUMENT_ROOT environment variable
     ------------------------------------------}
-    function TAbstractCGIEnvironment.documentRoot() : string;
+    function TDecoratorEnvironment.documentRoot() : string;
     begin
-        result := env('DOCUMENT_ROOT');
+        result := fDecoratedEnv.documentRoot();
     end;
 
     {-----------------------------------------
      Retrieve REQUEST_METHOD environment variable
     ------------------------------------------}
-    function TAbstractCGIEnvironment.requestMethod() : string;
+    function TDecoratorEnvironment.requestMethod() : string;
     begin
-        result := env('REQUEST_METHOD');
+        result := fDecoratedEnv.requestMethod();
     end;
 
     {-----------------------------------------
      Retrieve REQUEST_SCHEME environment variable
     ------------------------------------------}
-    function TAbstractCGIEnvironment.requestScheme() : string;
+    function TDecoratorEnvironment.requestScheme() : string;
     begin
-        result := env('REQUEST_SCHEME');
+        result := fDecoratedEnv.requestScheme();
     end;
 
     {-----------------------------------------
      Retrieve REQUEST_URI environment variable
     ------------------------------------------}
-    function TAbstractCGIEnvironment.requestUri() : string;
+    function TDecoratorEnvironment.requestUri() : string;
     begin
-        result := env('REQUEST_URI');
+        result := fDecoratedEnv.requestUri();
     end;
 
     {-----------------------------------------
      Retrieve QUERY_STRING environment variable
     ------------------------------------------}
-    function TAbstractCGIEnvironment.queryString() : string;
+    function TDecoratorEnvironment.queryString() : string;
     begin
-        result := env('QUERY_STRING');
+        result := fDecoratedEnv.queryString();
     end;
 
     {-----------------------------------------
      Retrieve SCRIPT_NAME environment variable
     ------------------------------------------}
-    function TAbstractCGIEnvironment.scriptName() : string;
+    function TDecoratorEnvironment.scriptName() : string;
     begin
-        result := env('SCRIPT_NAME');
+        result := fDecoratedEnv.scriptName();
     end;
 
     {-----------------------------------------
      Retrieve PATH_INFO environment variable
     ------------------------------------------}
-    function TAbstractCGIEnvironment.pathInfo() : string;
+    function TDecoratorEnvironment.pathInfo() : string;
     begin
-        result := env('PATH_INFO');
+        result := fDecoratedEnv.pathInfo();
     end;
 
     {-----------------------------------------
         Retrieve PATH_TRANSLATED environment variable
     ------------------------------------------}
-    function TAbstractCGIEnvironment.pathTranslated() : string;
+    function TDecoratorEnvironment.pathTranslated() : string;
     begin
-        result := env('PATH_TRANSLATED');
+        result := fDecoratedEnv.pathTranslated();
     end;
 
     {-----------------------------------------
      Retrieve CONTENT_TYPE environment variable
     ------------------------------------------}
-    function TAbstractCGIEnvironment.contentType() : string;
+    function TDecoratorEnvironment.contentType() : string;
     begin
-        result := env('CONTENT_TYPE');
+        result := fDecoratedEnv.contentType();
     end;
 
     {-----------------------------------------
     Retrieve CONTENT_LENGTH environment variable
     ------------------------------------------}
-    function TAbstractCGIEnvironment.contentLength() : string;
+    function TDecoratorEnvironment.contentLength() : string;
     begin
-        result := env('CONTENT_LENGTH');
+        result := fDecoratedEnv.contentLength();
     end;
 
     (*-----------------------------------------
@@ -400,56 +418,49 @@ resourcestring
      *------------------------------------------
      * @return content length as integer value
      *------------------------------------------*)
-    function TAbstractCGIEnvironment.intContentLength() : integer;
+    function TDecoratorEnvironment.intContentLength() : integer;
     begin
-        try
-            result := strToInt(contentLength());
-        except
-            on e:EConvertError do
-            begin
-                raise EInvalidRequest.create(sErrInvalidContentLength);
-            end;
-        end;
+        result := fDecoratedEnv.intContentLength();
     end;
 
     {-----------------------------------------
      Retrieve HTTP_HOST environment variable
     ------------------------------------------}
-    function TAbstractCGIEnvironment.httpHost() : string;
+    function TDecoratorEnvironment.httpHost() : string;
     begin
-        result := env('HTTP_HOST');
+        result := fDecoratedEnv.httpHost();
     end;
 
     {-----------------------------------------
      Retrieve HTTP_USER_AGENT environment variable
     ------------------------------------------}
-    function TAbstractCGIEnvironment.httpUserAgent() : string;
+    function TDecoratorEnvironment.httpUserAgent() : string;
     begin
-        result := env('HTTP_USER_AGENT');
+        result := fDecoratedEnv.httpUserAgent();
     end;
 
     {-----------------------------------------
      Retrieve HTTP_ACCEPT environment variable
     ------------------------------------------}
-    function TAbstractCGIEnvironment.httpAccept() : string;
+    function TDecoratorEnvironment.httpAccept() : string;
     begin
-        result := env('HTTP_ACCEPT');
+        result := fDecoratedEnv.httpAccept();
     end;
 
     {-----------------------------------------
      Retrieve HTTP_ACCEPT_LANGUAGE environment variable
     ------------------------------------------}
-    function TAbstractCGIEnvironment.httpAcceptLanguage() : string;
+    function TDecoratorEnvironment.httpAcceptLanguage() : string;
     begin
-        result := env('HTTP_ACCEPT_LANGUAGE');
+        result := fDecoratedEnv.httpAcceptLanguage();
     end;
 
     {-----------------------------------------
      Retrieve HTTP_COOKIE environment variable
     ------------------------------------------}
-    function TAbstractCGIEnvironment.httpCookie() : string;
+    function TDecoratorEnvironment.httpCookie() : string;
     begin
-        result := env('HTTP_COOKIE');
+        result := fDecoratedEnv.httpCookie();
     end;
 
     (*!------------------------------------------------
@@ -458,13 +469,35 @@ resourcestring
      * @param index index to use
      * @return key name
      *-----------------------------------------------*)
-    function TAbstractCGIEnvironment.getValue(const indx : integer) : string;
+    function TDecoratorEnvironment.getValue(const indx : integer) : string;
     begin
-        result := env(getKey(indx));
+        result := fDecoratedEnv.enumerator.getValue(indx);
     end;
 
-    function TAbstractCGIEnvironment.getEnumerator() : ICGIEnvironmentEnumerator;
+    function TDecoratorEnvironment.getEnumerator() : ICGIEnvironmentEnumerator;
     begin
         result := self;
     end;
+
+    (*!------------------------------------------------
+     * get number of variables
+     *-----------------------------------------------
+     * @return number of variables
+     *-----------------------------------------------*)
+    function TDecoratorEnvironment.count() : integer;
+    begin
+        result := fEnv.enumerator.count();
+    end;
+
+    (*!------------------------------------------------
+     * get key by index
+     *-----------------------------------------------
+     * @param index index to use
+     * @return key name
+     *-----------------------------------------------*)
+    function TDecoratorEnvironment.getKey(const indx : integer) : shortstring;
+    begin
+        result := fEnv.enumerator.getKey(indx);
+    end;
+
 end.
