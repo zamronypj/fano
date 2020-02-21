@@ -22,6 +22,7 @@ TAlphaNumDashValidator = AlphaNumDashValidatorImpl.TAlphaNumDashValidator;
 TAlphaValidator = AlphaValidatorImpl.TAlphaValidator;
 TEmailValidator = EmailValidatorImpl.TEmailValidator;
 TUrlValidator = UrlValidatorImpl.TUrlValidator;
+TSlugValidator = SlugValidatorImpl.TSlugValidator;
 
 TBaseCompositeValidator = BaseCompositeValidatorImpl.TBaseCompositeValidator;
 TCompositeValidator = CompositeValidatorImpl.TCompositeValidator;
@@ -86,3 +87,5 @@ TFileFormatValidator = FileFormatValidatorImpl.TFileFormatValidator;
 TImagePngValidator = ImagePngValidatorImpl.TImagePngValidator;
 TImageJpgValidator = ImageJpgValidatorImpl.TImageJpgValidator;
 TImageGifValidator = ImageGifValidatorImpl.TImageGifValidator;
+
+TIpv4Validator = Ipv4ValidatorImpl.TIpv4Validator;

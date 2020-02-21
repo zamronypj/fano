@@ -19,6 +19,7 @@ AlphaNumValidatorImpl,
 AlphaNumSpaceValidatorImpl,
 AlphaNumDashValidatorImpl,
 AlphaValidatorImpl,
+SlugValidatorImpl,
 
 BaseCompositeValidatorImpl,
 CompositeValidatorImpl,
@@ -78,3 +79,5 @@ FileFormatValidatorImpl,
 ImagePngValidatorImpl,
 ImageJpgValidatorImpl,
 ImageGifValidatorImpl,
+
+Ipv4ValidatorImpl,
