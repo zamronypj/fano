@@ -87,6 +87,7 @@ uses
         try
             result := fActualDispatcher.dispatchRequest(verbEnv, stdIn);
         finally
+            //make sure we remove reference to avoid memory leak
             verbEnv := nil;
         end;
     end;
