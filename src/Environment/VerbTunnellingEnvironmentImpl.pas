@@ -31,13 +31,14 @@ type
     TVerbTunnellingEnvironment = class(TInjectableObject, ICGIEnvironment, ICGIEnvironmentEnumerator)
     private
         fEnv : ICGIEnvironment;
+        fEnvEnum : ICGIEnvironmentEnumerator;
 
         function overrideMethod(
             const originalMethod : string;
             const methodOverrideHeader : string
         ) : string;
     public
-        constructor create(aEnv : ICGIEnvironment);
+        constructor create(const aEnv : ICGIEnvironment);
         destructor destroy(); override;
 
         (*!-----------------------------------------
@@ -179,13 +180,15 @@ uses
     sysutils,
     EInvalidMethodImpl;
 
-    constructor TVerbTunnellingEnvironment.create(aEnv : ICGIEnvironment);
+    constructor TVerbTunnellingEnvironment.create(const aEnv : ICGIEnvironment);
     begin
         fEnv := aEnv;
+        fEnvEnum := aEnv.enumerator;
     end;
 
     destructor TVerbTunnellingEnvironment.destroy();
     begin
+        fEnvEnum := nil;
         fEnv := nil;
         inherited destroy();
     end;
@@ -407,7 +410,7 @@ uses
      *-----------------------------------------------*)
     function TVerbTunnellingEnvironment.getValue(const indx : integer) : string;
     begin
-        result := fEnv.enumerator.getValue(indx);
+        result := fEnvEnum.getValue(indx);
     end;
 
     function TVerbTunnellingEnvironment.getEnumerator() : ICGIEnvironmentEnumerator;
@@ -422,7 +425,7 @@ uses
      *-----------------------------------------------*)
     function TVerbTunnellingEnvironment.count() : integer;
     begin
-        result := fEnv.enumerator.count();
+        result := fEnvEnum.count();
     end;
 
     (*!------------------------------------------------
@@ -433,6 +436,6 @@ uses
      *-----------------------------------------------*)
     function TVerbTunnellingEnvironment.getKey(const indx : integer) : shortstring;
     begin
-        result := fEnv.enumerator.getKey(indx);
+        result := fEnvEnum.getKey(indx);
     end;
 end.
