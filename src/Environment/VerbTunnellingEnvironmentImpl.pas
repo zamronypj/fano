@@ -183,7 +183,7 @@ uses
     constructor TVerbTunnellingEnvironment.create(const aEnv : ICGIEnvironment);
     begin
         fEnv := aEnv;
-        fEnvEnum := aEnv.enumerator;
+        fEnvEnum := aEnv as ICGIEnvironmentEnumerator;
     end;
 
     destructor TVerbTunnellingEnvironment.destroy();
