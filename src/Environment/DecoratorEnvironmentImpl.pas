@@ -46,67 +46,67 @@ type
         {-----------------------------------------
          Retrieve GATEWAY_INTERFACE environment variable
         ------------------------------------------}
-        function gatewayInterface() : string;
+        function gatewayInterface() : string; virtual;
 
         {-----------------------------------------
          Retrieve REMOTE_ADDR environment variable
         ------------------------------------------}
-        function remoteAddr() : string;
+        function remoteAddr() : string; virtual;
 
         {-----------------------------------------
          Retrieve REMOTE_PORT environment variable
         ------------------------------------------}
-        function remotePort() : string;
+        function remotePort() : string; virtual;
 
         {-----------------------------------------
          Retrieve REMOTE_HOST environment variable
         ------------------------------------------}
-        function remoteHost() : string;
+        function remoteHost() : string; virtual;
 
         {-----------------------------------------
          Retrieve REMOTE_USER environment variable
         ------------------------------------------}
-        function remoteUser() : string;
+        function remoteUser() : string; virtual;
 
         {-----------------------------------------
          Retrieve REMOTE_IDENT environment variable
         ------------------------------------------}
-        function remoteIdent() : string;
+        function remoteIdent() : string; virtual;
 
         {-----------------------------------------
          Retrieve AUTH_TYPE environment variable
         ------------------------------------------}
-        function authType() : string;
+        function authType() : string; virtual;
 
         {-----------------------------------------
          Retrieve SERVER_ADDR environment variable
         ------------------------------------------}
-        function serverAddr() : string;
+        function serverAddr() : string; virtual;
 
         {-----------------------------------------
          Retrieve SERVER_PORT environment variable
         ------------------------------------------}
-        function serverPort() : string;
+        function serverPort() : string; virtual;
 
         {-----------------------------------------
          Retrieve SERVER_NAME environment variable
         ------------------------------------------}
-        function serverName() : string;
+        function serverName() : string; virtual;
 
         {-----------------------------------------
          Retrieve SERVER_SOFTWARE environment variable
         ------------------------------------------}
-        function serverSoftware() : string;
+        function serverSoftware() : string; virtual;
 
         {-----------------------------------------
          Retrieve SERVER_PROTOCOL environment variable
         ------------------------------------------}
-        function serverProtocol() : string;
+        function serverProtocol() : string; virtual;
 
         {-----------------------------------------
          Retrieve DOCUMENT_ROOT environment variable
         ------------------------------------------}
-        function documentRoot() : string;
+        function documentRoot() : string; virtual;
 
         {-----------------------------------------
          Retrieve REQUEST_METHOD environment variable
@@ -116,42 +116,42 @@ type
         {-----------------------------------------
          Retrieve REQUEST_SCHEME environment variable
         ------------------------------------------}
-        function requestScheme() : string;
+        function requestScheme() : string; virtual;
 
         {-----------------------------------------
          Retrieve REQUEST_URI environment variable
         ------------------------------------------}
-        function requestUri() : string;
+        function requestUri() : string; virtual;
 
         {-----------------------------------------
          Retrieve QUERY_STRING environment variable
         ------------------------------------------}
-        function queryString() : string;
+        function queryString() : string; virtual;
 
         {-----------------------------------------
          Retrieve SCRIPT_NAME environment variable
         ------------------------------------------}
-        function scriptName() : string;
+        function scriptName() : string; virtual;
 
         {-----------------------------------------
          Retrieve PATH_INFO environment variable
         ------------------------------------------}
-        function pathInfo() : string;
+        function pathInfo() : string; virtual;
 
         {-----------------------------------------
          Retrieve PATH_TRANSLATED environment variable
         ------------------------------------------}
-        function pathTranslated() : string;
+        function pathTranslated() : string; virtual;
 
         {-----------------------------------------
          Retrieve CONTENT_TYPE environment variable
         ------------------------------------------}
-        function contentType() : string;
+        function contentType() : string; virtual;
 
         {-----------------------------------------
          Retrieve CONTENT_LENGTH environment variable
         ------------------------------------------}
-        function contentLength() : string;
+        function contentLength() : string; virtual;
 
         (*-----------------------------------------
          * Retrieve CONTENT_LENGTH environment variable
@@ -159,32 +159,32 @@ type
          *------------------------------------------
          * @return content length as integer value
          *------------------------------------------*)
-        function intContentLength() : integer;
+        function intContentLength() : integer; virtual;
 
         {-----------------------------------------
          Retrieve HTTP_HOST environment variable
         ------------------------------------------}
-        function httpHost() : string;
+        function httpHost() : string; virtual;
 
         {-----------------------------------------
          Retrieve HTTP_USER_AGENT environment variable
         ------------------------------------------}
-        function httpUserAgent() : string;
+        function httpUserAgent() : string; virtual;
 
         {-----------------------------------------
          Retrieve HTTP_ACCEPT environment variable
         ------------------------------------------}
-        function httpAccept() : string;
+        function httpAccept() : string; virtual;
 
         {-----------------------------------------
          Retrieve HTTP_ACCEPT_LANGUAGE environment variable
         ------------------------------------------}
-        function httpAcceptLanguage() : string;
+        function httpAcceptLanguage() : string; virtual;
 
         {-----------------------------------------
          Retrieve HTTP_COOKIE environment variable
         ------------------------------------------}
-        function httpCookie() : string;
+        function httpCookie() : string; virtual;
 
         (*!------------------------------------------------
          * get number of variables
@@ -209,7 +209,7 @@ type
          *-----------------------------------------------*)
         function getValue(const indx : integer) : string; virtual;
 
-        function getEnumerator() : ICGIEnvironmentEnumerator;
+        function getEnumerator() : ICGIEnvironmentEnumerator; virtual;
     end;
 
 implementation
