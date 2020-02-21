@@ -105,12 +105,12 @@ uses
         if (keyName = 'REQUEST_METHOD') then
         begin
             result := overrideMethod(
-                fEnv.requestMethod(),
-                uppercase(fEnv.env('HTTP_X_HTTP_METHOD_OVERRIDE'))
+                fDecoratedEnv.requestMethod(),
+                uppercase(fDecoratedEnv['HTTP_X_HTTP_METHOD_OVERRIDE'])
             );
         end else
         begin
-            result := fEnv.env(keyName);
+            result := fDecoratedEnv[keyName];
         end;
     end;
 
