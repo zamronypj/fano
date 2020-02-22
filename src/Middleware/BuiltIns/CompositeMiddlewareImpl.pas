@@ -17,13 +17,14 @@ uses
     RequestIntf,
     ResponseIntf,
     MiddlewareIntf,
+    MiddlewareLinkIntf,
     RouteArgsReaderIntf,
     RequestHandlerIntf,
     InjectableObjectImpl;
 
 type
 
-    TMiddlewareArray = array of IMiddleware;
+    TMiddlewareArray = array of IMiddlewareLink;
 
     (*!------------------------------------------------
      * midlleware class that is composed from several
@@ -50,6 +51,10 @@ type
 
 implementation
 
+uses
+
+    MiddlewareLinkImpl;
+
     constructor TCompositeMiddleware.create(const middlewares : array of IMiddleware);
     begin
         fMiddlewares := initMiddlewares(middlewares);
@@ -66,9 +71,17 @@ implementation
     begin
         totMiddlewares := high(middlewares) - low(middlewares) + 1;
         setLength(result, totMiddlewares);
-        for i := 0 to totMiddlewares - 1 do
+        if (totMiddlewares > 0) then
         begin
-            result[i] := middlewares[i];
+            for i := 0 to totMiddlewares - 1 do
+            begin
+                result[i] := TMiddlewareLink.create(middlewares[i]);
+                result[i].next := nil;
+                if (i > 0) then
+                begin
+                    result[i-1].next := result[i];
+                end;
+            end;
         end;
     end;
 
@@ -78,6 +91,7 @@ implementation
         totMiddlewares := length(middlewares);
         for i := 0 to totMiddlewares - 1 do
         begin
+            middlewares[i].next := nil;
             middlewares[i] := nil;
         end;
         setLength(middlewares, 0);
@@ -90,20 +104,21 @@ implementation
         const args : IRouteArgsReader;
         const next : IRequestHandler
     ) : IResponse;
-    var i, totMiddlewares : integer;
-        newResponse : IResponse;
+    var totMiddlewares : integer;
     begin
         totMiddlewares := length(fMiddlewares);
-        newResponse := response;
-        for i:= 0 to totMiddlewares - 1 do
+        if (totMiddlewares > 0) then
         begin
-            newResponse := fMiddlewares[i].handleRequest(
-                request,
-                newResponse,
-                args,
-                next
-            );
+            fMiddlewares[totMiddlewares-1].next := next;
+            try
+                result := fMiddlewares[0].handleRequest(request, response, args);
+            finally
+                //remove reference to avoid memory leak
+                fMiddlewares[totMiddlewares-1].next := nil;
+            end;
+        end else
+        begin
+            result := next.handleRequest(request, response, args);
         end;
-        result := newResponse;
     end;
 end.

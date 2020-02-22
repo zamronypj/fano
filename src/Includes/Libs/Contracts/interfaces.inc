@@ -54,3 +54,5 @@ CliParamsFactoryIntf,
 
 EncrypterIntf,
 DecrypterIntf,
+
+{$INCLUDE Socket2/interfaces.inc}

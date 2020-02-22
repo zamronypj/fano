@@ -34,6 +34,7 @@ KeyValuePairImpl,
 KeyValuePairFactoryImpl,
 
 {$INCLUDE Socket/implementations.inc}
+{$INCLUDE Socket2/implementations.inc}
 {$INCLUDE Logger/implementations.inc}
 {$INCLUDE Regex/implementations.inc}
 {$INCLUDE LibCurl/implementations.inc}

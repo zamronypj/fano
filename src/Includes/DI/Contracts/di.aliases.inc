@@ -23,3 +23,5 @@ IServiceFactory = ServiceFactoryIntf.IServiceFactory;
 IService = ServiceIntf.IService;
 
 IContainerFactory = ContainerFactoryIntf.IContainerFactory;
+
+IServiceProvider = ServiceProviderIntf.IServiceProvider;

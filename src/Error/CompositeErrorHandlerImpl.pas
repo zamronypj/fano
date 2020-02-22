@@ -27,7 +27,7 @@ type
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *---------------------------------------------------*)
     TCompositeErrorHandler = class(TBaseErrorHandler)
-    private
+    protected
         firstErrorHandler : IErrorHandler;
         secondErrorHandler : IErrorHandler;
     public

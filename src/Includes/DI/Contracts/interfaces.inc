@@ -21,3 +21,4 @@ ServiceIntf,
 ServiceFactoryIntf,
 
 ContainerFactoryIntf,
+ServiceProviderIntf,

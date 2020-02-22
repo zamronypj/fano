@@ -16,11 +16,14 @@ uses
     RunnableIntf,
     DependencyContainerIntf,
     AppIntf,
+    AppServiceProviderIntf,
     DispatcherIntf,
     EnvironmentIntf,
     EnvironmentEnumeratorIntf,
     ErrorHandlerIntf,
     StdInIntf,
+    RouterIntf,
+    RouteBuilderIntf,
     CoreAppConsts;
 
 type
@@ -30,13 +33,10 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TCoreWebApplication = class(TInterfacedObject, IWebApplication, IRunnable)
+    TCoreWebApplication = class abstract (TInterfacedObject, IWebApplication, IRunnable)
     protected
-        dependencyContainer : IDependencyContainer;
-        dispatcher : IDispatcher;
-        environment : ICGIEnvironment;
-        errorHandler : IErrorHandler;
-        fStdInReader : IStdIn;
+        fAppSvc : IAppServiceProvider;
+        fRouteBuilder : IRouteBuilder;
 
         (*!-----------------------------------------------
          * execute application and write response
@@ -46,7 +46,7 @@ type
          * TODO: need to think about how to execute when
          * application is run as daemon.
          *-----------------------------------------------*)
-        function execute() : IRunnable;
+        function execute(const env : ICGIEnvironment) : IRunnable;
 
         procedure reset();
 
@@ -58,50 +58,17 @@ type
          * constructed
          *-----------------------------------------------*)
         function initialize(const container : IDependencyContainer) : boolean; virtual;
-
-        (*!-----------------------------------------------
-         * Build application route dispatcher
-         *------------------------------------------------
-         * @param container dependency container
-         *-----------------------------------------------*)
-        procedure buildDispatcher(const container : IDependencyContainer);
-
-        (*!-----------------------------------------------
-         * Build application dependencies
-         *------------------------------------------------
-         * @param container dependency container
-         *-----------------------------------------------*)
-        procedure buildDependencies(const container : IDependencyContainer); virtual; abstract;
-
-        (*!-----------------------------------------------
-         * Build application routes
-         *------------------------------------------------
-         * @param container dependency container
-         *-----------------------------------------------*)
-        procedure buildRoutes(const container : IDependencyContainer); virtual; abstract;
-
-        (*!-----------------------------------------------
-         * initialize application route dispatcher
-         *------------------------------------------------
-         * @param container dependency container
-         * @return dispatcher instance
-         *-----------------------------------------------*)
-        function initDispatcher(const container : IDependencyContainer) : IDispatcher; virtual; abstract;
     public
 
         (*!-----------------------------------------------
          * constructor
          *------------------------------------------------
-         * @param container dependency container
-         * @param env CGI environment instance
-         * @param errHandler error handler
-         * @param stdIn standard input reader
+         * @param appSvc class provide essentials service
+         * @param routeBuilder class responsible to build application routes
          *-----------------------------------------------*)
         constructor create(
-            const container : IDependencyContainer;
-            const env : ICGIEnvironment;
-            const errHandler : IErrorHandler;
-            const stdInReader : IStdIn
+            const appSvc : IAppServiceProvider;
+            const routeBuilder : IRouteBuilder
         );
         destructor destroy(); override;
         function run() : IRunnable; virtual; abstract;
@@ -112,48 +79,30 @@ implementation
 uses
 
     SysUtils,
-    ResponseIntf,
-
-    ///exception-related units
-    EInvalidDispatcherImpl;
+    ResponseIntf;
 
     procedure TCoreWebApplication.reset();
     begin
-        dispatcher := nil;
-        environment := nil;
-        errorHandler := nil;
-        dependencyContainer := nil;
-        fStdInReader := nil;
+        fAppSvc := nil;
+        fRouteBuilder := nil;
     end;
 
     (*!-----------------------------------------------
      * constructor
      *------------------------------------------------
-     * @param container dependency container
-     * @param env CGI environment instance
-     * @param errHandler error handler
-     *-----------------------------------------------
-     * errHandler is injected as application dependencies
-     * instead of using dependency container because
-     * we need to make sure that during building
-     * application dependencies and routes, if something
-     * goes wrong, we can be sure that there is error handler
-     * to handle the exception
+     * @param appSvc class that provide essentials services
+     * @param routeBuilder class responsible to build application routes
      *-----------------------------------------------*)
     constructor TCoreWebApplication.create(
-        const container : IDependencyContainer;
-        const env : ICGIEnvironment;
-        const errHandler : IErrorHandler;
-        const stdInReader : IStdIn
+        const appSvc : IAppServiceProvider;
+        const routeBuilder : IRouteBuilder
     );
     begin
         inherited create();
         randomize();
         reset();
-        dependencyContainer := container;
-        environment := env;
-        errorHandler := errHandler;
-        fStdInReader := stdInReader;
+        fAppSvc := appSvc;
+        fRouteBuilder := routeBuilder;
     end;
 
     (*!-----------------------------------------------
@@ -163,26 +112,6 @@ uses
     begin
         reset();
         inherited destroy();
-    end;
-
-    (*!-----------------------------------------------
-     * Build application route dispatcher
-     *------------------------------------------------
-     * @param container dependency container
-     * @throws EInvalidDispatcher
-     *-----------------------------------------------
-     * route dispatcher is essentials but because
-     * we allow user to use IDispatcher
-     * implementation they like, we need to be informed
-     * about it.
-     *-----------------------------------------------*)
-    procedure TCoreWebApplication.buildDispatcher(const container : IDependencyContainer);
-    begin
-        dispatcher := initDispatcher(container);
-        if (dispatcher = nil) then
-        begin
-            raise EInvalidDispatcher.create(sErrInvalidDispatcher);
-        end;
     end;
 
     (*!-----------------------------------------------
@@ -199,9 +128,8 @@ uses
      *-----------------------------------------------*)
     function TCoreWebApplication.initialize(const container : IDependencyContainer) : boolean;
     begin
-        buildDependencies(container);
-        buildRoutes(container);
-        buildDispatcher(container);
+        fAppSvc.register(container);
+        fRouteBuilder.buildRoutes(container, fAppSvc.router);
         result := true;
     end;
 
@@ -210,10 +138,10 @@ uses
      *------------------------------------------------
      * @return current application instance
      *-----------------------------------------------*)
-    function TCoreWebApplication.execute() : IRunnable;
+    function TCoreWebApplication.execute(const env : ICGIEnvironment) : IRunnable;
     var response : IResponse;
     begin
-        response := dispatcher.dispatchRequest(environment, fStdInReader);
+        response := fAppSvc.dispatcher.dispatchRequest(env, fAppSvc.stdIn);
         try
             response.write();
             result := self;
