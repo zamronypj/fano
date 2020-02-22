@@ -59,7 +59,7 @@ uses
 
     (*!-----------------------------------
      * internal callback which we use to extract
-     * request header and query strings
+     * request header
      *------------------------------------
      * @param cls user-defined data that is passed
      *        to MHD_get_connection_values()
@@ -68,49 +68,71 @@ uses
      * @param value value of data
      * @return flag if we should continue or stop
      *--------------------------------------*)
-    function extractHeadersQueryStrs (
+    function extractHeaders (
         cls : pointer;
         kind : MHD_ValueKind;
         key : pcchar;
         value : pcchar
     ) : cint; cdecl;
     var keyValueInst : TMhdParamKeyValuePair;
-        akey, strKey, queryStr : string;
+        akey, strKey : string;
     begin
         //cls = self
         keyValueInst := TMhdParamKeyValuePair(cls);
         akey := PChar(key);
 
-        if (kind = MHD_HEADER_KIND) then
+        //turn request header into format according to CGI Environment (RFC 3875)
+        //'Host' ==> 'HTTP_HOST',
+        //'User-Agent' ==> 'HTTP_USER_AGENT' .. etc,
+        //except
+        //'Content-Length' ==> 'CONTENT_LENGTH'
+        //'Content-Type' ==> 'CONTENT_TYPE'
+        strKey := uppercase(stringReplace(akey, '-', '_', [rdReplaceAll]));
+        if not ((akey = 'Content-Length') or (akey = 'Content-Type')) then
         begin
-            //turn request header into format according to CGI Environment (RFC 3875)
-            //'Host' ==> 'HTTP_HOST',
-            //'User-Agent' ==> 'HTTP_USER_AGENT' .. etc,
-            //except
-            //'Content-Length' ==> 'CONTENT_LENGTH'
-            //'Content-Type' ==> 'CONTENT_TYPE'
-            strKey := uppercase(stringReplace(akey, '-', '_', [rdReplaceAll]));
-            if not ((akey = 'Content-Length') or (akey = 'Content-Type')) then
-            begin
-                strKey := 'HTTP_' + strKey;
-            end;
-            keyValueInst.setValue(strKey, PChar(value));
-        end else
-        if (kind = MHD_GET_ARGUMENT_KIND) then
-        begin
-            //TODO: this is little bit not optimized because query string
-            //are already parsed by libmicrohttpd. We need to do this
-            //so we do not need to change how everything works
-            queryStr := keyValueInst.getValue('QUERY_STRING');
-            if (queryStr = '') then
-            begin
-                queryStr := akey + '=' + pchar(value);
-            end else
-            begin
-                queryStr := '&' + akey + '=' + pchar(value);
-            end;
-            keyValueInst.setValue('QUERY_STRING', queryStr);
+            strKey := 'HTTP_' + strKey;
         end;
+        keyValueInst.setValue(strKey, PChar(value));
+
+        //we will process all data so just return MHD_YES
+        result := MHD_YES;
+    end;
+
+    (*!-----------------------------------
+     * internal callback which we use to extract
+     * request query strings
+     *------------------------------------
+     * @param cls user-defined data that is passed
+     *        to MHD_get_connection_values()
+     * @param kind type of data we are dealing
+     * @param key name of data
+     * @param value value of data
+     * @return flag if we should continue or stop
+     *--------------------------------------*)
+    function extractQueryStrs (
+        cls : pointer;
+        kind : MHD_ValueKind;
+        key : pcchar;
+        value : pcchar
+    ) : cint; cdecl;
+    var keyValueInst : TMhdParamKeyValuePair;
+        queryStr : string;
+    begin
+        //cls = self
+        keyValueInst := TMhdParamKeyValuePair(cls);
+
+        //TODO: this is little bit not optimized because query string
+        //are already parsed by libmicrohttpd. We need to do this
+        //so we do not need to change how everything works
+        queryStr := keyValueInst.getValue('QUERY_STRING');
+        if (queryStr = '') then
+        begin
+            queryStr := pchar(key) + '=' + pchar(value);
+        end else
+        begin
+            queryStr := '&' + pchar(key) + '=' + pchar(value);
+        end;
+        keyValueInst.setValue('QUERY_STRING', queryStr);
 
         //we will process all data so just return MHD_YES
         result := MHD_YES;
@@ -159,15 +181,30 @@ uses
         setValue('AUTH_TYPE', '');
         setValue('REMOTE_IDENT', '');
 
-        //we will build query string inside extractHeadersQueryStrs
+        //we will build HTTP header environment inside extractHeaders
+        //note: while libmicrohttpd allows to get request header and query string
+        //with same function callback using MHD_HEADER_KIND or MHD_GET_ARGUMENT_KIND,
+        //there is no way to indicate if current data is header or query string,
+        //so we need separate to calls
+        MHD_get_connection_values (
+            mhData.connection,
+            MHD_HEADER_KIND,
+            @extractHeaders,
+            //pass current class instance so we can retrieve it
+            //from cls pointer of extractHeaders() function
+            self
+        );
+
+        //we will build query string inside extractQueryStrs
+        //initialize with empty string first
         setValue('QUERY_STRING', '');
 
         MHD_get_connection_values (
             mhData.connection,
-            MHD_HEADER_KIND or MHD_GET_ARGUMENT_KIND,
-            @extractHeadersQueryStrs,
+            MHD_GET_ARGUMENT_KIND,
+            @extractQueryStrs,
             //pass current class instance so we can retrieve it
-            //from cls pointer of extractKeyValue() function
+            //from cls pointer of extractQueryStrs() function
             self
         );
 
