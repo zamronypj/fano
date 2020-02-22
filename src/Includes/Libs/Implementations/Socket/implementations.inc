@@ -12,17 +12,3 @@
  *
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
  *-----------------------------------------------*)
-
-InetSocketSvrImpl,
-
-{$IFDEF unix}
-UnixSocketSvrImpl,
-{$ENDIF}
-
-BoundSocketSvrImpl,
-
-{$IFDEF LINUX}
-EpollInetSocketSvrImpl,
-EpollUnixSocketSvrImpl,
-EpollBoundSocketSvrImpl,
-{$ENDIF}
