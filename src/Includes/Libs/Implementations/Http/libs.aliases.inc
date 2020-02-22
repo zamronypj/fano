@@ -6,8 +6,8 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-{------------ Begin SCGI-related------------------}
-TScgiStdOutWriter = ScgiStdOutWriterImpl.TScgiStdOutWriter;
-TScgiParser = ScgiParserImpl.TScgiParser;
-TScgiProcessor = ScgiProcessorImpl.TScgiProcessor;
-{------------ End SCGI-related------------------}
+{------------ Begin libmicrohttpd-related------------------}
+TMhdStdOutWriter = MhdStdOutWriterImpl.TMhdStdOutWriter;
+TMhdStdinReader = MhdStdInReaderImpl.TMhdStdInReader;
+TMhdProcessor = MhdProcessorImpl.TMhdProcessor;
+{------------ End libmicrohttpd-related------------------}
