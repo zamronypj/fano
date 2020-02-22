@@ -31,10 +31,11 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TMhdProcessor = class(TInterfacedObject, IProtocolProcessor, IRunnableWithData)
+    TMhdProcessor = class(TInterfacedObject, IProtocolProcessor, IRunnableWithDataNotif)
     private
         fPort : word;
         fHost : string;
+        fTimeout : longword;
         fRequestReadyListener : IReadyListener;
         fDataListener : IDataAvailListener;
         fStdIn : IStreamAdapter;
@@ -51,6 +52,7 @@ type
             upload_data_size : psize_t;
             ptr : ppointer
         ): cint;
+
     public
         constructor create(const host : string; const port : word);
         destructor destroy(); override;
@@ -107,13 +109,20 @@ uses
 
     SysUtils,
     BaseUnix,
-    TermSignalImpl;
+    TermSignalImpl,
+    KeyValueEnvironmentImpl,
+    MhdParamKeyValuePairImpl;
 
-    constructor TMhdProcessor.create(const host : string; const port : word);
+    constructor TMhdProcessor.create(
+        const host : string;
+        const port : word;
+        const timeout : longword = 120
+    );
     begin
         inherited create();
         fHost := host;
         fPort := port;
+        fTimeout := timeout;
         fRequestReadyListener := nil;
         fDataListener := nil;
         fStdIn := nil;
@@ -141,15 +150,9 @@ uses
         const streamId : IStreamId
     ) : boolean;
     begin
+        //intentationally does nothing, because libmicrohttpd
+        //already does stream parsing so this is not relevant
         result := true;
-        if assigned(fRequestReadyListener) then
-        begin
-            fRequestReadyListener.ready(
-                stream,
-                getEnv(),
-                getStdIn()
-            );
-        end;
     end;
 
     (*!------------------------------------------------
@@ -216,6 +219,23 @@ uses
         );
     end;
 
+    function TMhdProcessor.buildEnv(
+        connection : PMHD_Connection;
+        url : pcchar;
+        method : pcchar;
+        version : pcchar
+    ): : ICGIEnvironment;
+    var
+        mhdData : TMhdData;
+    begin
+        mhdData.connection := connection;
+        mhdData.url := url;
+        mhdData.method := method;
+        result := TKeyValueEnvironment.create(
+            TMhdParamKeyValuePair.create(mhdData)
+        );
+    end;
+
     function TMhdProcessor.handle(
         connection : PMHD_Connection;
         url : pcchar;
@@ -225,27 +245,16 @@ uses
         upload_data_size : psize_t;
         ptr : ppointer
     ): cint;
-    var request : IRequest;
+    var
+        mhdEnv : ICGIEnvironment;
+        stdInStream : IStreamAdapter;
     begin
-        request := TMhdRequest.create(
-            connection,
-            method,
-            url,
-            upload_data,
-            upload_data_size
-        );
-
-        MHD_get_connection_values(
-            connection,
-            MHD_GET_ARGUMENT_KIND,
-            @getKeyValueData,
-            fQuery
-        );
-        fDataListener.handleData(
-            stream,
-            self,
-            self,
-            self
+        mhdEnv := buildEnv(connection, url, method, version);
+        stdInStream := buildStdInStream(connection, upload, upload_data_size);
+        fRequestReadyListener.ready(
+            getStream(connection),
+            mhdEnv,
+            stdInStream
         );
         result := MHD_YES;
     end;
@@ -260,16 +269,14 @@ uses
         svrDaemon : PMHD_Daemon;
     begin
         svrDaemon := MHD_start_daemon(
-            // MHD_USE_SELECT_INTERNALLY or MHD_USE_DEBUG or MHD_USE_POLL,
-             MHD_USE_SELECT_INTERNALLY or MHD_USE_DEBUG,
-            // MHD_USE_THREAD_PER_CONNECTION or MHD_USE_DEBUG or MHD_USE_POLL,
-            // MHD_USE_THREAD_PER_CONNECTION or MHD_USE_DEBUG,
+            MHD_USE_EPOLL_INTERNALLY_LINUX_ONLY,
             fPort,
             nil,
             nil,
             @handleRequestCallback,
             self,
-            MHD_OPTION_CONNECTION_TIMEOUT, cuint(120),
+            MHD_OPTION_CONNECTION_TIMEOUT,
+            cuint(fTimeout),
             MHD_OPTION_END
         );
         if svrDaemon <> nil then
@@ -277,7 +284,6 @@ uses
             waitUntilTerminate();
             MHD_stop_daemon(svrDaemon);
         end;
-
     end;
 
     (*!------------------------------------------------

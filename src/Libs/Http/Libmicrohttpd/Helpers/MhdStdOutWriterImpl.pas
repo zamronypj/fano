@@ -51,13 +51,13 @@ implementation
     function TMhdStdOutWriter.writeStream(const stream : IStreamAdapter; const str : string) : IStdOut;
     var response: PMHD_Response;
     begin
-        stream.writeBuffer(str[1], length(str));
         response := MHD_create_response_from_buffer(
-            strlen(str),
+            length(str),
             pointer(str),
             MHD_RESPMEM_PERSISTENT
         );
-        ret := MHD_queue_response(connection, MHD_HTTP_OK, response);
+
+        MHD_queue_response(connection, MHD_HTTP_OK, response);
         MHD_destroy_response(response);
         result:= self;
     end;

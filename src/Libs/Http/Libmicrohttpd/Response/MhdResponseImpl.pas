@@ -26,8 +26,38 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TMhdResponse = class (TInterfacedObject, IResponse)
+    TMhdResponse = class (TInterfacedObject, IHeaders, IResponse)
+    private
+        fConnection : PMHD_Connection;
     public
+        (*!------------------------------------
+         * set http header
+         *-------------------------------------
+         * @param key name  of http header to set
+         * @param value value of header
+         * @return header instance
+         *-------------------------------------*)
+        function setHeader(const key : shortstring; const value : string) : IHeaders;
+
+        (*!------------------------------------
+         * add http header
+         *-------------------------------------
+         * @param key name  of http header to set
+         * @param value value of header
+         * @return header instance
+         *-------------------------------------*)
+        function addHeader(const key : shortstring; const value : string) : IHeaders;
+
+        (*!------------------------------------
+         * output http headers to STDOUT
+         *-------------------------------------
+         * Implementor must end with empty blank line
+         * after write all headers
+         *-------------------------------------
+         * @return header instance
+         *-------------------------------------*)
+        function writeHeaders() : IHeaders;
+
         (*!------------------------------------
          * get http headers instance
          *-------------------------------------
@@ -55,12 +85,46 @@ type
 implementation
 
     (*!------------------------------------
+     * set http header
+     *-------------------------------------
+     * @param key name  of http header to set
+     * @param value value of header
+     * @return header instance
+     *-------------------------------------*)
+    function setHeader(const key : shortstring; const value : string) : IHeaders;
+
+    (*!------------------------------------
+     * add http header
+     *-------------------------------------
+     * @param key name  of http header to set
+     * @param value value of header
+     * @return header instance
+     *-------------------------------------*)
+    function addHeader(const key : shortstring; const value : string) : IHeaders;
+    begin
+
+
+    (*!------------------------------------
+        * output http headers to STDOUT
+        *-------------------------------------
+        * Implementor must end with empty blank line
+        * after write all headers
+        *-------------------------------------
+        * @return header instance
+        *-------------------------------------*)
+    function writeHeaders() : IHeaders;
+    begin
+        MHD_add_response_header (response, "Content-Type", MIMETYPE);
+    end;
+
+    (*!------------------------------------
      * get http headers instance
      *-------------------------------------
      * @return header instance
      *-------------------------------------*)
     function TMhdResponse.headers() : IHeaders;
     begin
+        result := self;
     end;
 
     (*!------------------------------------
@@ -70,6 +134,7 @@ implementation
      *-------------------------------------*)
     function TMhdResponse.write() : IResponse;
     begin
+
     end;
 
     (*!------------------------------------
