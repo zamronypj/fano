@@ -60,7 +60,11 @@ uses
         if isJsonRequest then
         begin
             jsonRequest := TJsonRequest.create(request);
-            result := nextMdlwr.handleRequest(jsonRequest, response, args);
+            try
+                result := nextMdlwr.handleRequest(jsonRequest, response, args);
+            finally
+                jsonRequest := nil;
+            end;
         end else
         begin
             result := nextMdlwr.handleRequest(request, response, args);

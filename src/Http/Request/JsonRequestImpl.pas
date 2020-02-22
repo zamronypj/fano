@@ -22,7 +22,8 @@ uses
     ReadonlyHeadersIntf,
     EnvironmentIntf,
     UriIntf,
-    fpjson;
+    fpjson,
+    HashListImpl;
 
 type
 
@@ -32,76 +33,13 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TJsonRequest = class(TInterfaceObject, IRequest, IReadOnlyList)
+    TJsonRequest = class(TDecoratorRequest)
     private
-        fActualRequest : IRequest;
         fBodyJson : TJsonData;
-        fBodyParams : IReadOnlyList;
-        fQueryBodyParams : IReadOnlyList;
+        fBodyList : THashList;
 
-        function getSingleParam(
-            const src : IReadOnlyList;
-            const key: string;
-            const defValue : string = ''
-        ) : string;
+        procedure buildFlatList(const bodyJson : TJsonData; const bodyList : THashList);
     public
-        constructor create(const request : IRequest);
-        destructor destroy(); override;
-
-        (*!------------------------------------
-         * get http headers instance
-         *-------------------------------------
-         * @return header instance
-         *-------------------------------------*)
-        function headers() : IReadOnlyHeaders;
-
-        (*!------------------------------------------------
-         * get request URI
-         *-------------------------------------------------
-         * @return IUri of current request
-         *------------------------------------------------*)
-        function uri() : IUri;
-
-        (*!------------------------------------------------
-         * get request method GET, POST, HEAD, etc
-         *-------------------------------------------------
-         * @return string request method
-         *------------------------------------------------*)
-        function getMethod() : string;
-
-        (*!------------------------------------------------
-         * get single query param value by its name
-         *-------------------------------------------------
-         * @param string key name of key
-         * @param string defValue default value to use if key
-         *               does not exist
-         * @return string value
-         *------------------------------------------------*)
-        function getQueryParam(const key: string; const defValue : string = '') : string;
-
-        (*!------------------------------------------------
-         * get all query params
-         *-------------------------------------------------
-         * @return list of query string params
-         *------------------------------------------------*)
-        function getQueryParams() : IReadOnlyList;
-
-        (*!------------------------------------------------
-         * get single cookie param value by its name
-         *-------------------------------------------------
-         * @param string key name of key
-         * @param string defValue default value to use if key
-         *               does not exist
-         * @return string value
-         *------------------------------------------------*)
-        function getCookieParam(const key: string; const defValue : string = '') : string;
-
-        (*!------------------------------------------------
-         * get all cookies params
-         *-------------------------------------------------
-         * @return list of cookie params
-         *------------------------------------------------*)
-        function getCookieParams() : IReadOnlyList;
 
         (*!------------------------------------------------
          * get request body data
@@ -118,31 +56,7 @@ type
          *-------------------------------------------------
          * @return array of parsed body params
          *------------------------------------------------*)
-        function getParsedBodyParams() : IReadOnlyList;
-
-        (*!------------------------------------------------
-         * get request uploaded file by name
-         *-------------------------------------------------
-         * @param string key name of key
-         * @return instance of IUploadedFileArray or nil if is not
-         *         exists
-         *------------------------------------------------*)
-        function getUploadedFile(const key: string) : IUploadedFileArray;
-
-        (*!------------------------------------------------
-         * get all uploaded files
-         *-------------------------------------------------
-         * @return IUploadedFileCollection or nil if no file
-         *         upload
-         *------------------------------------------------*)
-        function getUploadedFiles() : IUploadedFileCollection;
-
-        (*!------------------------------------------------
-         * get CGI environment
-         *-------------------------------------------------
-         * @return ICGIEnvironment
-         *------------------------------------------------*)
-        function getEnvironment() : ICGIEnvironment;
+        function getParsedBodyParams() : IReadOnlyList; override;
 
         (*!------------------------------------------------
          * get request query string or body data
@@ -152,7 +66,7 @@ type
          *               does not exist
          * @return string value
          *------------------------------------------------*)
-        function getParam(const key: string; const defValue : string = '') : string;
+        function getParam(const key: string; const defValue : string = '') : string; override;
 
         (*!------------------------------------------------
          * get all request query string body data
@@ -208,130 +122,40 @@ uses
     KeyValueTypes,
     jsonparser;
 
-    constructor TJsonRequest.create(const request : IRequest);
-    var abody : string;
+    procedure TJsonRequest.buildFlatList(
+        const bodyJson : TJsonData;
+        const bodyList : THashList;
+        const key : string;
+    );
+    var i : integer;
     begin
-        fActualRequest := request;
-        abody := fActualRequest.getParsedBodyParam('application/json');
-        if (abody <> '') then
+        if (bodyJson.count > 0) then
         begin
-            fBodyJson := getJSON(abody);
-            //combine parsed body params of actual request with ourselves
-            fBodyParams := TCompositeList.create(
-                self,
-                fActualRequest.getParsedBodyParams(),
-            );
-            fQueryBodyParams := TCompositeList.create(
-                fActualRequest.getQueryParams(),
-                fBodyParams
-            );
+            for i := 0 to bodyJson.count - 1 do
+            begin
+                buildFlatList(bodyJson.items[i], bodyList)
+            end;
         end else
         begin
+        end;
+    end;
+
+    constructor TJsonRequest.create(const request : IRequest);
+    begin
+        inherited create(request);
+        try
+            fBodyJson := getJSON(fActualRequest.getParsedBodyParam('application/json'));
+        except
             fBodyJson := nil;
+            raise;
         end;
     end;
 
     destructor TJsonRequest.destroy();
     begin
-        fActualRequest := nil;
-        fBodyParams := nil;
-        fQueryBodyParams := nil;
         fBodyJson.free();
         inherited destroy();
     end;
-
-    (*!------------------------------------
-     * get http headers instance
-     *-------------------------------------
-     * @return header instance
-     *-------------------------------------*)
-    function TJsonRequest.headers() : IReadOnlyHeaders;
-    begin
-        result := fActualRequest.headers();
-    end;
-
-    (*!------------------------------------------------
-     * get request URI
-     *-------------------------------------------------
-     * @return IUri of current request
-     *------------------------------------------------*)
-    function TJsonRequest.uri() : IUri;
-    begin
-        result := fActualRequest.uri();
-    end;
-
-    (*!------------------------------------------------
-     * get single query param value by its name
-     *-------------------------------------------------
-     * @param string key name of key
-     * @param string defValue default value to use if key
-     *               does not exist
-     * @return string value
-     *------------------------------------------------*)
-    function TJsonRequest.getQueryParam(const key: string; const defValue : string = '') : string;
-    begin
-        result := fActualRequest.getQueryParam(key, defValue);
-    end;
-
-    (*!------------------------------------------------
-     * get all request query strings data
-     *-------------------------------------------------
-     * @return list of request query string parameters
-     *------------------------------------------------*)
-    function TJsonRequest.getQueryParams() : IReadOnlyList;
-    begin
-        result := fActualRequest.getQueryParams();
-    end;
-
-    (*!------------------------------------------------
-     * get single cookie param value by its name
-     *-------------------------------------------------
-     * @param string key name of key
-     * @param string defValue default value to use if key
-     *               does not exist
-     * @return string value
-     *------------------------------------------------*)
-    function TJsonRequest.getCookieParam(const key: string; const defValue : string = '') : string;
-    begin
-        result := fActualRequest.getCookieParam(key, defValue);
-    end;
-
-    (*!------------------------------------------------
-     * get all request cookie data
-     *-------------------------------------------------
-     * @return list of request cookies parameters
-     *------------------------------------------------*)
-    function TJsonRequest.getCookieParams() : IReadOnlyList;
-    begin
-        result := fActualRequest.getCookieParams();
-    end;
-
-    (*!------------------------------------------------
-     * get single param value by its name
-     *-------------------------------------------------
-     * @param IList src hash list instance
-     * @param string key name of key
-     * @param string defValue default value to use if key
-     *               does not exist
-     * @return string value
-     *------------------------------------------------*)
-    function TJsonRequest.getSingleParam(
-        const src : IReadOnlyList;
-        const key: string;
-        const defValue : string = ''
-    ) : string;
-    var qry : PKeyValue;
-    begin
-        qry := src.find(key);
-        if (qry = nil) then
-        begin
-            result := defValue;
-        end else
-        begin
-            result := qry^.value;
-        end;
-    end;
-
 
     (*!------------------------------------------------
      * get request body data
@@ -342,8 +166,21 @@ uses
      * @return string value
      *------------------------------------------------*)
     function TJsonRequest.getParsedBodyParam(const key: string; const defValue : string = '') : string;
+    var data : TJSONData;
     begin
-        result := getSingleParam(fBodyParams);
+        result := defValue;
+        data := fBodyJson.findPath(key);
+        if (data <> nil) then
+        begin
+            if data.count > 0 then
+            begin
+                //it is data having child just return is as JSON string
+                result := data.asJSON;
+            end else
+            begin
+                result := data.asString;
+            end;
+        end;
     end;
 
     (*!------------------------------------------------
@@ -353,59 +190,7 @@ uses
      *------------------------------------------------*)
     function TJsonRequest.getParsedBodyParams() : IReadOnlyList;
     begin
-        result := fBodyParams;
-    end;
-
-    (*!------------------------------------------------
-     * get request uploaded file by name
-     *-------------------------------------------------
-     * @param string key name of key
-     * @return instance of IUploadedFileArray or nil if is not
-     *         exists
-     *------------------------------------------------*)
-    function TJsonRequest.getUploadedFile(const key: string) : IUploadedFileArray;
-    begin
-        result := fActualRequest.getUploadedFile(key);
-    end;
-
-    (*!------------------------------------------------
-     * get all uploaded files
-     *-------------------------------------------------
-     * @return IUploadedFileCollection
-     *------------------------------------------------*)
-    function TJsonRequest.getUploadedFiles() : IUploadedFileCollection;
-    begin
-        result := fActualRequest.getUploadedFiles();
-    end;
-
-    (*!------------------------------------------------
-     * test if current request is coming from AJAX request
-     *-------------------------------------------------
-     * @return true if ajax request false otherwise
-     *------------------------------------------------*)
-    function TJsonRequest.isXhr() : boolean;
-    begin
-        result := fActualRequest.isXhr();
-    end;
-
-    (*!------------------------------------------------
-     * get request method GET, POST, HEAD, etc
-     *-------------------------------------------------
-     * @return string request method
-     *------------------------------------------------*)
-    function TJsonRequest.getMethod() : string;
-    begin
-        result := getEnvironment().requestMethod();
-    end;
-
-    (*!------------------------------------------------
-     * get CGI environment
-     *-------------------------------------------------
-     * @return ICGIEnvironment
-     *------------------------------------------------*)
-    function TJsonRequest.getEnvironment() : ICGIEnvironment;
-    begin
-        result := fActualRequest.getEnvironment();
+        result := self;
     end;
 
     (*!------------------------------------------------
@@ -418,7 +203,11 @@ uses
      *------------------------------------------------*)
     function TJsonRequest.getParam(const key: string; const defValue : string = '') : string;
     begin
-        result := getSingleParam(fQueryBodyParams, key, defValue);
+        result := inherited getParam(key, defValue);
+        if (result = '') then
+        begin
+            result := getParsedBodyParam(key, defValue);
+        end;
     end;
 
     (*!------------------------------------------------
@@ -428,7 +217,7 @@ uses
      *------------------------------------------------*)
     function TJsonRequest.getParams() : IReadOnlyList;
     begin
-        result := fQueryBodyParams;
+        result := self;
     end;
 
     (*!------------------------------------------------
@@ -438,7 +227,7 @@ uses
      *-----------------------------------------------*)
     function TJsonRequest.count() : integer;
     begin
-        result := fBodyJson.count;
+        result := fBodyList.count;
     end;
 
     (*!------------------------------------------------
@@ -448,9 +237,8 @@ uses
      * @return item instance
      *-----------------------------------------------*)
     function TJsonRequest.get(const indx : integer) : pointer;
-    var
     begin
-        result := pointer(fBodyJson.items[indx]);
+        result := fBodyList.get(indx);
     end;
 
     (*!------------------------------------------------
@@ -460,14 +248,12 @@ uses
      * @return item instance
      *-----------------------------------------------*)
     function TJsonRequest.find(const aKey : shortstring) : pointer;
-    var keyvalue : PKeyValue;
-        adata : TJsonData;
+    var adata : TJsonData;
     begin
         adata := fBodyJson.findPath(aKey);
         if (adata <> nil) then
         begin
-            akeyvalue.key := akey;
-            akeyvalue.value := data.asString;
+            result := pointer(data);
         end else
         begin
             result := nil;
@@ -482,7 +268,7 @@ uses
      *-----------------------------------------------*)
     function TJsonRequest.keyOfIndex(const indx : integer) : shortstring;
     begin
-        result :=
+        result := fBodyList.keyOfIndex(index);
     end;
 
     (*!------------------------------------------------
@@ -493,7 +279,7 @@ uses
      *-----------------------------------------------*)
     function TJsonRequest.indexOf(const aKey : shortstring) : integer;
     begin
-
+        result := fBodyList.indexOf(aKey);
     end;
 
 end.
