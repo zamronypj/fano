@@ -120,8 +120,8 @@ uses
     var firstKeys, secondKeys : TStrings;
         indx, firstCount, secondCount : integer;
     begin
-        firstKeys := firstViewParam.vars();
-        secondKeys := secondViewParam.vars();
+        firstKeys := firstViewParam.asStrings();
+        secondKeys := secondViewParam.asStrings();
         firstCount := firstKeys.count;
         secondCount := secondKeys.count;
         keys.clear();
