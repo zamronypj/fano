@@ -84,7 +84,7 @@ type
         (*!------------------------------------------------
          * property to read and set value in array-like fashin
          *-----------------------------------------------*)
-        property vars[const varName : shortstring] : IDependency read getVar write putVar; default;
+        property vars[const varName : shortstring] : string read getVar write putVar; default;
 
     end;
 
