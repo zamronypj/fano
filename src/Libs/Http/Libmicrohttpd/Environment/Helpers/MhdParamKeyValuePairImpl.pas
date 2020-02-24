@@ -117,7 +117,7 @@ uses
         //except
         //'Content-Length' ==> 'CONTENT_LENGTH'
         //'Content-Type' ==> 'CONTENT_TYPE'
-        strKey := uppercase(stringReplace(key, '-', '_', [rdReplaceAll]));
+        strKey := uppercase(stringReplace(key, '-', '_', [rfReplaceAll]));
         if not ((key = MHD_HTTP_HEADER_CONTENT_LENGTH) or
             (key = MHD_HTTP_HEADER_CONTENT_TYPE)) then
         begin
