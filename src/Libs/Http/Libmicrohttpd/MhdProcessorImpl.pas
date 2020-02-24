@@ -15,6 +15,9 @@ interface
 
 uses
 
+    //BaseUnix and libmicrohttpd both declared pcchar type
+    //need to order libmicrohttpd after BaseUNix, so any pcchar use
+    //libmicrohttpd's pcchar, otherwise FPC complains about type mismatch
     BaseUnix,
     libmicrohttpd,
     StreamAdapterIntf,
