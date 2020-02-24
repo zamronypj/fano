@@ -22,6 +22,7 @@ uses
     ProtocolProcessorIntf,
     StreamIdIntf,
     ReadyListenerIntf,
+    DataAvailListenerIntf,
     libmicrohttpd;
 
 type
