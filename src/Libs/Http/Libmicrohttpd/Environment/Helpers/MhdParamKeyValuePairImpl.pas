@@ -151,7 +151,7 @@ uses
         setValue('SERVER_ADMIN', mhdData.serverAdmin);
         setValue('SERVER_NAME', mhdData.serverName);
         setValue('SERVER_ADDR', mhdData.serverAddr);
-        setValue('SERVER_PORT', mhdData.serverPort);
+        setValue('SERVER_PORT', intToStr(mhdData.serverPort));
         setValue('SERVER_SOFTWARE', mhdData.serverSoftware);
         setValue('DOCUMENT_ROOT', mhdData.documentRoot);
         setValue('SERVER_PROTOCOL', PCHAR(mhdData.version));
