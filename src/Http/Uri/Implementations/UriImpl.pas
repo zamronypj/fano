@@ -62,6 +62,7 @@ implementation
 
 uses
 
+    SysUtils,
     uriparser;
 
     constructor TUri.create(const env : ICGIEnvironment);
