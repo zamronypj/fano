@@ -15,6 +15,7 @@ uses
 
     classes,
     consoletestrunner,
+    {$INCLUDE src/tests.inc}
     fano;
 
 type
