@@ -111,6 +111,7 @@ uses
     SysUtils,
     BaseUnix,
     TermSignalImpl,
+    EnvironmentIntf,
     KeyValueEnvironmentImpl,
     MhdParamKeyValuePairImpl;
 
