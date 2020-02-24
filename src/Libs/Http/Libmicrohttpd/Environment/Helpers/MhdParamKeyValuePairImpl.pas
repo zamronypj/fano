@@ -148,22 +148,22 @@ uses
         ipAddress : string;
     begin
         setValue('GATEWAY_INTERFACE', 'CGI/1.1');
-        setValue('SERVER_ADMIN', mhData.serverAdmin);
-        setValue('SERVER_NAME', mhData.serverName);
-        setValue('SERVER_ADDR', mhData.serverAddr);
-        setValue('SERVER_PORT', mhData.serverPort);
-        setValue('SERVER_SOFTWARE', mhData.serverSoftware);
-        setValue('DOCUMENT_ROOT', mhData.documentRoot);
-        setValue('SERVER_PROTOCOL', PCHAR(mhData.version));
+        setValue('SERVER_ADMIN', mhdData.serverAdmin);
+        setValue('SERVER_NAME', mhdData.serverName);
+        setValue('SERVER_ADDR', mhdData.serverAddr);
+        setValue('SERVER_PORT', mhdData.serverPort);
+        setValue('SERVER_SOFTWARE', mhdData.serverSoftware);
+        setValue('DOCUMENT_ROOT', mhdData.documentRoot);
+        setValue('SERVER_PROTOCOL', PCHAR(mhdData.version));
 
-        setValue('REQUEST_METHOD', PChar(mhData.method));
+        setValue('REQUEST_METHOD', PChar(mhdData.method));
         setValue('PATH_INFO', '');
         setValue('PATH_TRANSLATED', '');
         setValue('PATH', GetEnvironmentVariable('PATH'));
 
         //get client information
         connectionInfo := MHD_get_connection_info(
-            mhData.connection,
+            mhdData.connection,
             MHD_CONNECTION_INFO_CLIENT_ADDRESS
         );
 
@@ -186,7 +186,7 @@ uses
         //there is no way to indicate if current data is header or query string,
         //so we need separate to calls
         MHD_get_connection_values (
-            mhData.connection,
+            mhdData.connection,
             MHD_HEADER_KIND,
             @extractRequestData,
             //pass current class instance so we can retrieve it
@@ -199,7 +199,7 @@ uses
         setValue('QUERY_STRING', '');
 
         MHD_get_connection_values (
-            mhData.connection,
+            mhdData.connection,
             MHD_GET_ARGUMENT_KIND,
             @extractRequestData,
             //pass current class instance so we can retrieve it
@@ -207,7 +207,7 @@ uses
             self
         );
 
-        setValue('REQUEST_URI', PChar(mhData.url) + '?' + getValue('QUERY_STRING'));
+        setValue('REQUEST_URI', PChar(mhdData.url) + '?' + getValue('QUERY_STRING'));
     end;
 
 end.
