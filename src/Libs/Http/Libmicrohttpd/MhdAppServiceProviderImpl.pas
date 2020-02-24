@@ -31,7 +31,11 @@ type
     private
         fServer : IRunnableWithDataNotif;
     public
-        constructor create(const actualSvc : IDaemonAppServiceProvider);
+        constructor create(
+            const actualSvc : IDaemonAppServiceProvider;
+            const host : string;
+            const port : word
+        );
         destructor destroy(); override;
         function getServer() : IRunnableWithDataNotif; override;
         function getStdIn() : IStdIn; override;
@@ -44,10 +48,14 @@ uses
     MhdProcessorImpl,
     MhdStdOutWriterImpl;
 
-    constructor TMhdAppServiceProvider.create(const actualSvc : IDaemonAppServiceProvider);
+    constructor TMhdAppServiceProvider.create(
+        const actualSvc : IDaemonAppServiceProvider;
+        const host : string;
+        const port : word
+    );
     begin
         inherited create(actualSvc);
-        fProtocol := TMhdProcessor.create();
+        fProtocol := TMhdProcessor.create(host, port);
         //TMhdProcessor also act as server
         fServer := fProtocol as IRunnableWithDataNotif;
         fStdOut := TMhdStdOutWriter.create();
