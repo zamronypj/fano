@@ -211,8 +211,8 @@ uses
     end;
 
     //BaseUnix and libmicrohttpd both declared pcchar type
-    //need to order libmicrohttpd after BaseUNix, so any pcchar use
-    //libmicrohttpd.pcchar, otherwise FPC complains about type mismatch
+    //here any pcchar use libmicrohttpd.pcchar,
+    //otherwise FPC complains about type mismatch
     function handleRequestCallback(
         acontext :  pointer;
         aconnection : PMHD_Connection;
@@ -254,10 +254,10 @@ uses
 
     function TMhdProcessor.handleReq(
         aconnection : PMHD_Connection;
-        aurl : pcchar;
-        amethod : pcchar;
-        aversion : pcchar;
-        aupload_data : pcchar;
+        aurl : libmicrohttpd.pcchar;
+        amethod : libmicrohttpd.pcchar;
+        aversion : libmicrohttpd.pcchar;
+        aupload_data : libmicrohttpd.pcchar;
         aupload_data_size : psize_t;
         aptr : ppointer
     ): cint;
