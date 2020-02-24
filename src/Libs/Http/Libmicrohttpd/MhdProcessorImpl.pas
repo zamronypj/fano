@@ -225,7 +225,7 @@ uses
         url : pcchar;
         method : pcchar;
         version : pcchar
-    ): : ICGIEnvironment;
+    ): ICGIEnvironment;
     var
         mhdData : TMhdData;
     begin
@@ -237,23 +237,23 @@ uses
         );
     end;
 
-    function TMhdProcessor.handle(
-        connection : PMHD_Connection;
-        url : pcchar;
-        method : pcchar;
-        version : pcchar;
-        upload_data : pcchar;
-        upload_data_size : psize_t;
-        ptr : ppointer
+    function TMhdProcessor.handleReq(
+        aconnection : PMHD_Connection;
+        aurl : pcchar;
+        amethod : pcchar;
+        aversion : pcchar;
+        aupload_data : pcchar;
+        aupload_data_size : psize_t;
+        aptr : ppointer
     ): cint;
     var
         mhdEnv : ICGIEnvironment;
         stdInStream : IStreamAdapter;
     begin
-        mhdEnv := buildEnv(connection, url, method, version);
-        stdInStream := buildStdInStream(connection, upload, upload_data_size);
+        mhdEnv := buildEnv(aconnection, aurl, amethod, aversion);
+        stdInStream := buildStdInStream(aconnection, aupload_data, upload_data_size);
         fRequestReadyListener.ready(
-            getStream(connection),
+            getStream(aconnection),
             mhdEnv,
             stdInStream
         );
