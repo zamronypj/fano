@@ -63,7 +63,11 @@ type
         ): cint;
 
     public
-        constructor create(const host : string; const port : word);
+        constructor create(
+            const host : string;
+            const port : word;
+            const timeout : longword = 120
+        );
         destructor destroy(); override;
 
         (*!------------------------------------------------
