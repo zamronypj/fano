@@ -44,7 +44,7 @@ type
         procedure resetInternalVars();
         procedure waitUntilTerminate();
 
-        function handle(
+        function handleReq(
             connection : PMHD_Connection;
             url : pcchar;
             method : pcchar;
@@ -209,7 +209,7 @@ uses
         ptr : ppointer
     ): cint; cdecl;
     begin
-        result := TMhdProcessor(context).handle(
+        result := TMhdProcessor(context).handleReq(
             connection,
             url,
             method,
