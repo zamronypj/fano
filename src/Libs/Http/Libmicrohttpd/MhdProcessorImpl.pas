@@ -15,6 +15,7 @@ interface
 
 uses
 
+    libmicrohttpd,
     StreamAdapterIntf,
     CloseableIntf,
     RunnableIntf,
@@ -23,7 +24,7 @@ uses
     StreamIdIntf,
     ReadyListenerIntf,
     DataAvailListenerIntf,
-    libmicrohttpd;
+    EnvironmentIntf;
 
 type
 
@@ -43,6 +44,13 @@ type
 
         procedure resetInternalVars();
         procedure waitUntilTerminate();
+
+        function buildEnv(
+            aconnection : PMHD_Connection;
+            aurl : pcchar;
+            amethod : pcchar;
+            aversion : pcchar
+        ): ICGIEnvironment;
 
         function handleReq(
             connection : PMHD_Connection;
@@ -111,7 +119,6 @@ uses
     SysUtils,
     BaseUnix,
     TermSignalImpl,
-    EnvironmentIntf,
     KeyValueEnvironmentImpl,
     MhdParamKeyValuePairImpl;
 
@@ -222,17 +229,17 @@ uses
     end;
 
     function TMhdProcessor.buildEnv(
-        connection : PMHD_Connection;
-        url : pcchar;
-        method : pcchar;
-        version : pcchar
+        aconnection : PMHD_Connection;
+        aurl : pcchar;
+        amethod : pcchar;
+        aversion : pcchar
     ): ICGIEnvironment;
     var
         mhdData : TMhdData;
     begin
-        mhdData.connection := connection;
-        mhdData.url := url;
-        mhdData.method := method;
+        mhdData.connection := aconnection;
+        mhdData.url := aurl;
+        mhdData.method := amethod;
         result := TKeyValueEnvironment.create(
             TMhdParamKeyValuePair.create(mhdData)
         );
