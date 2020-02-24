@@ -52,7 +52,8 @@ implementation
 
 uses
 
-    sockets;
+    sockets,
+    fastcgi;
 
     (*!-----------------------------------------------
      * constructor
