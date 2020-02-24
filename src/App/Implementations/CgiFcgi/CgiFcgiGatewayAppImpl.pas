@@ -44,7 +44,7 @@ type
             const fcgiAppInst : IWebApplication
         );
         destructor destroy(); override;
-        function run() : IRunnable; override;
+        function run() : IRunnable;
 
     end;
 
