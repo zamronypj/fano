@@ -36,12 +36,12 @@ type
         (*!-----------------------------------------------
          * constructor
          *------------------------------------------------
-         * @param cgiApp instance CGI Application
-         * @param fcgiApp instance FastCGI application
+         * @param cgiAppInst instance CGI Application
+         * @param fcgiAppInst instance FastCGI application
          *-----------------------------------------------*)
         constructor create(
-            const cgiApp : IWebApplication;
-            const fcgiApp : IWebApplication
+            const cgiAppInst : IWebApplication;
+            const fcgiAppInst : IWebApplication
         );
         destructor destroy(); override;
         function run() : IRunnable; override;
@@ -57,24 +57,24 @@ uses
     (*!-----------------------------------------------
      * constructor
      *------------------------------------------------
-     * @param cgiApp instance CGI Application
-     * @param fcgiApp instance FastCGI application
+     * @param cgiAppInst instance CGI Application
+     * @param fcgiAppInst instance FastCGI application
      *-----------------------------------------------*)
     constructor TCgiFcgiGatewayApplication.create(
-        const cgiApp : IWebApplication;
-        const fcgiApp : IWebApplication
+        const cgiAppInst : IWebApplication;
+        const fcgiAppInst : IWebApplication
     );
     begin
         inherited create();
-        fCgiApp := cgiApp;
-        fFcgiApp := fcgiApp;
+        fCgiApp := cgiAppInst;
+        fFcgiApp := fcgiAppInst;
     end;
 
     destructor TCgiFcgiGatewayApplication.destroy();
     begin
-        inherited destroy();
         fCgiApp := nil;
         fFcgiApp := nil;
+        inherited destroy();
     end;
 
     function TCgiFcgiGatewayApplication.isRunAsFastCgi() : boolean;
