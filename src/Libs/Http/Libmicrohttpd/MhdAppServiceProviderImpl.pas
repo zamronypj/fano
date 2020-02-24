@@ -38,7 +38,6 @@ type
         );
         destructor destroy(); override;
         function getServer() : IRunnableWithDataNotif; override;
-        function getStdIn() : IStdIn; override;
     end;
 
 implementation
@@ -59,7 +58,6 @@ uses
         //TMhdProcessor also act as server
         fServer := fProtocol as IRunnableWithDataNotif;
         fStdOut := TMhdStdOutWriter.create();
-        fStdIn : TMhdStdInReader.create();
     end;
 
     destructor TMhdAppServiceProvider.destroy();
@@ -71,11 +69,6 @@ uses
     function TMhdAppServiceProvider.getServer() : IRunnableWithDataNotif;
     begin
         result := fServer;
-    end;
-
-    function TMhdAppServiceProvider.getStdIn() : IStdIn;
-    begin
-
     end;
 
 end.
