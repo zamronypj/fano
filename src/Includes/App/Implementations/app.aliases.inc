@@ -15,6 +15,7 @@
 
 TCgiWebApplication = AppImpl.TCgiWebApplication;
 TDaemonWebApplication = DaemonAppImpl.TDaemonWebApplication;
+TCgiFcgiGatewayApplication = CgiFcgiGatewayAppImpl.TCgiFcgiGatewayApplication;
 
 TBasicAppServiceProvider = BasicAppServiceProviderImpl.TBasicAppServiceProvider;
 TDaemonAppServiceProvider = DaemonAppServiceProviderImpl.TDaemonAppServiceProvider;

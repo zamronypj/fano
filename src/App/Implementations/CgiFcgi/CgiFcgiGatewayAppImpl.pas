@@ -5,7 +5,7 @@
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
-unit FastCGIAppImpl;
+unit CgiFcgiGatewayAppImpl;
 
 interface
 
@@ -26,7 +26,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TCGIFastCGIGatewayApplication = class(TInterfacedObject, IWebApplication)
+    TCgiFcgiGatewayApplication = class(TInterfacedObject, IWebApplication)
     private
         fCgiApp : IWebApplication;
         fFcgiApp : IWebApplication;
@@ -60,7 +60,7 @@ uses
      * @param cgiApp instance CGI Application
      * @param fcgiApp instance FastCGI application
      *-----------------------------------------------*)
-    constructor TCGIFastCGIGatewayApplication.create(
+    constructor TCgiFcgiGatewayApplication.create(
         const cgiApp : IWebApplication;
         const fcgiApp : IWebApplication
     );
@@ -70,14 +70,14 @@ uses
         fFcgiApp := fcgiApp;
     end;
 
-    destructor TCGIFastCGIGatewayApplication.destroy();
+    destructor TCgiFcgiGatewayApplication.destroy();
     begin
         inherited destroy();
         fCgiApp := nil;
         fFcgiApp := nil;
     end;
 
-    function TCGIFastCGIGatewayApplication.isRunAsFastCgi() : boolean;
+    function TCgiFcgiGatewayApplication.isRunAsFastCgi() : boolean;
     var sockAddr :TSockAddr;
         len, err: longint;
     begin
@@ -87,7 +87,7 @@ uses
         result := (err = -1) and (socketError() = EsockENOTCONN);
     end;
 
-    function TCGIFastCGIGatewayApplication.run() : IRunnable;
+    function TCgiFcgiGatewayApplication.run() : IRunnable;
     begin
         if (isRunAsFastCgi()) then
         begin
