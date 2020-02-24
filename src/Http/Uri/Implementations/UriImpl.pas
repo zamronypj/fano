@@ -85,7 +85,7 @@ uses
         uri := parseURI(url);
         fScheme := uri.protocol;
         fHost := uri.host;
-        fPort := uri.port;
+        fPort := inttostr(uri.port);
         fQuery := uri.params;
         fFragment := uri.bookmark;
 
