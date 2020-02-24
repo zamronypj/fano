@@ -7,6 +7,7 @@
  *}
 
 {------------ Begin libmicrohttpd-related------------------}
+TMhdAppServiceProvider = MhdAppServiceProviderImpl.TMhdAppServiceProvider;
 TMhdStdOutWriter = MhdStdOutWriterImpl.TMhdStdOutWriter;
 TMhdStdinReader = MhdStdInReaderImpl.TMhdStdInReader;
 TMhdProcessor = MhdProcessorImpl.TMhdProcessor;
