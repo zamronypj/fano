@@ -15,10 +15,6 @@ interface
 
 uses
 
-    //BaseUnix and libmicrohttpd both declared pcchar type
-    //need to order libmicrohttpd after BaseUNix, so any pcchar use
-    //libmicrohttpd's pcchar, otherwise FPC complains about type mismatch
-    BaseUnix,
     libmicrohttpd,
     StreamAdapterIntf,
     CloseableIntf,
@@ -57,13 +53,13 @@ type
         ): ICGIEnvironment;
 
         function handleReq(
-            connection : PMHD_Connection;
-            url : pcchar;
-            method : pcchar;
-            version : pcchar;
-            upload_data : pcchar;
-            upload_data_size : psize_t;
-            ptr : ppointer
+            aconnection : PMHD_Connection;
+            aurl : pcchar;
+            amethod : pcchar;
+            aversion : pcchar;
+            aupload_data : pcchar;
+            aupload_data_size : psize_t;
+            aptr : ppointer
         ): cint;
 
     public
@@ -124,6 +120,7 @@ implementation
 
 uses
 
+    BaseUnix,
     SysUtils,
     TermSignalImpl,
     KeyValueEnvironmentImpl,
@@ -213,13 +210,16 @@ uses
         fpSelect(terminatePipeIn + 1, @fds, nil, nil, nil);
     end;
 
+    //BaseUnix and libmicrohttpd both declared pcchar type
+    //need to order libmicrohttpd after BaseUNix, so any pcchar use
+    //libmicrohttpd.pcchar, otherwise FPC complains about type mismatch
     function handleRequestCallback(
         acontext :  pointer;
         aconnection : PMHD_Connection;
-        aurl : pcchar;
-        amethod : pcchar;
-        aversion : pcchar;
-        aupload_data : pcchar;
+        aurl : libmicrohttpd.pcchar;
+        amethod : libmicrohttpd.pcchar;
+        aversion : libmicrohttpd.pcchar;
+        aupload_data : libmicrohttpd.pcchar;
         aupload_data_size : psize_t;
         aptr : ppointer
     ): cint; cdecl;
