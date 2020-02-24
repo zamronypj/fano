@@ -15,6 +15,7 @@ interface
 
 uses
 
+    BaseUnix,
     libmicrohttpd,
     StreamAdapterIntf,
     CloseableIntf,
@@ -121,7 +122,6 @@ implementation
 uses
 
     SysUtils,
-    BaseUnix,
     TermSignalImpl,
     KeyValueEnvironmentImpl,
     MhdParamKeyValuePairImpl;
