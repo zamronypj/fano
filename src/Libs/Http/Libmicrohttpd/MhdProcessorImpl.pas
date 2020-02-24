@@ -52,6 +52,12 @@ type
             aversion : pcchar
         ): ICGIEnvironment;
 
+        function buildStdInStream(
+            aconnection : PMHD_Connection;
+            aupload_data : pcchar;
+            aupload_data_size : psize_t;
+        ): IStreamAdapter;
+
         function handleReq(
             aconnection : PMHD_Connection;
             aurl : pcchar;
@@ -252,6 +258,19 @@ uses
         );
     end;
 
+    function TMhdProcessor.buildStdInStream(
+        aconnection : PMHD_Connection;
+        aupload_data : libmicrohttpd.pcchar;
+        aupload_data_size : psize_t;
+    ): IStreamAdapter;
+    begin
+        result := TMhdStreamAdapter.create(
+            aconnection,
+            aupload_data,
+            auploda_data_size
+        );
+    end;
+
     function TMhdProcessor.handleReq(
         aconnection : PMHD_Connection;
         aurl : libmicrohttpd.pcchar;
@@ -263,14 +282,14 @@ uses
     ): cint;
     var
         mhdEnv : ICGIEnvironment;
-        stdInStream : IStreamAdapter;
+        mhdStream : IStreamAdapter;
     begin
         mhdEnv := buildEnv(aconnection, aurl, amethod, aversion);
-        stdInStream := buildStdInStream(aconnection, aupload_data, upload_data_size);
+        mhdStream := buildStdInStream(aconnection, aupload_data, aupload_data_size);
         fRequestReadyListener.ready(
-            getStream(aconnection),
+            mhdStream,
             mhdEnv,
-            stdInStream
+            mhdStream
         );
         result := MHD_YES;
     end;
