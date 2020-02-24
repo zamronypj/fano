@@ -237,9 +237,9 @@ uses
 
     function TMhdProcessor.buildEnv(
         aconnection : PMHD_Connection;
-        aurl : pcchar;
-        amethod : pcchar;
-        aversion : pcchar
+        aurl : libmicrohttpd.pcchar;
+        amethod : libmicrohttpd.pcchar;
+        aversion : libmicrohttpd.pcchar
     ): ICGIEnvironment;
     var
         mhdData : TMhdData;
