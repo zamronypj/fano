@@ -199,24 +199,24 @@ uses
     end;
 
     function handleRequestCallback(
-        context :  pointer;
-        connection : PMHD_Connection;
-        url : pcchar;
-        method : pcchar;
-        version : pcchar;
-        upload_data : pcchar;
-        upload_data_size : psize_t;
-        ptr : ppointer
+        acontext :  pointer;
+        aconnection : PMHD_Connection;
+        aurl : pcchar;
+        amethod : pcchar;
+        aversion : pcchar;
+        aupload_data : pcchar;
+        aupload_data_size : psize_t;
+        aptr : ppointer
     ): cint; cdecl;
     begin
-        result := TMhdProcessor(context).handleReq(
-            connection,
-            url,
-            method,
-            version,
-            upload_data,
-            upload_data_size,
-            ptr
+        result := TMhdProcessor(acontext).handleReq(
+            aconnection,
+            aurl,
+            amethod,
+            aversion,
+            aupload_data,
+            aupload_data_size,
+            aptr
         );
     end;
 
