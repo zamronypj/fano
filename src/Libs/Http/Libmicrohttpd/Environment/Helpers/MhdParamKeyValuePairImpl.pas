@@ -23,7 +23,7 @@ type
 
     TMhdData = record
         //this will be provided by libmicrohttpd
-        connection : PMHDConnection;
+        connection : PMHD_Connection;
         url: Pcchar;
         method: Pcchar;
         version: Pcchar;
