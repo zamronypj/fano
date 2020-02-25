@@ -334,6 +334,7 @@ uses
             waitUntilTerminate();
             MHD_stop_daemon(svrDaemon);
         end;
+        result := self;
     end;
 
     (*!------------------------------------------------
