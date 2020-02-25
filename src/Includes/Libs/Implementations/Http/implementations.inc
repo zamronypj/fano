@@ -9,7 +9,6 @@
 {------------ Begin SCGI-related------------------}
 
 MhdAppServiceProviderImpl,
-MhdStdInWriterImpl,
 MhdStdOutWriterImpl,
 MhdProcessorImpl,
 {------------ End SCGI-related------------------}
