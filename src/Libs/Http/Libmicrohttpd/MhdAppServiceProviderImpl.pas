@@ -44,6 +44,7 @@ implementation
 
 uses
 
+    MhdConnectionAwareIntf,
     MhdProcessorImpl,
     MhdStdOutWriterImpl;
 
@@ -54,10 +55,10 @@ uses
     );
     begin
         inherited create(actualSvc);
-        fProtocol := TMhdProcessor.create(host, port);
+        fStdOut := TMhdStdOutWriter.create();
+        fProtocol := TMhdProcessor.create(fStdOut as IMhdConnectionAware, host, port);
         //TMhdProcessor also act as server
         fServer := fProtocol as IRunnableWithDataNotif;
-        fStdOut := TMhdStdOutWriter.create();
     end;
 
     destructor TMhdAppServiceProvider.destroy();

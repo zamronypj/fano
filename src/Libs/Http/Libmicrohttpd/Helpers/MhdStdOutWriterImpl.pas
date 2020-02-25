@@ -18,7 +18,8 @@ uses
     libmicrohttpd,
     StreamAdapterIntf,
     StdOutIntf,
-    StreamStdOutImpl;
+    StreamStdOutImpl,
+    MhdConnectionAwareIntf;
 
 type
 
@@ -28,8 +29,10 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TMhdStdOutWriter = class(TStreamStdOut)
+    TMhdStdOutWriter = class(TStreamStdOut, IMhdConnectionAware)
     private
+        fConnection : PMHD_Connection;
+
         function writeHeaders(
             const response : PMHD_Response;
             const headers : TStringArray
@@ -44,6 +47,18 @@ type
          * @return current instance
          *-----------------------------------------------*)
         function writeStream(const stream : IStreamAdapter; const str : string) : IStdOut; override;
+    public
+        (*!------------------------------------------------
+         * get libmicrohttpd connection
+         *-----------------------------------------------
+         * @return connection
+         *-----------------------------------------------*)
+        function getConnection() : PMHD_Connection;
+
+        (*!------------------------------------------------
+         * set libmicrohttpd connection
+         *-----------------------------------------------*)
+        procedure setConnection(aconnection : PMHD_Connection);
     end;
 
 implementation
@@ -121,8 +136,26 @@ const
             MHD_RESPMEM_PERSISTENT
         );
         statusCode := writeHeaders(response, headers);
-        MHD_queue_response(connection, statusCode, response);
+        MHD_queue_response(fConnection, statusCode, response);
         MHD_destroy_response(response);
         result:= self;
+    end;
+
+    (*!------------------------------------------------
+     * get libmicrohttpd connection
+     *-----------------------------------------------
+     * @return connection
+     *-----------------------------------------------*)
+    function TMhdStdOutWriter.getConnection() : PMHD_Connection;
+    begin
+        result := fConnection;
+    end;
+
+    (*!------------------------------------------------
+     * set libmicrohttpd connection
+     *-----------------------------------------------*)
+    procedure TMhdStdOutWriter.setConnection(aconnection : PMHD_Connection);
+    begin
+        fConnection := aconnection;
     end;
 end.

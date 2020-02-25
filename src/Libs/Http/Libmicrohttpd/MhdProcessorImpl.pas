@@ -24,7 +24,8 @@ uses
     StreamIdIntf,
     ReadyListenerIntf,
     DataAvailListenerIntf,
-    EnvironmentIntf;
+    EnvironmentIntf,
+    MhdConnectionAwareIntf;
 
 type
 
@@ -41,6 +42,7 @@ type
         fRequestReadyListener : IReadyListener;
         fDataListener : IDataAvailListener;
         fStdIn : IStreamAdapter;
+        fConnectionAware : IMhdConnectionAware;
 
         procedure resetInternalVars();
         procedure waitUntilTerminate();
@@ -70,6 +72,7 @@ type
 
     public
         constructor create(
+            const aConnectionAware : IMhdConnectionAware;
             const host : string;
             const port : word;
             const timeout : longword = 120
@@ -145,6 +148,7 @@ uses
         fRequestReadyListener := nil;
         fDataListener := nil;
         fStdIn := nil;
+        fConnectionAware := aConnectionAware;
     end;
 
     destructor TMhdProcessor.destroy();
@@ -158,6 +162,7 @@ uses
         fRequestReadyListener := nil;
         fDataListener := nil;
         fStdIn := nil;
+        fConnectionAware := nil;
     end;
 
     (*!------------------------------------------------
@@ -267,7 +272,7 @@ uses
         result := TMhdStreamAdapter.create(
             aconnection,
             aupload_data,
-            auploda_data_size
+            aupload_data_size
         );
     end;
 
@@ -283,15 +288,40 @@ uses
     var
         mhdEnv : ICGIEnvironment;
         mhdStream : IStreamAdapter;
+        mem : TMemoryStream;
     begin
-        mhdEnv := buildEnv(aconnection, aurl, amethod, aversion);
-        mhdStream := buildStdInStream(aconnection, aupload_data, aupload_data_size);
-        fRequestReadyListener.ready(
-            mhdStream,
-            mhdEnv,
-            mhdStream
-        );
-        result := MHD_YES;
+        result := MHD_NO;
+        if (aptr^ = nil) then
+        begin
+            //begin of request
+            mem := TMemoryStream.create();
+            if (aupload_data_size > 0) then
+            begin
+                mem.writeBuffer(aupload_data^, aupload_data_size);
+            end;
+            aptr^ := mem;
+        end else
+        begin
+            mem := TMemoryStream(aptr^);
+
+            if (aupload_data_size = 0) then
+            begin
+                //request is complete
+                fConnectionAware.connection := aconnection;
+                mhdEnv := buildEnv(aconnection, aurl, amethod, aversion);
+                mhdStream := TStreamAdapter.create(mem);
+                fRequestReadyListener.ready(
+                    //we will not use this in
+                    TNullStreamAdapter.create(),
+                    mhdEnv,
+                    mhdStream
+                );
+                result := MHD_YES;
+            end else
+            begin
+                mem.writeBuffer(aupload_data^, aupload_data_size);
+            end;
+        end;
     end;
 
     (*!------------------------------------------------
