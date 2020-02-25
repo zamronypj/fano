@@ -128,7 +128,9 @@ uses
     SysUtils,
     TermSignalImpl,
     KeyValueEnvironmentImpl,
-    MhdParamKeyValuePairImpl;
+    MhdParamKeyValuePairImpl,
+    StreamAdapterImpl,
+    NullStreamAdapterImpl;
 
     constructor TMhdProcessor.create(
         const host : string;
@@ -301,7 +303,7 @@ uses
                 result := MHD_YES;
             end else
             begin
-                mem.writeBuffer(aupload_data^, aupload_data_size);
+                mem.writeBuffer(aupload_data^, aupload_data_size^);
             end;
         end;
     end;
