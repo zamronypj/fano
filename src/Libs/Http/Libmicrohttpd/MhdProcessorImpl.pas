@@ -54,12 +54,6 @@ type
             aversion : pcchar
         ): ICGIEnvironment;
 
-        function buildStdInStream(
-            aconnection : PMHD_Connection;
-            aupload_data : pcchar;
-            aupload_data_size : psize_t
-        ): IStreamAdapter;
-
         function handleReq(
             aconnection : PMHD_Connection;
             aurl : pcchar;
@@ -261,19 +255,6 @@ uses
         mhdData.method := amethod;
         result := TKeyValueEnvironment.create(
             TMhdParamKeyValuePair.create(mhdData)
-        );
-    end;
-
-    function TMhdProcessor.buildStdInStream(
-        aconnection : PMHD_Connection;
-        aupload_data : libmicrohttpd.pcchar;
-        aupload_data_size : psize_t
-    ): IStreamAdapter;
-    begin
-        result := TMhdStreamAdapter.create(
-            aconnection,
-            aupload_data,
-            aupload_data_size
         );
     end;
 
