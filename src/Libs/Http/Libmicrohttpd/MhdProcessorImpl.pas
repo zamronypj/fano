@@ -129,6 +129,7 @@ implementation
 
 uses
 
+    Classes,
     BaseUnix,
     SysUtils,
     TermSignalImpl,
