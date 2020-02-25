@@ -226,7 +226,7 @@ uses
         amethod : libmicrohttpd.pcchar;
         aversion : libmicrohttpd.pcchar;
         aupload_data : libmicrohttpd.pcchar;
-        aupload_data_size : psize_t;
+        aupload_data_size : libmicrohttpd.psize_t;
         aptr : ppointer
     ): cint; cdecl;
     begin
@@ -277,16 +277,16 @@ uses
         begin
             //begin of request
             mem := TMemoryStream.create();
-            if (aupload_data_size > 0) then
+            if (aupload_data_size^ > 0) then
             begin
-                mem.writeBuffer(aupload_data^, aupload_data_size);
+                mem.writeBuffer(aupload_data^, aupload_data_size^);
             end;
             aptr^ := mem;
         end else
         begin
             mem := TMemoryStream(aptr^);
 
-            if (aupload_data_size = 0) then
+            if (aupload_data_size^ = 0) then
             begin
                 //request is complete
                 fConnectionAware.connection := aconnection;
