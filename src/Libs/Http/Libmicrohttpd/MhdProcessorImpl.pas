@@ -55,7 +55,7 @@ type
         function buildStdInStream(
             aconnection : PMHD_Connection;
             aupload_data : pcchar;
-            aupload_data_size : psize_t;
+            aupload_data_size : psize_t
         ): IStreamAdapter;
 
         function handleReq(
@@ -261,7 +261,7 @@ uses
     function TMhdProcessor.buildStdInStream(
         aconnection : PMHD_Connection;
         aupload_data : libmicrohttpd.pcchar;
-        aupload_data_size : psize_t;
+        aupload_data_size : psize_t
     ): IStreamAdapter;
     begin
         result := TMhdStreamAdapter.create(
