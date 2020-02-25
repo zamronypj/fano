@@ -347,5 +347,6 @@ uses
     function TMhdProcessor.setDataAvailListener(const dataListener : IDataAvailListener) : IRunnableWithDataNotif;
     begin
         fDataListener := dataListener;
+        result := self;
     end;
 end.
