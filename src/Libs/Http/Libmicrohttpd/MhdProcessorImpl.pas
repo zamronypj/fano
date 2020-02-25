@@ -133,6 +133,7 @@ uses
     NullStreamAdapterImpl;
 
     constructor TMhdProcessor.create(
+        const aConnectionAware : IMhdConnectionAware;
         const host : string;
         const port : word;
         const timeout : longword = 120
