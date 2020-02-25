@@ -34,7 +34,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TMhdProcessor = class(TInterfacedObject, IProtocolProcessor, IRunnableWithDataNotif)
+    TMhdProcessor = class(TInterfacedObject, IProtocolProcessor, IRunnable, IRunnableWithDataNotif)
     private
         fPort : word;
         fHost : string;
