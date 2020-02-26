@@ -69,8 +69,7 @@ uses
 
 const
 
-    CRLF = #13#10;
-    HEADER_SEPARATOR_STR = #13#10#13#10#13#10;
+    HEADER_SEPARATOR_STR = LineEnding + LineEnding;
     HEADER_SEPARATOR_LEN = length(HEADER_SEPARATOR_STR);
 
     function TMhdStdOutWriter.writeHeaders(
@@ -124,7 +123,7 @@ const
     begin
         separatorPos := pos(HEADER_SEPARATOR_STR, str);
         headers := copy(str, 1, separatorPos + 1).split(
-            CRLF,
+            LineEnding,
             TStringSplitOptions.ExcludeEmpty
         );
         response := MHD_create_response_from_buffer(
