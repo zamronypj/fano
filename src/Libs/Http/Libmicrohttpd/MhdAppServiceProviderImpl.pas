@@ -17,7 +17,7 @@ uses
     RunnableWithDataNotifIntf,
     DaemonAppServiceProviderIntf,
     ProtocolAppServiceProviderImpl,
-    MhdSvrInfoTypes;
+    MhdSvrConfigTypes;
 
 type
 
@@ -34,8 +34,7 @@ type
     public
         constructor create(
             const actualSvc : IDaemonAppServiceProvider;
-            const host : string;
-            const port : word
+            const svrConfig : TMhdSvrConfig
         );
         destructor destroy(); override;
         function getServer() : IRunnableWithDataNotif; override;
@@ -51,13 +50,12 @@ uses
 
     constructor TMhdAppServiceProvider.create(
         const actualSvc : IDaemonAppServiceProvider;
-        const host : string;
-        const port : word
+        const svrConfig : TMhdSvrConfig
     );
     begin
         inherited create(actualSvc);
         fStdOut := TMhdStdOutWriter.create();
-        fProtocol := TMhdProcessor.create(fStdOut as IMhdConnectionAware, host, port);
+        fProtocol := TMhdProcessor.create(fStdOut as IMhdConnectionAware, svrConfig);
         //TMhdProcessor also act as server
         fServer := fProtocol as IRunnableWithDataNotif;
     end;
