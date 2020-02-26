@@ -17,7 +17,8 @@ uses
 
     libmicrohttpd,
     StreamAdapterIntf,
-    KeyValuePairImpl;
+    KeyValuePairImpl,
+    MhdSvrConfigTypes;
 
 type
 
