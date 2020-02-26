@@ -7,6 +7,7 @@
  *}
 
 {------------ Begin libmicrohttpd-related------------------}
+TMhdSvrConfig = MhdSvrConfigTypes.TMhdSvrConfig;
 TMhdAppServiceProvider = MhdAppServiceProviderImpl.TMhdAppServiceProvider;
 TMhdStdOutWriter = MhdStdOutWriterImpl.TMhdStdOutWriter;
 TMhdProcessor = MhdProcessorImpl.TMhdProcessor;

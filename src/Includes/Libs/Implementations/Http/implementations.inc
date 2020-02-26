@@ -7,7 +7,7 @@
  *}
 
 {------------ Begin SCGI-related------------------}
-
+MhdSvrConfigTypes,
 MhdAppServiceProviderImpl,
 MhdStdOutWriterImpl,
 MhdProcessorImpl,

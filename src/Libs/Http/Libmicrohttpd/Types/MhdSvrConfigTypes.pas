@@ -26,25 +26,6 @@ type
         timeout : longword;
     end;
 
-    function initMhdSvrConfig() : TMhdSvrConfig;
 implementation
 
-uses
-
-    SysUtils;
-
-    function initMhdSvrConfig() : TMhdSvrConfig;
-    begin
-        with result do
-        begin
-            host := '127.0.0.1';
-            port := 80;
-            documentRoot := getCurrentDir() + '/public';
-            serverName := 'web.fano';
-            serverSoftware := 'Fano Framework Web App';
-            serverSignature := 'Fano Framework Web App';
-            serverAdmin := 'admin@web.fano';
-            timeout := 120;
-        end;
-    end;
 end.
