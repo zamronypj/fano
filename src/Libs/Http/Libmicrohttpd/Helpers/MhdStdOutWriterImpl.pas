@@ -122,21 +122,26 @@ const
         statusCode : longword;
     begin
         separatorPos := pos(HEADER_SEPARATOR_STR, str);
+
         headers := copy(str, 1, separatorPos + 1).split(
             LineEnding,
             TStringSplitOptions.ExcludeEmpty
         );
+
         response := MHD_create_response_from_buffer(
             //we need str without headers
             //this is simply to avoid having to copy response string
             //to another buffer which may quite big
             length(str) - separatorPos - HEADER_SEPARATOR_LEN,
             pointer(pointer(str) + separatorPos + HEADER_SEPARATOR_LEN - 1),
-            MHD_RESPMEM_PERSISTENT
+            MHD_RESPMEM_MUST_COPY
         );
+
         statusCode := writeHeaders(response, headers);
+
         MHD_queue_response(fConnection, statusCode, response);
         MHD_destroy_response(response);
+
         result:= self;
     end;
 
