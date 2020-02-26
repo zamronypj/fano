@@ -278,6 +278,7 @@ uses
             if (aupload_data_size^ > 0) then
             begin
                 mem.writeBuffer(aupload_data^, aupload_data_size^);
+                aupload_data_size^ := 0;
             end;
             aptr^ := mem;
             result := MHD_YES;
@@ -300,6 +301,7 @@ uses
             end else
             begin
                 mem.writeBuffer(aupload_data^, aupload_data_size^);
+                aupload_data_size^ := 0;
             end;
             result := MHD_YES;
         end;
