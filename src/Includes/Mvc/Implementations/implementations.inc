@@ -35,6 +35,7 @@ TemplateViewImpl,
 NullViewImpl,
 NullViewFactoryImpl,
 ViewPartialImpl,
+StrViewPartialImpl,
 ViewPartialFactoryImpl,
 
 AbstractControllerImpl,
