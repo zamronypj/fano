@@ -285,6 +285,7 @@ uses
                 mem.writeBuffer(aupload_data^, aupload_data_size^);
             end;
             aptr^ := mem;
+            result := MHD_YES;
         end else
         begin
             mem := TMemoryStream(aptr^);
@@ -301,11 +302,11 @@ uses
                     mhdEnv,
                     mhdStream
                 );
-                result := MHD_YES;
             end else
             begin
                 mem.writeBuffer(aupload_data^, aupload_data_size^);
             end;
+            result := MHD_YES;
         end;
     end;
 
