@@ -289,11 +289,18 @@ uses
             if (aupload_data_size^ = 0) then
             begin
                 //request is complete
+                //set seek position to beginning to avoid EReadError
+                mem.position := 0;
                 fConnectionAware.connection := aconnection;
                 mhdEnv := buildEnv(aconnection, aurl, amethod, aversion);
+
+                //wrap memory stream as IStreamAdapter and let
+                //them free memory when finished
                 mhdStream := TStreamAdapter.create(mem);
+
                 fRequestReadyListener.ready(
-                    //we will not use this in
+                    //we will not use socket stream as we will have our own IStdOut
+                    //that write output with libmicrohttpd
                     TNullStreamAdapter.create(),
                     mhdEnv,
                     mhdStream
