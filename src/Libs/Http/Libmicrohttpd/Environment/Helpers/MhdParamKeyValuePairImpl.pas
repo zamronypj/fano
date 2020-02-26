@@ -29,12 +29,7 @@ type
         version: Pcchar;
 
         //this will be set by application
-        documentRoot : string;
-        serverAddr : string;
-        serverPort : word;
-        serverName : string;
-        serverSoftware : string;
-        serverAdmin : string;
+        serverConfig : TMhdSvrConfig;
     end;
 
     (*!------------------------------------------------
@@ -145,15 +140,15 @@ uses
 
     procedure TMhdParamKeyValuePair.initEnvVars(const mhdData : TMhdData);
     var connectionInfo : PMHD_ConnectionInfo;
-        ipAddress : string;
+        ipAddress, queryStr, reqUri : string;
     begin
         setValue('GATEWAY_INTERFACE', 'CGI/1.1');
-        setValue('SERVER_ADMIN', mhdData.serverAdmin);
-        setValue('SERVER_NAME', mhdData.serverName);
-        setValue('SERVER_ADDR', mhdData.serverAddr);
-        setValue('SERVER_PORT', intToStr(mhdData.serverPort));
-        setValue('SERVER_SOFTWARE', mhdData.serverSoftware);
-        setValue('DOCUMENT_ROOT', mhdData.documentRoot);
+        setValue('SERVER_ADMIN', mhdData.serverConfig.serverAdmin);
+        setValue('SERVER_NAME', mhdData.serverConfig.serverName);
+        setValue('SERVER_ADDR', mhdData.serverConfig.host);
+        setValue('SERVER_PORT', intToStr(mhdData.serverConfig.port));
+        setValue('SERVER_SOFTWARE', mhdData.serverConfig.serverSoftware);
+        setValue('DOCUMENT_ROOT', mhdData.serverConfig.documentRoot);
         setValue('SERVER_PROTOCOL', PCHAR(mhdData.version));
 
         setValue('REQUEST_METHOD', PChar(mhdData.method));
@@ -207,7 +202,16 @@ uses
             self
         );
 
-        setValue('REQUEST_URI', PChar(mhdData.url) + '?' + getValue('QUERY_STRING'));
+        queryStr := getValue('QUERY_STRING');
+
+        if (length(queryStr) > 0) then
+        begin
+            reqUri := PChar(mhdData.url) + '?' + queryStr;
+        end else
+        begin
+            reqUri := PChar(mhdData.url);
+        end;
+        setValue('REQUEST_URI', reqUri);
     end;
 
 end.

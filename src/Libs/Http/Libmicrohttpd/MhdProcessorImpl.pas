@@ -25,7 +25,8 @@ uses
     ReadyListenerIntf,
     DataAvailListenerIntf,
     EnvironmentIntf,
-    MhdConnectionAwareIntf;
+    MhdConnectionAwareIntf,
+    MhdSvrConfigTypes;
 
 type
 
@@ -36,9 +37,7 @@ type
      *-----------------------------------------------*)
     TMhdProcessor = class(TInterfacedObject, IProtocolProcessor, IRunnable, IRunnableWithDataNotif)
     private
-        fPort : word;
-        fHost : string;
-        fTimeout : longword;
+        fSvrConfig : TMhdSvrConfig;
         fRequestReadyListener : IReadyListener;
         fDataListener : IDataAvailListener;
         fStdIn : IStreamAdapter;
@@ -67,9 +66,7 @@ type
     public
         constructor create(
             const aConnectionAware : IMhdConnectionAware;
-            const host : string;
-            const port : word;
-            const timeout : longword = 120
+            const svrConfig : TMhdSvrConfig
         );
         destructor destroy(); override;
 
@@ -134,19 +131,15 @@ uses
 
     constructor TMhdProcessor.create(
         const aConnectionAware : IMhdConnectionAware;
-        const host : string;
-        const port : word;
-        const timeout : longword = 120
+        const svrConfig : TMhdSvrConfig
     );
     begin
         inherited create();
-        fHost := host;
-        fPort := port;
-        fTimeout := timeout;
+        fConnectionAware := aConnectionAware;
+        fSvrConfig := svrConfig;
         fRequestReadyListener := nil;
         fDataListener := nil;
         fStdIn := nil;
-        fConnectionAware := aConnectionAware;
     end;
 
     destructor TMhdProcessor.destroy();
@@ -256,6 +249,8 @@ uses
         mhdData.connection := aconnection;
         mhdData.url := aurl;
         mhdData.method := amethod;
+        mhdData.version := aversion;
+        mhdData.serverConfig := fSvrConfig;
         result := TKeyValueEnvironment.create(
             TMhdParamKeyValuePair.create(mhdData)
         );
@@ -321,13 +316,13 @@ uses
     begin
         svrDaemon := MHD_start_daemon(
             MHD_USE_EPOLL_INTERNALLY_LINUX_ONLY,
-            fPort,
+            fSvrConfig.port,
             nil,
             nil,
             @handleRequestCallback,
             self,
             MHD_OPTION_CONNECTION_TIMEOUT,
-            cuint(fTimeout),
+            cuint(fSvrConfig.Timeout),
             MHD_OPTION_END
         );
         if svrDaemon <> nil then

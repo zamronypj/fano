@@ -16,7 +16,8 @@ uses
 
     RunnableWithDataNotifIntf,
     DaemonAppServiceProviderIntf,
-    ProtocolAppServiceProviderImpl;
+    ProtocolAppServiceProviderImpl,
+    MhdSvrInfoTypes;
 
 type
 
