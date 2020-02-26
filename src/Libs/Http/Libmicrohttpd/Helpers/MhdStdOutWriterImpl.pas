@@ -132,7 +132,7 @@ const
             //we need str without headers
             //this is simply to avoid having to copy response string
             //to another buffer which may quite big
-            length(str) - separatorPos - HEADER_SEPARATOR_LEN,
+            length(str) - separatorPos - HEADER_SEPARATOR_LEN + 1,
             pointer(pointer(str) + separatorPos + HEADER_SEPARATOR_LEN - 1),
             MHD_RESPMEM_MUST_COPY
         );
