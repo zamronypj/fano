@@ -86,7 +86,8 @@ uses
 
     SysUtils,
     hmac,
-    sha1;
+    sha1,
+    ESessionKeyNotFoundImpl;
 
     constructor TCsrf.create(const secretKey : string);
     begin
@@ -140,8 +141,11 @@ uses
             tokenValue := sess[valueKey];
             result := true;
         except
-            //if we get here, then session data not found
-            result := false;
+            on e : ESessionKeyNotFound do
+            begin
+                //if we get here, then session data not found
+                result := false;
+            end;
         end;
     end;
 
