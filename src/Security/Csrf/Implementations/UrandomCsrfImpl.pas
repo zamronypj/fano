@@ -21,6 +21,10 @@ uses
     SessionIntf,
     CsrfImpl;
 
+const
+
+    DEFAULT_RANDOM_BYTES_LEN = 32;
+
 type
 
     (*!------------------------------------------------
@@ -45,7 +49,7 @@ type
         constructor create(
             const secretKey : string;
             const randomInst : IRandom;
-            const strength : integer = 32
+            const strength : integer = DEFAULT_RANDOM_BYTES_LEN
         );
 
         destructor destroy(); override;
@@ -77,7 +81,7 @@ uses
     constructor TUrandomCsrf.create(
         const secretKey : string;
         const randomInst : IRandom;
-        const strength : integer = 32
+        const strength : integer = DEFAULT_RANDOM_BYTES_LEN
     );
     begin
         inherited create(secretKey);

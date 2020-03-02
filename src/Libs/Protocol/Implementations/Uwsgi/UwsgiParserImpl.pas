@@ -234,9 +234,17 @@ const
             //while buff.seek() is zero-based.
             buff.seek(contentLenPos + 14 - 1, FROM_BEGINNING);
             buff.read(varLen, 2);
-            setLength(contentLenStr, varLen);
-            buff.read(contentLenStr[1], varLen);
-            result := strToInt(contentLenStr);
+            if varLen <> 0 then
+            begin
+                setLength(contentLenStr, varLen);
+                buff.read(contentLenStr[1], varLen);
+                result := strToInt(contentLenStr);
+            end else
+            begin
+                //TODO: In nginx, somehow we get here. Must inspect further why
+                //this request does not have request body
+                result := 0;
+            end;
         end else
         begin
             //this request does not have request body
