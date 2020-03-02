@@ -19,8 +19,12 @@ uses
 
 type
 
-    ESessionExpired = class(Exception)
-    end;
+    (*!------------------------------------------------
+     * Exception that is raised when session has expired
+     *
+     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+     *-----------------------------------------------*)
+    ESessionExpired = class(Exception);
 
 implementation
 

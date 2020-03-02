@@ -15,6 +15,7 @@
 
 ESessionExpired = ESessionExpiredImpl.ESessionExpired;
 ESessionInvalid = ESessionInvalidImpl.ESessionInvalid;
+ESessionKeyNotFound = ESessionKeyNotFoundImpl.ESessionKeyNotFound;
 
 TDecoratorSessionIdGenerator = DecoratorSessionIdGeneratorImpl.TDecoratorSessionIdGenerator;
 TGuidSessionIdGenerator = GuidSessionIdGeneratorImpl.TGuidSessionIdGenerator;
