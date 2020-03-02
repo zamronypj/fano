@@ -31,11 +31,8 @@ TKeyValuePairFactory = KeyValuePairFactoryImpl.TKeyValuePairFactory;
 {$INCLUDE Logger/libs.aliases.inc}
 {$INCLUDE Regex/libs.aliases.inc}
 {$INCLUDE LibCurl/libs.aliases.inc}
-{$INCLUDE FastCGI/libs.aliases.inc}
-{$INCLUDE SCGI/libs.aliases.inc}
-{$INCLUDE Uwsgi/libs.aliases.inc}
+{$INCLUDE Protocol/libs.aliases.inc}
 {$INCLUDE Random/libs.aliases.inc}
 {$INCLUDE Cli/libs.aliases.inc}
 {$INCLUDE Encrypter/libs.aliases.inc}
 {$INCLUDE Antivirus/libs.aliases.inc}
-{$INCLUDE Http/libs.aliases.inc}
