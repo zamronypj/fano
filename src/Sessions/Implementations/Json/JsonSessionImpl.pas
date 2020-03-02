@@ -122,7 +122,12 @@ uses
     jsonParser,
     DateUtils,
     SessionConsts,
-    ESessionExpiredImpl;
+    ESessionExpiredImpl,
+    ESessionKeyNotFoundImpl;
+
+resourcestring
+
+    sErrKeyNotFound = 'Session data "%s" not found';
 
     (*!------------------------------------
      * constructor
@@ -202,8 +207,9 @@ uses
         except
             on e : EJson do
             begin
-               e.message := e.message + fSessionData.asJson;
-               raise;
+                raise ESessionKeyNotFound.createFmt(
+                   sErrKeyNotFound, [ sessionVar ]
+                );
             end;
         end;
         result := sessValue.asString;

@@ -45,3 +45,4 @@ KeyValuePairFactoryImpl,
 {$INCLUDE Cli/implementations.inc}
 {$INCLUDE Encrypter/implementations.inc}
 {$INCLUDE Antivirus/implementations.inc}
+{$INCLUDE Http/implementations.inc}

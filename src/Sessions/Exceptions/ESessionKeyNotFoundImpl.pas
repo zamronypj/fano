@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit ESessionInvalidImpl;
+unit ESessionKeyNotFoundImpl;
 
 interface
 
@@ -21,12 +21,12 @@ type
 
 
     (*!------------------------------------------------
-     * Exception that is raised when valid session
-     * cannot be found in storage
+     * Exception that is raised when key cannot be found
+     * in session
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    ESessionInvalid = class(Exception);
+    ESessionKeyNotFound = class(Exception);
 
 implementation
 

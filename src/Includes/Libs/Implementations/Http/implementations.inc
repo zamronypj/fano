@@ -6,9 +6,9 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-(*! ---------------------------------------------
- * redeclare all class types in unit inside Libs/Socket
- * directory
- *
- * @author Zamrony P. Juhara <zamronypj@yahoo.com>
- *-----------------------------------------------*)
+{------------ Begin SCGI-related------------------}
+MhdSvrConfigTypes,
+MhdAppServiceProviderImpl,
+MhdStdOutWriterImpl,
+MhdProcessorImpl,
+{------------ End SCGI-related------------------}

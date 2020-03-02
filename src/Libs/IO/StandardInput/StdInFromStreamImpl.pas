@@ -60,8 +60,14 @@ implementation
 
     function TStdInFromStream.readStdIn(const contentLength : int64) : string;
     begin
-        setLength(result, contentLength);
-        fInputStream.readBuffer(result[1], contentLength);
+        if (contentLength > 0) then
+        begin
+            setLength(result, contentLength);
+            fInputStream.readBuffer(result[1], contentLength);
+        end else
+        begin
+            result := '';
+        end;
     end;
 
     (*!------------------------------------------------
