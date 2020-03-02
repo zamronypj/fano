@@ -38,11 +38,8 @@ KeyValuePairFactoryImpl,
 {$INCLUDE Logger/implementations.inc}
 {$INCLUDE Regex/implementations.inc}
 {$INCLUDE LibCurl/implementations.inc}
-{$INCLUDE FastCGI/implementations.inc}
-{$INCLUDE SCGI/implementations.inc}
-{$INCLUDE Uwsgi/implementations.inc}
+{$INCLUDE Protocol/implementations.inc}
 {$INCLUDE Random/implementations.inc}
 {$INCLUDE Cli/implementations.inc}
 {$INCLUDE Encrypter/implementations.inc}
 {$INCLUDE Antivirus/implementations.inc}
-{$INCLUDE Http/implementations.inc}
