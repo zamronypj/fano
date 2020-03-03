@@ -289,11 +289,14 @@ uses
         isStaticFileRequest : boolean;
         fname : string;
         method : string;
+        url : string;
     begin
+        url := string(pchar(aurl));
         method := string(pchar(amethod));
-        fname := fSvrConfig.documentRoot + string(pchar(aurl));
+        fname := fSvrConfig.documentRoot + url;
         isStaticFileRequest := ((method = MHD_HTTP_METHOD_GET) or
             (method = MHD_HTTP_METHOD_HEAD)) and
+            (url <> '/') and
             (0 = fpStat(pchar(fname), bufStat));
 
         if isStaticFileRequest then
