@@ -63,6 +63,26 @@ type
             aptr : ppointer
         ): cint;
 
+        function handleFileNotFoundReq(
+            aconnection : PMHD_Connection;
+            aurl : pcchar;
+            amethod : pcchar;
+            aversion : pcchar;
+            aupload_data : pcchar;
+            aupload_data_size : psize_t;
+            aptr : ppointer
+        ): cint;
+
+        function handleStaticFileReq(
+            aconnection : PMHD_Connection;
+            aurl : pcchar;
+            amethod : pcchar;
+            aversion : pcchar;
+            aupload_data : pcchar;
+            aupload_data_size : psize_t;
+            aptr : ppointer
+        ): cint;
+
     public
         constructor create(
             const aConnectionAware : IMhdConnectionAware;
@@ -265,6 +285,47 @@ uses
         aupload_data_size : psize_t;
         aptr : ppointer
     ): cint;
+    var bufStat: TStat;
+        isStaticFileRequest : boolean;
+    begin
+        isStaticFileRequest := (0 = strcomp(amethod, MHD_HTTP_METHOD_GET)) and
+            (0 = strcomp(amethod, MHD_HTTP_METHOD_HEAD)) and
+            (0 = fpStat(pchar(aurl), bufStat));
+
+        if isStaticFileRequest then
+        begin
+            result := handleStaticFileReq(
+                aconnection,
+                aurl,
+                amethod,
+                aversion,
+                aupload_data,
+                aupload_data_size,
+                aptr
+            );
+        end else
+        begin
+            result := handleFileNotFoundReq(
+                aconnection,
+                aurl,
+                amethod,
+                aversion,
+                aupload_data,
+                aupload_data_size,
+                aptr
+            );
+        end;
+    end;
+
+    function TMhdProcessor.handleFileNotFoundReq(
+        aconnection : PMHD_Connection;
+        aurl : libmicrohttpd.pcchar;
+        amethod : libmicrohttpd.pcchar;
+        aversion : libmicrohttpd.pcchar;
+        aupload_data : libmicrohttpd.pcchar;
+        aupload_data_size : psize_t;
+        aptr : ppointer
+    ): cint;
     var
         mhdEnv : ICGIEnvironment;
         mhdStream : IStreamAdapter;
@@ -312,6 +373,35 @@ uses
             end;
             result := MHD_YES;
         end;
+    end;
+
+    function TMhdProcessor.handleStaticFileReq(
+        aconnection : PMHD_Connection;
+        aurl : libmicrohttpd.pcchar;
+        amethod : libmicrohttpd.pcchar;
+        aversion : libmicrohttpd.pcchar;
+        aupload_data : libmicrohttpd.pcchar;
+        aupload_data_size : psize_t;
+        aptr : ppointer
+    ): cint;
+    const beginRequestMarker : cint = 0;
+    var fd : cint;
+        bufStat : TStat;
+        response : PMHD_Response;
+    begin
+        result := MHD_NO;
+        if (@beginRequestMarker <> aptr^) then
+        begin
+            //this is begin of request, just skip processing
+            aptr^ := @beginRequestMarker;
+            exit(MHD_YES);
+        end;
+
+        fpStat(pchar(aurl), bufStat);
+        fd := fpOpen(pchar(aurl), O_RdOnly);
+        response = MHD_create_response_from_fd(bufStat.st_size, fd);
+        result := MHD_queue_response (aconnection, MHD_HTTP_OK, response);
+        MHD_destroy_response (response);
     end;
 
     (*!------------------------------------------------
