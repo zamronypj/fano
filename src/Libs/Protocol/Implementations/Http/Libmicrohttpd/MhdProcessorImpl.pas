@@ -287,10 +287,12 @@ uses
     ): cint;
     var bufStat: TStat;
         isStaticFileRequest : boolean;
+        fname : string;
     begin
+        fname := fSvrConfig.documentRoot + string(pchar(aurl));
         isStaticFileRequest := (0 = strcomp(amethod, MHD_HTTP_METHOD_GET)) and
             (0 = strcomp(amethod, MHD_HTTP_METHOD_HEAD)) and
-            (0 = fpStat(pchar(aurl), bufStat));
+            (0 = fpStat(pchar(fname), bufStat));
 
         if isStaticFileRequest then
         begin
@@ -388,6 +390,7 @@ uses
     var fd : cint;
         bufStat : TStat;
         response : PMHD_Response;
+        fname : string;
     begin
         result := MHD_NO;
         if (@beginRequestMarker <> aptr^) then
@@ -397,8 +400,9 @@ uses
             exit(MHD_YES);
         end;
 
-        fpStat(pchar(aurl), bufStat);
-        fd := fpOpen(pchar(aurl), O_RdOnly);
+        fname := fSvrConfig.documentRoot + string(pchar(aurl));
+        fpStat(pchar(fname), bufStat);
+        fd := fpOpen(pchar(fname), O_RdOnly);
         response = MHD_create_response_from_fd(bufStat.st_size, fd);
         result := MHD_queue_response (aconnection, MHD_HTTP_OK, response);
         MHD_destroy_response (response);
