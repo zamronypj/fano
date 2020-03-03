@@ -288,10 +288,12 @@ uses
     var bufStat: TStat;
         isStaticFileRequest : boolean;
         fname : string;
+        method : string;
     begin
+        method := string(pchar(amethod));
         fname := fSvrConfig.documentRoot + string(pchar(aurl));
-        isStaticFileRequest := ((0 = strcomp(amethod, MHD_HTTP_METHOD_GET)) or
-            (0 = strcomp(amethod, MHD_HTTP_METHOD_HEAD))) and
+        isStaticFileRequest := ((method = MHD_HTTP_METHOD_GET) or
+            (method = MHD_HTTP_METHOD_HEAD)) and
             (0 = fpStat(pchar(fname), bufStat));
 
         if isStaticFileRequest then
