@@ -290,8 +290,8 @@ uses
         fname : string;
     begin
         fname := fSvrConfig.documentRoot + string(pchar(aurl));
-        isStaticFileRequest := (0 = strcomp(amethod, MHD_HTTP_METHOD_GET)) and
-            (0 = strcomp(amethod, MHD_HTTP_METHOD_HEAD)) and
+        isStaticFileRequest := ((0 = strcomp(amethod, MHD_HTTP_METHOD_GET)) or
+            (0 = strcomp(amethod, MHD_HTTP_METHOD_HEAD))) and
             (0 = fpStat(pchar(fname), bufStat));
 
         if isStaticFileRequest then
