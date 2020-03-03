@@ -403,7 +403,7 @@ uses
         fname := fSvrConfig.documentRoot + string(pchar(aurl));
         fpStat(pchar(fname), bufStat);
         fd := fpOpen(pchar(fname), O_RdOnly);
-        response = MHD_create_response_from_fd(size_t(bufStat.st_size), fd);
+        response := MHD_create_response_from_fd(bufStat.st_size, fd);
         result := MHD_queue_response (aconnection, MHD_HTTP_OK, response);
         MHD_destroy_response (response);
     end;
