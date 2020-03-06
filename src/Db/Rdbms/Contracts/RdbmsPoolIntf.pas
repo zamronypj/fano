@@ -56,6 +56,14 @@ type
         function availableCount() : integer;
 
         (*!------------------------------------------------
+         * test if there is available connection in pool
+         *-------------------------------------------------
+         * @return true if one or more item available
+         *-------------------------------------------------*)
+        function isAvailable() : boolean;
+        property available : boolean read isAvailable;
+
+        (*!------------------------------------------------
          * get total used rdbms connection in pool
          *-------------------------------------------------
          * @return number of used connection in pool

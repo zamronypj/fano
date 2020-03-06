@@ -88,6 +88,13 @@ type
          * @return number of used connection in pool
          *-------------------------------------------------*)
         function usedCount() : integer;
+
+        (*!------------------------------------------------
+         * test if there is available connection in pool
+         *-------------------------------------------------
+         * @return true if one or more item available
+         *-------------------------------------------------*)
+        function isAvailable() : boolean;
     end;
 
 implementation
@@ -214,4 +221,15 @@ resourcestring
     begin
         result := fUsedRdbmsList.count;
     end;
+
+    (*!------------------------------------------------
+     * test if there is available connection in pool
+     *-------------------------------------------------
+     * @return true if one or more item available
+     *-------------------------------------------------*)
+    function TRdbmsPool.isAvailable() : boolean;
+    begin
+        result := (availableCount() > 0);
+    end;
+
 end.

@@ -31,8 +31,9 @@ type
     TThreadSafeRdbmsPool = class(TInjectableObject, IRdbmsPool)
     private
         fActualPool : IRdbmsPool;
-        fPoolEvent : TSimpleEvent;
-        fCriticalSection : TCriticalSection;
+        fPoolEvent : TEventObject;
+        fLock : TCriticalSection;
+        function tryAcquire() : IRdbms;
     public
         constructor create(const pool : IRdbmsPool);
         destructor destroy(); override;
@@ -71,6 +72,13 @@ type
          * @return number of used connection in pool
          *-------------------------------------------------*)
         function usedCount() : integer;
+
+        (*!------------------------------------------------
+         * test if there is available connection in pool
+         *-------------------------------------------------
+         * @return true if one or more item available
+         *-------------------------------------------------*)
+        function isAvailable() : boolean;
     end;
 
 implementation
@@ -89,18 +97,43 @@ resourcestring
     constructor TThreadSafeRdbmsPool.create(const pool : IRdbmsPool);
     begin
         fActualPool := pool;
-        fPoolEvent := TSimpleEvent.create();
-        fCriticalSection := TCriticalSection.create();
+
+        //create event object that is initially set if actual pool
+        //contains available item
+        fPoolEvent := TEventObject.create(
+            nil,
+            true,
+            fActualPool.available,
+            'TThreadSafeRdbmsPool'
+        );
+
+        fLock := TCriticalSection.create();
     end;
 
     destructor TThreadSafeRdbmsPool.destroy();
     begin
+        fLock.free();
         fPoolEvent.free();
-        fCriticalSection.free();
         fActualPool := nil;
         inherited destroy();
     end;
 
+    function TThreadSafeRdbmsPool.tryAcquire() : IRdbms;
+    begin
+        fLock.acquire();
+        try
+            result := fActualPool.acquire();
+
+            if not fActualPool.available then
+            begin
+                //reset event so when other thread tries to acquire, it blocks.
+                fPoolEvent.resetEvent();
+            end;
+        finally
+            fLock.release();
+        end;
+
+    end;
 
     (*!------------------------------------------------
      * get rdbms connection from pool
@@ -110,14 +143,8 @@ resourcestring
     function TThreadSafeRdbmsPool.acquire() : IRdbms;
     begin
         //block thread until pool is available
-        fPoolEvent.waitFor(INFINITE)
-        result := fActualPool.acquire();
-
-        if availableCount() = 0 then
-        begin
-            //reset event so when other thread tries to acquire, it blocks.
-            fPoolEvent.resetEvent();
-        end;
+        fPoolEvent.waitFor(INFINITE);
+        result := tryAcquire();
     end;
 
     (*!------------------------------------------------
@@ -127,15 +154,15 @@ resourcestring
      *-------------------------------------------------*)
     procedure TThreadSafeRdbmsPool.release(const conn : IRdbms);
     begin
-        fCriticalSection.acquire();
+        fLock.acquire();
         try
             fActualPool.release(conn);
-            if fActualPool.availableCount() > 0 then
+            if fActualPool.available then
             begin
                 fPoolEvent.setEvent();
             end;
         finally
-            fCriticalSection.release();
+            fLock.release();
         end;
     end;
 
@@ -146,11 +173,11 @@ resourcestring
      *-------------------------------------------------*)
     function TThreadSafeRdbmsPool.count() : integer;
     begin
-        fCriticalSection.acquire();
+        fLock.acquire();
         try
             result := fActualPool.count();
         finally
-            fCriticalSection.release();
+            fLock.release();
         end;
     end;
 
@@ -161,11 +188,11 @@ resourcestring
      *-------------------------------------------------*)
     function TThreadSafeRdbmsPool.availableCount() : integer;
     begin
-        fCriticalSection.acquire();
+        fLock.acquire();
         try
             result := fActualPool.availableCount();
         finally
-            fCriticalSection.release();
+            fLock.release();
         end;
     end;
 
@@ -176,11 +203,26 @@ resourcestring
      *-------------------------------------------------*)
     function TThreadSafeRdbmsPool.usedCount() : integer;
     begin
-        fCriticalSection.acquire();
+        fLock.acquire();
         try
             result := fActualPool.usedCount();
         finally
-            fCriticalSection.release();
+            fLock.release();
+        end;
+    end;
+
+    (*!------------------------------------------------
+     * test if there is available connection in pool
+     *-------------------------------------------------
+     * @return true if one or more item available
+     *-------------------------------------------------*)
+    function TThreadSafeRdbmsPool.isAvailable() : boolean;
+    begin
+        fLock.acquire();
+        try
+            result := fActualPool.isAvailable();
+        finally
+            fLock.release();
         end;
     end;
 end.
