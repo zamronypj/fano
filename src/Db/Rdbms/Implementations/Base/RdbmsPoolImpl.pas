@@ -15,11 +15,13 @@ interface
 
 uses
 
+    SysUtils,
+    db,
+    sqldb,
+    fgl,
     RdbmsIntf,
     RdbmsFactoryIntf,
     RdbmsPoolIntf,
-    db,
-    sqldb,
     InjectableObjectImpl;
 
 type
@@ -101,8 +103,6 @@ implementation
 
 uses
 
-    SysUtils,
-    fgl,
     EPoolConnectionImpl;
 
 resourcestring
