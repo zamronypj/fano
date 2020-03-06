@@ -37,9 +37,7 @@ type
          *-------------------------------------------------
          * @param dbname database name to use
          *-------------------------------------------------*)
-        constructor create(
-            const dbname : string;
-        );
+        constructor create(const dbname : string);
 
         (*!------------------------------------------------
          * create rdbms instance
