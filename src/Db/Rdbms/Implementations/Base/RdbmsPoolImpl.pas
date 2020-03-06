@@ -112,23 +112,13 @@ resourcestring
 
     constructor TRdbmsPool.create(
         const rdbmsFactory : IRdbmsFactory;
-        const poolSize : integer;
-        const host : string;
-        const dbname : string;
-        const username : string;
-        const password : string;
-        const port : word
+        const poolSize : integer
     );
     begin
         fAvailableRdbmsList := TRdbmsList.create();
         fUsedRdbmsList := TRdbmsList.create();
         fRdbmsFactory := rdbmsFactory;
         fPoolSize := poolSize;
-        fHost := host;
-        fDbName := dbname;
-        fUser := username;
-        fPassword := password;
-        fPort := port;
         initPool(fPoolSize);
     end;
 
@@ -150,7 +140,6 @@ resourcestring
         for i:= 0 to poolSize - 1 do
         begin
             conn := fRdbmsFactory.build();
-            conn.connect(fHost, fDbName, fUser, fPassword, fPort);
             fAvailableRdbmsList.add(conn);
         end;
     end;
