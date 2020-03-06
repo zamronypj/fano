@@ -34,7 +34,7 @@ implementation
 
 uses
 
-    SQLite3Connection;
+    SQLite3Conn;
 
     constructor TSQLiteDb.create();
     begin

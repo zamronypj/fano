@@ -14,6 +14,18 @@
  *-----------------------------------------------*)
 
 RdbmsImpl,
+
+RdbmsPoolImpl,
+ThreadSafeRdbmsPoolImpl,
+
 MySqlDbImpl,
 MySqlDbFactoryImpl,
+
 PostgreSqlDbImpl,
+PostgreSqlDbFactoryImpl,
+
+FirebirdDbImpl,
+FirebirdDbFactoryImpl,
+
+SQLiteDbImpl,
+SQLiteDbFactoryImpl,

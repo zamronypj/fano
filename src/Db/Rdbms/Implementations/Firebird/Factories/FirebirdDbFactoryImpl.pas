@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit MySqlDbFactoryImpl;
+unit FirebirdDbFactoryImpl;
 
 interface
 
@@ -21,19 +21,18 @@ uses
 
 const
 
-    MYSQL_DEFAULT_PORT = 3306;
+    FIREBIRD_DEFAULT_PORT = 3050;
 
 type
 
     (*!------------------------------------------------
      * basic class having capability to
-     * handle mysql relational database operation
+     * handle Firebird relational database operation
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TMySqlDbFactory = class(TAbstractDbFactory)
+    TFirebirdDbFactory = class(TAbstractDbFactory)
     private
-        mysqlVersion : string;
         databaseHostname : string;
         databaseName : string;
         databaseUsername : string;
@@ -44,7 +43,6 @@ type
         (*!------------------------------------------------
          * create connection to RDBMS server
          *-------------------------------------------------
-         * @param version MySQL version
          * @param host hostname/ip where RDBMS server run
          * @param dbname database name to use
          * @param username user name credential to login
@@ -52,12 +50,11 @@ type
          * @param port TCP port where RDBMS listen
          *-------------------------------------------------*)
         constructor create(
-            const version : string;
             const host : string;
             const dbname : string;
             const username : string;
             const password : string;
-            const port : word = MYSQL_DEFAULT_PORT
+            const port : word = FIREBIRD_DEFAULT_PORT
         );
 
         (*!------------------------------------------------
@@ -72,28 +69,25 @@ implementation
 
 uses
 
-    MySqlDbImpl;
+    FirebirdDbImpl;
 
     (*!------------------------------------------------
      * create connection to RDBMS server
      *-------------------------------------------------
-     * @param version MySQL version
      * @param host hostname/ip where RDBMS server run
      * @param dbname database name to use
      * @param username user name credential to login
      * @param password password credential to login
      * @param port TCP port where RDBMS listen
      *-------------------------------------------------*)
-    constructor TMySqlDbFactory.create(
-        const version : string;
+    constructor TFirebirdDbFactory.create(
         const host : string;
         const dbname : string;
         const username : string;
         const password : string;
-        const port : word = MYSQL_DEFAULT_PORT
+        const port : word = FIREBIRD_DEFAULT_PORT
     );
     begin
-        mysqlVersion := version;
         databaseHostname := host;
         databaseName := dbname;
         databaseUsername := username;
@@ -106,9 +100,9 @@ uses
      *-------------------------------------------------
      * @return database connection instance
      *-------------------------------------------------*)
-    function TMySqlDbFactory.build() : IRdbms;
+    function TFirebirdDbFactory.build() : IRdbms;
     begin
-        result := TMySqlDb.create(mysqlVersion);
+        result := TFirebirdDb.create();
         result.connect(
             databaseHostname,
             databaseName,
