@@ -41,11 +41,6 @@ type
 
         fRdbmsFactory : IRdbmsFactory;
         fPoolSize : integer;
-        fHost : string;
-        fUser : string;
-        fPassword : string;
-        fDbName : string;
-        fPort : word;
 
         procedure initPool(const poolSize : integer);
         procedure clearPool();
