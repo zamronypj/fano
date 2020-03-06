@@ -71,7 +71,7 @@ uses
     function TSQLiteDbFactory.build() : IRdbms;
     begin
         result := TSQLiteDb.create();
-        result.connect('', databaseName, '', '', '');
+        result.connect('', databaseName, '', '', 0);
     end;
 
 end.
