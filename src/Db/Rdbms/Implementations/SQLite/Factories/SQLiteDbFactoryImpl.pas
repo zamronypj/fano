@@ -70,7 +70,7 @@ uses
      *-------------------------------------------------*)
     function TSQLiteDbFactory.build() : IRdbms;
     begin
-        result := TFirebirdDb.create();
+        result := TSQLiteDb.create();
         result.connect('', databaseName, '', '', '');
     end;
 
