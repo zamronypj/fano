@@ -52,6 +52,7 @@ implementation
 
 uses
 
+    FileReaderIntf,
     StrViewPartialImpl,
     StringFileReaderImpl;
 
