@@ -43,6 +43,7 @@ type
         //false for everything else
         isSelect : boolean;
 
+        procedure raiseExceptionIfInvalidConnection();
         procedure raiseExceptionIfInvalidField();
     public
         constructor create(const connType : string);
@@ -274,6 +275,14 @@ resourcestring
         result := self;
     end;
 
+    procedure TRdbms.raiseExceptionIfInvalidConnection();
+    begin
+        if (dbInstance = nil) then
+        begin
+            raise EInvalidDbConnection.create(sErrInvalidConnection);
+        end;
+    end;
+
     (*!------------------------------------------------
      * initiate a transaction
      *-------------------------------------------------
@@ -282,10 +291,7 @@ resourcestring
      *-------------------------------------------------*)
     function TRdbms.beginTransaction() : IRdbms;
     begin
-        if (dbInstance = nil) then
-        begin
-            raise EInvalidDbConnection.create(sErrInvalidConnection);
-        end;
+        raiseExceptionIfInvalidConnection();
         dbInstance.startTransaction();
         result := self;
     end;
@@ -297,10 +303,7 @@ resourcestring
      *-------------------------------------------------*)
     function TRdbms.endTransaction() : IRdbms;
     begin
-        if (dbInstance = nil) then
-        begin
-            raise EInvalidDbConnection.create(sErrInvalidConnection);
-        end;
+        raiseExceptionIfInvalidConnection();
         dbInstance.endTransaction();
         result := self;
     end;
@@ -312,6 +315,7 @@ resourcestring
      *-------------------------------------------------*)
     function TRdbms.resultCount() : largeInt;
     begin
+        raiseExceptionIfInvalidConnection();
         result := query.RecordCount;
     end;
 
@@ -322,6 +326,7 @@ resourcestring
      *-------------------------------------------------*)
     function TRdbms.eof() : boolean;
     begin
+        raiseExceptionIfInvalidConnection();
         result := query.eof;
     end;
 
@@ -332,6 +337,7 @@ resourcestring
      *-------------------------------------------------*)
     function TRdbms.next() : IRdbmsResultSet;
     begin
+        raiseExceptionIfInvalidConnection();
         query.next();
         result := self;
     end;
@@ -343,6 +349,7 @@ resourcestring
      *-------------------------------------------------*)
     function TRdbms.fields() : IRdbmsFields;
     begin
+        raiseExceptionIfInvalidConnection();
         result := self;
     end;
 
@@ -353,6 +360,7 @@ resourcestring
      *-------------------------------------------------*)
     function TRdbms.fieldCount() : integer;
     begin
+        raiseExceptionIfInvalidConnection();
         result := query.fields.count;
     end;
 
@@ -363,6 +371,7 @@ resourcestring
      *-------------------------------------------------*)
     function TRdbms.fieldByName(const name : shortstring) : IRdbmsField;
     begin
+        raiseExceptionIfInvalidConnection();
         currentField := query.fields.fieldByName(name);
         result := self;
     end;
@@ -374,6 +383,7 @@ resourcestring
      *-------------------------------------------------*)
     function TRdbms.fieldByIndex(const indx : integer) : IRdbmsField;
     begin
+        raiseExceptionIfInvalidConnection();
         currentField := query.fields.fieldByNumber(indx);
         result := self;
     end;
@@ -452,6 +462,7 @@ resourcestring
      *-------------------------------------------------*)
     function TRdbms.prepare(const sql : string) : IRdbmsStatement;
     begin
+        raiseExceptionIfInvalidConnection();
         isSelect := (pos('select', trimLeft(lowerCase(sql))) = 1);
         query.sql.text := sql;
         result := self;
@@ -464,6 +475,7 @@ resourcestring
      *-------------------------------------------------*)
     function TRdbms.execute() : IRdbmsResultSet;
     begin
+        raiseExceptionIfInvalidConnection();
         if (isSelect) then
         begin
             query.open();
@@ -481,6 +493,7 @@ resourcestring
      *-------------------------------------------------*)
     function TRdbms.paramStr(const strName : string; const strValue : string) : IRdbmsStatement;
     begin
+        raiseExceptionIfInvalidConnection();
         query.params.paramByName(strName).asString := strValue;
         result := self;
     end;
@@ -492,6 +505,7 @@ resourcestring
      *-------------------------------------------------*)
     function TRdbms.paramInt(const strName : string; const strValue : integer) : IRdbmsStatement;
     begin
+        raiseExceptionIfInvalidConnection();
         query.params.paramByName(strName).asInteger := strValue;
         result := self;
     end;
@@ -503,6 +517,7 @@ resourcestring
      *-------------------------------------------------*)
     function TRdbms.paramFloat(const strName : string; const strValue : double) : IRdbmsStatement;
     begin
+        raiseExceptionIfInvalidConnection();
         query.params.paramByName(strName).asFloat := strValue;
         result := self;
     end;
@@ -514,6 +529,7 @@ resourcestring
      *-------------------------------------------------*)
     function TRdbms.paramDateTime(const strName : string; const strValue : TDateTime) : IRdbmsStatement;
     begin
+        raiseExceptionIfInvalidConnection();
         query.params.paramByName(strName).asDateTime := strValue;
         result := self;
     end;
