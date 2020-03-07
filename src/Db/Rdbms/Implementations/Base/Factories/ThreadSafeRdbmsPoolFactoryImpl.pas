@@ -73,7 +73,7 @@ uses
      *----------------------------------------------------
      * @param container dependency container instance
      *---------------------------------------------------*)
-    function TThreadSafeRdbmsPoolFactory.build(const container : IDependencyContainer) : IDependency; override;
+    function TThreadSafeRdbmsPoolFactory.build(const container : IDependencyContainer) : IDependency;
     var pool : IRdbmsPool;
     begin
         pool := fDbPoolFactory.build(container) as IRdbmsPool;

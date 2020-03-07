@@ -80,7 +80,7 @@ uses
      *----------------------------------------------------
      * @param container dependency container instance
      *---------------------------------------------------*)
-    function TRdbmsPoolFactory.build(const container : IDependencyContainer) : IDependency; override;
+    function TRdbmsPoolFactory.build(const container : IDependencyContainer) : IDependency;
     begin
         result := TRdbmsPool.create(fDbFactory, fPoolSize) as IDependency;
     end;
