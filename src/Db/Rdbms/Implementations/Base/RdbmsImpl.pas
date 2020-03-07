@@ -220,6 +220,7 @@ uses
 
     SysUtils,
     EInvalidDbConnectionImpl,
+    EInvalidDbQueryImpl,
     EInvalidDbFieldImpl;
 
 resourcestring
