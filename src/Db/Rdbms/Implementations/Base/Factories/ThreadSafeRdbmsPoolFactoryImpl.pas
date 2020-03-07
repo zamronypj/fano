@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit RdbmsPoolFactoryImpl;
+unit ThreadSafeRdbmsPoolFactoryImpl;
 
 interface
 
@@ -25,26 +25,22 @@ uses
 type
 
     (*!------------------------------------------------
-     * Factory class for TRdbmsPool class
+     * Factory class for ThreadSafeRdbmsPool class
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TRdbmsPoolFactory = class(TFactory)
+    TThreadSafeRdbmsPoolFactory = class(TFactory)
     private
-        fDbFactory : IRdbmsFactory;
-        fPoolSize : integer;
+        fDbPoolFactory : IDependencyFactory;
     public
 
         (*!------------------------------------------------
          * constructor
          *-------------------------------------------------
-         * @param rdbmsFactory factory class responsible to create IRdbms instance
-         * @param poolSize number of IRdbms instnce in pool
+         * @param poolFactory factory class responsible to create actual pool
          *-------------------------------------------------*)
-        constructor create(
-            const rdbmsFactory : IRdbmsFactory;
-            const poolSize : integer
-        );
+        constructor create(const poolFactory : IDependencyFactory);
+
         (*!---------------------------------------------------
          * build class instance
          *----------------------------------------------------
@@ -58,21 +54,18 @@ implementation
 
 uses
 
-    RdbmsPoolImpl;
+    ThreadSafeRdbmsPoolImpl;
 
     (*!------------------------------------------------
      * constructor
      *-------------------------------------------------
-     * @param rdbmsFactory factory class responsible to create IRdbms instance
-     * @param poolSize number of IRdbms instnce in pool
+     * @param poolFactory factory class responsible to create actual pool
      *-------------------------------------------------*)
-    constructor TRdbmsPoolFactory.create(
-        const rdbmsFactory : IRdbmsFactory;
-        const poolSize : integer
+    constructor TThreadSafeRdbmsPoolFactory.create(
+        const poolFactory : IDependencyFactory
     );
     begin
-        fDbFactory := rdbmsFactory;
-        fPoolSize := poolSize;
+        fDbPoolFactory := poolFactory;
     end;
 
     (*!---------------------------------------------------
@@ -80,9 +73,11 @@ uses
      *----------------------------------------------------
      * @param container dependency container instance
      *---------------------------------------------------*)
-    function TRdbmsPoolFactory.build(const container : IDependencyContainer) : IDependency; override;
+    function TThreadSafeRdbmsPoolFactory.build(const container : IDependencyContainer) : IDependency; override;
+    var pool : IRdbmsPool;
     begin
-        result := TRdmbsPool.create(fDbFactory, fPoolSize) as IDependency;
+        pool := fDbPoolFactory.build(container) as IRdbmsPool;
+        result := TThreadSafeRdmbsPool.create(pool) as IDependency;
     end;
 
 end.

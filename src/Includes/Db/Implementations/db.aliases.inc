@@ -15,6 +15,8 @@
 TRdbms = RdbmsImpl.TRdbms;
 TRdbmsPool = RdbmsPoolImpl.TRdbmsPool;
 TThreadSafeRdbmsPool = ThreadSafeRdbmsPoolImpl.TThreadSafeRdbmsPool;
+TRdbmsPoolFactory = RdbmsPoolFactoryImpl.TRdbmsPoolFactory;
+TThreadSafeRdbmsPoolFactory = ThreadSafeRdbmsPoolFactoryImpl.TThreadSafeRdbmsPoolFactory;
 
 TMySqlDb = MySqlDbImpl.TMySqlDb;
 TMySQLDbFactory = MySqlDbFactoryImpl.TMySQLDbFactory;

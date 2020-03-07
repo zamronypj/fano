@@ -17,6 +17,8 @@ RdbmsImpl,
 
 RdbmsPoolImpl,
 ThreadSafeRdbmsPoolImpl,
+RdbmsPoolFactoryImpl,
+ThreadSafeRdbmsPoolFactoryImpl,
 
 MySqlDbImpl,
 MySqlDbFactoryImpl,
