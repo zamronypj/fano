@@ -82,7 +82,7 @@ uses
      *---------------------------------------------------*)
     function TRdbmsPoolFactory.build(const container : IDependencyContainer) : IDependency; override;
     begin
-        result := TRdmbsPool.create(fDbFactory, fPoolSize) as IDependency;
+        result := TRdbmsPool.create(fDbFactory, fPoolSize) as IDependency;
     end;
 
 end.

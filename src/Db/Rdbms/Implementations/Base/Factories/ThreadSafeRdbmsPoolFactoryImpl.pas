@@ -77,7 +77,7 @@ uses
     var pool : IRdbmsPool;
     begin
         pool := fDbPoolFactory.build(container) as IRdbmsPool;
-        result := TThreadSafeRdmbsPool.create(pool) as IDependency;
+        result := TThreadSafeRdbmsPool.create(pool) as IDependency;
     end;
 
 end.
