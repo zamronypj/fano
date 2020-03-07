@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit ViewPartialFactoryImpl;
+unit StrViewPartialFactoryImpl;
 
 interface
 
@@ -25,15 +25,19 @@ uses
 type
 
     (*!------------------------------------------------
-     * View that can render from a HTML template file to string
+     * View that can render from a HTML template string to string
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TViewPartialFactory = class(TFactory)
+    TStrViewPartialFactory = class(TFactory)
     private
         parser : ITemplateParser;
+        fTemplatePath : string;
     public
-        constructor create(const parserInst : ITemplateParser);
+        constructor create(
+            const parserInst : ITemplateParser;
+            const templatePath : string
+        );
         destructor destroy(); override;
 
         (*!---------------------------------------------------
@@ -48,15 +52,19 @@ implementation
 
 uses
 
-    ViewPartialImpl,
+    StrViewPartialImpl,
     StringFileReaderImpl;
 
-    constructor TViewPartialFactory.create(const parserInst : ITemplateParser);
+    constructor TStrViewPartialFactory.create(
+        const parserInst : ITemplateParser;
+        const templatePath : string
+    );
     begin
         parser := parserInst;
+        fTemplatePath := templatePath
     end;
 
-    destructor TViewPartialFactory.destroy();
+    destructor TStrViewPartialFactory.destroy();
     begin
         parser := nil;
         inherited destroy();
@@ -67,9 +75,14 @@ uses
      *----------------------------------------------------
      * @param container dependency container instance
      *---------------------------------------------------*)
-    function TViewPartialFactory.build(const container : IDependencyContainer) : IDependency;
+    function TStrViewPartialFactory.build(const container : IDependencyContainer) : IDependency;
+    var fReader : IFileReader;
     begin
-        result := TViewPartial.create(parser, TStringFileReader.create());
+        fReader := TStringFileReader.create();
+        result := TStrViewPartial.create(
+            parser,
+            fReader.readFile(fTemplatePath)
+        );
     end;
 
 end.
