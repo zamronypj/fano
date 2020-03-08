@@ -53,7 +53,7 @@ all your applications that depends on Fano will be affected. If newer version of
 
 ## Windows User
 
-Fano Framework is not yet supported in Windows.
+Fano Framework is not yet supported on Windows.
 
 ## Roadmap
 
