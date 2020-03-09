@@ -168,7 +168,7 @@ uses
         fBodyList := THashList.create();
         try
             fBodyJson := getJSON(respBody);
-            buildFlatList(fBodyJson)
+            buildFlatList(fBodyJson, fBodyList, '');
         except
             freeData(fBodyList);
             fBodyJson.free();
