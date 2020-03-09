@@ -13,6 +13,9 @@
  *-----------------------------------------------*)
 
 RdbmsIntf,
+RdbmsPoolIntf,
+RdbmsFactoryIntf,
 RdbmsResultSetIntf,
 RdbmsFieldsIntf,
 RdbmsFieldIntf,
+RdbmsStatementIntf,

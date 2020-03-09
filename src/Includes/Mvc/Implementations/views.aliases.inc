@@ -19,4 +19,6 @@ TTemplateView = TemplateViewImpl.TTemplateView;
 TNullView = NullViewImpl.TNullView;
 TNullViewFactory = NullViewFactoryImpl.TNullViewFactory;
 TViewPartial = ViewPartialImpl.TViewPartial;
+TStrViewPartial = StrViewPartialImpl.TStrViewPartial;
 TViewPartialFactory = ViewPartialFactoryImpl.TViewPartialFactory;
+TStrViewPartialFactory = StrViewPartialFactoryImpl.TStrViewPartialFactory;

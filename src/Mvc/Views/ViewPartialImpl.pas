@@ -62,9 +62,9 @@ uses
 
     destructor TViewPartial.destroy();
     begin
-        inherited destroy();
-        templateParser := nil;
         fileReader := nil;
+        templateParser := nil;
+        inherited destroy();
     end;
 
     function TViewPartial.partial(

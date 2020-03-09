@@ -15,6 +15,7 @@
 
 ESessionExpiredImpl,
 ESessionInvalidImpl,
+ESessionKeyNotFoundImpl,
 
 DecoratorSessionIdGeneratorImpl,
 GuidSessionIdGeneratorImpl,
