@@ -167,7 +167,7 @@ uses
     begin
         fBodyList := THashList.create();
         try
-            fBodyJson := getJSON();
+            fBodyJson := getJSON(respBody);
             buildFlatList(fBodyJson)
         except
             freeData(fBodyList);
