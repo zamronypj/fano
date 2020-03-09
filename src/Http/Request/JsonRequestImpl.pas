@@ -98,7 +98,7 @@ uses
     procedure TJsonRequest.buildObjectFlatList(
         const bodyJson : TJsonData;
         const bodyList : IList;
-        const currentKey : string;
+        const currentKey : string
     );
     var i : integer;
         key : string;
@@ -120,7 +120,7 @@ uses
     procedure TJsonRequest.buildFlatList(
         const bodyJson : TJsonData;
         const bodyList : IList;
-        const currentKey : string;
+        const currentKey : string
     );
     begin
         if not assigned(bodyJson) then
