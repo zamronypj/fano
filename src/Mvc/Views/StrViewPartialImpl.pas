@@ -57,8 +57,8 @@ implementation
 
     destructor TStrViewPartial.destroy();
     begin
-        inherited destroy();
         templateParser := nil;
+        inherited destroy();
     end;
 
     function TStrViewPartial.partial(
