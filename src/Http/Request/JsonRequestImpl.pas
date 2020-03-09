@@ -120,7 +120,12 @@ uses
                 key := TJsonObject(bodyJson).names[i];
             end;
 
-            buildFlatList(bodyJson.items[i], bodyList, currentKey + '.' + key);
+            if (currentKey <> '') then
+            begin
+                key := currentKey + '.' + key
+            end;
+
+            buildFlatList(bodyJson.items[i], bodyList, key);
         end;
     end;
 
