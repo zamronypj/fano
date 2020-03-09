@@ -6,3 +6,4 @@ TNullMiddlewareListFactory = NullMiddlewareListFactoryImpl.TNullMiddlewareListFa
 TNullMiddleware = NullMiddlewareImpl.TNullMiddleware;
 TCompositeMiddleware = CompositeMiddlewareImpl.TCompositeMiddleware;
 TRequestHandlerAsMiddleware = RequestHandlerAsMiddlewareImpl.TRequestHandlerAsMiddleware;
+TJsonContentTypeMiddleware = JsonContentTypeMiddlewareImpl.TJsonContentTypeMiddleware;
