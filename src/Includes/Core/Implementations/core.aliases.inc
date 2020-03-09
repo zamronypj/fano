@@ -1,6 +1,7 @@
 TPlaceholder = PlaceholderTypes.TPlaceholder;
 TArrayOfPlaceholders = PlaceholderTypes.TArrayOfPlaceholders;
 TKeyValue = KeyValueTypes.TKeyValue;
+PKeyValue = KeyValueTypes.PKeyValue;
 TArrayOfKeyValue = KeyValueTypes.TArrayOfKeyValue;
 TNullSerializeable = NullSerializeableImpl.TNullSerializeable;
 TStringSerializeable = StringSerializeableImpl.TStringSerializeable;
