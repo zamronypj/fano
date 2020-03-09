@@ -15,6 +15,8 @@
 
 HeadersFactoryImpl,
 RequestImpl,
+DecoratorRequestImpl,
+JsonRequestImpl,
 ResponseImpl,
 JsonResponseImpl,
 BinaryResponseImpl,

@@ -13,6 +13,19 @@
  *-----------------------------------------------*)
 
 TRdbms = RdbmsImpl.TRdbms;
+TRdbmsPool = RdbmsPoolImpl.TRdbmsPool;
+TThreadSafeRdbmsPool = ThreadSafeRdbmsPoolImpl.TThreadSafeRdbmsPool;
+TRdbmsPoolFactory = RdbmsPoolFactoryImpl.TRdbmsPoolFactory;
+TThreadSafeRdbmsPoolFactory = ThreadSafeRdbmsPoolFactoryImpl.TThreadSafeRdbmsPoolFactory;
+
 TMySqlDb = MySqlDbImpl.TMySqlDb;
 TMySQLDbFactory = MySqlDbFactoryImpl.TMySQLDbFactory;
+
 TPostgreSqlDb = PostgreSqlDbImpl.TPostgreSqlDb;
+TPostgreSqlDbFactory = PostgreSqlDbFactoryImpl.TPostgreSqlDbFactory;
+
+TFirebirdDb = FirebirdDbImpl.TFirebirdDb;
+TFirebirdDbFactory = FirebirdDbFactoryImpl.TFirebirdDbFactory;
+
+TSQLiteDb = SQLiteDbImpl.TSQLiteDb;
+TSQLiteDbFactory = SQLiteDbFactoryImpl.TSQLiteDbFactory;
