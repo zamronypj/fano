@@ -32,7 +32,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TDecoratorRequest = class(TInterfaceObject, IRequest)
+    TDecoratorRequest = class(TInterfacedObject, IRequest)
     protected
         fActualRequest : IRequest;
 
