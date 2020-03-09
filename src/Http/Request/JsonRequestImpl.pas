@@ -51,6 +51,7 @@ type
             const currentKey : string
         );
         procedure init(const respBody : string);
+        procedure freeData(const bodyList : IList);
     public
 
         (*!------------------------------------------------
@@ -94,7 +95,8 @@ uses
 
     SysUtils,
     jsonparser,
-    HashListImpl;
+    HashListImpl,
+    KeyValueTypes;
 
     procedure TJsonRequest.buildObjectFlatList(
         const bodyJson : TJsonData;
@@ -123,6 +125,7 @@ uses
         const bodyList : IList;
         const currentKey : string
     );
+    var keyval : PKeyValue;
     begin
         if not assigned(bodyJson) then
         begin
@@ -130,18 +133,33 @@ uses
         end;
 
         case bodyJson.JSONType of
-            jtArray, jsObject :
+            jtArray, jtObject :
                 begin
                     buildObjectFlatList(bodyJson, bodyList, currentKey);
                 end;
             jtNull:
                 begin
-                    bodyList.add(currentKey, '');
+                    bodyList.add(currentKey, nil);
                 end;
             else
                 begin
-                    bodyList.add(currentKey, bodyJson.asString);
+                    new(keyval);
+                    keyval^.key := currentKey;
+                    keyval^.value := bodyJson.asString;
+                    bodyList.add(currentKey, keyval);
                 end;
+        end;
+    end;
+
+    procedure TJsonRequest.freeData(const bodyList : IList);
+    var i: integer;
+        keyval : PKeyValue;
+    begin
+        for i:= bodyList.count-1 downto 0 do
+        begin
+            keyval := bodyList.get(i);
+            dispose(keyval);
+            bodyList.delete(i);
         end;
     end;
 
@@ -152,6 +170,7 @@ uses
             fBodyJson := getJSON();
             buildFlatList(fBodyJson)
         except
+            freeData(fBodyList);
             fBodyJson.free();
             fBodyJson := nil;
             fBodyList := nil;
@@ -167,6 +186,7 @@ uses
 
     destructor TJsonRequest.destroy();
     begin
+        freeData(fBodyList);
         fBodyJson.free();
         fBodyList = nil;
         inherited destroy();
