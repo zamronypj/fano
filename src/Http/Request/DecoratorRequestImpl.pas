@@ -40,6 +40,13 @@ type
         constructor create(const request : IRequest);
         destructor destroy(); override;
 
+        (*!------------------------------------------------
+         * test if current request is coming from AJAX request
+         *-------------------------------------------------
+         * @return true if ajax request false otherwise
+         *------------------------------------------------*)
+        function isXhr() : boolean;
+
         (*!------------------------------------
          * get http headers instance
          *-------------------------------------
