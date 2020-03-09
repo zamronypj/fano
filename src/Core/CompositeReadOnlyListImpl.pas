@@ -59,7 +59,10 @@ resourcestring
 
     sErrIndexOutOfBound = 'Index is out of bound';
 
-    constructor TCompositeReadOnlyList.create(const firstList : IList; const secondList : IList);
+    constructor TCompositeReadOnlyList.create(
+        const firstList : IReadOnlyList;
+        const secondList : IReadOnlyList
+    );
     begin
         fFirstList := firstList;
         fSecondList := secondList;
