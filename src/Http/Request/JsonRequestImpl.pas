@@ -15,6 +15,7 @@ interface
 
 uses
 
+    RequestIntf,
     AjaxAwareIntf,
     ReadOnlyListIntf,
     UploadedFileIntf,
@@ -53,6 +54,8 @@ type
         procedure init(const respBody : string);
         procedure freeData(const bodyList : IList);
     public
+        constructor create(const request : IRequest);
+        destructor destroy(); override;
 
         (*!------------------------------------------------
          * get request body data
