@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit MySqlDbFactoryImpl;
+unit SQLiteDbFactoryImpl;
 
 interface
 
@@ -19,46 +19,25 @@ uses
     RdbmsFactoryIntf,
     AbstractDbFactoryImpl;
 
-const
-
-    MYSQL_DEFAULT_PORT = 3306;
-
 type
 
     (*!------------------------------------------------
      * basic class having capability to
-     * handle mysql relational database operation
+     * handle SQLite relational database operation
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TMySqlDbFactory = class(TAbstractDbFactory)
+    TSQLiteDbFactory = class(TAbstractDbFactory)
     private
-        mysqlVersion : string;
-        databaseHostname : string;
         databaseName : string;
-        databaseUsername : string;
-        databasePassword : string;
-        databasePort : word;
     public
 
         (*!------------------------------------------------
          * create connection to RDBMS server
          *-------------------------------------------------
-         * @param version MySQL version
-         * @param host hostname/ip where RDBMS server run
          * @param dbname database name to use
-         * @param username user name credential to login
-         * @param password password credential to login
-         * @param port TCP port where RDBMS listen
          *-------------------------------------------------*)
-        constructor create(
-            const version : string;
-            const host : string;
-            const dbname : string;
-            const username : string;
-            const password : string;
-            const port : word = MYSQL_DEFAULT_PORT
-        );
+        constructor create(const dbname : string);
 
         (*!------------------------------------------------
          * create rdbms instance
@@ -72,33 +51,16 @@ implementation
 
 uses
 
-    MySqlDbImpl;
+    SQLiteDbImpl;
 
     (*!------------------------------------------------
      * create connection to RDBMS server
      *-------------------------------------------------
-     * @param version MySQL version
-     * @param host hostname/ip where RDBMS server run
      * @param dbname database name to use
-     * @param username user name credential to login
-     * @param password password credential to login
-     * @param port TCP port where RDBMS listen
      *-------------------------------------------------*)
-    constructor TMySqlDbFactory.create(
-        const version : string;
-        const host : string;
-        const dbname : string;
-        const username : string;
-        const password : string;
-        const port : word = MYSQL_DEFAULT_PORT
-    );
+    constructor TSQLiteDbFactory.create(const dbname : string);
     begin
-        mysqlVersion := version;
-        databaseHostname := host;
         databaseName := dbname;
-        databaseUsername := username;
-        databasePassword := password;
-        databasePort := port;
     end;
 
     (*!------------------------------------------------
@@ -106,16 +68,10 @@ uses
      *-------------------------------------------------
      * @return database connection instance
      *-------------------------------------------------*)
-    function TMySqlDbFactory.build() : IRdbms;
+    function TSQLiteDbFactory.build() : IRdbms;
     begin
-        result := TMySqlDb.create(mysqlVersion);
-        result.connect(
-            databaseHostname,
-            databaseName,
-            databaseUsername,
-            databasePassword,
-            databasePort
-        );
+        result := TSQLiteDb.create();
+        result.connect('', databaseName, '', '', 0);
     end;
 
 end.

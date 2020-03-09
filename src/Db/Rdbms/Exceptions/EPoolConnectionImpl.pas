@@ -6,33 +6,26 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit MySqlDbImpl;
+unit EPoolConnectionImpl;
 
 interface
 
 {$MODE OBJFPC}
-{$H+}
 
 uses
 
-    RdbmsImpl;
+    sysutils;
 
 type
 
     (*!------------------------------------------------
-     * basic class having capability to
-     * handle mysql relational database operation
+     * Exception that is raised when regarding
+     * database connection pool.
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TMySqlDb = class(TRdbms);
+    EPoolConnection = class(Exception);
 
 implementation
-
-uses
-
-    Mysql55Conn,
-    Mysql56Conn,
-    Mysql57Conn;
 
 end.
