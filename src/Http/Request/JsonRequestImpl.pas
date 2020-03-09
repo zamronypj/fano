@@ -61,7 +61,7 @@ type
          *               does not exist
          * @return string value
          *------------------------------------------------*)
-        function getParsedBodyParam(const key: string; const defValue : string = '') : string;
+        function getParsedBodyParam(const key: string; const defValue : string = '') : string; override;
 
         (*!------------------------------------------------
          * get all request body data
@@ -85,46 +85,7 @@ type
          *-------------------------------------------------
          * @return array of query string and parsed body params
          *------------------------------------------------*)
-        function getParams() : IReadOnlyList;
-
-        (*!------------------------------------------------
-         * get number of item in list
-         *-----------------------------------------------
-         * @return number of item in list
-         *-----------------------------------------------*)
-        function count() : integer;
-
-        (*!------------------------------------------------
-         * get item by index
-         *-----------------------------------------------
-         * @param indx index of item
-         * @return item instance
-         *-----------------------------------------------*)
-        function get(const indx : integer) : pointer;
-
-        (*!------------------------------------------------
-         * find by its key name
-         *-----------------------------------------------
-         * @param aKey name to use to find item
-         * @return item instance
-         *-----------------------------------------------*)
-        function find(const aKey : shortstring) : pointer;
-
-        (*!------------------------------------------------
-         * get key name by using its index
-         *-----------------------------------------------
-         * @param indx index to find
-         * @return key name
-         *-----------------------------------------------*)
-        function keyOfIndex(const indx : integer) : shortstring;
-
-        (*!------------------------------------------------
-         * get index by key name
-         *-----------------------------------------------
-         * @param aKey name
-         * @return index of key
-         *-----------------------------------------------*)
-        function indexOf(const aKey : shortstring) : integer;
+        function getParams() : IReadOnlyList; override;
     end;
 
 implementation
@@ -273,66 +234,5 @@ uses
         result := TCompositeList.create(fActualParams.getParams(), fBodyList);
     end;
 
-    (*!------------------------------------------------
-     * get number of item in list
-     *-----------------------------------------------
-     * @return number of item in list
-     *-----------------------------------------------*)
-    function TJsonRequest.count() : integer;
-    begin
-        result := fBodyList.count;
-    end;
-
-    (*!------------------------------------------------
-     * get item by index
-     *-----------------------------------------------
-     * @param indx index of item
-     * @return item instance
-     *-----------------------------------------------*)
-    function TJsonRequest.get(const indx : integer) : pointer;
-    begin
-        result := fBodyList.get(indx);
-    end;
-
-    (*!------------------------------------------------
-     * find by its key name
-     *-----------------------------------------------
-     * @param aKey name to use to find item
-     * @return item instance
-     *-----------------------------------------------*)
-    function TJsonRequest.find(const aKey : shortstring) : pointer;
-    var adata : TJsonData;
-    begin
-        adata := fBodyJson.findPath(aKey);
-        if (adata <> nil) then
-        begin
-            result := pointer(data);
-        end else
-        begin
-            result := nil;
-        end;
-    end;
-
-    (*!------------------------------------------------
-     * get key name by using its index
-     *-----------------------------------------------
-     * @param indx index to find
-     * @return key name
-     *-----------------------------------------------*)
-    function TJsonRequest.keyOfIndex(const indx : integer) : shortstring;
-    begin
-        result := fBodyList.keyOfIndex(index);
-    end;
-
-    (*!------------------------------------------------
-     * get index by key name
-     *-----------------------------------------------
-     * @param aKey name
-     * @return index of key
-     *-----------------------------------------------*)
-    function TJsonRequest.indexOf(const aKey : shortstring) : integer;
-    begin
-        result := fBodyList.indexOf(aKey);
-    end;
 
 end.
