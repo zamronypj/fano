@@ -92,6 +92,7 @@ implementation
 
 uses
 
+    SysUtils,
     jsonparser,
     HashListImpl;
 
@@ -110,7 +111,7 @@ uses
                 key := inttoStr(i);
             end else
             begin
-                key := bodyJson.names[i];
+                key := TJsonObject(bodyJson).names[i];
             end;
 
             buildFlatList(bodyJson.items[i], bodyList, currentKey + '.' + key);
