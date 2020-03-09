@@ -54,9 +54,12 @@ uses
     ) : IResponse;
     var jsonRequest : IRequest;
         isJsonRequest : boolean;
+        method : string;
     begin
-        isJsonRequest := ((request.method = 'POST') or (request.method = 'PUT')) and
-            (request.env.contentType = 'application/json');
+        method := request.method;
+        isJsonRequest := ((method = 'POST') or (method = 'PUT') or
+            (method = 'DELETE')) and (request.env.contentType = 'application/json');
+
         if isJsonRequest then
         begin
             jsonRequest := TJsonRequest.create(request);
