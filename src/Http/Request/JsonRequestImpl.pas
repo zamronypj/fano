@@ -23,7 +23,8 @@ uses
     EnvironmentIntf,
     UriIntf,
     fpjson,
-    ListIntf;
+    ListIntf,
+    DecoratorRequestImpl;
 
 type
 
