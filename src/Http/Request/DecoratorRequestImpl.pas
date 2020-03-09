@@ -15,15 +15,13 @@ interface
 
 uses
 
+    RequestIntf,
     AjaxAwareIntf,
     ReadOnlyListIntf,
     UploadedFileIntf,
     UploadedFileCollectionIntf,
     ReadonlyHeadersIntf,
     EnvironmentIntf,
-    UploadedFileIntf,
-    UploadedFileCollectionIntf,
-    UploadedFileCollectionWriterIntf,
     UriIntf;
 
 type
