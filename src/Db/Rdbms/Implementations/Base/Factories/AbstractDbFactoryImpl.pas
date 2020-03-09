@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit ViewPartialFactoryImpl;
+unit AbstractDbFactoryImpl;
 
 interface
 
@@ -17,59 +17,46 @@ uses
 
     DependencyIntf,
     DependencyContainerIntf,
-    ViewParametersIntf,
-    ViewPartialIntf,
-    TemplateParserIntf,
+    RdbmsIntf,
+    RdbmsFactoryIntf,
     FactoryImpl;
 
 type
 
     (*!------------------------------------------------
-     * View that can render from a HTML template file to string
+     * abstract class having capability to
+     * handle relational database creation
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TViewPartialFactory = class(TFactory)
-    private
-        parser : ITemplateParser;
+    TAbstractDbFactory = class abstract (TFactory, IRdbmsFactory)
     public
-        constructor create(const parserInst : ITemplateParser);
-        destructor destroy(); override;
-
         (*!---------------------------------------------------
          * build class instance
          *----------------------------------------------------
          * @param container dependency container instance
          *---------------------------------------------------*)
         function build(const container : IDependencyContainer) : IDependency; override;
+
+        (*!------------------------------------------------
+         * create rdbms instance
+         *-------------------------------------------------
+         * @return database connection instance
+         *-------------------------------------------------*)
+        function build() : IRdbms; virtual; abstract;
     end;
 
 implementation
-
-uses
-
-    ViewPartialImpl,
-    StringFileReaderImpl;
-
-    constructor TViewPartialFactory.create(const parserInst : ITemplateParser);
-    begin
-        parser := parserInst;
-    end;
-
-    destructor TViewPartialFactory.destroy();
-    begin
-        parser := nil;
-        inherited destroy();
-    end;
 
     (*!---------------------------------------------------
      * build class instance
      *----------------------------------------------------
      * @param container dependency container instance
      *---------------------------------------------------*)
-    function TViewPartialFactory.build(const container : IDependencyContainer) : IDependency;
+    function TAbstractDbFactory.build(const container : IDependencyContainer) : IDependency;
     begin
-        result := TViewPartial.create(parser, TStringFileReader.create());
+        result := build() as IDependency;
     end;
+
 
 end.
