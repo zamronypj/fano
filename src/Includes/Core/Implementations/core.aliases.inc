@@ -6,6 +6,7 @@ TNullSerializeable = NullSerializeableImpl.TNullSerializeable;
 TStringSerializeable = StringSerializeableImpl.TStringSerializeable;
 THashList = HashListImpl.THashList;
 TCompositeList = CompositeListImpl.TCompositeList;
+TCompositeReadOnlyList = CompositeReadOnlyListImpl.TCompositeReadOnlyList;
 
 EKeyNotFound = EKeyNotFoundImpl.EKeyNotFound;
 EIndexOutOfBound = EIndexOutOfBoundImpl.EIndexOutOfBound;

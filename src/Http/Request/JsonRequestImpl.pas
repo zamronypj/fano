@@ -99,7 +99,8 @@ uses
     SysUtils,
     jsonparser,
     HashListImpl,
-    KeyValueTypes;
+    KeyValueTypes,
+    CompositeReadOnlyListImpl;
 
     procedure TJsonRequest.buildObjectFlatList(
         const bodyJson : TJsonData;
@@ -191,7 +192,7 @@ uses
     begin
         freeData(fBodyList);
         fBodyJson.free();
-        fBodyList = nil;
+        fBodyList := nil;
         inherited destroy();
     end;
 
@@ -255,7 +256,7 @@ uses
      *------------------------------------------------*)
     function TJsonRequest.getParams() : IReadOnlyList;
     begin
-        result := TCompositeList.create(fActualParams.getParams(), fBodyList);
+        result := TCompositeReadOnlyList.create(fActualRequest.getParams(), fBodyList);
     end;
 
 
