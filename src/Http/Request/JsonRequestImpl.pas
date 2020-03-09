@@ -23,7 +23,7 @@ uses
     EnvironmentIntf,
     UriIntf,
     fpjson,
-    HashListImpl;
+    ListIntf;
 
 type
 
@@ -36,9 +36,20 @@ type
     TJsonRequest = class(TDecoratorRequest)
     private
         fBodyJson : TJsonData;
-        fBodyList : THashList;
+        fBodyList : IList;
 
-        procedure buildFlatList(const bodyJson : TJsonData; const bodyList : THashList);
+        procedure buildObjectFlatList(
+            const bodyJson : TJsonData;
+            const bodyList : IList;
+            const currentKey : string
+        );
+
+        procedure buildFlatList(
+            const bodyJson : TJsonData;
+            const bodyList : IList;
+            const currentKey : string
+        );
+        procedure init(const respBody : string);
     public
 
         (*!------------------------------------------------
@@ -119,41 +130,82 @@ implementation
 
 uses
 
-    KeyValueTypes,
-    jsonparser;
+    jsonparser,
+    HashListImpl;
+
+    procedure TJsonRequest.buildObjectFlatList(
+        const bodyJson : TJsonData;
+        const bodyList : IList;
+        const currentKey : string;
+    );
+    var i : integer;
+        key : string;
+    begin
+        for i := 0 to bodyJson.count - 1 do
+        begin
+            if (bodyJson.JSONType = jtArray) then
+            begin
+                key := inttoStr(i);
+            end else
+            begin
+                key := bodyJson.names[i];
+            end;
+
+            buildFlatList(bodyJson.items[i], bodyList, currentKey + '.' + key);
+        end;
+    end;
 
     procedure TJsonRequest.buildFlatList(
         const bodyJson : TJsonData;
-        const bodyList : THashList;
-        const key : string;
+        const bodyList : IList;
+        const currentKey : string;
     );
-    var i : integer;
     begin
-        if (bodyJson.count > 0) then
+        if not assigned(bodyJson) then
         begin
-            for i := 0 to bodyJson.count - 1 do
-            begin
-                buildFlatList(bodyJson.items[i], bodyList)
-            end;
-        end else
-        begin
+            exit();
+        end;
+
+        case bodyJson.JSONType of
+            jtArray, jsObject :
+                begin
+                    buildObjectFlatList(bodyJson, bodyList, currentKey);
+                end;
+            jtNull:
+                begin
+                    bodyList.add(currentKey, '');
+                end;
+            else
+                begin
+                    bodyList.add(currentKey, bodyJson.asString);
+                end;
+        end;
+    end;
+
+    procedure TJsonRequest.init(const respBody : string);
+    begin
+        fBodyList := THashList.create();
+        try
+            fBodyJson := getJSON();
+            buildFlatList(fBodyJson)
+        except
+            fBodyJson.free();
+            fBodyJson := nil;
+            fBodyList := nil;
+            raise;
         end;
     end;
 
     constructor TJsonRequest.create(const request : IRequest);
     begin
         inherited create(request);
-        try
-            fBodyJson := getJSON(fActualRequest.getParsedBodyParam('application/json'));
-        except
-            fBodyJson := nil;
-            raise;
-        end;
+        init(request.getParsedBodyParam('application/json'));
     end;
 
     destructor TJsonRequest.destroy();
     begin
         fBodyJson.free();
+        fBodyList = nil;
         inherited destroy();
     end;
 
@@ -190,7 +242,7 @@ uses
      *------------------------------------------------*)
     function TJsonRequest.getParsedBodyParams() : IReadOnlyList;
     begin
-        result := self;
+        result := fBodyList;
     end;
 
     (*!------------------------------------------------
@@ -217,7 +269,7 @@ uses
      *------------------------------------------------*)
     function TJsonRequest.getParams() : IReadOnlyList;
     begin
-        result := self;
+        result := TCompositeList.create(fActualParams.getParams(), fBodyList);
     end;
 
     (*!------------------------------------------------
