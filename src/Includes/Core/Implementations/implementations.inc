@@ -18,6 +18,7 @@ StringSerializeableImpl,
 
 HashListImpl,
 CompositeListImpl,
+CompositeReadOnlyListImpl,
 
 EKeyNotFoundImpl,
 EIndexOutOfBoundImpl,
