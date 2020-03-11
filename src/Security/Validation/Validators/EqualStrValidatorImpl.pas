@@ -39,12 +39,25 @@ type
 
 implementation
 
+resourcestring
+
+    sErrFieldMustBeEqualString = 'Field %s must be equal to ';
+
+    (*!------------------------------------------------
+     * constructor
+     *-------------------------------------------------*)
+    constructor TEqualStrValidator.create(const refStr : string);
+    begin
+        inherited create(sErrFieldMustBeEqualStr + refStr);
+        fRefStr := refStr;
+    end;
+
     function TEqualStrValidator.compareStrWithRef(
         const astr: string;
         const refStr : string
     ) : boolean;
     begin
-        result := (astr = refStr);
+        result := (compareStr(astr, efStr) = 0);
     end;
 
 end.
