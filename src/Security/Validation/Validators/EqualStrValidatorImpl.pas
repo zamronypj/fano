@@ -35,9 +35,19 @@ type
             const astr: string;
             const refStr : string
         ) : boolean; override;
+    public
+        (*!------------------------------------------------
+        * constructor
+        *-------------------------------------------------*)
+        constructor create(const refStr : string);
+
     end;
 
 implementation
+
+uses
+
+    sysutils;
 
 resourcestring
 

@@ -37,6 +37,11 @@ type
             const astr: string;
             const refStr : string
         ) : boolean; override;
+    public
+        (*!------------------------------------------------
+        * constructor
+        *-------------------------------------------------*)
+        constructor create(const refStr : string);
     end;
 
 implementation
@@ -44,6 +49,19 @@ implementation
 uses
 
     sysutils;
+
+resourcestring
+
+    sErrFieldMustBeEqualString = 'Field %s must be equal to ';
+
+    (*!------------------------------------------------
+     * constructor
+     *-------------------------------------------------*)
+    constructor TEqualStrValidator.create(const refStr : string);
+    begin
+        inherited create(sErrFieldMustBeEqualStr + refStr);
+        fRefStr := refStr;
+    end;
 
     function TCaseInsensitiveEqualStrValidator.compareStrWithRef(
         const astr: string;
