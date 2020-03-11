@@ -74,15 +74,24 @@ implementation
     end;
 
     function TFancyErrorHandler.getEnvTrace(const env: ICGIEnvironmentEnumerator) : string;
-    var indx, totEnv: integer;
+    var indx, totEnv, valPos: integer;
+        key, value : string;
     begin
         totEnv := env.count();
         result := '<section class="wrapper"><div class="inner"><h3>Environments:</h3><ul>';
 
         for indx := 0 to totEnv-1 do
         begin
-            result := result + '<li><h5>' + env.getKey(indx) + '</h5>'+
-                '<pre><code>' + env.getValue(indx) + '</code></pre></li>';
+            key := env.getKey(indx);
+            value := env.getValue(indx);
+            valPos := pos('=' + value, key);
+            if valPos <> 0 then
+            begin
+                //key in CGI sometime include is value too, strip that if any
+                key := copy(key, valPos, length(key) - valPos);
+            end;
+            result := result + '<li><h5>' + key + '</h5>'+
+                '<pre><code>' + value + '</code></pre></li>';
         end;
 
         result := result + '</ul></div></section>';
