@@ -48,7 +48,7 @@ implementation
     var
         i: integer;
         frames: PPointer;
-        strExcAddr, stackCount : string;
+        strExcAddr : string;
     begin
         result := '';
         if (e <> nil) then
@@ -68,8 +68,7 @@ implementation
         for i := 0 to ExceptFrameCount - 1 do
         begin
             strExcAddr := BackTraceStrFunc(frames[i]);
-            stackCount := IntToStr(i+1);
-            result := result + '(' + stackCount + ') ' + strExcAddr + LineEnding;
+            result := result + strExcAddr + LineEnding;
         end;
         result := result + '</code></pre></div></section>';
     end;
