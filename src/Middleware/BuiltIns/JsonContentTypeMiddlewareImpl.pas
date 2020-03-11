@@ -58,7 +58,8 @@ uses
     begin
         method := request.method;
         isJsonRequest := ((method = 'POST') or (method = 'PUT') or
-            (method = 'DELETE')) and (request.env.contentType = 'application/json');
+            (method = 'PATCH') or (method = 'DELETE')) and
+            (request.env.contentType = 'application/json');
 
         if isJsonRequest then
         begin
