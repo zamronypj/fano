@@ -51,7 +51,7 @@ uses
 
 resourcestring
 
-    sErrFieldMustBeIntegerWithMaxValue = 'Field %%s must be integer with maximum value of "%d"';
+    sErrFieldMustBeIntegerWithMaxValue = 'Field %%s must be integer with maximum value of %d';
 
     (*!------------------------------------------------
      * constructor
@@ -59,7 +59,7 @@ resourcestring
     constructor TMaxIntegerValidator.create(const maxValue : integer);
     begin
         inherited create(
-            format(sErrFieldMustBeIntegerWithMaxValue, [maxValue]),
+            format(sErrFieldMustBeIntegerWithMaxValue, [ maxValue ]),
             maxValue
         );
     end;

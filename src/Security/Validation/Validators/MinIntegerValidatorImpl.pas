@@ -51,7 +51,7 @@ uses
 
 resourcestring
 
-    sErrFieldMustBeIntegerWithMinValue = 'Field %%s must be integer with minimum value of "%d"';
+    sErrFieldMustBeIntegerWithMinValue = 'Field %%s must be integer with minimum value of %d';
 
     (*!------------------------------------------------
      * constructor
@@ -59,7 +59,7 @@ resourcestring
     constructor TMinIntegerValidator.create(const minValue : integer);
     begin
         inherited create(
-            format(sErrFieldMustBeIntegerWithMinValue, [minValue]),
+            format(sErrFieldMustBeIntegerWithMinValue, [ minValue ]),
             minValue
         );
     end;

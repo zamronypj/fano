@@ -51,7 +51,7 @@ uses
 
 resourcestring
 
-    sErrFieldMustBeIntegerLessThan = 'Field %%s must be integer with less than "%d"';
+    sErrFieldMustBeIntegerLessThan = 'Field %%s must be integer less than %d';
 
     (*!------------------------------------------------
      * constructor
