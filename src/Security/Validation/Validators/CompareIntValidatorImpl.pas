@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit CompareStrValidatorImpl;
+unit CompareIntValidatorImpl;
 
 interface
 
@@ -23,18 +23,19 @@ uses
 type
 
     (*!------------------------------------------------
-     * abstract class having capability to
-     * validate data compared against a reference string
+     * basic class having capability to
+     * validate data compared against a reference integer
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TCompareStrValidator = class abstract (TBaseValidator)
+    TCompareIntValidator = class abstract (TBaseValidator)
+    private
+        fReferenceValue : integer;
     protected
-        fRefStr : string;
 
-        function compareStrWithRef(
-            const astr: string;
-            const refStr : string
+        function compareIntWithRef(
+            const aint: integer;
+            const refInt : integer
         ) : boolean; virtual; abstract;
 
         (*!------------------------------------------------
@@ -48,6 +49,8 @@ type
             const dataCollection : IReadOnlyList;
             const request : IRequest
         ) : boolean; override;
+    public
+        constructor create(const errMsgFormat : string; const refInt : integer);
     end;
 
 implementation
@@ -57,17 +60,31 @@ uses
     SysUtils;
 
     (*!------------------------------------------------
+     * constructor
+     *-------------------------------------------------*)
+    constructor TCompareIntValidator.create(
+        const errMsgFormat : string;
+        const refInt : integer
+    );
+    begin
+        inherited create(errMsgFormat);
+        fReferenceValue := refInt;
+    end;
+
+    (*!------------------------------------------------
      * actual data validation
      *-------------------------------------------------
      * @param dataToValidate input data
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
-    function TCompareStrValidator.isValidData(
+    function TCompareIntValidator.isValidData(
         const dataToValidate : string;
         const dataCollection : IReadOnlyList;
         const request : IRequest
     ) : boolean;
+    var intValue : integer;
     begin
-        result := compareStrWithRef(dataToValidate, fRefStr);
+        result := tryStrToInt(dataToValidate, intValue) and
+            compareIntWithRef(intValue, fReferenceValue);
     end;
 end.

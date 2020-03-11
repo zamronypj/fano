@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit MinIntegerValidatorImpl;
+unit GreaterThanValidatorImpl;
 
 interface
 
@@ -24,11 +24,11 @@ type
 
     (*!------------------------------------------------
      * basic class having capability to
-     * validate if data does not less than a reference value
+     * validate if data greater than a reference value
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TMinIntegerValidator = class(TCompareIntValidator)
+    TGreaterThanValidator = class(TCompareIntValidator)
     protected
         function compareIntWithRef(
             const aInt: integer;
@@ -38,9 +38,9 @@ type
         (*!------------------------------------------------
          * constructor
          *-------------------------------------------------
-         * @param minValue minimum value allowed
+         * @param refValue reference value
          *-------------------------------------------------*)
-        constructor create(const minValue : integer);
+        constructor create(const refValue : integer);
     end;
 
 implementation
@@ -51,25 +51,25 @@ uses
 
 resourcestring
 
-    sErrFieldMustBeIntegerWithMinValue = 'Field %%s must be integer with minimum value of "%d"';
+    sErrFieldMustBeIntegerGreaterThan = 'Field %%s must be integer with greater than "%d"';
 
     (*!------------------------------------------------
      * constructor
      *-------------------------------------------------*)
-    constructor TMinIntegerValidator.create(const minValue : integer);
+    constructor TGreaterThanValidator.create(const refValue : integer);
     begin
         inherited create(
-            format(sErrFieldMustBeIntegerWithMinValue, [minValue]),
-            minValue
+            format(sErrFieldMustBeIntegerGreaterThan, [ refValue ]),
+            refValue
         );
     end;
 
-    function TMinIntegerValidator.compareIntWithRef(
+    function TGreaterThanValidator.compareIntWithRef(
         const aInt: integer;
         const refInt : integer
     ) : boolean;
     begin
-        result := (aInt >= refInt);
+        result := (aInt > refInt);
     end;
 
 end.

@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit MinIntegerValidatorImpl;
+unit EqualIntValidatorImpl;
 
 interface
 
@@ -24,52 +24,52 @@ type
 
     (*!------------------------------------------------
      * basic class having capability to
-     * validate if data does not less than a reference value
+     * validate data equality against a reference integer
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TMinIntegerValidator = class(TCompareIntValidator)
+    TEqualIntValidator = class(TCompareIntValidator)
     protected
+
         function compareIntWithRef(
             const aInt: integer;
             const refInt : integer
         ) : boolean; override;
     public
         (*!------------------------------------------------
-         * constructor
-         *-------------------------------------------------
-         * @param minValue minimum value allowed
-         *-------------------------------------------------*)
-        constructor create(const minValue : integer);
+        * constructor
+        *-------------------------------------------------*)
+        constructor create(const refInt : integer);
+
     end;
 
 implementation
 
 uses
 
-    SysUtils;
+    sysutils;
 
 resourcestring
 
-    sErrFieldMustBeIntegerWithMinValue = 'Field %%s must be integer with minimum value of "%d"';
+    sErrFieldMustBeEqualInt = 'Field %%s must be equal to "%d"';
 
     (*!------------------------------------------------
      * constructor
      *-------------------------------------------------*)
-    constructor TMinIntegerValidator.create(const minValue : integer);
+    constructor TEqualIntValidator.create(const refInt : integer);
     begin
         inherited create(
-            format(sErrFieldMustBeIntegerWithMinValue, [minValue]),
-            minValue
+            format(sErrFieldMustBeEqualInt, [refInt]),
+            refInt
         );
     end;
 
-    function TMinIntegerValidator.compareIntWithRef(
+    function TEqualIntValidator.compareIntWithRef(
         const aInt: integer;
         const refInt : integer
     ) : boolean;
     begin
-        result := (aInt >= refInt);
+        result := (aInt = refInt);
     end;
 
 end.
