@@ -54,14 +54,14 @@ implementation
         if (e <> nil) then
         begin
             result := result +
-                '<section class="wrapper"><div class="inner">'
+                '<section class="wrapper"><div class="inner">' +
                 '<div>Exception class : <strong>' + e.className + '</strong></div>' +
                 '<div>Message : <em>' + e.message + '</em></div></div></section>';
         end;
 
         strExcAddr := BackTraceStrFunc(ExceptAddr);
         result := result +
-            '<section class="wrapper"><div class="inner"><h3>Stacktrace:</h3>'+
+            '<section class="wrapper"><div class="inner"><h3>Stacktrace:</h3>' +
             '<pre><code>' + strExcAddr + LineEnding;
 
         frames := ExceptFrames;
