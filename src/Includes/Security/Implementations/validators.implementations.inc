@@ -39,6 +39,7 @@ EvenIntValidatorImpl,
 OddIntValidatorImpl,
 PositiveIntValidatorImpl,
 NegativeIntValidatorImpl,
+InIntValidatorImpl,
 
 RegexValidatorImpl,
 RequiredValidatorImpl,

@@ -42,6 +42,7 @@ TEvenIntValidator = EvenIntValidatorImpl.TEvenIntValidator;
 TOddIntValidator = OddIntValidatorImpl.TOddIntValidator;
 TPositiveIntValidator = PositiveIntValidatorImpl.TPositiveIntValidator;
 TNegativeIntValidator = NegativeIntValidatorImpl.TNegativeIntValidator;
+TInIntValidator = InIntValidatorImpl.TInIntValidator;
 
 TFloatValidator = FloatValidatorImpl.TFloatValidator;
 TNumericValidator = NumericValidatorImpl.TNumericValidator;
