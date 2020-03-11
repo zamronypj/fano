@@ -20,6 +20,8 @@ AlphaNumSpaceValidatorImpl,
 AlphaNumDashValidatorImpl,
 AlphaValidatorImpl,
 SlugValidatorImpl,
+PhoneValidatorImpl,
+MacAddrValidatorIMpl,
 
 BaseCompositeValidatorImpl,
 CompositeValidatorImpl,

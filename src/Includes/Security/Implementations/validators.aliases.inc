@@ -24,6 +24,7 @@ TEmailValidator = EmailValidatorImpl.TEmailValidator;
 TUrlValidator = UrlValidatorImpl.TUrlValidator;
 TSlugValidator = SlugValidatorImpl.TSlugValidator;
 TPhoneValidator = PhoneValidatorImpl.TPhoneValidator;
+TMacAddrValidator = MacAddrValidatorImpl.TMAcAddrValidator;
 
 TBaseCompositeValidator = BaseCompositeValidatorImpl.TBaseCompositeValidator;
 TCompositeValidator = CompositeValidatorImpl.TCompositeValidator;
