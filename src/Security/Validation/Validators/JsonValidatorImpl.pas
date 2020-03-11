@@ -85,7 +85,11 @@ resourcestring
             //TODO: getJSON() will be called twice, first here then later in
             //actual code that process data. Can we avoid? cheap test using regex?
             jsonData := getJSON(dataToValidate);
-            result := (jsonData <> nil);
+            try
+                result := (jsonData <> nil);
+            finally
+                jsonData.free();
+            end;
         except
             //if exception is raised, it means not valid json
             result := false;
