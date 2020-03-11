@@ -68,7 +68,7 @@ resourcestring
         const refStr : string
     ) : boolean;
     begin
-        result := (lowercase(astr) = lowercase(refStr));
+        result := (compareText(astr, refStr) = 0);
     end;
 
 end.
