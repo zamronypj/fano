@@ -62,7 +62,7 @@ implementation
 
 resourcestring
 
-    sErrFieldMustBeIn = 'Field %%s must be integer and in given values "%s"';
+    sErrFieldMustBeIn = 'Field %%s must be integer and in given values [%s]';
 
     function initValidValues(const validValues : array of integer) : TIntArray;
     var i, tot : integer;
