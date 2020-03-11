@@ -51,7 +51,7 @@ uses
 
 resourcestring
 
-    sErrFieldMustBeEqualString = 'Field %s must be equal to ';
+    sErrFieldMustBeEqualStr = 'Field %s must be equal to ';
 
     (*!------------------------------------------------
      * constructor
