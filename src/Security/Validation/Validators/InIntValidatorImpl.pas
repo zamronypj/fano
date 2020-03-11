@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit InValidatorImpl;
+unit InIntValidatorImpl;
 
 interface
 
@@ -23,15 +23,17 @@ uses
 
 type
 
+    TIntArray = array of integer;
+
     (*!------------------------------------------------
      * basic class having capability to
      * validate data that must included in given list of values
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TInValidator = class(TBaseValidator)
+    TInIntValidator = class(TBaseValidator)
     protected
-        fValidValues : TStringArray;
+        fValidValues : TIntArray;
 
         (*!------------------------------------------------
          * actual data validation
@@ -48,7 +50,7 @@ type
         (*!------------------------------------------------
          * constructor
          *-------------------------------------------------*)
-        constructor create(const validValues : array of string);
+        constructor create(const validValues : array of integer);
 
         (*!------------------------------------------------
          * destructor
@@ -60,9 +62,9 @@ implementation
 
 resourcestring
 
-    sErrFieldMustBeIn = 'Field %%s must be in given values "%s"';
+    sErrFieldMustBeIn = 'Field %%s must be integer and in given values "%s"';
 
-    function initValidValues(const validValues : array of string) : TStringArray;
+    function initValidValues(const validValues : array of integer) : TIntArray;
     var i, tot : integer;
     begin
         tot := high(validValues) - low(validValues) + 1;
@@ -73,22 +75,22 @@ resourcestring
         end;
     end;
 
-    function asCommaSeparatedStr(const validValues : array of string) : string;
+    function asCommaSeparatedStr(const validValues : array of integer) : string;
     var i, tot : integer;
     begin
         tot := high(validValues) - low(validValues) + 1;
         result := '';
         for i := 0 to tot-2 do
         begin
-            result := result + validValues[i] + ',';
+            result := result + intToStr(validValues[i]) + ',';
         end;
-        result := result + validValues[tot-1];
+        result := result + intToStr(validValues[tot-1]);
     end;
 
     (*!------------------------------------------------
      * constructor
      *-------------------------------------------------*)
-    constructor TInValidator.create(const validValues : array of string);
+    constructor TInIntValidator.create(const validValues : array of integer);
     begin
         inherited create(
             format(
@@ -102,7 +104,7 @@ resourcestring
     (*!------------------------------------------------
      * destructor
      *-------------------------------------------------*)
-    destructor TInValidator.destroy();
+    destructor TInIntValidator.destroy();
     begin
         setLength(fValidValues, 0);
         inherited destroy();
@@ -114,18 +116,20 @@ resourcestring
      * @param dataToValidate input data
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
-    function TInValidator.isValidData(
+    function TInIntValidator.isValidData(
         const dataToValidate : string;
         const dataCollection : IReadOnlyList;
         const request : IRequest
     ) : boolean;
     var i, len : integer;
+        intval : integer;
     begin
         result := false;
         len := length(fValidValues);
         for i := 0 to len - 1 do
         begin
-            if (dataToValidate = fValidValues[i]) then
+            if (tryStrToInt(dataToValidate, intval) and
+               (intval = fValidValues[i])) then
             begin
                 result := true;
                 exit();
