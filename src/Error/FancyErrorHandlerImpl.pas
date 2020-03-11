@@ -55,8 +55,8 @@ implementation
         begin
             result := result +
                 '<section class="wrapper"><div class="inner">' +
-                '<div>Exception class : <strong>' + e.className + '</strong></div>' +
-                '<div>Message : <em>' + e.message + '</em></div></div></section>';
+                '<div>Exception : <strong>' + e.className + '</strong></div>' +
+                '<div><em>' + e.message + '</em></div></div></section>';
         end;
 
         strExcAddr := BackTraceStrFunc(ExceptAddr);
