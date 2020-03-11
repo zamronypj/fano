@@ -88,7 +88,7 @@ implementation
             if valPos <> 0 then
             begin
                 //key in CGI sometime include is value too, strip that if any
-                key := copy(key, 1, valPos);
+                key := copy(key, 1, valPos - 1);
             end;
             result := result + '<li><h5>' + key + '</h5>'+
                 '<pre><code>' + value + '</code></pre></li>';
