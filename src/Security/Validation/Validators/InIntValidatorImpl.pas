@@ -82,7 +82,7 @@ resourcestring
         result := '';
         for i := 0 to tot-2 do
         begin
-            result := result + intToStr(validValues[i]) + ',';
+            result := result + intToStr(validValues[i]) + ', ';
         end;
         result := result + intToStr(validValues[tot-1]);
     end;
