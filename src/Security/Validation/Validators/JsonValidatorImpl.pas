@@ -82,9 +82,12 @@ resourcestring
     var jsonData : TJSONData;
     begin
         try
+            //TODO: getJSON() will be called twice, first here then later in
+            //actual code that process data. Can we avoid? cheap test using regex?
             jsonData := getJSON(dataToValidate);
-            result := (jsonData <> '');
+            result := (jsonData <> nil);
         except
+            //if exception is raised, it means not valid json
             result := false;
         end;
     end;
