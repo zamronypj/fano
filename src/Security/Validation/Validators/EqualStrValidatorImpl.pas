@@ -51,14 +51,14 @@ uses
 
 resourcestring
 
-    sErrFieldMustBeEqualStr = 'Field %s must be equal to ';
+    sErrFieldMustBeEqualStr = 'Field %%s must be equal to "%s"';
 
     (*!------------------------------------------------
      * constructor
      *-------------------------------------------------*)
     constructor TEqualStrValidator.create(const refStr : string);
     begin
-        inherited create(sErrFieldMustBeEqualStr + refStr);
+        inherited create(format(sErrFieldMustBeEqualStr, [refStr]));
         fRefStr := refStr;
     end;
 
