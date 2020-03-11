@@ -13,7 +13,6 @@ STR_HEAD_HTML =
     '		<meta charset="utf-8" />' + LineEnding +
     '		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />' + LineEnding +
     '		<style>' + LineEnding +
-    '' + LineEnding +
     '	html, body, div, span, applet, object,' + LineEnding +
     '	iframe, h1, h2, h3, h4, h5, h6, p, blockquote,' + LineEnding +
     '	pre, a, abbr, acronym, address, big, cite,' + LineEnding +
@@ -31,53 +30,38 @@ STR_HEAD_HTML =
     '		font-size: 100%;' + LineEnding +
     '		font: inherit;' + LineEnding +
     '		vertical-align: baseline;}' + LineEnding +
-    '' + LineEnding +
     '	article, aside, details, figcaption, figure,' + LineEnding +
     '	footer, header, hgroup, menu, nav, section {' + LineEnding +
     '		display: block;}' + LineEnding +
-    '' + LineEnding +
     '	body {' + LineEnding +
     '		line-height: 1;' + LineEnding +
     '	}' + LineEnding +
-    '' + LineEnding +
     '	ol, ul {' + LineEnding +
     '		list-style: none;' + LineEnding +
     '	}' + LineEnding +
-    '' + LineEnding +
     '	body {' + LineEnding +
     '		-webkit-text-size-adjust: none;' + LineEnding +
     '	}' + LineEnding +
-    '' + LineEnding +
-    '	/* Basic */' + LineEnding +
-    '' + LineEnding +
     '		@-ms-viewport {' + LineEnding +
     '			width: device-width;' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
     '		body {' + LineEnding +
     '			-ms-overflow-style: scrollbar;' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
     '		@media screen and (max-width: 480px) {' + LineEnding +
-    '' + LineEnding +
     '			html, body {' + LineEnding +
     '				min-width: 320px;' + LineEnding +
     '			}' + LineEnding +
-    '' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
     '		html {' + LineEnding +
     '			box-sizing: border-box;' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
     '		*, *:before, *:after {' + LineEnding +
     '			box-sizing: inherit;' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
     '		body {' + LineEnding +
     '			background: #312450;' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
     '			body.is-preload *, body.is-preload *:before, body.is-preload *:after {' + LineEnding +
     '				-moz-animation: none !important;' + LineEnding +
     '				-webkit-animation: none !important;' + LineEnding +
@@ -88,9 +72,6 @@ STR_HEAD_HTML =
     '				-ms-transition: none !important;' + LineEnding +
     '				transition: none !important;' + LineEnding +
     '			}' + LineEnding +
-    '' + LineEnding +
-    '	/* Type */' + LineEnding +
-    '' + LineEnding +
     '		body, input, select, textarea {' + LineEnding +
     '			color: rgba(255, 255, 255, 0.55);' + LineEnding +
     '			font-family: Arial, Helvetica, sans-serif;' + LineEnding +
@@ -98,31 +79,21 @@ STR_HEAD_HTML =
     '			font-weight: normal;' + LineEnding +
     '			line-height: 1.75;' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
-    '			@media screen and (max-width: 1680px) {' + LineEnding +
-    '' + LineEnding +
-    '				body, input, select, textarea {' + LineEnding +
-    '					font-size: 13pt;' + LineEnding +
-    '				}' + LineEnding +
-    '' + LineEnding +
+    '		@media screen and (max-width: 1680px) {' + LineEnding +
+    '			body, input, select, textarea {' + LineEnding +
+    '				font-size: 13pt;' + LineEnding +
     '			}' + LineEnding +
-    '' + LineEnding +
-    '			@media screen and (max-width: 1280px) {' + LineEnding +
-    '' + LineEnding +
-    '				body, input, select, textarea {' + LineEnding +
-    '					font-size: 12pt;' + LineEnding +
-    '				}' + LineEnding +
-    '' + LineEnding +
+    '		}' + LineEnding +
+    '		@media screen and (max-width: 1280px) {' + LineEnding +
+    '			body, input, select, textarea {' + LineEnding +
+    '				font-size: 12pt;' + LineEnding +
     '			}' + LineEnding +
-    '' + LineEnding +
+    '		}' + LineEnding +
     '			@media screen and (max-width: 360px) {' + LineEnding +
-    '' + LineEnding +
     '				body, input, select, textarea {' + LineEnding +
     '					font-size: 11pt;' + LineEnding +
     '				}' + LineEnding +
-    '' + LineEnding +
     '			}' + LineEnding +
-    '' + LineEnding +
     '		a {' + LineEnding +
     '			-moz-transition: color 0.2s ease, border-bottom-color 0.2s ease;' + LineEnding +
     '			-webkit-transition: color 0.2s ease, border-bottom-color 0.2s ease;' + LineEnding +
@@ -132,89 +103,68 @@ STR_HEAD_HTML =
     '			color: inherit;' + LineEnding +
     '			text-decoration: none;' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
     '			a:hover {' + LineEnding +
     '				border-bottom-color: transparent;' + LineEnding +
     '				color: #ffffff;' + LineEnding +
     '			}' + LineEnding +
-    '' + LineEnding +
     '		strong, b {' + LineEnding +
     '			color: #ffffff;' + LineEnding +
     '			font-weight: bold;' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
     '		em, i {' + LineEnding +
     '			font-style: italic;' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
     '		p {' + LineEnding +
     '			margin: 0 0 2em 0;' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
     '		h1, h2, h3, h4, h5, h6 {' + LineEnding +
     '			color: #ffffff;' + LineEnding +
     '			font-weight: bold;' + LineEnding +
     '			line-height: 1.5;' + LineEnding +
     '			margin: 0 0 0.5em 0;' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
     '		h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {' + LineEnding +
     '			color: inherit;' + LineEnding +
     '			text-decoration: none;' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
     '		h1 {' + LineEnding +
     '			font-size: 2.75em;' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
     '		h2 {' + LineEnding +
     '			font-size: 1.75em;' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
     '		h3 {' + LineEnding +
     '			font-size: 1.1em;' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
     '		h4 {' + LineEnding +
     '			font-size: 1em;' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
     '		h5 {' + LineEnding +
     '			font-size: 0.8em;' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
     '		h6 {' + LineEnding +
     '			font-size: 0.6em;' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
     '		@media screen and (max-width: 736px) {' + LineEnding +
-    '' + LineEnding +
     '			h1 {' + LineEnding +
     '				font-size: 2em;' + LineEnding +
     '			}' + LineEnding +
-    '' + LineEnding +
     '			h2 {' + LineEnding +
     '				font-size: 1.25em;' + LineEnding +
     '			}' + LineEnding +
-    '' + LineEnding +
     '			h3 {' + LineEnding +
     '				font-size: 1em;' + LineEnding +
     '			}' + LineEnding +
-    '' + LineEnding +
     '			h4 {' + LineEnding +
     '				font-size: 0.8em;' + LineEnding +
     '			}' + LineEnding +
-    '' + LineEnding +
     '			h5 {' + LineEnding +
     '				font-size: 0.6em;' + LineEnding +
     '			}' + LineEnding +
-    '' + LineEnding +
     '			h6 {' + LineEnding +
     '				font-size: 0.6em;' + LineEnding +
     '			}' + LineEnding +
-    '' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
     '		code {' + LineEnding +
     '			background: rgba(255, 255, 255, 0.05);' + LineEnding +
     '			border-radius: 0.25em;' + LineEnding +
@@ -224,71 +174,54 @@ STR_HEAD_HTML =
     '			margin: 0 0.25em;' + LineEnding +
     '			padding: 0.25em 0.65em;' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
     '		pre {' + LineEnding +
     '			-webkit-overflow-scrolling: touch;' + LineEnding +
     '			font-family: "Courier New", monospace;' + LineEnding +
     '			font-size: 0.9em;' + LineEnding +
     '			margin: 0 0 2em 0;' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
     '			pre code {' + LineEnding +
     '				display: block;' + LineEnding +
-    '				line-height: 1.75em;' + LineEnding +
+    '				line-height: 1.5em;' + LineEnding +
     '				padding: 1em 1.5em;' + LineEnding +
     '				overflow-x: auto;' + LineEnding +
     '			}' + LineEnding +
-    '' + LineEnding +
     '		.align-left {' + LineEnding +
     '			text-align: left;' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
     '		.align-center {' + LineEnding +
     '			text-align: center;' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
     '		.align-right {' + LineEnding +
     '			text-align: right;' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
-    '	/* Row */' + LineEnding +
-    '' + LineEnding +
     '		.row {' + LineEnding +
     '			display: flex;' + LineEnding +
     '			flex-wrap: wrap;' + LineEnding +
     '			box-sizing: border-box;' + LineEnding +
     '			align-items: stretch;' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
     '			.row > * {' + LineEnding +
     '				box-sizing: border-box;' + LineEnding +
     '			}' + LineEnding +
-    '' + LineEnding +
     '			@media screen and (max-width: 1680px) {' + LineEnding +
-    '' + LineEnding +
     '				.row {' + LineEnding +
     '					display: flex;' + LineEnding +
     '					flex-wrap: wrap;' + LineEnding +
     '					box-sizing: border-box;' + LineEnding +
     '					align-items: stretch;' + LineEnding +
     '				}' + LineEnding +
-    '' + LineEnding +
-    '					.row > * {' + LineEnding +
-    '						box-sizing: border-box;' + LineEnding +
-    '					}' + LineEnding +
-    '' + LineEnding +
-    '					.row {' + LineEnding +
-    '						margin-top: 0;' + LineEnding +
-    '						margin-left: -1.5em;' + LineEnding +
-    '					}' + LineEnding +
-    '' + LineEnding +
-    '						.row > * {' + LineEnding +
-    '							padding: 0 0 0 1.5em;' + LineEnding +
-    '						}' + LineEnding +
-    '' + LineEnding +
-    '' + LineEnding +
+    '				.row > * {' + LineEnding +
+    '					box-sizing: border-box;' + LineEnding +
+    '				}' + LineEnding +
+    '				.row {' + LineEnding +
+    '					margin-top: 0;' + LineEnding +
+    '					margin-left: -1.5em;' + LineEnding +
+    '				}' + LineEnding +
+    '				.row > * {' + LineEnding +
+    '					padding: 0 0 0 1.5em;' + LineEnding +
+    '				}' + LineEnding +
     '			}' + LineEnding +
-    '' + LineEnding +
     '			@media screen and (max-width: 1280px) {' + LineEnding +
     '				.row {' + LineEnding +
     '					display: flex;' + LineEnding +
@@ -296,50 +229,39 @@ STR_HEAD_HTML =
     '					box-sizing: border-box;' + LineEnding +
     '					align-items: stretch;' + LineEnding +
     '				}' + LineEnding +
-    '' + LineEnding +
     '				.row > * {' + LineEnding +
     '					box-sizing: border-box;' + LineEnding +
     '				}' + LineEnding +
     '			}' + LineEnding +
-    '' + LineEnding +
     '			@media screen and (max-width: 980px) {' + LineEnding +
-    '' + LineEnding +
     '				.row {' + LineEnding +
     '					display: flex;' + LineEnding +
     '					flex-wrap: wrap;' + LineEnding +
     '					box-sizing: border-box;' + LineEnding +
     '					align-items: stretch;' + LineEnding +
     '				}' + LineEnding +
-    '' + LineEnding +
     '				.row > * {' + LineEnding +
     '					box-sizing: border-box;' + LineEnding +
     '				}' + LineEnding +
-    '' + LineEnding +
     '				.row {' + LineEnding +
     '					margin-top: 0;' + LineEnding +
     '					margin-left: -1.5em;' + LineEnding +
     '				}' + LineEnding +
-    '' + LineEnding +
     '				.row > * {' + LineEnding +
     '					padding: 0 0 0 1.5em;' + LineEnding +
     '				}' + LineEnding +
-    '' + LineEnding +
     '			}' + LineEnding +
-    '' + LineEnding +
     '			@media screen and (max-width: 736px) {' + LineEnding +
-    '' + LineEnding +
     '				.row {' + LineEnding +
     '					display: flex;' + LineEnding +
     '					flex-wrap: wrap;' + LineEnding +
     '					box-sizing: border-box;' + LineEnding +
     '					align-items: stretch;' + LineEnding +
     '				}' + LineEnding +
-    '' + LineEnding +
     '				.row > * {' + LineEnding +
     '					box-sizing: border-box;' + LineEnding +
     '				}' + LineEnding +
     '			}' + LineEnding +
-    '' + LineEnding +
     '			@media screen and (max-width: 480px) {' + LineEnding +
     '				.row {' + LineEnding +
     '					display: flex;' + LineEnding +
@@ -351,151 +273,49 @@ STR_HEAD_HTML =
     '						box-sizing: border-box;' + LineEnding +
     '					}' + LineEnding +
     '			}' + LineEnding +
-    '' + LineEnding +
-    '	/* List */' + LineEnding +
-    '' + LineEnding +
     '		ol {' + LineEnding +
     '			list-style: decimal;' + LineEnding +
     '			margin: 0 0 2em 0;' + LineEnding +
     '			padding-left: 1.25em;' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
     '			ol li {' + LineEnding +
     '				padding-left: 0.25em;' + LineEnding +
     '			}' + LineEnding +
-    '' + LineEnding +
     '		ul {' + LineEnding +
     '			list-style: disc;' + LineEnding +
     '			margin: 0 0 2em 0;' + LineEnding +
     '			padding-left: 1em;' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
     '			ul li {' + LineEnding +
     '				padding-left: 0.5em;' + LineEnding +
     '			}' + LineEnding +
-    '' + LineEnding +
     '			ul.alt {' + LineEnding +
     '				list-style: none;' + LineEnding +
     '				padding-left: 0;' + LineEnding +
     '			}' + LineEnding +
-    '' + LineEnding +
     '				ul.alt li {' + LineEnding +
     '					border-top: solid 1px rgba(255, 255, 255, 0.15);' + LineEnding +
     '					padding: 0.5em 0;' + LineEnding +
     '				}' + LineEnding +
-    '' + LineEnding +
     '					ul.alt li:first-child {' + LineEnding +
     '						border-top: 0;' + LineEnding +
     '						padding-top: 0;' + LineEnding +
     '					}' + LineEnding +
-    '' + LineEnding +
-    '		dl {' + LineEnding +
-    '			margin: 0 0 2em 0;' + LineEnding +
-    '		}' + LineEnding +
-    '' + LineEnding +
-    '			dl dt {' + LineEnding +
-    '				display: block;' + LineEnding +
-    '				font-weight: bold;' + LineEnding +
-    '				margin: 0 0 1em 0;' + LineEnding +
-    '			}' + LineEnding +
-    '' + LineEnding +
-    '			dl dd {' + LineEnding +
-    '				margin-left: 2em;' + LineEnding +
-    '			}' + LineEnding +
-    '' + LineEnding +
-    '' + LineEnding +
-    '	/* Icons */' + LineEnding +
-    '' + LineEnding +
-    '		ul.icons {' + LineEnding +
-    '			cursor: default;' + LineEnding +
-    '			list-style: none;' + LineEnding +
-    '			padding-left: 0;' + LineEnding +
-    '		}' + LineEnding +
-    '' + LineEnding +
-    '			ul.icons li {' + LineEnding +
-    '				display: inline-block;' + LineEnding +
-    '				padding: 0 0.75em 0 0;' + LineEnding +
-    '			}' + LineEnding +
-    '' + LineEnding +
-    '				ul.icons li:last-child {' + LineEnding +
-    '					padding-right: 0;' + LineEnding +
-    '				}' + LineEnding +
-    '' + LineEnding +
-    '				ul.icons li > a, ul.icons li > span {' + LineEnding +
-    '					border: 0;' + LineEnding +
-    '					text-decoration: none;' + LineEnding +
-    '				}' + LineEnding +
-    '' + LineEnding +
-    '					ul.icons li > a:before, ul.icons li > span:before {' + LineEnding +
-    '						-moz-osx-font-smoothing: grayscale;' + LineEnding +
-    '						-webkit-font-smoothing: antialiased;' + LineEnding +
-    '						font-family: FontAwesome;' + LineEnding +
-    '						font-style: normal;' + LineEnding +
-    '						font-weight: normal;' + LineEnding +
-    '						text-transform: none !important;' + LineEnding +
-    '					}' + LineEnding +
-    '' + LineEnding +
-    '					ul.icons li > a .label, ul.icons li > span .label {' + LineEnding +
-    '						display: none;' + LineEnding +
-    '					}' + LineEnding +
-    '' + LineEnding +
-    '	/* Menu */' + LineEnding +
-    '' + LineEnding +
-    '		ul.menu {' + LineEnding +
-    '			list-style: none;' + LineEnding +
-    '			padding: 0;' + LineEnding +
-    '		}' + LineEnding +
-    '' + LineEnding +
-    '			ul.menu > li {' + LineEnding +
-    '				border-left: solid 1px rgba(255, 255, 255, 0.15);' + LineEnding +
-    '				display: inline-block;' + LineEnding +
-    '				line-height: 1;' + LineEnding +
-    '				margin-left: 1.5em;' + LineEnding +
-    '				padding: 0 0 0 1.5em;' + LineEnding +
-    '			}' + LineEnding +
-    '' + LineEnding +
-    '				ul.menu > li:first-child {' + LineEnding +
-    '					border-left: 0;' + LineEnding +
-    '					margin: 0;' + LineEnding +
-    '					padding-left: 0;' + LineEnding +
-    '				}' + LineEnding +
-    '' + LineEnding +
-    '			@media screen and (max-width: 480px) {' + LineEnding +
-    '' + LineEnding +
-    '				ul.menu > li {' + LineEnding +
-    '					border-left: 0;' + LineEnding +
-    '					display: block;' + LineEnding +
-    '					line-height: inherit;' + LineEnding +
-    '					margin: 0.5em 0 0 0;' + LineEnding +
-    '					padding-left: 0;' + LineEnding +
-    '				}' + LineEnding +
-    '' + LineEnding +
-    '			}' + LineEnding +
-    '' + LineEnding +
-    '	/* Section/Article */' + LineEnding +
-    '' + LineEnding +
-    '		section.special, article.special {' + LineEnding +
-    '			text-align: center;' + LineEnding +
-    '		}' + LineEnding +
-    '' + LineEnding +
     '		header p {' + LineEnding +
     '			color: rgba(255, 255, 255, 0.35);' + LineEnding +
     '			position: relative;' + LineEnding +
     '			margin: 0 0 1.5em 0;' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
     '		header h2 + p {' + LineEnding +
     '			font-size: 1.25em;' + LineEnding +
     '			margin-top: -1em;' + LineEnding +
     '			line-height: 1.5em;' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
     '		header h3 + p {' + LineEnding +
     '			font-size: 1.1em;' + LineEnding +
     '			margin-top: -0.8em;' + LineEnding +
     '			line-height: 1.5em;' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
     '		header h4 + p,' + LineEnding +
     '		header h5 + p,' + LineEnding +
     '		header h6 + p {' + LineEnding +
@@ -503,17 +323,14 @@ STR_HEAD_HTML =
     '			margin-top: -0.6em;' + LineEnding +
     '			line-height: 1.5em;' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
     '		.wrapper {' + LineEnding +
     '			position: relative;' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
     '		.wrapper > .inner {' + LineEnding +
     '			padding: 1em 1em 1em 1em ;' + LineEnding +
     '			max-width: 100%;' + LineEnding +
     '			width: 75em;' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
     '		@media screen and (max-width: 1680px) {' + LineEnding +
     '			.wrapper > .inner {' + LineEnding +
     '				padding: 4em 4em 2em 4em ;' + LineEnding +
@@ -525,44 +342,32 @@ STR_HEAD_HTML =
     '				width: 100%;' + LineEnding +
     '			}' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
     '		@media screen and (max-width: 736px) {' + LineEnding +
     '			.wrapper > .inner {' + LineEnding +
     '				padding: 1em 1.5em 1em 1.5em ;' + LineEnding +
     '			}' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
     '		.wrapper.alt {' + LineEnding +
     '			background-color: #261c3e;' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
     '		.wrapper.style1 {' + LineEnding +
     '			background-color: #5e42a6;' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
     '		.wrapper.style1-alt {' + LineEnding +
     '			background-color: #493382;' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
     '		.wrapper.style2 {' + LineEnding +
     '			background-color: #5052b5;' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
     '		.wrapper.style2-alt {' + LineEnding +
     '			background-color: #3e4094;' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
     '		.wrapper.style3 {' + LineEnding +
     '			background-color: #b74e91;' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
     '		.wrapper.style3-alt {' + LineEnding +
     '			background-color: #953d75;' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
-    '' + LineEnding +
-    '	/* Header */' + LineEnding +
-    '' + LineEnding +
     '		#header {' + LineEnding +
     '			display: -moz-flex;' + LineEnding +
     '			display: -webkit-flex;' + LineEnding +
@@ -572,7 +377,6 @@ STR_HEAD_HTML =
     '			cursor: default;' + LineEnding +
     '			padding: 1.75em 2em;' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
     '		#header > .title {' + LineEnding +
     '			border: 0;' + LineEnding +
     '			color: #ffffff;' + LineEnding +
@@ -580,7 +384,6 @@ STR_HEAD_HTML =
     '			font-size: 1.25em;' + LineEnding +
     '			font-weight: bold;' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
     '		#header > nav {' + LineEnding +
     '			-moz-flex: 1;' + LineEnding +
     '			-webkit-flex: 1;' + LineEnding +
@@ -588,23 +391,19 @@ STR_HEAD_HTML =
     '			flex: 1;' + LineEnding +
     '			text-align: right;' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
     '		#header > nav > ul {' + LineEnding +
     '			margin: 0;' + LineEnding +
     '			padding: 0;' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
     '		#header > nav > ul > li {' + LineEnding +
     '			display: inline-block;' + LineEnding +
     '			margin-left: 1.75em;' + LineEnding +
     '			padding: 0;' + LineEnding +
     '			vertical-align: middle;' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
     '		#header > nav > ul > li:first-child {' + LineEnding +
     '			margin-left: 0;' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
     '		#header > nav > ul > li a {' + LineEnding +
     '			border: 0;' + LineEnding +
     '			color: rgba(255, 255, 255, 0.35);' + LineEnding +
@@ -614,63 +413,49 @@ STR_HEAD_HTML =
     '			letter-spacing: 0.25em;' + LineEnding +
     '			text-transform: uppercase;' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
     '		#header > nav > ul > li a:hover {' + LineEnding +
     '			color: rgba(255, 255, 255, 0.55);' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
     '		#header > nav > ul > li a.active {' + LineEnding +
     '			color: #ffffff;' + LineEnding +
     '		}' + LineEnding +
-    '' + LineEnding +
     '			@media screen and (max-width: 736px) {' + LineEnding +
     '				#header {' + LineEnding +
     '					padding: 1em 2em;' + LineEnding +
     '				}' + LineEnding +
     '			}' + LineEnding +
-    '' + LineEnding +
     '			@media screen and (max-width: 480px) {' + LineEnding +
-    '' + LineEnding +
     '				#header {' + LineEnding +
     '					display: block;' + LineEnding +
     '					padding: 0 2em;' + LineEnding +
     '					text-align: left;' + LineEnding +
     '				}' + LineEnding +
-    '' + LineEnding +
     '				#header .title {' + LineEnding +
     '					font-size: 1.25em;' + LineEnding +
     '					padding: 1em 0;' + LineEnding +
     '				}' + LineEnding +
-    '' + LineEnding +
     '				#header > nav {' + LineEnding +
     '					border-top: solid 1px rgba(255, 255, 255, 0.15);' + LineEnding +
     '					text-align: inherit;' + LineEnding +
     '				}' + LineEnding +
-    '' + LineEnding +
     '				#header > nav > ul > li {' + LineEnding +
     '					margin-left: 1.5em;' + LineEnding +
     '				}' + LineEnding +
-    '' + LineEnding +
     '				#header > nav > ul > li a {' + LineEnding +
     '					height: 6em;' + LineEnding +
     '					line-height: 6em;' + LineEnding +
     '				}' + LineEnding +
     '			}' + LineEnding +
-    '' + LineEnding +
     '			#header + #wrapper > .wrapper > .inner {' + LineEnding +
     '				margin: 0 auto;' + LineEnding +
     '			}' + LineEnding +
     '		</style>' + LineEnding +
     '	</head>' + LineEnding +
     '	<body class="is-preload">' + LineEnding +
-    '' + LineEnding +
-    '		<!-- Header -->' + LineEnding +
     '			<header id="header">' + LineEnding +
     '				<span class="title">Fano Application Error</span>' + LineEnding +
     '				<nav>' + LineEnding +
     '					<ul><li><a href="https://fanoframework.github.io">Documentation</a></li></ul>' + LineEnding +
     '				</nav>' + LineEnding +
     '			</header>' + LineEnding +
-    '' + LineEnding +
-    '		<!-- Wrapper -->' + LineEnding +
     '			<div id="wrapper">';
