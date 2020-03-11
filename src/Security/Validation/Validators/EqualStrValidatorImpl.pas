@@ -67,7 +67,7 @@ resourcestring
         const refStr : string
     ) : boolean;
     begin
-        result := (compareStr(astr, efStr) = 0);
+        result := (compareStr(astr, refStr) = 0);
     end;
 
 end.

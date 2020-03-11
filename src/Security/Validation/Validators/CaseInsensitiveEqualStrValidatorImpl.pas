@@ -52,14 +52,14 @@ uses
 
 resourcestring
 
-    sErrFieldMustBeEqualString = 'Field %s must be equal to ';
+    sErrFieldMustBeCaseInsensitiveEqualStr = 'Field %s must be equal (case-insentive) to ';
 
     (*!------------------------------------------------
      * constructor
      *-------------------------------------------------*)
-    constructor TEqualStrValidator.create(const refStr : string);
+    constructor TCaseInsensitiveEqualStrValidator.create(const refStr : string);
     begin
-        inherited create(sErrFieldMustBeEqualStr + refStr);
+        inherited create(sErrFieldMustBeCaseInsensitiveEqualStr + refStr);
         fRefStr := refStr;
     end;
 
