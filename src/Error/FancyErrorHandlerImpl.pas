@@ -23,7 +23,7 @@ uses
 type
 
     (*!---------------------------------------------------
-     * default error handler for debugging
+     * modern look default error handler for debugging
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *---------------------------------------------------*)
