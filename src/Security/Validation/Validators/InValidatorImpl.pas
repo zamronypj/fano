@@ -80,7 +80,7 @@ resourcestring
         result := '';
         for i := 0 to tot-2 do
         begin
-            result := result + validValues[i] + ', ';
+            result := result + '"' + validValues[i] + '", ';
         end;
         result := result + validValues[tot-1];
     end;
