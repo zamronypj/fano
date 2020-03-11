@@ -48,7 +48,7 @@ uses
     function TCaseInsensitiveEqualStrValidator.compareStrWithRef(
         const astr: string;
         const refStr : string
-    ) : boolean; override;
+    ) : boolean;
     begin
         result := (lowercase(astr) = lowercase(refStr));
     end;

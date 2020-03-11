@@ -42,7 +42,7 @@ implementation
     function TEqualStrValidator.compareStrWithRef(
         const astr: string;
         const refStr : string
-    ) : boolean; override;
+    ) : boolean;
     begin
         result := (astr = refStr);
     end;
