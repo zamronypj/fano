@@ -23,6 +23,7 @@ TAlphaValidator = AlphaValidatorImpl.TAlphaValidator;
 TEmailValidator = EmailValidatorImpl.TEmailValidator;
 TUrlValidator = UrlValidatorImpl.TUrlValidator;
 TSlugValidator = SlugValidatorImpl.TSlugValidator;
+TPhoneValidator = PhoneValidatorImpl.TPhoneValidator;
 
 TBaseCompositeValidator = BaseCompositeValidatorImpl.TBaseCompositeValidator;
 TCompositeValidator = CompositeValidatorImpl.TCompositeValidator;
@@ -89,3 +90,12 @@ TImageJpgValidator = ImageJpgValidatorImpl.TImageJpgValidator;
 TImageGifValidator = ImageGifValidatorImpl.TImageGifValidator;
 
 TIpv4Validator = Ipv4ValidatorImpl.TIpv4Validator;
+
+TJsonValidator = JsonValidatorImpl.TJsonValidator;
+
+TFileValidator = FileValidatorImpl.TFileValidator;
+DirectoryValidator = DirectoryValidatorImpl.TDirectoryValidator;
+
+TCompareStrValidator = CompareStrValidatorImpl.TCompareStrValidator;
+TEqualStrValidator = EqualStrValidatorImpl.TEqualStrValidator;
+TCaseInsensitiveEqualStrValidator = CaseInsensitiveEqualStrValidatorImpl.TCaseInsensitiveEqualStrValidator;

@@ -81,3 +81,12 @@ ImageJpgValidatorImpl,
 ImageGifValidatorImpl,
 
 Ipv4ValidatorImpl,
+
+JsonValidatorImpl,
+
+FileValidatorImpl,
+DirectoryValidatorImpl,
+
+CompareStrValidatorImpl,
+EqualStrValidatorImpl,
+CaseInsensitiveEqualStrValidatorImpl,
