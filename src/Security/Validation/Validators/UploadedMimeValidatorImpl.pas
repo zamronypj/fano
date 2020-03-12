@@ -59,22 +59,12 @@ implementation
 
 uses
 
+    StringUtils,
     UploadedFileCollectionIntf;
 
 resourcestring
 
-    sErrFieldIsUploadedMime = 'Field %s must be a valid uploaded file with MIME types of ';
-
-    function initMimeTypes(const mimeTypes : array of string) : TStringArray;
-    var i, len : integer;
-    begin
-        len := high(mimeTypes) - low(mimeTypes) + 1;
-        setLength(result, len);
-        for i := 0 to len -1 do
-        begin
-            result[i] := mimeTypes[i];
-        end;
-    end;
+    sErrFieldIsUploadedMime = 'Field %%s must be a valid uploaded file with MIME type in [%s]';
 
     function inMimeTypes(const aType : string; const mimeTypes : TStringArray) : boolean;
     var i, len : integer;
@@ -112,8 +102,8 @@ resourcestring
     constructor TUploadedMimeValidator.create(const mimes : array of string);
     begin
         inherited create();
-        errorMsgFormat := sErrFieldIsUploadedMime;
-        fMimeTypes := initMimeTypes(mimes);
+        errorMsgFormat := format(sErrFieldIsUploadedMime, [ join(mimes) ]);
+        fMimeTypes := toStringArray(mimes);
     end;
 
     destructor TUploadedMimeValidator.destroy();

@@ -58,32 +58,13 @@ type
 
 implementation
 
+uses
+
+    StringUtils;
+
 resourcestring
 
     sErrFieldMustBeIn = 'Field %%s must be in given values "%s"';
-
-    function initValidValues(const validValues : array of string) : TStringArray;
-    var i, tot : integer;
-    begin
-        tot := high(validValues) - low(validValues) + 1;
-        setLength(result, tot);
-        for i := 0 to tot-1 do
-        begin
-            result[i] := validValues[i];
-        end;
-    end;
-
-    function asCommaSeparatedStr(const validValues : array of string) : string;
-    var i, tot : integer;
-    begin
-        tot := high(validValues) - low(validValues) + 1;
-        result := '';
-        for i := 0 to tot-2 do
-        begin
-            result := result + '"' + validValues[i] + '", ';
-        end;
-        result := result + validValues[tot-1];
-    end;
 
     (*!------------------------------------------------
      * constructor
@@ -93,10 +74,10 @@ resourcestring
         inherited create(
             format(
                 sErrFieldMustBeIn,
-                [ asCommaSeparatedStr(validValues) ]
+                [ join(validValues) ]
             )
         );
-        fValidValues := initValidValues(validValues);
+        fValidValues := toStringArray(validValues);
     end;
 
     (*!------------------------------------------------
