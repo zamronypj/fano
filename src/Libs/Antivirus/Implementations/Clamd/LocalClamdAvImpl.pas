@@ -159,7 +159,7 @@ uses
         try
             result := '';
             command := 'nSCAN ' + filePath + #10;
-            socket.writeBuffer(command, length(command));
+            socket.writeBuffer(command[1], length(command));
             setLength(buff, 4096);
             repeat
                 buffRead := socket.read(buff[1], 4096);
