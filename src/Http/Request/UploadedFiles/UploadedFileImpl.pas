@@ -152,11 +152,11 @@ resourcestring
     ) : string;
     var fstream : TFileStream;
     begin
-        result := getTempDir() + DirectorySeparator + makeRandomStr(prefix, suffix);
+        result := getTempDir() + makeRandomStr(prefix, suffix);
         if (fileExists(result)) then
         begin
             //this is just pre caution, try to recreate name
-            result := getTempDir() + DirectorySeparator + makeRandomStr(prefix, suffix);
+            result := getTempDir() + makeRandomStr(prefix, suffix);
             if (fileExists(result)) then
             begin
                 //give up
