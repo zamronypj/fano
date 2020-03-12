@@ -31,6 +31,7 @@ TCompositeValidator = CompositeValidatorImpl.TCompositeValidator;
 TCollectiveValidator = CollectiveValidatorImpl.TCollectiveValidator;
 TAndValidator = AndValidatorImpl.TAndValidator;
 TOrValidator = OrValidatorImpl.TOrValidator;
+TAnyOfValidator = AnyOfValidatorImpl.TAnyOfValidator;
 
 TIntegerValidator = IntegerValidatorImpl.TIntegerValidator;
 TInt64Validator = Int64ValidatorImpl.TInt64Validator;

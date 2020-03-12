@@ -28,6 +28,7 @@ CompositeValidatorImpl,
 CollectiveValidatorImpl,
 AndValidatorImpl,
 OrValidatorImpl,
+AnyOfValidatorImpl,
 
 IntegerValidatorImpl,
 Int64ValidatorImpl,
