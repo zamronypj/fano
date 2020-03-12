@@ -78,6 +78,7 @@ implementation
 
 uses
 
+    sysutils,
     ScanResultIntf;
 
 resourcestring
