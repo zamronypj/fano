@@ -69,13 +69,13 @@ resourcestring
     function inMimeTypes(const aType : string; const mimeTypes : TStringArray) : boolean;
     var i, len : integer;
     begin
-        result := true;
+        result := false;
         len := length(mimeTypes);
         for i := 0 to len -1 do
         begin
-            if (aType <> mimeTypes[i]) then
+            if (aType = mimeTypes[i]) then
             begin
-                result := false;
+                result := true;
                 exit();
             end;
         end;
