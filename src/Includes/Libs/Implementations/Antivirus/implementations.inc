@@ -12,3 +12,5 @@ ClamAvImpl,
 EClamAvImpl,
 {$ENDIF}
 {------------ End ClamAV antivirus related------------------}
+
+NullAvImpl,

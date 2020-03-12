@@ -12,3 +12,5 @@ TClamAv = ClamAvImpl.TClamAv;
 EClamAv = EClamAvImpl.EClamAv;
 {$ENDIF}
 {------------ End ClamAV antivirus related------------------}
+
+TNullAv = NullAvImpl.TNullAv;
