@@ -165,7 +165,7 @@ uses
                 buffRead := socket.read(buff[1], 4096);
                 if buffRead > 0 then
                 begin
-                    result := result + copy(buff[1], 1, buffRead);
+                    result := result + copy(buff, 1, buffRead);
                 end;
             until (buffRead <= 0);
         finally

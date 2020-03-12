@@ -82,7 +82,8 @@ uses
 
 resourcestring
 
-    sErrFieldIsMustBeFreeFromVirus = 'Field %s must be a free from virus. ';
+    sErrFieldIsMustBeFreeFromVirus = 'Field %s must be a free from virus.';
+    sErrVirusDetected = 'Virus detected: ';
 
     (*!------------------------------------------------
      * constructor
@@ -117,7 +118,7 @@ resourcestring
             if not result then
             begin
                 //virus detected, exit loop early
-                errorMsgFormat := fOriginalErrMsg + ' Virus detected: ' + scanRes.virusName();
+                errorMsgFormat := fOriginalErrMsg + sErrVirusDetected + scanRes.virusName();
                 exit;
             end;
         end;
