@@ -147,7 +147,6 @@ uses
         command : string;
         buff : string;
         buffRead : integer;
-        scanStatusPos : integer;
     begin
         if fUseUnixDomainSocket then
         begin
