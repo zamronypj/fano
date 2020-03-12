@@ -102,7 +102,7 @@ resourcestring
     constructor TUploadedMimeValidator.create(const mimes : array of string);
     begin
         inherited create();
-        errorMsgFormat := format(sErrFieldIsUploadedMime, [ join(mimes) ]);
+        errorMsgFormat := format(sErrFieldIsUploadedMime, [ join(', ', mimes) ]);
         fMimeTypes := toStringArray(mimes);
     end;
 

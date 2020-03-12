@@ -74,7 +74,7 @@ resourcestring
         inherited create(
             format(
                 sErrFieldMustBeIn,
-                [ join(validValues) ]
+                [ join(', ', validValues) ]
             )
         );
         fValidValues := toStringArray(validValues);
