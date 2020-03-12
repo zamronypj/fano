@@ -83,7 +83,7 @@ uses
 resourcestring
 
     sErrFieldIsMustBeFreeFromVirus = 'Field %s must be a free from virus.';
-    sErrVirusDetected = 'Virus detected: ';
+    sErrVirusDetected = ' Virus %s detected in file %s';
 
     (*!------------------------------------------------
      * constructor
@@ -118,7 +118,14 @@ resourcestring
             if not result then
             begin
                 //virus detected, exit loop early
-                errorMsgFormat := fOriginalErrMsg + sErrVirusDetected + scanRes.virusName();
+                errorMsgFormat := fOriginalErrMsg +
+                    format(
+                        sErrVirusDetected,
+                        [
+                            scanRes.virusName() ,
+                            uploadedFiles[i].getClientFilename()
+                        ]
+                    );
                 exit;
             end;
         end;
