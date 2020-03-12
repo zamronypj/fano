@@ -24,8 +24,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    EClamAv = class(Exception)
-    end;
+    EClamAv = class(Exception);
 
 implementation
 
