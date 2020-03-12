@@ -51,6 +51,13 @@ type
         function count() : integer;
 
         (*!------------------------------------------------
+         * test if there is uploaded file specified by name
+         *-------------------------------------------------
+         * @return true if specified
+         *------------------------------------------------*)
+        function has(const key : shortstring) : boolean;
+
+        (*!------------------------------------------------
          * get IUploadedFile instance by name
          *-------------------------------------------------
          * @return IUploadedFileArray instance
@@ -141,6 +148,16 @@ type
     function TUploadedFileCollection.count() : integer;
     begin
         result := uploadedFiles.count();
+    end;
+
+    (*!------------------------------------------------
+     * test if there is uploaded file specified by name
+     *-------------------------------------------------
+     * @return true if specified
+     *------------------------------------------------*)
+    function TUploadedFileCollection.has(const key : shortstring) : boolean;
+    begin
+        result := (uploadedFiles.find(key) <> nil);
     end;
 
     (*!------------------------------------------------
