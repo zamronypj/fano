@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit ClamAvImpl;
+unit NullAvImpl;
 
 interface
 
@@ -21,27 +21,13 @@ uses
 type
 
     (*!-----------------------------------------------
-     * class having capability to scan file for computer virus
-     * using ClamAV antivirus. This class is used for
-     * validating file upload.
+     * dummy class having capability to scan file for computer virus.
+     * This is to disable antivirus validation in form file upload
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TClamAv = class(TInterfacedObject, IAntivirus, IScanResult)
-    private
-        fVirusName : PAnsiChar;
-        fCleaned : boolean;
-        fEngineCreated : boolean;
-        fEngine : pointer;
-        procedure loadAntivirusDb(const engine : pointer);
-        procedure compileEngine(var engine : pointer);
-        procedure raiseExceptionIfFailed(const errCode : integer; const msg : string);
-        procedure createEngine(var engine : pointer);
-        procedure freeEngine(var engine : pointer);
+    TNullAv = class(TInterfacedObject, IAntivirus, IScanResult)
     public
-        constructor create();
-        destructor destroy(); override;
-
         (*!------------------------------------------------
          * setup antivirus engine
          *-----------------------------------------------
@@ -81,85 +67,15 @@ type
 
 implementation
 
-uses
-
-    clamav3,
-    EClamAvImpl;
-
-    procedure TClamAv.raiseExceptionIfFailed(const errCode : integer; const msg : string);
-    begin
-        if (errCode <> CL_SUCCESS) then
-        begin
-            freeEngine(fEngine);
-            raise EClamAv.create(msg + AnsiString(cl_strerror(errCode)));
-        end;
-    end;
-
-    constructor TClamAv.create();
-    var ret : integer;
-    begin
-        fCleaned := false;
-        fVirusName := nil;
-        fEngineCreated := false;
-        fEngine := nil;
-        ret := cl_init(CL_INIT_DEFAULT);
-        raiseExceptionIfFailed(ret, 'ClamAV initialization fails. ');
-    end;
-
-    destructor TClamAv.destroy();
-    begin
-        endScan();
-        inherited destroy();
-    end;
-
-    procedure TClamAv.loadAntivirusDb(const engine : pointer);
-    var ret : integer;
-        sigs : cardinal;
-    begin
-        ret := cl_load(cl_retdbdir(), cl_engine(engine^), sigs, CL_DB_STDOPT);
-        raiseExceptionIfFailed(ret, 'Load antivirus database fails. ');
-    end;
-
-    procedure TClamAv.createEngine(var engine : pointer);
-    begin
-        engine := cl_engine_new();
-        if (not assigned(engine)) then
-        begin
-            raise EClamAv.create('Engine creation failed.');
-        end;
-    end;
-
-    procedure TClamAv.freeEngine(var engine : pointer);
-    begin
-        if fEngineCreated then
-        begin
-            cl_engine_free(cl_engine(engine^));
-            engine := nil;
-            fEngineCreated := false;
-        end;
-    end;
-
-    procedure TClamAv.compileEngine(var engine : pointer);
-    var ret : integer;
-    begin
-        ret := cl_engine_compile(cl_engine(engine^));
-        raiseExceptionIfFailed(ret, 'Compile engine failed. ');
-    end;
 
     (*!------------------------------------------------
      * setup antivirus engine
      *-----------------------------------------------
      * @return current instance
      *-----------------------------------------------*)
-    function TClamAv.beginScan() : IAntivirus;
+    function TNullAv.beginScan() : IAntivirus;
     begin
-        if (not fEngineCreated) then
-        begin
-            createEngine(fEngine);
-            loadAntivirusDb(fEngine);
-            compileEngine(fEngine);
-            fEngineCreated := (fEngine <> nil);
-        end;
+        //intentionally does nothing
         result := self;
     end;
 
@@ -168,9 +84,9 @@ uses
      *-----------------------------------------------
      * @return current instance
      *-----------------------------------------------*)
-    function TClamAv.endScan() : IAntivirus;
+    function TNullAv.endScan() : IAntivirus;
     begin
-        freeEngine(fEngine);
+        //intentionally does nothing
         result := self;
     end;
 
@@ -179,19 +95,9 @@ uses
      *-----------------------------------------------
      * @return scan result
      *-----------------------------------------------*)
-    function TClamAv.scanFile(const filePath : string) : IScanResult;
-    var ret : longint;
-        scanned : dword;
+    function TNullAv.scanFile(const filePath : string) : IScanResult;
     begin
-        scanned := 0;
-        ret := cl_scanfile(
-            PChar(filePath),
-            @fVirusName,
-            scanned,
-            cl_engine(fEngine^),
-            dword(CL_SCAN_STDOPT)
-        );
-        fCleaned := (ret = CL_CLEAN) or (ret = CL_SUCCESS);
+        //intentionally does nothing
         result := self;
     end;
 
@@ -200,9 +106,10 @@ uses
      *-----------------------------------------------
      * @return true if cleaned
      *-----------------------------------------------*)
-    function TClamAv.isCleaned() : boolean;
+    function TNullAv.isCleaned() : boolean;
     begin
-        result := fCleaned;
+        //intentionally does nothing and always assumed cleaned
+        result := true;
     end;
 
     (*!------------------------------------------------
@@ -210,9 +117,9 @@ uses
      *------------------------------------------------
      * @return name of virus or empty string if clean
      *-----------------------------------------------*)
-    function TClamAv.virusName() : string;
+    function TNullAv.virusName() : string;
     begin
-        result := AnsiString(fVirusName);
+        result := '';
     end;
 
 end.
