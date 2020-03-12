@@ -167,7 +167,7 @@ uses
                 begin
                     result := result + copy(buff[1], 1, buffRead);
                 end;
-            until (buffRead > 0);
+            until (buffRead <= 0);
         finally
             socket.free();
         end;
