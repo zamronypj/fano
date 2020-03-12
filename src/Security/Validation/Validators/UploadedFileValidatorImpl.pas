@@ -92,7 +92,7 @@ resourcestring
         const request : IRequest
     ) : boolean;
     begin
-        result := (request.uploadedFiles.has(fieldName) <> nil);
+        result := request.uploadedFiles.has(fieldName);
     end;
 
     (*!------------------------------------------------
