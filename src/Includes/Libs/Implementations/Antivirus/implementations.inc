@@ -9,8 +9,9 @@
 {------------ ClamAV antivirus related------------------}
 {$IFDEF LIBCLAMAV}
 ClamAvImpl,
-EClamAvImpl,
 {$ENDIF}
+EClamAvImpl,
+LocalClamdAvImpl,
 {------------ End ClamAV antivirus related------------------}
 
 NullAvImpl,
