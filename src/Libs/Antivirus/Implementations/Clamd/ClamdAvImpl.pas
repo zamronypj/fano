@@ -40,13 +40,20 @@ type
             const socket : TSocketStream;
             const filePath : string
         ); override;
+
+        (*!------------------------------------------------
+         * reply prefix
+         *-----------------------------------------------
+         * @return reply prefix
+         *----------------------------------------------
+         * for INSTREAM
+         * reply is stream: OK
+         * Method implementation must return 'stream'
+         *-----------------------------------------------*)
+        function getReplyPrefix(const filePath : string) : string; override;
     end;
 
 implementation
-
-const
-
-    BUFF_SIZE = 2 * 1024;
 
     procedure TClamdAv.sendFileContent(
         const socket : TSocketStream;

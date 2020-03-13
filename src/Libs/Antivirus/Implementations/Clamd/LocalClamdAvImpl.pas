@@ -42,10 +42,7 @@ type
          *----------------------------------------------
          * for SCAN /path/to/file
          * reply is /path/to/file: OK
-         * for INSTREAM
-         * reply is stream: OK
          * Method implementation must return '/path/to/file'
-         * or 'stream'
          *-----------------------------------------------*)
         function getReplyPrefix(const filePath : string) : string; override;
     end;
