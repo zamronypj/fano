@@ -66,7 +66,8 @@ const
                 socket.writeBuffer(BEtoN(buffRead), sizeof(longint));
                 socket.writeBuffer(buff^, buffRead);
             until buffRead < BUFF_SIZE;
-            socket.writeBuffer(0, sizeOf(longint));
+            buffRead := 0;
+            socket.writeBuffer(buffRead, sizeOf(longint));
         finally
             freeMem(buff);
         end;
