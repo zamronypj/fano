@@ -19,6 +19,10 @@ uses
     AntivirusIntf,
     ScanResultIntf;
 
+const
+
+    BUFF_SIZE = 2 * 1024;
+
 type
 
     (*!-----------------------------------------------
@@ -36,12 +40,14 @@ type
         fClean : boolean;
         fVirusName : string;
         function sendScanRequest(const filePath : string) : string;
-    protected
         procedure raiseSockReadExcept();
-        function doSendScanRequest(
+        function readReply(const socket : TSocketStream) : string;
+        procedure interpretReply(const reply : string);
+    protected
+        procedure doSendScanRequest(
             const socket : TSocketStream;
             const filePath : string
-        ) : string; virtual; abstract;
+        ); virtual; abstract;
 
     public
 
@@ -164,9 +170,27 @@ uses
         end;
 
         try
-            result := doSendScanRequest(socket, filePath);
+            doSendScanRequest(socket, filePath);
+            result := readReply(socket);
         finally
             socket.free();
+        end;
+    end;
+
+    procedure TAbstractClamdAv.interpretReply(const reply : string);
+    var
+        scanStatusPos : integer;
+        lenFilePath : integer;
+    begin
+        fVirusName := '';
+        scanStatusPos := rpos('OK', reply);
+        fClean := (scanStatusPos <> 0);
+        if not fClean then
+        begin
+            //length of filepath + ': '
+            lenFilePath := length(filePath) + 2;
+            scanStatusPos := rpos(' FOUND', reply);
+            fVirusName := copy(reply, lenFilePath + 1, scanStatusPos - lenFilePath);
         end;
     end;
 
@@ -186,22 +210,8 @@ uses
      * /path/to/file: virusName FOUND
      *-----------------------------------------------*)
     function TAbstractClamdAv.scanFile(const filePath : string) : IScanResult;
-    var
-        response : string;
-        scanStatusPos : integer;
-        lenFilePath : integer;
     begin
-        fVirusName := '';
-        response := sendScanRequest(filePath);
-        scanStatusPos := rpos('OK', response);
-        fClean := (scanStatusPos <> 0);
-        if not fClean then
-        begin
-            //length of filepath + ': '
-            lenFilePath := length(filePath) + 2;
-            scanStatusPos := rpos(' FOUND', response);
-            fVirusName := copy(response, lenFilePath + 1, scanStatusPos - lenFilePath);
-        end;
+        interpretReply(sendScanRequest(filePath));
         result := self;
     end;
 
@@ -232,6 +242,27 @@ uses
     begin
         errCode := socketError();
         raise ESockError.createFmt(rsSocketReadFailed, errCode, strError(errCode));
+    end;
+
+    function TAbstractClamdAv.reeadReply(const socket : TSocketStream) : string;
+    var buff : string;
+        buffRead : integer;
+    begin
+        result := '';
+        setLength(buff, BUFF_SIZE);
+        repeat
+            buffRead := socket.read(buff[1], BUFF_SIZE);
+            if buffRead > 0 then
+            begin
+                //TODO: improve by avoiding string concatenation and copy
+                result := result + copy(buff, 1, buffRead);
+            end;
+        until (buffRead <= 0);
+
+        if (buffRead < 0) then
+        begin
+            raiseSockReadExcept();
+        end;
     end;
 
 end.
