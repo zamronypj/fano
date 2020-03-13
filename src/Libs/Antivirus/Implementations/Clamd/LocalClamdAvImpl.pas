@@ -38,6 +38,10 @@ type
 
 implementation
 
+const
+
+    BUFF_SIZE = 2 * 1024;
+
     function TLocalClamdAv.doSendScanRequest(
         const socket : TSocketStream;
         const filePath : string
@@ -49,9 +53,9 @@ implementation
         result := '';
         command := 'nSCAN ' + filePath + #10;
         socket.writeBuffer(command[1], length(command));
-        setLength(buff, 4096);
+        setLength(buff, BUFF_SIZE);
         repeat
-            buffRead := socket.read(buff[1], 4096);
+            buffRead := socket.read(buff[1], BUFF_SIZE);
             if buffRead > 0 then
             begin
                 //TODO: improve by avoiding string concatenation and copy
