@@ -64,9 +64,9 @@ const
             repeat
                 buffRead := fStream.read(buff^, BUFF_SIZE);
                 socket.writeBuffer(BEtoN(buffRead), sizeof(longint));
-                socket.WriteBuffer(buff^, buffRead);
+                socket.writeBuffer(buff^, buffRead);
             until buffRead < BUFF_SIZE;
-            socket.WriteBuffer(buff^, sizeOf(longint));
+            socket.writeBuffer(0, sizeOf(longint));
         finally
             freeMem(buff);
         end;
