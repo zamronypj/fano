@@ -88,4 +88,18 @@ const
         end;
     end;
 
+    (*!------------------------------------------------
+     * reply prefix
+     *-----------------------------------------------
+     * @return reply prefix
+     *----------------------------------------------
+     * for INSTREAM
+     * reply is stream: OK
+     * Method implementation must return 'stream'
+     *-----------------------------------------------*)
+    function TClamdAv.getReplyPrefix(const filePath : string) : string;
+    begin
+        result := 'stream';
+    end;
+
 end.

@@ -49,6 +49,20 @@ type
             const filePath : string
         ); virtual; abstract;
 
+        (*!------------------------------------------------
+         * reply prefix
+         *-----------------------------------------------
+         * @return reply prefix
+         *----------------------------------------------
+         * for SCAN /path/to/file
+         * reply is /path/to/file: OK
+         * for INSTREAM
+         * reply is stream: OK
+         * Method implementation must return '/path/to/file'
+         * or 'stream'
+         *-----------------------------------------------*)
+        function getReplyPrefix(const filePath : string) : string; virtual; abstract;
+
     public
 
         (*!------------------------------------------------
@@ -177,20 +191,20 @@ uses
         end;
     end;
 
-    procedure TAbstractClamdAv.interpretReply(const filePath : string; const reply : string);
+    procedure TAbstractClamdAv.interpretReply(const prefix : string; const reply : string);
     var
         scanStatusPos : integer;
-        lenFilePath : integer;
+        lenReplyPrefix : integer;
     begin
         fVirusName := '';
         scanStatusPos := rpos('OK', reply);
         fClean := (scanStatusPos <> 0);
         if not fClean then
         begin
-            //length of filepath + ': '
-            lenFilePath := length(filePath) + 2;
+            //length of prefix + ': '
+            lenReplyPrefix := length(prefix) + 2;
             scanStatusPos := rpos(' FOUND', reply);
-            fVirusName := copy(reply, lenFilePath + 1, scanStatusPos - lenFilePath);
+            fVirusName := copy(reply, lenReplyPrefix + 1, scanStatusPos - lenReplyPrefix);
         end;
     end;
 
@@ -202,16 +216,23 @@ uses
      * @return scan result
      *-----------------------------------------------
      * For example if filepath is /path/to/file
-     *
+     * with SCAN command
      * On clean scan, clamav daemon returns string
      * /path/to/file: OK
      *
      * On infected, clamav daemon returns string
      * /path/to/file: virusName FOUND
+     *
+     * with INSTREAM command
+     * On clean scan, clamav daemon returns string
+     * stream: OK
+     *
+     * On infected, clamav daemon returns string
+     * stream: virusName FOUND
      *-----------------------------------------------*)
     function TAbstractClamdAv.scanFile(const filePath : string) : IScanResult;
     begin
-        interpretReply(filePath, sendScanRequest(filePath));
+        interpretReply(getReplyPrefix(), sendScanRequest(filePath));
         result := self;
     end;
 

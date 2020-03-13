@@ -34,6 +34,20 @@ type
             const socket : TSocketStream;
             const filePath : string
         ); override;
+
+        (*!------------------------------------------------
+         * reply prefix
+         *-----------------------------------------------
+         * @return reply prefix
+         *----------------------------------------------
+         * for SCAN /path/to/file
+         * reply is /path/to/file: OK
+         * for INSTREAM
+         * reply is stream: OK
+         * Method implementation must return '/path/to/file'
+         * or 'stream'
+         *-----------------------------------------------*)
+        function getReplyPrefix(const filePath : string) : string; override;
     end;
 
 implementation
@@ -46,6 +60,20 @@ implementation
     begin
         command := 'nSCAN ' + filePath + #10;
         socket.writeBuffer(command[1], length(command));
+    end;
+
+    (*!------------------------------------------------
+     * reply prefix
+     *-----------------------------------------------
+     * @return reply prefix
+     *----------------------------------------------
+     * for SCAN /path/to/file
+     * reply is /path/to/file: OK
+     * Method implementation must return '/path/to/file'
+     *-----------------------------------------------*)
+    function TLocalClamdAv.getReplyPrefix(const filePath : string) : string;
+    begin
+        result := filePath;
     end;
 
 end.
