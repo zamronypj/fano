@@ -37,6 +37,13 @@ type
         function count() : integer;
 
         (*!------------------------------------------------
+         * test if there is uploaded file specified by name
+         *-------------------------------------------------
+         * @return true if specified
+         *------------------------------------------------*)
+        function has(const key : shortstring) : boolean;
+
+        (*!------------------------------------------------
          * get IUploadedFile instance by name
          *-------------------------------------------------
          * @return IUploadedFile instance

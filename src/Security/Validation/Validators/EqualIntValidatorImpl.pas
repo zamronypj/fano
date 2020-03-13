@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit MaxIntegerValidatorImpl;
+unit EqualIntValidatorImpl;
 
 interface
 
@@ -24,52 +24,52 @@ type
 
     (*!------------------------------------------------
      * basic class having capability to
-     * validate if data does not greater than a reference value
+     * validate data equality against a reference integer
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TMaxIntegerValidator = class(TCompareIntValidator)
+    TEqualIntValidator = class(TCompareIntValidator)
     protected
+
         function compareIntWithRef(
             const aInt: integer;
             const refInt : integer
         ) : boolean; override;
     public
         (*!------------------------------------------------
-         * constructor
-         *-------------------------------------------------
-         * @param maxValue maximum value allowed
-         *-------------------------------------------------*)
-        constructor create(const maxValue : integer);
+        * constructor
+        *-------------------------------------------------*)
+        constructor create(const refInt : integer);
+
     end;
 
 implementation
 
 uses
 
-    SysUtils;
+    sysutils;
 
 resourcestring
 
-    sErrFieldMustBeIntegerWithMaxValue = 'Field %%s must be integer with maximum value of %d';
+    sErrFieldMustBeEqualInt = 'Field %%s must be equal to "%d"';
 
     (*!------------------------------------------------
      * constructor
      *-------------------------------------------------*)
-    constructor TMaxIntegerValidator.create(const maxValue : integer);
+    constructor TEqualIntValidator.create(const refInt : integer);
     begin
         inherited create(
-            format(sErrFieldMustBeIntegerWithMaxValue, [ maxValue ]),
-            maxValue
+            format(sErrFieldMustBeEqualInt, [refInt]),
+            refInt
         );
     end;
 
-    function TMaxIntegerValidator.compareIntWithRef(
+    function TEqualIntValidator.compareIntWithRef(
         const aInt: integer;
         const refInt : integer
     ) : boolean;
     begin
-        result := (aInt <= refInt);
+        result := (aInt = refInt);
     end;
 
 end.

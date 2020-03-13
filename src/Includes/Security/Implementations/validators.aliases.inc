@@ -23,12 +23,15 @@ TAlphaValidator = AlphaValidatorImpl.TAlphaValidator;
 TEmailValidator = EmailValidatorImpl.TEmailValidator;
 TUrlValidator = UrlValidatorImpl.TUrlValidator;
 TSlugValidator = SlugValidatorImpl.TSlugValidator;
+TPhoneValidator = PhoneValidatorImpl.TPhoneValidator;
+TMacAddrValidator = MacAddrValidatorImpl.TMacAddrValidator;
 
 TBaseCompositeValidator = BaseCompositeValidatorImpl.TBaseCompositeValidator;
 TCompositeValidator = CompositeValidatorImpl.TCompositeValidator;
 TCollectiveValidator = CollectiveValidatorImpl.TCollectiveValidator;
 TAndValidator = AndValidatorImpl.TAndValidator;
 TOrValidator = OrValidatorImpl.TOrValidator;
+TAnyOfValidator = AnyOfValidatorImpl.TAnyOfValidator;
 
 TIntegerValidator = IntegerValidatorImpl.TIntegerValidator;
 TInt64Validator = Int64ValidatorImpl.TInt64Validator;
@@ -40,6 +43,11 @@ TEvenIntValidator = EvenIntValidatorImpl.TEvenIntValidator;
 TOddIntValidator = OddIntValidatorImpl.TOddIntValidator;
 TPositiveIntValidator = PositiveIntValidatorImpl.TPositiveIntValidator;
 TNegativeIntValidator = NegativeIntValidatorImpl.TNegativeIntValidator;
+TInIntValidator = InIntValidatorImpl.TInIntValidator;
+TCompareIntValidator = CompareIntValidatorImpl.TCompareIntValidator;
+TEqualIntValidator = EqualIntValidatorImpl.TEqualIntValidator;
+TLessThanValidator = LessThanValidatorImpl.TLessThanValidator;
+TGreaterThanValidator = GreaterThanValidatorImpl.TGreaterThanValidator;
 
 TFloatValidator = FloatValidatorImpl.TFloatValidator;
 TNumericValidator = NumericValidatorImpl.TNumericValidator;
@@ -89,3 +97,12 @@ TImageJpgValidator = ImageJpgValidatorImpl.TImageJpgValidator;
 TImageGifValidator = ImageGifValidatorImpl.TImageGifValidator;
 
 TIpv4Validator = Ipv4ValidatorImpl.TIpv4Validator;
+
+TJsonValidator = JsonValidatorImpl.TJsonValidator;
+
+TFileValidator = FileValidatorImpl.TFileValidator;
+DirectoryValidator = DirectoryValidatorImpl.TDirectoryValidator;
+
+TCompareStrValidator = CompareStrValidatorImpl.TCompareStrValidator;
+TEqualStrValidator = EqualStrValidatorImpl.TEqualStrValidator;
+TCaseInsensitiveEqualStrValidator = CaseInsensitiveEqualStrValidatorImpl.TCaseInsensitiveEqualStrValidator;

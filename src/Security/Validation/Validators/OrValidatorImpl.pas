@@ -76,7 +76,11 @@ implementation
         for i := 0 to len - 1 do
         begin
             result := result or fValidators[i].isValid(fieldName, dataToValidate, request);
-            if (not result) then
+            if (result) then
+            begin
+                //one of validation rules is satisfied so exit early
+                exit;
+            end else
             begin
                 if (totFail > 0) then
                 begin

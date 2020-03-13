@@ -78,11 +78,13 @@ implementation
 
 uses
 
+    sysutils,
     ScanResultIntf;
 
 resourcestring
 
-    sErrFieldIsMustBeFreeFromVirus = 'Field %s must be a free from virus. ';
+    sErrFieldIsMustBeFreeFromVirus = 'Field %s must be a free from virus.';
+    sErrVirusDetected = ' Virus "%s" detected in file "%s"';
 
     (*!------------------------------------------------
      * constructor
@@ -117,7 +119,14 @@ resourcestring
             if not result then
             begin
                 //virus detected, exit loop early
-                errorMsgFormat := fOriginalErrMsg + ' Virus detected: ' + scanRes.virusName();
+                errorMsgFormat := fOriginalErrMsg +
+                    format(
+                        sErrVirusDetected,
+                        [
+                            scanRes.virusName() ,
+                            uploadedFiles[i].getClientFilename()
+                        ]
+                    );
                 exit;
             end;
         end;

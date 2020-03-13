@@ -181,7 +181,7 @@ uses
         res := epoll_ctl(epollFd, EPOLL_CTL_ADD, fd, @ev);
         if (res < 0) then
         begin
-            raise EEpollCtl.create(raEpollAddFileDescriptorFailed);
+            raise EEpollCtl.create(rsEpollAddFileDescriptorFailed);
         end;
     end;
 
