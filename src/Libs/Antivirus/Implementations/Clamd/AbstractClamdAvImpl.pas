@@ -110,6 +110,7 @@ implementation
 
 uses
 
+    sockets,
     errors,
     strutils,
     SocketConsts,
