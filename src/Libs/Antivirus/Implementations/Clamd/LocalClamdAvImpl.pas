@@ -49,7 +49,6 @@ const
     var command : string;
         buff : string;
         buffRead : integer;
-        errCode : longInt;
     begin
         result := '';
         command := 'nSCAN ' + filePath + #10;
