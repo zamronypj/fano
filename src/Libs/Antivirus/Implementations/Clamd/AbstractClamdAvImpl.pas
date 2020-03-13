@@ -244,7 +244,7 @@ uses
         raise ESockError.createFmt(rsSocketReadFailed, errCode, strError(errCode));
     end;
 
-    function TAbstractClamdAv.reeadReply(const socket : TSocketStream) : string;
+    function TAbstractClamdAv.readReply(const socket : TSocketStream) : string;
     var buff : string;
         buffRead : integer;
     begin
