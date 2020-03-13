@@ -49,6 +49,7 @@ const
     var command : string;
         buff : string;
         buffRead : integer;
+        errCode : longInt;
     begin
         result := '';
         command := 'nSCAN ' + filePath + #10;
@@ -62,6 +63,11 @@ const
                 result := result + copy(buff, 1, buffRead);
             end;
         until (buffRead <= 0);
+
+        if (buffRead < 0) then
+        begin
+            raiseSockReadExcept();
+        end;
     end;
 
 end.

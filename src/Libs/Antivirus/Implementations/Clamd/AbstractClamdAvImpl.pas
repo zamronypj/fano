@@ -37,6 +37,7 @@ type
         fVirusName : string;
         function sendScanRequest(const filePath : string) : string;
     protected
+        procedure raiseSockReadExcept();
         function doSendScanRequest(
             const socket : TSocketStream;
             const filePath : string
@@ -109,7 +110,10 @@ implementation
 
 uses
 
-    strutils;
+    errors,
+    strutils,
+    SocketConsts,
+    ESockErrorImpl;
 
     constructor TAbstractClamdAv.create(const host : string; const port : word);
     begin
@@ -219,6 +223,14 @@ uses
     function TAbstractClamdAv.virusName() : string;
     begin
         result := fVirusName;
+    end;
+
+    procedure TAbstractClamdAv.raiseSockReadExcept();
+    var
+        errCode : longint;
+    begin
+        errCode := socketError();
+        raise ESockError.createFmt(rsSocketReadFailed, errCode, strError(errCode));
     end;
 
 end.

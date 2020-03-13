@@ -84,7 +84,7 @@ uses
 resourcestring
 
     sErrFieldIsMustBeFreeFromVirus = 'Field %s must be a free from virus.';
-    sErrVirusDetected = ' Virus %s detected in file %s';
+    sErrVirusDetected = ' Virus "%s" detected in file "%s"';
 
     (*!------------------------------------------------
      * constructor
