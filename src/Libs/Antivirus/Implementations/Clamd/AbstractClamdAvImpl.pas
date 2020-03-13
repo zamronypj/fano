@@ -42,7 +42,7 @@ type
         function sendScanRequest(const filePath : string) : string;
         procedure raiseSockReadExcept();
         function readReply(const socket : TSocketStream) : string;
-        procedure interpretReply(const reply : string);
+        procedure interpretReply(const filePath : string; const reply : string);
     protected
         procedure doSendScanRequest(
             const socket : TSocketStream;
@@ -177,7 +177,7 @@ uses
         end;
     end;
 
-    procedure TAbstractClamdAv.interpretReply(const reply : string);
+    procedure TAbstractClamdAv.interpretReply(const filePath : string; const reply : string);
     var
         scanStatusPos : integer;
         lenFilePath : integer;
@@ -211,7 +211,7 @@ uses
      *-----------------------------------------------*)
     function TAbstractClamdAv.scanFile(const filePath : string) : IScanResult;
     begin
-        interpretReply(sendScanRequest(filePath));
+        interpretReply(filePath, sendScanRequest(filePath));
         result := self;
     end;
 
