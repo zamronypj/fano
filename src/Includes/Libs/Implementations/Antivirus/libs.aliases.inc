@@ -9,6 +9,7 @@
 {------------ Begin ClamAV antivirus related------------------}
 EClamAv = EClamAvImpl.EClamAv;
 TLocalClamdAv = LocalClamdAvImpl.TLocalClamdAv;
+TClamdAv = ClamdAvImpl.TClamdAv;
 {------------ End ClamAV antivirus related------------------}
 
 TNullAv = NullAvImpl.TNullAv;

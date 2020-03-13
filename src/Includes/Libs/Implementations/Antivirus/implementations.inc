@@ -9,6 +9,7 @@
 {------------ ClamAV antivirus related------------------}
 EClamAvImpl,
 LocalClamdAvImpl,
+ClamdAvImpl,
 {------------ End ClamAV antivirus related------------------}
 
 NullAvImpl,
