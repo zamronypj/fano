@@ -37,7 +37,7 @@ KeyValuePairFactoryImpl,
 {$INCLUDE Socket2/implementations.inc}
 {$INCLUDE Logger/implementations.inc}
 {$INCLUDE Regex/implementations.inc}
-{$INCLUDE LibCurl/implementations.inc}
+{$INCLUDE HttpClient/implementations.inc}
 {$INCLUDE Protocol/implementations.inc}
 {$INCLUDE Random/implementations.inc}
 {$INCLUDE Cli/implementations.inc}
