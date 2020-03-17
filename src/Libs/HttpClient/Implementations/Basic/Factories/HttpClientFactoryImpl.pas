@@ -63,6 +63,7 @@ uses
     HttpGetClientIntf,
     HttpPostClientIntf,
     HttpPutClientIntf,
+    HttpPatchClientIntf,
     HttpDeleteClientIntf,
     HttpHeadClientIntf,
 
@@ -72,6 +73,7 @@ uses
         getClientFactory : IDependencyFactory;
         postClientFactory : IDependencyFactory;
         putClientFactory : IDependencyFactory;
+        patchClientFactory : IDependencyFactory;
         deleteClientFactory : IDependencyFactory;
         headClientFactory : IDependencyFactory
     );
@@ -79,6 +81,7 @@ uses
         fGetClientFactory := getClientFactory;
         fPostClientFactory := postClientFactory;
         fPutClientFactory := putClientFactory;
+        fPatchClientFactory := patchClientFactory;
         fDeleteClientFactory := deleteClientFactory;
         fHeadClientFactory := headClientFactory;
     end;
@@ -89,6 +92,7 @@ uses
         fGetClientFactory := nil;
         fPostClientFactory := nil;
         fPutClientFactory := nil;
+        fPatchClientFactory := nil;
         fDeleteClientFactory := nil;
         fHeadClientFactory := nil;
     end;
@@ -104,6 +108,7 @@ uses
             fGetClientFactory.build(container) as IHttpGetClient,
             fPostClientFactory.build(container) as IHttpPostClient,
             fPutClientFactory.build(container) as IHttpPutClient,
+            fPatchClientFactory.build(container) as IHttpPatchClient,
             fDeleteClientFactory.build(container) as IHttpDeleteClient,
             fHeadClientFactory.build(container) as IHttpHeadClient
         );

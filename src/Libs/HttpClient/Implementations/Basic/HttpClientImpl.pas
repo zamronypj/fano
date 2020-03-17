@@ -26,7 +26,7 @@ type
 
     (*!------------------------------------------------
      * basic HTTP client having capability to send
-     * GET, POST, PUT, DELETE and HEAD
+     * GET, POST, PUT, PATCH,  DELETE and HEAD
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
@@ -35,6 +35,7 @@ type
         IHttpGetClient,
         IHttpPostClient,
         IHttpPutClient,
+        IHttpPatchClient,
         IHttpDeleteClient,
         IHttpHeadClient
     )
@@ -42,21 +43,30 @@ type
         fGetClient : IHttpGetClient;
         fPostClient : IHttpPostClient;
         fPutClient : IHttpPutClient;
+        fPatchClient : IHttpPutClient;
         fDeleteClient : IHttpDeleteClient;
         fHeadClient : IHttpHeadClient;
     public
+
+        (*!------------------------------------------------
+         * constructor
+         *
+         * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+         *-----------------------------------------------*)
         constructor create(
-            const getClient : IHttpGetClient;
-            const postClient : IHttpPostClient;
-            const putClient : IHttpPutClient;
-            const deleteClient : IHttpDeleteClient;
-            const headClient : IHttpHeadClient
+            getClient : IHttpGetClient;
+            postClient : IHttpPostClient;
+            putClient : IHttpPutClient;
+            patchClient : IHttpPatchClient;
+            deleteClient : IHttpDeleteClient;
+            headClient : IHttpHeadClient
         );
         destructor destroy(); override;
 
         property httpGet : IHttpGetClient read fGetClient implements IHttpGetClient;
         property httpPost : IHttpPostClient read fPostClient implements IHttpPostClient;
         property httpPut : IHttpPutClient read fPutClient implements IHttpPutClient;
+        property httpPatch : IHttpPatchClient read fPatchClient implements IHttpPatchClient;
         property httpDelete : IHttpDeleteClient read fDeleteClient implements IHttpDeleteClient;
         property httpHead : IHttpHeadClient read fHeadClient implements IHttpHeadClient;
 
@@ -65,28 +75,31 @@ type
 implementation
 
     constructor THttpClient.create(
-        const getClient : IHttpGetClient;
-        const postClient : IHttpPostClient;
-        const putClient : IHttpPutClient;
-        const deleteClient : IHttpDeleteClient;
-        const headClient : IHttpHeadClient
+        getClient : IHttpGetClient;
+        postClient : IHttpPostClient;
+        putClient : IHttpPutClient;
+        patchClient : IHttpPatchClient;
+        deleteClient : IHttpDeleteClient;
+        headClient : IHttpHeadClient
     );
     begin
         fGetClient := getClient;
         fPostClient := postClient;
         fPutClient := putClient;
+        fPatchClient := patchClient;
         fDeleteClient := deleteClient;
         fHeadClient := headClient;
     end;
 
     destructor THttpClient.destroy();
     begin
-        inherited destroy();
         fGetClient := nil;
         fPostClient := nil;
         fPutClient := nil;
+        fPatchClient := nil;
         fDeleteClient := nil;
         fHeadClient := nil;
+        inherited destroy();
     end;
 
 end.
