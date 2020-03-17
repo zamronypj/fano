@@ -44,7 +44,7 @@ type
         fGetClient : IHttpGetClient;
         fPostClient : IHttpPostClient;
         fPutClient : IHttpPutClient;
-        fPatchClient : IHttpPutClient;
+        fPatchClient : IHttpPatchClient;
         fDeleteClient : IHttpDeleteClient;
         fHeadClient : IHttpHeadClient;
     public
