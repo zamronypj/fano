@@ -19,6 +19,7 @@ uses
     HttpGetClientIntf,
     HttpPostClientIntf,
     HttpPutClientIntf,
+    HttpPatchClientIntf,
     HttpDeleteClientIntf,
     HttpHeadClientIntf;
 
