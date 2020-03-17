@@ -33,6 +33,7 @@ type
         fGetClientFactory : IDependencyFactory;
         fPostClientFactory : IDependencyFactory;
         fPutClientFactory : IDependencyFactory;
+        fPatchClientFactory : IDependencyFactory;
         fDeleteClientFactory : IDependencyFactory;
         fHeadClientFactory : IDependencyFactory;
     public
@@ -40,6 +41,7 @@ type
             getClientFactory : IDependencyFactory;
             postClientFactory : IDependencyFactory;
             putClientFactory : IDependencyFactory;
+            patchClientFactory : IDependencyFactory;
             deleteClientFactory : IDependencyFactory;
             headClientFactory : IDependencyFactory
         );
