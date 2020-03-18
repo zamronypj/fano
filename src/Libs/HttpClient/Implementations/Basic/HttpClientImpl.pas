@@ -21,13 +21,14 @@ uses
     HttpPutClientIntf,
     HttpPatchClientIntf,
     HttpDeleteClientIntf,
-    HttpHeadClientIntf;
+    HttpHeadClientIntf,
+    HttpOptionsClientIntf;
 
 type
 
     (*!------------------------------------------------
      * basic HTTP client having capability to send
-     * GET, POST, PUT, PATCH,  DELETE and HEAD
+     * GET, POST, PUT, PATCH,  DELETE and HEAD, OPTIONS
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
@@ -38,7 +39,8 @@ type
         IHttpPutClient,
         IHttpPatchClient,
         IHttpDeleteClient,
-        IHttpHeadClient
+        IHttpHeadClient,
+        IHttpOptionsClient
     )
     private
         fGetClient : IHttpGetClient;
@@ -47,6 +49,7 @@ type
         fPatchClient : IHttpPatchClient;
         fDeleteClient : IHttpDeleteClient;
         fHeadClient : IHttpHeadClient;
+        fOptionsClient : IHttpOptionsClient;
     public
 
         (*!------------------------------------------------
@@ -60,7 +63,8 @@ type
             putClient : IHttpPutClient;
             patchClient : IHttpPatchClient;
             deleteClient : IHttpDeleteClient;
-            headClient : IHttpHeadClient
+            headClient : IHttpHeadClient;
+            optsClient : IHttpOptionsClient
         );
         destructor destroy(); override;
 
@@ -70,6 +74,7 @@ type
         property httpPatch : IHttpPatchClient read fPatchClient implements IHttpPatchClient;
         property httpDelete : IHttpDeleteClient read fDeleteClient implements IHttpDeleteClient;
         property httpHead : IHttpHeadClient read fHeadClient implements IHttpHeadClient;
+        property httpOptions : IHttpOptionsClient read fOptsClient implements IHttpOptionsClient;
 
     end;
 
@@ -81,7 +86,8 @@ implementation
         putClient : IHttpPutClient;
         patchClient : IHttpPatchClient;
         deleteClient : IHttpDeleteClient;
-        headClient : IHttpHeadClient
+        headClient : IHttpHeadClient;
+        optsClient : IHttpOptionsClient
     );
     begin
         fGetClient := getClient;
@@ -90,6 +96,7 @@ implementation
         fPatchClient := patchClient;
         fDeleteClient := deleteClient;
         fHeadClient := headClient;
+        fOptionsClient := optsClient;
     end;
 
     destructor THttpClient.destroy();
@@ -100,6 +107,7 @@ implementation
         fPatchClient := nil;
         fDeleteClient := nil;
         fHeadClient := nil;
+        fOptionsClient := nil;
         inherited destroy();
     end;
 

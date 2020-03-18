@@ -19,7 +19,8 @@ uses
     InjectableObjectImpl,
     ResponseStreamIntf,
     HttpClientHeadersIntf,
-    HttpClientHandleAwareIntf;
+    HttpClientHandleAwareIntf,
+    QueryStrBuilderIntf;
 
 type
 
@@ -46,6 +47,8 @@ type
         *-----------------------------------------------*)
         procedure initCallback(const hndCurl : pCurl);
     protected
+        fQueryStrBuilder : IQueryStrBuilder;
+
         (*!------------------------------------------------
          * internal variable that holds curl handle
          *-----------------------------------------------*)
@@ -88,7 +91,8 @@ type
         constructor create(
             const curlHandle : IHttpClientHandleAware;
             const headersInst : IHttpClientHeaders;
-            const fStream : IResponseStream
+            const fStream : IResponseStream;
+            const queryStrBuilder : IQueryStrBuilder
         );
 
         (*!------------------------------------------------
@@ -173,7 +177,8 @@ resourcestring
     constructor THttpMethod.create(
         const curlHandle : IHttpClientHandleAware;
         const headersInst : IHttpClientHeaders;
-        const fStream : IResponseStream
+        const fStream : IResponseStream;
+        const queryStrBuilder : IQueryStrBuilder
     );
     begin
         //libcurl only knows raw pointer, so we use raw pointer to hold
@@ -188,6 +193,7 @@ resourcestring
         hCurl := curlHandle.handle();
         initCallback(hCurl);
         httpHeader := headersInst;
+        fQueryStrBuilder := queryStrBuilder;
     end;
 
     (*!------------------------------------------------
@@ -195,7 +201,6 @@ resourcestring
      *-----------------------------------------------*)
     destructor THttpMethod.destroy();
     begin
-        inherited destroy();
 
         //libcurl only knows raw pointer, so we use raw pointer to hold
         //instance of IResponseStream interface. But because typecast interface
@@ -206,6 +211,9 @@ resourcestring
 
         streamInst := nil;
         hCurl := nil;
+        httpHeader := nil;
+        fQueryStrBuilder := nil;
+        inherited destroy();
     end;
 
     (*!------------------------------------------------

@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit HttpHeadImpl;
+unit HttpOptionsImpl;
 
 interface
 
@@ -16,28 +16,28 @@ interface
 uses
 
     HttpMethodImpl,
-    HttpHeadClientIntf,
+    HttpOptionsClientIntf,
     ResponseStreamIntf,
     SerializeableIntf;
 
 type
 
     (*!------------------------------------------------
-     * class that send HTTP HEAD to server
+     * class that send HTTP OPTIONS to server
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    THttpHead = class(THttpMethod, IHttpHeadClient)
+    THttpOptions = class(THttpMethod, IHttpOptionsClient)
     public
 
         (*!------------------------------------------------
-         * send HTTP HEAD request
+         * send HTTP OPTIONS request
          *-----------------------------------------------
          * @param url url to send request
-         * @param data data related to this request
+         * @param context object instance related to this message
          * @return response from server
          *-----------------------------------------------*)
-        function head(
+        function options(
             const url : string;
             const data : ISerializeable = nil
         ) : IResponseStream;
@@ -51,25 +51,29 @@ uses
     libcurl;
 
     (*!------------------------------------------------
-     * send HTTP GET request
+     * send HTTP OPTIONS request
      *-----------------------------------------------
      * @param url url to send request
      * @param data data related to this request
      * @return current instance
-     *-----------------------------------------------
-     * @credit: https://github.com/graemeg/freepascal/blob/master/packages/libcurl/examples/testcurl.pp
      *-----------------------------------------------*)
-    function THttpHead.head(
+    function THttpOptions.options(
         const url : string;
         const data : ISerializeable = nil
     ) : IResponseStream;
-    var fullUrl : string;
+    var params : string;
     begin
         raiseExceptionIfCurlNotInitialized();
         streamInst.reset();
-        fullUrl := fQueryStrBuilder.buildUrlWithQueryParams(url, data);
-        curl_easy_setopt(hCurl, CURLOPT_URL, [ pchar(fullUrl) ]);
-        curl_easy_setopt(hCurl, CURLOPT_NOBODY, [ 1 ]);
+        curl_easy_setopt(hCurl, CURLOPT_URL, [ pchar(url) ]);
+        curl_easy_setopt(hCurl, CURLOPT_UPLOAD, [ 1 ]);
+        curl_easy_setopt(hCurl, CURLOPT_CUSTOMREQUEST, [ pchar('OPTIONS') ]);
+        params := '';
+        if (data <> nil) then
+        begin
+           params := data.serialize();
+        end;
+        curl_easy_setopt(hCurl , CURLOPT_READDATA, [ pchar(params) ]);
         executeCurl(hCurl);
         result := streamInst;
     end;

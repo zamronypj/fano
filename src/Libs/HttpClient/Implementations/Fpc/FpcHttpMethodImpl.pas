@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit HttpClientHeadersImpl;
+unit FpcHttpMethodImpl;
 
 interface
 
@@ -15,32 +15,38 @@ interface
 
 uses
 
-    libcurl,
+    fphttpclient,
+    InjectableObjectImpl,
+    ResponseStreamIntf,
     HttpClientHeadersIntf,
     HttpClientHandleAwareIntf,
-    InjectableObjectImpl;
+    QueryStrBuilderIntf;
 
 type
 
     (*!------------------------------------------------
-     * class that set/get Curl HTTP options
+     * base class for HTTP operation usng TFpHttpClient
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    THttpClientHeaders = class(TInjectableObject, IHttpClientHeaders)
-    private
-        (*!------------------------------------------------
-        * internal variable that holds curl handle
-        *-----------------------------------------------*)
-        hCurl : PCurl;
-        headerList : Pcurl_slist;
+    TFpcHttpMethod = class(TInjectableObject, IHttpClientHeaders)
+    protected
+        fQueryStrBuilder : IQueryStrBuilder;
+        fHttpClient : TFPHTTPClient;
+
     public
+
         (*!------------------------------------------------
          * constructor
          *-----------------------------------------------
-         * @param curlHandle instance class that can get handle
+         * @param headersInst instance class that can set headers
+         * @param fStream stream instance that will be used to
+         *                store data coming from server
          *-----------------------------------------------*)
-        constructor create(const curlHandle : IHttpClientHandleAware);
+        constructor create(
+            const headersInst : IHttpClientHeaders;
+            const queryStrBuilder : IQueryStrBuilder
+        );
 
         (*!------------------------------------------------
          * destructor
@@ -62,28 +68,39 @@ type
          * @return current instance
          *-----------------------------------------------*)
         function apply() : IHttpClientHeaders;
+
     end;
 
 implementation
 
+uses
+
+    EHttpClientErrorImpl;
+
+
+
     (*!------------------------------------------------
      * constructor
+     *-----------------------------------------------
+     * @param fStream stream instance that will be used to
+     *                store data coming from server
      *-----------------------------------------------*)
-    constructor THttpClientHeaders.create(const curlHandle : IHttpClientHandleAware);
+    constructor TFpcHttpMethod.create(
+        const queryStrBuilder : IQueryStrBuilder
+    );
     begin
-        hCurl := curlHandle.handle();
-        headerList := nil;
+        fHttpClient := TFPHTTPClient.create(nil);
+        fQueryStrBuilder := queryStrBuilder;
     end;
 
     (*!------------------------------------------------
      * destructor
      *-----------------------------------------------*)
-    destructor THttpClientHeaders.destroy();
+    destructor TFpcHttpMethod.destroy();
     begin
+        fQueryStrBuilder := nil;
+        fHttpClient.free();
         inherited destroy();
-        curl_slist_free_all(headerList);
-        headerList := nil;
-        hCurl := nil;
     end;
 
     (*!------------------------------------------------
@@ -93,9 +110,9 @@ implementation
      * @param avalue string contain header value
      * @return current instance
      *-----------------------------------------------*)
-    function THttpClientHeaders.add(const aheader : string; const avalue : string) : IHttpClientHeaders;
+    function TFpcHttpMethod.add(const aheader : string; const avalue : string) : IHttpClientHeaders;
     begin
-        headerList := curl_slist_append(headerList, pchar(aheader + ': ' + avalue));
+        fHttpClient.addHeader(aheader, avalue);
         result := self;
     end;
 
@@ -104,9 +121,9 @@ implementation
      *-----------------------------------------------
      * @return current instance
      *-----------------------------------------------*)
-    function THttpClientHeaders.apply() : IHttpClientHeaders;
+    function TFpcHttpMethod.apply() : IHttpClientHeaders;
     begin
-        curl_easy_setopt(hCurl, CURLOPT_HTTPHEADER, [ headerList ]);
+        //do nothing as not relevant here
         result := self;
     end;
 

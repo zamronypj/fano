@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit HttpHeadImpl;
+unit FpcHttpDeleteImpl;
 
 interface
 
@@ -15,29 +15,28 @@ interface
 
 uses
 
-    HttpMethodImpl,
-    HttpHeadClientIntf,
+    HttpDeleteClientIntf,
     ResponseStreamIntf,
     SerializeableIntf;
 
 type
 
     (*!------------------------------------------------
-     * class that send HTTP HEAD to server
+     * class that send HTTP DELETE to server
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    THttpHead = class(THttpMethod, IHttpHeadClient)
+    TFpcHttpDelete = class(TFpcHttpMethod, IHttpDeleteClient)
     public
 
         (*!------------------------------------------------
-         * send HTTP HEAD request
+         * send HTTP DELETE request
          *-----------------------------------------------
          * @param url url to send request
          * @param data data related to this request
          * @return response from server
          *-----------------------------------------------*)
-        function head(
+        function delete(
             const url : string;
             const data : ISerializeable = nil
         ) : IResponseStream;
@@ -48,30 +47,33 @@ implementation
 
 uses
 
-    libcurl;
+    Classes,
+    ResponseStreamImpl;
 
     (*!------------------------------------------------
-     * send HTTP GET request
+     * send HTTP DELETE request
      *-----------------------------------------------
      * @param url url to send request
      * @param data data related to this request
      * @return current instance
-     *-----------------------------------------------
-     * @credit: https://github.com/graemeg/freepascal/blob/master/packages/libcurl/examples/testcurl.pp
      *-----------------------------------------------*)
-    function THttpHead.head(
+    function TFpcHttpDelete.put(
         const url : string;
         const data : ISerializeable = nil
     ) : IResponseStream;
-    var fullUrl : string;
+    var stream : TStream;
     begin
-        raiseExceptionIfCurlNotInitialized();
-        streamInst.reset();
         fullUrl := fQueryStrBuilder.buildUrlWithQueryParams(url, data);
-        curl_easy_setopt(hCurl, CURLOPT_URL, [ pchar(fullUrl) ]);
-        curl_easy_setopt(hCurl, CURLOPT_NOBODY, [ 1 ]);
-        executeCurl(hCurl);
-        result := streamInst;
+        try
+            stream := TMemoryStream.create();
+            fpHttpClient.delete(url, stream);
+            //wrap as IResponseStream and delete stream when goes out of scope
+            result := TResponseStream.create(stream);
+        except
+            //something is wrong
+            stream.free();
+            result := nil;
+        end;
     end;
 
 end.
