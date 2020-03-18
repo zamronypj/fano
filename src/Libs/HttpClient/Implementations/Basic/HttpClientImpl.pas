@@ -74,7 +74,7 @@ type
         property httpPatch : IHttpPatchClient read fPatchClient implements IHttpPatchClient;
         property httpDelete : IHttpDeleteClient read fDeleteClient implements IHttpDeleteClient;
         property httpHead : IHttpHeadClient read fHeadClient implements IHttpHeadClient;
-        property httpOptions : IHttpOptionsClient read fOptsClient implements IHttpOptionsClient;
+        property httpOptions : IHttpOptionsClient read fOptionsClient implements IHttpOptionsClient;
 
     end;
 
