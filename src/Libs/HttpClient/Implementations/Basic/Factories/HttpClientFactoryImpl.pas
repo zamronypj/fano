@@ -36,6 +36,7 @@ type
         fPatchClientFactory : IDependencyFactory;
         fDeleteClientFactory : IDependencyFactory;
         fHeadClientFactory : IDependencyFactory;
+        fOptionsClientFactory : IDependencyFactory;
     public
         constructor create(
             getClientFactory : IDependencyFactory;
@@ -43,7 +44,8 @@ type
             putClientFactory : IDependencyFactory;
             patchClientFactory : IDependencyFactory;
             deleteClientFactory : IDependencyFactory;
-            headClientFactory : IDependencyFactory
+            headClientFactory : IDependencyFactory;
+            optionsClientFactory : IDependencyFactory
         );
 
         destructor destroy(); override;
@@ -68,6 +70,7 @@ uses
     HttpPatchClientIntf,
     HttpDeleteClientIntf,
     HttpHeadClientIntf,
+    HttpOptionsClientIntf,
 
     HttpClientImpl;
 
@@ -77,7 +80,8 @@ uses
         putClientFactory : IDependencyFactory;
         patchClientFactory : IDependencyFactory;
         deleteClientFactory : IDependencyFactory;
-        headClientFactory : IDependencyFactory
+        headClientFactory : IDependencyFactory;
+        optionsClientFactory : IDependencyFactory
     );
     begin
         fGetClientFactory := getClientFactory;
@@ -86,6 +90,7 @@ uses
         fPatchClientFactory := patchClientFactory;
         fDeleteClientFactory := deleteClientFactory;
         fHeadClientFactory := headClientFactory;
+        fOptionsClientFactory := optionsClientFactory;
     end;
 
     destructor THttpClientFactory.destroy();
@@ -97,6 +102,7 @@ uses
         fPatchClientFactory := nil;
         fDeleteClientFactory := nil;
         fHeadClientFactory := nil;
+        fOptionsClientFactory := nil;
     end;
 
     (*!---------------------------------------------------
@@ -112,7 +118,8 @@ uses
             fPutClientFactory.build(container) as IHttpPutClient,
             fPatchClientFactory.build(container) as IHttpPatchClient,
             fDeleteClientFactory.build(container) as IHttpDeleteClient,
-            fHeadClientFactory.build(container) as IHttpHeadClient
+            fHeadClientFactory.build(container) as IHttpHeadClient,
+            fOptionsClientFactory.build(container) as IHttpOptionsClient
         );
     end;
 end.

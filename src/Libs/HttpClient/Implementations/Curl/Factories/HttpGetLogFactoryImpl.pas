@@ -57,7 +57,8 @@ uses
     HttpGetImpl,
     ResponseStreamImpl,
     ResponseStreamLogImpl,
-    HttpClientHeadersImpl;
+    HttpClientHeadersImpl,
+    QueryStrBuilderImpl;
 
     constructor THttpGetLogFactory.create(
         const handleInst : IHttpClientHandleAware;
@@ -87,7 +88,8 @@ uses
             TResponseStreamLog.create(
                 TResponseStream.create(TStringStream.create('')),
                 logger
-            )
+            ),
+            TQueryStrBuilder.create()
         );
     end;
 end.
