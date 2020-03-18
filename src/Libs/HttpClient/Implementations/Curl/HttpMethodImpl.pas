@@ -226,7 +226,7 @@ resourcestring
      *-----------------------------------------------*)
     function add(const aheader : string; const avalue : string) : IHttpClientHeaders;
     begin
-        httpHeader.add(aheader, avalue);
+        fHttpHeader.add(aheader, avalue);
         result := self;
     end;
 
@@ -237,7 +237,7 @@ resourcestring
      *-----------------------------------------------*)
     function THttpMethod.apply() : IHttpClientHeaders;
     begin
-        httpHeader.apply();
+        fHttpHeader.apply();
         result := self;
     end;
 
