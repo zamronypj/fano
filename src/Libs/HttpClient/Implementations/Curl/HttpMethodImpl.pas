@@ -31,7 +31,7 @@ type
      *-----------------------------------------------*)
     THttpMethod = class(TInjectableObject, IHttpClientHeaders)
     private
-        httpHeader : IHttpClientHeaders;
+        fHttpHeader : IHttpClientHeaders;
 
         (*!------------------------------------------------
          * raise exception if curl operation fail
@@ -193,7 +193,7 @@ resourcestring
 
         hCurl := curlHandle.handle();
         initCallback(hCurl);
-        httpHeader := headersInst;
+        fHttpHeader := headersInst;
         fQueryStrBuilder := queryStrBuilder;
     end;
 
@@ -212,7 +212,7 @@ resourcestring
 
         streamInst := nil;
         hCurl := nil;
-        httpHeader := nil;
+        fHttpHeader := nil;
         fQueryStrBuilder := nil;
         inherited destroy();
     end;
@@ -224,7 +224,7 @@ resourcestring
      * @param avalue string contain header value
      * @return current instance
      *-----------------------------------------------*)
-    function add(const aheader : string; const avalue : string) : IHttpClientHeaders;
+    function THttpMethod.add(const aheader : string; const avalue : string) : IHttpClientHeaders;
     begin
         fHttpHeader.add(aheader, avalue);
         result := self;
