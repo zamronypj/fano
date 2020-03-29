@@ -8,3 +8,5 @@
 
 TNullModelReader = NullModelReaderImpl.TNullModelReader;
 TNullModelResultSet = NullModelResultSetImpl.TNullModelResultSet;
+
+TNullModelReaderFactory = NullModelReaderFactoryImpl.TNullModelReaderFactory;
