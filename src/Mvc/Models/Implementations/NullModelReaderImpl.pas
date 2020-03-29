@@ -75,7 +75,7 @@ uses
     function TNullModelReader.read(const params : IModelParams = nil) : IModelResultSet;
     begin
         //intentionally does nothing
-        result := self;
+        result := fNullResultSet;
     end;
 
     (*!----------------------------------------------
