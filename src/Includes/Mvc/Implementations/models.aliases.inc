@@ -6,6 +6,5 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-{$INCLUDE views.aliases.inc}
-{$INCLUDE controllers.aliases.inc}
-{$INCLUDE models.aliases.inc}
+TNullModelReader = NullModelReaderImpl.TNullModelReader;
+TNullModelResultSet = NullModelResultSetImpl.TNullModelResultSet;
