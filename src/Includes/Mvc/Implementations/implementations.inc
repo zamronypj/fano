@@ -41,3 +41,7 @@ StrViewPartialFactoryImpl,
 
 AbstractControllerImpl,
 ControllerImpl,
+
+NullModelReaderImpl,
+NullModelResultSetImpl,
+NullModelReaderFactoryImpl,
