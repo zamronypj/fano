@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit InValidatorImpl;
+unit FileValidatorImpl;
 
 interface
 
@@ -15,7 +15,6 @@ interface
 
 uses
 
-    SysUtils,
     ReadOnlyListIntf,
     ValidatorIntf,
     RequestIntf,
@@ -25,14 +24,12 @@ type
 
     (*!------------------------------------------------
      * basic class having capability to
-     * validate data that must included in given list of values
+     * validate that data is valid file
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TInValidator = class(TBaseValidator)
+    TFileValidator = class(TBaseValidator)
     protected
-        fValidValues : TStringArray;
-
         (*!------------------------------------------------
          * actual data validation
          *-------------------------------------------------
@@ -48,45 +45,25 @@ type
         (*!------------------------------------------------
          * constructor
          *-------------------------------------------------*)
-        constructor create(const validValues : array of string);
-
-        (*!------------------------------------------------
-         * destructor
-         *-------------------------------------------------*)
-        destructor destroy(); override;
+        constructor create();
     end;
 
 implementation
 
 uses
 
-    StringUtils;
+    SysUtils;
 
 resourcestring
 
-    sErrFieldMustBeIn = 'Field %%s must be in given values "%s"';
+    sErrFieldMustBeFile = 'Field %s must be valid file';
 
     (*!------------------------------------------------
      * constructor
      *-------------------------------------------------*)
-    constructor TInValidator.create(const validValues : array of string);
+    constructor TFileValidator.create();
     begin
-        inherited create(
-            format(
-                sErrFieldMustBeIn,
-                [ join(', ', validValues) ]
-            )
-        );
-        fValidValues := toStringArray(validValues);
-    end;
-
-    (*!------------------------------------------------
-     * destructor
-     *-------------------------------------------------*)
-    destructor TInValidator.destroy();
-    begin
-        setLength(fValidValues, 0);
-        inherited destroy();
+        inherited create(sErrFieldMustBeFile);
     end;
 
     (*!------------------------------------------------
@@ -95,22 +72,12 @@ resourcestring
      * @param dataToValidate input data
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
-    function TInValidator.isValidData(
+    function TFileValidator.isValidData(
         const dataToValidate : string;
         const dataCollection : IReadOnlyList;
         const request : IRequest
     ) : boolean;
-    var i, len : integer;
     begin
-        result := false;
-        len := length(fValidValues);
-        for i := 0 to len - 1 do
-        begin
-            if (dataToValidate = fValidValues[i]) then
-            begin
-                result := true;
-                exit();
-            end;
-        end;
+        result := FileExists(dataToValidate);
     end;
 end.

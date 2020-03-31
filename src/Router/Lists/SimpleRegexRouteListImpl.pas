@@ -306,7 +306,7 @@ const
      *   /name/{name}/{unitId}/edback
      *
      * into route pattern ready for dispatch
-     * /name/([)^/]+)/([^/]+)/edback
+     * /name/([^/]+)/([^/]+)/edback
      *
      * See ROUTE_DISPATCH_REGEX constant
      *---------------------------------------------------*)

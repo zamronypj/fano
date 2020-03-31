@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit MaxIntegerValidatorImpl;
+unit GreaterThanValidatorImpl;
 
 interface
 
@@ -24,11 +24,11 @@ type
 
     (*!------------------------------------------------
      * basic class having capability to
-     * validate if data does not greater than a reference value
+     * validate if data greater than a reference value
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TMaxIntegerValidator = class(TCompareIntValidator)
+    TGreaterThanValidator = class(TCompareIntValidator)
     protected
         function compareIntWithRef(
             const aInt: integer;
@@ -38,9 +38,9 @@ type
         (*!------------------------------------------------
          * constructor
          *-------------------------------------------------
-         * @param maxValue maximum value allowed
+         * @param refValue reference value
          *-------------------------------------------------*)
-        constructor create(const maxValue : integer);
+        constructor create(const refValue : integer);
     end;
 
 implementation
@@ -51,25 +51,25 @@ uses
 
 resourcestring
 
-    sErrFieldMustBeIntegerWithMaxValue = 'Field %%s must be integer with maximum value of %d';
+    sErrFieldMustBeIntegerGreaterThan = 'Field %%s must be integer greater than %d';
 
     (*!------------------------------------------------
      * constructor
      *-------------------------------------------------*)
-    constructor TMaxIntegerValidator.create(const maxValue : integer);
+    constructor TGreaterThanValidator.create(const refValue : integer);
     begin
         inherited create(
-            format(sErrFieldMustBeIntegerWithMaxValue, [ maxValue ]),
-            maxValue
+            format(sErrFieldMustBeIntegerGreaterThan, [ refValue ]),
+            refValue
         );
     end;
 
-    function TMaxIntegerValidator.compareIntWithRef(
+    function TGreaterThanValidator.compareIntWithRef(
         const aInt: integer;
         const refInt : integer
     ) : boolean;
     begin
-        result := (aInt <= refInt);
+        result := (aInt > refInt);
     end;
 
 end.

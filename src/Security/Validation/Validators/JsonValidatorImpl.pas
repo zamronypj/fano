@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit InValidatorImpl;
+unit JsonValidatorImpl;
 
 interface
 
@@ -15,7 +15,6 @@ interface
 
 uses
 
-    SysUtils,
     ReadOnlyListIntf,
     ValidatorIntf,
     RequestIntf,
@@ -25,14 +24,12 @@ type
 
     (*!------------------------------------------------
      * basic class having capability to
-     * validate data that must included in given list of values
+     * validate that data is valid JSON
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TInValidator = class(TBaseValidator)
+    TJsonValidator = class(TBaseValidator)
     protected
-        fValidValues : TStringArray;
-
         (*!------------------------------------------------
          * actual data validation
          *-------------------------------------------------
@@ -48,45 +45,27 @@ type
         (*!------------------------------------------------
          * constructor
          *-------------------------------------------------*)
-        constructor create(const validValues : array of string);
-
-        (*!------------------------------------------------
-         * destructor
-         *-------------------------------------------------*)
-        destructor destroy(); override;
+        constructor create();
     end;
 
 implementation
 
 uses
 
-    StringUtils;
+    SysUtils,
+    fpjson,
+    jsonparser;
 
 resourcestring
 
-    sErrFieldMustBeIn = 'Field %%s must be in given values "%s"';
+    sErrFieldMustBeJson = 'Field %s must be valid JSON';
 
     (*!------------------------------------------------
      * constructor
      *-------------------------------------------------*)
-    constructor TInValidator.create(const validValues : array of string);
+    constructor TJsonValidator.create();
     begin
-        inherited create(
-            format(
-                sErrFieldMustBeIn,
-                [ join(', ', validValues) ]
-            )
-        );
-        fValidValues := toStringArray(validValues);
-    end;
-
-    (*!------------------------------------------------
-     * destructor
-     *-------------------------------------------------*)
-    destructor TInValidator.destroy();
-    begin
-        setLength(fValidValues, 0);
-        inherited destroy();
+        inherited create(sErrFieldMustBeJson);
     end;
 
     (*!------------------------------------------------
@@ -95,22 +74,25 @@ resourcestring
      * @param dataToValidate input data
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
-    function TInValidator.isValidData(
+    function TJsonValidator.isValidData(
         const dataToValidate : string;
         const dataCollection : IReadOnlyList;
         const request : IRequest
     ) : boolean;
-    var i, len : integer;
+    var jsonData : TJSONData;
     begin
-        result := false;
-        len := length(fValidValues);
-        for i := 0 to len - 1 do
-        begin
-            if (dataToValidate = fValidValues[i]) then
-            begin
-                result := true;
-                exit();
+        try
+            //TODO: getJSON() will be called twice, first here then later in
+            //actual code that process data. Can we avoid? cheap test using regex?
+            jsonData := getJSON(dataToValidate);
+            try
+                result := (jsonData <> nil);
+            finally
+                jsonData.free();
             end;
+        except
+            //if exception is raised, it means not valid json
+            result := false;
         end;
     end;
 end.

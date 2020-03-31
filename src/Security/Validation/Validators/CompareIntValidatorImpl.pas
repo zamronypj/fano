@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit InValidatorImpl;
+unit CompareIntValidatorImpl;
 
 interface
 
@@ -15,7 +15,6 @@ interface
 
 uses
 
-    SysUtils,
     ReadOnlyListIntf,
     ValidatorIntf,
     RequestIntf,
@@ -25,13 +24,19 @@ type
 
     (*!------------------------------------------------
      * basic class having capability to
-     * validate data that must included in given list of values
+     * validate data compared against a reference integer
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TInValidator = class(TBaseValidator)
+    TCompareIntValidator = class abstract (TBaseValidator)
+    private
+        fReferenceValue : integer;
     protected
-        fValidValues : TStringArray;
+
+        function compareIntWithRef(
+            const aint: integer;
+            const refInt : integer
+        ) : boolean; virtual; abstract;
 
         (*!------------------------------------------------
          * actual data validation
@@ -45,48 +50,25 @@ type
             const request : IRequest
         ) : boolean; override;
     public
-        (*!------------------------------------------------
-         * constructor
-         *-------------------------------------------------*)
-        constructor create(const validValues : array of string);
-
-        (*!------------------------------------------------
-         * destructor
-         *-------------------------------------------------*)
-        destructor destroy(); override;
+        constructor create(const errMsgFormat : string; const refInt : integer);
     end;
 
 implementation
 
 uses
 
-    StringUtils;
-
-resourcestring
-
-    sErrFieldMustBeIn = 'Field %%s must be in given values "%s"';
+    SysUtils;
 
     (*!------------------------------------------------
      * constructor
      *-------------------------------------------------*)
-    constructor TInValidator.create(const validValues : array of string);
+    constructor TCompareIntValidator.create(
+        const errMsgFormat : string;
+        const refInt : integer
+    );
     begin
-        inherited create(
-            format(
-                sErrFieldMustBeIn,
-                [ join(', ', validValues) ]
-            )
-        );
-        fValidValues := toStringArray(validValues);
-    end;
-
-    (*!------------------------------------------------
-     * destructor
-     *-------------------------------------------------*)
-    destructor TInValidator.destroy();
-    begin
-        setLength(fValidValues, 0);
-        inherited destroy();
+        inherited create(errMsgFormat);
+        fReferenceValue := refInt;
     end;
 
     (*!------------------------------------------------
@@ -95,22 +77,14 @@ resourcestring
      * @param dataToValidate input data
      * @return true if data is valid otherwise false
      *-------------------------------------------------*)
-    function TInValidator.isValidData(
+    function TCompareIntValidator.isValidData(
         const dataToValidate : string;
         const dataCollection : IReadOnlyList;
         const request : IRequest
     ) : boolean;
-    var i, len : integer;
+    var intValue : integer;
     begin
-        result := false;
-        len := length(fValidValues);
-        for i := 0 to len - 1 do
-        begin
-            if (dataToValidate = fValidValues[i]) then
-            begin
-                result := true;
-                exit();
-            end;
-        end;
+        result := tryStrToInt(dataToValidate, intValue) and
+            compareIntWithRef(intValue, fReferenceValue);
     end;
 end.

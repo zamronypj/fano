@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit EClamAvImpl;
+unit AnyOfValidatorImpl;
 
 interface
 
@@ -15,17 +15,18 @@ interface
 
 uses
 
-    SysUtils;
+    OrValidatorImpl;
 
 type
 
-    (*!-----------------------------------------------
-     * Exception for ClamAv related issue
+    (*!------------------------------------------------
+     * basic class having capability to
+     * validate data that must be any of other validators
+     * This is alias for TOrValidator
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
-     *-----------------------------------------------*)
-    EClamAv = class(Exception);
+     *-------------------------------------------------*)
+    TAnyOfValidator = TOrValidator;
 
 implementation
-
 end.

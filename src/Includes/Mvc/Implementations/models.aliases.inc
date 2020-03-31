@@ -6,10 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-{------------ ClamAV antivirus related------------------}
-EClamAvImpl,
-LocalClamdAvImpl,
-ClamdAvImpl,
-{------------ End ClamAV antivirus related------------------}
+TNullModelReader = NullModelReaderImpl.TNullModelReader;
+TNullModelResultSet = NullModelResultSetImpl.TNullModelResultSet;
 
-NullAvImpl,
+TNullModelReaderFactory = NullModelReaderFactoryImpl.TNullModelReaderFactory;
