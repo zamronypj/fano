@@ -17,7 +17,8 @@ uses
 
     HttpOptionsClientIntf,
     ResponseStreamIntf,
-    SerializeableIntf;
+    SerializeableIntf,
+    FpcHttpMethodImpl;
 
 type
 

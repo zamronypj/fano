@@ -17,7 +17,8 @@ uses
 
     HttpDeleteClientIntf,
     ResponseStreamIntf,
-    SerializeableIntf;
+    SerializeableIntf,
+    FpcHttpMethodImpl;
 
 type
 
