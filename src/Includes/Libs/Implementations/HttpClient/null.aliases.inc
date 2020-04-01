@@ -6,6 +6,6 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-{$INCLUDE curl.implementations.inc}
-{$INCLUDE fpc.implementations.inc}
-{$INCLUDE null.implementations.inc}
+{------------ Begin Null http client related------------------}
+TNullHttpClient = NullHttpClient.TNullHttpClient;
+{------------ End Null http client related------------------}

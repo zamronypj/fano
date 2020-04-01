@@ -39,14 +39,11 @@ type
         (*!------------------------------------------------
          * constructor
          *-----------------------------------------------
-         * @param headersInst instance class that can set headers
-         * @param fStream stream instance that will be used to
-         *                store data coming from server
+         * @param queryStrBuilder instance of object having
+         *                        capability to build query
+         *                        string
          *-----------------------------------------------*)
-        constructor create(
-            const headersInst : IHttpClientHeaders;
-            const queryStrBuilder : IQueryStrBuilder
-        );
+        constructor create(const queryStrBuilder : IQueryStrBuilder);
 
         (*!------------------------------------------------
          * destructor
@@ -77,13 +74,12 @@ uses
 
     EHttpClientErrorImpl;
 
-
-
     (*!------------------------------------------------
      * constructor
      *-----------------------------------------------
-     * @param fStream stream instance that will be used to
-     *                store data coming from server
+     * @param queryStrBuilder instance of object having
+     *                        capability to build query
+     *                        string
      *-----------------------------------------------*)
     constructor TFpcHttpMethod.create(
         const queryStrBuilder : IQueryStrBuilder

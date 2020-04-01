@@ -57,7 +57,7 @@ uses
      * @param data data related to this request
      * @return current instance
      *-----------------------------------------------*)
-    function TFpcHttpDelete.put(
+    function TFpcHttpDelete.delete(
         const url : string;
         const data : ISerializeable = nil
     ) : IResponseStream;
