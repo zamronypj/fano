@@ -15,6 +15,7 @@ interface
 
 uses
 
+    Classes,
     HttpGetClientIntf,
     ResponseStreamIntf,
     SerializeableIntf,
@@ -28,6 +29,15 @@ type
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
     TFpcHttpGet = class(TFpcHttpMethod, IHttpGetClient)
+    protected
+        (*!------------------------------------------------
+         * send actual HTTP request
+         *-----------------------------------------------
+         * @param url url to send request
+         * @param stream response stream
+        *-----------------------------------------------*)
+        procedure sendRequest(const url : string; const stream : TStream); override;
+
     public
 
         (*!------------------------------------------------
@@ -46,10 +56,16 @@ type
 
 implementation
 
-uses
-
-    Classes,
-    ResponseStreamImpl;
+    (*!------------------------------------------------
+     * send actual HTTP request
+     *-----------------------------------------------
+     * @param url url to send request
+     * @param stream response stream
+     *-----------------------------------------------*)
+    procedure TFpcHttpGet.sendRequest(const url : string; const stream : TStream);
+    begin
+        fHttpClient.get(url, stream);
+    end;
 
     (*!------------------------------------------------
      * send HTTP GET request
@@ -62,20 +78,8 @@ uses
         const url : string;
         const data : ISerializeable = nil
     ) : IResponseStream;
-    var stream : TStream;
-        fullUrl : string;
     begin
-        fullUrl := fQueryStrBuilder.buildUrlWithQueryParams(url, data);
-        try
-            stream := TMemoryStream.create();
-            fpHttpClient.get(url, stream);
-            //wrap as IResponseStream and delete stream when goes out of scope
-            result := TResponseStream.create(stream);
-        except
-            //something is wrong
-            stream.free();
-            result := nil;
-        end;
+        result := send(url, data);
     end;
 
 end.

@@ -15,6 +15,7 @@ interface
 
 uses
 
+    Classes,
     fphttpclient,
     InjectableObjectImpl,
     ResponseStreamIntf,
@@ -29,11 +30,30 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TFpcHttpMethod = class(TInjectableObject, IHttpClientHeaders)
+    TFpcHttpMethod = class abstract (TInjectableObject, IHttpClientHeaders)
     protected
         fQueryStrBuilder : IQueryStrBuilder;
         fHttpClient : TFPHTTPClient;
 
+        (*!------------------------------------------------
+         * send HTTP request
+         *-----------------------------------------------
+         * @param url url to send request
+         * @param data data related to this request
+         * @return current instance
+        *-----------------------------------------------*)
+        function send(
+            const url : string;
+            const data : ISerializeable = nil
+        ) : IResponseStream;
+
+        (*!------------------------------------------------
+         * send actual HTTP request
+         *-----------------------------------------------
+         * @param url url to send request
+         * @param stream response stream
+        *-----------------------------------------------*)
+        procedure sendRequest(const url : string; const stream : TStream); virtual; abstract;
     public
 
         (*!------------------------------------------------
@@ -72,6 +92,7 @@ implementation
 
 uses
 
+    ResponseStreamImpl,
     EHttpClientErrorImpl;
 
     (*!------------------------------------------------
@@ -123,4 +144,30 @@ uses
         result := self;
     end;
 
+    (*!------------------------------------------------
+     * send HTTP request
+     *-----------------------------------------------
+     * @param url url to send request
+     * @param data data related to this request
+     * @return current instance
+     *-----------------------------------------------*)
+    function TFpcHttpMethod.send(
+        const url : string;
+        const data : ISerializeable = nil
+    ) : IResponseStream;
+    var stream : TStream;
+        fullUrl : string;
+    begin
+        fullUrl := fQueryStrBuilder.buildUrlWithQueryParams(url, data);
+        try
+            stream := TMemoryStream.create();
+            sendRequest(url, stream);
+            //wrap as IResponseStream and delete stream when goes out of scope
+            result := TResponseStream.create(stream);
+        except
+            //something is wrong
+            stream.free();
+            result := nil;
+        end;
+    end;
 end.
