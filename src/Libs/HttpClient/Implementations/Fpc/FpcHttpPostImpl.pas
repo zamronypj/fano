@@ -63,6 +63,7 @@ uses
         const data : ISerializeable = nil
     ) : IResponseStream;
     var stream : TStream;
+        fullUrl : string;
     begin
         fullUrl := fQueryStrBuilder.buildUrlWithQueryParams(url, data);
         try

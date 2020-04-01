@@ -28,7 +28,6 @@ type
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
     TFpcHttpGet = class(TFpcHttpMethod, IHttpGetClient)
-    private
     public
 
         (*!------------------------------------------------
@@ -64,6 +63,7 @@ uses
         const data : ISerializeable = nil
     ) : IResponseStream;
     var stream : TStream;
+        fullUrl : string;
     begin
         fullUrl := fQueryStrBuilder.buildUrlWithQueryParams(url, data);
         try
