@@ -162,7 +162,7 @@ uses
         fullUrl := fQueryStrBuilder.buildUrlWithQueryParams(url, data);
         try
             stream := TMemoryStream.create();
-            sendRequest(url, stream);
+            sendRequest(fullUrl, stream);
             //wrap as IResponseStream and delete stream when goes out of scope
             result := TResponseStream.create(stream);
         except
