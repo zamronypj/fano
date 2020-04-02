@@ -19,6 +19,7 @@ uses
     fphttpclient,
     InjectableObjectImpl,
     ResponseStreamIntf,
+    SerializeableIntf,
     HttpClientHeadersIntf,
     HttpClientHandleAwareIntf,
     QueryStrBuilderIntf;
