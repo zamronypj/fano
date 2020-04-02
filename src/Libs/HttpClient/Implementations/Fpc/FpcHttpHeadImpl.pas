@@ -63,8 +63,15 @@ implementation
      * @param stream response stream
      *-----------------------------------------------*)
     procedure TFpcHttpHead.sendRequest(const url : string; const stream : TStream);
+    var s : TStrings;
     begin
-        fHttpClient.head(url, stream);
+        s := TStringList.create();
+        try
+            fHttpClient.head(url, s);
+            s.saveToStream(stream);
+        finally
+            s.free();
+        end;
     end;
 
     (*!------------------------------------------------
