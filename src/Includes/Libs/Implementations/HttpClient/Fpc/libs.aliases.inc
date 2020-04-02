@@ -8,7 +8,7 @@
 
 {------------ Begin TFpHttpClient-related------------------}
 
-TFpcHttpGet = HttpFpcGetImpl.TFpcHttpGet;
+TFpcHttpGet = FpcHttpGetImpl.TFpcHttpGet;
 TFpcHttpGetFactory = FpcHttpGetFactoryImpl.TFpcHttpGetFactory;
 
 TFpcHttpFpcPost = FpcHttpPostImpl.TFpcHttpPost;
