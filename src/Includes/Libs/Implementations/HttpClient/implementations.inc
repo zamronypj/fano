@@ -6,6 +6,6 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-{$INCLUDE curl.implementations.inc}
-{$INCLUDE fpc.implementations.inc}
-{$INCLUDE null.implementations.inc}
+{$INCLUDE Curl/implementations.inc}
+{$INCLUDE Fpc/implementations.inc}
+{$INCLUDE Null/implementations.inc}

@@ -6,6 +6,6 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-{$INCLUDE curl.aliases.inc}
-{$INCLUDE fpc.aliases.inc}
-{$INCLUDE null.aliases.inc}
+{$INCLUDE Curl/libs.aliases.inc}
+{$INCLUDE Fpc/libs.aliases.inc}
+{$INCLUDE Null/libs.aliases.inc}

@@ -20,6 +20,12 @@ TFpcHttpPutFactory = FpcHttpPutFactoryImpl.TFpcHttpPutFactory;
 TFpcHttpDelete = FpcHttpDeleteImpl.TFpcHttpDelete;
 TFpcHttpDeleteFactory = FpcHttpDeleteFactoryImpl.TFpcHttpDeleteFactory;
 
+TFpcHttpOptions = FpcHttpOptionsImpl.TFpcHttpOptions;
+TFpcHttpOptionsFactory = FpcHttpOptionsFactoryImpl.TFpcHttpOptionsFactory;
+
+TFpcHttpPatch = FpcHttpPatchImpl.TFpcHttpPatch;
+TFpcHttpPatchFactory = FpcHttpPatchFactoryImpl.TFpcHttpPatchFactory;
+
 TFpcHttpHead = FpcHttpHeadImpl.TFpcHttpHead;
 TFpcHttpHeadFactory = FpcHttpHeadFactoryImpl.TFpcHttpHeadFactory;
 {------------ End TFPHttpClient-related------------------}

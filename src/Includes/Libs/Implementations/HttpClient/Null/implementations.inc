@@ -6,6 +6,8 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-{------------ Begin Null http client related------------------}
-TNullHttpClient = NullHttpClient.TNullHttpClient;
-{------------ End Null http client related------------------}
+{------------ Begin Null Http Client-related------------------}
+NullHttpClientImpl,
+NullHttpClientFactoryImpl,
+
+{------------ End Null Http Client-related------------------}

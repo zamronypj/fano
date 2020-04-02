@@ -19,6 +19,12 @@ FpcHttpPutFactoryImpl,
 FpcHttpDeleteImpl,
 FpcHttpDeleteFactoryImpl,
 
+FpcHttpOptionsImpl,
+FpcHttpOptionsFactoryImpl,
+
+FpcHttpPatchImpl,
+FpcHttpPatchFactoryImpl,
+
 FpcHttpHeadImpl,
 FpcHttpHeadFactoryImpl,
 
