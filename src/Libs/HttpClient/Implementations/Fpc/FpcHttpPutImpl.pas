@@ -61,7 +61,7 @@ implementation
      * @param url url to send request
      * @param stream response stream
      *-----------------------------------------------*)
-    procedure TFpcHttpPost.sendRequest(const url : string; const stream : TStream);
+    procedure TFpcHttpPut.sendRequest(const url : string; const stream : TStream);
     begin
         fHttpClient.put(url, stream);
     end;
