@@ -17,6 +17,7 @@ uses
 
     InjectableObjectImpl,
     ResponseStreamIntf,
+    SerializeableIntf,
     HttpClientHeadersIntf,
     HttpGetClientIntf,
     HttpPostClientIntf,
