@@ -15,6 +15,7 @@ interface
 
 uses
 
+    Classes,
     HttpHeadClientIntf,
     ResponseStreamIntf,
     SerializeableIntf,
