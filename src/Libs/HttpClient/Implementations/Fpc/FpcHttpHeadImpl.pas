@@ -67,7 +67,7 @@ implementation
     begin
         s := TStringList.create();
         try
-            //TFPHTTPClient head() somehow only accept TStrings
+            //FPC 3.0.4, TFPHTTPClient head() only accept TStrings
             //so we need to manually save to stream.
             fHttpClient.head(url, s);
             s.saveToStream(stream);
