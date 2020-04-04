@@ -70,12 +70,12 @@ implementation
 
     function TModelParam.readString(const key : shortstring) : string; overload;
     begin
-        result := fKeyValue.find(key);
+        result := fKeyValue[key];
     end;
 
     function TModelParam.readInteger(const key : shortstring) : integer; overload;
     begin
-        result := fKeyIntValue.find(key);
+        result := fKeyIntValue[key];
     end;
 
 end.
