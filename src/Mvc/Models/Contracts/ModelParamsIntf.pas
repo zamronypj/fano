@@ -13,6 +13,10 @@ interface
 {$MODE OBJFPC}
 {$H+}
 
+uses
+
+    SerializeableIntf;
+
 type
 
     (*!------------------------------------------------
@@ -20,7 +24,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    IModelParams = interface
+    IModelParams = interface(ISerializeable)
         ['{6CB5843D-56E3-4012-AB5B-7A354A0EE5D3}']
 
         function writeString(const key : shortstring; const value : string) : IModelParams; overload;
