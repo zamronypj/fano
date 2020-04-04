@@ -13,3 +13,5 @@ TNullModelReaderFactory = NullModelReaderFactoryImpl.TNullModelReaderFactory;
 
 TModelParams = ModelParamsImpl.TModelParams;
 TModelParamsFactory = ModelParamsFactoryImpl.TModelParamsFactory;
+
+TDecoratorModelParams = DecoratorModelParamsImpl.TDecoratorModelParams;

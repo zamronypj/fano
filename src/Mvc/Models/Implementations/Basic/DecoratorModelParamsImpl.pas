@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit ModelParamsImpl;
+unit DecoratorModelParamsImpl;
 
 interface
 
@@ -16,23 +16,20 @@ interface
 uses
 
     ModelParamsIntf,
-    InjectableObjectImpl,
-    KeyValueMapImpl,
-    KeyIntValueMapImpl;
+    InjectableObjectImpl;
 
 type
 
     (*!------------------------------------------------
-     * store model parameter data
+     * decorator model parameter data
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TModelParams = class (TInjectableObject, IModelParams)
-    private
-        fKeyValue : TKeyValueMap;
-        fKeyIntValue : TKeyIntValueMap;
+    TDecoratorModelParams = class (TInjectableObject, IModelParams)
+    protected
+        fActualParams : IModelParams;
     public
-        constructor create();
+        constructor create(const actualParam : IModelParams);
         destructor destroy(); override;
 
         function writeString(const key : shortstring; const value : string) : IModelParams; overload;
@@ -44,39 +41,37 @@ type
 
 implementation
 
-    constructor TModelParams.create();
+    constructor TDecoratorModelParams.create(const actualParam : IModelParams);
     begin
-        fKeyValue := TKeyValueMap.create();
-        fKeyIntValue := TKeyIntValueMap.create();
+        fActualParams := actualParam;
     end;
 
-    destructor TModelParams.destroy();
+    destructor TDecoratorModelParams.destroy();
     begin
-        fKeyValue.free();
-        fKeyIntValue.free();
+        fActualParams := nil;
         inherited destroy();
     end;
 
-    function TModelParams.writeString(const key : shortstring; const value : string) : IModelParams; overload;
+    function TDecoratorModelParams.writeString(const key : shortstring; const value : string) : IModelParams; overload;
     begin
-        fKeyValue[key] := value;
+        fActualParams.writeString(key, value);
         result := self;
     end;
 
-    function TModelParams.writeInteger(const key : shortstring; const value : integer) : IModelParams; overload;
+    function TDecoratorModelParams.writeInteger(const key : shortstring; const value : integer) : IModelParams; overload;
     begin
-        fKeyIntValue[key] := value;
+        fActualParams.writeInteger(key, value);
         result := self;
     end;
 
-    function TModelParams.readString(const key : shortstring) : string; overload;
+    function TDecoratorModelParams.readString(const key : shortstring) : string; overload;
     begin
-        result := fKeyValue[key];
+        result := fActualParams.readString(key);
     end;
 
-    function TModelParams.readInteger(const key : shortstring) : integer; overload;
+    function TDecoratorModelParams.readInteger(const key : shortstring) : integer; overload;
     begin
-        result := fKeyIntValue[key];
+        result := fActualParams.readInteger(key);
     end;
 
 end.

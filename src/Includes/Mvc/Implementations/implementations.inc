@@ -48,3 +48,5 @@ NullModelReaderFactoryImpl,
 
 ModelParamsImpl,
 ModelParamsFactoryImpl,
+
+DecoratorModelParamsImpl,
