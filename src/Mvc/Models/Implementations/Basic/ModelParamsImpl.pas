@@ -31,15 +31,19 @@ type
     private
         fKeyValue : TKeyValueMap;
         fKeyIntValue : TKeyIntValueMap;
+        function serializeKeyValue(const akeyValue : TKeyValueMap) : string;
+        function serializeKeyIntValue(const akeyValue : TKeyIntValueMap) : string;
     public
         constructor create();
         destructor destroy(); override;
 
-        function writeString(const key : shortstring; const value : string) : IModelParams; overload;
-        function writeInteger(const key : shortstring; const value : integer) : IModelParams; overload;
+        function writeString(const key : shortstring; const value : string) : IModelParams;
+        function writeInteger(const key : shortstring; const value : integer) : IModelParams;
 
-        function readString(const key : shortstring) : string; overload;
-        function readInteger(const key : shortstring) : integer; overload;
+        function readString(const key : shortstring) : string;
+        function readInteger(const key : shortstring) : integer;
+
+        function serialize() : string;
     end;
 
 implementation
@@ -57,26 +61,82 @@ implementation
         inherited destroy();
     end;
 
-    function TModelParams.writeString(const key : shortstring; const value : string) : IModelParams; overload;
+    function TModelParams.writeString(const key : shortstring; const value : string) : IModelParams;
     begin
         fKeyValue[key] := value;
         result := self;
     end;
 
-    function TModelParams.writeInteger(const key : shortstring; const value : integer) : IModelParams; overload;
+    function TModelParams.writeInteger(const key : shortstring; const value : integer) : IModelParams;
     begin
         fKeyIntValue[key] := value;
         result := self;
     end;
 
-    function TModelParams.readString(const key : shortstring) : string; overload;
+    function TModelParams.readString(const key : shortstring) : string;
     begin
         result := fKeyValue[key];
     end;
 
-    function TModelParams.readInteger(const key : shortstring) : integer; overload;
+    function TModelParams.readInteger(const key : shortstring) : integer;
     begin
         result := fKeyIntValue[key];
     end;
 
+    function TModelParams.serializeKeyValue(const akeyValue : TKeyValueMap) : string;
+    var i, totKeyVal : integer;
+    begin
+        result := '';
+        totKeyVal := aKeyValue.count;
+        if (totKeyVal = 0) then
+        begin
+            exit();
+        end;
+
+        for i := 0 to totKeyVal - 2 do
+        begin
+            result := result +
+                '"' + aKeyValue.keys[i] + '" : "' +
+                aKeyValue.data[i] + '",';
+        end;
+        result := result +
+            '"' + aKeyValue.keys[totKeyVal - 1] + '" : "' +
+            aKeyValue.data[totKeyVal - 1] + '"';
+    end;
+
+    function TModelParams.serializeKeyIntValue(const akeyValue : TKeyIntValueMap) : string;
+    var i, totKeyVal : integer;
+    begin
+        result := '';
+        totKeyVal := aKeyValue.count;
+        if (totKeyVal = 0) then
+        begin
+            exit();
+        end;
+
+        for i := 0 to totKeyVal - 2 do
+        begin
+            result := result +
+                '"' + aKeyValue.keys[i] + '" : "' +
+                inttoStr(aKeyValue.data[i]) + '",';
+        end;
+        result := result +
+            '"' + aKeyValue.keys[totKeyVal - 1] + '" : "' +
+            intToStr(aKeyValue.data[totKeyVal - 1]) + '"';
+    end;
+
+    function TModelParams.serialize() : string;
+    begin
+        if (fKeyValue.count > 0) or (fKeyIntValue.count > 0) then
+        begin
+            //serialize as JSON string
+            result := '{' +
+                serializeKeyValue(fKeyValue) +
+                serializeKeyIntValue(fKeyIntValue) +
+            '}';
+        end else
+        begin
+            result := '';
+        end;;
+    end;
 end.

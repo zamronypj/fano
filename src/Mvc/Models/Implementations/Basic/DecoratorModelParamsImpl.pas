@@ -32,11 +32,13 @@ type
         constructor create(const actualParam : IModelParams);
         destructor destroy(); override;
 
-        function writeString(const key : shortstring; const value : string) : IModelParams; overload;
-        function writeInteger(const key : shortstring; const value : integer) : IModelParams; overload;
+        function writeString(const key : shortstring; const value : string) : IModelParams; virtual;
+        function writeInteger(const key : shortstring; const value : integer) : IModelParams; virtual;
 
-        function readString(const key : shortstring) : string; overload;
-        function readInteger(const key : shortstring) : integer; overload;
+        function readString(const key : shortstring) : string; virtual;
+        function readInteger(const key : shortstring) : integer; virtual;
+
+        function serialize() : string; virtual;
     end;
 
 implementation
@@ -52,26 +54,31 @@ implementation
         inherited destroy();
     end;
 
-    function TDecoratorModelParams.writeString(const key : shortstring; const value : string) : IModelParams; overload;
+    function TDecoratorModelParams.writeString(const key : shortstring; const value : string) : IModelParams;
     begin
         fActualParams.writeString(key, value);
         result := self;
     end;
 
-    function TDecoratorModelParams.writeInteger(const key : shortstring; const value : integer) : IModelParams; overload;
+    function TDecoratorModelParams.writeInteger(const key : shortstring; const value : integer) : IModelParams;
     begin
         fActualParams.writeInteger(key, value);
         result := self;
     end;
 
-    function TDecoratorModelParams.readString(const key : shortstring) : string; overload;
+    function TDecoratorModelParams.readString(const key : shortstring) : string;
     begin
         result := fActualParams.readString(key);
     end;
 
-    function TDecoratorModelParams.readInteger(const key : shortstring) : integer; overload;
+    function TDecoratorModelParams.readInteger(const key : shortstring) : integer;
     begin
         result := fActualParams.readInteger(key);
+    end;
+
+    function TDecoratorModelParams.serialize() : string;
+    begin
+        result := fActualParams.serialize();
     end;
 
 end.
