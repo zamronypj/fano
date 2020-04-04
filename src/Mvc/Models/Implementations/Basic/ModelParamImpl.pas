@@ -58,13 +58,13 @@ implementation
 
     function TModelParam.writeString(const key : shortstring; const value : string) : IModelParams; overload;
     begin
-        fKeyValue.AddOrSetData(key, value);
+        fKeyValue[key] := value;
         result := self;
     end;
 
     function TModelParam.writeInteger(const key : shortstring; const value : integer) : IModelParams; overload;
     begin
-        fKeyIntValue.AddOrSetData(key, value);
+        fKeyIntValue[key] := value;
         result := self;
     end;
 
