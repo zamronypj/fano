@@ -78,7 +78,7 @@ implementation
         const data : ISerializeable = nil
     ) : IResponseStream;
     begin
-        result := send(url, data);
+        result := send(url, nil, data);
     end;
 
 end.
