@@ -40,12 +40,14 @@ type
          * send HTTP request
          *-----------------------------------------------
          * @param url url to send request
-         * @param data data related to this request
+         * @param query data that is passed as query string
+         * @param body data is passed as request body
          * @return current instance
         *-----------------------------------------------*)
         function send(
             const url : string;
-            const data : ISerializeable = nil
+            const query : ISerializeable = nil;
+            const body : ISerializeable = nil
         ) : IResponseStream;
 
         (*!------------------------------------------------
@@ -154,14 +156,19 @@ uses
      *-----------------------------------------------*)
     function TFpcHttpMethod.send(
         const url : string;
-        const data : ISerializeable = nil
+        const query : ISerializeable = nil;
+        const body : ISerializeable = nil
     ) : IResponseStream;
     var stream : TStream;
         fullUrl : string;
     begin
-        fullUrl := fQueryStrBuilder.buildUrlWithQueryParams(url, data);
+        fullUrl := fQueryStrBuilder.buildUrlWithQueryParams(url, query);
         try
             stream := TMemoryStream.create();
+            if (assigned(body)) then
+            begin
+                fHttpClient.RequestBody.WriteAnsiString(body.serialize());
+            end;
             sendRequest(fullUrl, stream);
             //wrap as IResponseStream and delete stream when goes out of scope
             result := TResponseStream.create(stream);
