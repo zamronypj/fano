@@ -48,6 +48,10 @@ type
 
 implementation
 
+uses
+
+    SysUtils;
+
     constructor TModelParams.create();
     begin
         fKeyValue := TKeyValueMap.create();
