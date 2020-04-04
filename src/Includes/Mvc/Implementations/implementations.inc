@@ -45,3 +45,6 @@ ControllerImpl,
 NullModelReaderImpl,
 NullModelResultSetImpl,
 NullModelReaderFactoryImpl,
+
+ModelParamImpl,
+ModelParamFactoryImpl,

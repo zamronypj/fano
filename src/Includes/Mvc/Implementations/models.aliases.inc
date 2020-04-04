@@ -10,3 +10,6 @@ TNullModelReader = NullModelReaderImpl.TNullModelReader;
 TNullModelResultSet = NullModelResultSetImpl.TNullModelResultSet;
 
 TNullModelReaderFactory = NullModelReaderFactoryImpl.TNullModelReaderFactory;
+
+TModelParam = ModelParamImpl.TModelParam;
+TModelParamFactory = ModelParamFactoryImpl.TModelParamFactory;
