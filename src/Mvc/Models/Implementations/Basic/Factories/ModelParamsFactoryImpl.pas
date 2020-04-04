@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit ModelParamFactoryImpl;
+unit ModelParamsFactoryImpl;
 
 interface
 
@@ -20,11 +20,11 @@ uses
 
 type
     (*!------------------------------------------------
-     * TModelParam factory class
+     * TModelParams factory class
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TModelParamFactory = class(TFactory)
+    TModelParamsFactory = class(TFactory)
     public
         (*!---------------------------------------------------
          * build class instance
@@ -40,15 +40,15 @@ implementation
 
 uses
 
-    ModelParamImpl;
+    ModelParamsImpl;
 
     (*!---------------------------------------------------
      * build class instance
      *----------------------------------------------------
      * @param container dependency container instance
      *---------------------------------------------------*)
-    function TModelParamFactory.build(const container : IDependencyContainer) : IDependency;
+    function TModelParamsFactory.build(const container : IDependencyContainer) : IDependency;
     begin
-        result := TModelParam.create();
+        result := TModelParams.create();
     end;
 end.

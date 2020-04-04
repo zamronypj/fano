@@ -11,5 +11,5 @@ TNullModelResultSet = NullModelResultSetImpl.TNullModelResultSet;
 
 TNullModelReaderFactory = NullModelReaderFactoryImpl.TNullModelReaderFactory;
 
-TModelParam = ModelParamImpl.TModelParam;
-TModelParamFactory = ModelParamFactoryImpl.TModelParamFactory;
+TModelParams = ModelParamsImpl.TModelParams;
+TModelParamsFactory = ModelParamsFactoryImpl.TModelParamsFactory;

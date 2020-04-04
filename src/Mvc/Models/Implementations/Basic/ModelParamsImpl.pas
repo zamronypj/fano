@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit ModelParamImpl;
+unit ModelParamsImpl;
 
 interface
 
@@ -26,7 +26,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TModelParam = class (TInterfacedObject, IModelParams)
+    TModelParams = class (TInterfacedObject, IModelParams)
     private
         fKeyValue : TKeyValueMap;
         fKeyIntValue : TKeyIntValueMap;
@@ -43,37 +43,37 @@ type
 
 implementation
 
-    constructor TModelParam.create();
+    constructor TModelParams.create();
     begin
         fKeyValue := TKeyValueMap.create();
         fKeyIntValue := TKeyIntValueMap.create();
     end;
 
-    destructor TModelParam.destroy();
+    destructor TModelParams.destroy();
     begin
         fKeyValue.free();
         fKeyIntValue.free();
         inherited destroy();
     end;
 
-    function TModelParam.writeString(const key : shortstring; const value : string) : IModelParams; overload;
+    function TModelParams.writeString(const key : shortstring; const value : string) : IModelParams; overload;
     begin
         fKeyValue[key] := value;
         result := self;
     end;
 
-    function TModelParam.writeInteger(const key : shortstring; const value : integer) : IModelParams; overload;
+    function TModelParams.writeInteger(const key : shortstring; const value : integer) : IModelParams; overload;
     begin
         fKeyIntValue[key] := value;
         result := self;
     end;
 
-    function TModelParam.readString(const key : shortstring) : string; overload;
+    function TModelParams.readString(const key : shortstring) : string; overload;
     begin
         result := fKeyValue[key];
     end;
 
-    function TModelParam.readInteger(const key : shortstring) : integer; overload;
+    function TModelParams.readInteger(const key : shortstring) : integer; overload;
     begin
         result := fKeyIntValue[key];
     end;
