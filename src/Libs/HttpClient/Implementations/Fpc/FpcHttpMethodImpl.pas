@@ -159,7 +159,7 @@ uses
         const query : ISerializeable = nil;
         const body : ISerializeable = nil
     ) : IResponseStream;
-    var stream : TStream;
+    var stream, body : TStream;
         fullUrl : string;
     begin
         fullUrl := fQueryStrBuilder.buildUrlWithQueryParams(url, query);
@@ -167,9 +167,17 @@ uses
             stream := TMemoryStream.create();
             if (assigned(body)) then
             begin
-                fHttpClient.RequestBody := TStringStream.create(body.serialize());
+                body := TStringStream.create(body.serialize());
+                try
+                    fHttpClient.RequestBody := TStringStream.create(body.serialize());
+                    sendRequest(fullUrl, stream);
+                finally
+                    body.free();
+                end;
+            end else
+            begin
+                sendRequest(fullUrl, stream);
             end;
-            sendRequest(fullUrl, stream);
             //wrap as IResponseStream and delete stream when goes out of scope
             result := TResponseStream.create(stream);
         except
