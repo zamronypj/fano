@@ -167,7 +167,7 @@ uses
             stream := TMemoryStream.create();
             if (assigned(body)) then
             begin
-                fHttpClient.RequestBody.WriteAnsiString(body.serialize());
+                fHttpClient.RequestBody := TStringStream.create(body.serialize());
             end;
             sendRequest(fullUrl, stream);
             //wrap as IResponseStream and delete stream when goes out of scope
