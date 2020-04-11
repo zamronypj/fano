@@ -41,10 +41,10 @@ type
         procedure raiseExceptionIfError(const errCode : CurlCode);
 
         (*!------------------------------------------------
-        * initialize callback
-        *-----------------------------------------------
-        * @return curl handle
-        *-----------------------------------------------*)
+         * initialize callback
+         *-----------------------------------------------
+         * @return curl handle
+         *-----------------------------------------------*)
         procedure initCallback(const hndCurl : pCurl);
     protected
         fQueryStrBuilder : IQueryStrBuilder;
@@ -192,7 +192,6 @@ resourcestring
         streamInst := fStream;
 
         hCurl := curlHandle.handle();
-        initCallback(hCurl);
         fHttpHeader := headersInst;
         fQueryStrBuilder := queryStrBuilder;
     end;
@@ -276,6 +275,7 @@ resourcestring
      *---------------------------------------------------*)
     function THttpMethod.executeCurl(const hndCurl : pCurl) : CurlCode;
     begin
+        initCallback(hndCurl);
         result := curl_easy_perform(hndCurl);
         raiseExceptionIfError(result);
     end;
