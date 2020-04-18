@@ -110,6 +110,7 @@ uses
     EMethodNotAllowedImpl,
     EInvalidMethodImpl,
     EInvalidRequestImpl,
+    ENotFoundImpl,
     ESockBindImpl,
     ESockCreateImpl,
     ESockListenImpl;
@@ -217,6 +218,11 @@ uses
             end;
 
             on e : ERouteHandlerNotFound do
+            begin
+                fDaemonAppSvc.errorHandler.handleError(env.enumerator, e, 404, sHttp404Message);
+            end;
+
+            on e : ENotFound do
             begin
                 fDaemonAppSvc.errorHandler.handleError(env.enumerator, e, 404, sHttp404Message);
             end;

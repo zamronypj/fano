@@ -40,6 +40,7 @@ uses
     EMethodNotAllowedImpl,
     EInvalidMethodImpl,
     EInvalidRequestImpl,
+    ENotFoundImpl,
     EDependencyNotFoundImpl,
     EInvalidDispatcherImpl,
     EInvalidFactoryImpl;
@@ -67,6 +68,12 @@ uses
             end;
 
             on e : ERouteHandlerNotFound do
+            begin
+                fAppSvc.errorHandler.handleError(fAppSvc.env.enumerator, e, 404, sHttp404Message);
+                reset();
+            end;
+
+            on e : ENotFound do
             begin
                 fAppSvc.errorHandler.handleError(fAppSvc.env.enumerator, e, 404, sHttp404Message);
                 reset();
