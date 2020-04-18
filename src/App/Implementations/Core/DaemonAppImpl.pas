@@ -213,7 +213,7 @@ uses
         except
             on e : EInvalidRequest do
             begin
-                fDaemonAppSvc.errorHandler.handleError(env.enumerator, e, 400 sHttp400Message);
+                fDaemonAppSvc.errorHandler.handleError(env.enumerator, e, 400, sHttp400Message);
             end;
 
             on e : ERouteHandlerNotFound do
