@@ -30,7 +30,7 @@ TKeyValuePairFactory = KeyValuePairFactoryImpl.TKeyValuePairFactory;
 {$INCLUDE Socket2/libs.aliases.inc}
 {$INCLUDE Logger/libs.aliases.inc}
 {$INCLUDE Regex/libs.aliases.inc}
-{$INCLUDE LibCurl/libs.aliases.inc}
+{$INCLUDE HttpClient/libs.aliases.inc}
 {$INCLUDE Protocol/libs.aliases.inc}
 {$INCLUDE Random/libs.aliases.inc}
 {$INCLUDE Cli/libs.aliases.inc}

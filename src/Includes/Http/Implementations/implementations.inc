@@ -27,6 +27,7 @@ UploadedFileCollectionImpl,
 EInvalidRequestImpl,
 EInvalidUploadedFileImpl,
 EInvalidMethodImpl,
+ENotFoundImpl,
 
 CookieImpl,
 CookieFactoryImpl,

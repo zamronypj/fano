@@ -65,11 +65,11 @@ uses
     begin
         raiseExceptionIfCurlNotInitialized();
         streamInst.reset();
-        curl_easy_setopt(hCurl, CURLOPT_URL, [ PChar(url) ]);
+        curl_easy_setopt(hCurl, CURLOPT_URL, [ pchar(url) ]);
         if (data <> nil) then
         begin
             params := data.serialize();
-            curl_easy_setopt(hCurl, CURLOPT_POSTFIELDS, [ PChar(params) ]);
+            curl_easy_setopt(hCurl, CURLOPT_POSTFIELDS, [ pchar(params) ]);
         end;
         executeCurl(hCurl);
         result := streamInst;

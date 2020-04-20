@@ -10,3 +10,8 @@ TNullModelReader = NullModelReaderImpl.TNullModelReader;
 TNullModelResultSet = NullModelResultSetImpl.TNullModelResultSet;
 
 TNullModelReaderFactory = NullModelReaderFactoryImpl.TNullModelReaderFactory;
+
+TModelParams = ModelParamsImpl.TModelParams;
+TModelParamsFactory = ModelParamsFactoryImpl.TModelParamsFactory;
+
+TDecoratorModelParams = DecoratorModelParamsImpl.TDecoratorModelParams;
