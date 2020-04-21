@@ -120,11 +120,6 @@ uses
      * @param container dependency container
      * @return true if application dependency succesfully
      * constructed
-     *-----------------------------------------------
-     * TODO: need to think about how to initialize when
-     * application is run as daemon. Current implementation
-     * is we put this in run() method which maybe not right
-     * place.
      *-----------------------------------------------*)
     function TCoreWebApplication.initialize(const container : IDependencyContainer) : boolean;
     begin
@@ -136,6 +131,8 @@ uses
             on e : Exception do
             begin
                 result := false;
+                //TODO : improve exception handling
+                writeln('Fail to initialize application.');
                 writeln('Exception: ', e.ClassName);
                 writeln('Message: ', e.Message);
             end;
