@@ -128,9 +128,18 @@ uses
      *-----------------------------------------------*)
     function TCoreWebApplication.initialize(const container : IDependencyContainer) : boolean;
     begin
-        fAppSvc.register(container);
-        fRouteBuilder.buildRoutes(container, fAppSvc.router);
-        result := true;
+        try
+            fAppSvc.register(container);
+            fRouteBuilder.buildRoutes(container, fAppSvc.router);
+            result := true;
+        except
+            on e : Exception do
+            begin
+                result := false;
+                writeln('Exception: ', e.ClassName, );
+                writeln('Message: ', e.Message);
+            end;
+        end;
     end;
 
     (*!-----------------------------------------------
