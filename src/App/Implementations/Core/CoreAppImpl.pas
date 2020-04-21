@@ -136,7 +136,7 @@ uses
             on e : Exception do
             begin
                 result := false;
-                writeln('Exception: ', e.ClassName, );
+                writeln('Exception: ', e.ClassName);
                 writeln('Message: ', e.Message);
             end;
         end;
