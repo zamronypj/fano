@@ -323,8 +323,7 @@ uses
         var origFds : TFDSet;
         var terminated : boolean
     );
-    var ch : char;
-        fds : longint;
+    var fds : longint;
     begin
         for fds := 0 to maxHandle do
         begin
