@@ -295,7 +295,7 @@ uses
 
             if (clientSocket < 0) then
             begin
-                raiseExceptionIfAny();
+                handleAcceptError();
             end else
             begin
                 fSockOpts.makeNonBlocking(clientSocket);
@@ -334,7 +334,7 @@ uses
                 begin
                     //we get termination signal, just read until no more
                     //bytes and quit
-                    fpRead(pipeIn, @ch, 1);
+                    readPipe(pipeIn);
                     terminated := true;
                     break;
                 end else
