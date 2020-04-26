@@ -68,10 +68,6 @@ type
             const stdin : IStdIn
         ) : IRunnable; override;
 
-        procedure executeRequest(
-            const env : ICGIEnvironment;
-            const stdin : IStdIn
-        );
     public
         (*!-----------------------------------------------
          * constructor
@@ -231,24 +227,6 @@ uses
     end;
 
     (*!-----------------------------------------------
-     * execute request
-     *------------------------------------------------
-     * @param env, CGI environment
-     *-----------------------------------------------*)
-    procedure TDaemonWebApplication.executeRequest(
-        const env : ICGIEnvironment;
-        const stdin : IStdIn
-    );
-    begin
-        execAndHandleExcept(
-            fDaemonAppSvc.container,
-            env,
-            stdin,
-            fDaemonAppSvc.errorHandler
-        );
-    end;
-
-    (*!-----------------------------------------------
      * called when socket contain data available to be
      * processed
      *------------------------------------------------
@@ -287,7 +265,12 @@ uses
         try
             //when we get here, CGI environment and any POST data are ready
             fDaemonAppSvc.stdIn.setStream(stdInStream);
-            executeRequest(env);
+            execAndHandleExcept(
+                fDaemonAppSvc.container,
+                env,
+                fDaemonAppSvc.stdIn,
+                fDaemonAppSvc.errorHandler
+            );
         finally
             fDaemonAppSvc.outputBuffer.endBuffering();
             //write response back to web server (i.e FastCGI client)

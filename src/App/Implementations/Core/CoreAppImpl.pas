@@ -71,7 +71,8 @@ type
          *-----------------------------------------------*)
         function doExecute(
             const container : IDependencyContainer;
-            const env : ICGIEnvironment
+            const env : ICGIEnvironment;
+            const stdin : IStdIn
         ) : IRunnable; virtual; abstract;
 
 
