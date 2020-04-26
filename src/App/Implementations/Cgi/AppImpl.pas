@@ -17,6 +17,7 @@ uses
     DependencyContainerIntf,
     EnvironmentIntf,
     StdInIntf,
+    DispatcherIntf,
     CoreAppConsts,
     CoreAppImpl;
 
@@ -39,7 +40,8 @@ type
         function doExecute(
             const container : IDependencyContainer;
             const env : ICGIEnvironment;
-            const stdin : IStdIn
+            const stdin : IStdIn;
+            const dispatcher : IDispatcher
         ) : IRunnable; override;
     public
         function run() : IRunnable; override;
@@ -61,7 +63,8 @@ uses
     function TCgiWebApplication.doExecute(
         const container : IDependencyContainer;
         const env : ICGIEnvironment;
-        const stdin : IStdIn
+        const stdin : IStdIn;
+        const dispatcher : IDispatcher
     ) : IRunnable;
     begin
         if (initialize(container)) then
