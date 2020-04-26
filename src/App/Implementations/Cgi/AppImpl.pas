@@ -69,7 +69,7 @@ uses
     begin
         if (initialize(container)) then
         begin
-            execute(env, stdin);
+            execute(env, stdin, dispatcher);
         end;
         result := self;
     end;
