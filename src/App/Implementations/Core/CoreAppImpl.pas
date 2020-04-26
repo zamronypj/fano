@@ -42,11 +42,11 @@ type
          * execute application and write response
          *------------------------------------------------
          * @return current application instance
-         *-----------------------------------------------
-         * TODO: need to think about how to execute when
-         * application is run as daemon.
          *-----------------------------------------------*)
-        function execute(const env : ICGIEnvironment) : IRunnable;
+        function execute(
+            const env : ICGIEnvironment;
+            const stdin : IStdIn
+        ) : IRunnable;
 
         (*!-----------------------------------------------
          * execute application and handle exception
