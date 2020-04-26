@@ -232,6 +232,7 @@ type
             const env : ICGIEnvironment
         ) : IRunnable; virtual; abstract;
 
+
         procedure reset();
 
         (*!-----------------------------------------------
