@@ -64,10 +64,14 @@ type
          *-----------------------------------------------*)
         function doExecute(
             const container : IDependencyContainer;
-            const env : ICGIEnvironment
+            const env : ICGIEnvironment;
+            const stdin : IStdIn
         ) : IRunnable; override;
 
-        procedure executeRequest(const env : ICGIEnvironment);
+        procedure executeRequest(
+            const env : ICGIEnvironment;
+            const stdin : IStdIn
+        );
     public
         (*!-----------------------------------------------
          * constructor
@@ -218,10 +222,11 @@ uses
      *-----------------------------------------------*)
     function TDaemonWebApplication.doExecute(
         const container : IDependencyContainer;
-        const env : ICGIEnvironment
+        const env : ICGIEnvironment;
+        const stdin : IStdIn
     ) : IRunnable;
     begin
-        execute(env);
+        execute(env, stdin);
         result := self;
     end;
 
@@ -230,9 +235,17 @@ uses
      *------------------------------------------------
      * @param env, CGI environment
      *-----------------------------------------------*)
-    procedure TDaemonWebApplication.executeRequest(const env : ICGIEnvironment);
+    procedure TDaemonWebApplication.executeRequest(
+        const env : ICGIEnvironment;
+        const stdin : IStdIn
+    );
     begin
-        execAndHandleExcept(fDaemonAppSvc.container, env, fDaemonAppSvc.errorHandler);
+        execAndHandleExcept(
+            fDaemonAppSvc.container,
+            env,
+            stdin,
+            fDaemonAppSvc.errorHandler
+        );
     end;
 
     (*!-----------------------------------------------

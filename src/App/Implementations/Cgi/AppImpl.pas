@@ -16,6 +16,7 @@ uses
     RunnableIntf,
     DependencyContainerIntf,
     EnvironmentIntf,
+    StdInIntf,
     CoreAppConsts,
     CoreAppImpl;
 
@@ -37,7 +38,8 @@ type
          *-----------------------------------------------*)
         function doExecute(
             const container : IDependencyContainer;
-            const env : ICGIEnvironment
+            const env : ICGIEnvironment;
+            const stdin : IStdIn
         ) : IRunnable; override;
     public
         function run() : IRunnable; override;
@@ -58,12 +60,13 @@ uses
      *-----------------------------------------------*)
     function TCgiWebApplication.doExecute(
         const container : IDependencyContainer;
-        const env : ICGIEnvironment
+        const env : ICGIEnvironment;
+        const stdin : IStdIn
     ) : IRunnable;
     begin
         if (initialize(container)) then
         begin
-            execute(env);
+            execute(env, stdin);
         end;
         result := self;
     end;
@@ -72,12 +75,14 @@ uses
      * execute application and handle exception
      *------------------------------------------------
      * @return current application instance
-     *-----------------------------------------------
-     * TODO: need to think about how to execute when
-     * application is run as daemon.
      *-----------------------------------------------*)
     function TCgiWebApplication.run() : IRunnable;
     begin
-        result := execAndHandleExcept(fAppSvc.container, fAppSvc.env, fAppSvc.errorHandler);
+        result := execAndHandleExcept(
+            fAppSvc.container,
+            fAppSvc.env,
+            fAppSvc.stdIn,
+            fAppSvc.errorHandler
+        );
     end;
 end.

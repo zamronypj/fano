@@ -58,6 +58,7 @@ type
         function execAndHandleExcept(
             const container : IDependencyContainer;
             const env : ICGIEnvironment;
+            const stdin : IStdIn;
             const errorHandler : IErrorHandler
         ) : IRunnable;
 
@@ -180,10 +181,13 @@ uses
      *------------------------------------------------
      * @return current application instance
      *-----------------------------------------------*)
-    function TCoreWebApplication.execute(const env : ICGIEnvironment) : IRunnable;
+    function TCoreWebApplication.execute(
+        const env : ICGIEnvironment;
+        const stdin : IStdIn
+    ) : IRunnable;
     var response : IResponse;
     begin
-        response := fAppSvc.dispatcher.dispatchRequest(env, fAppSvc.stdIn);
+        response := fAppSvc.dispatcher.dispatchRequest(env, stdIn);
         try
             response.write();
             result := self;
@@ -200,11 +204,12 @@ uses
     function TCoreWebApplication.execAndHandleExcept(
         const container : IDependencyContainer;
         const env : ICGIEnvironment;
+        const stdin : IStdIn;
         const errorHandler : IErrorHandler
     ) : IRunnable;
     begin
         try
-            result := doExecute(container, env);
+            result := doExecute(container, env, stdin);
         except
             on e : EInvalidRequest do
             begin
