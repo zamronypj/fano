@@ -23,7 +23,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    EUnauthorizedImpl = class(Exception);
+    EUnauthorized = class(Exception);
 
 implementation
 

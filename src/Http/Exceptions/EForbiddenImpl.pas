@@ -23,7 +23,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    EForbiddenImpl = class(Exception);
+    EForbidden = class(Exception);
 
 implementation
 
