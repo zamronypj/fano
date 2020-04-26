@@ -41,6 +41,9 @@ type
         (*!-----------------------------------------------
          * execute application and write response
          *------------------------------------------------
+         * @param env CGI environment
+         * @param stdin stdin instance
+         * @param dispatcher dispatcher instance
          * @return current application instance
          *-----------------------------------------------*)
         function execute(
@@ -54,6 +57,9 @@ type
          *------------------------------------------------
          * @param container dependency container
          * @param env CGI environment
+         * @param stdin stdin instance
+         * @param errorHandler error handler instance
+         * @param dispatcher dispatcher instance
          * @return current application instance
          *-----------------------------------------------*)
         function execAndHandleExcept(
@@ -69,6 +75,8 @@ type
          *------------------------------------------------
          * @param container dependency container
          * @param env CGI environment
+         * @param stdin stdin instance
+         * @param dispatcher dispatcher instance
          * @return current application instance
          *-----------------------------------------------*)
         function doExecute(
@@ -77,7 +85,6 @@ type
             const stdin : IStdIn;
             const dispatcher : IDispatcher
         ) : IRunnable; virtual; abstract;
-
 
         procedure reset();
 
@@ -183,6 +190,9 @@ uses
     (*!-----------------------------------------------
      * execute application and write response
      *------------------------------------------------
+     * @param env CGI environment
+     * @param stdin stdin instance
+     * @param dispatcher dispatcher instance
      * @return current application instance
      *-----------------------------------------------*)
     function TCoreWebApplication.execute(
@@ -204,6 +214,11 @@ uses
     (*!-----------------------------------------------
      * execute application and handle exception
      *------------------------------------------------
+     * @param container dependency container
+     * @param env CGI environment
+     * @param stdin stdin instance
+     * @param errorHandler error handler instance
+     * @param dispatcher dispatcher instance
      * @return current application instance
      *-----------------------------------------------*)
     function TCoreWebApplication.execAndHandleExcept(

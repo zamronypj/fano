@@ -35,6 +35,8 @@ type
          *------------------------------------------------
          * @param container dependency container
          * @param env CGI environment
+         * @param stdin stdin instance
+         * @param dispatcher dispatcher instance
          * @return current application instance
          *-----------------------------------------------*)
         function doExecute(
@@ -58,6 +60,8 @@ uses
      *------------------------------------------------
      * @param container dependency container
      * @param env CGI environment
+     * @param stdin stdin instance
+     * @param dispatcher dispatcher instance
      * @return current application instance
      *-----------------------------------------------*)
     function TCgiWebApplication.doExecute(

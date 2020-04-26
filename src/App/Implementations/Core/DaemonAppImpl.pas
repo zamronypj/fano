@@ -60,6 +60,8 @@ type
          *------------------------------------------------
          * @param container dependency container
          * @param env CGI environment
+         * @param stdin stdin instance
+         * @param dispatcher dispatcher instance
          * @return current application instance
          *-----------------------------------------------*)
         function doExecute(
@@ -170,15 +172,21 @@ uses
                     //TODO add better exception handling for ESockBind, ESockListen, ESockCreate
                     on e : ESockCreate do
                     begin
-                        writeln(e.message);
+                        writeln('Fail to create socket.');
+                        writeln('Exception: ', e.ClassName);
+                        writeln('Message: ', e.Message);
                     end;
                     on e : ESockBind do
                     begin
-                        writeln(e.message);
+                        writeln('Fail to bind socket.');
+                        writeln('Exception: ', e.ClassName);
+                        writeln('Message: ', e.Message);
                     end;
                     on e : ESockListen do
                     begin
-                        writeln(e.message);
+                        writeln('Fail to listen socket.');
+                        writeln('Exception: ', e.ClassName);
+                        writeln('Message: ', e.Message);
                     end;
                 end;
             finally
@@ -215,6 +223,8 @@ uses
      *------------------------------------------------
      * @param container dependency container
      * @param env CGI environment
+     * @param stdin stdin instance
+     * @param dispatcher dispatcher instance
      * @return current application instance
      *-----------------------------------------------*)
     function TDaemonWebApplication.doExecute(
