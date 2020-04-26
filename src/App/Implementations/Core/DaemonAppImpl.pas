@@ -86,7 +86,7 @@ type
         ) : boolean;
 
         (*!------------------------------------------------
-         * FastCGI request is ready
+         * request is ready
          *-----------------------------------------------
          * @param socketStream, original socket stream
          * @param env, CGI environment
