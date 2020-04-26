@@ -220,7 +220,7 @@ uses
     function TDaemonWebApplication.doExecute(
         const container : IDependencyContainer;
         const env : ICGIEnvironment;
-        const stdin : IStdIn
+        const stdin : IStdIn;
         const dispatcher : IDispatcher
     ) : IRunnable;
     begin
