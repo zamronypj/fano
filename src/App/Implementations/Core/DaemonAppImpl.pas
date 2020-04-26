@@ -65,7 +65,8 @@ type
         function doExecute(
             const container : IDependencyContainer;
             const env : ICGIEnvironment;
-            const stdin : IStdIn
+            const stdin : IStdIn;
+            const dispatcher : IDispatcher
         ) : IRunnable; override;
 
     public
@@ -220,9 +221,10 @@ uses
         const container : IDependencyContainer;
         const env : ICGIEnvironment;
         const stdin : IStdIn
+        const dispatcher : IDispatcher
     ) : IRunnable;
     begin
-        execute(env, stdin);
+        execute(env, stdin, dispatcher);
         result := self;
     end;
 
@@ -269,7 +271,8 @@ uses
                 fDaemonAppSvc.container,
                 env,
                 fDaemonAppSvc.stdIn,
-                fDaemonAppSvc.errorHandler
+                fDaemonAppSvc.errorHandler,
+                fDaemonAppSvc.dispatcher
             );
         finally
             fDaemonAppSvc.outputBuffer.endBuffering();

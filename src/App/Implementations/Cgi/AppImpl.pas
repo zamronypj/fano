@@ -82,7 +82,8 @@ uses
             fAppSvc.container,
             fAppSvc.env,
             fAppSvc.stdIn,
-            fAppSvc.errorHandler
+            fAppSvc.errorHandler,
+            fAppSvc.dispatcher
         );
     end;
 end.

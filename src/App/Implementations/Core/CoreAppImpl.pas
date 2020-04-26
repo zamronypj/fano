@@ -45,7 +45,8 @@ type
          *-----------------------------------------------*)
         function execute(
             const env : ICGIEnvironment;
-            const stdin : IStdIn
+            const stdin : IStdIn;
+            const dispatcher : IDispatcher
         ) : IRunnable;
 
         (*!-----------------------------------------------
@@ -59,7 +60,8 @@ type
             const container : IDependencyContainer;
             const env : ICGIEnvironment;
             const stdin : IStdIn;
-            const errorHandler : IErrorHandler
+            const errorHandler : IErrorHandler;
+            const dispatcher : IDispatcher
         ) : IRunnable;
 
         (*!-----------------------------------------------
@@ -72,7 +74,8 @@ type
         function doExecute(
             const container : IDependencyContainer;
             const env : ICGIEnvironment;
-            const stdin : IStdIn
+            const stdin : IStdIn;
+            const dispatcher : IDispatcher
         ) : IRunnable; virtual; abstract;
 
 
@@ -184,11 +187,12 @@ uses
      *-----------------------------------------------*)
     function TCoreWebApplication.execute(
         const env : ICGIEnvironment;
-        const stdin : IStdIn
+        const stdin : IStdIn;
+        const dispatcher : IDispatcher
     ) : IRunnable;
     var response : IResponse;
     begin
-        response := fAppSvc.dispatcher.dispatchRequest(env, stdIn);
+        response := dispatcher.dispatchRequest(env, stdIn);
         try
             response.write();
             result := self;
@@ -206,11 +210,12 @@ uses
         const container : IDependencyContainer;
         const env : ICGIEnvironment;
         const stdin : IStdIn;
-        const errorHandler : IErrorHandler
+        const errorHandler : IErrorHandler;
+        const dispatcher : IDispatcher
     ) : IRunnable;
     begin
         try
-            result := doExecute(container, env, stdin);
+            result := doExecute(container, env, stdin, dispatcher);
         except
             on e : EInvalidRequest do
             begin
