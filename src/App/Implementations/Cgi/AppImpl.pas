@@ -14,6 +14,8 @@ interface
 uses
 
     RunnableIntf,
+    DependencyContainerIntf,
+    EnvironmentIntf,
     CoreAppConsts,
     CoreAppImpl;
 
@@ -25,6 +27,18 @@ type
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
     TCgiWebApplication = class(TCoreWebApplication)
+    protected
+        (*!-----------------------------------------------
+         * execute application
+         *------------------------------------------------
+         * @param container dependency container
+         * @param env CGI environment
+         * @return current application instance
+         *-----------------------------------------------*)
+        function doExecute(
+            const container : IDependencyContainer;
+            const env : ICGIEnvironment
+        ) : IRunnable; override;
     public
         function run() : IRunnable; override;
     end;
@@ -33,17 +47,26 @@ implementation
 
 uses
 
-    SysUtils,
+    SysUtils;
 
-    ///exception-related units
-    ERouteHandlerNotFoundImpl,
-    EMethodNotAllowedImpl,
-    EInvalidMethodImpl,
-    EInvalidRequestImpl,
-    ENotFoundImpl,
-    EDependencyNotFoundImpl,
-    EInvalidDispatcherImpl,
-    EInvalidFactoryImpl;
+    (*!-----------------------------------------------
+     * execute application
+     *------------------------------------------------
+     * @param container dependency container
+     * @param env CGI environment
+     * @return current application instance
+     *-----------------------------------------------*)
+    function TCgiWebApplication.doExecute(
+        const container : IDependencyContainer;
+        const env : ICGIEnvironment
+    ) : IRunnable;
+    begin
+        if (initialize(container)) then
+        begin
+            execute(env);
+        end;
+        result := self;
+    end;
 
     (*!-----------------------------------------------
      * execute application and handle exception
@@ -55,47 +78,6 @@ uses
      *-----------------------------------------------*)
     function TCgiWebApplication.run() : IRunnable;
     begin
-        try
-            if (initialize(fAppSvc.container)) then
-            begin
-                result := execute(fAppSvc.env);
-            end;
-        except
-            on e : EInvalidRequest do
-            begin
-                fAppSvc.errorHandler.handleError(fAppSvc.env.enumerator, e, 400, sHttp400Message);
-                reset();
-            end;
-
-            on e : ERouteHandlerNotFound do
-            begin
-                fAppSvc.errorHandler.handleError(fAppSvc.env.enumerator, e, 404, sHttp404Message);
-                reset();
-            end;
-
-            on e : ENotFound do
-            begin
-                fAppSvc.errorHandler.handleError(fAppSvc.env.enumerator, e, 404, sHttp404Message);
-                reset();
-            end;
-
-            on e : EMethodNotAllowed do
-            begin
-                fAppSvc.errorHandler.handleError(fAppSvc.env.enumerator, e, 405, sHttp405Message);
-                reset();
-            end;
-
-            on e : EInvalidMethod do
-            begin
-                fAppSvc.errorHandler.handleError(fAppSvc.env.enumerator, e, 501, sHttp501Message);
-                reset();
-            end;
-
-            on e : Exception do
-            begin
-                fAppSvc.errorHandler.handleError(fAppSvc.env.enumerator, e);
-                reset();
-            end;
-        end;
+        result := execAndHandleExcept(fAppSvc.container, fAppSvc.env, fAppSvc.errorHandler);
     end;
 end.

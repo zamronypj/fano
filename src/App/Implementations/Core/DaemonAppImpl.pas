@@ -55,6 +55,18 @@ type
 
         procedure cleanUp();
     protected
+        (*!-----------------------------------------------
+         * execute application
+         *------------------------------------------------
+         * @param container dependency container
+         * @param env CGI environment
+         * @return current application instance
+         *-----------------------------------------------*)
+        function doExecute(
+            const container : IDependencyContainer;
+            const env : ICGIEnvironment
+        ) : IRunnable; override;
+
         procedure executeRequest(const env : ICGIEnvironment);
     public
         (*!-----------------------------------------------
@@ -106,11 +118,6 @@ uses
 
     SysUtils,
     EnvironmentEnumeratorIntf,
-    ERouteHandlerNotFoundImpl,
-    EMethodNotAllowedImpl,
-    EInvalidMethodImpl,
-    EInvalidRequestImpl,
-    ENotFoundImpl,
     ESockBindImpl,
     ESockCreateImpl,
     ESockListenImpl;
@@ -203,45 +210,29 @@ uses
     end;
 
     (*!-----------------------------------------------
+     * execute application
+     *------------------------------------------------
+     * @param container dependency container
+     * @param env CGI environment
+     * @return current application instance
+     *-----------------------------------------------*)
+    function TDaemonWebApplication.doExecute(
+        const container : IDependencyContainer;
+        const env : ICGIEnvironment
+    ) : IRunnable;
+    begin
+        execute(env);
+        result := self;
+    end;
+
+    (*!-----------------------------------------------
      * execute request
      *------------------------------------------------
      * @param env, CGI environment
      *-----------------------------------------------*)
     procedure TDaemonWebApplication.executeRequest(const env : ICGIEnvironment);
     begin
-        try
-            execute(env);
-        except
-            on e : EInvalidRequest do
-            begin
-                fDaemonAppSvc.errorHandler.handleError(env.enumerator, e, 400, sHttp400Message);
-            end;
-
-            on e : ERouteHandlerNotFound do
-            begin
-                fDaemonAppSvc.errorHandler.handleError(env.enumerator, e, 404, sHttp404Message);
-            end;
-
-            on e : ENotFound do
-            begin
-                fDaemonAppSvc.errorHandler.handleError(env.enumerator, e, 404, sHttp404Message);
-            end;
-
-            on e : EMethodNotAllowed do
-            begin
-                fDaemonAppSvc.errorHandler.handleError(env.enumerator, e, 405, sHttp405Message);
-            end;
-
-            on e : EInvalidMethod do
-            begin
-                fDaemonAppSvc.errorHandler.handleError(env.enumerator, e, 501, sHttp501Message);
-            end;
-
-            on e : Exception do
-            begin
-                fDaemonAppSvc.errorHandler.handleError(env.enumerator, e);
-            end;
-        end;
+        execAndHandleExcept(fDaemonAppSvc.container, env, fDaemonAppSvc.errorHandler);
     end;
 
     (*!-----------------------------------------------
