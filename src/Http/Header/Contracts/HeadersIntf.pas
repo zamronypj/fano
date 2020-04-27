@@ -31,6 +31,14 @@ type
         (*!------------------------------------
          * set http header
          *-------------------------------------
+         * @param headerline key:value of header
+         * @return header instance
+         *-------------------------------------*)
+        function setHeaderLine(const headerline : string) : IHeaders;
+
+        (*!------------------------------------
+         * set http header
+         *-------------------------------------
          * @param key name  of http header to set
          * @param value value of header
          * @return header instance
@@ -45,6 +53,14 @@ type
          * @return header instance
          *-------------------------------------*)
         function addHeader(const key : shortstring; const value : string) : IHeaders;
+
+        (*!------------------------------------
+         * add http header line
+         *-------------------------------------
+         * @param headerline key:value of header
+         * @return header instance
+         *-------------------------------------*)
+        function addHeaderLine(const headerline : string) : IHeaders;
 
         (*!------------------------------------
          * output http headers to STDOUT

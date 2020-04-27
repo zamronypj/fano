@@ -39,6 +39,14 @@ type
         (*!------------------------------------
          * set http header
          *-------------------------------------
+         * @param headerline key:value of header
+         * @return header instance
+         *-------------------------------------*)
+        function setHeaderLine(const headerline : string) : IHeaders;
+
+        (*!------------------------------------
+         * set http header
+         *-------------------------------------
          * @param key name  of http header to set
          * @param value value of header
          * @return header instance
@@ -53,6 +61,14 @@ type
          * @return header instance
          *-------------------------------------*)
         function addHeader(const key : shortstring; const value : string) : IHeaders;
+
+        (*!------------------------------------
+         * set http header
+         *-------------------------------------
+         * @param headerline key:value of header
+         * @return header instance
+         *-------------------------------------*)
+        function addHeaderLine(const headerline : string) : IHeaders;
 
         (*!------------------------------------
          * get http header
@@ -87,7 +103,8 @@ uses
 
     HashListImpl,
     HeaderConsts,
-    EHeaderNotSetImpl;
+    EHeaderNotSetImpl,
+    EInvalidHeaderImpl;
 
 type
 
@@ -145,6 +162,44 @@ type
         result := self;
     end;
 
+    function parsedHeaderLine(
+        const headerline : string;
+        out key : shortstring;
+        out value : string
+    ) : boolean;
+    var colonPos: integer;
+    begin
+        colonPos := pos(':', headerline);
+        if (colonPos > 0) then
+        begin
+            key := copy(headerline, 1, colonPos - 1);
+            value := trim(copy(headerline, colonPos, length(headerline) - colonpos));
+            result := true;
+        end else
+        begin
+            result := false;
+        end;
+    end;
+
+    (*!------------------------------------
+     * set http header
+     *-------------------------------------
+     * @param headerline key:value of header
+     * @return header instance
+     *-------------------------------------*)
+    function THeaders.setHeaderLine(const headerline : string) : IHeaders;
+    var key : shortstring;
+        value : string;
+    begin
+        if (parseHeaderLine(headerline, key, value)) then
+        begin
+            result := setHeader(key, value);
+        end else
+        begin
+            raise EInvalidHeader.createFmt(sErrInvalidHeader, [headerline]);
+        end;
+    end;
+
     (*!------------------------------------
      * add http header
      *-------------------------------------
@@ -160,6 +215,25 @@ type
         hdr^.value := value;
         headerList.add(key, hdr);
         result := self;
+    end;
+
+    (*!------------------------------------
+     * add http header
+     *-------------------------------------
+     * @param headerline key:value of header
+     * @return header instance
+     *-------------------------------------*)
+    function THeaders.addHeaderLine(const headerline : string) : IHeaders;
+    var key : shortstring;
+        value : string;
+    begin
+        if (parseHeaderLine(headerline, key, value)) then
+        begin
+            result := addHeader(key, value);
+        end else
+        begin
+            raise EInvalidHeader.createFmt(sErrInvalidHeader, [headerline]);
+        end;
     end;
 
     (*!------------------------------------
