@@ -146,6 +146,17 @@ uses
         result := fStream;
     end;
 
+    (*!------------------------------------
+     * set new response body
+     *-------------------------------------
+     * @return response body
+     *-------------------------------------*)
+    function TRedirectResponse.setBody(const newBody : IResponseStream) : IResponse;
+    begin
+        //intentionally does nothing as redirect response do not need body
+        result := self;
+    end;
+
     function TRedirectResponse.clone() : ICloneable;
     var clonedObj : IResponse;
     begin

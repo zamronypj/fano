@@ -44,6 +44,10 @@ type
         procedure setNoStore(const donotstore : boolean);
         function getNoStore() : boolean;
         property noStore : boolean read getNoStore write setNoStore;
+
+        procedure setUseETag(const use_etag : boolean);
+        function getUseETag() : boolean;
+        property useETag : boolean read getUseETag write setUseETag;
     end;
 
 implementation

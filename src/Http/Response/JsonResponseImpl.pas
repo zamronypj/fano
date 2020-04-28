@@ -70,10 +70,10 @@ uses
 
     destructor TJsonResponse.destroy();
     begin
-        inherited destroy();
         jsonStream.free();
         responseStream := nil;
         httpHeaders := nil;
+        inherited destroy();
     end;
 
     (*!------------------------------------
@@ -113,5 +113,16 @@ uses
     function TJsonResponse.body() : IResponseStream;
     begin
         result := responseStream;
+    end;
+
+    (*!------------------------------------
+     * set new response body
+     *-------------------------------------
+     * @return response body
+     *-------------------------------------*)
+    function TJsonResponse.setBody(const newBody : IResponseStream) : IResponse;
+    begin
+        responseStream := newBody;
+        result := self;
     end;
 end.

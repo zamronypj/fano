@@ -34,6 +34,7 @@ type
         fMaxAge : integer;
         fMustRevalidate : boolean;
         fNoStore : boolean;
+        fUseETag : boolean;
         function getCacheTypeStr(const aType : TCacheControlType) : string;
         function serializeNoCache() : string;
         function serializeCache() : string;
@@ -62,6 +63,10 @@ type
         function getNoStore() : boolean;
         property noStore : boolean read getNoStore write setNoStore;
 
+        procedure setUseETag(const use_etag : boolean);
+        function getUseETag() : boolean;
+        property useETag : boolean read getUseETag write setUseETag;
+
     end;
 
 implementation
@@ -78,8 +83,9 @@ uses
     begin
         fNoStore := false;
         fCacheType := ctype;
-        fMaxAge := age'
+        fMaxAge := age;
         fMustRevalidate := must_revalidate;
+        fUseETag := false;
     end;
 
     procedure THttpCache.setNoStore(const donotstore : boolean);
@@ -120,6 +126,16 @@ uses
     function THttpCache.getMustRevalidate() : boolean;
     begin
         result := fMustRevalidate;
+    end;
+
+    procedure THttpCache.setUseETag(const use_etag : boolean);
+    begin
+        fUseETag := use_etag;
+    end;
+
+    function THttpCache.getUseETag() : boolean;
+    begin
+        result := fUseETag;
     end;
 
     function THttpCache.getCacheTypeStr(const aType : TCacheControlType) : string;

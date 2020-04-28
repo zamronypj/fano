@@ -46,6 +46,11 @@ type
 
 implementation
 
+uses
+
+    md5,
+    NullResponseStreamImpl;
+
     constructor TCacheControlMiddleware.create(const cache : IHttpCache);
     begin
         fCache := cache;
@@ -63,14 +68,49 @@ implementation
         const args : IRouteArgsReader;
         const nextMdlwr : IRequestHandler
     ) : IResponse;
+    var svrETag : string;
+        clientEtag : string;
     begin
-        if response.headers.has('Cache-Control') then
+        result := nextMdlwr.handleRequest(request, response, args);
+        if (request.method = 'GET') or (request.method ='HEAD')  then
         begin
-            result := nextMdlwr.handleRequest(request, response, args);
-        end else
-        begin
-            response.headers.addHeaderLine(fCache.serialize());
-            result := nextMdlwr.handleRequest(request, response, args);
+            if not result.headers.has('Cache-Control') then
+            begin
+                result.headers.addHeaderLine(fCache.serialize());
+            end;
+            svrETag = '';
+            if request.headers.has('If-None-Match') then
+            begin
+                clientETag := request.headers.getHeader('If-None-Match');
+                if result.headers.has('ETag') then
+                begin
+                    svrETag := result.headers.getHeader('ETag');
+                    if clientETag = svrETag then
+                    begin
+                        //remove body and replace with HTTP 304
+                        result.setBody(TNullResponseStream.create())
+                            .headers.setHeader('Status', '304 Not Modified');
+                    end;
+                end else if (fCache.useETag) then
+                begin
+                    svrETag := MD5Print(MD5String(result.body.read()));
+                    if clientETag = svrETag then
+                    begin
+                        //remove body and replace with HTTP 304
+                        result.setBody(TNullResponseStream.create())
+                            .headers.setHeader('Status', '304 Not Modified');
+                    end;
+                end;
+            end;
+
+            if (fCache.useETag) then
+            begin
+                if (svrETag = '') then
+                begin
+                    svrETag := MD5Print(MD5String(result.body.read()));
+                end;
+                result.headers.addHeader('ETag', '"' + tag + '"');
+            end;
         end;
     end;
 end.
