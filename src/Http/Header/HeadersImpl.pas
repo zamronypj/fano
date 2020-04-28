@@ -71,6 +71,22 @@ type
         function addHeaderLine(const headerline : string) : IHeaders;
 
         (*!------------------------------------
+         * remove http header
+         *-------------------------------------
+         * @param key name  of http header to set
+         * @return header instance
+         *-------------------------------------*)
+        function removeHeader(const key : shortstring) : IHeaders;
+
+        (*!------------------------------------
+         * remove multiple http headers
+         *-------------------------------------
+         * @param keys name of http headers to remove
+         * @return header instance
+         *-------------------------------------*)
+        function removeHeaders(keys : array of shortstring) : IHeaders;
+
+        (*!------------------------------------
          * get http header
          *-------------------------------------
          * @param key name  of http header to get
@@ -234,6 +250,36 @@ type
         begin
             raise EInvalidHeader.createFmt(sErrInvalidHeader, [headerline]);
         end;
+    end;
+
+    (*!------------------------------------
+     * remove http header
+     *-------------------------------------
+     * @param key name of http header to remove
+     * @return header instance
+     *-------------------------------------*)
+    function THeaders.removeHeader(const key : shortstring) : IHeaders;
+    var hdr : PHeaderRec;
+    begin
+        hdr := headerList.remove(key);
+        dispose(hdr);
+        result := self;
+    end;
+
+    (*!------------------------------------
+     * remove multiple http headers
+     *-------------------------------------
+     * @param keys name of http headers to remove
+     * @return header instance
+     *-------------------------------------*)
+    function THeaders.removeHeaders(const keys : array of shortstring) : IHeaders;
+    var i:integer;
+    begin
+        for i := low(keys) to high(keys) do
+        begin
+            removeHeader(keys[i]);
+        end;
+        result := self;
     end;
 
     (*!------------------------------------

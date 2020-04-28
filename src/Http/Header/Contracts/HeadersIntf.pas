@@ -63,6 +63,22 @@ type
         function addHeaderLine(const headerline : string) : IHeaders;
 
         (*!------------------------------------
+         * remove http header
+         *-------------------------------------
+         * @param key name of http header to remove
+         * @return header instance
+         *-------------------------------------*)
+        function removeHeader(const key : shortstring) : IHeaders;
+
+        (*!------------------------------------
+         * remove multiple http headers
+         *-------------------------------------
+         * @param keys name of http headers to remove
+         * @return header instance
+         *-------------------------------------*)
+        function removeHeaders(const keys : array of shortstring) : IHeaders;
+
+        (*!------------------------------------
          * output http headers to STDOUT
          *-------------------------------------
          * Implementor must end with empty blank line

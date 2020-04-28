@@ -32,6 +32,10 @@ type
     TCacheControlMiddleware = class(TInjectableObject, IMiddleware)
     private
         fCache : IHttpCache;
+        function isCacheable(
+            const request : IRequest;
+            const response : IResponse
+        ) : boolean;
     public
         constructor create(const cache : IHttpCache);
         destructor destroy(); override;
@@ -49,7 +53,7 @@ implementation
 uses
 
     md5,
-    NullResponseStreamImpl;
+    NotModifiedResponseImpl;
 
     constructor TCacheControlMiddleware.create(const cache : IHttpCache);
     begin
@@ -62,6 +66,15 @@ uses
         inherited destroy();
     end;
 
+    function TCacheControlMiddleware.isCacheable(
+        const request : IRequest;
+        const response : IResponse
+    ) : boolean;
+    begin
+        result := ((request.method = 'GET') or (request.method ='HEAD')) and
+            (response.body().size() > 0);
+    end;
+
     function TCacheControlMiddleware.handleRequest(
         const request : IRequest;
         const response : IResponse;
@@ -72,13 +85,15 @@ uses
         clientEtag : string;
     begin
         result := nextMdlwr.handleRequest(request, response, args);
-        if (request.method = 'GET') or (request.method ='HEAD')  then
+        if isCacheable(request, result) then
         begin
             if not result.headers.has('Cache-Control') then
             begin
                 result.headers.addHeaderLine(fCache.serialize());
             end;
+
             svrETag = '';
+
             if request.headers.has('If-None-Match') then
             begin
                 clientETag := request.headers.getHeader('If-None-Match');
@@ -87,18 +102,14 @@ uses
                     svrETag := result.headers.getHeader('ETag');
                     if clientETag = svrETag then
                     begin
-                        //remove body and replace with HTTP 304
-                        result.setBody(TNullResponseStream.create())
-                            .headers.setHeader('Status', '304 Not Modified');
+                        result := TNotModifiedResponse.create(result.headers);
                     end;
                 end else if (fCache.useETag) then
                 begin
                     svrETag := MD5Print(MD5String(result.body.read()));
                     if clientETag = svrETag then
                     begin
-                        //remove body and replace with HTTP 304
-                        result.setBody(TNullResponseStream.create())
-                            .headers.setHeader('Status', '304 Not Modified');
+                        result := TNotModifiedResponse.create(result.headers);
                     end;
                 end;
             end;
@@ -109,7 +120,7 @@ uses
                 begin
                     svrETag := MD5Print(MD5String(result.body.read()));
                 end;
-                result.headers.addHeader('ETag', '"' + tag + '"');
+                result.headers.addHeader('ETag', '"' + svrETag + '"');
             end;
         end;
     end;
