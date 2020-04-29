@@ -83,10 +83,13 @@ uses
     ) : IResponse;
     var svrETag : string;
         clientEtag : string;
+        notModified : boolean;
+        lastModified, ifModifiedSince : TDateTime;
     begin
         result := nextMdlwr.handleRequest(request, response, args);
         if isCacheable(request, result) then
         begin
+            notModified := false;
             if not result.headers.has('Cache-Control') then
             begin
                 result.headers.addHeaderLine(fCache.serialize());
@@ -96,31 +99,41 @@ uses
 
             if request.headers.has('If-None-Match') then
             begin
-                clientETag := request.headers.getHeader('If-None-Match');
+                clientETag := request.headers['If-None-Match'];
                 if result.headers.has('ETag') then
                 begin
-                    svrETag := result.headers.getHeader('ETag');
-                    if clientETag = svrETag then
-                    begin
-                        result := TNotModifiedResponse.create(result.headers);
-                    end;
+                    svrETag := result.headers['ETag'];
                 end else if (fCache.useETag) then
                 begin
                     svrETag := MD5Print(MD5String(result.body.read()));
-                    if clientETag = svrETag then
-                    begin
-                        result := TNotModifiedResponse.create(result.headers);
-                    end;
+                    result.headers.addHeader('ETag', '"' + svrETag + '"');
+                end;
+
+                if (clientETag = svrETag) or (clientETag = '"*"') then
+                begin
+                    notModified := true;
                 end;
             end;
 
-            if (fCache.useETag) then
+            if response.headers.has('Last-Modified') then
             begin
-                if (svrETag = '') then
+                if (request.headers.has('If-Modified-Since')) then
                 begin
-                    svrETag := MD5Print(MD5String(result.body.read()));
+                    lastModified := scanDateTime(
+                        'ddd, dd mmm yyyy hh:mm:ss',
+                        response.headers['Last-Modified']
+                    );
+                    ifModifiedSince := scanDateTime(
+                        'ddd, dd mmm yyyy hh:mm:ss',
+                        response.headers['If-Modified-Since']
+                    );
+                    notModified := ifModifiedSince >= lastModified;
                 end;
-                result.headers.addHeader('ETag', '"' + svrETag + '"');
+            end;
+
+            if notModified then
+            begin
+                result := TNotModifiedResponse.create(result.headers);
             end;
         end;
     end;
