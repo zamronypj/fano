@@ -11,6 +11,7 @@ unit CacheControlMiddlewareImpl;
 interface
 
 {$MODE OBJFPC}
+{$H+}
 
 uses
 
