@@ -73,7 +73,12 @@ implementation
 
 uses
 
-    SysUtils;
+    SysUtils,
+    httpprotocol;
+
+const
+
+    NO_STORE = HeaderCacheControl + ':  no-store';
 
     constructor THttpCache.create(
         const ctype : TCacheControlType = ctPrivate;
@@ -151,7 +156,7 @@ uses
 
     function THttpCache.serializeNoCache() : string;
     begin
-        result := 'Cache-Control: ' + getCacheTypeStr(fCacheType) + ', no-cache';
+        result := HeaderCacheControl + ': ' + getCacheTypeStr(fCacheType) + ', no-cache';
         if fMustRevalidate then
         begin
             result := result + ', must-revalidate';
@@ -160,12 +165,12 @@ uses
 
     function THttpCache.serializeNoStore() : string;
     begin
-        result := 'Cache-Control:  no-store';
+        result := NO_STORE;
     end;
 
     function THttpCache.serializeCache() : string;
     begin
-        result := 'Cache-Control: ' + getCacheTypeStr(fCacheType) +
+        result := HeaderCacheControl + ': ' + getCacheTypeStr(fCacheType) +
             ', max-age=' + intToStr(fMaxAge);
         if fMustRevalidate then
         begin

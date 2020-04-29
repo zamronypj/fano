@@ -25,7 +25,9 @@ uses
 type
 
     (*!------------------------------------------------
-     * midlleware class that add Cache-Control (RFC 7234)
+     * middleware class that add Cache-Control (RFC 7234)
+     * and also doing conditional GET check, replace response
+     * with HTTP 304 if not modified
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
@@ -33,6 +35,16 @@ type
     private
         fCache : IHttpCache;
         function isCacheable(
+            const request : IRequest;
+            const response : IResponse
+        ) : boolean;
+
+        function isSameETag(
+            const request : IRequest;
+            const response : IResponse
+        ) : boolean;
+
+        function isOlderLastModifiedDate(
             const request : IRequest;
             const response : IResponse
         ) : boolean;
@@ -52,8 +64,14 @@ implementation
 
 uses
 
+    httpprotocol,
     md5,
+    dateutils,
     NotModifiedResponseImpl;
+
+const
+
+    HTTP_DATE = 'ddd, dd mmm yyyy hh:mm:ss';
 
     constructor TCacheControlMiddleware.create(const cache : IHttpCache);
     begin
@@ -75,61 +93,81 @@ uses
             (response.body().size() > 0);
     end;
 
+    function TCacheControlMiddleware.isSameETag(
+        const request : IRequest;
+        const response : IResponse
+    ) : boolean;
+    var svrETag : string;
+        clientEtag : string;
+    begin
+        result := false;
+        if request.headers.has(HeaderIfNoneMatch) then
+        begin
+            svrETag = '';
+            clientETag := request.headers[HeaderIfNoneMatch];
+            if clientETag = '"*"' then
+            begin
+                result := true;
+            end else
+            begin
+                if response.headers.has(HeaderETag) then
+                begin
+                    svrETag := response.headers[HeaderETag];
+                end else if (fCache.useETag) then
+                begin
+                    svrETag := MD5Print(MD5String(result.body.read()));
+                    response.headers.addHeader(HeaderETag, '"' + svrETag + '"');
+                end;
+                //If-None-match value an be multiple values such as
+                //If-None-Match : "value1","value2"
+                result := pos(svrETag, clientETag) > 0;
+            end;
+
+        end;
+    end;
+
+    function TCacheControlMiddleware.isOlderLastModifiedDate(
+        const request : IRequest;
+        const response : IResponse
+    ) : boolean;
+    var lastModified, ifModifiedSince : TDateTime;
+    begin
+        result := false;
+        if response.headers.has(HeaderLastModified) then
+        begin
+            if (request.headers.has(HeaderIfModifiedSince)) then
+            begin
+                lastModified := scanDateTime(
+                    HTTP_DATE,
+                    response.headers[HeaderLastModified]
+                );
+                ifModifiedSince := scanDateTime(
+                    HTTP_DATE,
+                    request.headers[HeaderIfModifiedSince]
+                );
+                result := (ifModifiedSince >= lastModified);
+            end;
+        end;
+    end;
+
     function TCacheControlMiddleware.handleRequest(
         const request : IRequest;
         const response : IResponse;
         const args : IRouteArgsReader;
         const nextMdlwr : IRequestHandler
     ) : IResponse;
-    var svrETag : string;
-        clientEtag : string;
-        notModified : boolean;
-        lastModified, ifModifiedSince : TDateTime;
+    var notModified : boolean;
     begin
         result := nextMdlwr.handleRequest(request, response, args);
         if isCacheable(request, result) then
         begin
-            notModified := false;
-            if not result.headers.has('Cache-Control') then
+            if not result.headers.has(HeaderCacheControl) then
             begin
                 result.headers.addHeaderLine(fCache.serialize());
             end;
 
-            svrETag = '';
-
-            if request.headers.has('If-None-Match') then
-            begin
-                clientETag := request.headers['If-None-Match'];
-                if result.headers.has('ETag') then
-                begin
-                    svrETag := result.headers['ETag'];
-                end else if (fCache.useETag) then
-                begin
-                    svrETag := MD5Print(MD5String(result.body.read()));
-                    result.headers.addHeader('ETag', '"' + svrETag + '"');
-                end;
-
-                if (clientETag = svrETag) or (clientETag = '"*"') then
-                begin
-                    notModified := true;
-                end;
-            end;
-
-            if response.headers.has('Last-Modified') then
-            begin
-                if (request.headers.has('If-Modified-Since')) then
-                begin
-                    lastModified := scanDateTime(
-                        'ddd, dd mmm yyyy hh:mm:ss',
-                        response.headers['Last-Modified']
-                    );
-                    ifModifiedSince := scanDateTime(
-                        'ddd, dd mmm yyyy hh:mm:ss',
-                        response.headers['If-Modified-Since']
-                    );
-                    notModified := ifModifiedSince >= lastModified;
-                end;
-            end;
+            notModified := isSameETag(request, result) or
+                isOlderLastModifiedDate(request, result);
 
             if notModified then
             begin
