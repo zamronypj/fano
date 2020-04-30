@@ -102,9 +102,9 @@ const
         clientEtag : string;
     begin
         result := false;
+        svrETag := '';
         if request.headers.has(HeaderIfNoneMatch) then
         begin
-            svrETag := '';
             clientETag := request.headers[HeaderIfNoneMatch];
             if clientETag = '"*"' then
             begin
@@ -123,7 +123,11 @@ const
                 //If-None-Match : "value1","value2"
                 result := pos(svrETag, clientETag) > 0;
             end;
-
+        end;
+        if (svrETag = '') and (fCache.useETag) then
+        begin
+            svrETag := MD5Print(MD5String(response.body().read()));
+            response.headers.addHeader(HeaderETag, '"' + svrETag + '"');
         end;
     end;
 
