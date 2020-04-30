@@ -190,7 +190,7 @@ type
         if (colonPos > 0) then
         begin
             key := copy(headerline, 1, colonPos - 1);
-            value := trim(copy(headerline, colonPos, length(headerline) - colonpos));
+            value := trim(copy(headerline, colonPos + 1, length(headerline) - colonpos));
             result := true;
         end else
         begin
