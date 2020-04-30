@@ -32,12 +32,14 @@ type
         fNoStore : boolean;
         fMustRevalidate : boolean;
         fMaxAge : integer;
+        fUseETag : boolean;
     public
         constructor create();
         function cacheType(const ctype : TCacheControlType) : TCacheControlMiddlewareFactory;
         function noStore() : TCacheControlMiddlewareFactory;
         function mustRevalidate() : TCacheControlMiddlewareFactory;
         function maxAge(const age : integer) : TCacheControlMiddlewareFactory;
+        function useETag() : TCacheControlMiddlewareFactory;
 
         (*!---------------------------------------
          * build middleware instance
@@ -61,6 +63,7 @@ uses
         fNoStore := false;
         fMustRevalidate := false;
         fMaxAge := MAX_AGE_1_DAY;
+        fUseETag := false;
     end;
 
     function TCacheControlMiddlewareFactory.cacheType(const ctype : TCacheControlType) : TCacheControlMiddlewareFactory;
@@ -81,6 +84,12 @@ uses
         result := self;
     end;
 
+    function TCacheControlMiddlewareFactory.useETag() : TCacheControlMiddlewareFactory;
+    begin
+        fUseETag := true;
+        result := self;
+    end;
+
     function TCacheControlMiddlewareFactory.maxAge(const age : integer) : TCacheControlMiddlewareFactory;
     begin
         fMaxAge := age;
@@ -92,6 +101,7 @@ uses
     begin
         cache := THttpCache.create(fCacheType, fMaxAge, fMustRevalidate);
         cache.noStore := fNoStore;
+        cache.useETag := fUseETag;
         result := TCacheControlMiddleware.create(cache);
     end;
 
