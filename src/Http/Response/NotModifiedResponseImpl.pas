@@ -32,11 +32,13 @@ type
 implementation
 
     constructor TNotModifiedResponse.create(const hdrs : IHeaders);
+    var newHeaders : IHeaders;
     begin
+        newHeaders := hdrs.clone() as IHeaders;
         //create response with null body
-        inherited create(304, 'Not Modified', hdrs.clone() as IHeaders);
+        inherited create(304, 'Not Modified', newHeaders);
         //remove headers that MUST NOT be included with 304 Not Modified responses
-        headers.removeHeaders([
+        newHeaders.removeHeaders([
             'Allow',
             'Content-Encoding',
             'Content-Language',
