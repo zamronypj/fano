@@ -36,7 +36,7 @@ type
          * @throws EHeaderNotSet
          *-------------------------------------*)
         function getHeader(const key : shortstring) : string;
-        property values[const key : shortString] : string read getHeader default;
+        property values[const key : shortString] : string read getHeader; default;
 
         (*!------------------------------------
          * test if http header already been set

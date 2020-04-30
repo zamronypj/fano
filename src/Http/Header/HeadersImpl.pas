@@ -84,7 +84,7 @@ type
          * @param keys name of http headers to remove
          * @return header instance
          *-------------------------------------*)
-        function removeHeaders(keys : array of shortstring) : IHeaders;
+        function removeHeaders(const keys : array of shortstring) : IHeaders;
 
         (*!------------------------------------
          * get http header
@@ -117,6 +117,7 @@ implementation
 
 uses
 
+    sysutils,
     HashListImpl,
     HeaderConsts,
     EHeaderNotSetImpl,
@@ -178,7 +179,7 @@ type
         result := self;
     end;
 
-    function parsedHeaderLine(
+    function parseHeaderLine(
         const headerline : string;
         out key : shortstring;
         out value : string

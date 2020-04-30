@@ -61,6 +61,13 @@ type
          *-------------------------------------*)
         function body() : IResponseStream;
 
+        (*!------------------------------------
+         * set new response body
+         *-------------------------------------
+         * @return response body
+         *-------------------------------------*)
+        function setBody(const newBody : IResponseStream) : IResponse;
+
         function clone() : ICloneable;
     end;
 

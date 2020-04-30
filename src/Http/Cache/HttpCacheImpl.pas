@@ -49,7 +49,7 @@ type
 
         procedure setType(const ctype : TCacheControlType);
         function getType() : TCacheControlType;
-        property cacheType : integer read getType write setType;
+        property cacheType : TCacheControlType read getType write setType;
 
         procedure setMaxAge(const age : integer);
         function getMaxAge() : integer;
