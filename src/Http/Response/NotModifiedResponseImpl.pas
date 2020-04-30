@@ -36,14 +36,7 @@ implementation
         //create response with null body
         inherited create(304, 'Not Modified', hdrs.clone() as IHeaders);
         //remove headers that MUST NOT be included with 304 Not Modified responses
-        headers.removeHeader('Allow')
-            .removeHeader('Content-Encoding')
-            .removeHeader('Content-Language')
-            .removeHeader('Content-Length')
-            .removeHeader('Content-Type')
-            .removeHeader('Content-MD5')
-            .removeHeader('Last-Modified');
-        // ]);
+        //TODO: turn off for now as this somehow cause access violation
         // headers.removeHeaders([
         //     'Allow',
         //     'Content-Encoding',
