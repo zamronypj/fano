@@ -89,7 +89,7 @@ uses
     var clonedObj : IResponse;
     begin
         clonedObj := TNotModifiedResponse.create(
-            httpHeaders.clone() as IHeaders
+            headers().clone() as IHeaders
         );
         result := clonedObj;
     end;
