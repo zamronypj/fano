@@ -15,37 +15,132 @@ interface
 
 uses
 
-    HeadersIntf,
-    HttpCodeResponseImpl;
+    CloneableIntf,
+    ResponseIntf,
+    ResponseStreamIntf,
+    HeadersIntf;
 
 type
     (*!------------------------------------------------
-     * 304 Not Modified Http response class
+     * not modified response class
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TNotModifiedResponse = class(THttpCodeResponse)
+    TNotModifiedResponse = class(TInterfacedObject, IResponse)
+    private
+        httpHeaders : IHeaders;
+        fStream : IResponseStream;
     public
+        (*!------------------------------------
+         * constructor
+         *-------------------------------------
+         * @param hdrs header conllection instance
+         *-------------------------------------*)
         constructor create(const hdrs : IHeaders);
+        destructor destroy(); override;
+
+        (*!------------------------------------
+         * get http headers instance
+         *-------------------------------------
+         * @return header instance
+         *-------------------------------------*)
+        function headers() : IHeaders;
+
+        function write() : IResponse;
+
+        (*!------------------------------------
+         * get response body
+         *-------------------------------------
+         * @return response body
+         *-------------------------------------*)
+        function body() : IResponseStream;
+
+        (*!------------------------------------
+         * set new response body
+         *-------------------------------------
+         * @return response body
+         *-------------------------------------*)
+        function setBody(const newBody : IResponseStream) : IResponse;
+
+        function clone() : ICloneable;
     end;
 
 implementation
 
-    constructor TNotModifiedResponse.create(const hdrs : IHeaders);
+uses
+
+    sysutils,
+    NullResponseStreamImpl;
+
+    (*!------------------------------------
+     * constructor
+     *-------------------------------------
+     * @param hdrs header conllection instance
+     * @param url target url to redirect
+     * @param status, optional HTTP redirection status, default is 302
+     *-------------------------------------*)
+    constructor TNotModifiedResponse.create(
+        const hdrs : IHeaders
+    );
     begin
-        //create response with null body
-        inherited create(304, 'Not Modified', hdrs);
-        //remove headers that MUST NOT be included with 304 Not Modified responses
-        //TODO: turn off for now as this somehow cause access violation
-        // headers.removeHeaders([
-        //     'Allow',
-        //     'Content-Encoding',
-        //     'Content-Language',
-        //     'Content-Length',
-        //     'Content-Type',
-        //     'Content-MD5',
-        //     'Last-Modified'
-        // ]);
+        inherited create();
+        //304 response does not need body, so we just use null stream
+        fStream := TNullResponseStream.create();
+        httpHeaders := hdrs;
+    end;
+
+    destructor TNotModifiedResponse.destroy();
+    begin
+        fStream := nil;
+        httpHeaders := nil;
+        inherited destroy();
+    end;
+
+    (*!------------------------------------
+     * get http headers instance
+     *-------------------------------------
+     * @return header instance
+     *-------------------------------------*)
+    function TNotModifiedResponse.headers() : IHeaders;
+    begin
+        result := httpHeaders;
+    end;
+
+    function TNotModifiedResponse.write() : IResponse;
+    begin
+        httpHeaders.setHeader('Status', intToStr(fStatus) + ' ' + redirectCodeMessage(fStatus));
+        httpHeaders.writeHeaders();
+        result := self;
+    end;
+
+    (*!------------------------------------
+     * get response body
+     *-------------------------------------
+     * @return response body
+     *-------------------------------------*)
+    function TNotModifiedResponse.body() : IResponseStream;
+    begin
+        result := fStream;
+    end;
+
+    (*!------------------------------------
+     * set new response body
+     *-------------------------------------
+     * @return response body
+     *-------------------------------------*)
+    function TNotModifiedResponse.setBody(const newBody : IResponseStream) : IResponse;
+    begin
+        //intentionally does nothing as redirect response do not need body
+        result := self;
+    end;
+
+    function TNotModifiedResponse.clone() : ICloneable;
+    var clonedObj : IResponse;
+    begin
+        clonedObj := TNotModifiedResponse.create(
+            httpHeaders.clone() as IHeaders
+        );
+        result := clonedObj;
     end;
 
 end.
