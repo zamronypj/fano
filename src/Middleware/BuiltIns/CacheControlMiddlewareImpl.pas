@@ -177,6 +177,16 @@ const
             if notModified then
             begin
                 result := TNotModifiedResponse.create(result.headers);
+                //remove headers that MUST NOT be included with 304 Not Modified responses
+                result.headers.removeHeaders([
+                    'Allow',
+                    'Content-Encoding',
+                    'Content-Language',
+                    'Content-Length',
+                    'Content-Type',
+                    'Content-MD5',
+                    'Last-Modified'
+                ]);
             end;
         end;
     end;
