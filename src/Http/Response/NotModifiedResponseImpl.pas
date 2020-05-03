@@ -36,7 +36,7 @@ type
          *-------------------------------------
          * @param hdrs header conllection instance
          *-------------------------------------*)
-        constructor create(const hdrs : IHeaders);
+        constructor create(hdrs : IHeaders);
         destructor destroy(); override;
 
         (*!------------------------------------
@@ -80,7 +80,7 @@ uses
      * @param status, optional HTTP redirection status, default is 302
      *-------------------------------------*)
     constructor TNotModifiedResponse.create(
-        const hdrs : IHeaders
+        hdrs : IHeaders
     );
     begin
         inherited create();
@@ -109,6 +109,16 @@ uses
     function TNotModifiedResponse.write() : IResponse;
     begin
         httpHeaders.setHeader('Status', '304 Not Modified');
+        //remove headers that MUST NOT be included with 304 Not Modified responses
+        httpHeaders.removeHeaders([
+            'Allow',
+            'Content-Encoding',
+            'Content-Language',
+            'Content-Length',
+            'Content-Type',
+            'Content-MD5',
+            'Last-Modified'
+        ]);
         httpHeaders.writeHeaders();
         result := self;
     end;
