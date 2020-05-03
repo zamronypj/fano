@@ -108,7 +108,7 @@ uses
 
     function TNotModifiedResponse.write() : IResponse;
     begin
-        httpHeaders.setHeader('Status', intToStr(fStatus) + ' ' + redirectCodeMessage(fStatus));
+        httpHeaders.setHeader('Status', '304 Not Modified');
         httpHeaders.writeHeaders();
         result := self;
     end;
