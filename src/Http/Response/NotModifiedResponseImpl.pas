@@ -18,7 +18,8 @@ uses
     CloneableIntf,
     ResponseIntf,
     ResponseStreamIntf,
-    HeadersIntf;
+    HeadersIntf,
+    HttpCodeResponseImpl;
 
 type
     (*!------------------------------------------------
@@ -26,10 +27,9 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TNotModifiedResponse = class(TInterfacedObject, IResponse)
+    TNotModifiedResponse = class(THttpCodeResponse)
     private
-        httpHeaders : IHeaders;
-        fStream : IResponseStream;
+        procedure excludeHeaders();
     public
         (*!------------------------------------
          * constructor
@@ -37,32 +37,10 @@ type
          * @param hdrs header conllection instance
          *-------------------------------------*)
         constructor create(const hdrs : IHeaders);
-        destructor destroy(); override;
 
-        (*!------------------------------------
-         * get http headers instance
-         *-------------------------------------
-         * @return header instance
-         *-------------------------------------*)
-        function headers() : IHeaders;
+        function write() : IResponse; override;
 
-        function write() : IResponse;
-
-        (*!------------------------------------
-         * get response body
-         *-------------------------------------
-         * @return response body
-         *-------------------------------------*)
-        function body() : IResponseStream;
-
-        (*!------------------------------------
-         * set new response body
-         *-------------------------------------
-         * @return response body
-         *-------------------------------------*)
-        function setBody(const newBody : IResponseStream) : IResponse;
-
-        function clone() : ICloneable;
+        function clone() : ICloneable; override;
     end;
 
 implementation
@@ -81,34 +59,15 @@ uses
      *-------------------------------------*)
     constructor TNotModifiedResponse.create(const hdrs : IHeaders);
     begin
-        inherited create();
         //304 response does not need body, so we just use null stream
-        fStream := TNullResponseStream.create();
-        httpHeaders := hdrs;
+        inherited create(304, 'Not Modified', hdrs);
+        excludeHeaders();
     end;
 
-    destructor TNotModifiedResponse.destroy();
+    procedure TNotModifiedResponse.excludeHeaders();
     begin
-        fStream := nil;
-        httpHeaders := nil;
-        inherited destroy();
-    end;
-
-    (*!------------------------------------
-     * get http headers instance
-     *-------------------------------------
-     * @return header instance
-     *-------------------------------------*)
-    function TNotModifiedResponse.headers() : IHeaders;
-    begin
-        result := httpHeaders;
-    end;
-
-    function TNotModifiedResponse.write() : IResponse;
-    begin
-        httpHeaders.setHeader('Status', '304 Not Modified');
         //remove headers that MUST NOT be included with 304 Not Modified responses
-        httpHeaders.removeHeaders([
+        headers().removeHeaders([
             'Allow',
             'Content-Encoding',
             'Content-Language',
@@ -117,28 +76,12 @@ uses
             'Content-MD5',
             'Last-Modified'
         ]);
-        httpHeaders.writeHeaders();
-        result := self;
     end;
 
-    (*!------------------------------------
-     * get response body
-     *-------------------------------------
-     * @return response body
-     *-------------------------------------*)
-    function TNotModifiedResponse.body() : IResponseStream;
+    function TNotModifiedResponse.write() : IResponse;
     begin
-        result := fStream;
-    end;
-
-    (*!------------------------------------
-     * set new response body
-     *-------------------------------------
-     * @return response body
-     *-------------------------------------*)
-    function TNotModifiedResponse.setBody(const newBody : IResponseStream) : IResponse;
-    begin
-        //intentionally does nothing as redirect response do not need body
+        excludeHeaders();
+        inherited write();
         result := self;
     end;
 
