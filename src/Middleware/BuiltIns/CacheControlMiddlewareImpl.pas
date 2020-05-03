@@ -68,7 +68,6 @@ uses
     httpprotocol,
     md5,
     dateutils,
-    HeadersIntf,
     NotModifiedResponseImpl;
 
 const
@@ -177,7 +176,7 @@ const
 
             if notModified then
             begin
-                result := TNotModifiedResponse.create(result.headers.clone() as IHeaders);
+                result := TNotModifiedResponse.create(result.headers);
                 //remove headers that MUST NOT be included with 304 Not Modified responses
                 result.headers.removeHeaders([
                     'Allow',
