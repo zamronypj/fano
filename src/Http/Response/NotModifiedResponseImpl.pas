@@ -36,7 +36,7 @@ type
          *-------------------------------------
          * @param hdrs header conllection instance
          *-------------------------------------*)
-        constructor create(hdrs : IHeaders);
+        constructor create(const hdrs : IHeaders);
         destructor destroy(); override;
 
         (*!------------------------------------
@@ -79,9 +79,7 @@ uses
      * @param url target url to redirect
      * @param status, optional HTTP redirection status, default is 302
      *-------------------------------------*)
-    constructor TNotModifiedResponse.create(
-        hdrs : IHeaders
-    );
+    constructor TNotModifiedResponse.create(const hdrs : IHeaders);
     begin
         inherited create();
         //304 response does not need body, so we just use null stream

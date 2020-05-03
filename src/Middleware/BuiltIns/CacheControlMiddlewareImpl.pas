@@ -176,7 +176,7 @@ const
 
             if notModified then
             begin
-                result := TNotModifiedResponse.create(result.headers);
+                result := TNotModifiedResponse.create(result.headers.clone() as IHeaders);
             end;
         end;
     end;

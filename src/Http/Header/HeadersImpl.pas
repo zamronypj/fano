@@ -263,7 +263,10 @@ type
     var hdr : PHeaderRec;
     begin
         hdr := headerList.remove(key);
-        dispose(hdr);
+        if assigned(hdr) then
+        begin
+            dispose(hdr);
+        end;
         result := self;
     end;
 
