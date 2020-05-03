@@ -68,6 +68,7 @@ uses
     httpprotocol,
     md5,
     dateutils,
+    HeadersIntf,
     NotModifiedResponseImpl;
 
 const
