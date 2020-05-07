@@ -47,9 +47,9 @@ uses
 
     function TSendmailMailer.compose() : string;
     begin
-        result := 'To: ' + fTo + LineEnding
-            'Subject: ' + fSubject + LineEnding +
-            'Body: ' + fMessage + LineEnding;
+        result := 'To: ' + getTo() + LineEnding +
+            'Subject: ' + getSubject() + LineEnding +
+            'Body: ' + getMessage() + LineEnding;
     end;
 
     function TSendmailMailer.send() : boolean;
