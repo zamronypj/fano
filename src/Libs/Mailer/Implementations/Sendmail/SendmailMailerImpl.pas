@@ -41,7 +41,9 @@ implementation
 
 uses
 
-    Classes;
+    Classes,
+    SysUtils,
+    httpprotocol;
 
     constructor TSendmailMailer.create(const sendmailBin : string);
     begin
@@ -50,9 +52,12 @@ uses
 
     function TSendmailMailer.compose() : string;
     begin
-        result := 'To: ' + getTo() + LineEnding +
+        result := 'Date: ' + format(HTTPDateFmt(), Now()) + LineEnding +
+            'From: ' + getFrom() + LineEnding +
             'Subject: ' + getSubject() + LineEnding +
-            'Body: ' + getMessage() + LineEnding;
+            'To: ' + getTo() + LineEnding +
+            getHeader() + LineEnding +
+            getMessage() + LineEnding;
     end;
 
     procedure TSendmailMailer.executeSendmail(const proc : TProcess); virtual;
@@ -61,7 +66,6 @@ uses
         inputStr := TStringStream.create(compose());
         try
             proc.executable := fSendmailBin;
-            proc.parameters.add('-vt');
             proc.Options := proc.Options + [poUsePipes];
             proc.execute();
 
