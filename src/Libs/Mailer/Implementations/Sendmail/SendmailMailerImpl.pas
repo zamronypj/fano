@@ -15,6 +15,7 @@ interface
 
 uses
 
+    process,
     AbstractMailerImpl;
 
 type
@@ -29,6 +30,8 @@ type
     private
         fSendmailBin : string;
         function compose() : string;
+    protected
+        procedure executeSendmail(const proc : TProcess); virtual;
     public
         constructor create(const sendmailBin : string);
         function send() : boolean; override;
@@ -37,8 +40,8 @@ type
 implementation
 
 uses
-    Classes,
-    process;
+
+    Classes;
 
     constructor TSendmailMailer.create(const sendmailBin : string);
     begin
@@ -52,11 +55,10 @@ uses
             'Body: ' + getMessage() + LineEnding;
     end;
 
-    function TSendmailMailer.send() : boolean;
-    var proc : TProcess;
-        inputStr : TStream;
+    procedure TSendmailMailer.executeSendmail(const proc : TProcess); virtual;
+    var inputStr : TStream;
     begin
-        proc := TProcess.create(nil);
+        inputStr := TStringStream.create(compose());
         try
             proc.executable := fSendmailBin;
             proc.parameters.add('-vt');
@@ -64,12 +66,18 @@ uses
             proc.execute();
 
             //pipe email body to sendmail STDIN
-            inputStr := TStringStream.create(compose());
-            try
-                proc.input.copyFrom(inputStr);
-            finally
-                inputStr.free();
-            end;
+            proc.input.copyFrom(inputStr);
+        finally
+            inputStr.free();
+        end;
+    end;
+
+    function TSendmailMailer.send() : boolean;
+    var proc : TProcess;
+    begin
+        proc := TProcess.create(nil);
+        try
+            executeSendmail(proc);
             result := (proc.exitCode = 0);
         finally
             proc.free();
