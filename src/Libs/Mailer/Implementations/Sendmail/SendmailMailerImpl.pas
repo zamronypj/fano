@@ -70,6 +70,7 @@ uses
         inputStr := TStringStream.create(compose());
         try
             proc.executable := fSendmailBin;
+            proc.parameters.add('-t');
             proc.Options := proc.Options + [poUsePipes];
             proc.execute();
 
