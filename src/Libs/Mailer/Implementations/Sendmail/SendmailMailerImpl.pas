@@ -16,11 +16,8 @@ interface
 uses
 
     process,
+    SendmailConsts,
     AbstractMailerImpl;
-
-const
-
-    DEFAULT_SENDMAIL_BIN = '/usr/sbin/sendmail';
 
 type
 

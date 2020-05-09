@@ -17,6 +17,7 @@ uses
 
     LoggerIntf,
     process,
+    SendmailConsts,
     SendmailMailerImpl;
 
 type
@@ -30,6 +31,7 @@ type
     TSendmailLogMailer = class(TSendmailMailer)
     private
         fLogger : ILogger;
+        procedure logOutput(const proc : TProcess);
     protected
         procedure executeSendmail(const proc : TProcess); override;
     public
@@ -47,6 +49,10 @@ uses
     Classes,
     SysUtils,
     httpprotocol;
+
+const
+
+    BUFF_SIZE = 4 * 1024;
 
     constructor TSendmailLogMailer.create(
         const logger : ILogger;
@@ -67,7 +73,45 @@ uses
     begin
         proc.parameters.add('-v');
         inherited executeSendmail(proc);
-        //TODO log output
+        logOutput(proc);
     end;
 
+    procedure readOutput(
+        const proc : TProcess;
+        const str : TStream
+    );
+    var readSize, readCount : int64;
+        buffer : pointer;
+    begin
+        getMem(buffer, BUFF_SIZE);
+        try
+            while proc.running or (proc.Output.NumBytesAvailable > 0) do
+            begin
+                if proc.Output.NumBytesAvailable > 0 then
+                begin
+                    readSize := proc.Output.NumBytesAvailable;
+                    if readSize > BUFF_SIZE then
+                    begin
+                        readSize := BUFF_SIZE;
+                    end;
+                    readCount := proc.output.Read(buffer^, readSize);
+                    str.write(Buffer^, readCount);
+                end;
+            end;
+        finally
+            freeMem(buffer);
+        end;
+    end;
+
+    procedure TSendmailLogMailer.logOutput(const proc : TProcess);
+    var str : TStringStream;
+    begin
+        str := TStringStream.create('');
+        try
+            readOutput(proc, str);
+            fLogger.info(str.dataString);
+        finally
+            str.free();
+        end;
+    end;
 end.

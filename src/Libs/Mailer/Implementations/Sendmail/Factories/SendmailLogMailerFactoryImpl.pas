@@ -5,7 +5,7 @@
  * @copyright Copyright (c) 2018 Zamrony P. Juhara
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
-unit SendmailMailerFactoryImpl;
+unit SendmailLogMailerFactoryImpl;
 
 interface
 
@@ -16,21 +16,24 @@ uses
 
     DependencyIntf,
     DependencyContainerIntf,
+    LoggerIntf,
     FactoryImpl;
 
 type
 
     (*!------------------------------------------------
-     * factory class for TSendmailMailer
+     * factory class for TSendmailLogMailer
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *--------------------------------------------------*)
-    TSendmailMailerFactory = class(TFactory, IDependencyFactory)
+    TSendmailLogMailerFactory = class(TFactory, IDependencyFactory)
     private
         fSendmailBin : string;
+        fLogger : ILogger;
     public
         constructor create();
-        function sendmailBin(const sendmailBinPath : string) : TSendmailMailerFactory;
+        function sendmailBin(const sendmailBinPath : string) : TSendmailLogMailerFactory;
+        function logger(const alogger : ILogger) : TSendmailLogMailerFactory;
         function build(const container : IDependencyContainer) : IDependency; override;
     end;
 
@@ -39,22 +42,28 @@ implementation
 uses
 
     SendmailConsts,
-    SendmailMailerImpl;
+    SendmailLogMailerImpl;
 
-    constructor TSendmailMailerFactory.create();
+    constructor TSendmailLogMailerFactory.create();
     begin
         fSendmailBin := DEFAULT_SENDMAIL_BIN;
     end;
 
-    function TSendmailMailerFactory.sendmailBin(const sendmailBinPath : string) : TSendmailMailerFactory;
+    function TSendmailLogMailerFactory.sendmailBin(const sendmailBinPath : string) : TSendmailMailerFactory;
     begin
         fSendmailBin := sendmailBinPath;
         result := self;
     end;
 
-    function TSendmailMailerFactory.build(const container : IDependencyContainer) : IDependency;
+    function TSendmailLogMailerFactory.logger(const logger : ILogger) : TSendmailMailerFactory;
     begin
-        result := TSendmailMailer.create(fSendmailBin);
+        fLogger := alogger;
+        result := self;
+    end;
+
+    function TSendmailLogMailerFactory.build(const container : IDependencyContainer) : IDependency;
+    begin
+        result := TSendmailLogMailer.create(fLogger, fSendmailBin);
     end;
 
 end.
