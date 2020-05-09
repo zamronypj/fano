@@ -48,6 +48,7 @@ uses
     function TSendmailMailerFactory.sendmailBin(const sendmailBinPath : string) : TSendmailMailerFactory;
     begin
         fSendmailBin := sendmailBinPath;
+        result := self;
     end;
 
     function TSendmailMailerFactory.build(const container : IDependencyContainer) : IDependency;
