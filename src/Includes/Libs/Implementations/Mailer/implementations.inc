@@ -16,3 +16,6 @@ AbstractMailerImpl,
 
 SendmailMailerImpl,
 SendmailMailerFactoryImpl,
+
+SendmailLogMailerImpl,
+SendmailLogMailerFactoryImpl,
