@@ -23,7 +23,7 @@ type
 
     (*!------------------------------------------------
      * class having capability to
-     * send email using sendmail
+     * send email using sSMTP sendmail
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
