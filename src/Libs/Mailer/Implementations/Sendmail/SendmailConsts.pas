@@ -17,9 +17,5 @@ const
 
     DEFAULT_SENDMAIL_BIN = '/usr/sbin/sendmail';
 
-resourcestring
-
-    sErrEmptyRecipient = 'Empty mail recipient';
-
 implementation
 end.

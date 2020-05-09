@@ -82,6 +82,10 @@ uses
 
     EMailerImpl;
 
+resourcestring
+
+    sErrEmptyRecipient = 'Empty mail recipient';
+
     function TAbstractMailer.getRecipient() : string;
     begin
         result := fRecipientEmail;
