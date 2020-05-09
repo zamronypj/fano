@@ -16,6 +16,3 @@ TAbstractMailer = AbstractMailerImpl.TAbstractMailer;
 
 TSendmailMailer = SendmailMailerImpl.TSendmailMailer;
 TSendmailMailerFactory = SendmailMailerFactoryImpl.TSendmailMailerFactory;
-
-TSendmailLogMailer = SendmailLogMailerImpl.TSendmailLogMailer;
-TSendmailLogMailerFactory = SendmailLogMailerFactoryImpl.TSendmailLogMailerFactory;
