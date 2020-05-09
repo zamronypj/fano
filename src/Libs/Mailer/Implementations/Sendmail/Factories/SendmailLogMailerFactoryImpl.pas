@@ -49,13 +49,13 @@ uses
         fSendmailBin := DEFAULT_SENDMAIL_BIN;
     end;
 
-    function TSendmailLogMailerFactory.sendmailBin(const sendmailBinPath : string) : TSendmailMailerFactory;
+    function TSendmailLogMailerFactory.sendmailBin(const sendmailBinPath : string) : TSendmailLogMailerFactory;
     begin
         fSendmailBin := sendmailBinPath;
         result := self;
     end;
 
-    function TSendmailLogMailerFactory.logger(const alogger : ILogger) : TSendmailMailerFactory;
+    function TSendmailLogMailerFactory.logger(const alogger : ILogger) : TSendmailLogMailerFactory;
     begin
         fLogger := alogger;
         result := self;
