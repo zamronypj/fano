@@ -70,7 +70,7 @@ uses
             proc.execute();
 
             //pipe email body to sendmail STDIN
-            proc.input.copyFrom(inputStr);
+            proc.input.copyFrom(inputStr, 0);
         finally
             inputStr.free();
         end;
