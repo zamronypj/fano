@@ -28,13 +28,13 @@ type
     IMailer = interface
         ['{0C1A40B2-9FD3-470A-8BBD-241D5686DEB3}']
 
-        function getTo() : string;
-        procedure setTo(const aTo : string);
-        property &to : string read getTo write setTo;
+        function getRecipient() : string;
+        procedure setRecipient(const aTo : string);
+        property recipient : string read getRecipient write setRecipient;
 
-        function getFrom() : string;
-        procedure setFrom(const aFrom : string);
-        property from : string read getFrom write setFrom;
+        function getSender() : string;
+        procedure setSender(const aFrom : string);
+        property sender : string read getSender write setSender;
 
         function getSubject() : string;
         procedure setSubject(const aSubject : string);
@@ -42,7 +42,7 @@ type
 
         function getMessage() : string;
         procedure setMessage(const aMessage : string);
-        property &message : string read getMessage write setMessage;
+        property messageBody : string read getMessage write setMessage;
 
         function getAttachment() : TStream;
         procedure setAttachment(const aAttachment : TStream);

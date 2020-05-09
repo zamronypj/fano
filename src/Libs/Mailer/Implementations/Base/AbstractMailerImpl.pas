@@ -36,13 +36,13 @@ type
         fAttachment : TStream;
         fHeader : string;
     public
-        function getTo() : string;
-        procedure setTo(const aTo : string);
-        property &to : string read getTo write setTo;
+        function getRecipient() : string;
+        procedure setRecipient(const aTo : string);
+        property recipient : string read getRecipient write setRecipient;
 
-        function getFrom() : string;
-        procedure setFrom(const aFrom : string);
-        property from : string read getFrom write setFrom;
+        function getSender() : string;
+        procedure setSender(const aFrom : string);
+        property sender : string read getSender write setSender;
 
         function getSubject() : string;
         procedure setSubject(const aSubject : string);
@@ -50,7 +50,7 @@ type
 
         function getMessage() : string;
         procedure setMessage(const aMessage : string);
-        property &message : string read getMessage write setMessage;
+        property messageBody : string read getMessage write setMessage;
 
         function getAttachment() : TStream;
         procedure setAttachment(const aAttachment : TStream);
@@ -65,22 +65,22 @@ type
 
 implementation
 
-    function TAbstractMailer.getTo() : string;
+    function TAbstractMailer.getRecipient() : string;
     begin
         result := fTo;
     end;
 
-    procedure TAbstractMailer.setTo(const aTo : string);
+    procedure TAbstractMailer.setRecipient(const aTo : string);
     begin
         fTo := aTo;
     end;
 
-    function TAbstractMailer.getFrom() : string;
+    function TAbstractMailer.getSender() : string;
     begin
         result := fFrom;
     end;
 
-    procedure TAbstractMailer.setFrom(const aFrom : string);
+    procedure TAbstractMailer.setSender(const aFrom : string);
     begin
         fFrom := aFrom;
     end;

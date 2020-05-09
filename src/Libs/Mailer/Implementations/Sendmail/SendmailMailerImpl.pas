@@ -57,9 +57,9 @@ uses
     function TSendmailMailer.compose() : string;
     begin
         result := 'Date: ' + formatDatetime(HTTPDateFmt, Now()) + LineEnding +
-            'From: ' + getFrom() + LineEnding +
+            'From: ' + getSender() + LineEnding +
             'Subject: ' + getSubject() + LineEnding +
-            'To: ' + getTo() + LineEnding +
+            'To: ' + getRecipient() + LineEnding +
             getHeader() + LineEnding +
             getMessage() + LineEnding;
     end;
