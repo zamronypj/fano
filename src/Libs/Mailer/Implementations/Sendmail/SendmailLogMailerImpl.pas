@@ -77,27 +77,18 @@ const
     end;
 
     procedure readOutput(
-        const proc : TProcess;
+        const procStream : TStream;
         const str : TStream
     );
-    var readSize, readCount : int64;
+    var readCount : int64;
         buffer : pointer;
     begin
         getMem(buffer, BUFF_SIZE);
         try
-            while proc.running or (proc.Output.NumBytesAvailable > 0) do
-            begin
-                if proc.Output.NumBytesAvailable > 0 then
-                begin
-                    readSize := proc.Output.NumBytesAvailable;
-                    if readSize > BUFF_SIZE then
-                    begin
-                        readSize := BUFF_SIZE;
-                    end;
-                    readCount := proc.output.Read(buffer^, readSize);
-                    str.write(Buffer^, readCount);
-                end;
-            end;
+            repeat
+                readCount := procStream.read(buffer^, BUFF_SIZE);
+                str.writeBuffer(buffer^, readCount);
+            until readCount = 0;
         finally
             freeMem(buffer);
         end;
@@ -108,7 +99,7 @@ const
     begin
         str := TStringStream.create('');
         try
-            readOutput(proc, str);
+            readOutput(proc.output, str);
             fLogger.info(str.dataString);
         finally
             str.free();
