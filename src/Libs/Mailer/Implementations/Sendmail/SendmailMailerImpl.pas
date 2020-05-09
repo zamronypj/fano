@@ -52,7 +52,7 @@ uses
 
     function TSendmailMailer.compose() : string;
     begin
-        result := 'Date: ' + format(HTTPDateFmt(), Now()) + LineEnding +
+        result := 'Date: ' + formatDatetime(HTTPDateFmt, Now()) + LineEnding +
             'From: ' + getFrom() + LineEnding +
             'Subject: ' + getSubject() + LineEnding +
             'To: ' + getTo() + LineEnding +
