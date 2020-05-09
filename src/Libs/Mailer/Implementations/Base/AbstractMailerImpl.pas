@@ -54,7 +54,7 @@ type
 
         function getAttachment() : TStream;
         procedure setAttachment(const aAttachment : TStream);
-        property attachment : string read getAttachment write setAttachment;
+        property attachment : TStream read getAttachment write setAttachment;
 
         function getHeader() : string;
         procedure setHeader(const aHeader : string);
