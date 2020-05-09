@@ -10,6 +10,7 @@ unit SendmailMailerFactoryImpl;
 interface
 
 {$MODE OBJFPC}
+{$H+}
 
 uses
 
@@ -25,7 +26,11 @@ type
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *--------------------------------------------------*)
     TSendmailMailerFactory = class(TFactory, IDependencyFactory)
+    private
+        fSendmailBin : string;
     public
+        constructor create();
+        function sendmailBin(const sendmailBinPath : string) : TSendmailMailerFactory;
         function build(const container : IDependencyContainer) : IDependency; override;
     end;
 
@@ -35,9 +40,19 @@ uses
 
     SendmailMailerImpl;
 
+    constructor TSendmailMailerFactory.create();
+    begin
+        fSendmailBin := DEFAULT_SENDMAIL_BIN;
+    end;
+
+    function TSendmailMailerFactory.sendmailBin(const sendmailBinPath : string) : TSendmailMailerFactory;
+    begin
+        fSendmailBin := sendmailBinPath;
+    end;
+
     function TSendmailMailerFactory.build(const container : IDependencyContainer) : IDependency;
     begin
-        result := TSendmailMailer.create();
+        result := TSendmailMailer.create(fSendmailBin);
     end;
 
 end.

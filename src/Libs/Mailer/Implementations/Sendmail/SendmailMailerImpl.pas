@@ -18,6 +18,10 @@ uses
     process,
     AbstractMailerImpl;
 
+const
+
+    DEFAULT_SENDMAIL_BIN = '/usr/sbin/sendmail';
+
 type
 
     (*!------------------------------------------------
@@ -33,7 +37,7 @@ type
     protected
         procedure executeSendmail(const proc : TProcess); virtual;
     public
-        constructor create(const sendmailBin : string);
+        constructor create(const sendmailBin : string = DEFAULT_SENDMAIL_BIN);
         function send() : boolean; override;
     end;
 
@@ -45,7 +49,7 @@ uses
     SysUtils,
     httpprotocol;
 
-    constructor TSendmailMailer.create(const sendmailBin : string);
+    constructor TSendmailMailer.create(const sendmailBin : string =  DEFAULT_SENDMAIL_BIN);
     begin
         fSendmailBin := sendmailBin;
     end;
