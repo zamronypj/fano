@@ -64,15 +64,16 @@ uses
     procedure TSendmailMailer.executeSendmail(const proc : TProcess);
     var inputStr : TStream;
     begin
+        proc.executable := fSendmailBin;
+        proc.parameters.add('-t');
+        proc.Options := proc.Options + [poUsePipes];
+        proc.execute();
+
         inputStr := TStringStream.create(compose());
         try
-            proc.executable := fSendmailBin;
-            proc.parameters.add('-t');
-            proc.Options := proc.Options + [poUsePipes];
-            proc.execute();
-
             //pipe email body to sendmail STDIN
             proc.input.copyFrom(inputStr, 0);
+            proc.closeInput();
         finally
             inputStr.free();
         end;

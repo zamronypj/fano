@@ -99,7 +99,7 @@ const
     begin
         str := TStringStream.create('');
         try
-            readOutput(proc.output, str);
+            //readOutput(proc.output, str);
             fLogger.info(str.dataString);
         finally
             str.free();
