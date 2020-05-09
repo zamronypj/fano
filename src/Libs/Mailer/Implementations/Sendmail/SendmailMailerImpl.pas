@@ -60,7 +60,7 @@ uses
             getMessage() + LineEnding;
     end;
 
-    procedure TSendmailMailer.executeSendmail(const proc : TProcess); virtual;
+    procedure TSendmailMailer.executeSendmail(const proc : TProcess);
     var inputStr : TStream;
     begin
         inputStr := TStringStream.create(compose());
