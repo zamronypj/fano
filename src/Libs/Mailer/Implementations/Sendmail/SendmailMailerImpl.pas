@@ -54,11 +54,11 @@ uses
     function TSendmailMailer.compose() : string;
     begin
         result := 'Date: ' + formatDatetime(HTTPDateFmt, Now()) + LineEnding +
-            'From: ' + getSender() + LineEnding +
+            'From: ' + composeSender() + LineEnding +
             'Subject: ' + getSubject() + LineEnding +
-            'To: ' + getRecipient() + LineEnding +
+            'To: ' + composeRecipient() + LineEnding +
             getHeader() + LineEnding +
-            getMessage() + LineEnding;
+            getBody() + LineEnding;
     end;
 
     procedure TSendmailMailer.executeSendmail(const proc : TProcess);
@@ -73,7 +73,6 @@ uses
         try
             //pipe email body to sendmail STDIN
             proc.input.copyFrom(inputStr, 0);
-            proc.closeInput();
         finally
             inputStr.free();
         end;

@@ -32,17 +32,25 @@ type
         procedure setRecipient(const aTo : string);
         property recipient : string read getRecipient write setRecipient;
 
+        function getRecipientName() : string;
+        procedure setRecipientName(const aRecipientName : string);
+        property recipientName : string read getRecipientName write setRecipientName;
+
         function getSender() : string;
         procedure setSender(const aFrom : string);
         property sender : string read getSender write setSender;
+
+        function getSenderName() : string;
+        procedure setSenderName(const aSenderName : string);
+        property senderName : string read getSenderName write setSenderName;
 
         function getSubject() : string;
         procedure setSubject(const aSubject : string);
         property subject : string read getSubject write setSubject;
 
-        function getMessage() : string;
-        procedure setMessage(const aMessage : string);
-        property messageBody : string read getMessage write setMessage;
+        function getBody() : string;
+        procedure setBody(const aMessage : string);
+        property body : string read getBody write setBody;
 
         function getAttachment() : TStream;
         procedure setAttachment(const aAttachment : TStream);

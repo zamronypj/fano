@@ -6,20 +6,25 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit SendmailConsts;
+unit EMailerImpl;
 
 interface
 
 {$MODE OBJFPC}
-{$H+}
 
-const
+uses
 
-    DEFAULT_SENDMAIL_BIN = '/usr/sbin/sendmail';
+    sysutils;
 
-resourcestring
+type
 
-    sErrEmptyRecipient = 'Empty mail recipient';
+    (*!------------------------------------------------
+     * Exception that is raised when mailer fails
+     *
+     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+     *-------------------------------------------------*)
+    EMailer = class(Exception);
 
 implementation
+
 end.

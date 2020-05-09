@@ -29,28 +29,41 @@ type
      *-----------------------------------------------*)
     TAbstractMailer = class(TInjectableObject, IMailer)
     private
-        fTo : string;
-        fFrom : string;
+        fSenderEmail : string;
+        fSenderName : string;
+        fRecipientEmail : string;
+        fRecipientName : string;
         fSubject : string;
         fMessage : string;
         fAttachment : TStream;
         fHeader : string;
+    protected
+        function composeSender() : string;
+        function composeRecipient() : string;
     public
         function getRecipient() : string;
         procedure setRecipient(const aTo : string);
         property recipient : string read getRecipient write setRecipient;
 
+        function getRecipientName() : string;
+        procedure setRecipientName(const aRecipientName : string);
+        property recipientName : string read getRecipientName write setRecipientName;
+
         function getSender() : string;
         procedure setSender(const aFrom : string);
         property sender : string read getSender write setSender;
+
+        function getSenderName() : string;
+        procedure setSenderName(const aSenderName : string);
+        property senderName : string read getSenderName write setSenderName;
 
         function getSubject() : string;
         procedure setSubject(const aSubject : string);
         property subject : string read getSubject write setSubject;
 
-        function getMessage() : string;
-        procedure setMessage(const aMessage : string);
-        property messageBody : string read getMessage write setMessage;
+        function getBody() : string;
+        procedure setBody(const aMessage : string);
+        property body : string read getBody write setBody;
 
         function getAttachment() : TStream;
         procedure setAttachment(const aAttachment : TStream);
@@ -65,24 +78,75 @@ type
 
 implementation
 
+uses
+
+    EMailerImpl;
+
     function TAbstractMailer.getRecipient() : string;
     begin
-        result := fTo;
+        result := fRecipientEmail;
     end;
 
     procedure TAbstractMailer.setRecipient(const aTo : string);
     begin
-        fTo := aTo;
+        if aTo = '' then
+        begin
+            raise EMailer.create(sErrEmptyRecipient);
+        end;
+
+        fRecipientEmail := aTo;
+    end;
+
+    function TAbstractMailer.getRecipientName() : string;
+    begin
+        result := fRecipientName;
+    end;
+
+    procedure TAbstractMailer.setRecipientName(const aRecipientName : string);
+    begin
+        fRecipientName := aRecipientName;
     end;
 
     function TAbstractMailer.getSender() : string;
     begin
-        result := fFrom;
+        result := fSenderEmail;
     end;
 
     procedure TAbstractMailer.setSender(const aFrom : string);
     begin
-        fFrom := aFrom;
+        fSenderEmail := aFrom;
+    end;
+
+    function TAbstractMailer.getSenderName() : string;
+    begin
+        result := fSenderName;
+    end;
+
+    procedure TAbstractMailer.setSenderName(const aSenderName : string);
+    begin
+        fSenderName := aSenderName;
+    end;
+
+    function TAbstractMailer.composeSender() : string;
+    begin
+        if fSenderName = '' then
+        begin
+            result := fSenderEmail;
+        end else
+        begin
+            result := fSenderName + ' <' + fSenderEmail + '>';
+        end;
+    end;
+
+    function TAbstractMailer.composeRecipient() : string;
+    begin
+        if fRecipientName = '' then
+        begin
+            result := fRecipientEmail;
+        end else
+        begin
+            result := fRecipientName + ' <' + fRecipientEmail + '>';
+        end;
     end;
 
     function TAbstractMailer.getSubject() : string;
@@ -95,12 +159,12 @@ implementation
         fSubject := aSubject;
     end;
 
-    function TAbstractMailer.getMessage() : string;
+    function TAbstractMailer.getBody() : string;
     begin
         result := fMessage;
     end;
 
-    procedure TAbstractMailer.setMessage(const aMessage : string);
+    procedure TAbstractMailer.setBody(const aMessage : string);
     begin
         fMessage := aMessage;
     end;
