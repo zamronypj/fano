@@ -55,7 +55,7 @@ uses
         result := self;
     end;
 
-    function TSendmailLogMailerFactory.logger(const logger : ILogger) : TSendmailMailerFactory;
+    function TSendmailLogMailerFactory.logger(const alogger : ILogger) : TSendmailMailerFactory;
     begin
         fLogger := alogger;
         result := self;
