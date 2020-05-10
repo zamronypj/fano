@@ -59,7 +59,7 @@ type
          *-------------------------------------------------
          * @return database connection instance
          *-------------------------------------------------*)
-        function endTransaction() : IRdbms;
+        function rollback() : IRdbms;
 
         (*!------------------------------------------------
          * commit a transaction

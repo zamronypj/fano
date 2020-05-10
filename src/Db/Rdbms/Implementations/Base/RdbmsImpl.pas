@@ -281,6 +281,11 @@ resourcestring
         begin
             dbInstance := TSQLConnector.create(nil);
             dbInstance.transaction := TSQLTransaction.create(dbInstance);
+
+            //by default SqlDb TSQLConnection will start transaction as needed
+            //we do not want that. let developer decide for themselves
+            dbInstance.Transaction.Options := [stoExplicitStart];
+
             fQuery := TSQLQuery.create(nil);
             fQuery.database := dbInstance;
         end;
@@ -332,14 +337,14 @@ resourcestring
     end;
 
     (*!------------------------------------------------
-     * commit or rollback and end a transaction
+     * rollback a transaction
      *-------------------------------------------------
      * @return database connection instance
      *-------------------------------------------------*)
-    function TRdbms.endTransaction() : IRdbms;
+    function TRdbms.rollback() : IRdbms;
     begin
         raiseExceptionIfInvalidConnection();
-        dbInstance.endTransaction();
+        dbInstance.transaction.rollback();
         result := self;
     end;
 
