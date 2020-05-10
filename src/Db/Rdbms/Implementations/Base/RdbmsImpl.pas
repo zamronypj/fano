@@ -278,6 +278,16 @@ resourcestring
         result := self;
     end;
 
+    (*!------------------------------------------------
+     * get current database name
+     *-------------------------------------------------
+     * @return database name
+     *-------------------------------------------------*)
+    function TRdbms.getDbName() : string;
+    begin
+        result := dbInstance.DatabaseName;
+    end;
+
     procedure TRdbms.raiseExceptionIfInvalidConnection();
     begin
         if (dbInstance = nil) then

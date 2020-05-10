@@ -70,6 +70,13 @@ type
          * @return result set
          *-------------------------------------------------*)
         function prepare(const sql : string) : IRdbmsStatement;
+
+        (*!------------------------------------------------
+         * get current database name
+         *-------------------------------------------------
+         * @return database name
+         *-------------------------------------------------*)
+        function getDbName() : string;
     end;
 
 implementation
