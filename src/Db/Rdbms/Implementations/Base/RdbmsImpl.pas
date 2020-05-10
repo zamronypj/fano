@@ -84,14 +84,11 @@ type
         function beginTransaction() : IRdbms;
 
         (*!------------------------------------------------
-         * end a transaction
+         * rollback a transaction
          *-------------------------------------------------
          * @return database connection instance
-         *-------------------------------------------------
-         * This is provided to make it easy to auto commit or
-         * rollback
          *-------------------------------------------------*)
-        function endTransaction() : IRdbms;
+        function rollback() : IRdbms;
 
         (*!------------------------------------------------
          * commit a transaction
