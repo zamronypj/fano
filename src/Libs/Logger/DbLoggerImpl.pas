@@ -33,7 +33,7 @@ type
         fTableName : string;
         fLevelField : string;
         fMsgField : string;
-        fCreateAtField : string;
+        fCreatedAtField : string;
         fContextField : string;
     public
         constructor create(
@@ -41,7 +41,7 @@ type
             const tableName : string;
             const levelField : string;
             const msgField : string;
-            const createAtField : string;
+            const createdAtField : string;
             const contextField : string
         );
 
@@ -75,7 +75,7 @@ uses
         const tableName : string = DEFAULT_TABLE_NAME;
         const levelField : string = DEFAULT_LEVEL_COLUMN_NAME;
         const msgField : string = DEFAULT_MSG_COLUMN_NAME;
-        const createAtField : string = DEFAULT_CREATED_AT_COLUMN_NAME;
+        const createdAtField : string = DEFAULT_CREATED_AT_COLUMN_NAME;
         const contextField : string  = DEFAULT_CONTEXT_COLUMN_NAME
     );
     begin
@@ -83,7 +83,7 @@ uses
         fTableName := tableName;
         fLevelField := levelField;
         fMsgField := msgField;
-        fCreateAtField := createAtField;
+        fCreatedAtField := createdAtField;
         fContextField := contextField;
     end;
 
