@@ -128,6 +128,9 @@ uses
             statement.paramStr('context', context.serialize());
 
         statement.execute();
+
+        //SqlDb ALWAYS implicitly start transaction so commmit() is required
+        fRdbms.commit();
         result := self;
     end;
 
