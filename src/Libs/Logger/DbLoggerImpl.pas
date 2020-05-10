@@ -72,11 +72,11 @@ uses
 
     constructor TDbLogger.create(
         const rdbms : IRdbms;
-        const tableName : string = DEFAULT_TABLE_NAME;
-        const levelField : string = DEFAULT_LEVEL_COLUMN_NAME;
-        const msgField : string = DEFAULT_MSG_COLUMN_NAME;
-        const createdAtField : string = DEFAULT_CREATED_AT_COLUMN_NAME;
-        const contextField : string  = DEFAULT_CONTEXT_COLUMN_NAME
+        const tableName : string;
+        const levelField : string;
+        const msgField : string;
+        const createdAtField : string;
+        const contextField : string
     );
     begin
         fRdbms := rdbms;
