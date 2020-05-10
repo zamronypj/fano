@@ -120,9 +120,14 @@ uses
         );
         statement.paramStr('level', level)
             .paramStr('msg', msg)
-            .paramStr('createdAt', FormatDateTime('yyyy-mm-dd hh:nn:ss', Now))
-            .paramStr('context', context.serialize())
-            .execute();
+            .paramStr('createdAt', FormatDateTime('yyyy-mm-dd hh:nn:ss', Now));
+
+        if (context = nil) then
+            statement.paramStr('context', '')
+        else
+            statement.paramStr('context', context.serialize());
+
+        statement.execute();
         result := self;
     end;
 
