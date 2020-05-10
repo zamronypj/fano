@@ -94,6 +94,13 @@ type
         function endTransaction() : IRdbms;
 
         (*!------------------------------------------------
+         * commit a transaction
+         *-------------------------------------------------
+         * @return database connection instance
+         *-------------------------------------------------*)
+        function commit() : IRdbms;
+
+        (*!------------------------------------------------
          * total data in result set
          *-------------------------------------------------
          * @return total data in current result set
@@ -337,6 +344,18 @@ resourcestring
     end;
 
     (*!------------------------------------------------
+     * commit a transaction
+     *-------------------------------------------------
+     * @return database connection instance
+     *-------------------------------------------------*)
+    function TRdbms.commit() : IRdbms;
+    begin
+        raiseExceptionIfInvalidConnection();
+        dbInstance.transaction.commit();
+        result := self;
+    end;
+
+    (*!------------------------------------------------
      * number of record in result set
      *-------------------------------------------------
      * @return largeInt number of records
@@ -512,7 +531,6 @@ resourcestring
         end else
         begin
             fQuery.execSql();
-            dbInstance.transaction.commit();
         end;
         result:= self;
     end;
