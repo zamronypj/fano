@@ -29,7 +29,7 @@ type
         fTableName : string;
         fLevelField : string;
         fMsgField : string;
-        fCreateAtField : string;
+        fCreatedAtField : string;
         fContextField : string;
     public
         constructor create();
@@ -37,7 +37,7 @@ type
         function tableName(const atablename : string) : TDbLoggerFactory;
         function levelField(const aLevelField : string) : TDbLoggerFactory;
         function msgField(const aMsgField : string) : TDbLoggerFactory;
-        function createAtField(const aCreateAtField : string) : TDbLoggerFactory;
+        function createdAtField(const aCreatedAtField : string) : TDbLoggerFactory;
         function contextField(const aContextField : string) : TDbLoggerFactory;
         function build(const container : IDependencyContainer) : IDependency; override;
     end;
@@ -64,7 +64,7 @@ const
         fTableName := DEFAULT_TABLE_NAME;
         fLevelField := DEFAULT_LEVEL_COLUMN_NAME;
         fMsgField := DEFAULT_MSG_COLUMN_NAME;
-        fCreateAtField := DEFAULT_CREATED_AT_COLUMN_NAME;
+        fCreatedAtField := DEFAULT_CREATED_AT_COLUMN_NAME;
         fContextField := DEFAULT_CONTEXT_COLUMN_NAME;
     end;
 
@@ -92,9 +92,9 @@ const
         result := self
     end;
 
-    function TDbLoggerFactory.createAtField(const aCreateAtField : string) : TDbLoggerFactory;
+    function TDbLoggerFactory.createdAtField(const aCreatedAtField : string) : TDbLoggerFactory;
     begin
-        fCreateAtField := aCreateAtField;
+        fCreatedAtField := aCreatedAtField;
         result := self
     end;
 
