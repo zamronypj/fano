@@ -110,8 +110,8 @@ uses
     var statement : IRdbmsStatement;
     begin
         statement := fRdbms.prepare(
-            'INSERT INTO ' + fTableName +
-            ' (' +
+            'INSERT INTO `' + fRdbms.getDbName() + '`.`' + fTableName +
+            '` (' +
                 '`' + fLevelField + '`,' +
                 '`' + fMsgField + '`,' +
                 '`' + fCreatedAtField + '`,' +
