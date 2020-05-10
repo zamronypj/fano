@@ -281,7 +281,10 @@ resourcestring
 
             //by default SqlDb TSQLConnection will start transaction as needed
             //we do not want that. let developer decide for themselves
-            dbInstance.Transaction.Options := [stoExplicitStart];
+            //but somehow SqlDb always want to use transaction so following
+            //line will cause EDatabaseError
+            //"Error: attempt to implicitly start a transaction on Connection..."
+            //dbInstance.Transaction.Options := [stoExplicitStart];
 
             fQuery := TSQLQuery.create(nil);
             fQuery.database := dbInstance;
