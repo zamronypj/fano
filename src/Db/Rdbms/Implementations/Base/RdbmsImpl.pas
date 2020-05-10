@@ -512,6 +512,7 @@ resourcestring
         end else
         begin
             fQuery.execSql();
+            dbInstance.transaction.commit();
         end;
         result:= self;
     end;
