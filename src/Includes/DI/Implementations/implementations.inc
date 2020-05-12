@@ -14,7 +14,6 @@
  *-----------------------------------------------*)
 
 DependencyContainerImpl,
-InitializeableContainerImpl,
 DependencyListImpl,
 InjectableObjectImpl,
 
