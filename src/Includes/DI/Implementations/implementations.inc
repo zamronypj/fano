@@ -23,9 +23,6 @@ EInvalidFactoryImpl,
 EDependencyAliasImpl,
 FactoryImpl,
 
-ServiceImpl,
-ServiceContainerImpl,
 BasicContainerFactoryImpl,
-ServiceContainerFactoryImpl,
 
 CompositeServiceProviderImpl,
