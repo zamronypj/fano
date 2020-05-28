@@ -28,6 +28,9 @@ type
     class procedure Fill(const ABuffer: THashLibUInt64Array; AFrom, ATo: Int32;
       AFiller: UInt64); overload; static;
 
+    class procedure FillMemory(ABufferPtr: Pointer; ASize: Int64;
+      AFiller: Byte); static;
+
     class procedure ZeroFill(const ABuffer: THashLibByteArray);
       overload; static;
 
@@ -37,8 +40,23 @@ type
     class procedure ZeroFill(const ABuffer: THashLibUInt64Array);
       overload; static;
 
+    class procedure ZeroFill(const AMatrixBuffer: THashLibMatrixUInt32Array);
+      overload; static;
+
+    class procedure ZeroFill(const AMatrixBuffer: THashLibMatrixUInt64Array);
+      overload; static;
+
     class function Concatenate(const ABuffer1, ABuffer2: THashLibByteArray)
-      : THashLibByteArray; static;
+      : THashLibByteArray; overload; static;
+
+    class function Concatenate(const ABuffer1, ABuffer2: THashLibUInt32Array)
+      : THashLibUInt32Array; overload; static;
+
+    class function Clone(const AMatrixBuffer: THashLibMatrixUInt32Array)
+      : THashLibMatrixUInt32Array; overload; static;
+
+    class function Clone(const AMatrixBuffer: THashLibMatrixUInt64Array)
+      : THashLibMatrixUInt64Array; overload; static;
 
   end;
 
@@ -122,6 +140,15 @@ begin
   end;
 end;
 
+class procedure TArrayUtils.FillMemory(ABufferPtr: Pointer; ASize: Int64;
+  AFiller: Byte);
+begin
+  if ABufferPtr <> Nil then
+  begin
+    System.FillChar(ABufferPtr^, ASize, AFiller);
+  end;
+end;
+
 class procedure TArrayUtils.ZeroFill(const ABuffer: THashLibByteArray);
 begin
   TArrayUtils.Fill(ABuffer, 0, System.Length(ABuffer), Byte(0));
@@ -135,6 +162,28 @@ end;
 class procedure TArrayUtils.ZeroFill(const ABuffer: THashLibUInt64Array);
 begin
   TArrayUtils.Fill(ABuffer, 0, System.Length(ABuffer), UInt64(0));
+end;
+
+class procedure TArrayUtils.ZeroFill(const AMatrixBuffer
+  : THashLibMatrixUInt32Array);
+var
+  LIdx: Int32;
+begin
+  for LIdx := System.Low(AMatrixBuffer) to System.High(AMatrixBuffer) do
+  begin
+    TArrayUtils.ZeroFill(AMatrixBuffer[LIdx]);
+  end;
+end;
+
+class procedure TArrayUtils.ZeroFill(const AMatrixBuffer
+  : THashLibMatrixUInt64Array);
+var
+  LIdx: Int32;
+begin
+  for LIdx := System.Low(AMatrixBuffer) to System.High(AMatrixBuffer) do
+  begin
+    TArrayUtils.ZeroFill(AMatrixBuffer[LIdx]);
+  end;
 end;
 
 class function TArrayUtils.Concatenate(const ABuffer1,
@@ -152,6 +201,49 @@ begin
   begin
     System.Move(ABuffer2[0], Result[LABuffer1Length], System.Length(ABuffer2) *
       System.SizeOf(Byte));
+  end;
+end;
+
+class function TArrayUtils.Concatenate(const ABuffer1,
+  ABuffer2: THashLibUInt32Array): THashLibUInt32Array;
+var
+  LABuffer1Length: Int32;
+begin
+  LABuffer1Length := System.Length(ABuffer1);
+  System.SetLength(Result, LABuffer1Length + System.Length(ABuffer2));
+  if ABuffer1 <> Nil then
+  begin
+    System.Move(ABuffer1[0], Result[0], LABuffer1Length *
+      System.SizeOf(UInt32));
+  end;
+  if ABuffer2 <> Nil then
+  begin
+    System.Move(ABuffer2[0], Result[LABuffer1Length], System.Length(ABuffer2) *
+      System.SizeOf(UInt32));
+  end;
+end;
+
+class function TArrayUtils.Clone(const AMatrixBuffer: THashLibMatrixUInt32Array)
+  : THashLibMatrixUInt32Array;
+var
+  LIdx: Int32;
+begin
+  System.SetLength(Result, System.Length(AMatrixBuffer));
+  for LIdx := System.Low(AMatrixBuffer) to System.High(AMatrixBuffer) do
+  begin
+    Result[LIdx] := System.Copy(AMatrixBuffer[LIdx]);
+  end;
+end;
+
+class function TArrayUtils.Clone(const AMatrixBuffer: THashLibMatrixUInt64Array)
+  : THashLibMatrixUInt64Array;
+var
+  LIdx: Int32;
+begin
+  System.SetLength(Result, System.Length(AMatrixBuffer));
+  for LIdx := System.Low(AMatrixBuffer) to System.High(AMatrixBuffer) do
+  begin
+    Result[LIdx] := System.Copy(AMatrixBuffer[LIdx]);
   end;
 end;
 

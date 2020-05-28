@@ -9,7 +9,7 @@ uses
   HlpKDF,
   HlpIHashInfo,
   HlpHMACNotBuildInAdapter,
-  HlpBitConverter,
+  HlpConverters,
   HlpArrayUtils,
   HlpHashLibTypes;
 
@@ -109,25 +109,14 @@ end;
 
 class function TPBKDF2_HMACNotBuildInAdapter.GetBigEndianBytes(AInput: UInt32)
   : THashLibByteArray;
-var
-  LBytes, LInvertedBytes: THashLibByteArray;
 begin
-  LBytes := TBitConverter.GetBytes(AInput);
-  LInvertedBytes := THashLibByteArray.Create(LBytes[3], LBytes[2], LBytes[1],
-    LBytes[0]);
-  if TBitConverter.IsLittleEndian then
-  begin
-    result := LInvertedBytes
-  end
-  else
-  begin
-    result := LBytes;
-  end;
+  System.SetLength(Result, System.SizeOf(UInt32));
+  TConverters.ReadUInt32AsBytesBE(AInput, Result, 0);
 end;
 
 function TPBKDF2_HMACNotBuildInAdapter.Func: THashLibByteArray;
 var
-  LINT_Block, LTemp, LRet: THashLibByteArray;
+  LINT_Block, LTemp: THashLibByteArray;
   LIdx: UInt32;
   LJdx: Int32;
 begin
@@ -140,7 +129,7 @@ begin
 
   LTemp := FHMAC.TransformFinal().GetBytes();
 
-  LRet := LTemp;
+  Result := System.Copy(LTemp);
 
   LIdx := 2;
   while LIdx <= FIterationCount do
@@ -149,13 +138,12 @@ begin
     LJdx := 0;
     while LJdx < FBlockSize do
     begin
-      LRet[LJdx] := LRet[LJdx] xor LTemp[LJdx];
+      Result[LJdx] := Result[LJdx] xor LTemp[LJdx];
       System.Inc(LJdx);
     end;
     System.Inc(LIdx);
   end;
   System.Inc(FBlock);
-  result := LRet;
 end;
 
 function TPBKDF2_HMACNotBuildInAdapter.GetBytes(AByteCount: Int32)
@@ -187,7 +175,7 @@ begin
     begin
       System.Move(FBuffer[FStartIndex], LKey[0], AByteCount);
       FStartIndex := FStartIndex + AByteCount;
-      result := LKey;
+      Result := LKey;
       Exit;
     end;
   end;
@@ -218,11 +206,11 @@ begin
         System.Move(LT_Block[LRemainder], FBuffer[FStartIndex], LRemCount);
       end;
       FEndIndex := FEndIndex + LRemCount;
-      result := LKey;
+      Result := LKey;
       Exit;
     end;
   end;
-  result := LKey;
+  Result := LKey;
 end;
 
 procedure TPBKDF2_HMACNotBuildInAdapter.Initialize;

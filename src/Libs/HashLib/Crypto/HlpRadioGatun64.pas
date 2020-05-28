@@ -7,7 +7,6 @@ interface
 uses
   HlpHashLibTypes,
 {$IFDEF DELPHI}
-  HlpBitConverter,
   HlpHashBuffer,
   HlpHash,
 {$ENDIF DELPHI}
@@ -48,15 +47,10 @@ implementation
 function TRadioGatun64.Clone(): IHash;
 var
   LHashInstance: TRadioGatun64;
-  LIdx: Int32;
 begin
   LHashInstance := TRadioGatun64.Create();
   LHashInstance.FMill := System.Copy(FMill);
-  // since System.Copy() does not support jagged arrays (multidimensional dynamic arrays, we improvise)
-  for LIdx := System.Low(FBelt) to System.High(FBelt) do
-  begin
-    LHashInstance.FBelt[LIdx] := System.Copy(FBelt[LIdx]);
-  end;
+  LHashInstance.FBelt := TArrayUtils.Clone(FBelt);
   LHashInstance.FBuffer := FBuffer.Clone();
   LHashInstance.FProcessedBytesCount := FProcessedBytesCount;
   result := LHashInstance as IHash;
@@ -120,18 +114,9 @@ begin
 end;
 
 procedure TRadioGatun64.Initialize;
-var
-  LIdx: Int32;
 begin
   TArrayUtils.ZeroFill(FMill);
-
-  LIdx := 0;
-  while LIdx < 13 do
-  begin
-    TArrayUtils.ZeroFill(FBelt[LIdx]);
-    System.Inc(LIdx);
-  end;
-
+  TArrayUtils.ZeroFill(FBelt);
   Inherited Initialize();
 end;
 

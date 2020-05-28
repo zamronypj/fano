@@ -10,7 +10,6 @@ uses
   HlpHash,
 {$IFDEF DELPHI}
   HlpHashBuffer,
-  HlpBitConverter,
 {$ENDIF DELPHI}
   HlpIHashInfo,
   HlpIHash,
@@ -23,24 +22,22 @@ uses
   HlpHashLibTypes;
 
 resourcestring
-  SInvalidHashMode = 'Only "[%s]" HashModes are Supported';
   SInvalidXOFSize =
     'XOFSize in Bits must be Multiples of 8 and be Greater than Zero Bytes';
   SOutputLengthInvalid = 'Output Length is above the Digest Length';
   SOutputBufferTooShort = 'Output Buffer Too Short';
+  SWritetoXofAfterReadError = '"%s" Write to Xof after Read not Allowed';
 
 type
   TSHA3 = class abstract(TBlockHash, ICryptoNotBuildIn, ITransformBlock)
 
   type
 {$SCOPEDENUMS ON}
-    THashMode = (hmKeccak = $1, hmSHA3 = $6, hmShake = $1F, hmCShake = $4);
+    THashMode = (hmKeccak = $1, hmCShake = $4, hmSHA3 = $6, hmShake = $1F);
 {$SCOPEDENUMS OFF}
   strict protected
   var
     FState: THashLibUInt64Array;
-    FHashSize, FBlockSize: Int32;
-    FHashMode: THashMode;
 
 {$REGION 'Consts'}
 
@@ -71,13 +68,14 @@ type
     procedure TransformBlock(AData: PByte; ADataLength: Int32;
       AIndex: Int32); override;
 
+    function GetHashMode(): TSHA3.THashMode; virtual;
+
   public
     procedure Initialize; override;
 
   end;
 
 type
-
   TSHA3_224 = class sealed(TSHA3)
 
   public
@@ -87,7 +85,6 @@ type
   end;
 
 type
-
   TSHA3_256 = class sealed(TSHA3)
 
   public
@@ -97,7 +94,6 @@ type
   end;
 
 type
-
   TSHA3_384 = class sealed(TSHA3)
 
   public
@@ -107,7 +103,6 @@ type
   end;
 
 type
-
   TSHA3_512 = class sealed(TSHA3)
 
   public
@@ -117,8 +112,15 @@ type
   end;
 
 type
+  TKeccak = class abstract(TSHA3)
 
-  TKeccak_224 = class sealed(TSHA3)
+  strict protected
+
+    function GetHashMode(): TSHA3.THashMode; override;
+  end;
+
+type
+  TKeccak_224 = class sealed(TKeccak)
 
   public
 
@@ -127,18 +129,7 @@ type
   end;
 
 type
-
-  TKeccak_256 = class sealed(TSHA3)
-
-  public
-
-    constructor Create();
-    function Clone(): IHash; override;
-  end;
-
-type
-
-  TKeccak_288 = class sealed(TSHA3)
+  TKeccak_256 = class sealed(TKeccak)
 
   public
 
@@ -147,8 +138,7 @@ type
   end;
 
 type
-
-  TKeccak_384 = class sealed(TSHA3)
+  TKeccak_288 = class sealed(TKeccak)
 
   public
 
@@ -157,8 +147,16 @@ type
   end;
 
 type
+  TKeccak_384 = class sealed(TKeccak)
 
-  TKeccak_512 = class sealed(TSHA3)
+  public
+
+    constructor Create();
+    function Clone(): IHash; override;
+  end;
+
+type
+  TKeccak_512 = class sealed(TKeccak)
 
   public
 
@@ -176,15 +174,18 @@ type
     function SetXOFSizeInBitsInternal(AXofSizeInBits: UInt64): IXOF;
   strict protected
   var
-    FBufferPosition, FDigestPosition, FShakeBufferPosition: UInt64;
+    FBufferPosition, FDigestPosition: UInt64;
     FShakeBuffer: THashLibByteArray;
     FFinalized: Boolean;
     constructor Create(AHashSize: THashSize);
+    function GetHashMode(): TSHA3.THashMode; override;
     property XOFSizeInBits: UInt64 read GetXOFSizeInBits write SetXOFSizeInBits;
 
   public
     procedure Initialize(); override;
     function GetResult(): THashLibByteArray; override;
+    procedure TransformBytes(const AData: THashLibByteArray;
+      AIndex, ADataLength: Int32); override;
     function TransformFinal(): IHashResult; override;
     procedure DoOutput(const ADestination: THashLibByteArray;
       ADestinationOffset, AOutputLength: UInt64);
@@ -220,6 +221,8 @@ type
 
   var
     FN, FS, FInitBlock: THashLibByteArray;
+
+    function GetHashMode(): TSHA3.THashMode; override;
 
     /// <param name="AHashSize">
     /// the HashSize of the underlying Shake function
@@ -269,7 +272,7 @@ type
   strict protected
   var
     FHash: IHash;
-    FKey, FCustomization: THashLibByteArray;
+    FKey: THashLibByteArray;
 
     function GetName: String; override;
 
@@ -305,8 +308,7 @@ type
   strict private
     constructor Create(const AKMACKey, ACustomization: THashLibByteArray;
       AOutputLengthInBits: UInt64); overload;
-    constructor Create(const AHash: IHash;
-      const AKMACKey, ACustomization: THashLibByteArray;
+    constructor Create(const AHash: IHash; const AKMACKey: THashLibByteArray;
       AOutputLengthInBits: UInt64); overload;
 
   public
@@ -326,7 +328,7 @@ type
     constructor Create(const AKMACKey, ACustomization
       : THashLibByteArray); overload;
     constructor Create(const AHash: IHash;
-      const AKMACKey, ACustomization: THashLibByteArray); overload;
+      const AKMACKey: THashLibByteArray); overload;
 
   strict protected
     property XOFSizeInBits: UInt64 read GetXOFSizeInBits write SetXOFSizeInBits;
@@ -344,8 +346,7 @@ type
   strict private
     constructor Create(const AKMACKey, ACustomization: THashLibByteArray;
       AOutputLengthInBits: UInt64); overload;
-    constructor Create(const AHash: IHash;
-      const AKMACKey, ACustomization: THashLibByteArray;
+    constructor Create(const AHash: IHash; const AKMACKey: THashLibByteArray;
       AOutputLengthInBits: UInt64); overload;
 
   public
@@ -365,7 +366,7 @@ type
     constructor Create(const AKMACKey, ACustomization
       : THashLibByteArray); overload;
     constructor Create(const AHash: IHash;
-      const AKMACKey, ACustomization: THashLibByteArray); overload;
+      const AKMACKey: THashLibByteArray); overload;
 
   strict protected
     property XOFSizeInBits: UInt64 read GetXOFSizeInBits write SetXOFSizeInBits;
@@ -381,11 +382,14 @@ implementation
 
 { TSHA3 }
 
+function TSHA3.GetHashMode(): TSHA3.THashMode;
+begin
+  Result := TSHA3.THashMode.hmSHA3;
+end;
+
 constructor TSHA3.Create(AHashSize: THashSize);
 begin
   Inherited Create(Int32(AHashSize), 200 - (Int32(AHashSize) * 2));
-  FHashSize := HashSize;
-  FBlockSize := BlockSize;
   System.SetLength(FState, 25);
 end;
 
@@ -397,33 +401,20 @@ begin
   LBufferPosition := FBuffer.Position;
   LBlock := FBuffer.GetBytesZeroPadded();
 
-  LBlock[LBufferPosition] := Int32(FHashMode);
-  LBlock[FBlockSize - 1] := LBlock[FBlockSize - 1] xor $80;
+  LBlock[LBufferPosition] := Int32(GetHashMode());
+  LBlock[BlockSize - 1] := LBlock[BlockSize - 1] xor $80;
 
   TransformBlock(PByte(LBlock), System.Length(LBlock), 0);
 end;
 
 function TSHA3.GetName: String;
 begin
-  case FHashMode of
-    TSHA3.THashMode.hmKeccak:
-      Result := Format('%s_%u', ['TKeccak', Self.HashSize * 8]);
-    TSHA3.THashMode.hmSHA3:
-      Result := Self.ClassName;
-    TSHA3.THashMode.hmShake, TSHA3.THashMode.hmCShake:
-      Result := Format('%s_%s_%u', [Self.ClassName, 'XOFSizeInBytes',
-        (Self as IXOF).XOFSizeInBits shr 3]);
-  else
-    begin
-      raise EArgumentInvalidHashLibException.CreateResFmt(@SInvalidHashMode,
-        ['hmKeccak, hmSHA3, hmShake, hmCShake']);
-    end;
-  end;
+  Result := Self.ClassName;
 end;
 
 function TSHA3.GetResult: THashLibByteArray;
 begin
-  System.SetLength(Result, FHashSize);
+  System.SetLength(Result, HashSize);
 
   TConverters.le64_copy(PUInt64(FState), 0, PByte(Result), 0,
     System.Length(Result));
@@ -783,7 +774,7 @@ var
 begin
   TConverters.le64_copy(AData, AIndex, @(LData[0]), 0, ADataLength);
   LJdx := 0;
-  LBlockCount := FBlockSize shr 3;
+  LBlockCount := BlockSize shr 3;
   while LJdx < LBlockCount do
   begin
     FState[LJdx] := FState[LJdx] xor LData[LJdx];
@@ -811,7 +802,6 @@ end;
 constructor TSHA3_224.Create;
 begin
   Inherited Create(THashSize.hsHashSize224);
-  FHashMode := THashMode.hmSHA3;
 end;
 
 { TSHA3_256 }
@@ -831,7 +821,6 @@ end;
 constructor TSHA3_256.Create;
 begin
   Inherited Create(THashSize.hsHashSize256);
-  FHashMode := THashMode.hmSHA3;
 end;
 
 { TSHA3_384 }
@@ -851,7 +840,6 @@ end;
 constructor TSHA3_384.Create;
 begin
   Inherited Create(THashSize.hsHashSize384);
-  FHashMode := THashMode.hmSHA3;
 end;
 
 { TSHA3_512 }
@@ -871,7 +859,6 @@ end;
 constructor TSHA3_512.Create;
 begin
   Inherited Create(THashSize.hsHashSize512);
-  FHashMode := THashMode.hmSHA3;
 end;
 
 { TKeccak_224 }
@@ -891,7 +878,6 @@ end;
 constructor TKeccak_224.Create;
 begin
   Inherited Create(THashSize.hsHashSize224);
-  FHashMode := THashMode.hmKeccak;
 end;
 
 { TKeccak_256 }
@@ -911,7 +897,6 @@ end;
 constructor TKeccak_256.Create;
 begin
   Inherited Create(THashSize.hsHashSize256);
-  FHashMode := THashMode.hmKeccak;
 end;
 
 { TKeccak_288 }
@@ -931,7 +916,6 @@ end;
 constructor TKeccak_288.Create;
 begin
   Inherited Create(THashSize.hsHashSize288);
-  FHashMode := THashMode.hmKeccak;
 end;
 
 { TKeccak_384 }
@@ -951,7 +935,6 @@ end;
 constructor TKeccak_384.Create;
 begin
   Inherited Create(THashSize.hsHashSize384);
-  FHashMode := THashMode.hmKeccak;
 end;
 
 { TKeccak_512 }
@@ -971,10 +954,14 @@ end;
 constructor TKeccak_512.Create;
 begin
   Inherited Create(THashSize.hsHashSize512);
-  FHashMode := THashMode.hmKeccak;
 end;
 
 { TShake }
+
+function TShake.GetHashMode(): TSHA3.THashMode;
+begin
+  Result := TSHA3.THashMode.hmShake;
+end;
 
 function TShake.SetXOFSizeInBitsInternal(AXofSizeInBits: UInt64): IXOF;
 var
@@ -1002,7 +989,6 @@ end;
 constructor TShake.Create(AHashSize: THashSize);
 begin
   Inherited Create(AHashSize);
-  FHashMode := THashMode.hmShake;
   FFinalized := False;
   System.SetLength(FShakeBuffer, 8);
 end;
@@ -1010,7 +996,7 @@ end;
 procedure TShake.DoOutput(const ADestination: THashLibByteArray;
   ADestinationOffset, AOutputLength: UInt64);
 var
-  LDestinationOffset: UInt64;
+  LDiff, LCount, LBlockOffset: UInt64;
 begin
 
   if (UInt64(System.Length(ADestination)) - ADestinationOffset) < AOutputLength
@@ -1030,14 +1016,12 @@ begin
     FFinalized := True;
   end;
 
-  LDestinationOffset := ADestinationOffset;
-
   while AOutputLength > 0 do
   begin
-    if FShakeBufferPosition >= 8 then
+    if (FDigestPosition and 7) = 0 then
     begin
 
-      if (FBufferPosition * 8) >= UInt64(FBlockSize) then
+      if (FBufferPosition * 8) >= UInt64(BlockSize) then
       begin
         KeccakF1600_StatePermute();
         FBufferPosition := 0;
@@ -1045,15 +1029,28 @@ begin
 
       TConverters.ReadUInt64AsBytesLE(FState[FBufferPosition], FShakeBuffer, 0);
       System.Inc(FBufferPosition);
-      FShakeBufferPosition := 0;
     end;
 
-    ADestination[LDestinationOffset] := FShakeBuffer[FShakeBufferPosition];
+    LBlockOffset := FDigestPosition and 7;
 
-    System.Inc(FShakeBufferPosition);
-    System.Dec(AOutputLength);
-    System.Inc(FDigestPosition);
-    System.Inc(LDestinationOffset);
+    LDiff := UInt64(System.Length(FShakeBuffer)) - LBlockOffset;
+
+    // Math.Min
+    if AOutputLength < LDiff then
+    begin
+      LCount := AOutputLength
+    end
+    else
+    begin
+      LCount := LDiff;
+    end;
+
+    System.Move(FShakeBuffer[LBlockOffset],
+      ADestination[ADestinationOffset], LCount);
+
+    System.Dec(AOutputLength, LCount);
+    System.Inc(ADestinationOffset, LCount);
+    System.Inc(FDigestPosition, LCount);
   end;
 end;
 
@@ -1073,9 +1070,19 @@ begin
   inherited Initialize();
   FBufferPosition := 0;
   FDigestPosition := 0;
-  FShakeBufferPosition := 8;
   FFinalized := False;
   TArrayUtils.ZeroFill(FShakeBuffer);
+end;
+
+procedure TShake.TransformBytes(const AData: THashLibByteArray;
+  AIndex, ADataLength: Int32);
+begin
+  if FFinalized then
+  begin
+    raise EInvalidOperationHashLibException.CreateResFmt
+      (@SWritetoXofAfterReadError, [Name]);
+  end;
+  inherited TransformBytes(AData, AIndex, ADataLength);
 end;
 
 function TShake.TransformFinal: IHashResult;
@@ -1105,7 +1112,6 @@ begin
   LHashInstance := LXof as TShake_128;
   LHashInstance.FBufferPosition := FBufferPosition;
   LHashInstance.FDigestPosition := FDigestPosition;
-  LHashInstance.FShakeBufferPosition := FShakeBufferPosition;
   LHashInstance.FFinalized := FFinalized;
   LHashInstance.FShakeBuffer := System.Copy(FShakeBuffer);
 
@@ -1138,7 +1144,6 @@ begin
   LHashInstance := LXof as TShake_256;
   LHashInstance.FBufferPosition := FBufferPosition;
   LHashInstance.FDigestPosition := FDigestPosition;
-  LHashInstance.FShakeBufferPosition := FShakeBufferPosition;
   LHashInstance.FFinalized := FFinalized;
   LHashInstance.FShakeBuffer := System.Copy(FShakeBuffer);
 
@@ -1157,6 +1162,18 @@ begin
 end;
 
 { TCShake }
+
+function TCShake.GetHashMode(): TSHA3.THashMode;
+begin
+  if (System.Length(FN) = 0) and (System.Length(FS) = 0) then
+  begin
+    Result := TSHA3.THashMode.hmShake;
+  end
+  else
+  begin
+    Result := TSHA3.THashMode.hmCShake;
+  end;
+end;
 
 class function TCShake.LeftEncode(AInput: UInt64): THashLibByteArray;
 var
@@ -1236,15 +1253,13 @@ begin
 
   FN := N;
   FS := S;
-  FInitBlock := Nil;
 
   if (System.Length(FN) = 0) and (System.Length(FS) = 0) then
   begin
-    FHashMode := THashMode.hmShake;
+    FInitBlock := Nil;
   end
   else
   begin
-    FHashMode := THashMode.hmCShake;
     FInitBlock := TArrayUtils.Concatenate(EncodeString(N), EncodeString(S));
   end;
 end;
@@ -1255,7 +1270,7 @@ begin
 
   if FInitBlock <> Nil then
   begin
-    TransformBytes(BytePad(FInitBlock, FBlockSize));
+    TransformBytes(BytePad(FInitBlock, BlockSize));
   end;
 end;
 
@@ -1276,7 +1291,6 @@ begin
 
   LHashInstance.FBufferPosition := FBufferPosition;
   LHashInstance.FDigestPosition := FDigestPosition;
-  LHashInstance.FShakeBufferPosition := FShakeBufferPosition;
   LHashInstance.FFinalized := FFinalized;
   LHashInstance.FShakeBuffer := System.Copy(FShakeBuffer);
 
@@ -1311,7 +1325,6 @@ begin
 
   LHashInstance.FBufferPosition := FBufferPosition;
   LHashInstance.FDigestPosition := FDigestPosition;
-  LHashInstance.FShakeBufferPosition := FShakeBufferPosition;
   LHashInstance.FFinalized := FFinalized;
   LHashInstance.FShakeBuffer := System.Copy(FShakeBuffer);
 
@@ -1369,15 +1382,7 @@ end;
 
 function TKMACNotBuildInAdapter.GetName: String;
 begin
-  if Supports(Self, IXOF) then
-  begin
-    Result := Format('%s_%s_%u', [Self.ClassName, 'XOFSizeInBytes',
-      (FHash as IXOF).XOFSizeInBits shr 3]);
-  end
-  else
-  begin
-    Result := Format('%s', [Self.ClassName]);
-  end;
+  Result := Self.ClassName;
 end;
 
 procedure TKMACNotBuildInAdapter.Initialize;
@@ -1432,7 +1437,7 @@ function TKMAC128.Clone(): IHash;
 var
   LHashInstance: TKMAC128;
 begin
-  LHashInstance := TKMAC128.Create(FHash.Clone(), FKey, FCustomization,
+  LHashInstance := TKMAC128.Create(FHash.Clone(), FKey,
     (FHash as IXOF).XOFSizeInBits);
   Result := LHashInstance as IHash;
   Result.BufferSize := BufferSize;
@@ -1442,17 +1447,14 @@ constructor TKMAC128.Create(const AKMACKey, ACustomization: THashLibByteArray;
   AOutputLengthInBits: UInt64);
 begin
   Create(TCShake_128.Create(TConverters.ConvertStringToBytes('KMAC',
-    TEncoding.UTF8), ACustomization) as IHash, AKMACKey, ACustomization,
-    AOutputLengthInBits);
+    TEncoding.UTF8), ACustomization) as IHash, AKMACKey, AOutputLengthInBits);
 end;
 
 constructor TKMAC128.Create(const AHash: IHash;
-  const AKMACKey, ACustomization: THashLibByteArray;
-  AOutputLengthInBits: UInt64);
+  const AKMACKey: THashLibByteArray; AOutputLengthInBits: UInt64);
 begin
   inherited Create(Int32(THashSize.hsHashSize128));
   SetKey(AKMACKey);
-  FCustomization := System.Copy(ACustomization);
   FHash := AHash;
   (FHash as IXOF).XOFSizeInBits := AOutputLengthInBits;
 end;
@@ -1495,7 +1497,7 @@ var
   LHashInstance: TKMAC128XOF;
   LXof: IXOF;
 begin
-  LHashInstance := TKMAC128XOF.Create(FHash.Clone(), FKey, FCustomization);
+  LHashInstance := TKMAC128XOF.Create(FHash.Clone(), FKey);
   LXof := LHashInstance as IXOF;
   LXof.XOFSizeInBits := XOFSizeInBits;
   Result := LHashInstance as IHash;
@@ -1503,11 +1505,10 @@ begin
 end;
 
 constructor TKMAC128XOF.Create(const AHash: IHash;
-  const AKMACKey, ACustomization: THashLibByteArray);
+  const AKMACKey: THashLibByteArray);
 begin
   inherited Create(Int32(THashSize.hsHashSize128));
   SetKey(AKMACKey);
-  FCustomization := System.Copy(ACustomization);
   FHash := AHash;
 end;
 
@@ -1515,7 +1516,7 @@ constructor TKMAC128XOF.Create(const AKMACKey, ACustomization
   : THashLibByteArray);
 begin
   Create(TCShake_128.Create(TConverters.ConvertStringToBytes('KMAC',
-    TEncoding.UTF8), ACustomization) as IHash, AKMACKey, ACustomization);
+    TEncoding.UTF8), ACustomization) as IHash, AKMACKey);
 end;
 
 class function TKMAC128XOF.CreateKMAC128XOF(const AKMACKey, ACustomization
@@ -1534,7 +1535,7 @@ function TKMAC256.Clone(): IHash;
 var
   LHashInstance: TKMAC256;
 begin
-  LHashInstance := TKMAC256.Create(FHash.Clone(), FKey, FCustomization,
+  LHashInstance := TKMAC256.Create(FHash.Clone(), FKey,
     (FHash as IXOF).XOFSizeInBits);
   Result := LHashInstance as IHash;
   Result.BufferSize := BufferSize;
@@ -1544,17 +1545,14 @@ constructor TKMAC256.Create(const AKMACKey, ACustomization: THashLibByteArray;
   AOutputLengthInBits: UInt64);
 begin
   Create(TCShake_256.Create(TConverters.ConvertStringToBytes('KMAC',
-    TEncoding.UTF8), ACustomization) as IHash, AKMACKey, ACustomization,
-    AOutputLengthInBits);
+    TEncoding.UTF8), ACustomization) as IHash, AKMACKey, AOutputLengthInBits);
 end;
 
 constructor TKMAC256.Create(const AHash: IHash;
-  const AKMACKey, ACustomization: THashLibByteArray;
-  AOutputLengthInBits: UInt64);
+  const AKMACKey: THashLibByteArray; AOutputLengthInBits: UInt64);
 begin
   inherited Create(Int32(THashSize.hsHashSize256));
   SetKey(AKMACKey);
-  FCustomization := System.Copy(ACustomization);
   FHash := AHash;
   (FHash as IXOF).XOFSizeInBits := AOutputLengthInBits;
 end;
@@ -1597,7 +1595,7 @@ var
   LHashInstance: TKMAC256XOF;
   LXof: IXOF;
 begin
-  LHashInstance := TKMAC256XOF.Create(FHash.Clone(), FKey, FCustomization);
+  LHashInstance := TKMAC256XOF.Create(FHash.Clone(), FKey);
   LXof := LHashInstance as IXOF;
   LXof.XOFSizeInBits := XOFSizeInBits;
   Result := LHashInstance as IHash;
@@ -1605,11 +1603,10 @@ begin
 end;
 
 constructor TKMAC256XOF.Create(const AHash: IHash;
-  const AKMACKey, ACustomization: THashLibByteArray);
+  const AKMACKey: THashLibByteArray);
 begin
   inherited Create(Int32(THashSize.hsHashSize256));
   SetKey(AKMACKey);
-  FCustomization := System.Copy(ACustomization);
   FHash := AHash;
 end;
 
@@ -1617,7 +1614,7 @@ constructor TKMAC256XOF.Create(const AKMACKey, ACustomization
   : THashLibByteArray);
 begin
   Create(TCShake_256.Create(TConverters.ConvertStringToBytes('KMAC',
-    TEncoding.UTF8), ACustomization) as IHash, AKMACKey, ACustomization);
+    TEncoding.UTF8), ACustomization) as IHash, AKMACKey);
 end;
 
 class function TKMAC256XOF.CreateKMAC256XOF(const AKMACKey, ACustomization
@@ -1628,6 +1625,13 @@ begin
   LXof := (TKMAC256XOF.Create(AKMACKey, ACustomization) as IKMAC) as IXOF;
   LXof.XOFSizeInBits := AXofSizeInBits;
   Result := (LXof as IHash) as IKMAC;
+end;
+
+{ TKeccak }
+
+function TKeccak.GetHashMode(): TSHA3.THashMode;
+begin
+  Result := TSHA3.THashMode.hmKeccak;
 end;
 
 end.

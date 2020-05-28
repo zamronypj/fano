@@ -8,7 +8,6 @@ uses
   HlpHashLibTypes,
   HlpBits,
 {$IFDEF DELPHI}
-  HlpBitConverter,
   HlpHashBuffer,
   HlpHash,
 {$ENDIF DELPHI}
@@ -51,18 +50,13 @@ implementation
 function TPanama.Clone(): IHash;
 var
   LHashInstance: TPanama;
-  LIdx: Int32;
 begin
   LHashInstance := TPanama.Create();
   LHashInstance.FState := System.Copy(FState);
   LHashInstance.FTheta := System.Copy(FTheta);
   LHashInstance.FGamma := System.Copy(FGamma);
   LHashInstance.FPi := System.Copy(FPi);
-  // since System.Copy() does not support jagged arrays (multidimensional dynamic arrays, we improvise)
-  for LIdx := System.Low(FStages) to System.High(FStages) do
-  begin
-    LHashInstance.FStages[LIdx] := System.Copy(FStages[LIdx]);
-  end;
+  LHashInstance.FStages := TArrayUtils.Clone(FStages);
   LHashInstance.FTap := FTap;
   LHashInstance.FBuffer := FBuffer.Clone();
   LHashInstance.FProcessedBytesCount := FProcessedBytesCount;
@@ -225,8 +219,6 @@ begin
 end;
 
 procedure TPanama.Initialize;
-var
-  LIdx: Int32;
 begin
   TArrayUtils.ZeroFill(FState);
   TArrayUtils.ZeroFill(FTheta);
@@ -235,10 +227,7 @@ begin
 
   FTap := 0;
 
-  for LIdx := System.Low(FStages) to System.High(FStages) do
-  begin
-    TArrayUtils.ZeroFill(FStages[LIdx]);
-  end;
+  TArrayUtils.ZeroFill(FStages);
 
   Inherited Initialize();
 end;

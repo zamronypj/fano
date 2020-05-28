@@ -12,4 +12,4 @@
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
  *-----------------------------------------------*)
 
-MailerIntf,
+PasswordHashIntf,
