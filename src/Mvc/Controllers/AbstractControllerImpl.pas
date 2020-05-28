@@ -27,7 +27,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TAbstractController = class(TInjectableObject, IRequestHandler)
+    TAbstractController = class abstract (TInjectableObject, IRequestHandler)
     public
         (*!-------------------------------------------
          * handle request

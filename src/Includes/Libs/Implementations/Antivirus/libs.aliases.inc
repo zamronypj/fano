@@ -7,8 +7,9 @@
  *}
 
 {------------ Begin ClamAV antivirus related------------------}
-{$IFDEF LIBCLAMAV}
-TClamAv = ClamAvImpl.TClamAv;
 EClamAv = EClamAvImpl.EClamAv;
-{$ENDIF}
+TLocalClamdAv = LocalClamdAvImpl.TLocalClamdAv;
+TClamdAv = ClamdAvImpl.TClamdAv;
 {------------ End ClamAV antivirus related------------------}
+
+TNullAv = NullAvImpl.TNullAv;

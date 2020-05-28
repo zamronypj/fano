@@ -27,10 +27,11 @@ type
         (*!------------------------------------------------
          *  add header
          *-----------------------------------------------
-         * @param headerLine string contain header
+         * @param aheader string contain header name
+         * @param avalue string contain header value
          * @return current instance
          *-----------------------------------------------*)
-        function add(const headerLine : string) : IHttpClientHeaders;
+        function add(const aheader : string; const avalue : string) : IHttpClientHeaders;
 
         (*!------------------------------------------------
          *  apply added header

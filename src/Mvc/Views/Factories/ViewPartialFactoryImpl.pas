@@ -25,7 +25,7 @@ uses
 type
 
     (*!------------------------------------------------
-     * View that can render from a HTML template to string
+     * View that can render from a HTML template file to string
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
@@ -58,8 +58,8 @@ uses
 
     destructor TViewPartialFactory.destroy();
     begin
-        inherited destroy();
         parser := nil;
+        inherited destroy();
     end;
 
     (*!---------------------------------------------------

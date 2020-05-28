@@ -177,8 +177,8 @@ uses
     (*!------------------------------------
      * get session variable
      *-------------------------------------
-     * @return session value
-     * @throws EJSON exception when not found
+     * @return session value or empty string
+     *        when not found
      *-------------------------------------*)
     function TIniSession.internalGetVar(const sessionVar : shortstring) : string;
     begin

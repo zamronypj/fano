@@ -34,13 +34,13 @@ KeyValuePairImpl,
 KeyValuePairFactoryImpl,
 
 {$INCLUDE Socket/implementations.inc}
+{$INCLUDE Socket2/implementations.inc}
 {$INCLUDE Logger/implementations.inc}
 {$INCLUDE Regex/implementations.inc}
-{$INCLUDE LibCurl/implementations.inc}
-{$INCLUDE FastCGI/implementations.inc}
-{$INCLUDE SCGI/implementations.inc}
-{$INCLUDE Uwsgi/implementations.inc}
+{$INCLUDE HttpClient/implementations.inc}
+{$INCLUDE Protocol/implementations.inc}
 {$INCLUDE Random/implementations.inc}
 {$INCLUDE Cli/implementations.inc}
 {$INCLUDE Encrypter/implementations.inc}
 {$INCLUDE Antivirus/implementations.inc}
+{$INCLUDE Mailer/implementations.inc}

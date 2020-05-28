@@ -23,3 +23,5 @@ CsrfIntf,
 
 CorsIntf,
 CorsConfigIntf,
+
+AuthIntf,

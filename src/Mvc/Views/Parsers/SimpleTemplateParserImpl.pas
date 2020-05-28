@@ -91,7 +91,7 @@ uses
         pattern, valueData : string;
     begin
         result := templateStr;
-        keys := viewParams.vars();
+        keys := viewParams.asStrings();
         for i := 0 to keys.count-1 do
         begin
             //if openTag is {{ and closeTag is }} then we
