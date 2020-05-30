@@ -43,8 +43,11 @@ type
 implementation
 
 uses
-
-    BlowfishEncrypterImpl;
+    EncrypterIntf,
+    DecrypterIntf,
+    BlowfishEncrypterImpl,
+    Base64EncrypterImpl,
+    CompositeEncrypterImpl;
 
     function TBlowfishEncrypterFactory.secretKey(const key : string) : TBlowfishEncrypterFactory;
     begin
@@ -58,7 +61,18 @@ uses
      * @param container dependency container instance
      *---------------------------------------------------*)
     function TBlowfishEncrypterFactory.build(const container : IDependencyContainer) : IDependency;
+    var blowfishEncrypter : IEncrypter;
+        base64Encrypter : IEncrypter;
+        blowfishDecrypter : IDecrypter;
+        base64Decrypter : IDecrypter;
     begin
-        result := TBlowfishEncrypter.create(fSecretKey);
+        blowfishEncrypter := TBlowfishEncrypter.create(fSecretKey);
+        blowfishDecrypter := blowfishEncrypter as IDecrypter;
+        base64Encrypter := TBase64Encrypter.create();
+        base64Decrypter := base64Encrypter as IDecrypter;
+        result := TCompositeEncrypter.create(
+            [ blowfishEncrypter, base64Encrypter ],
+            [ blowfishDecrypter, base64Decrypter ]
+        );
     end;
 end.
