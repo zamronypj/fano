@@ -20,7 +20,8 @@ uses
     DataAvailListenerIntf,
     ListenSocketIntf,
     IoHandlerIntf,
-    InjectableObjectImpl;
+    InjectableObjectImpl,
+    SocketConsts;
 
 type
 
@@ -43,7 +44,7 @@ type
         constructor create(
             const socket : IListenSocket;
             const ioHandler : IIoHandler;
-            const queueSize : longint = 32
+            const queueSize : longint = DEFAULT_LISTEN_BACKLOG
         );
         destructor destroy(); override;
 
@@ -71,7 +72,7 @@ uses
     constructor TSocket2Svr.create(
         const socket : IListenSocket;
         const ioHandler : IIoHandler;
-        const queueSize : longint = 32
+        const queueSize : longint = DEFAULT_LISTEN_BACKLOG
     );
     begin
         fSocket := socket;
