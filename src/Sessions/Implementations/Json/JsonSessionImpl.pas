@@ -123,7 +123,8 @@ uses
     DateUtils,
     SessionConsts,
     ESessionExpiredImpl,
-    ESessionKeyNotFoundImpl;
+    ESessionKeyNotFoundImpl,
+    ESessionInvalidImpl;
 
 resourcestring
 
@@ -143,7 +144,17 @@ resourcestring
     );
     begin
         inherited create(sessName, sessId);
-        fSessionData := getJSON(sessData);
+
+        try
+            fSessionData := getJSON(sessData);
+        except
+            on e: EParserError do
+            begin
+                //change exception to not show misleading error message
+                raise ESessionInvalid.create(rsSessionInvalid);
+            end;
+        end;
+
         raiseExceptionIfExpired();
     end;
 
