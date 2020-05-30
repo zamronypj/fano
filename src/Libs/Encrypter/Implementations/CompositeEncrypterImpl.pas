@@ -39,6 +39,21 @@ type
         procedure freeDecrypters(var decrypters : TDecrypterArray);
         function initDecrypters(const decrypters : array of IDecrypter) : TDecrypterArray;
     public
+
+        (*!------------------------------------------------
+         * constructor
+         *-----------------------------------------------
+         * @param encrypters array of encrypter
+         * @param decrypters array of decrypter
+         *-----------------------------------------------
+         * the order of encrypters and decrypters must match
+         * as decrypters is looped reverse. See decrypt() method
+         * for example
+         * TComposetEncrypter.create(
+         *    [AEncrypter, BEncrypter]
+         *    [ADecrypter, BDecrypter]
+         * );
+         *-----------------------------------------------*)
         constructor create(
             const encrypters : array of IEncrypter;
             const decrypters : array of IDecrypter
@@ -66,6 +81,20 @@ type
 
 implementation
 
+    (*!------------------------------------------------
+     * constructor
+     *-----------------------------------------------
+     * @param encrypters array of encrypter
+     * @param decrypters array of decrypter
+     *-----------------------------------------------
+     * the order of encrypters and decrypters must match
+     * as decrypters is looped reverse. See decrypt() method
+     * for example
+     * TComposetEncrypter.create(
+     *    [AEncrypter, BEncrypter]
+     *    [ADecrypter, BDecrypter]
+     * );
+     *-----------------------------------------------*)
     constructor TCompositeEncrypter.create(
         const encrypters : array of IEncrypter;
         const decrypters : array of IDecrypter
@@ -156,6 +185,8 @@ implementation
     begin
         result := encryptedStr;
         totDecrypters := length(fDecrypters);
+        //it is assumed that order of encrypter and decrypter matches
+        //so to decrypt we must reverse order.
         for i := totDecrypters - 1 downto 0 do
         begin
             result := fDecrypters[i].decrypt(result);
