@@ -55,6 +55,8 @@ type
          * constructor
          *--------------------------------------------
          * @param amiddlewares object represent middlewares
+         * @param amiddlewareLinkList object represent middleware linked list
+         * @param actualHandler actual request handler
          *--------------------------------------------*)
         constructor create(
             const amiddlewares : IMiddlewareList;
@@ -177,8 +179,8 @@ uses
      * constructor
      *--------------------------------------------
      * @param amiddlewares object represent middlewares
-     * @param viewInst view instance to use
-     * @param viewParamsInt view parameters
+     * @param amiddlewareLinkList object represent middleware linked list
+     * @param actualHandler actual request handler
      *--------------------------------------------*)
     constructor TRouteHandler.create(
         const amiddlewares : IMiddlewareList;
