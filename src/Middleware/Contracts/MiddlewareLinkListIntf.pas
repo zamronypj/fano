@@ -20,7 +20,7 @@ type
 
     (*!------------------------------------------------
      * interface for any class having capability to
-     * manage one or more middleware links
+     * get one or more middleware links
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)

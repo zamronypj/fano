@@ -20,7 +20,7 @@ type
 
     (*!------------------------------------------------
      * interface for any class having capability to
-     * manage one or more middlewares
+     * add a middleware to collection
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
