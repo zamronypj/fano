@@ -13,6 +13,13 @@ interface
 {$MODE OBJFPC}
 {$H+}
 
+uses
+
+    sockets;
+
+//Set equal to SOMAXCONN
+const DEFAULT_LISTEN_BACKLOG = SOMAXCONN;
+
 resourcestring
 
     rsSocketListenFailed = 'Listening failed, error: %s (%d)';
