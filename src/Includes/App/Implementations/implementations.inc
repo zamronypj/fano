@@ -14,43 +14,24 @@
  *-----------------------------------------------*)
 
 AppImpl,
-SimpleAppImpl,
-
 DaemonAppImpl,
+CgiFcgiGatewayAppImpl,
+
+BasicAppServiceProviderImpl,
+DaemonAppServiceProviderImpl,
+ServerAppServiceProviderImpl,
+DecoratorAppServiceProviderImpl,
+DecoratorDaemonAppServiceProviderImpl,
+AdapterDaemonAppServiceProviderImpl,
 
 {----------------Begin FastCGI related-----------------------------}
-SimpleFastCGIAppImpl,
-
-{$IFDEF UNIX}
-SimpleUnixFastCGIAppImpl,
-{$ENDIF}
-
-SimpleSockFastCGIAppImpl,
-
-
-{$IFDEF LINUX}
-EpollSimpleFastCGIAppImpl,
-EpollSimpleUnixFastCGIAppImpl,
-EpollSimpleSockFastCGIAppImpl,
-{$ENDIF}
+FastCgiAppServiceProviderImpl,
 {---------------- End FastCGI related-----------------------------}
 
 {----------------Begin SCGI related-----------------------------}
-SimpleScgiAppImpl,
-SimpleUnixScgiAppImpl,
-
-{$IFDEF LINUX}
-EpollSimpleScgiAppImpl,
-EpollSimpleUnixScgiAppImpl,
-{$ENDIF}
+ScgiAppServiceProviderImpl,
 {---------------- End SCGI related-----------------------------}
 
 {----------------Begin uwsgi related-----------------------------}
-SimpleUwsgiAppImpl,
-SimpleUnixUwsgiAppImpl,
-
-{$IFDEF LINUX}
-EpollSimpleUwsgiAppImpl,
-EpollSimpleUnixUwsgiAppImpl,
-{$ENDIF}
+UwsgiAppServiceProviderImpl,
 {---------------- End uwsgi related-----------------------------}

@@ -21,7 +21,7 @@ resourcestring
     rsCreateFailed = 'Create socket on %s failed, error: %s (%d)';
 
     rsEpollInitFailed = 'Fail to initialize epoll';
-    raEpollAddFileDescriptorFailed = 'Fail to add file descriptor';
+    rsEpollAddFileDescriptorFailed = 'Fail to add file descriptor';
 
     rsSocketError = 'Socket error: %s (%d)';
     rsSocketReadFailed = 'Read socket failed, error: %s (%d)';

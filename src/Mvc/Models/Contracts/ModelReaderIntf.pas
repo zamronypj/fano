@@ -32,7 +32,7 @@ type
          *-----------------------------------------------
          * @param params parameter for search/filtering
          * @return model data
-s         *-----------------------------------------------*)
+         *-----------------------------------------------*)
         function read(const params : IModelParams = nil) : IModelResultSet;
 
         (*!----------------------------------------------

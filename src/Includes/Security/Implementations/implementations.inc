@@ -17,3 +17,4 @@
 {$INCLUDE sanitations.implementations.inc}
 {$INCLUDE cors.implementations.inc}
 {$INCLUDE csrf.implementations.inc}
+{$INCLUDE auth.implementations.inc}

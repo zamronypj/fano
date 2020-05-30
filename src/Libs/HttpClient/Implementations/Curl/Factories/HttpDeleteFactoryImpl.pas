@@ -47,7 +47,8 @@ uses
     classes,
     HttpDeleteImpl,
     HttpClientHeadersImpl,
-    ResponseStreamImpl;
+    ResponseStreamImpl,
+    QueryStrBuilderImpl;
 
     (*!---------------------------------------------------
      * build class instance
@@ -59,7 +60,8 @@ uses
         result := THttpDelete.create(
             handle,
             THttpClientHeaders.create(handle),
-            TResponseStream.create(TStringStream.create(''))
+            TResponseStream.create(TStringStream.create('')),
+            TQueryStrBuilder.create()
         );
     end;
 end.

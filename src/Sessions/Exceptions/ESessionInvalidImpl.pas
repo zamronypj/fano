@@ -19,8 +19,14 @@ uses
 
 type
 
-    ESessionInvalid = class(Exception)
-    end;
+
+    (*!------------------------------------------------
+     * Exception that is raised when valid session
+     * cannot be found in storage
+     *
+     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+     *-----------------------------------------------*)
+    ESessionInvalid = class(Exception);
 
 implementation
 

@@ -12,7 +12,11 @@
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
  *-----------------------------------------------*)
 
- IRdbms = RdbmsIntf.IRdbms;
- IRdbmsResultSet = RdbmsResultSetIntf.IRdbmsResultSet;
- IRdbmsFields = RdbmsFieldsIntf.IRdbmsFields;
- IRdbmsField = RdbmsFieldIntf.IRdbmsField;
+IRdbms = RdbmsIntf.IRdbms;
+IRdbmsPool = RdbmsPoolIntf.IRdbmsPool;
+IRdbmsFactory = RdbmsFactoryIntf.IRdbmsFactory;
+
+IRdbmsResultSet = RdbmsResultSetIntf.IRdbmsResultSet;
+IRdbmsFields = RdbmsFieldsIntf.IRdbmsFields;
+IRdbmsField = RdbmsFieldIntf.IRdbmsField;
+IRdbmsStatement = RdbmsStatementIntf.IRdbmsStatement;

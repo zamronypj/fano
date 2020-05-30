@@ -99,7 +99,7 @@ uses
         pattern, valueData : string;
     begin
         result := templateStr;
-        keys := viewParams.vars();
+        keys := viewParams.asStrings();
         //TODO: improve by collecting keys and replace all keys in one go
         for i := 0 to keys.count-1 do
         begin

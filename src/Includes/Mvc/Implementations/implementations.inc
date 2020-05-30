@@ -32,10 +32,22 @@ ViewImpl,
 StaticViewImpl,
 CompositeViewImpl,
 TemplateViewImpl,
+GroupViewImpl,
 NullViewImpl,
 NullViewFactoryImpl,
 ViewPartialImpl,
+StrViewPartialImpl,
 ViewPartialFactoryImpl,
+StrViewPartialFactoryImpl,
 
 AbstractControllerImpl,
 ControllerImpl,
+
+NullModelReaderImpl,
+NullModelResultSetImpl,
+NullModelReaderFactoryImpl,
+
+ModelParamsImpl,
+ModelParamsFactoryImpl,
+
+DecoratorModelParamsImpl,

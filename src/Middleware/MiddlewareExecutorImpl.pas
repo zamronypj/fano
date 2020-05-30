@@ -11,6 +11,7 @@ unit MiddlewareExecutorImpl;
 interface
 
 {$MODE OBJFPC}
+{$H+}
 
 uses
 
@@ -45,8 +46,8 @@ implementation
 
 uses
 
-    MiddlewareStackIntf,
-    MiddlewareStackImpl;
+    RequestHandlerIntf,
+    MiddlewareChainImpl;
 
     constructor TMiddlewareExecutor.create(const appMiddlewares : IMiddlewareLinkList);
     begin
@@ -64,16 +65,16 @@ uses
         const response : IResponse;
         const routeHandler : IRouteHandler
     ) : IResponse;
-    var mdlwr : IMiddlewareStack;
+    var mdlwr : IRequestHandler;
     begin
-        mdlwr := TMiddlewareStack.create(
+        mdlwr := TMiddlewareChain.create(
             fAppMiddlewares,
             routeHandler.middlewares(),
             routeHandler.handler()
         );
         try
 
-            result := mdlwr.first.handleRequest(
+            result := mdlwr.handleRequest(
                 request,
                 response,
                 routeHandler.argsReader()
