@@ -59,11 +59,7 @@ uses
     begin
         try
             middlewareList := fMiddlewareListFactory.build();
-            result := TRouteHandler.create(
-                middlewareList.asList(),
-                middlewareList.asLinkList,
-                handler
-            );
+            result := TRouteHandler.create(middlewareList, handler);
         except
             middlewareList := nil;
             result := nil;
