@@ -142,7 +142,8 @@ uses
     sysutils,
     EDependencyNotFoundImpl,
     EInvalidFactoryImpl,
-    EDependencyAliasImpl;
+    EDependencyAliasImpl,
+    CircularDepAvoidFactoryImpl;
 
 resourcestring
 
@@ -208,6 +209,7 @@ type
         const actualServiceName : shortString
     ) : IDependencyContainer;
     var depRec : PDependencyRec;
+        circularDepFactory : IDependencyFactory;
     begin
         depRec := dependencyList.find(serviceName);
         if (depRec = nil) then
@@ -216,7 +218,15 @@ type
            dependencyList.add(serviceName, depRec);
         end;
 
-        depRec^.factory := serviceFactory;
+        //avoid circular dependency by wrapping it internally
+        //with TCircularDepAvoidFactory. Instead of stack overflow
+        //we will throw ECircularDependency exception.
+        circularDepFactory := TCircularDepAvoidFactory.create(
+            serviceName,
+            serviceFactory
+        );
+
+        depRec^.factory := circularDepFactory;
         depRec^.instance := nil;
         depRec^.singleInstance := singleInstance;
         depRec^.aliased := aliased;
