@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit BaseSha2PasswHashImpl;
+unit Argon2iPasswHashImpl;
 
 interface
 
@@ -21,15 +21,23 @@ uses
 type
 
     (*!------------------------------------------------
-     * base abstract SHA2 password hash
+     * Argon2i password hash
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TAbstractSHA2PasswordHash = class abstract (TInjectableObject, IPasswordHash)
+    TArgon2iPasswordHash = class (TInjectableObject, IPasswordHash)
     private
         fSalt : string;
+        fCost : integer;
+        fHashLen : integer;
+        fSecret : string;
     public
-        constructor create(const defSalt : string = '');
+        constructor create(
+            const defSecret : string;
+            const defSalt : string = '';
+            const defCost : integer = 10;
+            const defLen : integer = 64;
+        );
 
         (*!------------------------------------------------
          * set hash generator cost
@@ -56,11 +64,11 @@ type
         function salt(const saltValue : string) : IPasswordHash;
 
         (*!------------------------------------------------
-        * set secret key
-        *-----------------------------------------------
-        * @param secretValue a secret value
-        * @return current instance
-        *-----------------------------------------------*)
+         * set secret key
+         *-----------------------------------------------
+         * @param secretValue a secret value
+         * @return current instance
+         *-----------------------------------------------*)
         function secret(const secretValue : string) : IPasswordHash;
 
         (*!------------------------------------------------
@@ -69,7 +77,7 @@ type
          * @param plainPassw input password
          * @return password hash
          *-----------------------------------------------*)
-        function hash(const plainPassw : string) : string; virtual; abstract;
+        function hash(const plainPassw : string) : string;
 
         (*!------------------------------------------------
          * verify plain password against password hash
@@ -86,9 +94,27 @@ type
 
 implementation
 
-    constructor TAbstractSHA2PasswordHash.create(const defSalt : string = '');
+uses
+    Classes,
+    SysUtils,
+    HlpIHash,
+    HlpHashFactory,
+    HlpConverters,
+    HlpIHashInfo,
+    HlpPBKDF_Argon2NotBuildInAdapter,
+    HlpArgon2TypeAndVersion;
+
+    constructor TArgon2iPasswordHash.create(
+        const defSecret : string;
+        const defSalt : string = '';
+        const defCost : integer = 10;
+        const defLen : integer = 64
+    );
     begin
+        fSecret := defSecret;
         fSalt := defSalt;
+        fCost := defCost;
+        fHashLen := defLen;
     end;
 
     (*!------------------------------------------------
@@ -97,9 +123,9 @@ implementation
      * @param algorithmCost cost of hash generator
      * @return current instance
      *-----------------------------------------------*)
-    function TAbstractSHA2PasswordHash.cost(const algorithmCost : integer) : IPasswordHash;
+    function TArgon2iPasswordHash.cost(const algorithmCost : integer) : IPasswordHash;
     begin
-        //do nothing as it is not relevant here
+        fCost := algorithmCost;
         result := self;
     end;
 
@@ -109,9 +135,9 @@ implementation
      * @param hashLen length of hash
      * @return current instance
      *-----------------------------------------------*)
-    function TAbstractSHA2PasswordHash.len(const hashLen : integer) : IPasswordHash;
+    function TArgon2iPasswordHash.len(const hashLen : integer) : IPasswordHash;
     begin
-        //do nothing as it is not relevant here
+        fHashLen := hashLen;
         result := self;
     end;
 
@@ -121,7 +147,7 @@ implementation
      * @param salt
      * @return current instance
      *-----------------------------------------------*)
-    function TAbstractSHA2PasswordHash.salt(const saltValue : string) : IPasswordHash;
+    function TArgon2iPasswordHash.salt(const saltValue : string) : IPasswordHash;
     begin
         fSalt := saltValue;
         result := self;
@@ -133,10 +159,50 @@ implementation
      * @param secretValue a secret value
      * @return current instance
      *-----------------------------------------------*)
-    function TAbstractSHA2PasswordHash.secret(const secretValue : string) : IPasswordHash;
+    function TArgon2iPasswordHash.secret(const secretValue : string) : IPasswordHash;
     begin
-        //not relevant
+        fSecret := secretValue;
         result := self;
+    end;
+
+    (*!------------------------------------------------
+     * generate password hash
+     *-----------------------------------------------
+     * @param plainPassw input password
+     * @return password hash
+     *-----------------------------------------------*)
+    function TArgon2iPasswordHash.hash(const plainPassw : string) : string;
+    var
+        LGenerator: IPBKDF_Argon2;
+        LActual: String;
+        LAdditional, LSecret, LSalt, LPassword: TBytes;
+        LArgon2Parameter: IArgon2Parameters;
+    begin
+
+        LAdditional := TConverters.ConvertHexStringToBytes(AAdditional);
+        LSecret := TConverters.ConvertHexStringToBytes(ASecret);
+        LSalt := TConverters.ConvertHexStringToBytes(ASalt);
+        LPassword := TConverters.ConvertHexStringToBytes(APassword);
+
+        AArgon2ParametersBuilder.WithVersion(AVersion).WithIterations(AIterations)
+            .WithMemoryAsKB(AMemoryAsKB).WithParallelism(AParallelism)
+            .WithAdditional(LAdditional).WithSecret(LSecret).WithSalt(LSalt);
+
+        //
+        // Set the password.
+        //
+        LArgon2Parameter := AArgon2ParametersBuilder.Build();
+        AArgon2ParametersBuilder.Clear();
+        LGenerator := TKDF.TPBKDF_Argon2.CreatePBKDF_Argon2(LPassword,
+            LArgon2Parameter);
+
+        result := TConverters.ConvertBytesToHexString(
+            LGenerator.GetBytes(AOutputLength),
+            false
+        );
+
+        LArgon2Parameter.Clear();
+        LGenerator.Clear();
     end;
 
     (*!------------------------------------------------
@@ -146,7 +212,7 @@ implementation
      * @param hashedPassw password hash
      * @return true if password match password hash
      *-----------------------------------------------*)
-    function TAbstractSHA2PasswordHash.verify(
+    function TArgon2iPasswordHash.verify(
         const plainPassw : string;
         const hashedPasswd : string
     ) : boolean;

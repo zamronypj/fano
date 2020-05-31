@@ -49,6 +49,14 @@ type
         function salt(const saltValue : string) : IPasswordHash;
 
         (*!------------------------------------------------
+         * set secret key
+         *-----------------------------------------------
+         * @param secretValue a secret value
+         * @return current instance
+         *-----------------------------------------------*)
+        function secret(const secretValue : string) : IPasswordHash;
+
+        (*!------------------------------------------------
          * generate password hash
          *-----------------------------------------------
          * @param plainPassw input password

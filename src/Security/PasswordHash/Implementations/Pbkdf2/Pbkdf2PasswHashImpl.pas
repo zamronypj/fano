@@ -33,7 +33,7 @@ type
     public
         constructor create(
             const defSalt : string = '';
-            const defCost : integer = 10;
+            const defCost : integer = 1000;
             const defLen : integer = 64
         );
 
@@ -60,6 +60,14 @@ type
          * @return current instance
          *-----------------------------------------------*)
         function salt(const saltValue : string) : IPasswordHash;
+
+        (*!------------------------------------------------
+         * set secret key
+         *-----------------------------------------------
+         * @param secretValue a secret value
+         * @return current instance
+         *-----------------------------------------------*)
+        function secret(const secretValue : string) : IPasswordHash;
 
         (*!------------------------------------------------
          * generate password hash
@@ -95,7 +103,7 @@ uses
 
     constructor TPBKDF2PasswordHash.create(
         const defSalt : string = '';
-        const defCost : integer = 10;
+        const defCost : integer = 1000;
         const defLen : integer = 64
     );
     begin
@@ -137,6 +145,18 @@ uses
     function TPBKDF2PasswordHash.salt(const saltValue : string) : IPasswordHash;
     begin
         fSalt := saltValue;
+        result := self;
+    end;
+
+    (*!------------------------------------------------
+     * set secret key
+     *-----------------------------------------------
+     * @param secretValue a secret value
+     * @return current instance
+     *-----------------------------------------------*)
+    function TPBKDF2PasswordHash.secret(const secretValue : string) : IPasswordHash;
+    begin
+        //not relevant for PBKDF2_HMAC
         result := self;
     end;
 
