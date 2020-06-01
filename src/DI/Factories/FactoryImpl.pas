@@ -23,7 +23,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TFactory = class(TInterfacedObject, IDependencyFactory)
+    TFactory = class abstract (TInterfacedObject, IDependencyFactory)
     public
 
         (*!---------------------------------------------------
