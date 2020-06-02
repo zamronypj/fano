@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit XssFilterMiddlewareImpl;
+unit FrameGuardMiddlewareImpl;
 
 interface
 
@@ -20,17 +20,23 @@ uses
     MiddlewareIntf,
     RequestHandlerIntf,
     RouteArgsReaderIntf,
-    InjectableObjectImpl;
+    InjectableObjectImpl,
+    FrameGuardConsts;
 
 type
 
     (*!------------------------------------------------
-     * middleware that prevent basic XSS attack by adding
+     * middleware that prevent basic clickjacking by adding
+     * X-FRAME-OPTIONS header
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TXssFilterMiddleware = class(TInjectableObject, IMiddleware)
+    TFrameGuardMiddleware = class(TInjectableObject, IMiddleware)
+    private
+        fAction : string;
     public
+        constructor create(const act : string = XFRAMEOPT_SAMEORIGIN);
+
         (*!---------------------------------------
          * handle request and validate request
          *----------------------------------------
@@ -51,6 +57,11 @@ type
 
 implementation
 
+    constructor TFrameGuardMiddleware.create(const act : string = XFRAMEOPT_SAMEORIGIN);
+    begin
+        fAction := act;
+    end;
+
     (*!---------------------------------------
      * handle request
      *----------------------------------------
@@ -60,7 +71,7 @@ implementation
      * @param next next middleware to execute
      * @return response
      *----------------------------------------*)
-    function TXssFilterMiddleware.handleRequest(
+    function TFrameGuardMiddleware.handleRequest(
         const request : IRequest;
         const response : IResponse;
         const args : IRouteArgsReader;
@@ -68,7 +79,7 @@ implementation
     ) : IResponse;
     begin
         result := next.handleRequest(request, response, args);
-        result.headers().setHeader('X-XSS-Protection', '1; mode=block');
+        result.headers().setHeader('X-Frame-Options', fAction);
     end;
 
 end.
