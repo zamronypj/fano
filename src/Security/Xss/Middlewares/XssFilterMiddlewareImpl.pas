@@ -68,7 +68,7 @@ implementation
     ) : IResponse;
     begin
         result := next.handleRequest(request, response, args);
-        result.headers().setHeaderLine('X-XSS-Protection: 1; mode=block')
+        result.headers().setHeaderLine('X-XSS-Protection', '1; mode=block')
     end;
 
 end.
