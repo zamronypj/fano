@@ -18,3 +18,4 @@
 {$INCLUDE cors.aliases.inc}
 {$INCLUDE csrf.aliases.inc}
 {$INCLUDE auth.aliases.inc}
+{$INCLUDE xss.aliases.inc}
