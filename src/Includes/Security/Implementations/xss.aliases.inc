@@ -7,15 +7,11 @@
  *}
 
 (*! ---------------------------------------------
- * implementation units for security
- * that is included in fano.pas unit
+ * alias for implementation in security
+ * that is included in implementations.aliases.inc
  *
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
  *-----------------------------------------------*)
 
-{$INCLUDE validations.implementations.inc}
-{$INCLUDE sanitations.implementations.inc}
-{$INCLUDE cors.implementations.inc}
-{$INCLUDE csrf.implementations.inc}
-{$INCLUDE auth.implementations.inc}
-{$INCLUDE xss.implementations.inc}
+TXssFilterMiddleware = XssFilterMiddlewareImpl.TXssFilterMiddleware;
+TXssFilterMiddlewareFactory = XssFilterMiddlewareFactoryImpl.TXssFilterMiddlewareFactory;
