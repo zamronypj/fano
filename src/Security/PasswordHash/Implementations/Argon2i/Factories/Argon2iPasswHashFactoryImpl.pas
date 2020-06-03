@@ -11,6 +11,7 @@ unit Argon2iPasswHashFactoryImpl;
 interface
 
 {$MODE OBJFPC}
+{$H+}
 
 uses
 
@@ -27,7 +28,10 @@ type
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
     TArgon2iPasswordHashFactory = class(TFactory, IDependencyFactory)
+    private
+        fSecret : string;
     public
+        function secret(const asecret : string) : TArgon2iPasswordHashFactory;
         (*!---------------------------------------
          * build password hash instance
          *----------------------------------------
@@ -43,9 +47,15 @@ uses
 
     Argon2iPasswHashImpl;
 
+    function TArgon2iPasswordHashFactory.secret(const asecret : string) : TArgon2iPasswordHashFactory;
+    begin
+        fSecret := asecret;
+        result := self;
+    end;
+
     function TArgon2iPasswordHashFactory.build(const container : IDependencyContainer) : IDependency;
     begin
-        result := TArgon2iPasswordHash.create();
+        result := TArgon2iPasswordHash.create(fSecret);
     end;
 
 end.
