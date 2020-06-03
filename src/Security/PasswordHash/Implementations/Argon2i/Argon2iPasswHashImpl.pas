@@ -36,7 +36,7 @@ type
             const defSecret : string;
             const defSalt : string = '';
             const defCost : integer = 10;
-            const defLen : integer = 64;
+            const defLen : integer = 64
         );
 
         (*!------------------------------------------------
