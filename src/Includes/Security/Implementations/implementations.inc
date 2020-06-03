@@ -20,3 +20,4 @@
 {$INCLUDE auth.implementations.inc}
 {$INCLUDE xss.implementations.inc}
 {$INCLUDE frame.guard.implementations.inc}
+{$INCLUDE password.hash.implementations.inc}

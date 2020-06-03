@@ -20,3 +20,4 @@
 {$INCLUDE auth.aliases.inc}
 {$INCLUDE xss.aliases.inc}
 {$INCLUDE frame.guard.aliases.inc}
+{$INCLUDE password.hash.aliases.inc}
