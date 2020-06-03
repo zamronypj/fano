@@ -57,4 +57,3 @@ DecrypterIntf,
 
 {$INCLUDE Socket2/interfaces.inc}
 {$INCLUDE Mailer/interfaces.inc}
-{$INCLUDE PasswordHash/interfaces.inc}

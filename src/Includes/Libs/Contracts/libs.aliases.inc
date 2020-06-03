@@ -50,4 +50,3 @@ IDecrypter = DecrypterIntf.IDecrypter;
 
 {$INCLUDE Socket2/libs.aliases.inc}
 {$INCLUDE Mailer/libs.aliases.inc}
-{$INCLUDE PasswordHash/libs.aliases.inc}
