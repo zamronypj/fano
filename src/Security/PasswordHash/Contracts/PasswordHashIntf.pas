@@ -25,12 +25,28 @@ type
         ['{C9AFE9DF-A867-4B43-9318-A1C487D1ECD0}']
 
         (*!------------------------------------------------
-         * set hash generator cost
+         * set hash generator cost (if applicable)
          *-----------------------------------------------
          * @param algorithmCost cost of hash generator
          * @return current instance
          *-----------------------------------------------*)
         function cost(const algorithmCost : integer) : IPasswordHash;
+
+        (*!------------------------------------------------
+         * set hash memory cost (if applicable)
+         *-----------------------------------------------
+         * @param memCost cost of memory
+         * @return current instance
+         *-----------------------------------------------*)
+        function memory(const memCost : integer) : IPasswordHash;
+
+        (*!------------------------------------------------
+         * set hash paralleism cost (if applicable)
+         *-----------------------------------------------
+         * @param paralleismCost cost of paralleisme
+         * @return current instance
+         *-----------------------------------------------*)
+        function paralleism(const paralleismCost : integer) : IPasswordHash;
 
         (*!------------------------------------------------
          * set hash length

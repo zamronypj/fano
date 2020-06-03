@@ -58,6 +58,22 @@ type
         function cost(const algorithmCost : integer) : IPasswordHash;
 
         (*!------------------------------------------------
+         * set hash memory cost (if applicable)
+         *-----------------------------------------------
+         * @param memCost cost of memory
+         * @return current instance
+         *-----------------------------------------------*)
+        function memory(const memCost : integer) : IPasswordHash;
+
+        (*!------------------------------------------------
+         * set hash paralleism cost (if applicable)
+         *-----------------------------------------------
+         * @param paralleismCost cost of paralleisme
+         * @return current instance
+         *-----------------------------------------------*)
+        function paralleism(const paralleismCost : integer) : IPasswordHash;
+
+        (*!------------------------------------------------
          * set hash length
          *-----------------------------------------------
          * @param hashLen length of hash
@@ -146,6 +162,30 @@ uses
     function TArgon2iPasswordHash.cost(const algorithmCost : integer) : IPasswordHash;
     begin
         fCost := algorithmCost;
+        result := self;
+    end;
+
+    (*!------------------------------------------------
+     * set hash memory cost (if applicable)
+     *-----------------------------------------------
+     * @param memCost cost of memory
+     * @return current instance
+     *-----------------------------------------------*)
+    function TArgon2iPasswordHash.memory(const memCost : integer) : IPasswordHash;
+    begin
+        fMemoryAsKB := memCost;
+        result := self;
+    end;
+
+    (*!------------------------------------------------
+     * set hash paralleism cost (if applicable)
+     *-----------------------------------------------
+     * @param paralleismCost cost of paralleisme
+     * @return current instance
+     *-----------------------------------------------*)
+    function TArgon2iPasswordHash.paralleism(const paralleismCost : integer) : IPasswordHash;
+    begin
+        fParallelism := paralleismCost;
         result := self;
     end;
 

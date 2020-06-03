@@ -46,6 +46,22 @@ type
         function cost(const algorithmCost : integer) : IPasswordHash;
 
         (*!------------------------------------------------
+         * set hash memory cost (if applicable)
+         *-----------------------------------------------
+         * @param memCost cost of memory
+         * @return current instance
+         *-----------------------------------------------*)
+        function memory(const memCost : integer) : IPasswordHash;
+
+        (*!------------------------------------------------
+         * set hash paralleism cost (if applicable)
+         *-----------------------------------------------
+         * @param paralleismCost cost of paralleisme
+         * @return current instance
+         *-----------------------------------------------*)
+        function paralleism(const paralleismCost : integer) : IPasswordHash;
+
+        (*!------------------------------------------------
          * set hash length
          *-----------------------------------------------
          * @param hashLen length of hash
@@ -121,6 +137,30 @@ uses
     function TPBKDF2PasswordHash.cost(const algorithmCost : integer) : IPasswordHash;
     begin
         fCost := algorithmCost;
+        result := self;
+    end;
+
+    (*!------------------------------------------------
+     * set hash memory cost (if applicable)
+     *-----------------------------------------------
+     * @param memCost cost of memory
+     * @return current instance
+     *-----------------------------------------------*)
+    function TPBKDF2PasswordHash.memory(const memCost : integer) : IPasswordHash;
+    begin
+        //do nothing as it is not relevant here
+        result := self;
+    end;
+
+    (*!------------------------------------------------
+     * set hash paralleism cost (if applicable)
+     *-----------------------------------------------
+     * @param paralleismCost cost of paralleisme
+     * @return current instance
+     *-----------------------------------------------*)
+    function TPBKDF2PasswordHash.paralleism(const paralleismCost : integer) : IPasswordHash;
+    begin
+        //do nothing as it is not relevant here
         result := self;
     end;
 
