@@ -20,6 +20,6 @@ IValidatorCollection = ValidatorCollectionIntf.IValidatorCollection;
 IValidationRules = ValidationRulesIntf.IValidationRules;
 IRequestValidator = RequestValidatorIntf.IRequestValidator;
 
-{$INCLUDE cors.aliases.inc}
-{$INCLUDE auth.aliases.inc}
-{$INCLUDE password.hash.aliases.inc}
+{$INCLUDE Cors/aliases.inc}
+{$INCLUDE Auth/aliases.inc}
+{$INCLUDE PasswordHash/aliases.inc}

@@ -13,11 +13,11 @@
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
  *-----------------------------------------------*)
 
-{$INCLUDE validations.implementations.inc}
-{$INCLUDE sanitations.implementations.inc}
-{$INCLUDE cors.implementations.inc}
-{$INCLUDE csrf.implementations.inc}
-{$INCLUDE auth.implementations.inc}
-{$INCLUDE xss.implementations.inc}
-{$INCLUDE frame.guard.implementations.inc}
-{$INCLUDE password.hash.implementations.inc}
+{$INCLUDE Validations/implementations.inc}
+{$INCLUDE Sanitations/implementations.inc}
+{$INCLUDE Cors/implementations.inc}
+{$INCLUDE Csrf/implementations.inc}
+{$INCLUDE Auth/implementations.inc}
+{$INCLUDE Xss/implementations.inc}
+{$INCLUDE FrameGuard/implementations.inc}
+{$INCLUDE PasswordHash/implementations.inc}

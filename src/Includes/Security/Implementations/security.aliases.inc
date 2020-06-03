@@ -13,11 +13,11 @@
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
  *-----------------------------------------------*)
 
-{$INCLUDE validations.aliases.inc}
-{$INCLUDE sanitations.aliases.inc}
-{$INCLUDE cors.aliases.inc}
-{$INCLUDE csrf.aliases.inc}
-{$INCLUDE auth.aliases.inc}
-{$INCLUDE xss.aliases.inc}
-{$INCLUDE frame.guard.aliases.inc}
-{$INCLUDE password.hash.aliases.inc}
+{$INCLUDE Validations/aliases.inc}
+{$INCLUDE Sanitations/aliases.inc}
+{$INCLUDE Cors/aliases.inc}
+{$INCLUDE Csrf/aliases.inc}
+{$INCLUDE Auth/aliases.inc}
+{$INCLUDE Xss/aliases.inc}
+{$INCLUDE FrameGuard/aliases.inc}
+{$INCLUDE PasswordHash/aliases.inc}
