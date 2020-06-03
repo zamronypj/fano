@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit Pbkdf2PasswHashImpl;
+unit Argon2iPasswordHashImpl;
 
 interface
 
@@ -16,26 +16,38 @@ interface
 uses
 
     InjectableObjectImpl,
-    PasswordHashIntf;
+    PasswordHashIntf,
+    HlpIHashInfo,
+    HlpArgon2TypeAndVersion;
 
 type
 
     (*!------------------------------------------------
-     * PBKDF2 password hash
+     * Argon2i password hash
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TPBKDF2PasswordHash = class (TInjectableObject, IPasswordHash)
+    TArgon2iPasswordHash = class (TInjectableObject, IPasswordHash)
     private
         fSalt : string;
         fCost : integer;
         fHashLen : integer;
+        fSecret : string;
+        fMemoryAsKB : integer;
+        fParallelism : integer;
+        fArgon2Version : TArgon2Version;
+        fArgon2ParametersBuilder : IArgon2ParametersBuilder;
     public
         constructor create(
+            const defSecret : string;
             const defSalt : string = '';
-            const defCost : integer = 1000;
-            const defLen : integer = 64
+            const defCost : integer = 10;
+            const defLen : integer = 64;
+            const defMemAsKb : integer = 32;
+            const defParallel : integer = 4
         );
+
+        destructor destroy(); override;
 
         (*!------------------------------------------------
          * set hash generator cost
@@ -114,18 +126,31 @@ uses
     HlpIHash,
     HlpHashFactory,
     HlpConverters,
-    HlpSHA2_512,
-    HlpIHashInfo;
+    HlpPBKDF_Argon2NotBuildInAdapter;
 
-    constructor TPBKDF2PasswordHash.create(
+    constructor TArgon2iPasswordHash.create(
+        const defSecret : string;
         const defSalt : string = '';
-        const defCost : integer = 1000;
-        const defLen : integer = 64
+        const defCost : integer = 10;
+        const defLen : integer = 64;
+        const defMemAsKb : integer = 32;
+        const defParallel : integer = 4
     );
     begin
+        fSecret := defSecret;
         fSalt := defSalt;
         fCost := defCost;
         fHashLen := defLen;
+        fMemoryAsKB := defMemAsKb;
+        fParallelism := defParallel;
+        fArgon2Version := TArgon2Version.a2vARGON2_VERSION_10;
+        fArgon2ParametersBuilder := TArgon2iParametersBuilder.Builder();
+    end;
+
+    destructor TArgon2iPasswordHash.destroy();
+    begin
+        fArgon2ParametersBuilder := nil;
+        inherited destroy();
     end;
 
     (*!------------------------------------------------
@@ -134,7 +159,7 @@ uses
      * @param algorithmCost cost of hash generator
      * @return current instance
      *-----------------------------------------------*)
-    function TPBKDF2PasswordHash.cost(const algorithmCost : integer) : IPasswordHash;
+    function TArgon2iPasswordHash.cost(const algorithmCost : integer) : IPasswordHash;
     begin
         fCost := algorithmCost;
         result := self;
@@ -146,9 +171,9 @@ uses
      * @param memCost cost of memory
      * @return current instance
      *-----------------------------------------------*)
-    function TPBKDF2PasswordHash.memory(const memCost : integer) : IPasswordHash;
+    function TArgon2iPasswordHash.memory(const memCost : integer) : IPasswordHash;
     begin
-        //do nothing as it is not relevant here
+        fMemoryAsKB := memCost;
         result := self;
     end;
 
@@ -158,9 +183,9 @@ uses
      * @param paralleismCost cost of paralleisme
      * @return current instance
      *-----------------------------------------------*)
-    function TPBKDF2PasswordHash.paralleism(const paralleismCost : integer) : IPasswordHash;
+    function TArgon2iPasswordHash.paralleism(const paralleismCost : integer) : IPasswordHash;
     begin
-        //do nothing as it is not relevant here
+        fParallelism := paralleismCost;
         result := self;
     end;
 
@@ -170,7 +195,7 @@ uses
      * @param hashLen length of hash
      * @return current instance
      *-----------------------------------------------*)
-    function TPBKDF2PasswordHash.len(const hashLen : integer) : IPasswordHash;
+    function TArgon2iPasswordHash.len(const hashLen : integer) : IPasswordHash;
     begin
         fHashLen := hashLen;
         result := self;
@@ -182,7 +207,7 @@ uses
      * @param salt
      * @return current instance
      *-----------------------------------------------*)
-    function TPBKDF2PasswordHash.salt(const saltValue : string) : IPasswordHash;
+    function TArgon2iPasswordHash.salt(const saltValue : string) : IPasswordHash;
     begin
         fSalt := saltValue;
         result := self;
@@ -194,9 +219,9 @@ uses
      * @param secretValue a secret value
      * @return current instance
      *-----------------------------------------------*)
-    function TPBKDF2PasswordHash.secret(const secretValue : string) : IPasswordHash;
+    function TArgon2iPasswordHash.secret(const secretValue : string) : IPasswordHash;
     begin
-        //not relevant for PBKDF2_HMAC
+        fSecret := secretValue;
         result := self;
     end;
 
@@ -206,25 +231,42 @@ uses
      * @param plainPassw input password
      * @return password hash
      *-----------------------------------------------*)
-    function TPBKDF2PasswordHash.hash(const plainPassw : string) : string;
+    function TArgon2iPasswordHash.hash(const plainPassw : string) : string;
     var
-        BytePassword, ByteSalt: TBytes;
-        PBKDF2_HMACInstance: IPBKDF2_HMAC;
+        LGenerator: IPBKDF_Argon2;
+        LActual: String;
+        LAdditional, LSecret, LSalt, LPassword: TBytes;
+        LArgon2Parameter: IArgon2Parameters;
     begin
-        BytePassword := TConverters.ConvertStringToBytes(plainPassw, TEncoding.UTF8);
-        ByteSalt := TConverters.ConvertStringToBytes(fSalt, TEncoding.UTF8);
 
-        PBKDF2_HMACInstance := TKDF.TPBKDF2_HMAC.CreatePBKDF2_HMAC(
-            THashFactory.TCrypto.CreateSHA2_512(),
-            BytePassword,
-            ByteSalt,
-            fCost
+        LSecret := TConverters.ConvertHexStringToBytes(fSecret);
+        LSalt := TConverters.ConvertHexStringToBytes(fSalt);
+        LPassword := TConverters.ConvertHexStringToBytes(plainPassw);
+
+        fArgon2ParametersBuilder.WithVersion(fArgon2Version)
+            .WithIterations(fCost)
+            .WithMemoryAsKB(fMemoryAsKB)
+            .WithParallelism(fParallelism)
+            .WithSecret(LSecret)
+            .WithSalt(LSalt);
+
+        //
+        // Set the password.
+        //
+        LArgon2Parameter := fArgon2ParametersBuilder.Build();
+        fArgon2ParametersBuilder.Clear();
+        LGenerator := TKDF.TPBKDF_Argon2.CreatePBKDF_Argon2(
+            LPassword,
+            LArgon2Parameter
         );
 
         result := TConverters.ConvertBytesToHexString(
-            PBKDF2_HMACInstance.GetBytes(fHashLen),
+            LGenerator.GetBytes(fHashLen),
             false
         );
+
+        LArgon2Parameter.Clear();
+        LGenerator.Clear();
     end;
 
     (*!------------------------------------------------
@@ -234,7 +276,7 @@ uses
      * @param hashedPassw password hash
      * @return true if password match password hash
      *-----------------------------------------------*)
-    function TPBKDF2PasswordHash.verify(
+    function TArgon2iPasswordHash.verify(
         const plainPassw : string;
         const hashedPasswd : string
     ) : boolean;

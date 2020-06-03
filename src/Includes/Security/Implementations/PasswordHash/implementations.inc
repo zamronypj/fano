@@ -12,10 +12,10 @@
  *
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
  *-----------------------------------------------*)
-Pbkdf2PasswHashImpl,
-Pbkdf2PasswHashFactoryImpl,
-Argon2iPasswHashImpl,
-Argon2iPasswHashFactoryImpl,
-Sha2_256PasswHashImpl,
-Sha2_512PasswHashImpl,
-Sha2PasswHashFactoryImpl,
+Pbkdf2PasswordHashImpl,
+Pbkdf2PasswordHashFactoryImpl,
+Argon2iPasswordHashImpl,
+Argon2iPasswordHashFactoryImpl,
+Sha2_256PasswordHashImpl,
+Sha2_512PasswordHashImpl,
+Sha2PasswordHashFactoryImpl,

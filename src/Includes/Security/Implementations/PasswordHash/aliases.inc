@@ -12,12 +12,12 @@
  *
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
  *-----------------------------------------------*)
-TPbkdf2PasswordHash = Pbkdf2PasswHashImpl.TPbkdf2PasswordHash;
-TPbkdf2PasswordHashFactory = Pbkdf2PasswHashFactoryImpl.TPbkdf2PasswordHashFactory;
+TPbkdf2PasswordHash = Pbkdf2PasswordHashImpl.TPbkdf2PasswordHash;
+TPbkdf2PasswordHashFactory = Pbkdf2PasswordHashFactoryImpl.TPbkdf2PasswordHashFactory;
 
-TArgon2iPasswHash = Argon2iPasswHashImpl.TArgon2iPasswHash;
-TArgon2iPasswHashFactory = TArgon2iPasswHashFactoryImpl.TArgon2iPasswHashFactory;
+TArgon2iPasswordHash = Argon2iPasswordHashImpl.TArgon2iPasswordHash;
+TArgon2iPasswordHashFactory = TArgon2iPasswordHashFactoryImpl.TArgon2iPasswordHashFactory;
 
-TSha2_256PasswHash = Sha2_256PasswHashImpl.TSha2_256PasswHash;
-TSha2_512PasswHash = Sha2_512PasswHashImpl.TSha2_512PasswHash;
-TSha2PasswHashFactory = Sha2PasswHashFactoryImpl.TSha2PasswHashFactory;
+TSha2_256PasswordHash = Sha2_256PasswordHashImpl.TSha2_256PasswordHash;
+TSha2_512PasswordHash = Sha2_512PasswordHashImpl.TSha2_512PasswordHash;
+TSha2PasswordHashFactory = Sha2PasswordHashFactoryImpl.TSha2PasswordHashFactory;

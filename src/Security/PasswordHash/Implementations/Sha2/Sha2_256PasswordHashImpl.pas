@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit Sha2_256PasswHashImpl;
+unit Sha2_256PasswordHashImpl;
 
 interface
 
@@ -15,7 +15,7 @@ interface
 
 uses
 
-    AbstractSha2PasswHashImpl;
+    AbstractSha2PasswordHashImpl;
 
 type
 

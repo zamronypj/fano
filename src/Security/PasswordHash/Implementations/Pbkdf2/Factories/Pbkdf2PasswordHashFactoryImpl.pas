@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit Pbkdf2PasswHashFactoryImpl;
+unit Pbkdf2PasswordHashFactoryImpl;
 
 interface
 
@@ -41,7 +41,7 @@ implementation
 
 uses
 
-    Pbkdf2PasswHashImpl;
+    Pbkdf2PasswordHashImpl;
 
     function TPbkdf2PasswordHashFactory.build(const container : IDependencyContainer) : IDependency;
     begin

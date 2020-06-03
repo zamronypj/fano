@@ -6,12 +6,11 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit Argon2iPasswHashFactoryImpl;
+unit Sha2PasswordHashFactoryImpl;
 
 interface
 
 {$MODE OBJFPC}
-{$H+}
 
 uses
 
@@ -22,16 +21,22 @@ uses
 
 type
 
+    TSha2Type = (st256, st512);
+
     (*!------------------------------------------------
      * factory class for TArgon2iPasswordHash
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TArgon2iPasswordHashFactory = class(TFactory, IDependencyFactory)
+    TSha2PasswordHashFactory = class(TFactory, IDependencyFactory)
     private
-        fSecret : string;
+        fSha2Type : TSha2Type;
     public
-        function secret(const asecret : string) : TArgon2iPasswordHashFactory;
+        constructor create();
+
+        function use256() : TSha2PasswordHashFactory;
+        function use512() : TSha2PasswordHashFactory;
+
         (*!---------------------------------------
          * build password hash instance
          *----------------------------------------
@@ -45,17 +50,34 @@ implementation
 
 uses
 
-    Argon2iPasswHashImpl;
+    Sha2_256PasswordHashImpl,
+    Sha2_512PasswordHashImpl;
 
-    function TArgon2iPasswordHashFactory.secret(const asecret : string) : TArgon2iPasswordHashFactory;
+    constructor TSha2PasswordHashFactory.create();
     begin
-        fSecret := asecret;
+        fSha2Type := st256;
+    end;
+
+    function TSha2PasswordHashFactory.use256() : TSha2PasswordHashFactory;
+    begin
+        fSha2Type := st256;
         result := self;
     end;
 
-    function TArgon2iPasswordHashFactory.build(const container : IDependencyContainer) : IDependency;
+    function TSha2PasswordHashFactory.use512() : TSha2PasswordHashFactory;
     begin
-        result := TArgon2iPasswordHash.create(fSecret);
+        fSha2Type := st512;
+        result := self;
+    end;
+
+    function TSha2PasswordHashFactory.build(const container : IDependencyContainer) : IDependency;
+    begin
+        case fSha2Type of
+            st256 : result := TSha2_256PasswordHash.create();
+            st512 : result := TSha2_512PasswordHash.create();
+            else
+                result := TSha2_256PasswordHash.create();
+        end;
     end;
 
 end.
