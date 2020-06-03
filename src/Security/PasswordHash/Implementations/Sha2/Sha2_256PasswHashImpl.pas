@@ -54,10 +54,10 @@ uses
      *-----------------------------------------------*)
     function TSha2_256PasswordHash.hash(const plainPassw : string) : string;
     var
-        hash: IHash;
+        hashInst: IHash;
     begin
-        hash := THashFactory.TCrypto.CreateSHA2_256();
-        result := hash.ComputeString(plainPassw, TEncoding.UTF8).toString();
+        hashInst := THashFactory.TCrypto.CreateSHA2_256();
+        result := hashInst.ComputeString(plainPassw, TEncoding.UTF8).toString();
     end;
 
 end.
