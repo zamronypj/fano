@@ -16,7 +16,9 @@ interface
 uses
 
     InjectableObjectImpl,
-    PasswordHashIntf;
+    PasswordHashIntf,
+    HlpPBKDF_Argon2NotBuildInAdapter,
+    HlpArgon2TypeAndVersion;
 
 type
 
@@ -31,6 +33,10 @@ type
         fCost : integer;
         fHashLen : integer;
         fSecret : string;
+        fMemoryAsKB : integer;
+        fParallelism : integer;
+        fArgon2Version : TArgon2Version;
+        fArgon2ParametersBuilder : IArgon2ParametersBuilder;
     public
         constructor create(
             const defSecret : string;
@@ -38,6 +44,8 @@ type
             const defCost : integer = 10;
             const defLen : integer = 64
         );
+
+        destructor destroy(); override;
 
         (*!------------------------------------------------
          * set hash generator cost
@@ -100,21 +108,31 @@ uses
     HlpIHash,
     HlpHashFactory,
     HlpConverters,
-    HlpIHashInfo,
-    HlpPBKDF_Argon2NotBuildInAdapter,
-    HlpArgon2TypeAndVersion;
+    HlpIHashInfo;
 
     constructor TArgon2iPasswordHash.create(
         const defSecret : string;
         const defSalt : string = '';
         const defCost : integer = 10;
-        const defLen : integer = 64
+        const defLen : integer = 64;
+        const defMemAsKb : integer = 32;
+        const defParallel : integer = 4
     );
     begin
         fSecret := defSecret;
         fSalt := defSalt;
         fCost := defCost;
         fHashLen := defLen;
+        fMemoryAsKB := defMemAsKb;
+        fParallelism := defParallel;
+        fArgon2Version := TArgon2Version.a2vARGON2_VERSION_10;
+        fArgon2ParametersBuilder := TArgon2iParametersBuilder.Builder();
+    end;
+
+    destructor TArgon2iPasswordHash.destroy();
+    begin
+        fArgon2ParametersBuilder := nil;
+        inherited destroy();
     end;
 
     (*!------------------------------------------------
@@ -179,22 +197,26 @@ uses
         LArgon2Parameter: IArgon2Parameters;
     begin
 
-        LAdditional := TConverters.ConvertHexStringToBytes(AAdditional);
-        LSecret := TConverters.ConvertHexStringToBytes(ASecret);
-        LSalt := TConverters.ConvertHexStringToBytes(ASalt);
-        LPassword := TConverters.ConvertHexStringToBytes(APassword);
+        LSecret := TConverters.ConvertHexStringToBytes(fSecret);
+        LSalt := TConverters.ConvertHexStringToBytes(fSalt);
+        LPassword := TConverters.ConvertHexStringToBytes(plainPassw);
 
-        AArgon2ParametersBuilder.WithVersion(AVersion).WithIterations(AIterations)
-            .WithMemoryAsKB(AMemoryAsKB).WithParallelism(AParallelism)
-            .WithAdditional(LAdditional).WithSecret(LSecret).WithSalt(LSalt);
+        fArgon2ParametersBuilder.WithVersion(fArgon2Version)
+            .WithIterations(fCost)
+            .WithMemoryAsKB(fMemoryAsKB)
+            .WithParallelism(fParallelism)
+            .WithSecret(LSecret)
+            .WithSalt(LSalt);
 
         //
         // Set the password.
         //
-        LArgon2Parameter := AArgon2ParametersBuilder.Build();
-        AArgon2ParametersBuilder.Clear();
-        LGenerator := TKDF.TPBKDF_Argon2.CreatePBKDF_Argon2(LPassword,
-            LArgon2Parameter);
+        LArgon2Parameter := fArgon2ParametersBuilder.Build();
+        fArgon2ParametersBuilder.Clear();
+        LGenerator := TKDF.TPBKDF_Argon2.CreatePBKDF_Argon2(
+            LPassword,
+            LArgon2Parameter
+        );
 
         result := TConverters.ConvertBytesToHexString(
             LGenerator.GetBytes(AOutputLength),
