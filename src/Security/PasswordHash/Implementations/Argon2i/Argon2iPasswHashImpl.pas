@@ -17,7 +17,7 @@ uses
 
     InjectableObjectImpl,
     PasswordHashIntf,
-    HlpPBKDF_Argon2NotBuildInAdapter,
+    HlpIHashInfo,
     HlpArgon2TypeAndVersion;
 
 type
@@ -108,7 +108,7 @@ uses
     HlpIHash,
     HlpHashFactory,
     HlpConverters,
-    HlpIHashInfo;
+    HlpPBKDF_Argon2NotBuildInAdapter;
 
     constructor TArgon2iPasswordHash.create(
         const defSecret : string;
