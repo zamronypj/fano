@@ -25,3 +25,4 @@ CorsIntf,
 CorsConfigIntf,
 
 AuthIntf,
+PasswordHashIntf,

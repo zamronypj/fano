@@ -22,3 +22,4 @@ IRequestValidator = RequestValidatorIntf.IRequestValidator;
 
 {$INCLUDE cors.aliases.inc}
 {$INCLUDE auth.aliases.inc}
+{$INCLUDE password.hash.aliases.inc}

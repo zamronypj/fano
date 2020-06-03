@@ -44,4 +44,3 @@ KeyValuePairFactoryImpl,
 {$INCLUDE Encrypter/implementations.inc}
 {$INCLUDE Antivirus/implementations.inc}
 {$INCLUDE Mailer/implementations.inc}
-{$INCLUDE PasswordHash/implementations.inc}

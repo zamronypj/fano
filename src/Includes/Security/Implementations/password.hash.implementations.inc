@@ -2,14 +2,20 @@
  * Fano Web Framework (https://fanoframework.github.io)
  *
  * @link      https://github.com/fanoframework/fano
- * @copyright Copyright (c) 2018 Zamrony P. Juhara
+ * @copyright Copyright (c) 2018 - 2020 Zamrony P. Juhara
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
 (*! ---------------------------------------------
- * redeclare all class types in unit inside Libs/Mailer
- * directory
+ * list of xss units in security
+ * that is included in implementations.inc
  *
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
  *-----------------------------------------------*)
-TPbkdf2PasswordHash = Pbkdf2PasswHashImpl.TPbkdf2PasswordHash;
+Pbkdf2PasswHashImpl,
+Pbkdf2PasswHashFactoryImpl,
+Argon2iPasswHashImpl,
+Argon2iPasswHashFactoryImpl,
+Sha2_256PasswHashImpl,
+Sha2_512PasswHashImpl,
+Sha2PasswHashFactoryImpl,
