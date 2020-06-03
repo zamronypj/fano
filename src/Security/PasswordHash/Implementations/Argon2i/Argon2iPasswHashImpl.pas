@@ -219,7 +219,7 @@ uses
         );
 
         result := TConverters.ConvertBytesToHexString(
-            LGenerator.GetBytes(AOutputLength),
+            LGenerator.GetBytes(fHashLen),
             false
         );
 
