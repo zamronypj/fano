@@ -18,6 +18,9 @@ TPbkdf2PasswordHashFactory = Pbkdf2PasswordHashFactoryImpl.TPbkdf2PasswordHashFa
 TArgon2iPasswordHash = Argon2iPasswordHashImpl.TArgon2iPasswordHash;
 TArgon2iPasswordHashFactory = Argon2iPasswordHashFactoryImpl.TArgon2iPasswordHashFactory;
 
+TScryptPasswordHash = ScryptPasswordHashImpl.TScryptPasswordHash;
+TScryptPasswordHashFactory = ScryptPasswordHashFactoryImpl.TScryptPasswordHashFactory;
+
 TSha2_256PasswordHash = Sha2_256PasswordHashImpl.TSha2_256PasswordHash;
 TSha2_512PasswordHash = Sha2_512PasswordHashImpl.TSha2_512PasswordHash;
 TSha2PasswordHashFactory = Sha2PasswordHashFactoryImpl.TSha2PasswordHashFactory;
