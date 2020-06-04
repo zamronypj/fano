@@ -36,10 +36,10 @@ type
     public
         constructor create(
             const defSalt : string = '';
-            const defCost : integer = 10;
+            const defCost : integer = 1024;
             const defLen : integer = 64;
-            const defBlockSize : integer = 32;
-            const defParallel : integer = 4
+            const defBlockSize : integer = 8;
+            const defParallel : integer = 1
         );
 
         (*!------------------------------------------------
