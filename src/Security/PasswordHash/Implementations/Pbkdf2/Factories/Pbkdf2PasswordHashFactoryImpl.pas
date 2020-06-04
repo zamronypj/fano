@@ -20,6 +20,7 @@ uses
     RequestHandlerIntf;
 
 type
+    THashFunc = (hfSHA1, hfSHA2_256, hfSHA2_384, hfSHA2_512, hfSHA3);
 
     (*!------------------------------------------------
      * factory class for TPbkdf2PasswordHash
@@ -27,7 +28,12 @@ type
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
     TPbkdf2PasswordHashFactory = class(TFactory, IDependencyFactory)
+    private
+        fHashFunc : THashFunc;
     public
+        constructor create(const hashFunc : THashFunc = hfSHA1);
+        function withHash(const hf : THashFunc) : TPbkdf2PasswordHashFactory;
+
         (*!---------------------------------------
          * build password hash instance
          *----------------------------------------
@@ -41,11 +47,34 @@ implementation
 
 uses
 
+    HlpIHash,
+    HlpHashFactory,
     Pbkdf2PasswordHashImpl;
+
+    constructor create(const hashFunc : THashFunc = hfSHA1);
+    begin
+        fHashFunc := hf;
+    end;
+
+    function TPbkdf2PasswordHashFactory.withHash(const hf : THashFunc) : TPbkdf2PasswordHashFactory;
+    begin
+        fHashFunc := hf;
+    end;
+
+    function buildHash(const hf : THashFunc) : IHash;
+    begin
+        case fHashFunc of
+            hfSHA1 : result := THashFactory.TCrypto.CreateSHA1();
+            hfSHA2_256 : result:= THashFactory.TCrypto.CreateSHA2_256();
+            hfSHA2_384 : result:= THashFactory.TCrypto.CreateSHA2_384();
+            hfSHA2_512 : result:= THashFactory.TCrypto.CreateSHA2_512();
+            hfSHA3 : result:= THashFactory.TCrypto.CreateSHA3();
+        end;
+    end;
 
     function TPbkdf2PasswordHashFactory.build(const container : IDependencyContainer) : IDependency;
     begin
-        result := TPbkdf2PasswordHash.create();
+        result := TPbkdf2PasswordHash.create(buildHash(fHashFunc));
     end;
 
 end.

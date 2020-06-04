@@ -16,6 +16,7 @@ interface
 uses
 
     InjectableObjectImpl,
+    HlpIHash,
     PasswordHashIntf;
 
 type
@@ -27,15 +28,18 @@ type
      *-----------------------------------------------*)
     TPBKDF2PasswordHash = class (TInjectableObject, IPasswordHash)
     private
+        fHash : IHash;
         fSalt : string;
         fCost : integer;
         fHashLen : integer;
     public
         constructor create(
+            const hashInst : IHash;
             const defSalt : string = '';
             const defCost : integer = 1000;
             const defLen : integer = 64
         );
+        destructor destroy(); override;
 
         (*!------------------------------------------------
          * set hash generator cost
@@ -111,21 +115,28 @@ implementation
 uses
     Classes,
     SysUtils,
-    HlpIHash,
     HlpHashFactory,
     HlpConverters,
     HlpSHA2_512,
     HlpIHashInfo;
 
     constructor TPBKDF2PasswordHash.create(
+        const hashInst : IHash;
         const defSalt : string = '';
         const defCost : integer = 1000;
         const defLen : integer = 64
     );
     begin
+        fHash := hashInst;
         fSalt := defSalt;
         fCost := defCost;
         fHashLen := defLen;
+    end;
+
+    destructor TPBKDF2PasswordHash.destroy();
+    begin
+        fHash := nil;
+        inherited destroy();
     end;
 
     (*!------------------------------------------------
@@ -215,7 +226,7 @@ uses
         ByteSalt := TConverters.ConvertStringToBytes(fSalt, TEncoding.UTF8);
 
         PBKDF2_HMACInstance := TKDF.TPBKDF2_HMAC.CreatePBKDF2_HMAC(
-            THashFactory.TCrypto.CreateSHA2_512(),
+            fHash,
             BytePassword,
             ByteSalt,
             fCost
