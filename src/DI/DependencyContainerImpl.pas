@@ -318,10 +318,13 @@ type
      * registered using factory(), this method will return
      * different instance everytime it is called.
      *---------------------------------------------------------*)
-    function TDependencyContainer.getDependency(const serviceName : shortstring) : IDependency;
+    function TDependencyContainer.getDependency(
+        const serviceName : shortstring;
+        const aDepRec : pointer
+    ) : IDependency;
     var depRec : PDependencyRec;
     begin
-        depRec := getDepRecordOrExcept(serviceName);
+        depRec := aDepRec;
 
         if (depRec^.factory = nil) then
         begin
@@ -356,19 +359,17 @@ type
      *---------------------------------------------------------*)
     function TDependencyContainer.get(const serviceName : shortstring) : IDependency;
     var depRec : PDependencyRec;
-        svcName : shortstring;
     begin
         depRec := getDepRecordOrExcept(serviceName);
 
         if (not depRec^.aliased) then
         begin
-            svcName := serviceName;
+            result := getDependency(serviceName, depRec);
         end else
         begin
-            svcName := depRec^.actualServiceName;
+            result := get(depRec^.actualServiceName);
         end;
 
-        result := getDependency(svcName);
     end;
 
     (*!--------------------------------------------------------
