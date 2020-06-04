@@ -31,7 +31,7 @@ type
     private
         fHashFunc : THashFunc;
     public
-        constructor create(const hashFunc : THashFunc = hfSHA1);
+        constructor create(const hf : THashFunc = hfSHA1);
         function withHash(const hf : THashFunc) : TPbkdf2PasswordHashFactory;
 
         (*!---------------------------------------
@@ -51,7 +51,7 @@ uses
     HlpHashFactory,
     Pbkdf2PasswordHashImpl;
 
-    constructor create(const hashFunc : THashFunc = hfSHA1);
+    constructor TPbkdf2PasswordHashFactory.create(const hf : THashFunc = hfSHA1);
     begin
         fHashFunc := hf;
     end;
@@ -63,7 +63,7 @@ uses
 
     function buildHash(const hf : THashFunc) : IHash;
     begin
-        case fHashFunc of
+        case hf of
             hfSHA1 : result := THashFactory.TCrypto.CreateSHA1();
             hfSHA2_256 : result:= THashFactory.TCrypto.CreateSHA2_256();
             hfSHA2_384 : result:= THashFactory.TCrypto.CreateSHA2_384();
