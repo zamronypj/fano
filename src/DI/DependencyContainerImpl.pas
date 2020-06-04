@@ -63,6 +63,7 @@ type
          * get instance from service registration using its name.
          *---------------------------------------------------------
          * @param serviceName name of service
+         * @param aDepRec dependency record
          * @return dependency instance
          * @throws EDependencyNotFound
          *---------------------------------------------------------
@@ -71,7 +72,10 @@ type
          * registered using factory(), this method will return
          * different instance everytime get() is called
          *---------------------------------------------------------*)
-        function getDependency(const serviceName : shortstring) : IDependency;
+        function getDependency(
+            const serviceName : shortstring;
+            const aDepRec : pointer
+        ) : IDependency;
     public
         (*!--------------------------------------------------------
          * constructor
@@ -309,6 +313,7 @@ type
      * get instance from service registration using its name.
      *---------------------------------------------------------
      * @param serviceName name of service
+     * @param aDepRec dependency record
      * @return dependency instance
      * @throws EDependencyNotFound
      * @throws EInvalidFactory
