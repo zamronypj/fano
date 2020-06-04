@@ -176,9 +176,9 @@ type
 
     destructor TDependencyContainer.destroy();
     begin
-        inherited destroy();
         cleanUpDependencies();
         dependencyList := nil;
+        inherited destroy();
     end;
 
     procedure TDependencyContainer.cleanUpDependencies();
