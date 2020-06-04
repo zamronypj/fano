@@ -131,7 +131,7 @@ uses
         fSalt := defSalt;
         fCost := defCost;
         fHashLen := defLen;
-        fMemoryAsKB := defMemAsKb;
+        fBlockSize := defBlockSize;
         fParallelism := defParallel;
     end;
 
