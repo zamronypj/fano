@@ -122,7 +122,7 @@ uses
 
     constructor TScryptPasswordHash.create(
         const defSalt : string = '';
-        const defCost : integer = 10;
+        const defCost : integer = 32;
         const defLen : integer = 64;
         const defBlockSize : integer = 32;
         const defParallel : integer = 4
