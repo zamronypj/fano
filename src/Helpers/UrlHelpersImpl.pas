@@ -30,19 +30,11 @@ type
 
         (*!------------------------------------------------
          * url encode
-         *-------------------------------------------------
-         * @author Zamrony P. Juhara <zamronypj@yahoo.com>
-         * @author BenJones
-         * @credit http://forum.lazarus.freepascal.org/index.php?topic=15088.0
          *-----------------------------------------------*)
         function urlEncode() : string;
 
         (*!------------------------------------------------
          * url decode
-         *-------------------------------------------------
-         * @author Zamrony P. Juhara <zamronypj@yahoo.com>
-         * @author BenJones
-         * @credit http://forum.lazarus.freepascal.org/index.php?topic=15088.0
          *-----------------------------------------------*)
         function urlDecode() : string;
 
@@ -77,10 +69,6 @@ uses
 
     (*!------------------------------------------------
      * url decode
-     *-------------------------------------------------
-     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
-     * @author BenJones
-     * @credit http://forum.lazarus.freepascal.org/index.php?topic=15088.0
      *-----------------------------------------------*)
     function TUrlHelper.urlDecode() : string;
     begin
