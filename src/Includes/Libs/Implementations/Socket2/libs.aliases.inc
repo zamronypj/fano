@@ -32,6 +32,9 @@ TSocketOpts = SocketOptsImpl.TSocketOpts;
 TInetSvrFactory = InetSvrFactoryImpl.TInetSvrFactory;
 TUnixSvrFactory = UnixSvrFactoryImpl.TUnixSvrFactory;
 TBoundSvrFactory = BoundSvrFactoryImpl.TBoundSvrFactory;
+
+{$IFDEF LINUX}
 TEpollInetSvrFactory = EpollInetSvrFactoryImpl.TEpollInetSvrFactory;
 TEpollUnixSvrFactory = EpollUnixSvrFactoryImpl.TEpollUnixSvrFactory;
 TEpollBoundSvrFactory = EpollBoundSvrFactoryImpl.TEpollBoundSvrFactory;
+{$ENDIF}
