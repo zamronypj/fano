@@ -34,6 +34,9 @@ SocketOptsImpl,
 InetSvrFactoryImpl,
 UnixSvrFactoryImpl,
 BoundSvrFactoryImpl,
+
+{$IFDEF LINUX}
 EpollInetSvrFactoryImpl,
 EpollUnixSvrFactoryImpl,
 EpollBoundSvrFactoryImpl,
+{$ENDIF}
