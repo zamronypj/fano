@@ -62,7 +62,7 @@ type
             const kqFd : longint;
             const termPipeIn : longint;
             const listenSocket : IListenSocket;
-            const events : PEpoll_Event;
+            const events : PKEvent;
             const maxEvents : longint
         );
 
@@ -245,7 +245,7 @@ uses
         const listenSocket : IListenSocket;
         const pipeIn : longint;
         const totFd : longint;
-        const events : TKEvent;
+        const events : PKEvent;
         var terminated : boolean
     );
     var i, fd : longint;
@@ -273,7 +273,7 @@ uses
 
             if (events[i].flags and EV_EOF = EV_EOF) then
             begin
-                fpClose(fd);
+                closeSocket(fd);
             end;
         end;
     end;
@@ -344,9 +344,9 @@ uses
         const termPipeIn : longint
     );
     const MAX_EVENTS = 64;
-    var events : PEpoll_event;
+    var events : PKEvent;
     begin
-        getmem(events, MAX_EVENTS * sizeof(TEpoll_Event));
+        getmem(events, MAX_EVENTS * sizeof(TKEvent));
         try
             waitForConnection(
                 kqFd,
@@ -372,7 +372,7 @@ uses
 
         if (kqFd < 0) then
         begin
-            raise EKqueue.create(rsEpollInitFailed);
+            raise EKqueue.create(rsKqueueInitFailed);
         end;
 
         try
