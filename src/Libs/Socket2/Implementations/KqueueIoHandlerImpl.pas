@@ -114,9 +114,8 @@ type
          *-------------------------------------------------
          * @param kqFd, file descriptor returned from kqueue()
          * @param fd, file descriptor to be added
-         * @param flag, operation flag
          *-----------------------------------------------*)
-        procedure addToMonitoredSet(const kqFd : longint; const fd : longint; const flag : cardinal);
+        procedure addToMonitoredSet(const kqFd : longint; const fd : longint);
 
         (*!-----------------------------------------------
          * remove file descriptor from monitored set
@@ -143,12 +142,11 @@ uses
 
     CloseableIntf,
     ESockWouldBlockImpl,
-    EEpollCreateImpl,
     StreamAdapterImpl,
     SockStreamImpl,
     CloseableStreamImpl,
     EpollCloseableImpl,
-    EEpollCtlImpl,
+    EKqueueImpl,
     SocketConsts,
     DateUtils,
     SysUtils,
@@ -163,18 +161,16 @@ uses
      *-----------------------------------------------*)
     procedure TKqueueIoHandler.addToMonitoredSet(
         const kqFd : longint;
-        const fd : longint;
-        const flag : cardinal
+        const fd : longint
     );
-    var ev : TEpoll_Event;
+    var ev : TKEvent;
         res : longint;
     begin
-        ev.events := flag;
-        ev.data.fd := fd;
-        res := epoll_ctl(kqFd, EPOLL_CTL_ADD, fd, @ev);
+        EV_SET(@ev, fd, EVFILT_READ, EV_ADD, 0, nil, nil);
+        res := kevent(kqFd, @ev, 1, nil, 0, nil);
         if (res < 0) then
         begin
-            raise EEpollCtl.create(rsEpollAddFileDescriptorFailed);
+            raise EKqueue.create(rsKqueueAddFileDescriptorFailed);
         end;
     end;
 
@@ -188,14 +184,14 @@ uses
         const kqFd : longint;
         const fd : longint
     );
-    var ev : TEpoll_Event;
+    var ev : TKEvent;
     begin
-        //for EPOLL_CTRL_DEL, epoll_event is ignored but
-        //due to bug, Linux kernel < 2.6.9 requires non-NULL,
-        //here we just give them although not used.
-        ev.events := EPOLLIN;
-        ev.data.fd := fd;
-        epoll_ctl(kqFd, EPOLL_CTL_DEL, fd, @ev);
+        EV_SET(@ev, fd, EVFILT_READ, EV_DELETE, 0, nil, nil);
+        res := kevent(kqFd, @ev, 1, nil, 0, nil);
+        if (res < 0) then
+        begin
+            raise EKqueue.create(rsKqueueDeleteFileDescriptorFailed);
+        end;
     end;
 
     (*!-----------------------------------------------
@@ -229,7 +225,7 @@ uses
                 //add client socket to be monitored for I/O read
                 //note that before client socket is closed,
                 //we will remove it from monitored set (see TEpollCloseable class)
-                addToMonitoredSet(kqFd, clientSocket, EPOLLIN or EPOLLET);
+                addToMonitoredSet(kqFd, clientSocket);
             end;
         until (clientSocket < 0);
     end;
@@ -249,14 +245,14 @@ uses
         const listenSocket : IListenSocket;
         const pipeIn : longint;
         const totFd : longint;
-        const events : PEpoll_Event;
+        const events : TKEvent;
         var terminated : boolean
     );
     var i, fd : longint;
     begin
         for i := 0 to totFd -1  do
         begin
-            fd := events[i].data.fd;
+            fd := events[i].ident;
             if (fd = pipeIn) then
             begin
                 readPipe(pipeIn);
@@ -274,6 +270,11 @@ uses
                 //more client connections
                 handleClientConnection(kqFd, fd);
             end;
+
+            if (events[i].flags and EV_EOF = EV_EOF) then
+            begin
+                fpClose(fd);
+            end;
         end;
     end;
 
@@ -290,19 +291,19 @@ uses
         const kqFd : longint;
         const termPipeIn : longint;
         const listenSocket : IListenSocket;
-        const events : PEpoll_Event;
+        const events : PKEvent;
         const maxEvents : longint
     );
     var terminated : boolean;
         totFd : longint;
     begin
-        addToMonitoredSet(kqFd, termPipeIn, EPOLLIN);
-        addToMonitoredSet(kqFd, listenSocket.fd, EPOLLIN);
+        addToMonitoredSet(kqFd, termPipeIn);
+        addToMonitoredSet(kqFd, listenSocket.fd);
         try
             terminated := false;
             repeat
                 //wait indefinitely until something happen in fListenSocket or epollTerminatePipeIn
-                totFd := epoll_wait(kqFd, events, maxEvents, fTimeoutVal);
+                totFd := kevent(kqFd, nil, 0, events, maxEvents, fTimeoutVal);
                 if totFd > 0 then
                 begin
                     //one or more file descriptors is ready for I/O, check further
@@ -371,7 +372,7 @@ uses
 
         if (kqFd < 0) then
         begin
-            raise EEpollCreate.create(rsEpollInitFailed);
+            raise EKqueue.create(rsEpollInitFailed);
         end;
 
         try
