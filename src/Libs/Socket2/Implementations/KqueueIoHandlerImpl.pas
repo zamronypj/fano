@@ -35,7 +35,7 @@ type
      *-----------------------------------------------*)
     TKqueueIoHandler = class(TAbstractIoHandler)
     private
-        fTimeoutVal : longint;
+        fTimeoutVal : TTimeSpec;
 
         (*!-----------------------------------------------
          * accept all incoming connection until no more pending
@@ -126,6 +126,11 @@ type
         procedure removeFromMonitoredSet(const kqFd : longint; const fd : longint);
 
     public
+        constructor create(
+            const sockOpts : ISocketOpts;
+            const timeoutInMs : integer = 30000
+        );
+
         (*!-----------------------------------------------
          * handle incoming connection until terminated
          *------------------------------------------------
@@ -152,6 +157,26 @@ uses
     SysUtils,
     Errors,
     StreamIdIntf;
+
+    (*!-----------------------------------------------
+     * convert timeout in millisecond to TTimeSpec record
+     *-------------------------------------------------
+     * @param timeoutInMs, timeout in millisecond
+     *-----------------------------------------------*)
+    function getTimeout(const timeoutInMs : integer) : TTimeSpec;
+    begin
+        result.tv_sec := timeoutInMs div 1000;
+        result.tv_nsec = (timeoutInMs mod 1000) * 1000000;
+    end;
+
+    constructor TKqueueIoHandler.create(
+        const sockOpts : ISocketOpts;
+        const timeoutInMs : integer = 30000
+    );
+    begin
+        inherited create(sockOpts, timeoutInMs);
+        fTimeoutVal := getTimeOut(timeoutInMs);
+    end;
 
     (*!-----------------------------------------------
      * add file descriptor to monitored set
