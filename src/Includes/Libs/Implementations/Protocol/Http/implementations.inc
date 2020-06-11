@@ -6,9 +6,11 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-{------------ Begin SCGI-related------------------}
+{------------ Begin libmicrohttpd-related------------------}
+{$IFDEF LIBMICROHTTPD}
 MhdSvrConfigTypes,
 MhdAppServiceProviderImpl,
 MhdStdOutWriterImpl,
 MhdProcessorImpl,
-{------------ End SCGI-related------------------}
+{$ENDIF}
+{------------ End libmicrohttpd-related------------------}
