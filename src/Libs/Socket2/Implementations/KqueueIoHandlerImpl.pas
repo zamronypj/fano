@@ -97,7 +97,7 @@ type
          * @param listenSocket, listen socket handle
          * @param pipeIn, terminate pipe input handle
          * @param totFd, total file descriptor ready for I/O
-         * @param events, array of TEpoll_Event contained file descriptors
+         * @param events, array of TKEvent contained file descriptors
          * @param terminated, set true if we should terminate
          *-----------------------------------------------*)
         procedure handleFileDescriptorIOReady(
@@ -105,7 +105,7 @@ type
             const listenSocket : IListenSocket;
             const pipeIn : longint;
             const totFd : longint;
-            const events : PEpoll_Event;
+            const events : PKEvent;
             var terminated : boolean
         );
 
@@ -149,8 +149,7 @@ uses
     ESockWouldBlockImpl,
     StreamAdapterImpl,
     SockStreamImpl,
-    CloseableStreamImpl,
-    EpollCloseableImpl,
+    NullCloseableImpl,
     EKqueueImpl,
     SocketConsts,
     DateUtils,
@@ -388,7 +387,7 @@ uses
     (*!-----------------------------------------------
      * handle incoming connection until terminated
      *-------------------------------------------------
-     * @throws EEpollCreate exception
+     * @throws EKQueue exception
      *-----------------------------------------------*)
     procedure TKqueueIoHandler.handleConnection(const listenSocket : IListenSocket; termPipeIn : longint);
     var kqFd : longint;
@@ -427,7 +426,7 @@ uses
             try
                 //create instance which can remove client socket
                 //from epoll monitoring and after that close socket
-                streamCloser := TEpollCloseable.create(kqFd, clientSocket);
+                streamCloser := TNullCloseable.create(clientSocket);
                 try
                     fDataAvailListener.handleData(
                         astream,
