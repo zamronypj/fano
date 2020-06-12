@@ -397,6 +397,10 @@ uses
                     origfds,
                     terminated
                 );
+            end else
+            if totDesc = 0 then
+            begin
+                handleTimeout();
             end;
         until terminated;
     end;
