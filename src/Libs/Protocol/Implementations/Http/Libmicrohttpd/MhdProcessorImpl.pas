@@ -422,17 +422,39 @@ uses
     var
         svrDaemon : PMHD_Daemon;
     begin
-        svrDaemon := MHD_start_daemon(
-            MHD_USE_EPOLL_INTERNALLY_LINUX_ONLY,
-            fSvrConfig.port,
-            nil,
-            nil,
-            @handleRequestCallback,
-            self,
-            MHD_OPTION_CONNECTION_TIMEOUT,
-            cuint(fSvrConfig.Timeout),
-            MHD_OPTION_END
-        );
+        if fSvrConfig.useTLS then
+        begin
+            svrDaemon := MHD_start_daemon(
+                //TODO: MHD_USE_SSL is now deprecated and replaced with MHD_USE_TLS
+                MHD_USE_EPOLL_INTERNALLY_LINUX_ONLY or MHD_USE_SSL,
+                fSvrConfig.port,
+                nil,
+                nil,
+                @handleRequestCallback,
+                self,
+                MHD_OPTION_CONNECTION_TIMEOUT,
+                cuint(fSvrConfig.Timeout),
+                MHD_OPTION_HTTPS_MEM_KEY,
+                pAnsiChar(fSvrConfig.tlsKey),
+                MHD_OPTION_HTTPS_MEM_CERT,
+                pAnsiChar(fSvrConfig.tlsCert),
+                MHD_OPTION_END
+            );
+        end else
+        begin
+            svrDaemon := MHD_start_daemon(
+                MHD_USE_EPOLL_INTERNALLY_LINUX_ONLY,
+                fSvrConfig.port,
+                nil,
+                nil,
+                @handleRequestCallback,
+                self,
+                MHD_OPTION_CONNECTION_TIMEOUT,
+                cuint(fSvrConfig.Timeout),
+                MHD_OPTION_END
+            );
+        end;
+
         if svrDaemon <> nil then
         begin
             waitUntilTerminate();
