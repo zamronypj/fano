@@ -435,9 +435,9 @@ uses
                 MHD_OPTION_CONNECTION_TIMEOUT,
                 cuint(fSvrConfig.Timeout),
                 MHD_OPTION_HTTPS_MEM_KEY,
-                pAnsiChar(fSvrConfig.tlsKey),
+                libmicrohttpd.pcchar(fSvrConfig.tlsKey),
                 MHD_OPTION_HTTPS_MEM_CERT,
-                pAnsiChar(fSvrConfig.tlsCert),
+                libmicrohttpd.pcchar(fSvrConfig.tlsCert),
                 MHD_OPTION_END
             );
         end else
