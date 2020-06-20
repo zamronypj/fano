@@ -83,6 +83,7 @@ type
             aptr : ppointer
         ): cint;
 
+        function tryRun() : IRunnable;
     public
         constructor create(
             const aConnectionAware : IMhdConnectionAware;
@@ -147,7 +148,8 @@ uses
     KeyValueEnvironmentImpl,
     MhdParamKeyValuePairImpl,
     StreamAdapterImpl,
-    NullStreamAdapterImpl;
+    NullStreamAdapterImpl,
+    FileUtils;
 
     constructor TMhdProcessor.create(
         const aConnectionAware : IMhdConnectionAware;
@@ -418,12 +420,16 @@ uses
      *-------------------------------------------------
      * @return current instance
      *-------------------------------------------------*)
-    function TMhdProcessor.run() : IRunnable;
+    function TMhdProcessor.tryRun() : IRunnable;
     var
         svrDaemon : PMHD_Daemon;
+        tlsKey, tlsCert : string;
     begin
         if fSvrConfig.useTLS then
         begin
+            tlsKey := readFile(fSvrConfig.tlsKey);
+            tlsCert := readFile(fSvrConfig.tlsCert);
+
             svrDaemon := MHD_start_daemon(
                 //TODO: MHD_USE_SSL is now deprecated and replaced with MHD_USE_TLS
                 MHD_USE_EPOLL_INTERNALLY_LINUX_ONLY or MHD_USE_SSL,
@@ -435,9 +441,9 @@ uses
                 MHD_OPTION_CONNECTION_TIMEOUT,
                 cuint(fSvrConfig.Timeout),
                 MHD_OPTION_HTTPS_MEM_KEY,
-                libmicrohttpd.pcchar(fSvrConfig.tlsKey),
+                libmicrohttpd.pcchar(tlsKey),
                 MHD_OPTION_HTTPS_MEM_CERT,
-                libmicrohttpd.pcchar(fSvrConfig.tlsCert),
+                libmicrohttpd.pcchar(tlsCert),
                 MHD_OPTION_END
             );
         end else
@@ -461,6 +467,24 @@ uses
             MHD_stop_daemon(svrDaemon);
         end;
         result := self;
+    end;
+
+    (*!------------------------------------------------
+     * run it
+     *-------------------------------------------------
+     * @return current instance
+     *-------------------------------------------------*)
+    function TMhdProcessor.run() : IRunnable;
+    begin
+        try
+            result := tryRun();
+        except
+            on e: Exception do
+            begin
+                writeln('Exception: ', e.ClassName);
+                writeln('Message: ', e.Message);
+            end;
+        end;
     end;
 
     (*!------------------------------------------------

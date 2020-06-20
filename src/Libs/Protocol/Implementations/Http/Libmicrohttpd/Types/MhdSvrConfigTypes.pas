@@ -27,9 +27,9 @@ type
 
         //set to true if using https
         useTLS : boolean;
-        //SSL certificate key
+        //SSL certificate key file path
         tlsKey : string;
-        //SSL certificate
+        //SSL certificate file path
         tlsCert : string;
     end;
 
