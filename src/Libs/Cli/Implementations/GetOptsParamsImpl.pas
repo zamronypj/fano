@@ -105,14 +105,9 @@ uses
     ECliParamsImpl;
 
     constructor TGetOptsParams.create();
-    var i : integer;
     begin
         fOptions := TStringList.create();
         setLength(fOpts, 10);
-        for i:= low(fOpts) to high(fOpts) do
-        begin
-            fOpts[i] := default(TOption);
-        end;
         fOptCount := 0;
     end;
 
@@ -131,7 +126,10 @@ uses
     begin
         c:=#0;
         repeat
-            c := getLongOpts('', @fOpts[0], optionIndex);
+            //shortopts must not empty string, otherwise access violation
+            //we do not use short option. Here we just use space.
+            //see https://bugs.freepascal.org/view.php?id=37233
+            c := getLongOpts(' ', @fOpts[0], optionIndex);
             if c = #0 then
             begin
                 //optionIndex will be start from 1 instead of zero
@@ -255,7 +253,7 @@ uses
     var currLen : integer;
     begin
         currLen := length(fOpts);
-        if (fOptCount < currLen - 1) then
+        if (fOptCount = currLen) then
         begin
             setLength(fOpts, currLen + 10);
         end;
