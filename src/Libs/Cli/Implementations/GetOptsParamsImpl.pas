@@ -105,9 +105,14 @@ uses
     ECliParamsImpl;
 
     constructor TGetOptsParams.create();
+    var i : integer;
     begin
         fOptions := TStringList.create();
         setLength(fOpts, 10);
+        for i:= low(fOpts) to high(fOpts) do
+        begin
+            fOpts[i] := default(TOption);
+        end;
         fOptCount := 0;
     end;
 
