@@ -8,6 +8,7 @@ Web application framework for modern Pascal programming language.
 - [Free Pascal](https://www.freepascal.org/) >= 3.0
 - Web Server (Apache, nginx)
 - [libcurl development](https://curl.haxx.se/libcurl/) (optional)
+- [libmicrohttpd development](https://www.gnu.org/software/libmicrohttpd/) (optional)
 
 ## Installation
 
