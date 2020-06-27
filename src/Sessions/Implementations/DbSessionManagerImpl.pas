@@ -54,6 +54,8 @@ type
         fRdbms : IRdbms;
         fSessTableInfo : TSessionTableInfo;
 
+        function isSessionExistDb(const sessId : string) : boolean;
+
         function getSessionDb(
             const sessId : string;
             out sessData : string;
@@ -65,11 +67,14 @@ type
             const sessData : string;
             const expiredAt : TDateTime
         ) : boolean;
+
         function updateSessionDb(
             const sessId : string;
             const sessData : string;
             const expiredAt : TDateTime
         ) : boolean;
+
+        function deleteSessionDb(const sessId : string) : boolean;
 
         (*!------------------------------------
          * create session from session id
@@ -127,7 +132,6 @@ type
             const session : ISession
         ) : ISessionManager;
 
-        procedure cleanUpSessionList();
     public
 
         (*!------------------------------------
@@ -202,11 +206,6 @@ uses
 
 type
 
-    TSessionItem = record
-        sessionObj : ISession;
-    end;
-    PSessionItem = ^TSessionItem;
-
     (*!------------------------------------
      * constructor
      *-------------------------------------
@@ -237,24 +236,20 @@ type
      *-------------------------------------*)
     destructor TDbSessionManager.destroy();
     begin
-        fCurrentSession := nil;
-        cleanUpSessionList();
         fRbms := nil;
         fSessionFactory := nil;
         inherited destroy();
     end;
 
-    procedure TDbSessionManager.cleanUpSessionList();
-    var indx : integer;
-        item : PSessionItems;
+    function TDbSessionManager.isSessionExistDb(const sessId : string) : boolean;
+    var sts : IRdbmsStatement;
     begin
-        for indx := fSessionList.count()-1  downto 0 do
-        begin
-            item := fSessionList.get(indx);
-            item^.sessionObj := nil;
-            dispose(item);
-            fSessionList.delete(indx);
-        end;
+        sts := fRdbms.prepare(
+            'SELECT 1 FROM `' + fSessTableInfo.tableName + '` ' +
+            'WHERE `' + fSessTableInfo.sessionIdColumn + '` = :sessId'
+        );
+        sts.paramStr('sessId', sessId);
+        result := sts.execute().resultCount <> 0;
     end;
 
     function TDbSessionManager.getSessionDb(
@@ -271,7 +266,7 @@ type
                 '`' + fSessTableInfo.dataColumn + '`, ' +
                 '`' +fSessTableInfo.expiredAtColumn + '`' +
             ' FROM `' + fSessTableInfo.tableName + '` ' +
-            'WHERE ' + fSessTableInfo.sessionIdColumn + ' = :sessId'
+            'WHERE `' + fSessTableInfo.sessionIdColumn + '` = :sessId'
         );
         sts.paramStr('sessId', sessId);
         res := sts.execute();
@@ -301,8 +296,7 @@ type
         sts.paramStr('sessId', sessId);
         sts.paramDateTime('expiredAt', expiredAt);
         sts.paramStr('sessData', sessData);
-        sts.execute();
-        result := true;
+        result := sts.execute().resultCount() <> 0;
     end;
 
     function TDbSessionManager.updateSessionDb(
@@ -322,8 +316,18 @@ type
         sts.paramStr('sessId', sessId);
         sts.paramDateTime('expiredAt', expiredAt);
         sts.paramStr('sessData', sessData);
-        sts.execute();
-        result := true;
+        result := sts.execute().resultCount() <> 0;
+    end;
+
+    function TDbSessionManager.deleteSessionDb(const sessId : string) : boolean;
+    var sts : IRdbmsStatement;
+    begin
+        sts := fRdbms.prepare(
+            'DELETE FROM `' + fSessTableInfo.tableName + '` ' +
+            'WHERE ' + fSessTableInfo.sessionIdColumn + ' = :sessId'
+        );
+        sts.paramStr('sessId', sessId);
+        result := sts.execute().resultCount() <> 0;
     end;
 
     (*!------------------------------------
@@ -393,6 +397,8 @@ type
                 fSessionIdGenerator.getSessionId(request),
                 incSecond(now(), lifeTimeInSec)
             );
+            //this is new session, persist it first to storage
+            persistSession(sess);
         end;
 
         result := sess;
@@ -403,7 +409,7 @@ type
      *-------------------------------------
      * @param request current request instance
      * @param lifeTimeInSec life time of session in seconds
-     * @return session instance
+     * @return session instansce
      *-------------------------------------*)
     function TDbSessionManager.beginSession(
         const request : IRequest;
@@ -411,15 +417,10 @@ type
     ) : ISession;
     var sessionId : string;
         sess : ISession;
-        item : PSessionItem;
     begin
         try
             sessionId := request.getCookieParam(fCookieName);
             sess := createSession(request, sessionId, lifeTimeInSec);
-
-            new(item);
-            item^.sessionObj := sess;
-            fSessionList.add(sess.id(), item);
 
             fCurrentSession := sess;
             result := sess;
@@ -440,23 +441,10 @@ type
      *-------------------------------------*)
     function TDbSessionManager.getSession(const request : IRequest) : ISession;
     var sessionId : shortstring;
-        item : PSessionItem;
     begin
         sessionId := request.getCookieParam(fCookieName);
-        item := fSessionList.find(sessionId);
-        //it is assumed that getSession will be called between
-        //beginSession() and endSession()
-        //so fCurrentSession MUST NOT nil
-        if (item = nil) and (fCurrentSession <> nil) then
-        begin
-            //if we get here, it means, this is the first request
-            //so cookie is not yet set but it is initialized
-            result := fCurrentSession;
-        end else
-        if (item <> nil) then
-        begin
-            result := item^.sessionObj;
-        end else
+        result := findSession(sessionId);
+        if result = nil then
         begin
             raise ESessionInvalid.create('Invalid session. Cannot get valid session');
         end;
@@ -470,8 +458,6 @@ type
      * @return current instance
      *-------------------------------------*)
     function TDbSessionManager.endSession(const session : ISession) : ISessionManager;
-    var indx : integer;
-        item : PSessionItem;
     begin
         if session.expired() then
         begin
@@ -480,15 +466,6 @@ type
         begin
             persistSession(session);
         end;
-
-        indx := fSessionList.indexOf(session.id());
-        item := fSessionList.get(indx);
-        item^.sessionObj := nil;
-        dispose(item);
-        fSessionList.delete(indx);
-
-        fCurrentSession := nil;
-
         result := self;
     end;
 
@@ -500,11 +477,16 @@ type
      * @return current instance
      *-------------------------------------*)
     function TDbSessionManager.persistSession(const session : ISession) : ISessionManager;
-    var sessFilename : string;
+    var sessId : string;
     begin
-        sessFilename := fSessionFilename + session.id();
-        writeSessionFile(sessFilename, session.serialize());
-        session.clear();
+        sessId := session.id();
+        if isSessionExistDb(sessId) then
+        begin
+            updateSessionDb(sessId, session.serialize(), session.expiresAt());
+        end else
+        begin
+            createSessionDb(sessId, session.serialize(), session.expiresAt());
+        end;
         result := self;
     end;
 
@@ -516,13 +498,12 @@ type
      * @return current instance
      *-------------------------------------*)
     function TDbSessionManager.destroySession(const session : ISession) : ISessionManager;
-    var sessFilename : string;
+    var sessId : string;
     begin
-        session.clear();
-        sessFilename := fSessionFilename + session.id();
-        if (fileExists(sessFilename)) then
+        sessId := session.id();
+        if isSessionExistDb(sessId) then
         begin
-            deleteFile(sessFilename);
+            deleteSessionDb(sessId);
         end;
         result := self;
     end;
