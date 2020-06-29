@@ -236,7 +236,7 @@ uses
      *-------------------------------------*)
     destructor TDbSessionManager.destroy();
     begin
-        fRbms := nil;
+        fRdbms := nil;
         fSessionFactory := nil;
         inherited destroy();
     end;
