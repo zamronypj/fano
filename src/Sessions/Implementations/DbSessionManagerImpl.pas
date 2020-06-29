@@ -288,7 +288,7 @@ uses
         sts := fRdbms.prepare(
             'INSERT INTO `' + fSessTableInfo.tableName + '` ' +
             '( ' +
-                '`' + fSessTableInfo.sessionIdColumn + '`,'
+                '`' + fSessTableInfo.sessionIdColumn + '`,' +
                 '`' + fSessTableInfo.dataColumn + '`, ' +
                 '`' + fSessTableInfo.expiredAtColumn + '`' +
             ') VALUES (:sessId, :sessData, :expiredAt)'
