@@ -204,7 +204,6 @@ uses
     ESessionExpiredImpl,
     ESessionInvalidImpl;
 
-type
 
     (*!------------------------------------
      * constructor
