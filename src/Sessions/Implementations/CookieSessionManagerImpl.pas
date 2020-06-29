@@ -117,6 +117,7 @@ implementation
 
 uses
 
+    Classes,
     SysUtils,
     DateUtils,
     SessionConsts,
