@@ -420,8 +420,6 @@ uses
         try
             sessionId := request.getCookieParam(fCookieName);
             sess := createSession(request, sessionId, lifeTimeInSec);
-
-            fCurrentSession := sess;
             result := sess;
         except
             on e: ESessionExpired do
