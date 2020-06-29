@@ -354,8 +354,7 @@ uses
                 result := fSessionFactory.createSession(
                     fCookieName,
                     sessionId,
-                    sessData,
-                    expiry
+                    sessData
                 );
             except
                 on ESessionExpired do
