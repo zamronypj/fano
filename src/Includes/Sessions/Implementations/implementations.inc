@@ -32,6 +32,7 @@ IpKeyGuidSessionIdGeneratorFactoryImpl,
 
 FileSessionManagerImpl,
 CookieSessionManagerImpl,
+DbSessionManagerImpl,
 
 JsonSessionImpl,
 JsonSessionFactoryImpl,
