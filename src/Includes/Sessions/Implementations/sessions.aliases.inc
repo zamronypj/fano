@@ -49,6 +49,7 @@ TCookieSessionManagerFactory = CookieSessionManagerFactoryImpl.TCookieSessionMan
 TCookieSession = CookieSessionImpl.TCookieSession;
 TCookieSessionFactory = CookieSessionFactoryImpl.TCookieSessionFactory;
 
+TSessionTableInfo = DbSessionManagerImpl.TSessionTableInfo;
 TDbSessionManager = DbSessionManagerImpl.TDbSessionManager;
 
 TSessionMiddlewareExecutor = SessionMiddlewareExecutorImpl.TSessionMiddlewareExecutor;

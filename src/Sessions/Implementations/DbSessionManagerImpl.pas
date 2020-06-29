@@ -53,6 +53,7 @@ type
     private
         fRdbms : IRdbms;
         fSessTableInfo : TSessionTableInfo;
+        fSessionFactory : ISessionFactory;
 
         function isSessionExistDb(const sessId : string) : boolean;
 
