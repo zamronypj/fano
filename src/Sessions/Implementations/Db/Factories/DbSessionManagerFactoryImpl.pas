@@ -30,6 +30,7 @@ type
      *-----------------------------------------------*)
     TDbSessionManagerFactory = class abstract (TFactory)
     protected
+        fCookieName : string;
         fSessionIdGenerator : ISessionIdGenerator;
         fRdbms : IRdbms;
         fTableName : string;
@@ -37,6 +38,8 @@ type
         fDataColumn : string;
         fExpiredAtColumn : string;
     public
+        constructor create(const cookieName : string = FANO_COOKIE_NAME);
+
         function sessionIdGenerator(const sessIdGen : ISessionIdGenerator) : TDbSessionManagerFactory;
         function rdbms(const ardbms : IRdbms) : TDbSessionManagerFactory;
 
@@ -47,6 +50,11 @@ type
     end;
 
 implementation
+
+    constructor TDbSessionManagerFactory.create(const cookieName : string = FANO_COOKIE_NAME);
+    begin
+        fCookieName := cookieName;
+    end;
 
     function TDbSessionManagerFactory.sessionIdGenerator(const sessIdGen : ISessionIdGenerator) : TDbSessionManagerFactory;
     begin
