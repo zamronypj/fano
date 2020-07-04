@@ -45,6 +45,10 @@ IniSessionFactoryImpl,
 
 IniFileSessionManagerFactoryImpl,
 
+DbSessionManagerFactoryImpl,
+JsonDbSessionManagerFactoryImpl,
+IniDbSessionManagerFactoryImpl,
+
 CookieSessionImpl,
 CookieSessionFactoryImpl,
 

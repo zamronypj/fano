@@ -52,6 +52,10 @@ TCookieSessionFactory = CookieSessionFactoryImpl.TCookieSessionFactory;
 TSessionTableInfo = DbSessionManagerImpl.TSessionTableInfo;
 TDbSessionManager = DbSessionManagerImpl.TDbSessionManager;
 
+TDbSessionManagerFactory = DbSessionManagerFactoryImpl.TDbSessionManagerFactory;
+TJsonDbSessionManagerFactory = JsonDbSessionManagerFactoryImpl.TJsonDbSessionManagerFactory;
+TIniDbSessionManagerFactory= IniDbSessionManagerFactoryImpl.TIniDbSessionManagerFactory;
+
 TSessionMiddlewareExecutor = SessionMiddlewareExecutorImpl.TSessionMiddlewareExecutor;
 
 TSessionResponse = SessionResponseImpl.TSessionResponse;
