@@ -20,8 +20,7 @@ uses
     FactoryImpl,
     SessionConsts,
     RdbmsFactoryIntf,
-    SessionIdGeneratorFactoryIntf,
-    AbstractSessionManagerFactoryImpl;
+    SessionIdGeneratorFactoryIntf;
 
 type
     (*!------------------------------------------------
@@ -29,7 +28,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TDbSessionManagerFactory = class abstract (TAbstractSessionManagerFactory)
+    TDbSessionManagerFactory = class abstract (TFactory)
     protected
         fRdbmsFactory : IRdbmsFactory;
         fTableName : string;
