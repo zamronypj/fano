@@ -30,7 +30,7 @@ type
      *-----------------------------------------------*)
     TDbSessionManagerFactory = class abstract (TFactory)
     protected
-
+        fSessionIdGenerator : ISessionIdGenerator;
         fRdbms : IRdbms;
         fTableName : string;
         fSessionIdColumn : string;
