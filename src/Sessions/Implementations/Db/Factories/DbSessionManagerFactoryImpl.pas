@@ -38,10 +38,10 @@ type
         fDataColumn : string;
         fExpiredAtColumn : string;
     public
-        constructor create(const cookieName : string = FANO_COOKIE_NAME);
+        constructor create(const rdbms : IRdbms; const cookieName : string = FANO_COOKIE_NAME);
+        destructor destroy(); override;
 
         function sessionIdGenerator(const sessIdGen : ISessionIdGenerator) : TDbSessionManagerFactory;
-        function rdbms(const ardbms : IRdbms) : TDbSessionManagerFactory;
 
         function table(const tableName : string) : TDbSessionManagerFactory;
         function sessionIdColumn(const sessionIdName : string) : TDbSessionManagerFactory;
@@ -51,20 +51,34 @@ type
 
 implementation
 
-    constructor TDbSessionManagerFactory.create(const cookieName : string = FANO_COOKIE_NAME);
+uses
+
+    GuidSessionIdGeneratorImpl;
+
+    constructor TDbSessionManagerFactory.create(
+        const rdbms : IRdbms;
+        const cookieName : string = FANO_COOKIE_NAME
+    );
     begin
+        fRdbms := rdbms;
+        fSessionIdGenerator := TGuidSessionIdGenerator.create();
         fCookieName := cookieName;
+        fTableName := DEFAULT_SESS_TABLE_NAME;
+        fSessionIdColumn := DEFAULT_SESS_ID_COLUMN;
+        fDataColumn := DEFAULT_DATA_COLUMN;
+        fExpiredAtColumn := DEFAULT_EXPIRED_AT_COLUMN;
+    end;
+
+    destructor TDbSessionManagerFactory.destroy();
+    begin
+        fRdbms := nil;
+        fSessionIdGenerator := nil;
+        inherited destroy();
     end;
 
     function TDbSessionManagerFactory.sessionIdGenerator(const sessIdGen : ISessionIdGenerator) : TDbSessionManagerFactory;
     begin
         fSessionIdGenerator := sessIdGen;
-        result := self;
-    end;
-
-    function TDbSessionManagerFactory.rdbms(const ardbms : IRdbms) : TDbSessionManagerFactory;
-    begin
-        fRdbms := ardbms;
         result := self;
     end;
 

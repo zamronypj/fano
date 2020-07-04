@@ -284,6 +284,7 @@ uses
         const expiredAt : TDateTime
     ) : boolean;
     var sts : IRdbmsStatement;
+        res : IRdbmsResultSet;
     begin
         sts := fRdbms.prepare(
             'INSERT INTO `' + fSessTableInfo.tableName + '` ' +
@@ -296,7 +297,10 @@ uses
         sts.paramStr('sessId', sessId);
         sts.paramDateTime('expiredAt', expiredAt);
         sts.paramStr('sessData', sessData);
-        result := sts.execute().resultCount() <> 0;
+        res := sts.execute();
+        //SqlDb ALWAYS implicitly start transaction so commit() is required
+        fRdbms.commit();
+        result := res.resultCount() <> 0;
     end;
 
     function TDbSessionManager.updateSessionDb(
@@ -305,6 +309,7 @@ uses
         const expiredAt : TDateTime
     ) : boolean;
     var sts : IRdbmsStatement;
+        res : IRdbmsResultSet;
     begin
         sts := fRdbms.prepare(
             'UPDATE `' + fSessTableInfo.tableName + '` ' +
@@ -316,18 +321,25 @@ uses
         sts.paramStr('sessId', sessId);
         sts.paramDateTime('expiredAt', expiredAt);
         sts.paramStr('sessData', sessData);
-        result := sts.execute().resultCount() <> 0;
+        res := sts.execute();
+        //SqlDb ALWAYS implicitly start transaction so commit() is required
+        fRdbms.commit();
+        result := res.resultCount() <> 0;
     end;
 
     function TDbSessionManager.deleteSessionDb(const sessId : string) : boolean;
     var sts : IRdbmsStatement;
+        res : IRdbmsResultSet;
     begin
         sts := fRdbms.prepare(
             'DELETE FROM `' + fSessTableInfo.tableName + '` ' +
             'WHERE ' + fSessTableInfo.sessionIdColumn + ' = :sessId'
         );
         sts.paramStr('sessId', sessId);
-        result := sts.execute().resultCount() <> 0;
+        res := sts.execute();
+        //SqlDb ALWAYS implicitly start transaction so commit() is required
+        fRdbms.commit();
+        result := res.resultCount() <> 0;
     end;
 
     (*!------------------------------------

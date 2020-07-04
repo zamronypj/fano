@@ -46,7 +46,7 @@ type
 
         destructor destroy(); override;
 
-        function sessionIdGenerator(const sessIdGen : ISessionIdGenerator) : TCookieSessionManagerFactory'
+        function sessionIdGenerator(const sessIdGen : ISessionIdGenerator) : TCookieSessionManagerFactory;
 
         (*!---------------------------------------------------
          * build class instance
@@ -78,7 +78,7 @@ uses
         fActualSessFactory := actualSessFactory;
         fEncrypter := encrypter;
         fDecrypter := decrypter;
-        fSessionIdGenerator := nil;
+        fSessionIdGenerator := TGuidSessionIdGenerator.create();
     end;
 
     destructor TCookieSessionManagerFactory.destroy();
@@ -90,7 +90,7 @@ uses
         inherited destroy();
     end;
 
-    function TCookieSessionManagerFactory.sessionIdGenerator(const sessIdGen : ISessionIdGenerator) : TCookieSessionManagerFactory'
+    function TCookieSessionManagerFactory.sessionIdGenerator(const sessIdGen : ISessionIdGenerator) : TCookieSessionManagerFactory;
     begin
         fSessionIdGenerator := sessIdGen;
         result := self;
@@ -103,11 +103,6 @@ uses
      *---------------------------------------------------*)
     function TCookieSessionManagerFactory.build(const container : IDependencyContainer) : IDependency;
     begin
-        if (fSessionIdGenerator = nil) then
-        begin
-            fSessionIdGenerator := TGuidSessionIdGenerator.create();
-        end;
-
         result := TCookieSessionManager.create(
             fSessionIdGenerator,
             TCookieSessionFactory.create(fActualSessFactory, fEncrypter),
