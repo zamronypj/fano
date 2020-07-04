@@ -19,8 +19,8 @@ uses
     DependencyContainerIntf,
     FactoryImpl,
     SessionConsts,
-    RdbmsFactoryIntf,
-    SessionIdGeneratorFactoryIntf;
+    RdbmsIntf,
+    SessionIdGeneratorIntf;
 
 type
     (*!------------------------------------------------
@@ -30,13 +30,15 @@ type
      *-----------------------------------------------*)
     TDbSessionManagerFactory = class abstract (TFactory)
     protected
-        fRdbmsFactory : IRdbmsFactory;
+
+        fRdbms : IRdbms;
         fTableName : string;
         fSessionIdColumn : string;
         fDataColumn : string;
         fExpiredAtColumn : string;
     public
-        function rdbms(const rdbmsFactory : IRdbmsFactory) : TDbSessionManagerFactory;
+        function sessionIdGenerator(const sessIdGen : ISessionIdGenerator) : TDbSessionManagerFactory;
+        function rdbms(const ardbms : IRdbms) : TDbSessionManagerFactory;
 
         function table(const tableName : string) : TDbSessionManagerFactory;
         function sessionIdColumn(const sessionIdName : string) : TDbSessionManagerFactory;
@@ -46,9 +48,15 @@ type
 
 implementation
 
-    function TDbSessionManagerFactory.rdbms(const rdbmsFactory : IRdbmsFactory) : TDbSessionManagerFactory;
+    function TDbSessionManagerFactory.sessionIdGenerator(const sessIdGen : ISessionIdGenerator) : TCookieSessionManagerFactory'
     begin
-        fRdbmsFactory := rdbmsFactory;
+        fSessionIdGenerator := sessIdGen;
+        result := self;
+    end;
+
+    function TDbSessionManagerFactory.rdbms(const ardbms : IRdbms) : TDbSessionManagerFactory;
+    begin
+        fRdbms := ardbms;
         result := self;
     end;
 

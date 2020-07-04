@@ -19,6 +19,7 @@ uses
     FactoryImpl,
     SessionConsts,
     SessionFactoryIntf,
+    SessionIdGeneratorIntf,
     EncrypterIntf,
     DecrypterIntf;
 
@@ -34,6 +35,7 @@ type
         fActualSessFactory : ISessionFactory;
         fEncrypter : IEncrypter;
         fDecrypter : IDecrypter;
+        fSessionIdGenerator : ISessionIdGenerator;
     public
         constructor create(
             const actualSessFactory : ISessionFactory;
@@ -43,6 +45,8 @@ type
         );
 
         destructor destroy(); override;
+
+        function sessionIdGenerator(const sessIdGen : ISessionIdGenerator) : TCookieSessionManagerFactory'
 
         (*!---------------------------------------------------
          * build class instance
@@ -74,14 +78,22 @@ uses
         fActualSessFactory := actualSessFactory;
         fEncrypter := encrypter;
         fDecrypter := decrypter;
+        fSessionIdGenerator := nil;
     end;
 
     destructor TCookieSessionManagerFactory.destroy();
     begin
+        fSessionIdGenerator := nil;
         fActualSessFactory := nil;
         fEncrypter := nil;
         fDecrypter := nil;
         inherited destroy();
+    end;
+
+    function TCookieSessionManagerFactory.sessionIdGenerator(const sessIdGen : ISessionIdGenerator) : TCookieSessionManagerFactory'
+    begin
+        fSessionIdGenerator := sessIdGen;
+        result := self;
     end;
 
     (*!---------------------------------------------------
@@ -91,8 +103,13 @@ uses
      *---------------------------------------------------*)
     function TCookieSessionManagerFactory.build(const container : IDependencyContainer) : IDependency;
     begin
+        if (fSessionIdGenerator = nil) then
+        begin
+            fSessionIdGenerator := TGuidSessionIdGenerator.create();
+        end;
+
         result := TCookieSessionManager.create(
-            TGuidSessionIdGenerator.create(),
+            fSessionIdGenerator,
             TCookieSessionFactory.create(fActualSessFactory, fEncrypter),
             fCookieName,
             fDecrypter

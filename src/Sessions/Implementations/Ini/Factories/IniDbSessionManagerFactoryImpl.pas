@@ -62,10 +62,10 @@ uses
         sessTableInfo.dataColumn := fDataColumn;
         sessTableInfo.expiredAtColumn := fExpiredAtColumn;
         result := TDbSessionManager.create(
-            fSessionIdGeneratorFactory.build(),
+            fSessionIdGenerator,
             TIniSessionFactory.create(),
             fCookieName,
-            fRdbmsFactory.build(),
+            fRdbms,
             sessTableInfo
         );
     end;
