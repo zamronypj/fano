@@ -48,7 +48,7 @@ type
 
 implementation
 
-    function TDbSessionManagerFactory.sessionIdGenerator(const sessIdGen : ISessionIdGenerator) : TCookieSessionManagerFactory'
+    function TDbSessionManagerFactory.sessionIdGenerator(const sessIdGen : ISessionIdGenerator) : TCookieSessionManagerFactory;
     begin
         fSessionIdGenerator := sessIdGen;
         result := self;
