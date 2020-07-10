@@ -54,6 +54,7 @@ type
         fRdbms : IRdbms;
         fSessTableInfo : TSessionTableInfo;
         fSessionFactory : ISessionFactory;
+        fCurrentSession : ISession;
 
         function isSessionExistDb(const sessId : string) : boolean;
 
@@ -229,6 +230,7 @@ uses
         fSessionFactory := sessionFactory;
         fRdbms := rdbms;
         fSessTableInfo := sessTableInfo;
+        fCurrentSession := nil;
     end;
 
     (*!------------------------------------
@@ -238,6 +240,7 @@ uses
     begin
         fRdbms := nil;
         fSessionFactory := nil;
+        fCurrentSession := nil;
         inherited destroy();
     end;
 
@@ -316,7 +319,7 @@ uses
             'SET ' +
             fSessTableInfo.dataColumn + ' = :sessData, ' +
             fSessTableInfo.expiredAtColumn + '= :expiredAt ' +
-            'WHERE ' + fSessTableInfo.sessionIdColumn + ' = :sessId'
+            'WHERE `' + fSessTableInfo.sessionIdColumn + '` = :sessId'
         );
         sts.paramStr('sessId', sessId);
         sts.paramDateTime('expiredAt', expiredAt);
@@ -427,12 +430,11 @@ uses
         const lifeTimeInSec : integer
     ) : ISession;
     var sessionId : string;
-        sess : ISession;
     begin
         try
             sessionId := request.getCookieParam(fCookieName);
-            sess := createSession(request, sessionId, lifeTimeInSec);
-            result := sess;
+            fCurrentSession := createSession(request, sessionId, lifeTimeInSec);
+            result := fCurrentSession;
         except
             on e: ESessionExpired do
             begin
@@ -451,8 +453,26 @@ uses
     function TDbSessionManager.getSession(const request : IRequest) : ISession;
     var sessionId : shortstring;
     begin
+        result := nil;
         sessionId := request.getCookieParam(fCookieName);
-        result := findSession(sessionId);
+
+        if (fCurrentSession <> nil) then
+        begin
+            if (sessionId = '') or (fCurrentSession.id() = sessionId) then
+            begin
+                //if sessionId is empty string, it means first request
+                //TODO: need to re-think because in multi-threaded without proper synchronization,
+                //this may cause other user's session is hijacked
+                result := fCurrentSession;
+            end else
+            begin
+                result := findSession(sessionId);
+            end;
+        end else
+        begin
+            result := findSession(sessionId);
+        end;
+
         if result = nil then
         begin
             raise ESessionInvalid.create('Invalid session. Cannot get valid session');
@@ -475,6 +495,7 @@ uses
         begin
             persistSession(session);
         end;
+        fCurrentSession := nil;
         result := self;
     end;
 
