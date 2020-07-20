@@ -52,6 +52,10 @@ Free Pascal, directory where to search Fano units.
 This approach, however, has disadvantage. When you update your Fano repository,
 all your applications that depends on Fano will be affected. If newer version of Fano repository introduces breaking changes, application that requires older version of Fano repository may fail.
 
+## Versioning Number
+
+Fano Framework follows [Semantic Versioning 2.0.0](https://semver.org/#semantic-versioning-200).
+
 ## Windows User
 
 Fano Framework is not yet supported on Windows.
