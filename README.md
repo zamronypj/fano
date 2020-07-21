@@ -17,7 +17,7 @@ It depends on an application to bootstrap.
 
 ### Install from Fano Command Line tool
 
-[Fano Cli](https://github.com/fanoframework/fano-cli) is command line tool intended to simplify
+[Fano CLI](https://github.com/fanoframework/fano-cli) is command line tool intended to simplify
 [scaffolding web application](https://fanoframework.github.io/scaffolding-with-fano-cli/), creating controllers, views, models, etc. It is recommended way to setup web application skeleton with Fano Framework.
 
     $ fanocli --project-cgi=my-cool-app
