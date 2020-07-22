@@ -5,15 +5,13 @@ Web application framework for modern Pascal programming language.
 
 ## Requirement
 
+- Linux or FreeBSD
 - [Free Pascal](https://www.freepascal.org/) >= 3.0
 - Web Server (Apache, nginx)
 - [libcurl development](https://curl.haxx.se/libcurl/) (optional)
 - [libmicrohttpd development](https://www.gnu.org/software/libmicrohttpd/) (optional)
 
 ## Installation
-
-Fano is standalone library, and basically, is not very useful on its own.
-It depends on an application to bootstrap.
 
 ### Install from Fano Command Line tool
 
