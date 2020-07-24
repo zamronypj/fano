@@ -29,14 +29,16 @@ TSelectIoHandler = SelectIoHandlerImpl.TSelectIoHandler;
 
 {$IFDEF FREEBSD}
     {$IFDEF USE_KQUEUE}
-    TKQueueIoHandler = KQueueIoHandlerImpl.TKQueueIoHandler;
+    TKqueueIoHandler = KqueueIoHandlerImpl.TKqueueIoHandler;
     {$ENDIF}
 {$ENDIF}
 
 TSocketOpts = SocketOptsImpl.TSocketOpts;
 
 TInetSvrFactory = InetSvrFactoryImpl.TInetSvrFactory;
+{$IFDEF unix}
 TUnixSvrFactory = UnixSvrFactoryImpl.TUnixSvrFactory;
+{$ENDIF}
 TBoundSvrFactory = BoundSvrFactoryImpl.TBoundSvrFactory;
 
 {$IFDEF LINUX}
@@ -47,8 +49,8 @@ TEpollBoundSvrFactory = EpollBoundSvrFactoryImpl.TEpollBoundSvrFactory;
 
 {$IFDEF FREEBSD}
     {$IFDEF USE_KQUEUE}
-    TKQueueInetSvrFactory = KQueueInetSvrFactoryImpl.TKQueueInetSvrFactory;
-    TKQueueUnixSvrFactory = KQueueUnixSvrFactoryImpl.TKQueueUnixSvrFactory;
-    TKQueueBoundSvrFactory = KQueueBoundSvrFactoryImpl.TKQueueBoundSvrFactory;
+    TKqueueInetSvrFactory = KqueueInetSvrFactoryImpl.TKqueueInetSvrFactory;
+    TKqueueUnixSvrFactory = KqueueUnixSvrFactoryImpl.TKqueueUnixSvrFactory;
+    TKqueueBoundSvrFactory = KqueueBoundSvrFactoryImpl.TKqueueBoundSvrFactory;
     {$ENDIF}
 {$ENDIF}

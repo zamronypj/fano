@@ -38,7 +38,9 @@ SelectIoHandlerImpl,
 SocketOptsImpl,
 
 InetSvrFactoryImpl,
+{$IFDEF UNIX}
 UnixSvrFactoryImpl,
+{$ENDIF}
 BoundSvrFactoryImpl,
 
 {$IFDEF LINUX}
@@ -49,8 +51,8 @@ EpollBoundSvrFactoryImpl,
 
 {$IFDEF FREEBSD}
     {$IFDEF USE_KQUEUE}
-    KQueueInetSvrFactoryImpl,
-    KQueueUnixSvrFactoryImpl,
-    KQueueBoundSvrFactoryImpl,
+    KqueueInetSvrFactoryImpl,
+    KqueueUnixSvrFactoryImpl,
+    KqueueBoundSvrFactoryImpl,
     {$ENDIF}
 {$ENDIF}
