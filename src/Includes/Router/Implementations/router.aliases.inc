@@ -5,3 +5,4 @@ TSimpleRouterFactory = SimpleRouterFactoryImpl.TSimpleRouterFactory;
 TCombineRouterFactory = CombineRouterFactoryImpl.TCombineRouterFactory;
 
 TRouteBuilder = RouteBuilderImpl.TRouteBuilder;
+TCompositeRouteBuilder = CompositeRouteBuilderImpl.TCompositeRouteBuilder;
