@@ -301,7 +301,11 @@ resourcestring
             cookieParams,
             bodyParams
         );
-        queryAndBodyParams := TCompositeList.create(queryParams, bodyParams);
+
+        //make parameters in body take more precedence over query string
+        //to reduce risk of HTTP parameters pollution with cross-channel pollution
+        //see http://www.madlab.it/slides/BHEU2011/whitepaper-bhEU2011.pdf
+        queryAndBodyParams := TCompositeList.create(bodyParams, queryParams);
     end;
 
     destructor TRequest.destroy();
