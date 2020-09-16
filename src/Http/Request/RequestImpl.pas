@@ -584,17 +584,25 @@ resourcestring
      *-------------------------------------------------
      * @param string key name of key
      * @return instance of IUploadedFileArray or nil if is not
-     *         exists
+     *         exists or request is not multipart/form-data
      *------------------------------------------------*)
     function TRequest.getUploadedFile(const key: string) : IUploadedFileArray;
     begin
-        result := uploadedFiles.getUploadedFile(key);
+        if (uploadedFiles <> nil) then
+        begin
+            result := uploadedFiles.getUploadedFile(key);
+        end else
+        begin
+            //if we get here, it means request is not multipart/form-data
+            result := nil;
+        end;
     end;
 
     (*!------------------------------------------------
      * get all uploaded files
      *-------------------------------------------------
-     * @return IUploadedFileCollection
+     * @return IUploadedFileCollection or nil if
+     *         request is not multipart/form-data
      *------------------------------------------------*)
     function TRequest.getUploadedFiles() : IUploadedFileCollection;
     begin
