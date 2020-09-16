@@ -446,14 +446,14 @@ resourcestring
         end
         else if (pos('multipart/form-data', contentType) > 0) then
         begin
-            multipartFormDataParser.parse(contentType, bodyStr, body, uploadedFilesWriter);
+            multipartFormDataParser.parse(env.contentType(), bodyStr, body, uploadedFilesWriter);
             uploadedFiles := uploadedFilesWriter as IUploadedFileCollection;
         end else
         begin
             //if POST/PUT/PATCH but different contentType such as 'application/json'
             //save it as it is with its contentType as key and let developer deals with it
             new(param);
-            param^.key := contentType;
+            param^.key := env.contentType();
             param^.value := bodyStr;
             body.add(param^.key, param);
         end;
