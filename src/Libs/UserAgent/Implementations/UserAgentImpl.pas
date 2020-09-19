@@ -40,6 +40,7 @@ type
 
         procedure initRules(const rules : IList);
         procedure cleanRules(const rules : IList);
+        procedure resetMatchedRules(const rules : IList);
 
         function isMatched(const keyName : shortstring) : boolean;
     protected
@@ -54,7 +55,6 @@ type
         function isOS(const osName : shortString) : boolean;
         function isBrowser(const browserName : shortstring) : boolean;
 
-        property mobileDevice : boolean read isMobileDevice;
         property userAgent : string read getUserAgent write setUserAgent;
         property OS[const osName : shortString] : boolean read isOS;
         property browser[const browserName : shortstring] : boolean read isBrowser;
@@ -133,7 +133,7 @@ type
     var rule : PMatchRule;
         i : integer;
     begin
-        for i:= rules.count - 1 downto 0 do
+        for i:= rules.count() - 1 downto 0 do
         begin
             rule := rules.get(i);
             dispose(rule);
@@ -141,9 +141,24 @@ type
         end;
     end;
 
+    procedure TUserAgent.resetMatchedRules(const rules : IList);
+    var rule : PMatchRule;
+        i : integer;
+    begin
+        for i:= rules.count() - 1 downto 0 do
+        begin
+            rule := rules.get(i);
+            rule^.matched := false;
+        end;
+    end;
+
     procedure TUserAgent.setUserAgent(const ua : string);
     begin
-        fUserAgentStr := ua;
+        if (fUserAgentStr <> ua) then
+        begin
+            fUserAgentStr := ua;
+            resetMatchedRules(fRules);
+        end;
     end;
 
     function TUserAgent.getUserAgent() : string;
