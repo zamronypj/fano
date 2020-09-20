@@ -48,11 +48,13 @@ uses
     function TUserAgentFactory.regex(const regexInst : IRegex) : TUserAgentFactory;
     begin
         fRegex := regexInst;
+        result := self;
     end;
 
     function TUserAgentFactory.list(const listInst : IList) : TUserAgentFactory;
     begin
         fList := listInst;
+        result := self;
     end;
 
     function TUserAgentFactory.build(const container : IDependencyContainer) : IDependency;
