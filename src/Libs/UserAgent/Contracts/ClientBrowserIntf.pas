@@ -24,8 +24,8 @@ type
     IClientBrowser = interface
         ['{322490CD-125E-43AB-8167-EA28EAB9D964}']
 
-        function isBrowser(const browserName : string) : boolean;
-        property browser[const browserName : string] : boolean read isBrowser;
+        function isBrowser(const browserName : shortstring) : boolean;
+        property browser[const browserName : shortstring] : boolean read isBrowser;
     end;
 
 implementation
