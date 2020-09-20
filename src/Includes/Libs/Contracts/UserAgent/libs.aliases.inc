@@ -7,6 +7,6 @@
  *}
 
 IClientBrowser = ClientBrowserIntf.IClientBrowser;
-IClientDevice = ClientBrowserIntf.IClientDevice;
+IClientDevice = ClientDeviceIntf.IClientDevice;
 IClientOS = ClientOsIntf.IClientOS;
 IUserAgent = UserAgentIntf.IUserAgent;
