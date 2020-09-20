@@ -189,12 +189,12 @@ type
         res : TRegexMatchResult;
     begin
         arule := fRules.find(keyName);
-        result := (arule <> nil) and arule.matched;
-        if (arule <> nil) and (not arule.matched) then
+        result := (arule <> nil) and arule^.matched;
+        if (arule <> nil) and (not arule^.matched) then
         begin
-            res := fRegex.match(arule.regex, fUserAgentStr);
+            res := fRegex.match(arule^.regex, fUserAgentStr);
             //cache match result for speedup future match
-            arule.matched := res.matched;
+            arule^.matched := res.matched;
             result := res.matched;
         end;
     end;
