@@ -20,7 +20,8 @@ uses
     UserAgentIntf,
     ClientDeviceIntf,
     ClientOsIntf,
-    ClientBrowserIntf;
+    ClientBrowserIntf,
+    InjectableObjectImpl;
 
 type
 
@@ -30,7 +31,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TUserAgent = class(TInterfacedObject, IUserAgent, IClientDevice, IClientOs, IClientBrowser)
+    TUserAgent = class(TInjectableObject, IUserAgent, IClientDevice, IClientOs, IClientBrowser)
     private
         fRegex : IRegex;
         fRules : IList;
@@ -54,6 +55,10 @@ type
         function isMobile() : boolean;
         function isOS(const osName : shortString) : boolean;
         function isBrowser(const browserName : shortstring) : boolean;
+
+        function getBrowser() : IClientBrowser;
+        function getOS() : IClientOS;
+        function getDevice() : IClientDevice;
 
         property userAgent : string read getUserAgent write setUserAgent;
         property OS[const osName : shortString] : boolean read isOS;
@@ -202,6 +207,21 @@ type
     function TUserAgent.isBrowser(const browserName : shortString) : boolean;
     begin
         result := isMatched(browserName);
+    end;
+
+    function TUserAgent.getBrowser() : IClientBrowser;
+    begin
+        result := self;
+    end;
+
+    function TUserAgent.getOS() : IClientOS;
+    begin
+        result := self;
+    end;
+
+    function TUserAgent.getDevice() : IClientDevice;
+    begin
+        result := self;
     end;
 
 end.

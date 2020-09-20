@@ -13,6 +13,12 @@ interface
 {$MODE OBJFPC}
 {$H+}
 
+uses
+
+    ClientBrowserIntf,
+    ClientDeviceIntf,
+    ClientOsIntf;
+
 type
 
     (*!------------------------------------------------
@@ -26,6 +32,11 @@ type
 
         procedure setUserAgent(const ua : string);
         function getUserAgent() : string;
+
+        function getBrowser() : IClientBrowser;
+        function getOS() : IClientOS;
+        function getDevice() : IClientDevice;
+
         property userAgent : string read getUserAgent write setUserAgent;
     end;
 
