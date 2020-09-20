@@ -3,7 +3,7 @@
 Web application framework for modern Pascal programming language.
 [Learn more](https://fanoframework.github.io).
 
-[![MIT License](https://img.shields.io/apm/l/atomic-design-ui.svg?)](https://github.com/fanoframework/fano/blob/master/LICENSE)
+[![MIT License](https://img.shields.io/github/license/fanoframework/fano.svg?)](https://github.com/fanoframework/fano/blob/master/LICENSE)
 [![GitHub Release](https://img.shields.io/github/v/release/fanoframework/fano.svg?style=flat)]()
 
 ## Requirement
