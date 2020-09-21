@@ -145,12 +145,10 @@ uses
             authHeaderLine := request.headers().getHeader('Authorization');
             if pos(BEARER_STR, trimLeft(lowercase(authHeaderLine))) = 1 then
             begin
-                foundToken := decodeStringBase64(
-                    copy(
-                        authHeaderLine,
-                        BEARER_STR_LEN + 1,
-                        length(authHeaderLine) - BEARER_STR_LEN
-                    )
+                foundToken := copy(
+                    authHeaderLine,
+                    BEARER_STR_LEN + 1,
+                    length(authHeaderLine) - BEARER_STR_LEN
                 );
 
                 result := true;
