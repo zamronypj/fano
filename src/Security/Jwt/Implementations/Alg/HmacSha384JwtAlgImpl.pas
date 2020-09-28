@@ -27,7 +27,6 @@ type
     THmacSha384JwtAlg = class (TAbstractHmacJwtAlg)
     protected
         function hmac(const inpStr : string; const secretKey: string) : string; override;
-
     end;
 
 implementation

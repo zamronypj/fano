@@ -117,7 +117,10 @@ uses
             if fAlgorithms.has(jwt.JOSE.alg) then
             begin
                 alg := fAlgorithms[jwt.JOSE.alg];
-                result := alg.verify(token, fSecretKey);
+                result := alg.verify(
+                    jwt.JOSE.AsEncodedString + '.' + jwt.Claims.AsEncodedString,
+                    fSecretKey
+                );
             end else
             begin
                 raise EJwt.createFmt('Unknown JWT algorithm %s', [jwt.JOSE.alg]);
