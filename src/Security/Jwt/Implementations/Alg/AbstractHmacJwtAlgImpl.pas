@@ -27,23 +27,41 @@ type
      *-------------------------------------------------*)
     TAbstractHmacJwtAlg = class abstract (TInterfacedObject, IJwtAlg, IJwtAlgSign)
     protected
+        (*!------------------------------------------------
+         * compute HMAC of string
+         *-------------------------------------------------
+         * @param signature signature to compare
+         * @param secretKey secret key
+         * @return hash value
+         *-------------------------------------------------*)
         function hmac(const inpStr : string; const secretKey: string) : string; virtual; abstract;
     public
         (*!------------------------------------------------
          * verify token
          *-------------------------------------------------
          * @param payload payload to verify
+         * @param signature signature to compare
          * @param secretKey secret key
-         * @return boolean true if token is verified
+         * @return boolean true if payload is verified
+         *-------------------------------------------------
+         * Note: payload is concatenated value of
+         * base64url_header + '.' + base64url_claim
          *-------------------------------------------------*)
-        function verify(const payload : string; const secretKey: string) : boolean;
+        function verify(
+            const payload : string;
+            const signature : string;
+            const secretKey: string
+        ) : boolean;
 
         (*!------------------------------------------------
-         * sign token
+         * compute JWT signature of payload
          *-------------------------------------------------
-         * @param payload payload to verify
+         * @param payload payload to sign
          * @param secretKey secret key
          * @return string signature
+         *-------------------------------------------------
+         * Note: payload is assumed concatenated value of
+         * base64url_header + '.' + base64url_claim
          *-------------------------------------------------*)
         function sign(const payload : string; const secretKey: string) : string;
     end;
@@ -53,8 +71,13 @@ implementation
     (*!------------------------------------------------
      * verify token
      *-------------------------------------------------
-     * @param token token to verify
-     * @return boolean true if token is verified
+     * @param payload payload to verify
+     * @param signature signature to compare
+     * @param secretKey secret key
+     * @return boolean true if payload is verified
+     *-------------------------------------------------
+     * Note: payload is concatenated value of
+     * base64url_header + '.' + base64url_claim
      *-------------------------------------------------*)
     function TAbstractHmacJwtAlg.verify(
         const payload: string;
@@ -66,11 +89,14 @@ implementation
     end;
 
     (*!------------------------------------------------
-     * sign token
+     * compute JWT signature of payload
      *-------------------------------------------------
-     * @param payload payload to verify
+     * @param payload payload to sign
      * @param secretKey secret key
      * @return string signature
+     *-------------------------------------------------
+     * Note: payload is assumed concatenated value of
+     * base64url_header + '.' + base64url_claim
      *-------------------------------------------------*)
     function TAbstractHmacJwtAlg.sign(const payload : string; const secretKey: string) : string;
     begin

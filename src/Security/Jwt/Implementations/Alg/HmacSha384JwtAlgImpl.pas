@@ -26,6 +26,13 @@ type
      *-------------------------------------------------*)
     THmacSha384JwtAlg = class (TAbstractHmacJwtAlg)
     protected
+        (*!------------------------------------------------
+         * compute HMAC SHA2-384 of string
+         *-------------------------------------------------
+         * @param signature signature to compare
+         * @param secretKey secret key
+         * @return hash value
+         *-------------------------------------------------*)
         function hmac(const inpStr : string; const secretKey: string) : string; override;
     end;
 
@@ -38,6 +45,13 @@ uses
     HlpConverters,
     HlpHashFactory;
 
+    (*!------------------------------------------------
+     * compute HMAC SHA2-384 of string
+     *-------------------------------------------------
+     * @param signature signature to compare
+     * @param secretKey secret key
+     * @return hash value
+     *-------------------------------------------------*)
     function THmacSha384JwtAlg.hmac(
         const inpStr : string;
         const secretKey : string

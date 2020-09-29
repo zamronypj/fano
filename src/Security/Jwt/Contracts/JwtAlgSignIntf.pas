@@ -25,11 +25,14 @@ type
         ['{7BF0C343-C778-44D8-A3DE-1C55956BA19E}']
 
         (*!------------------------------------------------
-         * sign token
+         * compute JWT signature of payload
          *-------------------------------------------------
          * @param payload payload to sign
          * @param secretKey secret key
          * @return string signature
+         *-------------------------------------------------
+         * Note: payload is assumed concatenated value of
+         * base64url_header + '.' + base64url_claim
          *-------------------------------------------------*)
         function sign(const payload : string; const secretKey : string) : string;
 

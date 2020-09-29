@@ -26,6 +26,13 @@ type
      *-------------------------------------------------*)
     THmacSha512JwtAlg = class (TAbstractHmacJwtAlg)
     protected
+        (*!------------------------------------------------
+         * compute HMAC SHA2-512 of string
+         *-------------------------------------------------
+         * @param signature signature to compare
+         * @param secretKey secret key
+         * @return hash value
+         *-------------------------------------------------*)
         function hmac(const inpStr : string; const secretKey: string) : string; override;
     end;
 
@@ -38,6 +45,13 @@ uses
     HlpConverters,
     HlpHashFactory;
 
+    (*!------------------------------------------------
+     * compute HMAC SHA2-256 of string
+     *-------------------------------------------------
+     * @param signature signature to compare
+     * @param secretKey secret key
+     * @return hash value
+     *-------------------------------------------------*)
     function THmacSha512JwtAlg.hmac(
         const inpStr : string;
         const secretKey : string
@@ -50,5 +64,4 @@ uses
         hmacInst.Key := TConverters.ConvertStringToBytes(secretKey, TEncoding.UTF8);
         result := hmacInst.ComputeString(inpStr, TEncoding.UTF8).ToString();
     end;
-
 end.

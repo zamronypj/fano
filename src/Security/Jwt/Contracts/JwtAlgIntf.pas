@@ -27,10 +27,19 @@ type
         (*!------------------------------------------------
          * verify token
          *-------------------------------------------------
-         * @param token token to verify
-         * @return boolean true if token is verified
+         * @param payload payload to verify
+         * @param signature signature to compare
+         * @param secretKey secret key
+         * @return boolean true if payload is verified
+         *-------------------------------------------------
+         * Note: payload is concatenated value of
+         * base64url_header + '.' + base64url_claim
          *-------------------------------------------------*)
-        function verify(const token : string; const secretKey : string) : boolean;
+        function verify(
+            const payload : string;
+            const signature : string;
+            const secretKey : string
+        ) : boolean;
 
     end;
 
