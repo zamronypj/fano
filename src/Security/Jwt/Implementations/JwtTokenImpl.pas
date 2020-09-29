@@ -116,10 +116,10 @@ uses
         jwt := TJwt.create();
         try
             try
-                //this may raise EJSON when token is not JWT
+                //this may raise EJSON when token is not well-formed JWT
                 jwt.asEncodedString := token;
 
-                //if we get here, token is JWT
+                //if we get here, token is well-formed JWT
                 alg := fAlgorithms.find(jwt.JOSE.alg);
 
                 //test if signing algorithm is known, if not, then token is
