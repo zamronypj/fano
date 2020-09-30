@@ -15,8 +15,8 @@ interface
 
 uses
 
-    JwtAlgIntf,
-    JwtAlgSignIntf;
+    JwtAlgVerifierIntf,
+    JwtAlgSignerIntf;
 
 type
 
@@ -27,7 +27,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TNoneJwtAlg = class (TInterfacedObject, IJwtAlg, IJwtAlgSign)
+    TNoneJwtAlg = class (TInterfacedObject, IJwtAlgVerifier, IJwtAlgSigner)
     public
         (*!------------------------------------------------
          * verify token

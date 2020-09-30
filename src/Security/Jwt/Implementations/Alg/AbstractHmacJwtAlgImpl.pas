@@ -15,8 +15,8 @@ interface
 
 uses
 
-    JwtAlgIntf,
-    JwtAlgSignIntf;
+    JwtAlgVerifierIntf,
+    JwtAlgSignerIntf;
 
 type
 
@@ -25,7 +25,7 @@ type
      * with HMAC
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TAbstractHmacJwtAlg = class abstract (TInterfacedObject, IJwtAlg, IJwtAlgSign)
+    TAbstractHmacJwtAlg = class abstract (TInterfacedObject, IJwtAlgVerifier, IJwtAlgSigner)
     protected
         (*!------------------------------------------------
          * compute HMAC of string

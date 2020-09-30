@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit JwtAlgSignIntf;
+unit JwtAlgSignerIntf;
 
 interface
 
@@ -21,7 +21,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    IJwtAlgSign = interface
+    IJwtAlgSigner = interface
         ['{7BF0C343-C778-44D8-A3DE-1C55956BA19E}']
 
         (*!------------------------------------------------

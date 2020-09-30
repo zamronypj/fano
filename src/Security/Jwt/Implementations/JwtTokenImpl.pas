@@ -27,7 +27,7 @@ type
         alg : shortstring;
 
         //instance responsible to verify signature
-        inst : IJwtAlg;
+        inst : IJwtAlgVerify;
     end;
     TAlgArray = array of TAlg;
 

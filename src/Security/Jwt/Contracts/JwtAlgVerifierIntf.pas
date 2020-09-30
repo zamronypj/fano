@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit JwtAlgIntf;
+unit JwtAlgVerifierIntf;
 
 interface
 
@@ -21,7 +21,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    IJwtAlg = interface
+    IJwtAlgVerifier = interface
         ['{520D6E2D-70C1-43A5-8936-B79D48EA95C5}']
 
         (*!------------------------------------------------
