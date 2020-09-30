@@ -16,8 +16,8 @@ interface
 type
 
     (*!------------------------------------------------
-     * interface for any class having capability to
-     * verify jwt token
+     * interface for any JWT algorithm class having
+     * capability to verify jwt payload against its signature
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)

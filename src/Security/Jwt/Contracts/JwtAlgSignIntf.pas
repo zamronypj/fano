@@ -16,8 +16,8 @@ interface
 type
 
     (*!------------------------------------------------
-     * interface for any class having capability to
-     * generater jwt token signature
+     * interface for any JWT algorithm class having
+     * capability to generate jwt token signature
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
