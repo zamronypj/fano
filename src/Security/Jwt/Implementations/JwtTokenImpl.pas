@@ -56,13 +56,18 @@ type
             const secretKey : string;
             const algos: array of TAlg
         );
+
+        (*!------------------------------------------------
+         * destructor
+         *-------------------------------------------------*)
         destructor destroy(); override;
 
         (*!------------------------------------------------
          * verify token
          *-------------------------------------------------
          * @param token token to verify
-         * @return boolean true if token is verified
+         * @return boolean true if token is verified and
+         *        not expired and issuer match
          *-------------------------------------------------*)
         function verify(const token : string) : boolean;
 
@@ -80,6 +85,13 @@ uses
 const
     ALG_NOTFOUND = -1;
 
+    (*!------------------------------------------------
+     * constructor
+     *-------------------------------------------------
+     * @param issuer JWT issuer string
+     * @param secretKey secret key used to verify signature
+     * @param algos array of supported algorithms
+     *-------------------------------------------------*)
     constructor TJwtToken.create(
         const issuer : string;
         const secretKey : string;
@@ -96,6 +108,9 @@ const
         end;
     end;
 
+    (*!------------------------------------------------
+     * destructor
+     *-------------------------------------------------*)
     destructor TJwtToken.destroy();
     begin
         cleanUpAlgorithms();
@@ -133,7 +148,7 @@ const
      * verify token
      *-------------------------------------------------
      * @param token token to verify
-     * @return boolean true if token is verified,
+     * @return boolean true if token is verified and
      *         not expired and issuer match
      *-------------------------------------------------*)
     function TJwtToken.verify(const token : string) : boolean;
