@@ -38,7 +38,7 @@ type
         fIssuer : string;
         fSecretKey : string;
         fAlgorithms : IList;
-        procedure cleanUpAlgo();
+        procedure cleanUpAlgorithms();
     public
         constructor create(
             const algorithms : IList;
@@ -76,6 +76,7 @@ uses
     var i : integer;
         alg : PAlg;
     begin
+        fIssuer := issuer;
         fSecretKey := secretKey;
         fAlgorithms := algorithms;
         for i := low(algos) to high(algos) do
@@ -89,12 +90,12 @@ uses
 
     destructor TJwtToken.destroy();
     begin
-        cleanUpAlgo();
+        cleanUpAlgorithms();
         fAlgorithms := nil;
         inherited destroy();
     end;
 
-    procedure TJwtToken.cleanUpAlgo();
+    procedure TJwtToken.cleanUpAlgorithms();
     var i : integer;
         alg : PAlg;
     begin
