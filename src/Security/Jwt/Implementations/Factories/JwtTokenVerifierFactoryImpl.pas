@@ -96,7 +96,7 @@ const
         result := self;
     end;
 
-    function algorithms(const algos : array of IJwtAlgVerifier) : TJwtTokenVerifierFactory;
+    function TJwtTokenVerifierFactory.algorithms(const algos : array of IJwtAlgVerifier) : TJwtTokenVerifierFactory;
     begin
         fAlgorithms := algos;
         result := self;
