@@ -13,6 +13,10 @@ interface
 {$MODE OBJFPC}
 {$H+}
 
+uses
+
+    JwtAlgIntf;
+
 type
 
     (*!------------------------------------------------
@@ -21,22 +25,22 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    IJwtAlgVerifier = interface
+    IJwtAlgVerifier = interface(IJwtAlg)
         ['{520D6E2D-70C1-43A5-8936-B79D48EA95C5}']
 
         (*!------------------------------------------------
          * verify token
          *-------------------------------------------------
-         * @param payload payload to verify
+         * @param headerPayload payload to verify
          * @param signature signature to compare
          * @param secretKey secret key
          * @return boolean true if payload is verified
          *-------------------------------------------------
-         * Note: payload is concatenated value of
+         * Note: headerPayload is concatenated value of
          * base64url_header + '.' + base64url_claim
          *-------------------------------------------------*)
         function verify(
-            const payload : string;
+            const headerPayload : string;
             const signature : string;
             const secretKey : string
         ) : boolean;

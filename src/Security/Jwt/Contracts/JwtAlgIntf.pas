@@ -6,39 +6,29 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit JwtAlgSignerIntf;
+unit JwtAlgIntf;
 
 interface
 
 {$MODE OBJFPC}
 {$H+}
 
-uses
-
-    JwtAlgIntf;
-
 type
 
     (*!------------------------------------------------
-     * interface for any JWT algorithm class having
-     * capability to generate jwt token signature
+     * base interface for any JWT algorithm class
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    IJwtAlgSigner = interface(IJwtAlg)
-        ['{7BF0C343-C778-44D8-A3DE-1C55956BA19E}']
+    IJwtAlg = interface
+        ['{CC564C04-A606-4DDB-A28F-7765AEB9D70F}']
 
         (*!------------------------------------------------
-         * compute JWT signature of payload
+         * get JWT algorithm name
          *-------------------------------------------------
-         * @param headerPayload payload to sign
-         * @param secretKey secret key
-         * @return string signature
-         *-------------------------------------------------
-         * Note: headerPayload is assumed concatenated value of
-         * base64url_header + '.' + base64url_claim
+         * @return string name of algorithm
          *-------------------------------------------------*)
-        function sign(const headerPayload : string; const secretKey : string) : string;
+        function name() : shortstring;
 
     end;
 

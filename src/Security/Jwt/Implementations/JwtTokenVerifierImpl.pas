@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit JwtTokenImpl;
+unit JwtTokenVerifierImpl;
 
 interface
 
@@ -15,46 +15,43 @@ interface
 
 uses
 
+    ListIntf,
     TokenVerifierIntf,
-    JwtAlgIntf,
+    JwtAlgVerifierIntf,
     InjectableObjectImpl;
 
 type
 
     //supported JWT algorithm
-    TAlg = record
-        //algorithm name
-        alg : shortstring;
-
-        //instance responsible to verify signature
-        inst : IJwtAlgVerify;
-    end;
-    TAlgArray = array of TAlg;
+    TAlgArray = array of IJwtAlgVerifier;
 
     (*!------------------------------------------------
      * class having capability to verify JWT token validity
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TJwtToken = class (TInjectableObject, ITokenVerifier)
+    TJwtTokenVerifier = class (TInjectableObject, ITokenVerifier)
     private
+        fMetadata : IList;
         fAlgorithms : TAlgArray;
-        fIssuer : string;
         fSecretKey : string;
-        function findAlgoIndexByName(const alg : shortstring) : integer;
+        function findAlgoByName(const alg : shortstring) : IJwtAlgVerifier;
         procedure cleanUpAlgorithms();
+        procedure cleanUpMetadata();
     public
         (*!------------------------------------------------
          * constructor
          *-------------------------------------------------
+         * @param metadata lits of additional data for verification
          * @param issuer JWT issuer string
          * @param secretKey secret key used to verify signature
          * @param algos array of supported algorithms
          *-------------------------------------------------*)
         constructor create(
+            const metadata : IList;
             const issuer : string;
             const secretKey : string;
-            const algos: array of TAlg
+            const algos: array of IJwtAlgVerifier
         );
 
         (*!------------------------------------------------
@@ -71,6 +68,13 @@ type
          *-------------------------------------------------*)
         function verify(const token : string) : boolean;
 
+        (*!------------------------------------------------
+         * set additional data for token verification
+         *-------------------------------------------------*)
+        procedure setData(const key : shortstring; const metaData : string);
+        function getData(const key : shortstring) : string;
+        property data[const key : shortstring] : string read getData write setData; default;
+
     end;
 
 implementation
@@ -80,11 +84,15 @@ uses
     sysutils,
     dateutils,
     fpjson,
-    fpjwt;
+    fpjwt,
+    JwtConsts;
 
-const
+type
 
-    ALG_NOTFOUND = -1;
+    TMetadata = record
+        strValue : string;
+    end;
+    PMetadata = ^TMetadata;
 
     (*!------------------------------------------------
      * constructor
@@ -93,53 +101,64 @@ const
      * @param secretKey secret key used to verify signature
      * @param algos array of supported algorithms
      *-------------------------------------------------*)
-    constructor TJwtToken.create(
+    constructor TJwtTokenVerifier.create(
+        const metadata : IList;
         const issuer : string;
         const secretKey : string;
-        const algos: array of TAlg
+        const algos: array of IJwtAlgVerifier
     );
-    var i : integer;
     begin
-        fIssuer := issuer;
+        fMetadata := metadata;
         fSecretKey := secretKey;
-        setLength(fAlgorithms, high(algos) - low(algos) + 1);
-        for i := low(algos) to high(algos) do
-        begin
-            fAlgorithms[i] := algos[i];
-        end;
+        fAlgorithms := algos;
+        setData(JWT_ISSUER, issuer);
     end;
 
     (*!------------------------------------------------
      * destructor
      *-------------------------------------------------*)
-    destructor TJwtToken.destroy();
+    destructor TJwtTokenVerifier.destroy();
     begin
+        cleanUpMetadata();
         cleanUpAlgorithms();
         fAlgorithms := nil;
         inherited destroy();
     end;
 
-    procedure TJwtToken.cleanUpAlgorithms();
+    procedure TJwtTokenVerifier.cleanUpMetadata();
+    var i : integer;
+        meta : PMetadata;
+    begin
+        for i := fMetadata.count-1 downto 0 do
+        begin
+            meta := fMetadata.get(i);
+            meta^.strValue := nil;
+            dispose(meta);
+            fMetadata.delete(i);
+        end;
+    end;
+
+    procedure TJwtTokenVerifier.cleanUpAlgorithms();
     var i : integer;
     begin
         for i := length(fAlgorithms)-1 downto 0 do
         begin
-            fAlgorithms[i].inst := nil;
+            fAlgorithms[i] := nil;
         end;
     end;
 
-    function TJwtToken.findAlgoIndexByName(const alg : shortstring) : integer;
+    function TJwtTokenVerifier.findAlgoByName(const alg : shortstring) : IJwtAlgVerifier;
     var i, len : integer;
     begin
         //number of algorithms is very small, sequential search is good enough
-        result := ALG_NOTFOUND;
+        result := nil;
         len := length(fAlgorithms);
         for i := 0 to len-1 do
         begin
-            if (alg = fAlgorithms[i].alg) then
+            if (alg = fAlgorithms[i].name()) then
             begin
                 //algorithm found
-                result := i;
+                result := fAlgorithms[i];
                 break;
             end;
         end;
@@ -152,9 +171,11 @@ const
      * @return boolean true if token is verified and
      *         not expired and issuer match
      *-------------------------------------------------*)
-    function TJwtToken.verify(const token : string) : boolean;
+    function TJwtTokenVerifier.verify(const token : string) : boolean;
     var jwt : TJwt;
-        algIndex : integer;
+        alg : IJwtAlgVerify;
+        aAudience : string;
+        aIssuer : string;
     begin
         jwt := TJwt.create();
         try
@@ -163,14 +184,17 @@ const
                 jwt.asEncodedString := token;
 
                 //if we get here, token is well-formed JWT
-                algIndex := findAlgoIndexByName(jwt.JOSE.alg);
+                alg := findAlgoByName(jwt.JOSE.alg);
+
+                aAudience := fMetadata.find(JWT_AUDIENCE);
+                aIssuer := fMetadata.find(JWT_ISSUER);
 
                 //test if signing algorithm is known, if not, then token is
                 //definitely not generated by us or token has been tampered.
-                result := (algIndex <> ALG_NOTFOUND) and
+                result := (alg <> nil) and
 
                     //if algorithm is known, check signature
-                    fAlgorithm[algIndex].inst.verify(
+                    alg.verify(
                         jwt.JOSE.AsEncodedString + '.' + jwt.Claims.AsEncodedString,
                         jwt.Signature,
                         fSecretKey
@@ -179,8 +203,9 @@ const
                     //if signature valid, check if expired
                     (jwt.Claims.exp > DateTimeToUnix(Now)) and
 
-                    //if not expired, check if issuer match
-                    (jwt.Claims.iss = fIssuer);
+                    //if not expired, check if audience and issuer match
+                    (jwt.Claims.aud = aAudience) and
+                    (jwt.Claims.iss = aIssuer);
             except
                 on e : EJSON do
                 begin
@@ -193,4 +218,34 @@ const
         end;
     end;
 
+    procedure TJwtTokenVerifier.setData(const key : shortstring; const metaData : string);
+    var meta : PMetadata;
+    begin
+        meta := fMetadata.find(key);
+        if (meta = nil) then
+        begin
+            new(meta);
+            fMetadata.add(key, meta);
+        end;
+        meta^.strValue := issuer;
+    end;
+
+    procedure raiseMetadataNotFound(const key : shortstring);
+    begin
+        raise EJwt.createFmt('Jwt token meta data %s not found.', [key]);
+    end;
+
+    function TJwtTokenVerifier.getData(const key : shortstring) : string;
+    var meta : PMetadata;
+    begin
+        meta := fMetadata.find(key);
+        if meta <> nil then
+        begin
+            result := meta^.strValue;
+        end else
+        begin
+            raiseMetadataNotFound(key);
+            result := '';
+        end;
+    end;
 end.

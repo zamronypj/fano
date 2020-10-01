@@ -57,9 +57,20 @@ type
          * base64url_header + '.' + base64url_claim
          *-------------------------------------------------*)
         function sign(const payload : string; const secretKey: string) : string;
+    public
+        (*!------------------------------------------------
+         * get JWT algorithm name
+         *-------------------------------------------------
+         * @return string name of algorithm
+         *-------------------------------------------------*)
+        function name() : shortstring;
     end;
 
 implementation
+
+uses
+
+    JwtConsts;
 
     (*!------------------------------------------------
      * verify token
@@ -96,5 +107,15 @@ implementation
     begin
         //intentionally returns empty signature.
         result := '';
+    end;
+
+    (*!------------------------------------------------
+     * get JWT algorithm name
+     *-------------------------------------------------
+     * @return string name of algorithm
+     *-------------------------------------------------*)
+    function TNoneJwtAlg.name() : shortstring;
+    begin
+        result := ALG_NONE;
     end;
 end.

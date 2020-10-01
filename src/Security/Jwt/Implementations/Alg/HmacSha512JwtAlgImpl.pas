@@ -34,6 +34,13 @@ type
          * @return hash value
          *-------------------------------------------------*)
         function hmac(const inpStr : string; const secretKey: string) : string; override;
+    public
+        (*!------------------------------------------------
+         * get JWT algorithm name
+         *-------------------------------------------------
+         * @return string name of algorithm
+         *-------------------------------------------------*)
+        function name() : shortstring; override;
     end;
 
 implementation
@@ -43,7 +50,8 @@ uses
     SysUtils,
     HlpIHashInfo,
     HlpConverters,
-    HlpHashFactory;
+    HlpHashFactory,
+    JwtConsts;
 
     (*!------------------------------------------------
      * compute HMAC SHA2-256 of string
@@ -63,5 +71,15 @@ uses
         );
         hmacInst.Key := TConverters.ConvertStringToBytes(secretKey, TEncoding.UTF8);
         result := hmacInst.ComputeString(inpStr, TEncoding.UTF8).ToString();
+    end;
+
+    (*!------------------------------------------------
+     * get JWT algorithm name
+     *-------------------------------------------------
+     * @return string name of algorithm
+     *-------------------------------------------------*)
+    function THmacSha512JwtAlg.name() : shortstring;
+    begin
+        result := ALG_HS512;
     end;
 end.

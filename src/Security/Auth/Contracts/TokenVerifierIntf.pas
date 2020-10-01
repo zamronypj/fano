@@ -32,6 +32,12 @@ type
          *-------------------------------------------------*)
         function verify(const token : string) : boolean;
 
+        (*!------------------------------------------------
+         * set additional data for token verification (if any)
+         *-------------------------------------------------*)
+        procedure setData(const key : shortstring; const metaData : string);
+        function getData(const key : shortstring) : string;
+        property data[const key : shortstring] : string read getData write setData; default;
     end;
 
 implementation

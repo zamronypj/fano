@@ -64,6 +64,13 @@ type
          * base64url_header + '.' + base64url_claim
          *-------------------------------------------------*)
         function sign(const payload : string; const secretKey: string) : string;
+
+        (*!------------------------------------------------
+         * get JWT algorithm name
+         *-------------------------------------------------
+         * @return string name of algorithm
+         *-------------------------------------------------*)
+        function name() : shortstring; virtual; abstract;
     end;
 
 implementation
