@@ -17,8 +17,7 @@ uses
 
     DependencyIntf,
     DependencyContainerIntf,
-    FactoryImpl,
-    RequestHandlerIntf;
+    FactoryImpl;
 
 type
 

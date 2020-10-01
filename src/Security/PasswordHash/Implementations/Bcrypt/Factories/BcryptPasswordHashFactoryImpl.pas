@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit Sha2PasswordHashFactoryImpl;
+unit BcryptPasswordHashFactoryImpl;
 
 interface
 
@@ -16,25 +16,26 @@ uses
 
     DependencyIntf,
     DependencyContainerIntf,
-    FactoryImpl;
+    FactoryImpl,
+    BCryptTypes,
+    BCryptConsts;
 
 type
 
-    TSha2Type = (st256, st512);
-
     (*!------------------------------------------------
-     * factory class for TArgon2iPasswordHash
+     * factory class for TBcryptPasswordHash
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TSha2PasswordHashFactory = class(TFactory, IDependencyFactory)
+    TBcryptPasswordHashFactory = class(TFactory, IDependencyFactory)
     private
-        fSha2Type : TSha2Type;
+        fCost : byte;
+        fHashType : THashType;
     public
         constructor create();
+        function cost(aCost : byte) : TBcryptPasswordHashFactory;
 
-        function use256() : TSha2PasswordHashFactory;
-        function use512() : TSha2PasswordHashFactory;
+        function hashType(aType : THashType) : TBcryptPasswordHashFactory;
 
         (*!---------------------------------------
          * build password hash instance
@@ -49,34 +50,29 @@ implementation
 
 uses
 
-    Sha2_256PasswordHashImpl,
-    Sha2_512PasswordHashImpl;
+    BcryptPasswordHashImpl;
 
-    constructor TSha2PasswordHashFactory.create();
+    constructor TBcryptPasswordHashFactory.create();
     begin
-        fSha2Type := st256;
+        fHashType := BSD;
+        fCost := BCRYPT_DEFAULT_COST;
     end;
 
-    function TSha2PasswordHashFactory.use256() : TSha2PasswordHashFactory;
+    function TBcryptPasswordHashFactory.cost(aCost : byte) : TBcryptPasswordHashFactory;
     begin
-        fSha2Type := st256;
+        fCost := aCost;
         result := self;
     end;
 
-    function TSha2PasswordHashFactory.use512() : TSha2PasswordHashFactory;
+    function TBcryptPasswordHashFactory.hashType(aType : THashType) : TBcryptPasswordHashFactory;
     begin
-        fSha2Type := st512;
+        fHashType := aType;
         result := self;
     end;
 
-    function TSha2PasswordHashFactory.build(const container : IDependencyContainer) : IDependency;
+    function TBcryptPasswordHashFactory.build(const container : IDependencyContainer) : IDependency;
     begin
-        case fSha2Type of
-            st256 : result := TSha2_256PasswordHash.create();
-            st512 : result := TSha2_512PasswordHash.create();
-            else
-                result := TSha2_256PasswordHash.create();
-        end;
+        result := TBcryptPasswordHash.create(fHashType, fCost);
     end;
 
 end.

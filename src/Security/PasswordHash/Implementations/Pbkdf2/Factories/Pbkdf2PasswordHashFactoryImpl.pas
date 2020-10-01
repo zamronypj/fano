@@ -16,13 +16,18 @@ uses
 
     DependencyIntf,
     DependencyContainerIntf,
-    FactoryImpl,
-    RequestHandlerIntf;
+    FactoryImpl;
 
 type
-    THashFunc = (hfSHA1,
-        hfSHA2_256, hfSHA2_384, hfSHA2_512,
-        hfSHA3_256, hfSHA3_384, hfSHA3_512
+
+    THashFunc = (
+        hfSHA1,
+        hfSHA2_256,
+        hfSHA2_384,
+        hfSHA2_512,
+        hfSHA3_256,
+        hfSHA3_384,
+        hfSHA3_512
     );
 
     (*!------------------------------------------------
