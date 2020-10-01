@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit NoneHmacJwtAlgImpl;
+unit NoneJwtAlgImpl;
 
 interface
 
