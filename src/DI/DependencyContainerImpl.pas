@@ -160,10 +160,10 @@ uses
 
 resourcestring
 
-    sDependencyNotFound = 'Dependency %s not found';
-    sInvalidFactory = 'Factory %s is invalid';
-    sUnsupportedMultiLevelAlias = 'Unsupported multiple level alias %s to %s';
-    sSameAlias = 'Cannot create alias to itself (%s to %s)';
+    sDependencyNotFound = 'Dependency "%s" not found';
+    sInvalidFactory = 'Factory "%s" is invalid';
+    sUnsupportedMultiLevelAlias = 'Unsupported multiple level alias "%s" to "%s"';
+    sSameAlias = 'Cannot create alias to itself ("%s" to "%s")';
 
 type
 
