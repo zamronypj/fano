@@ -13,6 +13,10 @@ interface
 {$MODE OBJFPC}
 {$H+}
 
+uses
+
+    VerificationResultTypes;
+
 type
 
     (*!------------------------------------------------
@@ -30,13 +34,37 @@ type
          * @param token token to verify
          * @return boolean true if token is verified
          *-------------------------------------------------*)
-        function verify(const token : string) : boolean;
+        function verify(const token : string) : TVerificationResult;
 
         (*!------------------------------------------------
          * set additional data for token verification (if any)
+         *-------------------------------------------------
+         * @param key name of data to set
+         * @param metaData data to set
          *-------------------------------------------------*)
         procedure setData(const key : shortstring; const metaData : string);
+
+        (*!------------------------------------------------
+         * get additional data for token verification (if any)
+         *-------------------------------------------------
+         * @param key name of data to query
+         * @@return meta data for key
+         *-------------------------------------------------*)
         function getData(const key : shortstring) : string;
+
+        (*!------------------------------------------------
+         * test if contain meta data
+         *-------------------------------------------------
+         * @param key name of data to query
+         * @return boolean true if contain key
+         *-------------------------------------------------*)
+        function has(const key : shortstring) : boolean;
+
+        (*!------------------------------------------------
+         * property for token verification meta data
+         *-------------------------------------------------
+         * @param key name of data to set
+         *-------------------------------------------------*)
         property data[const key : shortstring] : string read getData write setData; default;
     end;
 

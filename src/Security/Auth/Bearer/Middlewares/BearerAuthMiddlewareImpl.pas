@@ -103,7 +103,8 @@ uses
 
     SysUtils,
     Base64,
-    HttpCodeResponseImpl;
+    HttpCodeResponseImpl,
+    VerificationResultTypes;
 
     (*!------------------------------------------------
      * constructor
@@ -210,10 +211,12 @@ uses
         const next : IRequestHandler
     ) : IResponse;
     var token : string;
+        verifyRes : TVerificationResult;
     begin
         if getCredential(request, token) then
         begin
-            if (fTokenVerifier.verify(token)) then
+            verifyRes := fTokenVerifier.verify(token);
+            if (verifyRes.verified) then
             begin
                 //continue to next middleware
                 result := next.handleRequest(request, response, args);

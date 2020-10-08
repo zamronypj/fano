@@ -20,6 +20,7 @@ const
      *-------------------------------------------------*)
     JWT_ISSUER = 'iss';
     JWT_AUDIENCE = 'aud';
+    JWT_SUBJECT = 'sub';
 
     (*!------------------------------------------------
      * Supported JWT signing algorithm
