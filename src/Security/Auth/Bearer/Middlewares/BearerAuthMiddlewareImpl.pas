@@ -36,6 +36,9 @@ type
         //bearer authentication realm
         fRealm : string;
 
+        //key to use to store found credential name in request
+        fCredentialKey : shortstring;
+
         //instance of class responsible to verify token
         fTokenVerifier : ITokenVerifier;
 
@@ -103,6 +106,7 @@ uses
 
     SysUtils,
     Base64,
+    CredentialRequestImpl,
     HttpCodeResponseImpl,
     VerificationResultTypes;
 
@@ -114,12 +118,14 @@ uses
      *-------------------------------------------------*)
     constructor TBearerAuthMiddleware.create(
         const tokenVerifier : ITokenVerifier;
-        const realm : string
+        const realm : string;
+        const credentialKey : shortstring
     );
     begin
         inherited create();
         fTokenVerifier := tokenVerifier;
         fRealm := realm;
+        fCredentialKey := credentialKey;
     end;
 
     (*!------------------------------------------------
@@ -212,14 +218,21 @@ uses
     ) : IResponse;
     var token : string;
         verifyRes : TVerificationResult;
+        credentialRequest : IRequest;
     begin
         if extractTokenFromRequest(request, token) then
         begin
             verifyRes := fTokenVerifier.verify(token);
             if (verifyRes.verified) then
             begin
+                //store credential info in request
+                credentialRequest := TCredentialRequest.create(
+                    request,
+                    fCredentialKey,
+                    verifyRes.credential
+                );
                 //continue to next middleware
-                result := next.handleRequest(request, response, args);
+                result := next.handleRequest(credentialRequest, response, args);
             end else
             begin
                 result := handleForbidden(response);
