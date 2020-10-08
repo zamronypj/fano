@@ -48,7 +48,7 @@ type
          * @param foundToken extracted token
          * @return boolean true if credential succesfully read
          *-------------------------------------------------*)
-        function getCredential(
+        function extractTokenFromRequest(
             const request : IRequest;
             out foundToken : string
         ) : boolean;
@@ -129,7 +129,7 @@ uses
      * @param foundToken extracted token
      * @return boolean true if credential succesfully read
      *-------------------------------------------------*)
-    function TBearerAuthMiddleware.getCredential(
+    function TBearerAuthMiddleware.extractTokenFromRequest(
         const request : IRequest;
         out foundToken : string
     ) : boolean;
@@ -213,7 +213,7 @@ uses
     var token : string;
         verifyRes : TVerificationResult;
     begin
-        if getCredential(request, token) then
+        if extractTokenFromRequest(request, token) then
         begin
             verifyRes := fTokenVerifier.verify(token);
             if (verifyRes.verified) then
