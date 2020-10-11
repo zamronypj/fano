@@ -105,7 +105,7 @@ uses
      *-------------------------------------------------*)
     function TEnvConfig.has(const configName : string) : boolean;
     begin
-        result := GetEnvironmentVariable(configName) = '';
+        result := GetEnvironmentVariable(configName) <> '';
     end;
 
 end.

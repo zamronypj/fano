@@ -246,8 +246,12 @@ uses
         except
             on e: ESessionExpired do
             begin
-                e.message := e.message + ' at begin session';
-                raise;
+                //session is expired, just create new one
+                result := fSessionFactory.createNewSession(
+                    fCookieName,
+                    encryptedSession,
+                    incSecond(now(), lifeTimeInSec)
+                );
             end;
         end;
     end;

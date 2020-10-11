@@ -63,7 +63,7 @@ uses
      *-------------------------------------------------*)
     function TIniStringConfigFactory.createConfig(const container : IDependencyContainer) : IAppConfiguration;
     begin
-        result := TIniStringConfig.create(configFilename, fDefaultSection);
+        result := TIniStringConfig.create(fConfigStr, fDefaultSection);
     end;
 
     function TIniStringConfigFactory.build(const container : IDependencyContainer) : IDependency;
