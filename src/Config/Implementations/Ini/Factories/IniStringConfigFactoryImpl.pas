@@ -10,7 +10,7 @@ uses
     DependencyIntf,
     DependencyContainerIntf,
     ConfigIntf,
-    ContainerFactoryIntf,
+    ConfigFactoryIntf,
     FactoryImpl;
 
 type
