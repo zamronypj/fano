@@ -18,7 +18,7 @@ uses
     IniFiles,
     DependencyIntf,
     ConfigIntf,
-    JsonConfigImpl;
+    IniConfigImpl;
 
 type
 
