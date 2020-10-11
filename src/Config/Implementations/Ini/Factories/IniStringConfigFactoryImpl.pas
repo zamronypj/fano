@@ -1,4 +1,4 @@
-unit JsonFileConfigFactoryImpl;
+unit IniStringConfigFactoryImpl;
 
 interface
 
@@ -6,24 +6,27 @@ interface
 {$H+}
 
 uses
+
     DependencyIntf,
     DependencyContainerIntf,
     ConfigIntf,
-    ConfigFactoryIntf,
+    ContainerFactoryIntf,
     FactoryImpl;
 
 type
 
     (*!------------------------------------------------------------
-     * Factory class for TJsonFileConfig
+     * Factory class for TJsonStringConfig
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------------------*)
-    TJsonFileConfigFactory = class (TFactory, IDependencyFactory, IConfigFactory)
+    TIniStringConfigFactory = class (TFactory, IDependencyFactory, IConfigFactory)
     private
-        configFilename : string;
+        fConfigStr : string;
+        fDefaultSection : string;
     public
-        constructor create(const configFile :string);
+        constructor create(const configStr :string);
+        function setDefaultSection(const defaultSection : string) : TIniStringConfigFactory;
 
         (*!------------------------------------------------
          * build application configuration instance
@@ -39,11 +42,18 @@ implementation
 
 uses
 
-    JsonFileConfigImpl;
+    IniStringConfigImpl;
 
-    constructor TJsonFileConfigFactory.create(const configFile : string);
+    constructor TIniStringConfigFactory.create(const configStr : string);
     begin
-        configFilename := configFile;
+        fConfigStr := configStr;
+        fDefaultSection := 'fano';
+    end;
+
+    function TIniStringConfigFactory.setDefaultSection(const defaultSection : string) : TIniStringConfigFactory;
+    begin
+        fDefaultSection := defaultSection;
+        result := self;
     end;
 
     (*!------------------------------------------------
@@ -51,14 +61,14 @@ uses
      *-------------------------------------------------
      * @return newly created configuration instance
      *-------------------------------------------------*)
-    function TJsonFileConfigFactory.createConfig(const container : IDependencyContainer) : IAppConfiguration;
+    function TIniStringConfigFactory.createConfig(const container : IDependencyContainer) : IAppConfiguration;
     begin
-        result := TJsonFileConfig.create(configFilename);
+        result := TIniStringConfig.create(configFilename, fDefaultSection);
     end;
 
-    function TJsonFileConfigFactory.build(const container : IDependencyContainer) : IDependency;
+    function TIniStringConfigFactory.build(const container : IDependencyContainer) : IDependency;
     begin
-        result := TJsonFileConfig.create(configFilename);
+        result := TIniStringConfig.create(fConfigStr, fDefaultSection);
     end;
 
 end.

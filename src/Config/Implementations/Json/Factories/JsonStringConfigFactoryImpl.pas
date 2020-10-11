@@ -1,4 +1,4 @@
-unit JsonFileConfigFactoryImpl;
+unit JsonStringConfigFactoryImpl;
 
 interface
 
@@ -6,6 +6,7 @@ interface
 {$H+}
 
 uses
+
     DependencyIntf,
     DependencyContainerIntf,
     ConfigIntf,
@@ -15,15 +16,15 @@ uses
 type
 
     (*!------------------------------------------------------------
-     * Factory class for TJsonFileConfig
+     * Factory class for TJsonStringConfig
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------------------*)
-    TJsonFileConfigFactory = class (TFactory, IDependencyFactory, IConfigFactory)
+    TJsonStringConfigFactory = class (TFactory, IDependencyFactory, IConfigFactory)
     private
-        configFilename : string;
+        fConfigStr : string;
     public
-        constructor create(const configFile :string);
+        constructor create(const configStr :string);
 
         (*!------------------------------------------------
          * build application configuration instance
@@ -39,11 +40,11 @@ implementation
 
 uses
 
-    JsonFileConfigImpl;
+    JsonStringConfigImpl;
 
-    constructor TJsonFileConfigFactory.create(const configFile : string);
+    constructor TJsonStringConfigFactory.create(const configStr : string);
     begin
-        configFilename := configFile;
+        fConfigStr := configStr;
     end;
 
     (*!------------------------------------------------
@@ -51,14 +52,14 @@ uses
      *-------------------------------------------------
      * @return newly created configuration instance
      *-------------------------------------------------*)
-    function TJsonFileConfigFactory.createConfig(const container : IDependencyContainer) : IAppConfiguration;
+    function TJsonStringConfigFactory.createConfig(const container : IDependencyContainer) : IAppConfiguration;
     begin
-        result := TJsonFileConfig.create(configFilename);
+        result := TJsonStringConfig.create(fConfigStr);
     end;
 
-    function TJsonFileConfigFactory.build(const container : IDependencyContainer) : IDependency;
+    function TJsonStringConfigFactory.build(const container : IDependencyContainer) : IDependency;
     begin
-        result := TJsonFileConfig.create(configFilename);
+        result := TJsonStringConfig.create(fConfigStr);
     end;
 
 end.

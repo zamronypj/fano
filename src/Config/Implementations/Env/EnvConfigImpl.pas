@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit JsonConfigImpl;
+unit EnvConfigImpl;
 
 interface
 
@@ -14,25 +14,21 @@ interface
 {$H+}
 
 uses
-    fpjson,
-    jsonparser,
+
+    IniFiles,
     DependencyIntf,
     ConfigIntf;
 
 type
 
     (*!------------------------------------------------------------
-     * Application configuration base class that load data from JSON
+     * Application configuration base class that load data from
+     * environment variables
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------------------*)
-    TJsonConfig = class(TInterfacedObject, IAppConfiguration, IDependency)
-    protected
-        json :TJSONData;
-        function buildJsonData() : TJSONData; virtual; abstract;
+    TEnvConfig = class(TInterfacedObject, IAppConfiguration, IDependency)
     public
-        constructor create();
-        destructor destroy(); override;
         function getString(const configName : string; const defaultValue : string = '') : string;
         function getInt(const configName : string; const defaultValue : integer = 0) : integer;
         function getBool(const configName : string; const defaultValue : boolean = false) : boolean;
@@ -50,69 +46,54 @@ type
 implementation
 
 uses
-    sysutils,
-    classes;
 
-    constructor TJsonConfig.create();
-    begin
-        json := buildJsonData();
-    end;
+    sysutils;
 
-    destructor TJsonConfig.destroy();
+    function TEnvConfig.getString(const configName : string; const defaultValue : string = '') : string;
     begin
-        json.free();
-        inherited destroy();
-    end;
-
-    function TJsonConfig.getString(const configName : string; const defaultValue : string = '') : string;
-    var jsonData : TJSONData;
-    begin
-        jsonData := json.findPath(configName);
-        if (jsonData = nil) then
+        result := GetEnvironmentVariable(configName);
+        if (result = '') then
         begin
             result := defaultValue;
-        end else
-        begin
-            result := jsonData.asString;
         end;
     end;
 
-    function TJsonConfig.getInt(const configName : string; const defaultValue : integer = 0) : integer;
-    var jsonData : TJSONData;
+    function TEnvConfig.getInt(const configName : string; const defaultValue : integer = 0) : integer;
+    var envValue : string;
     begin
-        jsonData := json.findPath(configName);
-        if (jsonData = nil) then
+        envValue := GetEnvironmentVariable(configName);
+        if (envValue = '') then
         begin
             result := defaultValue;
         end else
         begin
-            result := jsonData.asInteger;
+            result := StrToInt(envValue);
         end;
     end;
 
-    function TJsonConfig.getBool(const configName : string; const defaultValue : boolean = false) : boolean;
-    var jsonData : TJSONData;
+    function TEnvConfig.getBool(const configName : string; const defaultValue : boolean = false) : boolean;
+    var envValue : string;
     begin
-        jsonData := json.findPath(configName);
-        if (jsonData = nil) then
+        envValue := GetEnvironmentVariable(configName);
+        if (envValue = '') then
         begin
             result := defaultValue;
         end else
         begin
-            result := jsonData.asBoolean;
+            result := StrToBool(envValue);
         end;
     end;
 
-    function TJsonConfig.getFloat(const configName : string; const defaultValue : double = 0.0) : double;
-    var jsonData : TJSONData;
+    function TEnvConfig.getFloat(const configName : string; const defaultValue : double = 0.0) : double;
+    var envValue : string;
     begin
-        jsonData := json.findPath(configName);
-        if (jsonData = nil) then
+        envValue := GetEnvironmentVariable(configName);
+        if (envValue = '') then
         begin
             result := defaultValue;
         end else
         begin
-            result := jsonData.asFloat;
+            result := StrToFloat(envValue);
         end;
     end;
 
@@ -122,9 +103,9 @@ uses
      * @param configName name of config to check
      * @return true if configName is exists otherwise false
      *-------------------------------------------------*)
-    function TJsonConfig.has(const configName : string) : boolean;
+    function TEnvConfig.has(const configName : string) : boolean;
     begin
-        result := json.findPath(configName) <> nil;
+        result := GetEnvironmentVariable(configName) = '';
     end;
 
 end.
