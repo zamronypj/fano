@@ -15,6 +15,7 @@ interface
 
 uses
 
+    Classes,
     IniFiles,
     DependencyIntf,
     ConfigIntf,
@@ -40,8 +41,8 @@ type
 implementation
 
 uses
-    sysutils,
-    classes;
+
+    SysUtils;
 
     function TIniStringConfig.buildIniData() : TIniFile;
     begin
