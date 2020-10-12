@@ -1,4 +1,4 @@
-unit JsonFileConfigFactoryImpl;
+unit EnvConfigFactoryImpl;
 
 interface
 
@@ -6,6 +6,7 @@ interface
 {$H+}
 
 uses
+
     DependencyIntf,
     DependencyContainerIntf,
     ConfigIntf,
@@ -15,16 +16,12 @@ uses
 type
 
     (*!------------------------------------------------------------
-     * Factory class for TJsonFileConfig
+     * Factory class for TEnvConfig
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------------------*)
-    TJsonFileConfigFactory = class (TFactory, IDependencyFactory, IConfigFactory)
-    private
-        configFilename : string;
+    TEnvConfigFactory = class (TFactory, IDependencyFactory, IConfigFactory)
     public
-        constructor create(const configFile :string);
-
         (*!------------------------------------------------
          * build application configuration instance
          *-------------------------------------------------
@@ -32,6 +29,11 @@ type
          *-------------------------------------------------*)
         function createConfig(const container : IDependencyContainer) : IAppConfiguration;
 
+        (*!------------------------------------------------
+         * build application configuration instance
+         *-------------------------------------------------
+         * @return newly created configuration instance
+         *-------------------------------------------------*)
         function build(const container : IDependencyContainer) : IDependency; override;
     end;
 
@@ -39,11 +41,16 @@ implementation
 
 uses
 
-    JsonFileConfigImpl;
+    EnvConfigImpl;
 
-    constructor TJsonFileConfigFactory.create(const configFile : string);
+    (*!------------------------------------------------
+     * build application configuration instance
+     *-------------------------------------------------
+     * @return newly created configuration instance
+     *-------------------------------------------------*)
+    function TEnvConfigFactory.createConfig(const container : IDependencyContainer) : IAppConfiguration;
     begin
-        configFilename := configFile;
+        result := TEnvConfig.create();
     end;
 
     (*!------------------------------------------------
@@ -51,14 +58,9 @@ uses
      *-------------------------------------------------
      * @return newly created configuration instance
      *-------------------------------------------------*)
-    function TJsonFileConfigFactory.createConfig(const container : IDependencyContainer) : IAppConfiguration;
+    function TEnvConfigFactory.build(const container : IDependencyContainer) : IDependency;
     begin
-        result := TJsonFileConfig.create(configFilename);
-    end;
-
-    function TJsonFileConfigFactory.build(const container : IDependencyContainer) : IDependency;
-    begin
-        result := TJsonFileConfig.create(configFilename);
+        result := TEnvConfig.create();
     end;
 
 end.

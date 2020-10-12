@@ -1,4 +1,4 @@
-unit IniFileConfigFactoryImpl;
+unit CompositeConfigFactoryImpl;
 
 interface
 
@@ -16,17 +16,19 @@ uses
 type
 
     (*!------------------------------------------------------------
-     * Factory class for TIniFileConfig
+     * Factory class for TCompositeConfig
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------------------*)
-    TIniFileConfigFactory = class (TFactory, IDependencyFactory, IConfigFactory)
+    TCompositeConfigFactory = class (TFactory, IDependencyFactory, IConfigFactory)
     private
-        configFilename : string;
-        fDefaultSection : string;
+        fFirstFactory : IConfigFactory;
+        fSecondFactory : IConfigFactory;
     public
-        constructor create(const configFile :string);
-        function setDefaultSection(const defaultSection : string) : TIniFileConfigFactory;
+        constructor create(
+            const firstFactory : IConfigFactory;
+            const secondFactory : IConfigFactory
+        );
 
         (*!------------------------------------------------
          * build application configuration instance
@@ -47,18 +49,15 @@ implementation
 
 uses
 
-    IniFileConfigImpl;
+    CompositeConfigImpl;
 
-    constructor TIniFileConfigFactory.create(const configFile : string);
+    constructor TCompositeConfigFactory.create(
+        const firstFactory : IConfigFactory;
+        const secondFactory : IConfigFactory
+    );
     begin
-        configFilename := configFile;
-        fDefaultSection := 'fano';
-    end;
-
-    function TIniFileConfigFactory.setDefaultSection(const defaultSection : string) : TIniFileConfigFactory;
-    begin
-        fDefaultSection := defaultSection;
-        result := self;
+        fFirstFactory := firstFactory;
+        fSecondFactory := secondFactory;
     end;
 
     (*!------------------------------------------------
@@ -66,9 +65,12 @@ uses
      *-------------------------------------------------
      * @return newly created configuration instance
      *-------------------------------------------------*)
-    function TIniFileConfigFactory.createConfig(const container : IDependencyContainer) : IAppConfiguration;
+    function TCompositeConfigFactory.createConfig(const container : IDependencyContainer) : IAppConfiguration;
     begin
-        result := TIniFileConfig.create(configFilename, fDefaultSection);
+        result := TCompositeConfig.create(
+            fFirstFactory.createConfig(container),
+            fSecondFactory.createConfig(container)
+        );
     end;
 
     (*!------------------------------------------------
@@ -76,8 +78,12 @@ uses
      *-------------------------------------------------
      * @return newly created configuration instance
      *-------------------------------------------------*)
-    function TIniFileConfigFactory.build(const container : IDependencyContainer) : IDependency;
+    function TCompositeConfigFactory.build(const container : IDependencyContainer) : IDependency;
     begin
-        result := TIniFileConfig.create(configFilename, fDefaultSection);
+        result := TCompositeConfig.create(
+            fFirstFactory.createConfig(container),
+            fSecondFactory.createConfig(container)
+        );
     end;
+
 end.

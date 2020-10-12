@@ -1,4 +1,12 @@
-unit NullConfigFactoryImpl;
+{*!
+ * Fano Web Framework (https://fanoframework.github.io)
+ *
+ * @link      https://github.com/fanoframework/fano
+ * @copyright Copyright (c) 2018 - 2020 Zamrony P. Juhara
+ * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
+ *}
+
+unit ConfigFactoryIntf;
 
 interface
 
@@ -7,45 +15,28 @@ interface
 
 uses
 
-    DependencyIntf,
     DependencyContainerIntf,
-    ConfigIntf,
-    ConfigFactoryIntf,
-    FactoryImpl;
+    ConfigIntf;
 
 type
 
     (*!------------------------------------------------------------
-     * Factory class for TNullConfig
+     * interface for any class having capability to create application
+     * config instance
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------------------*)
-    TNullConfigFactory = class (TFactory, IDependencyFactory, IConfigFactory)
-    public
+    IConfigFactory = interface
+        ['{33E01657-A921-4C9F-8199-239E18C212AB}']
+
+
         (*!------------------------------------------------
          * build application configuration instance
          *-------------------------------------------------
          * @return newly created configuration instance
          *-------------------------------------------------*)
         function createConfig(const container : IDependencyContainer) : IAppConfiguration;
-
-        function build(const container : IDependencyContainer) : IDependency; override;
     end;
 
 implementation
-
-uses
-
-    NullConfigImpl;
-
-    function TNullConfigFactory.createConfig(const container : IDependencyContainer) : IAppConfiguration;
-    begin
-        result := TNullConfig.create();
-    end;
-
-    function TNullConfigFactory.build(const container : IDependencyContainer) : IDependency;
-    begin
-        result := TNullConfig.create();
-    end;
-
 end.
