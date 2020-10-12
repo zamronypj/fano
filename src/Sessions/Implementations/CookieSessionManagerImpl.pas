@@ -250,7 +250,7 @@ uses
                 //which mostly due to improper configuration
                 e.message := e.message +
                     ' cookie:' + fCookieName +
-                    'sessionId:' + sessionId +
+                    'sessionId:' + encryptedSession +
                     ' (begin session)';
                 raise;
             end;
