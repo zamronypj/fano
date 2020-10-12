@@ -94,6 +94,7 @@ implementation
 
 uses
 
+    SysUtils,
     SessionConsts,
     ESessionInvalidImpl;
 
