@@ -442,7 +442,7 @@ uses
                 //which mostly due to improper configuration
                 e.message := e.message +
                     ' cookie:' + fCookieName +
-                    'sessionId:' + sessionId +
+                    ' sessionId:' + sessionId +
                     ' (begin session)';
                 raise;
             end;
