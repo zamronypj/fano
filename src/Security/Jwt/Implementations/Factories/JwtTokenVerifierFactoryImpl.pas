@@ -24,7 +24,7 @@ uses
 type
 
     (*!------------------------------------------------
-     * factory class for TJwtToken
+     * factory class for TJwtTokenVerifier
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
@@ -70,12 +70,11 @@ const
     begin
         fIssuer := DEFAULT_ISSUER;
         fMetadataList := THashList.create();
-        fAlgorithms := [
-            THmacSha256JwtAlg.create(),
-            TNoneJwtAlg.create(),
-            THmacSha384JwtAlg.create(),
-            THmacSha512JwtAlg.create()
-        ];
+        setLength(fAlgorithms, 4);
+        fAlgorithms[0] := THmacSha256JwtAlg.create();
+        fAlgorithms[1] := TNoneJwtAlg.create();
+        fAlgorithms[2] := THmacSha384JwtAlg.create();
+        fAlgorithms[3] := THmacSha512JwtAlg.create();
     end;
 
     function TJwtTokenVerifierFactory.secret(const asecret : string) : TJwtTokenVerifierFactory;
@@ -97,8 +96,13 @@ const
     end;
 
     function TJwtTokenVerifierFactory.algorithms(const algos : array of IJwtAlgVerifier) : TJwtTokenVerifierFactory;
+    var i : integer;
     begin
-        fAlgorithms := algos;
+        setLength(fAlgorithms, length(algos));
+        for i:= low(algos) to high(algos) do
+        begin
+            fAlgorithms[i] := algos[i];
+        end;
         result := self;
     end;
 

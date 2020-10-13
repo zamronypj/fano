@@ -37,6 +37,7 @@ type
         fAlgorithms : TAlgArray;
         fSecretKey : string;
         function findAlgoByName(const alg : shortstring) : IJwtAlgVerifier;
+        function initAlgorithms(const algos: array of IJwtAlgVerifier) : TAlgArray;
         procedure cleanUpAlgorithms();
         procedure cleanUpMetadata();
     public
@@ -105,7 +106,8 @@ uses
     dateutils,
     fpjson,
     fpjwt,
-    JwtConsts;
+    JwtConsts,
+    EJwtImpl;
 
 type
 
@@ -130,7 +132,7 @@ type
     begin
         fMetadata := metadata;
         fSecretKey := secretKey;
-        fAlgorithms := algos;
+        fAlgorithms := initAlgorithms(algos);
         setData(JWT_ISSUER, issuer);
     end;
 
@@ -145,6 +147,16 @@ type
         inherited destroy();
     end;
 
+    function TJwtTokenVerifier.initAlgorithms(const algos: array of IJwtAlgVerifier) : TAlgArray;
+    var i: integer;
+    begin
+        setLength(result, high(algos) - low(algos) + 1);
+        for i:= low(algos) to high(algos) do
+        begin
+            result[i] := algos[i];
+        end;
+    end;
+
     procedure TJwtTokenVerifier.cleanUpMetadata();
     var i : integer;
         meta : PMetadata;
@@ -152,7 +164,6 @@ type
         for i := fMetadata.count-1 downto 0 do
         begin
             meta := fMetadata.get(i);
-            meta^.strValue := nil;
             dispose(meta);
             fMetadata.delete(i);
         end;
@@ -194,7 +205,7 @@ type
      *-------------------------------------------------*)
     function TJwtTokenVerifier.verify(const token : string) : TVerificationResult;
     var jwt : TJwt;
-        alg : IJwtAlgVerify;
+        alg : IJwtAlgVerifier;
         aAudience : string;
         aIssuer : string;
     begin
@@ -256,7 +267,7 @@ type
             new(meta);
             fMetadata.add(key, meta);
         end;
-        meta^.strValue := issuer;
+        meta^.strValue := metaData;
     end;
 
     procedure raiseMetadataNotFound(const key : shortstring);

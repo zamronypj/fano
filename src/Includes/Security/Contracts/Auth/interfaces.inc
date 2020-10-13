@@ -15,3 +15,4 @@
 
 AuthIntf,
 TokenVerifierIntf,
+TokenGeneratorIntf,

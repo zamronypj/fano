@@ -22,4 +22,7 @@ TNoneJwtAlg = NoneJwtAlgImpl.TNoneJwtAlg;
 TJwtTokenVerifier = JwtTokenVerifierImpl.TJwtTokenVerifier;
 TJwtTokenVerifierFactory = JwtTokenVerifierFactoryImpl.TJwtTokenVerifierFactory;
 
+TJwtTokenGenerator = JwtTokenGeneratorImpl.TJwtTokenGenerator;
+TJwtTokenGeneratorFactory = JwtTokenGeneratorFactoryImpl.TJwtTokenGeneratorFactory;
+
 EJwt = EJwtImpl.EJwt;

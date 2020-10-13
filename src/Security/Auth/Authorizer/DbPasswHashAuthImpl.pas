@@ -31,7 +31,7 @@ type
     TDbPasswHashAuth = class (TAbstractPasswHashAuth)
     private
         fRdbms : IRdbms;
-        fCredentialTable : string;
+        fCredentialTable : shortstring;
         fCredentialColumn : shortstring;
         fPasswHashColumn : shortstring;
         fPasswSaltColumn : shortstring;
@@ -49,7 +49,7 @@ type
             const credential : string;
             out credentialFound : boolean;
             out passwHash : string;
-            out passwSalt : string;
+            out passwSalt : string
         ); override;
     public
         (*!------------------------------------------------
@@ -65,10 +65,10 @@ type
         constructor create(
             const passwHash : IPasswordHash;
             const rdbmsInst : IRdbms;
-            const credentialTable : string;
+            const credentialTable : shortstring;
             const credentialColumn : shortstring;
             const passwHashColumn : shortstring;
-            const passwSaltColumn : shortstring
+            const passwSaltColumn : shortstring = ''
         );
 
         (*!------------------------------------------------
@@ -83,7 +83,15 @@ implementation
 uses
 
     RdbmsStatementIntf,
-    RdbmsResultSetIntf;
+    RdbmsResultSetIntf,
+    EAuthImpl;
+
+resourcestring
+
+    rsDbAuthRdbmsNil = 'Rdbms can not be nil';
+    rsDbAuthEmptyTable = 'Table name can not be empty';
+    rsDbAuthEmptyCredentialCol = 'Credential column name can not be empty';
+    rsDbAuthEmptyPasswHashCol = 'Password hash column name can not be empty';
 
     (*!------------------------------------------------
      * constructor
@@ -98,17 +106,45 @@ uses
     constructor TDbPasswHashAuth.create(
         const passwHash : IPasswordHash;
         const rdbmsInst : IRdbms;
-        const credentialTable : string;
+        const credentialTable : shortstring;
         const credentialColumn : shortstring;
         const passwHashColumn : shortstring;
-        const passwSaltColumn : shortstring
+        const passwSaltColumn : shortstring = ''
     );
     begin
         inherited create(passwHash);
+
         fRdbms := rdbmsInst;
+
+        if fRdbms = nil then
+        begin
+            raise EAuth.create(rsDbAuthRdbmsNil);
+        end;
+
         fCredentialTable := credentialTable;
+
+        if fCredentialTable = '' then
+        begin
+            raise EAuth.create(rsDbAuthEmptyTable);
+        end;
+
         fCredentialColumn := credentialColumn;
+
+        if fCredentialColumn = '' then
+        begin
+            raise EAuth.create(rsDbAuthEmptyCredentialCol);
+        end;
+
         fPasswHashColumn := passwHashColumn;
+
+        if fPasswHashColumn = '' then
+        begin
+            raise EAuth.create(rsDbAuthEmptyPasswHashCol);
+        end;
+
+        //salt column can be empty,
+        //which means password is not salted or password hash algorithm already
+        //provides salt such as BCrypt
         fPasswSaltColumn := passwSaltColumn;
     end;
 
@@ -135,18 +171,30 @@ uses
         const credential : string;
         out credentialFound : boolean;
         out passwHash : string;
-        out passwSalt : string;
+        out passwSalt : string
     );
     var statement : IRdbmsStatement;
         resultSet : IRdbmsResultSet;
+        columns : string;
     begin
+        passwHash := '';
+        passwSalt := '';
+
+        if fPasswSaltColumn = '' then
+        begin
+            //not using salt column or password hash algorithm already
+            //provider built-in salt generation such as Bcrypt
+            columns:= '`' + fPasswHashColumn + '`';
+        end else
+        begin
+            columns := '`' + fPasswHashColumn + '`' + ',' +
+                '`' + fPasswSaltColumn + '`';
+        end;
+
         statement := fRdbms.prepare(
-            'SELECT ' +
-            fPasswHashColumn + ',' +
-            fPasswSaltColumn +
-            ' FROM ' +
-            fCredentialTable +
-            'WHERE ' + fCredentialColumn + ' = :credential'
+            'SELECT ' + columns + ' FROM ' +
+            '`' + fCredentialTable + '`' +
+            ' WHERE `' +fCredentialColumn + '` = :credential'
         );
         statement.paramStr('credential', credential);
         resultSet := statement.execute();
@@ -154,11 +202,10 @@ uses
         if credentialFound then
         begin
             passwHash := resultSet.fields().fieldByName(fPasswHashColumn).asString();
-            passwSalt := resultSet.fields().fieldByName(fPasswSaltColumn).asString();
-        end else
-        begin
-            passwHash := '';
-            passwSalt := '';
+            if fPasswSaltColumn <> '' then
+            begin
+                passwSalt := resultSet.fields().fieldByName(fPasswSaltColumn).asString();
+            end;
         end;
     end;
 

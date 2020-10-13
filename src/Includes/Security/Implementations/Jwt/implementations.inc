@@ -22,4 +22,7 @@ NoneJwtAlgImpl,
 JwtTokenVerifierImpl,
 JwtTokenVerifierFactoryImpl,
 
+JwtTokenGeneratorImpl,
+JwtTokenGeneratorFactoryImpl,
+
 EJwtImpl,

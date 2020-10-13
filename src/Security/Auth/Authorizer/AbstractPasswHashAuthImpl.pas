@@ -17,7 +17,8 @@ uses
 
     AuthIntf,
     PasswordHashIntf,
-    CredentialTypes;
+    CredentialTypes,
+    InjectableObjectImpl;
 
 type
 
@@ -27,7 +28,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TAbstractPasswHashAuth = class abstract (TInterfacedObject, IAuth)
+    TAbstractPasswHashAuth = class abstract (TInjectableObject, IAuth)
     private
 
         (*!------------------------------------------------
@@ -50,7 +51,7 @@ type
             const credential : string;
             out credentialFound : boolean;
             out passwHash : string;
-            out passwSalt : string;
+            out passwSalt : string
         ); virtual; abstract;
 
     public
@@ -79,6 +80,14 @@ type
 
 implementation
 
+uses
+
+    EAuthImpl;
+
+resourcestring
+
+    rsAuthPasswHashNil = 'Password hash can not be nil';
+
     (*!------------------------------------------------
      * constructor
      *-------------------------------------------------
@@ -87,6 +96,11 @@ implementation
     constructor TAbstractPasswHashAuth.create(const passwHash : IPasswordHash);
     begin
         fPasswHash := passwHash;
+
+        if fPasswHash = nil then
+        begin
+            raise EAuth.create(rsAuthPasswHashNil);
+        end;
     end;
 
     (*!------------------------------------------------
