@@ -7,18 +7,19 @@
  *}
 
 (*! ---------------------------------------------
- * alias for implementation in security
- * that is included in implementations.aliases.inc
+ * list of auth units in security
+ * that is included in implementations.inc
  *
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
  *-----------------------------------------------*)
 
-{$INCLUDE Validations/aliases.inc}
-{$INCLUDE Sanitations/aliases.inc}
-{$INCLUDE Cors/aliases.inc}
-{$INCLUDE Csrf/aliases.inc}
-{$INCLUDE Auth/aliases.inc}
-{$INCLUDE Xss/aliases.inc}
-{$INCLUDE FrameGuard/aliases.inc}
-{$INCLUDE PasswordHash/aliases.inc}
-{$INCLUDE Jwt/aliases.inc}
+AbstractHmacJwtAlgImpl,
+HmacSha256JwtAlgImpl,
+HmacSha384JwtAlgImpl,
+HmacSha512JwtAlgImpl,
+NoneJwtAlgImpl,
+
+JwtTokenVerifierImpl,
+JwtTokenVerifierFactoryImpl,
+
+EJwtImpl,

@@ -7,18 +7,11 @@
  *}
 
 (*! ---------------------------------------------
- * implementation units for security
+ * alias for interface in security
  * that is included in fano.pas unit
  *
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
  *-----------------------------------------------*)
 
-{$INCLUDE Validations/implementations.inc}
-{$INCLUDE Sanitations/implementations.inc}
-{$INCLUDE Cors/implementations.inc}
-{$INCLUDE Csrf/implementations.inc}
-{$INCLUDE Auth/implementations.inc}
-{$INCLUDE Xss/implementations.inc}
-{$INCLUDE FrameGuard/implementations.inc}
-{$INCLUDE PasswordHash/implementations.inc}
-{$INCLUDE Jwt/implementations.inc}
+AuthIntf,
+TokenVerifierIntf,
