@@ -39,7 +39,7 @@ type
 
         function realm(const realmName : string) : TBearerAuthMiddlewareFactory;
         function credentialKey(const keyName : string) : TBearerAuthMiddlewareFactory;
-        function verifier(const verifier : ITokenVerifier) : TBearerAuthMiddlewareFactory;
+        function verifier(const verifierInst : ITokenVerifier) : TBearerAuthMiddlewareFactory;
 
         function build(const container : IDependencyContainer) : IDependency; override;
     end;
@@ -71,9 +71,9 @@ uses
         result := self;
     end;
 
-    function TBearerAuthMiddlewareFactory.verifier(const verifier : ITokenVerifier) : TBearerAuthMiddlewareFactory;
+    function TBearerAuthMiddlewareFactory.verifier(const verifierInst : ITokenVerifier) : TBearerAuthMiddlewareFactory;
     begin
-        fTokenVerifier := verifier;
+        fTokenVerifier := verifierInst;
         result := self;
     end;
 

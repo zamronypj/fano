@@ -26,5 +26,7 @@ DigestStaticCredentialsAuthImpl,
 DigestAuthMiddlewareImpl,
 StaticCredentialsDigestAuthMiddlewareFactoryImpl,
 
+BearerAuthMiddlewareImpl,
+BearerAuthMiddlewareFactoryImpl,
 
 DbPasswHashAuthFactoryImpl,

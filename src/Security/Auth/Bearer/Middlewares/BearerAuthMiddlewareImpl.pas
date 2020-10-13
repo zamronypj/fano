@@ -43,8 +43,6 @@ type
         fTokenVerifier : ITokenVerifier;
 
         (*!------------------------------------------------
-         * extract credential from Basic Authentatication
-        (*!------------------------------------------------
          * extract credential from Bearer Authentatication
          *-------------------------------------------------
          * @param request current request object
@@ -77,10 +75,13 @@ type
          *-------------------------------------------------
          * @param auth object responsible to verify token
          * @param realm string of realm value
+         * @param credentialKey name of the key to use to store
+         *      verified credential in request object
          *-------------------------------------------------*)
         constructor create(
             const tokenVerifier : ITokenVerifier;
-            const realm : string
+            const realm : string;
+            const credentialKey : shortstring
         );
 
         (*!------------------------------------------------
@@ -113,8 +114,10 @@ uses
     (*!------------------------------------------------
      * constructor
      *-------------------------------------------------
-     * @param auth object responsible to verify token
+     * @param tokenVerifier object responsible to verify token
      * @param realm string of realm value
+     * @param credentialKey name of the key to use to store
+     *      verified credential in request object
      *-------------------------------------------------*)
     constructor TBearerAuthMiddleware.create(
         const tokenVerifier : ITokenVerifier;
@@ -189,7 +192,7 @@ uses
      *-------------------------------------------------
      * @param response current response object
      * @return 403 response
-    *-------------------------------------------------*)
+     *-------------------------------------------------*)
     function TBearerAuthMiddleware.handleForbidden(
         const response : IResponse
     ) : IResponse;
@@ -209,7 +212,7 @@ uses
      * @param args route argument reader
      * @param next next middleware to run
      * @return response
-    *-------------------------------------------------*)
+     *-------------------------------------------------*)
     function TBearerAuthMiddleware.handleRequest(
         const request : IRequest;
         const response : IResponse;

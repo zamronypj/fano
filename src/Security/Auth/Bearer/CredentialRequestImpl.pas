@@ -53,7 +53,7 @@ type
         function getParam(
             const key: string;
             const defValue : string = ''
-        ) : string; virtual;
+        ) : string; override;
 
     end;
 
