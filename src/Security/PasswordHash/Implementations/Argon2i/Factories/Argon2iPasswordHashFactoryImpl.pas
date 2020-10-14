@@ -68,7 +68,6 @@ uses
         fLen := 64;
         fMemAsKb := 32;
         fParallel := 4;
-        result := self;
     end;
 
     function TArgon2iPasswordHashFactory.secret(const asecret : string) : TArgon2iPasswordHashFactory;

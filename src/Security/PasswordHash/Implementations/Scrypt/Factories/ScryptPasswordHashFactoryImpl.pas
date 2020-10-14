@@ -63,7 +63,6 @@ uses
         fLen := 64;
         fBlockSize := 8;
         fParallel := 1;
-        result := self;
     end;
 
     function TScryptPasswordHashFactory.salt(const asalt : string) : TScryptPasswordHashFactory;
