@@ -37,7 +37,7 @@ type
         function salt(const asalt : string) : TScryptPasswordHashFactory;
         function cost(const acost : integer) : TScryptPasswordHashFactory;
         function len(const alen : integer) : TScryptPasswordHashFactory;
-        function block(const amem : integer) : TScryptPasswordHashFactory;
+        function block(const ablock : integer) : TScryptPasswordHashFactory;
         function paralleism(const aparallel : integer) : TScryptPasswordHashFactory;
 
         (*!---------------------------------------
