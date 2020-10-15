@@ -230,6 +230,8 @@ uses
      *-----------------------------------------------
      * @param plainPassw input password
      * @return password hash
+     *-----------------------------------------------
+     * @credit https://github.com/Xor-el/HashLib4Pascal/blob/master/HashLib.Tests/src/PBKDF_Argon2Tests.pas
      *-----------------------------------------------*)
     function TArgon2iPasswordHash.hash(const plainPassw : string) : string;
     var
@@ -238,16 +240,26 @@ uses
         LArgon2Parameter: IArgon2Parameters;
     begin
 
-        LSecret := TConverters.ConvertHexStringToBytes(fSecret);
-        LSalt := TConverters.ConvertHexStringToBytes(fSalt);
-        LPassword := TConverters.ConvertHexStringToBytes(plainPassw);
-
         fArgon2ParametersBuilder.WithVersion(fArgon2Version)
             .WithIterations(fCost)
             .WithMemoryAsKB(fMemoryAsKB)
-            .WithParallelism(fParallelism)
-            .WithSecret(LSecret)
-            .WithSalt(LSalt);
+            .WithParallelism(fParallelism);
+
+        if (fSecret <> '') then
+        begin
+            //use secret
+            LSecret := TConverters.ConvertStringToBytes(fSecret, TEncoding.ASCII);
+            fArgon2ParametersBuilder.WithSecret(LSecret);
+        end;
+
+        if (fSalt <> '') then
+        begin
+            //use salt
+            LSalt := TConverters.ConvertStringToBytes(fSalt, TEncoding.ASCII);
+            fArgon2ParametersBuilder.WithSalt(LSalt);
+        end;
+
+        LPassword := TConverters.ConvertStringToBytes(plainPassw, TEncoding.ASCII);
 
         //
         // Set the password.
