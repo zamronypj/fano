@@ -143,7 +143,7 @@ uses
         fHashLen := defLen;
         fMemoryAsKB := defMemAsKb;
         fParallelism := defParallel;
-        fArgon2Version := TArgon2Version.a2vARGON2_VERSION_10;
+        fArgon2Version := TArgon2Version.a2vARGON2_VERSION_13;
         fArgon2ParametersBuilder := TArgon2iParametersBuilder.Builder();
     end;
 
