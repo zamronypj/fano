@@ -51,6 +51,7 @@ uses
     HlpIHashInfo,
     HlpConverters,
     HlpHashFactory,
+    SbpBase64,
     JwtConsts;
 
     (*!------------------------------------------------
@@ -70,7 +71,9 @@ uses
             THashFactory.TCrypto.CreateSHA2_384
         );
         hmacInst.Key := TConverters.ConvertStringToBytes(secretKey, TEncoding.UTF8);
-        result := hmacInst.ComputeString(inpStr, TEncoding.UTF8).ToString();
+        result := TBase64.UrlEncoding.Encode(
+            hmacInst.ComputeString(inpStr, TEncoding.UTF8).getBytes()
+        );
     end;
 
     (*!------------------------------------------------

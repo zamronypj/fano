@@ -51,6 +51,7 @@ uses
     HlpIHashInfo,
     HlpConverters,
     HlpHashFactory,
+    SbpBase64,
     JwtConsts;
 
     (*!------------------------------------------------
@@ -58,7 +59,7 @@ uses
      *-------------------------------------------------
      * @param signature signature to compare
      * @param secretKey secret key
-     * @return hash value
+     * @return baser64url encode of hash value
      *-------------------------------------------------*)
     function THmacSha256JwtAlg.hmac(
         const inpStr : string;
@@ -70,7 +71,9 @@ uses
             THashFactory.TCrypto.CreateSHA2_256
         );
         hmacInst.Key := TConverters.ConvertStringToBytes(secretKey, TEncoding.UTF8);
-        result := hmacInst.ComputeString(inpStr, TEncoding.UTF8).ToString();
+        result := TBase64.UrlEncoding.Encode(
+            hmacInst.ComputeString(inpStr, TEncoding.UTF8).GetBytes()
+        );
     end;
 
     (*!------------------------------------------------
