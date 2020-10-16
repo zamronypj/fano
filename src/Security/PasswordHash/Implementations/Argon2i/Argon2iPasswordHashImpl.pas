@@ -101,7 +101,7 @@ type
          * generate password hash
          *-----------------------------------------------
          * @param plainPassw input password
-         * @return password hash
+         * @return password hash in lowercase hex string
          *-----------------------------------------------*)
         function hash(const plainPassw : string) : string;
 
@@ -109,7 +109,7 @@ type
          * verify plain password against password hash
          *-----------------------------------------------
          * @param plainPassw input password
-         * @param hashedPassw password hash
+         * @param hashedPassw password hash in hex string
          * @return true if password match password hash
          *-----------------------------------------------*)
         function verify(
@@ -229,7 +229,7 @@ uses
      * generate password hash
      *-----------------------------------------------
      * @param plainPassw input password
-     * @return password hash
+     * @return password hash in lowercase hex string
      *-----------------------------------------------
      * @credit https://github.com/Xor-el/HashLib4Pascal/blob/master/HashLib.Tests/src/PBKDF_Argon2Tests.pas
      *-----------------------------------------------*)
@@ -286,7 +286,7 @@ uses
      * verify plain password against password hash
      *-----------------------------------------------
      * @param plainPassw input password
-     * @param hashedPassw password hash
+     * @param hashedPassw password hash in hex string
      * @return true if password match password hash
      *-----------------------------------------------*)
     function TArgon2iPasswordHash.verify(
@@ -294,6 +294,7 @@ uses
         const hashedPasswd : string
     ) : boolean;
     begin
-        result := (hash(plainPassw) = hashedPasswd);
+        //compare with lowercase hex string to make comparison consistent
+        result := (hash(plainPassw) = lowercase(hashedPasswd));
     end;
 end.
