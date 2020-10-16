@@ -62,13 +62,9 @@ uses
     HmacSha384JwtAlgImpl,
     HmacSha512JwtAlgImpl;
 
-const
-
-    DEFAULT_ISSUER = 'fano';
-
     constructor TJwtTokenVerifierFactory.create();
     begin
-        fIssuer := DEFAULT_ISSUER;
+        fIssuer := '';
         fMetadataList := THashList.create();
         setLength(fAlgorithms, 4);
         fAlgorithms[0] := THmacSha256JwtAlg.create();

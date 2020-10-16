@@ -155,11 +155,11 @@ uses
             authHeaderLine := request.headers().getHeader('Authorization');
             if pos(BEARER_STR, trimLeft(lowercase(authHeaderLine))) = 1 then
             begin
-                foundToken := copy(
+                foundToken := trim(copy(
                     authHeaderLine,
                     BEARER_STR_LEN + 1,
                     length(authHeaderLine) - BEARER_STR_LEN
-                );
+                ));
 
                 result := true;
             end;

@@ -66,6 +66,8 @@ uses
 
     sysutils,
     dateutils,
+    strutils,
+    base64,
     fpjwt,
     JwtConsts,
     EJwtImpl;
@@ -120,8 +122,18 @@ resourcestring
             jwt.JOSE.typ := 'JWT';
             jwt.JOSE.alg := fAlgorithm.name();
             jwt.Claims.LoadFromJSON(payload);
-            jwtHeaderPayloadStr := jwt.JOSE.AsEncodedString + '.' + jwt.Claims.AsEncodedString;
+
+            {$IF FPC_FULLVERSION <= 30400}
+                //FPC <= 3.0.4, asEncodedString returns base64 while JWT requires
+                //base64url so we just build our base64url encode manually
+                jwtHeaderPayloadStr := base64UrlEncode(jwt.JOSE.AsString) + '.' +
+                    base64UrlEncode(jwt.Claims.AsString);
+            {$ELSE}
+                jwtHeaderPayloadStr := jwt.JOSE.AsEncodedString + '.' + jwt.Claims.AsEncodedString;
+            {$ENDIF}
+
             result := jwtHeaderPayloadStr + '.' + fAlgorithm.sign(jwtHeaderPayloadStr, fSecretKey);
+
         finally
             jwt.free();
         end;

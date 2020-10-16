@@ -35,7 +35,46 @@ const
     ALG_HS384 = 'HS384';
     ALG_HS512 = 'HS512';
 
+    {$IF FPC_FULLVERSION <= 30400}
+        //FPC <= 3.0.4 does not properly base64 url encode/decode
+        //JWT so we provide utility for it
+        function base64UrlEncode(const aValue: string) : string;
+        function base64UrlDecode(const aValue: string) : string;
+    {$ENDIF}
 
 implementation
 
+{$IF FPC_FULLVERSION <= 30400}
+uses
+
+    SysUtils,
+    Base64,
+    StrUtils;
+
+    //FPC <= 3.0.4 does not properly base64 url encode/decode
+    //JWT so we provide utility for it
+    function base64UrlEncode(const aValue: string) : string;
+    begin
+        result := EncodeStringBase64(aValue);
+
+        //replace + with - and / with _ and trim = padding
+        result := TrimRightSet(
+            stringsReplace(result, ['+', '/'], ['-', '_'], [rfReplaceAll]),
+            ['=']
+        );
+    end;
+
+    function base64UrlDecode(const aValue: string) : string;
+    var padLen: integer;
+    begin
+        result := StringsReplace(AValue, ['-', '_'], ['+', '/'], [rfReplaceAll]);
+        padLen := length(result) mod 4;
+        if padLen > 0 then
+        begin
+            //add padding =
+            result := result + StringOfChar('=', 4 - padLen);
+        end;
+        result := DecodeStringBase64(result, true);
+    end;
+{$ENDIF}
 end.
