@@ -271,10 +271,12 @@ uses
             LArgon2Parameter
         );
 
-        result := TConverters.ConvertBytesToHexString(
+        //ConvertBytesToHexString output uppercase hex string
+        //many argon2 tools output lower case. For easier comparison make it lower
+        result := lowercase(TConverters.ConvertBytesToHexString(
             LGenerator.GetBytes(fHashLen),
             false
-        );
+        ));
 
         LArgon2Parameter.Clear();
         LGenerator.Clear();
