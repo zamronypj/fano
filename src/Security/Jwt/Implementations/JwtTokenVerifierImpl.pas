@@ -15,6 +15,7 @@ interface
 
 uses
 
+    fpjwt,
     ListIntf,
     TokenVerifierIntf,
     JwtAlgVerifierIntf,
@@ -40,6 +41,18 @@ type
         function initAlgorithms(const algos: array of IJwtAlgVerifier) : TAlgArray;
         procedure cleanUpAlgorithms();
         procedure cleanUpMetadata();
+    protected
+        (*!------------------------------------------------
+         * get credential found in verified JWT token
+         *-------------------------------------------------
+         * @param jose header part of JWT
+         * @param claims claim part of JWT
+         * @return string of credential
+         *-------------------------------------------------
+         * we return only subject of JWT claim as credential. If user requires
+         * different data, they can override this method and returns what they need.
+         *-------------------------------------------------*)
+        function getCredential(const jose : TJOSE; const claims: TClaims) : string; virtual;
     public
         (*!------------------------------------------------
          * constructor
@@ -107,7 +120,6 @@ uses
     base64,
     strutils,
     fpjson,
-    fpjwt,
     JwtConsts,
     EJwtImpl;
 
@@ -198,6 +210,21 @@ type
     end;
 
     (*!------------------------------------------------
+     * get credential found in verified JWT token
+     *-------------------------------------------------
+     * @param jose header part of JWT
+     * @param claims claim part of JWT
+     * @return string of credential
+     *-------------------------------------------------
+     * we return only subject of JWT claim as credential. If user requires
+     * different data, they can override this method and returns what they need.
+     *-------------------------------------------------*)
+    function TJwtTokenVerifier.getCredential(const jose : TJOSE; const claims: TClaims) : string;
+    begin
+        result := claims.sub;
+    end;
+
+    (*!------------------------------------------------
      * verify token
      *-------------------------------------------------
      * @param token token to verify
@@ -277,7 +304,7 @@ type
 
                 if result.verified then
                 begin
-                    result.credential := jwt.Claims.sub;
+                    result.credential := getCredential(jwt.JOSE, jwt.Claims);
                     setData(JWT_SUBJECT, jwt.Claims.sub);
                 end;
             except
