@@ -32,3 +32,4 @@ TBearerAuthMiddleware = BearerAuthMiddlewareImpl.TBearerAuthMiddleware;
 TBearerAuthMiddlewareFactory = BearerAuthMiddlewareFactoryImpl.TBearerAuthMiddlewareFactory;
 
 TDbPasswHashAuthFactory = DbPasswHashAuthFactoryImpl.TDbPasswHashAuthFactory;
+TStaticPasswHashAuthFactory = StaticPasswHashAuthFactoryImpl.TStaticPasswHashAuthFactory;

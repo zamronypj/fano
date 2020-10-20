@@ -31,3 +31,4 @@ BearerAuthMiddlewareImpl,
 BearerAuthMiddlewareFactoryImpl,
 
 DbPasswHashAuthFactoryImpl,
+StaticPasswHashAuthFactoryImpl,

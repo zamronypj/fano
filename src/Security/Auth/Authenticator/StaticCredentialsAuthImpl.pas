@@ -19,7 +19,8 @@ uses
     ResponseIntf,
     RouteArgsReaderIntf,
     AuthIntf,
-    CredentialTypes;
+    CredentialTypes,
+    InjectableObjectImpl;
 
 type
 
@@ -32,7 +33,7 @@ type
      * Note: Not very suitable for very large arrays
      * as it searches credentials sequentially
      *-------------------------------------------------*)
-    TStaticCredentialsAuth = class (TInterfacedObject, IAuth)
+    TStaticCredentialsAuth = class (TInjectableObject, IAuth)
     private
         fAllowedCredentials : TCredentials;
 
