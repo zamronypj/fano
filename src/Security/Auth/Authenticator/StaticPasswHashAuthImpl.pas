@@ -101,7 +101,7 @@ implementation
         const allowedCred : TCredential
     ) : boolean;
     begin
-        fPasswHash.salt(authCred.salt);
+        fPasswHash.salt(allowedCred.salt);
         result := (authCred.username = allowedCred.username) and
             fPasswHash.verify(authCred.password, allowedCred.password);
     end;
