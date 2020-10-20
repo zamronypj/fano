@@ -45,7 +45,7 @@ type
         function verifyCredential(
             const authCred : TCredential;
             const allowedCred : TCredential
-        ) : boolean; virtual;
+        ) : boolean; override;
     public
         (*!------------------------------------------------
          * constructor
