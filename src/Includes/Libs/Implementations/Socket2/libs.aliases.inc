@@ -19,6 +19,7 @@ TSocket2Svr = Socket2SvrImpl.TSocket2Svr;
 TUnixSocket = UnixSocketImpl.TUnixSocket;
 {$ENDIF}
 TInetSocket = InetSocketImpl.TInetSocket;
+TInet6Socket = Inet6SocketImpl.TInet6Socket;
 TBoundSocket = BoundSocketImpl.TBoundSocket;
 
 TAbstractIoHandler = AbstractIoHandlerImpl.TAbstractIoHandler;
@@ -36,11 +37,13 @@ TSelectIoHandler = SelectIoHandlerImpl.TSelectIoHandler;
 TSocketOpts = SocketOptsImpl.TSocketOpts;
 
 TInetSvrFactory = InetSvrFactoryImpl.TInetSvrFactory;
+TInet6SvrFactory = Inet6SvrFactoryImpl.TInet6SvrFactory;
 TUnixSvrFactory = UnixSvrFactoryImpl.TUnixSvrFactory;
 TBoundSvrFactory = BoundSvrFactoryImpl.TBoundSvrFactory;
 
 {$IFDEF LINUX}
 TEpollInetSvrFactory = EpollInetSvrFactoryImpl.TEpollInetSvrFactory;
+TEpollInet6SvrFactory = EpollInet6SvrFactoryImpl.TEpollInet6SvrFactory;
 TEpollUnixSvrFactory = EpollUnixSvrFactoryImpl.TEpollUnixSvrFactory;
 TEpollBoundSvrFactory = EpollBoundSvrFactoryImpl.TEpollBoundSvrFactory;
 {$ENDIF}
@@ -48,6 +51,7 @@ TEpollBoundSvrFactory = EpollBoundSvrFactoryImpl.TEpollBoundSvrFactory;
 {$IFDEF FREEBSD}
     {$IFDEF USE_KQUEUE}
     TKQueueInetSvrFactory = KQueueInetSvrFactoryImpl.TKQueueInetSvrFactory;
+    TKQueueInet6SvrFactory = KQueueInet6SvrFactoryImpl.TKQueueInet6SvrFactory;
     TKQueueUnixSvrFactory = KQueueUnixSvrFactoryImpl.TKQueueUnixSvrFactory;
     TKQueueBoundSvrFactory = KQueueBoundSvrFactoryImpl.TKQueueBoundSvrFactory;
     {$ENDIF}
