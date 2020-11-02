@@ -50,10 +50,11 @@ type
         fWorkerThreadMgr : TWorkerThreadManager;
         fTaskQueue : ITaskQueue;
         fConnQueuer : IDataAvailListener;
+    protected
+        function buildTaskQueue() : ITaskQueue; virtual;
     public
         constructor create(
             const actualSvc : IDaemonAppServiceProvider;
-            const taskQueue : ITaskQueue;
             const numWorkerThread : integer
         );
         destructor destroy(); override;
@@ -88,17 +89,18 @@ uses
     NullProtocolProcessorImpl,
     NullRunnableWithDataNotifImpl,
     OutputBufferImpl,
-    StreamQueueImpl;
+    StreamQueueImpl,
+    TaskQueueImpl,
+    ThreadSafeTaskQueueImpl;
 
     constructor TMultiThreadDaemonAppServiceProvider.create(
         const actualSvc : IDaemonAppServiceProvider;
-        const taskQueue : ITaskQueue;
         const numWorkerThread : integer
     );
     begin
         inherited create(actualSvc);
-        fTaskQueue := taskQueue;
-        fWorkerThreadMgr := TWorkerThreadManager.create(taskQueue, numWorkerThread);
+        fTaskQueue := buildTaskQueue();
+        fWorkerThreadMgr := TWorkerThreadManager.create(fTaskQueue, numWorkerThread);
     end;
 
     destructor TMultiThreadDaemonAppServiceProvider.destroy();
@@ -106,6 +108,11 @@ uses
         fWorkerThreadMgr.free();
         fTaskQueue := nil;
         inherited destroy();
+    end;
+
+    function TMultiThreadDaemonAppServiceProvider.buildTaskQueue() : ITaskQueue;
+    begin
+        result := TThreadSafeTaskQueue.create(TTaskQueue.create());
     end;
 
     function TMultiThreadDaemonAppServiceProvider.getServer() : IRunnableWithDataNotif;
