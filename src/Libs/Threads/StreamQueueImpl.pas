@@ -18,9 +18,12 @@ uses
     DataAvailListenerIntf,
     CloseableIntf,
     StreamAdapterIntf,
-    StreamIdIntf;
+    StreamIdIntf,
+    ProtocolProcessorIntf,
+    TaskQueueIntf;
 
 type
+
 
     (*!-----------------------------------------------
      * class having capability to handle data availability
@@ -29,7 +32,14 @@ type
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
     TStreamQueue = class(TInterfacedObject, IDataAvailListener)
+    private
+        fQueue : ITaskQueue;
+        fProtocol : IProtocolProcessor;
     public
+        constructor create(
+            const queue : ITaskQueue;
+            const protocol : IProtocolProcessor
+        );
 
         (*!------------------------------------------------
         * handle if data is available
@@ -50,5 +60,40 @@ type
     end;
 
 implementation
+
+uses
+
+    HandleConnWorkImpl;
+
+    constructor TStreamQueue.create(
+        const queue : ITaskQueue;
+        const protocol : IProtocolProcessor
+    );
+    begin
+        fQueue := queue;
+        fProtocol := protocol;
+    end;
+
+    (*!------------------------------------------------
+     * handle if data is available
+     *-----------------------------------------------
+     * @param stream, stream that store data
+     * @param context, additional data related to stream
+     * @param streamCloser, instance that can close stream if required
+     * @param streamId, instance that can identify stream
+     * @return true if data is handled
+     *-----------------------------------------------*)
+    function TStreamQueue.handleData(
+        const stream : IStreamAdapter;
+        const context : TObject;
+        const streamCloser : ICloseable;
+        const streamId : IStreamId
+    ) : boolean;
+    var task : PTaskItem;
+    begin
+        new(task);
+        task^.work := THandleConnWork.create(fProtocol, stream, streamCloser, streamId);
+        fQueue.enqueue(task);
+    end;
 
 end.

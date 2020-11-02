@@ -22,11 +22,10 @@ uses
     SyncObjs,
     fgl,
     RunnableIntf,
-    QueueIntf;
+    TaskQueueIntf;
 
 type
 
-    IRunnableQueue = specialize IQueue<IRunnable>;
 
     (*!------------------------------------------------
      * generic worker thread that execute runnable object
@@ -36,18 +35,18 @@ type
      *-----------------------------------------------*)
     TWorkerThread = class(TThread)
     private
-        fQueue : IRunnableQueue;
+        fQueue : ITaskQueue;
     public
-        constructor create(const queue : IRunnableQueue);
+        constructor create(const aQueue : ITaskQueue);
         destructor destroy(); override;
-        procedure execute();
+        procedure execute(); override;
     end;
 
 implementation
 
-    constructor TWorkerThread.create(const queue : IRunnableQueue);
+    constructor TWorkerThread.create(const aQueue : ITaskQueue);
     begin
-        fQueue := queue;
+        fQueue := aQueue;
     end;
 
     destructor TWorkerThread.destroy();
@@ -57,12 +56,20 @@ implementation
     end;
 
     procedure TWorkerThread.execute();
-    var runnableObj : IRunnable;
+    var task : PTaskItem;
     begin
         while not terminated do
         begin
-            runnableObj := fQueue.dequeue();
-            runnableObj.run();
+            //get task to run from thread-safe queue
+            task := fQueue.dequeue();
+            try
+                //TODO: add timeout so that long-running task does not starve thread
+                //instead yield execution so current thread can process other task
+                task^.work.run();
+            finally
+                task^.work := nil;
+                dispose(task);
+            end;
         end;
     end;
 end.

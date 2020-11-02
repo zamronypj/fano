@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit QueueObjectImpl;
+unit HandleConnWorkImpl;
 
 interface
 
@@ -23,17 +23,22 @@ uses
 
 type
 
-    TQueueObject = class(TInterfacedObject, IRunnable)
+    (*!------------------------------------------------
+     * IRunnable implementation which handle socket connection
+     * and delegate reading and parsing to protocol processor
+     *
+     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+     *-----------------------------------------------*)
+    THandleConnWork = class(TInterfacedObject, IRunnable)
     private
         fProtocol : IProtocolProcessor;
         fstream : IStreamAdapter;
-        fcontext : TObject;
         fstreamCloser : ICloseable;
         fstreamId : IStreamId;
     public
         constructor create(
+            const protocolProcessor : IProtocolProcessor;
             const stream : IStreamAdapter;
-            const context : TObject;
             const streamCloser : ICloseable;
             const streamId : IStreamId
         );
@@ -44,32 +49,29 @@ type
 
 implementation
 
-    constructor TQueueObject.create(
+    constructor THandleConnWork.create(
         const protocolProcessor : IProtocolProcessor;
         const stream : IStreamAdapter;
-        const context : TObject;
         const streamCloser : ICloseable;
         const streamId : IStreamId
     );
     begin
         fProtocol := protocolProcessor;
         fstream := stream;
-        fcontext := context;
         fstreamCloser := streamCloser;
         fstreamId := streamId;
     end;
 
-    destructor TQueueObject.destroy();
+    destructor THandleConnWork.destroy();
     begin
         fProtocol := nil;
         fstream := nil;
-        fcontext := nil;
         fstreamCloser := nil;
         fstreamId := nil;
         inherited destroy();
     end;
 
-    function TQueueObject.run() : IRunnable;
+    function THandleConnWork.run() : IRunnable;
     begin
         fProtocol.process(fstream, fstreamCloser, fStreamId);
         result := self;
