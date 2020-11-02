@@ -44,6 +44,7 @@ type
     TMultiThreadDaemonAppServiceProvider = class (
         TDecoratorDaemonAppServiceProvider,
         IDaemonAppServiceProvider,
+        IRunnable,
         IRunnableWithDataNotif
     )
     private
@@ -147,6 +148,7 @@ uses
         //start worker thread and server
         fWorkerThreadMgr.run();
         fDaemonSvc.server.run();
+        result := self;
     end;
 
 end.

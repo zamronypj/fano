@@ -94,6 +94,7 @@ uses
         new(task);
         task^.work := THandleConnWork.create(fProtocol, stream, streamCloser, streamId);
         fQueue.enqueue(task);
+        result := true;
     end;
 
 end.
