@@ -20,7 +20,6 @@ uses
     {$ENDIF}
     Classes,
     SyncObjs,
-    fgl,
     RunnableIntf,
     TaskQueueIntf;
 
@@ -46,8 +45,8 @@ implementation
 
     constructor TWorkerThread.create(const aQueue : ITaskQueue);
     begin
-        //create suspended thread with default stack frame size
-        inherited create(true);
+        //create thread with default stack frame size
+        inherited create(false);
         fQueue := aQueue;
     end;
 

@@ -93,12 +93,11 @@ implementation
     end;
 
     function TWorkerThreadManager.run() : IRunnable;
-    var threadIdx : integer;
     begin
-        for threadIdx :=0 to fList.count-1 do
-        begin
-            fList[threadIdx].start();
-        end;
+        // for threadIdx :=0 to fList.count-1 do
+        // begin
+        //     fList[threadIdx].start();
+        // end;
         result := self;
     end;
 end.
