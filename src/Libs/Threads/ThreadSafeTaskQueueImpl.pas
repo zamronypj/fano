@@ -69,13 +69,11 @@ type
         function dequeue() : PTaskItem;
 
         (*!------------------------------------------------
-         * retrieve current queue size
+         * empty status
          *-----------------------------------------------
-         * @return total number of item in queue
+         * @return queue empty or not
          *-----------------------------------------------*)
-        function getSize() : integer;
-
-        property size : integer read getSize;
+        function isEmpty() : boolean;
     end;
 
 implementation
@@ -114,7 +112,7 @@ implementation
     begin
         fLock.acquire();
         try
-            wasEmpty := fQueue.size = 0;
+            wasEmpty := fQueue.isEmpty();
             result := fQueue.enqueue(value);
             if wasEmpty then
             begin
@@ -139,7 +137,7 @@ implementation
             //need to do wait in loop because there is chance that
             //by the time fNotEmpty is signaled, other thread may dequeue it
             //causing queue to be empty again before we can reacquire the lock
-            while fQueue.size = 0 do
+            while fQueue.isEmpty() do
             begin
                 //release lock, so other thread can access fQueue
                 fLock.release();
@@ -154,7 +152,7 @@ implementation
 
             result := fQueue.dequeue();
 
-            if fQueue.size = 0 then
+            if fQueue.isEmpty() then
             begin
                 //signal that queue is empty
                 fNotEmpty.resetEvent();
@@ -165,15 +163,15 @@ implementation
     end;
 
     (*!------------------------------------------------
-     * retrieve current queue size
+     * empty status
      *-----------------------------------------------
-     * @return total number of item in queue
+     * @return queue empty or not
      *-----------------------------------------------*)
-    function TThreadSafeTaskQueue.getSize() : integer;
+    function TThreadSafeTaskQueue.isEmpty() : boolean;
     begin
         fLock.acquire();
         try
-            result := fQueue.size;
+            result := fQueue.isEmpty();
         finally
             fLock.release();
         end;

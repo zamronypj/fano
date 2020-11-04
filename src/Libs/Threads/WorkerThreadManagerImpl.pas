@@ -34,6 +34,8 @@ type
     TWorkerThreadManager = class(TInterfacedObject, IRunnable)
     private
         fList : TWorkerThreadList;
+        fNumWorkerThread : integer;
+        fTaskQueue : ITaskQueue;
 
         procedure terminateThreads();
         procedure waitThreads();
@@ -47,13 +49,10 @@ type
 implementation
 
     constructor TWorkerThreadManager.create(const taskQueue : ITaskQueue; const numThread : integer);
-    var threadIdx : integer;
     begin
         fList := TWorkerThreadList.create();
-        for threadIdx := 0 to numThread-1 do
-        begin
-            fList.add(TWorkerThread.create(taskQueue));
-        end;
+        fTaskQueue := taskQueue;
+        fNumWorkerThread := numThread;
     end;
 
     destructor TWorkerThreadManager.destroy();
@@ -61,13 +60,14 @@ implementation
         terminateThreads();
         waitThreads();
         cleanupThreads();
+        fTaskQueue := nil;
         inherited destroy();
     end;
 
     procedure TWorkerThreadManager.waitThreads();
     var threadIdx : integer;
     begin
-        for threadIdx :=0 to fList.count-1 do
+        for threadIdx := 0 to fList.count-1 do
         begin
             fList[threadIdx].waitFor();
         end;
@@ -86,18 +86,19 @@ implementation
     procedure TWorkerThreadManager.terminateThreads();
     var threadIdx : integer;
     begin
-        for threadIdx :=0 to fList.count-1 do
+        for threadIdx := 0 to fList.count-1 do
         begin
             fList[threadIdx].terminate();
         end;
     end;
 
     function TWorkerThreadManager.run() : IRunnable;
+    var threadIdx : integer;
     begin
-        // for threadIdx :=0 to fList.count-1 do
-        // begin
-        //     fList[threadIdx].start();
-        // end;
+        for threadIdx := 0 to fNumWorkerThread-1 do
+        begin
+            fList.add(TWorkerThread.create(fTaskQueue));
+        end;
         result := self;
     end;
 end.

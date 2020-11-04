@@ -57,13 +57,11 @@ type
         function dequeue() : PTaskItem;
 
         (*!------------------------------------------------
-         * retrieve current queue size
+         * empty status
          *-----------------------------------------------
-         * @return total number of item in queue
+         * @return queue empty or not
          *-----------------------------------------------*)
-        function getSize() : integer;
-
-        property size : integer read getSize;
+        function isEmpty() : boolean;
     end;
 
 implementation
@@ -103,13 +101,12 @@ implementation
     end;
 
     (*!------------------------------------------------
-     * retrieve current queue size
+     * empty status
      *-----------------------------------------------
-     * @return total number of item in queue
+     * @return queue empty or not
      *-----------------------------------------------*)
-    function TTaskQueue.getSize() : integer;
+    function TTaskQueue.isEmpty() : boolean;
     begin
-        result := fQueue.size;
+        result := fQueue.isEmpty();
     end;
-
 end.

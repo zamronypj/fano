@@ -47,13 +47,12 @@ type
         function dequeue() : PTaskItem;
 
         (*!------------------------------------------------
-         * retrieve current queue size
+         * empty status
          *-----------------------------------------------
-         * @return total number of item in queue
+         * @return queue empty or not
          *-----------------------------------------------*)
-        function getSize() : integer;
+        function isEmpty() : boolean;
 
-        property size : integer read getSize;
     end;
 
 implementation
