@@ -14,11 +14,9 @@ interface
 {$H+}
 
 uses
-    {$IFDEF UNIX}
-    cthreads,
-    cmem,
-    {$ENDIF}
+
     Classes,
+    SysUtils,
     SyncObjs,
     RunnableIntf,
     TaskQueueIntf;
@@ -35,19 +33,24 @@ type
     TWorkerThread = class(TThread)
     private
         fQueue : ITaskQueue;
+        fException : Exception;
+        procedure handleExceptionInMainThread();
+        procedure handleException();
+        procedure runWorker();
+    protected
+        procedure execute(); override;
     public
         constructor create(const aQueue : ITaskQueue);
         destructor destroy(); override;
-        procedure execute(); override;
     end;
 
 implementation
 
     constructor TWorkerThread.create(const aQueue : ITaskQueue);
     begin
+        fQueue := aQueue;
         //create thread with default stack frame size
         inherited create(false);
-        fQueue := aQueue;
     end;
 
     destructor TWorkerThread.destroy();
@@ -56,7 +59,22 @@ implementation
         inherited destroy();
     end;
 
-    procedure TWorkerThread.execute();
+    procedure TWorkerThread.handleExceptionInMainThread();
+    begin
+        SysUtils.ShowException(fException, nil);
+    end;
+
+    procedure TWorkerThread.handleException();
+    begin
+        fException := Exception(ExceptObject);
+        try
+            Synchronize(@handleExceptionInMainThread);
+        finally
+            fException := nil;
+        end;
+    end;
+
+    procedure TWorkerThread.runWorker();
     var task : PTaskItem;
     begin
         while not terminated do
@@ -71,6 +89,16 @@ implementation
                 task^.work := nil;
                 dispose(task);
             end;
+        end;
+    end;
+
+    procedure TWorkerThread.execute();
+    begin
+        fException := nil;
+        try
+            runWorker();
+        except
+            handleException();
         end;
     end;
 end.
