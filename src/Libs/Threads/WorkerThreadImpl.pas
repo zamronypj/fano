@@ -36,15 +36,21 @@ type
         fException : Exception;
         procedure handleExceptionInMainThread();
         procedure handleException();
-        procedure runWorker();
+        function runWorker() : boolean;
+        procedure quitWorkerThread();
     protected
         procedure execute(); override;
     public
         constructor create(const aQueue : ITaskQueue);
         destructor destroy(); override;
+        procedure terminate();
     end;
 
 implementation
+
+uses
+
+    NullRunnableImpl;
 
     constructor TWorkerThread.create(const aQueue : ITaskQueue);
     begin
@@ -55,8 +61,8 @@ implementation
 
     destructor TWorkerThread.destroy();
     begin
-        fQueue := nil;
         inherited destroy();
+        fQueue := nil;
     end;
 
     procedure TWorkerThread.handleExceptionInMainThread();
@@ -74,31 +80,58 @@ implementation
         end;
     end;
 
-    procedure TWorkerThread.runWorker();
+    procedure TWorkerThread.quitWorkerThread();
     var task : PTaskItem;
     begin
-        while not terminated do
-        begin
-            //get task to run from thread-safe queue
-            task := fQueue.dequeue();
-            try
-                //TODO: add timeout so that long-running task does not starve thread
-                //instead yield execution so current thread can process other task
-                task^.work.run();
-            finally
-                task^.work := nil;
-                dispose(task);
-            end;
+        //thread is being terminated, enqueue dummy task so that when thread is
+        //suspended waiting to dequeue on empty queue, it
+        //can be continue run and thread can quit gracefully.
+        new(task);
+        task^.quit := true;
+        task^.work := TNullRunnable.create();
+        fQueue.enqueue(task);
+    end;
+
+    procedure TWorkerThread.terminate();
+    begin
+        //TODO: we should override TerminatedSet() but it is not yet defined
+        //in FreePascal < 3.3.1
+        //see https://bugs.freepascal.orf/view.php?id=37388
+        inherited terminate();
+        quitWorkerThread();
+    end;
+
+    function TWorkerThread.runWorker() : boolean;
+    var task : PTaskItem;
+    begin
+        //get task to run from thread-safe queue
+        task := fQueue.dequeue();
+        try
+            //TODO: add timeout so that long-running task does not starve thread
+            //instead yield execution so current thread can process other task
+            task^.work.run();
+
+            result := task^.quit;
+        finally
+            task^.work := nil;
+            dispose(task);
         end;
     end;
 
     procedure TWorkerThread.execute();
+    var shouldQuit : boolean;
     begin
-        fException := nil;
-        try
-            runWorker();
-        except
-            handleException();
+        //termination using terminated only is not sufficient as by the time
+        //thread is terminated, it may suspended when queue is empty.
+        shouldQuit := false;
+        while not (terminated or shouldQuit)  do
+        begin
+            fException := nil;
+            try
+                shouldQuit := runWorker();
+            except
+                handleException();
+            end;
         end;
     end;
 end.

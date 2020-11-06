@@ -41,14 +41,20 @@ type
         procedure waitThreads();
         procedure cleanupThreads();
     public
-        constructor create(const taskQueue : ITaskQueue; const numThread : integer);
+        constructor create(
+            const taskQueue : ITaskQueue;
+            const numThread : integer
+        );
         destructor destroy(); override;
         function run() : IRunnable;
     end;
 
 implementation
 
-    constructor TWorkerThreadManager.create(const taskQueue : ITaskQueue; const numThread : integer);
+    constructor TWorkerThreadManager.create(
+        const taskQueue : ITaskQueue;
+        const numThread : integer
+    );
     begin
         fList := TWorkerThreadList.create();
         fTaskQueue := taskQueue;

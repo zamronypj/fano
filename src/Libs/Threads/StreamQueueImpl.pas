@@ -92,6 +92,7 @@ uses
     var task : PTaskItem;
     begin
         new(task);
+        task^.quit := false;
         task^.work := THandleConnWork.create(fProtocol, stream, streamCloser, streamId);
         fQueue.enqueue(task);
         result := true;

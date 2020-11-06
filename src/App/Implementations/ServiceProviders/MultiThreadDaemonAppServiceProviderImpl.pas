@@ -84,6 +84,9 @@ implementation
 
 uses
 
+    LoggerIntf,
+    StdErrLoggerImpl,
+    ThreadSafeLoggerImpl,
     StdInFromStreamImpl,
     NullStreamAdapterImpl,
     NullStdOutImpl,

@@ -30,6 +30,7 @@ type
     TTaskQueue = class(TInterfacedObject, ITaskQueue)
     private
         fQueue : TTaskQueueInst;
+        procedure cleanUpItems();
     public
         (*!------------------------------------------------
          * constructor
@@ -73,8 +74,21 @@ implementation
 
     destructor TTaskQueue.destroy();
     begin
+        cleanUpItems();
         fQueue.free();
         inherited destroy();
+    end;
+
+    procedure TTaskQueue.cleanUpItems();
+    var task : PTaskItem;
+    begin
+        //drain any unprocessed items
+        while not isEmpty() do
+        begin
+            task := dequeue();
+            task^.work := nil;
+            dispose(task);
+        end;
     end;
 
     (*!------------------------------------------------

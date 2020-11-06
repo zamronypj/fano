@@ -19,6 +19,8 @@ uses
 type
 
     TTaskItem = record
+        //this is to signal worker thread to quit
+        quit : boolean;
         work : IRunnable;
     end;
     PTaskItem = ^TTaskItem;
