@@ -89,6 +89,7 @@ ImageJpgValidatorImpl,
 ImageGifValidatorImpl,
 
 Ipv4ValidatorImpl,
+Ipv6ValidatorImpl,
 
 JsonValidatorImpl,
 

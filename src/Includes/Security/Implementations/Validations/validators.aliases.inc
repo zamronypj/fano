@@ -97,6 +97,7 @@ TImageJpgValidator = ImageJpgValidatorImpl.TImageJpgValidator;
 TImageGifValidator = ImageGifValidatorImpl.TImageGifValidator;
 
 TIpv4Validator = Ipv4ValidatorImpl.TIpv4Validator;
+TIpv6Validator = Ipv6ValidatorImpl.TIpv6Validator;
 
 TJsonValidator = JsonValidatorImpl.TJsonValidator;
 
