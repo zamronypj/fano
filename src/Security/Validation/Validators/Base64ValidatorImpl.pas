@@ -83,10 +83,7 @@ resourcestring
             DecodeStringBase64(dataToValidate, false);
             result := true;
         except
-            on e : EBase64DecodingException do
-            begin
-                result := false;
-            end;
+            result := false;
         end;
     end;
 end.
