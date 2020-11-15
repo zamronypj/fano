@@ -76,6 +76,7 @@ TAfterDateTimeFieldValidator = AfterDateTimeFieldValidatorImpl.TAfterDateTimeFie
 TBeforeDateTimeFieldValidator = BeforeDateTimeFieldValidatorImpl.TBeforeDateTimeFieldValidator;
 
 TUuidValidator = UuidValidatorImpl.TUuidValidator;
+TBase64Validator = Base64ValidatorImpl.TBase64Validator;
 
 TMinLengthValidator = MinLengthValidatorImpl.TMinLengthValidator;
 TMaxLengthValidator = MaxLengthValidatorImpl.TMaxLengthValidator;
