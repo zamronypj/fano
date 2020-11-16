@@ -103,7 +103,7 @@ TIpv6Validator = Ipv6ValidatorImpl.TIpv6Validator;
 TJsonValidator = JsonValidatorImpl.TJsonValidator;
 
 TFileValidator = FileValidatorImpl.TFileValidator;
-DirectoryValidator = DirectoryValidatorImpl.TDirectoryValidator;
+TDirectoryValidator = DirectoryValidatorImpl.TDirectoryValidator;
 
 TCompareStrValidator = CompareStrValidatorImpl.TCompareStrValidator;
 TEqualStrValidator = EqualStrValidatorImpl.TEqualStrValidator;
