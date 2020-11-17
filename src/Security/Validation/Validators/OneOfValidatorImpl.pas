@@ -57,7 +57,7 @@ uses
 resourcestring
 
     sErrMustPassExactlyOne = 'Exactly one validator must pass but %d ' +
-        'validator(s) pass and %d validator(s) fail. ';
+        'validator(s) pass and %d validator(s) fail(s). ';
 
     (*!------------------------------------------------
      * Validate data
