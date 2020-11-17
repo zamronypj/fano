@@ -32,6 +32,7 @@ TCollectiveValidator = CollectiveValidatorImpl.TCollectiveValidator;
 TAndValidator = AndValidatorImpl.TAndValidator;
 TOrValidator = OrValidatorImpl.TOrValidator;
 TAnyOfValidator = AnyOfValidatorImpl.TAnyOfValidator;
+TAllOfValidator = AllOfValidatorImpl.TAllOfValidator;
 
 TIntegerValidator = IntegerValidatorImpl.TIntegerValidator;
 TInt64Validator = Int64ValidatorImpl.TInt64Validator;
