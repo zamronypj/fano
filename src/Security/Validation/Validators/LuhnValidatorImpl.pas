@@ -23,7 +23,8 @@ uses
 type
 
     (*!------------------------------------------------
-     * decorator class having capability to negate validate input data
+     * class having capability to validate input data
+     * against Luhn algorithm
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)

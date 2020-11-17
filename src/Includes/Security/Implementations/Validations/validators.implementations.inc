@@ -30,6 +30,7 @@ AndValidatorImpl,
 OrValidatorImpl,
 AnyOfValidatorImpl,
 AllOfValidatorImpl,
+OneOfValidatorImpl,
 
 IntegerValidatorImpl,
 Int64ValidatorImpl,
@@ -101,4 +102,14 @@ DirectoryValidatorImpl,
 CompareStrValidatorImpl,
 EqualStrValidatorImpl,
 CaseInsensitiveEqualStrValidatorImpl,
+
 LuhnValidatorImpl,
+
+VisaValidatorImpl,
+MastercardValidatorImpl,
+AmexValidatorImpl,
+DiscoverValidatorImpl,
+DinersClubValidatorImpl,
+JcbValidatorImpl,
+
+CreditCardValidatorImpl,

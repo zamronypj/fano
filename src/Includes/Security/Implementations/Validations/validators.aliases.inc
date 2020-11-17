@@ -33,6 +33,7 @@ TAndValidator = AndValidatorImpl.TAndValidator;
 TOrValidator = OrValidatorImpl.TOrValidator;
 TAnyOfValidator = AnyOfValidatorImpl.TAnyOfValidator;
 TAllOfValidator = AllOfValidatorImpl.TAllOfValidator;
+TOneOfValidator = OneOfValidatorImpl.TOneOfValidator;
 
 TIntegerValidator = IntegerValidatorImpl.TIntegerValidator;
 TInt64Validator = Int64ValidatorImpl.TInt64Validator;
@@ -109,4 +110,14 @@ TDirectoryValidator = DirectoryValidatorImpl.TDirectoryValidator;
 TCompareStrValidator = CompareStrValidatorImpl.TCompareStrValidator;
 TEqualStrValidator = EqualStrValidatorImpl.TEqualStrValidator;
 TCaseInsensitiveEqualStrValidator = CaseInsensitiveEqualStrValidatorImpl.TCaseInsensitiveEqualStrValidator;
+
 TLuhnValidator = LuhnValidatorImpl.TLuhnValidator;
+
+TVisaValidator = VisaValidatorImpl.TVisaValidator;
+TMastercardValidator = MastercardValidatorImpl.TMastercardValidator;
+TAmexValidator = AmexValidatorImpl.TAmexValidator;
+TDiscoverValidator = DiscoverValidatorImpl.TDiscoverValidator;
+TDinersClubValidator = DinersClubValidatorImpl.TDinersClubValidator;
+TJcbValidator = JcbValidatorImpl.TJcbValidator;
+
+TCreditCardValidator = CreditCardValidatorImpl.TCreditCardValidator;
