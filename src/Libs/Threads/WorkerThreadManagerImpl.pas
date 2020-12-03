@@ -110,7 +110,7 @@ implementation
     begin
         for threadIdx := 0 to length(fSvcProviders) - 1 do
         begin
-            fList.add(TWorkerThread.create(fTaskQueue, fSvcProviders[i].protocol));
+            fList.add(TWorkerThread.create(fTaskQueue, fSvcProviders[threadIdx].protocol));
         end;
         result := self;
     end;
