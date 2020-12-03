@@ -19,7 +19,6 @@ uses
     CloseableIntf,
     StreamAdapterIntf,
     StreamIdIntf,
-    ProtocolProcessorIntf,
     TaskQueueIntf;
 
 type
@@ -34,12 +33,8 @@ type
     TStreamQueue = class(TInterfacedObject, IDataAvailListener)
     private
         fQueue : ITaskQueue;
-        fProtocol : IProtocolProcessor;
     public
-        constructor create(
-            const queue : ITaskQueue;
-            const protocol : IProtocolProcessor
-        );
+        constructor create(const queue : ITaskQueue);
 
         (*!------------------------------------------------
         * handle if data is available
@@ -65,13 +60,9 @@ uses
 
     HandleConnWorkImpl;
 
-    constructor TStreamQueue.create(
-        const queue : ITaskQueue;
-        const protocol : IProtocolProcessor
-    );
+    constructor TStreamQueue.create(const queue : ITaskQueue);
     begin
         fQueue := queue;
-        fProtocol := protocol;
     end;
 
     (*!------------------------------------------------

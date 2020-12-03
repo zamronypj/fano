@@ -141,7 +141,7 @@ uses
         //intentionally ignore dataListener as we will handle data available on our own
         if (assigned(dataListener)) then
         begin
-            fConnQueuer := TStreamQueue.create(fTaskQueue, fDaemonSvc.protocol);
+            fConnQueuer := TStreamQueue.create(fTaskQueue);
             fDaemonSvc.server.setDataAvailListener(fConnQueuer);
         end else
         begin
