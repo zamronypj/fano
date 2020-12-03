@@ -90,10 +90,13 @@ uses
         const streamId : IStreamId
     ) : boolean;
     var task : PTaskItem;
+        work : THandleConnWork;
     begin
+        work := THandleConnWork.create(stream, streamCloser, streamId);
         new(task);
         task^.quit := false;
-        task^.work := THandleConnWork.create(fProtocol, stream, streamCloser, streamId);
+        task^.protocolAware := work;
+        task^.work := work;
         fQueue.enqueue(task);
         result := true;
     end;

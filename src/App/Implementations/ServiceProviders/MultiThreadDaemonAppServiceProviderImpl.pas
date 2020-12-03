@@ -54,10 +54,7 @@ type
     protected
         function buildTaskQueue() : ITaskQueue; virtual;
     public
-        constructor create(
-            const actualSvc : IDaemonAppServiceProvider;
-            const numWorkerThread : integer
-        );
+        constructor create(const actualSvc : array of IDaemonAppServiceProvider);
         destructor destroy(); override;
 
         function getServer() : IRunnableWithDataNotif; override;
@@ -84,6 +81,7 @@ implementation
 
 uses
 
+    sysutils,
     LoggerIntf,
     StdErrLoggerImpl,
     ThreadSafeLoggerImpl,
@@ -98,13 +96,18 @@ uses
     ThreadSafeTaskQueueImpl;
 
     constructor TMultiThreadDaemonAppServiceProvider.create(
-        const actualSvc : IDaemonAppServiceProvider;
-        const numWorkerThread : integer
+        const actualSvc : array of IDaemonAppServiceProvider
     );
     begin
-        inherited create(actualSvc);
+        if length(actualSvc) = 0 then
+        begin
+            raise Exception.Create('Service providers must be at least one');
+        end;
+
+        inherited create(actualSvc[0]);
+
         fTaskQueue := buildTaskQueue();
-        fWorkerThreadMgr := TWorkerThreadManager.create(fTaskQueue, numWorkerThread);
+        fWorkerThreadMgr := TWorkerThreadManager.create(fTaskQueue, actualSvc);
     end;
 
     destructor TMultiThreadDaemonAppServiceProvider.destroy();
@@ -135,9 +138,16 @@ uses
      *-----------------------------------------------*)
     function TMultiThreadDaemonAppServiceProvider.setDataAvailListener(const dataListener : IDataAvailListener) : IRunnableWithDataNotif;
     begin
-        //intentionally does nothing as we will handle data available on our own
-        fConnQueuer := TStreamQueue.create(fTaskQueue, fDaemonSvc.protocol);
-        fDaemonSvc.server.setDataAvailListener(fConnQueuer);
+        //intentionally ignore dataListener as we will handle data available on our own
+        if (assigned(dataListener)) then
+        begin
+            fConnQueuer := TStreamQueue.create(fTaskQueue, fDaemonSvc.protocol);
+            fDaemonSvc.server.setDataAvailListener(fConnQueuer);
+        end else
+        begin
+            fConnQueuer := nil;
+            fDaemonSvc.server.setDataAvailListener(nil);
+        end;
         result := self;
     end;
 

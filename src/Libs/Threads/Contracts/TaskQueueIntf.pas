@@ -14,13 +14,15 @@ interface
 
 uses
 
-    RunnableIntf;
+    RunnableIntf,
+    ProtocolAwareIntf;
 
 type
 
     TTaskItem = record
         //this is to signal worker thread to quit
         quit : boolean;
+        protocolAware : IProtocolAware;
         work : IRunnable;
     end;
     PTaskItem = ^TTaskItem;

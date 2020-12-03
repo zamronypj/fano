@@ -19,6 +19,7 @@ uses
     SysUtils,
     SyncObjs,
     RunnableIntf,
+    ProtocolProcessorIntf,
     TaskQueueIntf;
 
 type
@@ -33,6 +34,7 @@ type
     TWorkerThread = class(TThread)
     private
         fQueue : ITaskQueue;
+        fProtocol : IProtocolProcessor;
         fException : Exception;
         procedure handleExceptionInMainThread();
         procedure handleException();
@@ -41,7 +43,10 @@ type
     protected
         procedure execute(); override;
     public
-        constructor create(const aQueue : ITaskQueue);
+        constructor create(
+            const aQueue : ITaskQueue;
+            const proto : IProtocolProcessor
+        );
         destructor destroy(); override;
         procedure terminate();
     end;
@@ -50,11 +55,16 @@ implementation
 
 uses
 
-    NullRunnableImpl;
+    NullRunnableImpl,
+    NullProtocolAwareImpl;
 
-    constructor TWorkerThread.create(const aQueue : ITaskQueue);
+    constructor TWorkerThread.create(
+        const aQueue : ITaskQueue;
+        const proto : IProtocolProcessor
+    );
     begin
         fQueue := aQueue;
+        fProtocol := proto;
         //create thread with default stack frame size
         inherited create(false);
     end;
@@ -63,6 +73,7 @@ uses
     begin
         inherited destroy();
         fQueue := nil;
+        fProtocol := nil;
     end;
 
     procedure TWorkerThread.handleExceptionInMainThread();
@@ -88,6 +99,7 @@ uses
         //can be continue run and thread can quit gracefully.
         new(task);
         task^.quit := true;
+        task^.protocolAware := TNullProtocolAware.create();
         task^.work := TNullRunnable.create();
         fQueue.enqueue(task);
     end;
@@ -107,6 +119,8 @@ uses
         //get task to run from thread-safe queue
         task := fQueue.dequeue();
         try
+            task^.protocolAware.setProtocol(fProtocol);
+
             //TODO: add timeout so that long-running task does not starve thread
             //instead yield execution so current thread can process other task
             task^.work.run();

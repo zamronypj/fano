@@ -20,6 +20,7 @@ uses
     fgl,
     RunnableIntf,
     TaskQueueIntf,
+    DaemonAppServiceProviderIntf,
     WorkerThreadImpl;
 
 type
@@ -36,6 +37,7 @@ type
         fList : TWorkerThreadList;
         fNumWorkerThread : integer;
         fTaskQueue : ITaskQueue;
+        fSvcProviders : array of IDaemonServiceProvider;
 
         procedure terminateThreads();
         procedure waitThreads();
@@ -43,7 +45,7 @@ type
     public
         constructor create(
             const taskQueue : ITaskQueue;
-            const numThread : integer
+            const svcProviders : array of IDaemonServiceProvider
         );
         destructor destroy(); override;
         function run() : IRunnable;
@@ -53,12 +55,17 @@ implementation
 
     constructor TWorkerThreadManager.create(
         const taskQueue : ITaskQueue;
-        const numThread : integer
+        const svcProviders : array of IDaemonServiceProvider
     );
+    var i : integer;
     begin
         fList := TWorkerThreadList.create();
         fTaskQueue := taskQueue;
-        fNumWorkerThread := numThread;
+        setLength(fSvcProviders, length(svcProviders));
+        for i:= low(svcProviders) to high(svcProviders) do
+        begin
+            fSvcProviders[i] := svcProviders[i];
+        end;
     end;
 
     destructor TWorkerThreadManager.destroy();
@@ -101,9 +108,9 @@ implementation
     function TWorkerThreadManager.run() : IRunnable;
     var threadIdx : integer;
     begin
-        for threadIdx := 0 to fNumWorkerThread-1 do
+        for threadIdx := 0 to length(fSvcProviders) - 1 do
         begin
-            fList.add(TWorkerThread.create(fTaskQueue));
+            fList.add(TWorkerThread.create(fTaskQueue, fSvcProviders[i].protocol));
         end;
         result := self;
     end;

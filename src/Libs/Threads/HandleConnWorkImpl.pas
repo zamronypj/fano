@@ -19,6 +19,7 @@ uses
     StreamAdapterIntf,
     StreamIdIntf,
     RunnableIntf,
+    ProtocolAwareIntf,
     ProtocolProcessorIntf;
 
 type
@@ -29,7 +30,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    THandleConnWork = class(TInterfacedObject, IRunnable)
+    THandleConnWork = class(TInterfacedObject, IRunnable, IProtocolAware)
     private
         fProtocol : IProtocolProcessor;
         fstream : IStreamAdapter;
@@ -37,26 +38,25 @@ type
         fstreamId : IStreamId;
     public
         constructor create(
-            const protocolProcessor : IProtocolProcessor;
             const stream : IStreamAdapter;
             const streamCloser : ICloseable;
             const streamId : IStreamId
         );
         destructor destroy(); override;
         function run() : IRunnable;
+
     end;
 
 
 implementation
 
     constructor THandleConnWork.create(
-        const protocolProcessor : IProtocolProcessor;
         const stream : IStreamAdapter;
         const streamCloser : ICloseable;
         const streamId : IStreamId
     );
     begin
-        fProtocol := protocolProcessor;
+        fProtocol := nil;
         fstream := stream;
         fstreamCloser := streamCloser;
         fstreamId := streamId;
@@ -69,6 +69,16 @@ implementation
         fstreamCloser := nil;
         fstreamId := nil;
         inherited destroy();
+    end;
+
+    (*!------------------------------------------------
+     * set protocol processor
+     *-----------------------------------------------
+     * @param protocol protocol processor
+     *-----------------------------------------------*)
+    procedure THandleConnWork.setProtocol(const protocol : IProtocolProcessor);
+    begin
+        fProtocol := protocol;
     end;
 
     function THandleConnWork.run() : IRunnable;
