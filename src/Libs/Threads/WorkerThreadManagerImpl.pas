@@ -35,7 +35,6 @@ type
     TWorkerThreadManager = class(TInterfacedObject, IRunnable)
     private
         fList : TWorkerThreadList;
-        fNumWorkerThread : integer;
         fTaskQueue : ITaskQueue;
         fSvcProviders : array of IDaemonAppServiceProvider;
 

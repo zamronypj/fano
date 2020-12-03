@@ -45,6 +45,12 @@ type
         destructor destroy(); override;
         function run() : IRunnable;
 
+        (*!------------------------------------------------
+         * set protocol processor
+         *-----------------------------------------------
+         * @param protocol protocol processor
+         *-----------------------------------------------*)
+        procedure setProtocol(const protocol : IProtocolProcessor);
     end;
 
 
