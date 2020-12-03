@@ -45,7 +45,7 @@ type
     public
         constructor create(
             const taskQueue : ITaskQueue;
-            const svcProviders : array of IDaemonServiceProvider
+            const svcProviders : array of IDaemonAppServiceProvider
         );
         destructor destroy(); override;
         function run() : IRunnable;
@@ -55,7 +55,7 @@ implementation
 
     constructor TWorkerThreadManager.create(
         const taskQueue : ITaskQueue;
-        const svcProviders : array of IDaemonServiceProvider
+        const svcProviders : array of IDaemonAppServiceProvider
     );
     var i : integer;
     begin
