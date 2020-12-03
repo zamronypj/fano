@@ -37,7 +37,7 @@ type
         fList : TWorkerThreadList;
         fNumWorkerThread : integer;
         fTaskQueue : ITaskQueue;
-        fSvcProviders : array of IDaemonServiceProvider;
+        fSvcProviders : array of IDaemonAppServiceProvider;
 
         procedure terminateThreads();
         procedure waitThreads();
