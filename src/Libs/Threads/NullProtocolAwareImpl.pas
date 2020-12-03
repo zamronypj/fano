@@ -15,6 +15,7 @@ interface
 
 uses
 
+    ProtocolAwareIntf,
     ProtocolProcessorIntf;
 
 type
