@@ -329,7 +329,7 @@ uses
             terminated := false;
             repeat
                 //wait indefinitely until something happen in fListenSocket or epollTerminatePipeIn
-                totFd := kevent(kqFd, nil, 0, events, maxEvents, fTimeoutVal);
+                totFd := kevent(kqFd, nil, 0, events, maxEvents, @fTimeoutVal);
                 if totFd > 0 then
                 begin
                     //one or more file descriptors is ready for I/O, check further
