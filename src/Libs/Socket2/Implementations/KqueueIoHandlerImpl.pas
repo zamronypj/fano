@@ -191,7 +191,7 @@ uses
     var ev : TKEvent;
         res : longint;
     begin
-        EV_SET(@ev, fd, EVFILT_READ, EV_ADD, 0, nil, nil);
+        EV_SET(@ev, fd, EVFILT_READ, EV_ADD, 0, 0, nil);
         res := kevent(kqFd, @ev, 1, nil, 0, nil);
         if (res < 0) then
         begin
@@ -211,7 +211,7 @@ uses
     );
     var ev : TKEvent;
     begin
-        EV_SET(@ev, fd, EVFILT_READ, EV_DELETE, 0, nil, nil);
+        EV_SET(@ev, fd, EVFILT_READ, EV_DELETE, 0, 0, nil);
         res := kevent(kqFd, @ev, 1, nil, 0, nil);
         if (res < 0) then
         begin
