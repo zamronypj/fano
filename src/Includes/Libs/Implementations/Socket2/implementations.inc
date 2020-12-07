@@ -32,7 +32,7 @@ SelectIoHandlerImpl,
 
 {$IFDEF FREEBSD}
     {$IFDEF USE_KQUEUE}
-    KQueueIoHandlerImpl,
+    KqueueIoHandlerImpl,
     {$ENDIF}
 {$ENDIF}
 
