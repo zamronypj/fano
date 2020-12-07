@@ -166,7 +166,7 @@ uses
     function getTimeout(const timeoutInMs : integer) : TTimeSpec;
     begin
         result.tv_sec := timeoutInMs div 1000;
-        result.tv_nsec = (timeoutInMs mod 1000) * 1000000;
+        result.tv_nsec := (timeoutInMs mod 1000) * 1000000;
     end;
 
     constructor TKqueueIoHandler.create(
