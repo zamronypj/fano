@@ -19,6 +19,7 @@ uses
     IoHandlerIntf,
     DataAvailListenerIntf,
     ListenSocketIntf,
+    SocketOptsIntf,
     StreamAdapterIntf,
     AbstractIoHandlerImpl,
     BaseUnix,
