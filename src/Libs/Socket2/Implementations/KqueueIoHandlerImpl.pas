@@ -210,6 +210,7 @@ uses
         const fd : longint
     );
     var ev : TKEvent;
+        res : cint;
     begin
         EV_SET(@ev, fd, EVFILT_READ, EV_DELETE, 0, 0, nil);
         res := kevent(kqFd, @ev, 1, nil, 0, nil);
