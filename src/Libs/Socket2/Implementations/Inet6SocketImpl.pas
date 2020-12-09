@@ -95,6 +95,7 @@ uses
     begin
         fHost := ahost;
         fPort := aport;
+        FInetAddr := default(TInetSockAddr6);
         inherited create(sockOpts);
     end;
 
