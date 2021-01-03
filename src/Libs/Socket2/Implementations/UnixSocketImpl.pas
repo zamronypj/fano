@@ -93,6 +93,8 @@ uses
     );
     begin
         fSocketFile := filename;
+        FUnixAddr := default(TUnixSockAddr);
+        fSocketAddrLen := 0;
         inherited create(sockOpts);
     end;
 
