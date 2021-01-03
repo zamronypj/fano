@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit LocalDiskFileImpl;
+unit AmazonS3FileImpl;
 
 interface
 
@@ -22,11 +22,11 @@ type
 
     (*!------------------------------------------------
      * class having capability to read, write and
-     * get stats of file stored in local disk
+     * get stats of file stored in Amazon S3
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TLocalDiskFile = class (TInterfacedObject, IFile)
+    TAmazonS3File = class (TInterfacedObject, IFile)
     private
         fFilePath : string;
     public
@@ -116,12 +116,12 @@ uses
     sysutils,
     StreamAdapterImpl;
 
-    constructor TLocalDiskFile.create(const filePath : string);
+    constructor TAmazonS3File.create(const filePath : string);
     begin
         fFilePath := filePath;
     end;
 
-    destructor TLocalDiskFile.destroy();
+    destructor TAmazonS3File.destroy();
     begin
         inherited destroy();
     end;
@@ -132,7 +132,7 @@ uses
      * @param filePath file path to retrieve
      * @return content of file
      *-----------------------------------------------*)
-    function TLocalDiskFile.get() : string;
+    function TAmazonS3File.get() : string;
     var fStream : TFileStream;
         strStream : TStringStream;
     begin
@@ -155,7 +155,7 @@ uses
      *-----------------------------------------------
      * @param content content to write
      *-----------------------------------------------*)
-    procedure TLocalDiskFile.put(const content : string);
+    procedure TAmazonS3File.put(const content : string);
     var fStream : TFileStream;
     begin
         fStream := TFileStream.create(fFilePath, fmCreate);
@@ -172,7 +172,7 @@ uses
      *-----------------------------------------------
      * @return content of file
      *-----------------------------------------------*)
-    function TLocalDiskFile.getStream() : IStreamAdapter;
+    function TAmazonS3File.getStream() : IStreamAdapter;
     begin
         result := TStreamAdapter.create(TFileStream.create(fFilePath, fmOpenReadWrite));
     end;
@@ -183,7 +183,7 @@ uses
      * @param filePath file path to write
      * @param content content to write
      *-----------------------------------------------*)
-    procedure TLocalDiskFile.putStream(const content : IStreamAdapter);
+    procedure TAmazonS3File.putStream(const content : IStreamAdapter);
     var fStream : TFileStream;
         buff : pointer;
         byteRead, totRead : int64;
@@ -212,7 +212,7 @@ uses
      *-----------------------------------------------
      * @param content content to write
      *-----------------------------------------------*)
-    procedure TLocalDiskFile.prepend(const content : string);
+    procedure TAmazonS3File.prepend(const content : string);
     var fStream : TFileStream;
     begin
         fStream := TFileStream.create(fFilePath, fmOpenReadWrite);
@@ -229,7 +229,7 @@ uses
      *-----------------------------------------------
      * @param content content to write
      *-----------------------------------------------*)
-    procedure TLocalDiskFile.append(const content : string);
+    procedure TAmazonS3File.append(const content : string);
     var fStream : TFileStream;
     begin
         fStream := TFileStream.create(fFilePath, fmOpenReadWrite);
@@ -246,7 +246,7 @@ uses
      *-----------------------------------------------
      * @param dstPath destination file path
      *-----------------------------------------------*)
-    procedure TLocalDiskFile.copy(const dstPath : string);
+    procedure TAmazonS3File.copy(const dstPath : string);
     var fStream : TFileStream;
     begin
         fStream := TFileStream.create(fFilePath, fmOpenReadWrite);
@@ -265,7 +265,7 @@ uses
      * @param filePath file path to check
      * @return size of file
      *-----------------------------------------------*)
-    function TLocalDiskFile.size() : int64;
+    function TAmazonS3File.size() : int64;
     var fStream : TFileStream;
     begin
         fStream := TFileStream.create(fFilePath, fmOpenRead);
@@ -282,7 +282,7 @@ uses
      * @param filePath file path to check
      * @return size of file
      *-----------------------------------------------*)
-    function TLocalDiskFile.lastModified() : longint;
+    function TAmazonS3File.lastModified() : longint;
     begin
         result := FileAge(fFilePath);
     end;
