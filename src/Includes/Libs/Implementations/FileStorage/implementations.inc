@@ -19,3 +19,7 @@ LocalDiskStorageImpl,
 CompositeFileImpl,
 CompositeDirectoryImpl,
 CompositeStorageImpl,
+
+AmazonS3FileImpl,
+AmazonS3DirectoryImpl,
+AmazonS3StorageImpl,

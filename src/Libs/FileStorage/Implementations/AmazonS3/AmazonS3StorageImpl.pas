@@ -18,7 +18,8 @@ uses
     FileIntf,
     DirectoryIntf,
     StorageIntf,
-    InjectableObjectImpl;
+    InjectableObjectImpl,
+    aws_s3;
 
 type
 
@@ -30,11 +31,10 @@ type
      *-----------------------------------------------*)
     TAmazonS3Storage = class (TInjectableObject, IStorage)
     private
-        fBaseDir : string;
+        fS3Service : IS3Service;
 
-        function getAbsolutePath(const path : string) : string;
     public
-        constructor create(const baseDir : string);
+        constructor create(const accessKey : string; const secretKey : string);
 
         destructor destroy(); override;
 
@@ -101,19 +101,30 @@ uses
     sysutils,
     LocalDiskFileImpl;
 
-    constructor TAmazonS3Storage.create(const baseDir : string);
+
+    constructor TAmazonS3Storage.create(
+        const accessKey : string;
+        const secretKey : string
+    );
+    const USE_SSL = true;
     begin
-        fBaseDir := baseDir;
+        FS3Service := TS3Service.Create(
+            TAWSClient.Create(
+                TAWSSignatureVersion1.New(
+                    TAWSCredentials.New(
+                        accessKey,
+                        secretKey,
+                        USE_SSL
+                    )
+                )
+            )
+        );
     end;
 
     destructor TAmazonS3Storage.destroy();
     begin
+        fS3Service := nil;
         inherited destroy();
-    end;
-
-    function TAmazonS3Storage.getAbsolutePath(const path : string) : string;
-    begin
-        result := fBaseDir + path;
     end;
 
     (*!------------------------------------------------
@@ -124,13 +135,7 @@ uses
      *-----------------------------------------------*)
     function TAmazonS3Storage.exists(const path : string) : boolean;
     begin
-        result := FileExists(getAbsolutePath(path));
-        if (not result) then
-        begin
-            //if not found, try if path is directory. on Windows if path
-            //is directory, FileExists() returns false while Unix/Linux returns true
-            result := DirectoryExists(getAbsolutePath(path));
-        end;
+        result := fS3Service.Buckets.Check(path);
     end;
 
     (*!------------------------------------------------
@@ -141,7 +146,7 @@ uses
      *-----------------------------------------------*)
     function TAmazonS3Storage.getFile(const path : string) : IFile;
     begin
-        result := TLocalDiskFile.create(getAbsolutePath(path));
+        result := TAmazonS3File.create(fS3Service, path);
     end;
 
     (*!------------------------------------------------

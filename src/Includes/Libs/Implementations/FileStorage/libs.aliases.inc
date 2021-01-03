@@ -19,3 +19,7 @@ TLocalDiskStorage = LocalDiskStorageImpl.TLocalDiskStorage;
 TCompositeFile = CompositeFileImpl.TCompositeFile;
 TCompositeDirectory = CompositeDirectoryImpl.TCompositeDirectory;
 TCompositeStorage = CompositeStorageImpl.TCompositeStorage;
+
+TAmazonS3File = AmazonS3FileImpl.TAmazonS3File;
+TAmazonS3Directory = AmazonS3DirectoryImpl.TAmazonS3Directory;
+TAmazonS3Storage = AmazonS3StorageImpl.TAmazonS3Storage;

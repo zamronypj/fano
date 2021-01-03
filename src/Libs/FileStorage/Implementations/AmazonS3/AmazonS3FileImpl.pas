@@ -16,7 +16,8 @@ interface
 uses
 
     StreamAdapterIntf,
-    FileIntf;
+    FileIntf,
+    aws_s3;
 
 type
 
@@ -28,9 +29,10 @@ type
      *-----------------------------------------------*)
     TAmazonS3File = class (TInterfacedObject, IFile)
     private
+        fS3Service : IS3Service;
         fFilePath : string;
     public
-        constructor create(const filePath : string);
+        constructor create(const s3Svc : IS3Service; const filePath : string);
 
         destructor destroy(); override;
 
