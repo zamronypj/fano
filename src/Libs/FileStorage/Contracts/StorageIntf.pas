@@ -85,6 +85,8 @@ type
         procedure delete(const path : string);
     end;
 
+    IStorageArray = array of IStorage;
+
 implementation
 
 end.

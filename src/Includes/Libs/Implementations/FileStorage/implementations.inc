@@ -15,3 +15,7 @@
 LocalDiskFileImpl,
 LocalDiskDirectoryImpl,
 LocalDiskStorageImpl,
+
+CompositeFileImpl,
+CompositeDirectoryImpl,
+CompositeStorageImpl,

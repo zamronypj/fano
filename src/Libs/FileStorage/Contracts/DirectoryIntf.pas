@@ -38,6 +38,8 @@ type
 
     end;
 
+    IDirectoryArray = array of IDirectory;
+
 implementation
 
 end.

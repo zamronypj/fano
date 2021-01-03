@@ -15,3 +15,7 @@
 TLocalDiskFile = LocalDiskFileImpl.TLocalDiskFile;
 TLocalDiskDirectory = LocalDiskDirectoryImpl.TLocalDiskDirectory;
 TLocalDiskStorage = LocalDiskStorageImpl.TLocalDiskStorage;
+
+TCompositeFile = CompositeFileImpl.TCompositeFile;
+TCompositeDirectory = CompositeDirectoryImpl.TCompositeDirectory;
+TCompositeStorage = CompositeStorageImpl.TCompositeStorage;
