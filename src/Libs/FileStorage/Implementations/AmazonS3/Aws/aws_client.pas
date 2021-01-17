@@ -2,6 +2,7 @@
   MIT License
 
   Copyright (c) 2013-2019 Marcos Douglas B. Santos
+  Copyright (c) 2021 Zamrony P. Juhara
 
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
@@ -28,28 +29,19 @@ unit aws_client;
 interface
 
 uses
-  //rtl
-  sysutils,
-  classes,
-  //synapse
-  synautil,
-  //aws
-  aws_credentials,
-  aws_http;
+
+    sysutils,
+    classes,
+    aws_credentials,
+    aws_http_contracts,
+    aws_http,
+    aws_client_contracts,
+    aws_http_sender;
 
 type
-  IAWSRequest = IHTTPRequest;
+    TAWSRequest = THTTPRequest;
 
-  IAWSResponse = IHTTPResponse;
-
-  IAWSClient = interface(IInterface)
-  ['{9CE71A17-9ADC-4FC1-96ED-8E9C704A988C}']
-    function Send(Request: IAWSRequest): IAWSResponse;
-  end;
-
-  TAWSRequest = THTTPRequest;
-
-  TAWSResponse = THTTPResponse;
+    TAWSResponse = THTTPResponse;
 
   TAWSClient = class sealed(TInterfacedObject, IAWSClient)
   private
@@ -101,4 +93,3 @@ begin
 end;
 
 end.
-
