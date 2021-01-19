@@ -82,7 +82,7 @@ type
          * @param srcPath source path
          * @param dstPath destination path
          *-----------------------------------------------*)
-        procedure move(const dstPath : string);
+        procedure move(const srcPath : string; const dstPath : string);
 
         (*!------------------------------------------------
          * delete file or directory
@@ -97,6 +97,7 @@ implementation
 uses
 
     sysutils,
+    CompositeDirectoryImpl,
     CompositeFileImpl;
 
     constructor TCompositeStorage.create(const storages : array of IStorage);
@@ -112,7 +113,7 @@ uses
     destructor TCompositeStorage.destroy();
     var i : integer;
     begin
-        for i := low(storages) to high(storages) do
+        for i := low(fStorages) to high(fStorages) do
         begin
             fStorages[i] := nil;
         end;
@@ -149,6 +150,7 @@ uses
      *-----------------------------------------------*)
     function TCompositeStorage.getFile(const path : string) : IFile;
     var fileArr : IFileArray;
+        i : integer;
     begin
         setLength(fileArr, length(fStorages));
         for i:= low(fStorages) to high(fStorages) do
@@ -170,7 +172,7 @@ uses
         result := false;
         for i:= low(fStorages) to high(fStorages) do
         begin
-            if (fStorages[i].ifFile(path)) then
+            if (fStorages[i].isFile(path)) then
             begin
                 result := true;
                 break;
@@ -186,6 +188,7 @@ uses
      *-----------------------------------------------*)
     function TCompositeStorage.getDir(const path : string) : IDirectory;
     var dirArr : IDirectoryArray;
+        i : integer;
     begin
         setLength(dirArr, length(fStorages));
         for i:= low(fStorages) to high(fStorages) do
@@ -207,7 +210,7 @@ uses
         result := false;
         for i:= low(fStorages) to high(fStorages) do
         begin
-            if (fStorages[i].ifDir(path)) then
+            if (fStorages[i].isDir(path)) then
             begin
                 result := true;
                 break;

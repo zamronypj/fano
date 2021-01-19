@@ -45,9 +45,9 @@ type
         (*!------------------------------------------------
          * write content to file
          *-----------------------------------------------
-         * @param content content to write
+         * @param cnt content to write
          *-----------------------------------------------*)
-        procedure put(const content : string);
+        procedure put(const cnt : string);
 
         property content : string read get write put;
 
@@ -62,9 +62,9 @@ type
          * write content to file
          *-----------------------------------------------
          * @param filePath file path to write
-         * @param content content to write
+         * @param cnt content to write
          *-----------------------------------------------*)
-        procedure putStream(const content : IStreamAdapter);
+        procedure putStream(const cnt : IStreamAdapter);
 
         property stream : IStreamAdapter read getStream write putStream;
 
@@ -73,14 +73,14 @@ type
          *-----------------------------------------------
          * @param content content to write
          *-----------------------------------------------*)
-        procedure prepend(const content : string);
+        procedure prepend(const cnt : string);
 
         (*!------------------------------------------------
          * append content at end of file
          *-----------------------------------------------
          * @param content content to write
          *-----------------------------------------------*)
-        procedure append(const content : string);
+        procedure append(const cnt : string);
 
         (*!------------------------------------------------
          * copy file
@@ -133,6 +133,7 @@ uses
      * @return content of file
      *-----------------------------------------------*)
     function TLocalDiskFile.get() : string;
+    const COPY_WHOLE_STREAM = 0;
     var fStream : TFileStream;
         strStream : TStringStream;
     begin
@@ -140,7 +141,7 @@ uses
         try
             strStream := TStringStream.create('');
             try
-                strStream.CopyFrom(fStream);
+                strStream.CopyFrom(fStream, COPY_WHOLE_STREAM);
                 result := strStream.DataString;
             finally
                 strStream.free();
@@ -155,7 +156,7 @@ uses
      *-----------------------------------------------
      * @param content content to write
      *-----------------------------------------------*)
-    procedure TLocalDiskFile.put(const content : string);
+    procedure TLocalDiskFile.put(const cnt : string);
     var fStream : TFileStream;
     begin
         fStream := TFileStream.create(fFilePath, fmCreate);
@@ -183,7 +184,7 @@ uses
      * @param filePath file path to write
      * @param content content to write
      *-----------------------------------------------*)
-    procedure TLocalDiskFile.putStream(const content : IStreamAdapter);
+    procedure TLocalDiskFile.putStream(const cnt : IStreamAdapter);
     var fStream : TFileStream;
         buff : pointer;
         byteRead, totRead : int64;
@@ -212,7 +213,7 @@ uses
      *-----------------------------------------------
      * @param content content to write
      *-----------------------------------------------*)
-    procedure TLocalDiskFile.prepend(const content : string);
+    procedure TLocalDiskFile.prepend(const cnt : string);
     var fStream : TFileStream;
     begin
         fStream := TFileStream.create(fFilePath, fmOpenReadWrite);
@@ -229,7 +230,7 @@ uses
      *-----------------------------------------------
      * @param content content to write
      *-----------------------------------------------*)
-    procedure TLocalDiskFile.append(const content : string);
+    procedure TLocalDiskFile.append(const cnt : string);
     var fStream : TFileStream;
     begin
         fStream := TFileStream.create(fFilePath, fmOpenReadWrite);

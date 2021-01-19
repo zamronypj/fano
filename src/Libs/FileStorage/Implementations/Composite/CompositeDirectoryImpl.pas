@@ -47,7 +47,7 @@ type
 implementation
 
 
-    constructor TCompositeDirectory.create(const dirs : IDirectory);
+    constructor TCompositeDirectory.create(const dirs : IDirectoryArray);
     var i : integer;
     begin
         setlength(fDirs, Length(dirs));
@@ -77,9 +77,9 @@ implementation
     function TCompositeDirectory.list(const filterCriteria : string) : IFileArray;
     begin
         result := nil;
-        if (length(fFiles) > 0) then
+        if (length(fDirs) > 0) then
         begin
-            result := fFiles[0].list();
+            result := fDirs[0].list(filterCriteria);
         end;
     end;
 end.

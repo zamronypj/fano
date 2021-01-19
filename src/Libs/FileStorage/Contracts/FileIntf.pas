@@ -39,9 +39,9 @@ type
         (*!------------------------------------------------
          * write content to file
          *-----------------------------------------------
-         * @param content content to write
+         * @param cnt content to write
          *-----------------------------------------------*)
-        procedure put(const content : string);
+        procedure put(const cnt : string);
 
         property content : string read get write put;
 
@@ -56,25 +56,25 @@ type
          * write content to file
          *-----------------------------------------------
          * @param filePath file path to write
-         * @param content content to write
+         * @param cnt content to write
          *-----------------------------------------------*)
-        procedure putStream(const content : IStreamAdapter);
+        procedure putStream(const cnt : IStreamAdapter);
 
         property stream : IStreamAdapter read getStream write putStream;
 
         (*!------------------------------------------------
          * prepend content at begining of file
          *-----------------------------------------------
-         * @param content content to write
+         * @param cnt content to write
          *-----------------------------------------------*)
-        procedure prepend(const content : string);
+        procedure prepend(const cnt : string);
 
         (*!------------------------------------------------
          * append content at end of file
          *-----------------------------------------------
-         * @param content content to write
+         * @param cnt content to write
          *-----------------------------------------------*)
-        procedure append(const content : string);
+        procedure append(const cnt : string);
 
         (*!------------------------------------------------
          * copy file

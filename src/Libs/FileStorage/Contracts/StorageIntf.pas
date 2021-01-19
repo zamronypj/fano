@@ -75,7 +75,7 @@ type
          * @param srcPath source path
          * @param dstPath destination path
          *-----------------------------------------------*)
-        procedure move(const dstPath : string);
+        procedure move(const srcPath : string; const dstPath : string);
 
         (*!------------------------------------------------
          * delete file or directory

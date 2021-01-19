@@ -2,6 +2,7 @@
   MIT License
 
   Copyright (c) 2013-2019 Marcos Douglas B. Santos
+  Copyright (c) 2021 Zamrony P. Juhara
 
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
@@ -31,9 +32,6 @@ uses
   //rtl
   classes,
   sysutils,
-  //synapse
-  synautil,
-  //aws
   aws_base,
   aws_client;
 
