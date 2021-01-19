@@ -195,10 +195,10 @@ uses
             try
                 totRead := 0;
                 repeat
-                    byteRead := content.read(buff^, 4096);
+                    byteRead := cnt.read(buff^, 4096);
                     fStream.WriteBuffer(buff^, byteRead);
                     totRead := totRead + byteRead;
-                until (byteRead < 4096) and (totRead < content.size);
+                until (byteRead < 4096) and (totRead < cnt.size);
             finally
                 freeMem(buff);
             end;
@@ -219,7 +219,7 @@ uses
         fStream := TFileStream.create(fFilePath, fmOpenReadWrite);
         try
             fStream.Seek(0, soFromBeginning);
-            fStream.WriteBuffer(content[1], length(content));
+            fStream.WriteBuffer(cnt[1], length(cnt));
         finally
             fStream.free();
         end;
@@ -236,7 +236,7 @@ uses
         fStream := TFileStream.create(fFilePath, fmOpenReadWrite);
         try
             fStream.Seek(0, soEnd);
-            fStream.WriteBuffer(content[1], length(content));
+            fStream.WriteBuffer(cnt[1], length(cnt));
         finally
             fStream.free();
         end;
@@ -248,12 +248,17 @@ uses
      * @param dstPath destination file path
      *-----------------------------------------------*)
     procedure TLocalDiskFile.copy(const dstPath : string);
-    var fStream : TFileStream;
+    const COPY_WHOlE_STREAM = 0;
+    var fStream, dstStream : TFileStream;
     begin
-        fStream := TFileStream.create(fFilePath, fmOpenReadWrite);
+        fStream := TFileStream.create(fFilePath, fmOpenRead);
         try
-            fStream.Seek(0, soEnd);
-            fStream.WriteBuffer(content[1], length(content));
+            dstStream := TFileStream.create(dstPath, fmCreate);
+            try
+                dstStream.CopyFrom(fStream, COPY_WHOLE_STREAM);
+            finally
+                dstStream.free();
+            end;
         finally
             fStream.free();
         end;
