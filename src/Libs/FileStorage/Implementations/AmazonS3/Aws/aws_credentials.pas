@@ -32,7 +32,7 @@ uses
   sysutils,
   classes,
   dateutils,
-  aws_http;
+  aws_http_contracts;
 
 
 type
@@ -43,7 +43,7 @@ type
     function DataStamp: string;
     function RegionName: string;
     function ServiceName: string;
-    function Signature: TSHA256Digest;
+    function Signature: TBytes;
   end;
 
   { TAWSSignatureHMAC256 }
@@ -61,7 +61,7 @@ type
     function DataStamp: string;
     function RegionName: string;
     function ServiceName: string;
-    function Signature: TSHA256Digest;
+    function Signature: TBytes;
   end;
 
   IAWSCredentials = interface(IInterface)
@@ -125,6 +125,13 @@ type
 
 implementation
 
+uses
+
+    HlpIHashInfo,
+    HlpConverters,
+    HlpIHashResult,
+    HlpHashFactory;
+
 { TAWSSignatureHMAC256 }
 
 constructor TAWSSignatureHMAC256.Create(const AccessKey, DataStamp,
@@ -163,15 +170,23 @@ begin
   Result := FServiceName;
 end;
 
-function TAWSSignatureHMAC256.Signature: TSHA256Digest;
+function TAWSSignatureHMAC256.Signature: TBytes;
 var
-  oSHA256: TSHA256Digest;
+    res : IHashResult;
+    hmacInst : IHMAC;
 begin
-  HMAC_SHA256(UTF8Encode('AWS4'+FAccessKey), UTF8Encode(FDataStamp), oSHA256);
-  HMAC_SHA256(oSHA256, UTF8Encode(FRegionName), oSHA256);
-  HMAC_SHA256(oSHA256, UTF8Encode(FServiceName), oSHA256);
-  HMAC_SHA256(oSHA256, UTF8Encode('aws4_request'), oSHA256);
-  Result := oSHA256;
+    hmacInst := THashFactory.THMAC.CreateHMAC(
+        THashFactory.TCrypto.CreateSHA2_256
+    );
+    hmacInst.Key := TConverters.ConvertStringToBytes('AWS4' + FAccessKey, TEncoding.UTF8);
+    res := hmacInst.ComputeString(FDataStamp, TEncoding.UTF8);
+    hmacInst.Key := res.getBytes();
+    res := hmacInst.ComputeString(FRegionName, TEncoding.UTF8);
+    hmacInst.Key := res.getBytes();
+    res := hmacInst.ComputeString(FServiceName, TEncoding.UTF8);
+    hmacInst.Key := res.getBytes();
+    res := hmacInst.ComputeString('aws4_request', TEncoding.UTF8);
+    result := res.getBytes();
 end;
 
 { TAWSSignatureVersion4 }
@@ -216,59 +231,59 @@ end;
 
 function TAWSSignatureVersion4.Calculate(Request: IHTTPRequest): string;
 const
-  Algoritimo = 'AWS4-HMAC-SHA256';
-  TipoReq = 'aws4_request';
+    Algoritimo = 'AWS4-HMAC-SHA256';
+    TipoReq = 'aws4_request';
 var
-  Header: string;
-  Credencial: String;
-  Escopo: String;
-  DateFmt: String;
-  AwsDateTime: String;
-  Metodo: String;
-  Canonical: String;
-  CanonicalURI: String;
-  CanonicalQuery: String;
-  CanonicalHeaders: String;
-  SignedHeader: String;
-  PayLoadHash: String;
-  CanonicalRequest: String;
-  StringToSign: String;
-  Signature: String;
-  AuthorizationHeader: String;
-  Assinatura: TSHA256Digest;
-  oSHA256: TSHA256Digest;
+    Header: string;
+    Credencial: String;
+    Escopo: String;
+    DateFmt: String;
+    AwsDateTime: String;
+    Metodo: String;
+    Canonical: String;
+    CanonicalURI: String;
+    CanonicalQuery: String;
+    CanonicalHeaders: String;
+    SignedHeader: String;
+    PayLoadHash: String;
+    CanonicalRequest: String;
+    StringToSign: String;
+    Signature: String;
+    AuthorizationHeader: String;
+    Assinatura: TBytes;
+    hmacInst : IHMAC;
+
 begin
-  DateFmt:= FormatDateTime('yyyymmdd', IncHour(Now, 3));
-  AwsDateTime:= FormatDateTime('yyyymmdd', IncHour(Now, 3))+'T'+FormatDateTime('hhnnss', IncHour(Now, 3))+'Z';
-  Metodo:= Request.Method;
-  CanonicalURI:=EncodeTriplet(Request.Resource, '%', [':']);
-  CanonicalQuery:='';
+    DateFmt:= FormatDateTime('yyyymmdd', IncHour(Now, 3));
+    AwsDateTime:= FormatDateTime('yyyymmdd', IncHour(Now, 3))+'T'+FormatDateTime('hhnnss', IncHour(Now, 3))+'Z';
+    Metodo:= Request.Method;
+    CanonicalURI:=EncodeTriplet(Request.Resource, '%', [':']);
+    CanonicalQuery:='';
 
-  Header := 'Host:' + Request.Domain + #10 ;
-  CanonicalHeaders:= 'X-Amz-Date:' + AwsDateTime + #10 + Request.CanonicalizedAmzHeaders + #10;
-  SignedHeaders(Header+CanonicalHeaders, SignedHeader, Canonical);
+    Header := 'Host:' + Request.Domain + #10 ;
+    CanonicalHeaders:= 'X-Amz-Date:' + AwsDateTime + #10 + Request.CanonicalizedAmzHeaders + #10;
+    SignedHeaders(Header+CanonicalHeaders, SignedHeader, Canonical);
 
-  PayLoadHash:= SHA256(Request.SubResource);
+    PayLoadHash:= SHA256(Request.SubResource);
 
-  CanonicalRequest := Metodo + #10 + CanonicalURI + #10 + CanonicalQuery + #10
-                    + Canonical + #10 + SignedHeader + #10 + PayLoadHash;
+    CanonicalRequest := Metodo + #10 + CanonicalURI + #10 + CanonicalQuery + #10
+                      + Canonical + #10 + SignedHeader + #10 + PayLoadHash;
 
-  Credencial:= DateFmt + '/' + Request.ContentMD5 + '/' + Request.CanonicalizedResource + '/' + TipoReq;
-  Escopo:= Credentials.AccessKeyId + '/' + Credencial;
-  StringToSign := Algoritimo + #10 +  AwsDateTime + #10 + Credencial + #10 + SHA256( UTF8Encode(CanonicalRequest));
+    Credencial:= DateFmt + '/' + Request.ContentMD5 + '/' + Request.CanonicalizedResource + '/' + TipoReq;
+    Escopo:= Credentials.AccessKeyId + '/' + Credencial;
+    StringToSign := Algoritimo + #10 +  AwsDateTime + #10 + Credencial + #10 + SHA256( UTF8Encode(CanonicalRequest));
 
-  Assinatura:=TAWSSignatureHMAC256.New(Credentials.SecretKey, DateFmt, Request.ContentMD5, Request.CanonicalizedResource).Signature;
+    Assinatura:=TAWSSignatureHMAC256.New(Credentials.SecretKey, DateFmt, Request.ContentMD5, Request.CanonicalizedResource).Signature;
 
-  HMAC_SHA256(Assinatura, UTF8Encode(StringToSign), oSHA256);
-  Signature := SHA256DigestToString(oSHA256);
+    hmacInst := THashFactory.THMAC.CreateHMAC(THashFactory.TCrypto.CreateSHA2_256);
 
-  AuthorizationHeader := 'Authorization:' + Algoritimo + ' ' + 'Credential=' + Escopo + ', ' +
-                         'SignedHeaders=' + SignedHeader + ', ' + 'Signature=' + Signature;
+    hmacInst.Key := Assinatura;
+    signature := hmacInst.ComputeString(StringToSign, TEncoding.UTF8).toString();
 
-  Result := BuildHeader(CanonicalHeaders)
-            + AuthorizationHeader
-            ;
+    AuthorizationHeader := 'Authorization:' + Algoritimo + ' ' + 'Credential=' + Escopo + ', ' +
+                          'SignedHeaders=' + SignedHeader + ', ' + 'Signature=' + Signature;
 
+    result := BuildHeader(CanonicalHeaders) + AuthorizationHeader;
 end;
 
 { TAWSCredentials }
