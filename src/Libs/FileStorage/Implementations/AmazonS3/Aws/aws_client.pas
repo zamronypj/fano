@@ -32,7 +32,7 @@ uses
 
     sysutils,
     classes,
-    aws_credentials,
+    aws_credentials_contracts,
     aws_http_contracts,
     aws_http,
     aws_client_contracts,

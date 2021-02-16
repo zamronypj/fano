@@ -99,8 +99,9 @@ implementation
 uses
 
     sysutils,
+    aws_client,
+    aws_credentials,
     LocalDiskFileImpl;
-
 
     constructor TAmazonS3Storage.create(
         const accessKey : string;
