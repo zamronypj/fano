@@ -65,7 +65,6 @@ constructor THTTPSender.Create(const Method, Header, ContentType, URL: string;
 begin
     inherited Create;
     FSender := TFPHTTPClient.Create(nil);
-    FSender.Protocol := '1.0';
     FMethod := Method;
     FHeader := Header;
     FContentType := ContentType;
