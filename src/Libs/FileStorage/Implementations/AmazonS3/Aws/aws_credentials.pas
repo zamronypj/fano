@@ -173,19 +173,23 @@ uses
 
     function TAWSSignatureVersion4.BuildHeader(const Header: String): String;
     var
-      i: Integer;
-      List: TStringList;
+        i: Integer;
+        list: TStringList;
     begin
-        List := TStringList.Create;
-        List.Text:=Header;
-        List.LineBreak:=#10;
-        List.NameValueSeparator:=':';
-        List.Sorted:=True;
-        List.Sort;
-        Result := '';
-        for i := 1 to List.Count - 1 do
-        begin
-            Result := Result + List[i]+#10;
+        list := TStringList.Create;
+        try
+          list.Text := Header;
+          list.LineBreak := #10;
+          list.NameValueSeparator := ':';
+          list.Sorted:=True;
+          list.Sort;
+          result := '';
+          for i := 1 to list.Count - 1 do
+          begin
+              Result := Result + List[i] + #10;
+          end;
+        finally
+            list.free();
         end;
     end;
 

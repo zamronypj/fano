@@ -48,6 +48,7 @@ type
     FContentType: string;
     FURL: string;
     FStream: IAWSStream;
+    procedure setupHeaders(const httpClient: TFpHttpClient; const header : string);
   public
     constructor Create(const Method, Header, ContentType, URL: string; Stream: IAWSStream);
     class function New(const Method, Header, ContentType, URL: string; Stream: IAWSStream): IHTTPSender;
@@ -87,16 +88,16 @@ end;
 function THTTPSender.Send: IHTTPResponse;
 begin
     FSender.RequestHeaders.Clear;
+    FSender.RequestHeaders.Text := FHeader;
     FSender.RequestBody.Size := 0;
-    FSender.Headers.Add(FHeader);
     FSender.MimeType := FContentType;
     FStream.SaveToStream(FSender.Document);
     FSender.HTTPMethod(FMethod, FURL);
-    Result := THTTPResponse.New(
-      FSender.ResponseStatusCode,
-      FSender.ResponseHeaders.Text,
-      FSender.ResultString,
-      TAWSStream.New(FSender.Document)
+    result := THTTPResponse.New(
+        FSender.ResponseStatusCode,
+        FSender.ResponseHeaders.Text,
+        FSender.ResultString,
+        TAWSStream.New(FSender.Document)
     );
 end;
 
