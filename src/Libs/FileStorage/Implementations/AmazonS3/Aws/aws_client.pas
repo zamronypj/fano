@@ -43,53 +43,58 @@ type
 
     TAWSResponse = THTTPResponse;
 
-  TAWSClient = class sealed(TInterfacedObject, IAWSClient)
-  private
-    FSignature: IAWSSignature;
-    function MakeURL(const SubDomain, Domain, Query: string): string;
-  public
-    constructor Create(Signature: IAWSSignature);
-    class function New(Signature: IAWSSignature): IAWSClient;
-    function Send(Request: IAWSRequest): IAWSResponse;
-  end;
+    TAWSClient = class sealed(TInterfacedObject, IAWSClient)
+    private
+        FSignature: IAWSSignature;
+        function MakeURL(const SubDomain, Domain, Query: string): string;
+    public
+        constructor Create(Signature: IAWSSignature);
+        class function new(Signature: IAWSSignature): IAWSClient;
+        function send(Request: IAWSRequest): IAWSResponse;
+    end;
 
 implementation
 
-{ TAWSClient }
+    { TAWSClient }
 
-function TAWSClient.MakeURL(const SubDomain, Domain, Query: string): string;
-begin
-  Result := '';
-  if FSignature.Credentials.UseSSL then
-    Result += 'https://'
-  else
-    Result += 'http://';
-  if SubDomain <> '' then
-    Result += SubDomain + '.';
-  Result += Domain + Query;
-end;
+    function TAWSClient.MakeURL(const SubDomain, Domain, Query: string): string;
+    begin
+        Result := '';
+        if FSignature.Credentials.UseSSL then
+        begin
+            result += 'https://';
+        end else
+        begin
+            result += 'http://';
+        end;
 
-constructor TAWSClient.Create(Signature: IAWSSignature);
-begin
-  inherited Create;
-  FSignature := Signature;
-end;
+        if SubDomain <> '' then
+        begin
+            result += SubDomain + '.';
+        end;
+        result += Domain + Query;
+    end;
 
-class function TAWSClient.New(Signature: IAWSSignature): IAWSClient;
-begin
-  Result := Create(Signature);
-end;
+    constructor TAWSClient.create(Signature: IAWSSignature);
+    begin
+        inherited Create;
+        FSignature := Signature;
+    end;
 
-function TAWSClient.Send(Request: IAWSRequest): IAWSResponse;
-begin
-  Result := THTTPSender.New(
-    Request.Method,
-    FSignature.Calculate(Request),
-    Request.ContentType,
-    MakeURL(Request.SubDomain, Request.Domain, Request.Resource),
-    Request.Stream
-  )
-  .Send;
-end;
+    class function TAWSClient.new(Signature: IAWSSignature): IAWSClient;
+    begin
+        result := Create(Signature);
+    end;
+
+    function TAWSClient.send(Request: IAWSRequest): IAWSResponse;
+    begin
+        result := THTTPSender.New(
+            Request.Method,
+            FSignature.Calculate(Request),
+            Request.ContentType,
+            MakeURL(Request.SubDomain, Request.Domain, Request.Resource),
+            Request.Stream
+        ).send();
+    end;
 
 end.
