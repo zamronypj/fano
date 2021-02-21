@@ -19,6 +19,10 @@ uses
     EnvironmentIntf,
     DecoratorRequestImpl;
 
+const
+
+    VERB_OVERRIDE_PARAM = '_method';
+
 type
 
     (*!------------------------------------------------
@@ -31,13 +35,17 @@ type
     TVerbTunnellingRequest = class(TDecoratorRequest)
     protected
         fVerbTunnelingEnv : ICGIEnvironment;
+        fVerbOverrideParam : shortstring;
     public
         (*!------------------------------------------------
          * constructor
          *-------------------------------------------------
          * @param IRequest actual request to be decorated
          *------------------------------------------------*)
-        constructor create(const request : IRequest);
+        constructor create(
+            const request : IRequest;
+            const verbOverrideParam : shortstring = VERB_OVERRIDE_PARAM
+        );
 
         (*!------------------------------------------------
          * destructor
@@ -65,18 +73,25 @@ implementation
 
 uses
 
-    VerbTunnellingEnvironmentImpl;
+    XVerbTunnellingEnvironmentImpl;
 
     (*!------------------------------------------------
      * constructor
      *-------------------------------------------------
      * @param IRequest actual request to be decorated
      *------------------------------------------------*)
-    constructor TVerbTunnellingRequest.create(const request : IRequest);
+    constructor TVerbTunnellingRequest.create(
+        const request : IRequest;
+        const verbOverrideParam : shortstring = VERB_OVERRIDE_PARAM
+    );
     begin
         inherited create(request);
         //decorate original environment
-        fVerbTunnelingEnv := TVerbTunnellingEnvironment.create(request.env);
+        fVerbTunnelingEnv := TXVerbTunnellingEnvironment.create(
+            request.env,
+            self,
+            verbOverrideParam
+        );
     end;
 
     destructor TVerbTunnellingRequest.destroy();
@@ -104,4 +119,5 @@ uses
     begin
         result := fVerbTunnelingEnv;
     end;
+
 end.
