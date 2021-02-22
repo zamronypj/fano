@@ -110,6 +110,7 @@ implementation
                     routeHandler := nil;
                 end;
             finally
+                reqEnv := nil;
                 response := nil;
             end;
         finally
