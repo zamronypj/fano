@@ -76,7 +76,7 @@ uses
         inherited destroy();
     end;
 
-    function TVerbTunnellingEnvironment.overrideMethod() : string;
+    function TXVerbTunnellingEnvironment.overrideMethod() : string;
     var allowed : boolean;
     begin
         result := fRequest.getParsedBodyParam(fVerbOverrideParam);
