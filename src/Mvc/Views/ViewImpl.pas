@@ -69,7 +69,7 @@ type
         function render(
             const viewParams : IViewParameters;
             const response : IResponse
-        ) : IResponse;
+        ) : IResponse; virtual;
 
     end;
 
