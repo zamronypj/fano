@@ -34,7 +34,7 @@ type
     private
         fRequest : IRequest;
         fVerbOverrideParam : shortstring;
-        function overrideMethod() : string;
+        function overrideMethod(const keyName : string) : string;
     public
         constructor create(
             const aEnv : ICGIEnvironment;
@@ -76,7 +76,7 @@ uses
         inherited destroy();
     end;
 
-    function TXVerbTunnellingEnvironment.overrideMethod() : string;
+    function TXVerbTunnellingEnvironment.overrideMethod(const keyName : string) : string;
     var allowed : boolean;
     begin
         result := fRequest.getParsedBodyParam(fVerbOverrideParam);
