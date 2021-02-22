@@ -117,7 +117,7 @@ uses
     begin
         if keyName = 'REQUEST_METHOD' then
         begin
-            result := overrideMethod();
+            result := overrideMethod(keyName);
         end else
         begin
             result := inherited env(keyName);
