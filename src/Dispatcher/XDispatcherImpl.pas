@@ -86,6 +86,7 @@ implementation
     var routeHandler : IRouteHandler;
         request : IRequest;
         response : IResponse;
+        reqEnv : ICGIEnvironment;
     begin
         //build request instance first to allow request be modified
         //or decorated before we run route matching. This to allow
@@ -93,10 +94,12 @@ implementation
         request := requestFactory.build(env, stdIn);
         try
             //use CGI environment from request to allow
-            //request decorate CGI environment
-            response := responseFactory.build(request.env);
+            //request decorate CGI environment. Store it in tmp variable
+            //so we can release reference propery in case exception
+            reqEnv := request.env;
+            response := responseFactory.build(reqEnv);
             try
-                routeHandler := getRouteHandler(request.env);
+                routeHandler := getRouteHandler(reqEnv);
                 try
                     result := fMiddlewareExecutor.execute(
                         request,
