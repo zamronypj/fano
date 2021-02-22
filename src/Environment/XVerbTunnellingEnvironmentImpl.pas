@@ -59,6 +59,11 @@ uses
     sysutils,
     EInvalidMethodImpl;
 
+    procedure makeWeakRef(aInterfaceField: PInterface; const aValue: IInterface);
+    begin
+        PPointer(aInterfaceField)^ := Pointer(aValue);
+    end;
+
     constructor TXVerbTunnellingEnvironment.create(
         const aEnv : ICGIEnvironment;
         const request : IRequest;
@@ -66,7 +71,10 @@ uses
     );
     begin
         inherited create(aEnv);
-        fRequest := request;
+        //this class instance is cross reference
+        //with request instance so store reference request as weak reference to
+        //avoid memory leak
+        makeWeakRef(@fRequest, request);
         fVerbOverrideParam := verbOverrideParam;
     end;
 
