@@ -16,11 +16,15 @@
 DispatcherImpl,
 SimpleDispatcherImpl,
 VerbTunnellingDispatcherImpl,
+XDispatcherImpl,
+XSimpleDispatcherImpl,
 
 DispatcherFactoryImpl,
 SimpleDispatcherFactoryImpl,
 SessionDispatcherFactoryImpl,
 VerbTunnellingDispatcherFactoryImpl,
+XDispatcherFactoryImpl,
+XSimpleDispatcherFactoryImpl,
 
 EInvalidDispatcherImpl,
 EMethodNotAllowedImpl,
@@ -28,3 +32,4 @@ ERouteHandlerNotFoundImpl,
 
 RequestResponseFactoryImpl,
 FcgiRequestResponseFactoryImpl,
+VerbTunnellingRequestResponseFactoryImpl,

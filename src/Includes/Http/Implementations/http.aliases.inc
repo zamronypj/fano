@@ -2,6 +2,7 @@ THeadersFactory = HeadersFactoryImpl.THeadersFactory;
 TRequest = RequestImpl.TRequest;
 TDecoratorRequest = DecoratorRequestImpl.TDecoratorRequest;
 TJsonRequest = JsonRequestImpl.TJsonRequest;
+TVerbTunnellingRequest = VerbTunnellingRequestImpl.TVerbTunnellingRequest;
 TResponse = ResponseImpl.TResponse;
 TJsonResponse = JsonResponseImpl.TJsonResponse;
 TBinaryResponse = BinaryResponseImpl.TBinaryResponse;
