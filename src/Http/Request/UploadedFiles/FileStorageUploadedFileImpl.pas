@@ -128,10 +128,6 @@ resourcestring
      * @param string target path
      * @return current instance
      * @throws EInvalidOperation
-     *------------------------------------------------
-     * Implementor must raise exception when moveTo()
-     * called multiple time
-     * Implementor must check for file permission
      *------------------------------------------------*)
     function TFileStorageUploadedFile.moveTo(const targetPath : string) : IUploadedFile;
     begin
