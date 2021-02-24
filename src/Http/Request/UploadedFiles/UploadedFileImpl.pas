@@ -15,7 +15,6 @@ interface
 
 uses
 
-    InjectableObjectImpl,
     UploadedFileIntf;
 
 type
@@ -213,6 +212,7 @@ resourcestring
         const origFilename : string
     );
     begin
+        //TODO: improve as this may cause memory problem if content is very big
         tmpFile := createTmpFile(content, 'fano-', origFilename);
         tmpFileSize := length(tmpFile);
         tmpMimeType := contentType;
@@ -230,6 +230,8 @@ resourcestring
         begin
             deleteFile(tmpFile);
         end;
+
+        inherited destroy();
     end;
 
     (*!------------------------------------------------
@@ -247,8 +249,12 @@ resourcestring
     begin
         if (fileExists(tmpFile)) then
         begin
-            moveTmpFile(tmpFile, targetPath);
-            deleteFile(tmpFile);
+            if not renameFile(tmpFile, targetPath) then
+            begin
+                //try rename file first, if it fails just copy
+                moveTmpFile(tmpFile, targetPath);
+                deleteFile(tmpFile);
+            end;
         end else
         begin
             raise EInvalidUploadedFile.create(sErrInvalidUploadedFile);
