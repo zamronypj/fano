@@ -23,8 +23,7 @@ uses
 type
 
     (*!------------------------------------------------
-     * interface for any class having capability to manage
-     * local disk storage
+     * class having capability to manage local disk storage
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)

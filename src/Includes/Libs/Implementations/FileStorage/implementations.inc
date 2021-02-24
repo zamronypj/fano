@@ -15,10 +15,12 @@
 LocalDiskFileImpl,
 LocalDiskDirectoryImpl,
 LocalDiskStorageImpl,
+LocalDiskStorageFactoryImpl,
 
 CompositeFileImpl,
 CompositeDirectoryImpl,
 CompositeStorageImpl,
+CompositeStorageFactoryImpl,
 
 AmazonS3FileImpl,
 AmazonS3DirectoryImpl,

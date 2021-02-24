@@ -18,6 +18,7 @@ uses
     FileIntf,
     DirectoryIntf,
     StorageIntf,
+    StorageTypes,
     InjectableObjectImpl;
 
 type
@@ -32,7 +33,7 @@ type
     private
         fStorages : IStorageArray;
     public
-        constructor create(const storages : array of IStorage);
+        constructor create(const storages : IStorageArray);
 
         destructor destroy(); override;
 
@@ -100,14 +101,9 @@ uses
     CompositeDirectoryImpl,
     CompositeFileImpl;
 
-    constructor TCompositeStorage.create(const storages : array of IStorage);
-    var i : integer;
+    constructor TCompositeStorage.create(const storages : IStorageArray);
     begin
-        setlength(fStorages, Length(storages));
-        for i := low(storages) to high(storages) do
-        begin
-            fStorages[i] := storages[i];
-        end;
+        fStorages := storages;
     end;
 
     destructor TCompositeStorage.destroy();

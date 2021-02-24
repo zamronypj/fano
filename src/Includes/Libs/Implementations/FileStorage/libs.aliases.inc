@@ -15,10 +15,12 @@
 TLocalDiskFile = LocalDiskFileImpl.TLocalDiskFile;
 TLocalDiskDirectory = LocalDiskDirectoryImpl.TLocalDiskDirectory;
 TLocalDiskStorage = LocalDiskStorageImpl.TLocalDiskStorage;
+TLocalDiskStorageFactory = LocalDiskStorageFactoryImpl.TLocalDiskStorageFactory;
 
 TCompositeFile = CompositeFileImpl.TCompositeFile;
 TCompositeDirectory = CompositeDirectoryImpl.TCompositeDirectory;
 TCompositeStorage = CompositeStorageImpl.TCompositeStorage;
+TCompositeStorageFactory = CompositeStorageFactoryImpl.TCompositeStorageFactory;
 
 TAmazonS3File = AmazonS3FileImpl.TAmazonS3File;
 TAmazonS3Directory = AmazonS3DirectoryImpl.TAmazonS3Directory;
