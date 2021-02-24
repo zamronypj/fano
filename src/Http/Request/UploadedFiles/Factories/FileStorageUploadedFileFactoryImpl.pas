@@ -32,7 +32,7 @@ type
     private
         fStorage : IStorage;
     public
-        function storage(const storageInst : IStorage) : TFileStorageUploadedFileFactory;
+        constructor create(const storageInst : IStorage);
 
         (*!----------------------------------------
          * create instance of IUploadedFile
@@ -58,12 +58,11 @@ uses
     UploadedFileImpl,
     FileStorageUploadedFileImpl;
 
-    function TFileStorageUploadedFileFactory.storage(
+    constructor TFileStorageUploadedFileFactory.create(
         const storageInst : IStorage
-    ) : TFileStorageUploadedFileFactory;
+    );
     begin
         fStorage := storageInst;
-        result := self;
     end;
 
     (*!----------------------------------------

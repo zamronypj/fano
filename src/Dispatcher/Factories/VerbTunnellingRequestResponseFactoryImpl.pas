@@ -17,7 +17,8 @@ uses
     RequestFactoryIntf,
     ResponseFactoryIntf,
     RequestResponseFactoryIntf,
-    InjectableObjectImpl;
+    InjectableObjectImpl,
+    DecoratorRequestResponseFactoryImpl;
 
 type
 
@@ -27,27 +28,22 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *---------------------------------------------------*)
-    TVerbTunnellingRequestResponseFactory = class(TInjectableObject, IRequestResponseFactory)
+    TVerbTunnellingRequestResponseFactory = class(TDecoratorRequestResponseFactory)
     public
-        function getRequestFactory() : IRequestFactory;
-        function getResponseFactory() : IResponseFactory;
+        function getRequestFactory() : IRequestFactory; override;
     end;
 
 implementation
 
 uses
 
-    RequestFactoryImpl,
-    VerbTunnellingRequestFactoryImpl,
-    ResponseFactoryImpl;
+    VerbTunnellingRequestFactoryImpl;
 
     function TVerbTunnellingRequestResponseFactory.getRequestFactory() : IRequestFactory;
     begin
-        result := TVerbTunnellingRequestFactory.create(TRequestFactory.create());
+        result := TVerbTunnellingRequestFactory.create(
+            inherited getRequestFactory()
+        );
     end;
 
-    function TVerbTunnellingRequestResponseFactory.getResponseFactory() : IResponseFactory;
-    begin
-        result := TResponseFactory.create();
-    end;
 end.
