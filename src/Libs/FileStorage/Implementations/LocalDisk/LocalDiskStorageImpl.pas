@@ -185,8 +185,16 @@ uses
      * @param dstPath destination path
      *-----------------------------------------------*)
     procedure TLocalDiskStorage.move(const srcPath : string; const dstPath : string);
+    var absSrcPath, absDstPath : string;
     begin
-        RenameFile(srcPath, dstPath);
+        absSrcPath := getAbsolutePath(srcPath);
+        absDstPath := getAbsolutePath(dstPath);
+        if not RenameFile(absSrcPath, absDstPath) then
+        begin
+            //rename not supported, try using copy delete
+            getFile(srcPath).copy(absDstPath);
+            deleteFile(absSrcPath);
+        end;
     end;
 
     (*!------------------------------------------------
