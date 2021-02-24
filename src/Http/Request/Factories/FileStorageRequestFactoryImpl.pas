@@ -30,6 +30,7 @@ type
     private
         fStorage : IStorage;
     public
+        constructor create(const storageInst : IStorage);
         function build(const env : ICGIEnvironment; const stdIn : IStdIn) : IRequest;
     end;
 
@@ -46,6 +47,11 @@ uses
     StdInReaderImpl,
     SimpleStdInReaderImpl,
     UriImpl;
+
+    constructor TFileStorageRequestFactory.create(const storageInst : IStorage);
+    begin
+        fStorage := storageInst;
+    end;
 
     function TFileStorageRequestFactory.build(
         const env : ICGIEnvironment;
