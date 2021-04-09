@@ -20,7 +20,6 @@ uses
     ViewStackIntf,
     ViewPushIntf,
     TemplateParserIntf,
-    FileReaderIntf,
     InjectableObjectImpl;
 
 type
@@ -59,6 +58,13 @@ type
         ) : string;
 
         (*!------------------------------------------------
+         * get instance of IViewPush related to this
+         *-----------------------------------------------
+         * @return IViewPush instance
+         *-----------------------------------------------*)
+        function getPusher() : IViewPush;
+
+        (*!------------------------------------------------
          * push template string
          *-----------------------------------------------
          * @param stackName name of stack
@@ -66,6 +72,7 @@ type
          * @return current instance
          *-----------------------------------------------*)
         function push(const stackName : string; const tpl : string) : IViewPush;
+
     end;
 
 implementation
@@ -142,6 +149,16 @@ uses
         begin
             result := '';
         end;
+    end;
+
+    (*!------------------------------------------------
+     * get instance of IViewPush related to this
+     *-----------------------------------------------
+     * @return IViewPush instance
+     *-----------------------------------------------*)
+    function TViewStack.getPusher() : IViewPush;
+    begin
+        result := self;
     end;
 
     (*!------------------------------------------------

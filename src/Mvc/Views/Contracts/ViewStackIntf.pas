@@ -15,7 +15,8 @@ interface
 
 uses
 
-    ViewParametersIntf;
+    ViewParametersIntf,
+    ViewPushIntf;
 
 type
 
@@ -48,6 +49,14 @@ type
             const stackName : string;
             const viewParams : IViewParameters
         ) : string;
+
+        (*!------------------------------------------------
+         * get instance of IViewPush related to this
+         *-----------------------------------------------
+         * @return IViewPush instance
+         *-----------------------------------------------*)
+        function getPusher() : IViewPush;
+        property pusher : IViewPush read getPusher;
     end;
 
 implementation
