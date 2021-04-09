@@ -119,6 +119,7 @@ uses
      * clear all stacked template
      *-----------------------------------------------*)
     procedure TViewStack.clear();
+    var i : integer;
     begin
         for i := 0 to fTemplateStack.count-1 do
         begin
