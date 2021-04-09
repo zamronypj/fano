@@ -35,7 +35,7 @@ type
     private
         fTemplateParser : ITemplateParser;
         fTemplateStack : TStrings;
-        function getStringsByName(const aname : string) : TStrings;
+        function getStringsByName(const stackName : string) : TStrings;
     public
         constructor create(const templateParserInst : ITemplateParser);
         destructor destroy(); override;
