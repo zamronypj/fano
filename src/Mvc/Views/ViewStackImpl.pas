@@ -171,7 +171,7 @@ uses
     function TViewStack.push(const stackName : string; const tpl : string) : IViewPush;
     var strs : TStrings;
     begin
-        strs := getStringsByName(aname);
+        strs := getStringsByName(stackName);
         if assigned(strs) then
         begin
             strs.add(tpl);
@@ -180,7 +180,7 @@ uses
             //stack not created yet, add one
             strs := TStringList.create();
             strs.add(tpl);
-            fTemplateStack.addObject(aname, strs);
+            fTemplateStack.addObject(stackName, strs);
         end;
         result := self;
     end;
