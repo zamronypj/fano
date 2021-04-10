@@ -28,8 +28,11 @@ type
 
         (*!------------------------------------------------
          * clear all stacked template
+         *-----------------------------------------------
+         * @param stackName name of stack to clear. if
+         *        empty, all will be clear
          *-----------------------------------------------*)
-        procedure clear();
+        procedure clear(const stackName : string = '');
 
         (*!------------------------------------------------
          * push template string

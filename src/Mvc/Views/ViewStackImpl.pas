@@ -42,8 +42,11 @@ type
 
         (*!------------------------------------------------
          * clear all stacked template
+         *-----------------------------------------------
+         * @param stackName name of stack to clear. if
+         *        empty, all will be clear
          *-----------------------------------------------*)
-        procedure clear();
+        procedure clear(const stackName : string = '');
 
         (*!------------------------------------------------
          * concat all templates and rendered them as string
@@ -117,15 +120,29 @@ uses
 
     (*!------------------------------------------------
      * clear all stacked template
+     *-----------------------------------------------
+     * @param stackName name of stack to clear. if
+     *        empty, all will be clear
      *-----------------------------------------------*)
-    procedure TViewStack.clear();
+    procedure TViewStack.clear(const stackName : string = '');
     var i : integer;
+        strs : TStrings;
     begin
-        for i := 0 to fTemplateStack.count-1 do
+        if stackName = '' then
         begin
-            fTemplateStack.objects[i].free();
+            for i := 0 to fTemplateStack.count-1 do
+            begin
+                fTemplateStack.objects[i].free();
+            end;
+            fTemplateStack.clear();
+        end else
+        begin
+            strs := getStringsByName(stackName);
+            if assigned(strs) then
+            begin
+                strs.clear();
+            end;
         end;
-        fTemplateStack.clear();
     end;
 
     (*!------------------------------------------------
