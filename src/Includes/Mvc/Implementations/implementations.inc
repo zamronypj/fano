@@ -40,6 +40,7 @@ StrViewPartialImpl,
 ViewPartialFactoryImpl,
 StrViewPartialFactoryImpl,
 ViewStackImpl,
+ViewStackFactoryImpl,
 
 AbstractControllerImpl,
 ControllerImpl,

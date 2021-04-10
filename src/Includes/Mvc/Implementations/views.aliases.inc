@@ -33,3 +33,4 @@ TViewPartialFactory = ViewPartialFactoryImpl.TViewPartialFactory;
 TStrViewPartialFactory = StrViewPartialFactoryImpl.TStrViewPartialFactory;
 
 TViewStack = ViewStackImpl.TViewStack;
+TViewStackFactory = ViewStackFactoryImpl.TViewStackFactory;
