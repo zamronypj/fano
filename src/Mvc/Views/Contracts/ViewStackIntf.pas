@@ -33,11 +33,6 @@ type
         ['{6B173B11-3851-44AA-819E-28D060C7AD05}']
 
         (*!------------------------------------------------
-         * clear all stacked template
-         *-----------------------------------------------*)
-        procedure clear();
-
-        (*!------------------------------------------------
          * concat all templates and rendered them as string
          *-----------------------------------------------
          * @param stackName name of stack
