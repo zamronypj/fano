@@ -7,7 +7,7 @@
  *}
 
 (*! ---------------------------------------------
- * data types declaration unit that is included in fano.pas unit
+ * helper function declaration units that is included in fano.pas unit
  * This file is provided so we can use fano framework
  * by using only one uses to simplify things.
  *

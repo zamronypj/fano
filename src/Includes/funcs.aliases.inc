@@ -7,7 +7,7 @@
  *}
 
 (*! ---------------------------------------------
- * redeclare implementation aliases that is included in fano.pas unit
+ * redeclare helper function aliases that is included in fano.pas unit
  * This file is provided so we can use fano framework
  * by using only one uses to simplify things.
  *

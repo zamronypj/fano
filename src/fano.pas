@@ -36,5 +36,7 @@ type
     {$INCLUDE Includes/funcs.aliases.inc}
 
 implementation
+
     {$INCLUDE Includes/funcs.impl.inc}
+
 end.
