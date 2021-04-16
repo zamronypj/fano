@@ -59,6 +59,7 @@ implementation
 
 uses
 
+    SysUtils,
     StaticFilesMiddlewareImpl,
     KeyValuePairImpl;
 
