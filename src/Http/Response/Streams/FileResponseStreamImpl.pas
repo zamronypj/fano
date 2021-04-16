@@ -235,7 +235,7 @@ uses
      *-------------------------------------*)
     function TFileResponseStream.seek(const offset : int64; const origin : word = FROM_BEGINNING) : int64;
     begin
-        result := fStream.readBuffer(offset, origin);
+        result := fStream.seek(offset, origin);
     end;
 
     (*!------------------------------------------------
