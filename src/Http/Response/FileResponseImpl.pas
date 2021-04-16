@@ -61,7 +61,7 @@ uses
     begin
         result := TFileResponse.create(
             headers().clone() as IHeaders,
-            contentType,
+            fContentType,
             fFilename
         );
     end;
