@@ -43,7 +43,7 @@ implementation
 
 uses
 
-    ReadOnlyFileResponseStreamImpl;
+    FileResponseStreamImpl;
 
     constructor TFileResponse.create(
         const hdrs : IHeaders;
@@ -53,7 +53,7 @@ uses
     var respBody : IResponseStream;
     begin
         fFilename := filename;
-        respBody := TReadOnlyFileResponseStream.create(fFilename);
+        respBody := TFileResponseStream.create(fFilename);
         inherited create(hdrs, strContentType, respBody);
     end;
 
