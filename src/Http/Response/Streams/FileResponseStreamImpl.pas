@@ -210,7 +210,7 @@ uses
      *-----------------------------------------------*)
     procedure TFileResponseStream.readStream(const dstStream : IStreamAdapter; const bytesToRead : int64);
     begin
-        fStream.readStream(dstStream, sizeToRead);
+        fStream.readStream(dstStream, bytesToRead);
     end;
 
     (*!------------------------------------------------
