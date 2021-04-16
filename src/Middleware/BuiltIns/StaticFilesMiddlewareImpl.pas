@@ -93,7 +93,6 @@ uses
         const nextMdlwr : IRequestHandler
     ) : IResponse;
     var filename : string;
-        contentType
     begin
         filename := fBaseDirectory + request.uri().getPath();
         if fileExists(filename) then
