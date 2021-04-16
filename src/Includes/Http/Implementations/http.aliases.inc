@@ -10,6 +10,7 @@ TRedirectResponse = RedirectResponseImpl.TRedirectResponse;
 TNotModifiedResponse = NotModifiedResponseImpl.TNotModifiedResponse;
 TFileResponse = FileResponseImpl.TFileResponse;
 TResponseStream = ResponseStreamImpl.TResponseStream;
+TFileResponseStream = FileResponseStreamImpl.TFileResponseStream;
 
 TUploadedFile = UploadedFileImpl.TUploadedFile;
 TUploadedFileCollection = UploadedFileCollectionImpl.TUploadedFileCollection;
