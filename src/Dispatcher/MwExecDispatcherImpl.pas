@@ -64,7 +64,7 @@ uses
                     env.requestMethod(),
                     //remove any query string parts to avoid messing up pattern matching
                     env.requestUri().stripQueryString()
-                )
+                );
             end;
 
             on e: EMethodNotAllowed do
