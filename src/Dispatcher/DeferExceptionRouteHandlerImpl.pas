@@ -35,10 +35,9 @@ type
      *-------------------------------------------------*)
     TDeferExceptionRouteHandler = class abstract (TInterfacedObject, IRouteHandler, IRequestHandler)
     protected
-        fRequestMethod : string;
-        fRequestUri : string;
+        fExceptionMessage : string;
     public
-        constructor create(const method : string; const uri : string);
+        constructor create(const exceptionMsg : string);
 
         (*!-------------------------------------------
          * get middlewares list
@@ -97,9 +96,9 @@ uses
     NullMiddlewareListImpl,
     NullRouteArgsImpl;
 
-    constructor TDeferExceptionRouteHandler.create(const method : string; const uri : string);
+    constructor TDeferExceptionRouteHandler.create(const exceptionMsg : string);
     begin
-        fRequestMethod := method
+        fExceptionMessage := exceptionMsg;
     end;
 
     (*!-------------------------------------------

@@ -69,9 +69,6 @@ uses
     ) : IResponse;
     begin
         result := response;
-        raise EMethodNotAllowed.createFmt(
-            sMethodNotAllowed,
-            [fRequestMethod, fRequestUri]
-        );
+        raise EMethodNotAllowed.create(fExceptionMessage);
     end;
 end.

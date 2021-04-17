@@ -60,22 +60,14 @@ uses
             on e: ERouteHandlerNotFound do
             begin
                 //route is not exists, defer exception later
-                result := TDeferNotFoundRouteHandler.create(
-                    env.requestMethod(),
-                    //remove any query string parts to avoid messing up pattern matching
-                    env.requestUri().stripQueryString()
-                );
+                result := TDeferNotFoundRouteHandler.create(e.message);
                 exit;
             end;
 
             on e: EMethodNotAllowed do
             begin
                 //defer exception later
-                result := TDeferMethodNotAllowedRouteHandler.create(
-                    env.requestMethod(),
-                    //remove any query string parts to avoid messing up pattern matching
-                    env.requestUri().stripQueryString()
-                );
+                result := TDeferMethodNotAllowedRouteHandler.create(e.message);
                 exit;
             end;
         end;

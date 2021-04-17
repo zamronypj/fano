@@ -69,9 +69,6 @@ uses
     ) : IResponse;
     begin
         result := response;
-        raise ERouteHandlerNotFound.createFmt(
-            sRouteNotFound,
-            [fRequestMethod, fRequestUri]
-        );
+        raise ERouteHandlerNotFound.createFmt(fExceptionMessage);
     end;
 end.
