@@ -15,11 +15,9 @@ interface
 
 uses
 
-    RouteIntf,
-    RequestHandlerIntf,
-    RouteArgsWriterIntf,
+    RequestIntf,
+    ResponseIntf,
     RouteArgsReaderIntf,
-    MiddlewareLinkListIntf,
     DeferExceptionRouteHandlerImpl;
 
 type

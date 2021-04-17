@@ -15,6 +15,8 @@ interface
 
 uses
 
+    RequestIntf,
+    ResponseIntf,
     RouteIntf,
     RouteHandlerIntf,
     RequestHandlerIntf,
