@@ -76,6 +76,8 @@ uses
     var ext : string;
     begin
         ext := ExtractFileExt(filename);
+        //remove dot from ext
+        ext := copy(ext, 2, length(ext)-1);
         if (fMimeTypes.has(ext)) then
         begin
             result := fMimeTypes.getValue(ext);
