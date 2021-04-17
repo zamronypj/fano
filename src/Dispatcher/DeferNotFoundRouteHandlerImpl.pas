@@ -69,6 +69,6 @@ uses
     ) : IResponse;
     begin
         result := response;
-        raise ERouteHandlerNotFound.createFmt(fExceptionMessage);
+        raise ERouteHandlerNotFound.create(fExceptionMessage);
     end;
 end.
