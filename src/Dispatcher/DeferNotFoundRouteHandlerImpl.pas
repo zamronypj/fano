@@ -23,7 +23,7 @@ uses
 type
 
     (*!------------------------------------------------
-     * internal abstract class which is used in MwExecDispatcher
+     * internal class which is used in MwExecDispatcher
      * to defer raise of ERouteHandlerNotFound exception until
      * in handleRequest
      *-------------------------------------------------
@@ -68,6 +68,7 @@ uses
         const args : IRouteArgsReader
     ) : IResponse;
     begin
+        result := response;
         raise ERouteHandlerNotFound.createFmt(
             sRouteNotFound,
             [fRequestMethod, fRequestUri]
