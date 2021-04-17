@@ -65,6 +65,7 @@ uses
                     //remove any query string parts to avoid messing up pattern matching
                     env.requestUri().stripQueryString()
                 );
+                exit;
             end;
 
             on e: EMethodNotAllowed do
@@ -75,6 +76,7 @@ uses
                     //remove any query string parts to avoid messing up pattern matching
                     env.requestUri().stripQueryString()
                 );
+                exit;
             end;
         end;
     end;
