@@ -32,7 +32,9 @@ SysLogLoggerFactoryImpl,
 
 DecoratorLoggerImpl,
 ThreadSafeLoggerImpl,
-ThreadLoggerImpl,
+
+BackgroundThreadLoggerImpl,
+BackgroundThreadLoggerFactoryImpl,
 
 DbLoggerImpl,
 DbLoggerFactoryImpl,
