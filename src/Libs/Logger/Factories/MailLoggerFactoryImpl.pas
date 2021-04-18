@@ -83,10 +83,10 @@ const
     end;
 
     function TMailLoggerFactory.build(const container : IDependencyContainer) : IDependency;
-    var mailer : IMailer;
+    var mailerInst : IMailer;
     begin
-        mailer := container[fMailerSvcName] as IMailer;
-        result := TMailLogger.create(mailer, fTo, fFrom, fPrefix);
+        mailerInst := container[fMailerSvcName] as IMailer;
+        result := TMailLogger.create(mailerInst, fTo, fFrom, fPrefix);
     end;
 
 end.
