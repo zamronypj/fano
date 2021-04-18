@@ -90,7 +90,8 @@ uses
 
     function TMailLogger.buildSubject(
         const level : string;
-        const msg : string
+        const msg : string;
+        const context : ISerializeable
     ) : string;
     begin
         result := fPrefix + '[' + level + '] ';
