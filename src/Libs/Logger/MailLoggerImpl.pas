@@ -94,7 +94,13 @@ uses
         const context : ISerializeable
     ) : string;
     begin
-        result := fPrefix + '[' + level + '] ';
+        if fPrefix = '' then
+        begin
+            result := '[' + level + '] ';
+        end else
+        begin
+            result := fPrefix + ' [' + level + '] ';
+        end;
     end;
 
     function TMailLogger.buildMessage(
@@ -105,6 +111,7 @@ uses
     begin
         result := '[' + level + '] ' +
             FormatDateTime('yyyy-mm-dd hh:nn:ss', Now) +
+            ' ' +
             msg + LineEnding;
 
         if (context <> nil) then
