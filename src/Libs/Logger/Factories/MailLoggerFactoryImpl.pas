@@ -49,7 +49,7 @@ uses
 
 const
 
-    DEFAULT_MAIL_SERVICE = 'mailer';
+    DEFAULT_MAILER_SERVICE = 'mailer';
     DEFAULT_PREFIX = 'Fano';
 
     constructor TMailLoggerFactory.create();
