@@ -75,6 +75,7 @@ implementation
         const context : ISerializeable
     );
     begin
+        inherited create(true);
         fLogger := logger;
         fLevel := level;
         fMessage := msg;
