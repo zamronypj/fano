@@ -22,6 +22,7 @@ type
         username : string;
         password : string;
         timeout : integer;
+        useTls : boolean;
     end;
 
 implementation

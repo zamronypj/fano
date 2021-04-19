@@ -57,6 +57,10 @@ uses
         fSmtp.username := cfg.username;
         fSmtp.password := cfg.password;
         fSmtp.ConnectTimeout := cfg.timeout;
+        if cfg.useTls then
+        begin
+            cfg.useTLS := utUseExplicitTLS;
+        end;
     end;
 
     destructor TIndyMailer.destroy();
