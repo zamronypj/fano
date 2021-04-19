@@ -69,8 +69,8 @@ uses
         try
             msg.from.address := composeSender();
             msg.recipients.EmailAddresses := composeRecipient();
-            msg.subject := fSubject;
-            msg.body.text := fMessage;
+            msg.subject := getSubject();
+            msg.body.text := getMessage();
             if (attachment <> nil) and (attachment.Size >0) then
             begin
                 msg.attachment := TIdAttachment.create(msg.messageParts, attachment);
