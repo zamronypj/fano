@@ -60,7 +60,7 @@ uses
         fSmtp.ConnectTimeout := cfg.timeout;
         if cfg.useTls then
         begin
-            cfg.useTLS := utUseExplicitTLS;
+            fSmtp.useTLS := utUseExplicitTLS;
         end;
     end;
 
