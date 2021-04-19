@@ -46,8 +46,7 @@ uses
     IdMessage,
     IdAttachment,
     IdAttachmentMemory,
-    IdExplicitTLSClientServerBase,
-    httpprotocol;
+    IdExplicitTLSClientServerBase;
 
     constructor TIndyMailer.create(const cfg : TSmtpConfig);
     begin
