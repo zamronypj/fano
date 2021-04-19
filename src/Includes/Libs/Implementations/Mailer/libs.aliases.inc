@@ -16,3 +16,8 @@ TAbstractMailer = AbstractMailerImpl.TAbstractMailer;
 
 TSendmailMailer = SendmailMailerImpl.TSendmailMailer;
 TSendmailMailerFactory = SendmailMailerFactoryImpl.TSendmailMailerFactory;
+
+{$IFDEF USE_INDY}
+TIndyMailer =IndyMailerImpl.TIndyMailer;
+TIndyMailerFactory = IndyMailerFactoryImpl.TIndyMailerFactory;
+{$ENDIF}
