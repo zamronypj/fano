@@ -86,6 +86,8 @@ implementation
 
     procedure TLoggerThread.execute();
     begin
+        //to simplify things we assumed fLogger
+        //is thread-safe
         fLogger.log(fLevel, fMessage, fContext);
     end;
 
