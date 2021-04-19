@@ -74,13 +74,14 @@ implementation
         const msg : string;
         const context : ISerializeable
     );
+    const SUSPENDED_THREAD = true;
     begin
-        inherited create(true);
+        inherited create(SUSPENDED_THREAD);
+        FreeOnTerminate := true;
         fLogger := logger;
         fLevel := level;
         fMessage := msg;
         fContext := context;
-        FreeOnTerminate := true;
     end;
 
     procedure TLoggerThread.execute();
