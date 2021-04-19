@@ -56,6 +56,7 @@ uses
         fSmtp.port := cfg.port;
         fSmtp.username := cfg.username;
         fSmtp.password := cfg.password;
+        fSmtp.ConnectTimout := cfg.timeout;
     end;
 
     destructor TIndyMailer.destroy();
@@ -82,7 +83,7 @@ uses
             end;
 
             try
-                fSmtp.connect(fConfig.timeout);
+                fSmtp.connect();
                 try
                     fSmtp.send(msg);
                 finally
