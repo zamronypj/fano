@@ -68,7 +68,7 @@ uses
         msg := TIdMessage.create(nil);
         try
             msg.from.address := composeSender();
-            msg.recipients.address := composeRecipient();
+            msg.recipients.EmailAddresses := composeRecipient();
             msg.subject := fSubject;
             msg.body.text := fMessage;
             if (attachment <> nil) and (attachment.Size >0) then
