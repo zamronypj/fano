@@ -44,6 +44,8 @@ uses
     Classes,
     SysUtils,
     IdMessage,
+    IdAttachment,
+    IdAttachmentMemory,
     httpprotocol;
 
     constructor TIndyMailer.create(const cfg : TSmtpConfig);
@@ -64,6 +66,7 @@ uses
 
     function TIndyMailer.send() : boolean;
     var msg : TIdMessage;
+        attach : TIdAttachmentMemory;
     begin
         msg := TIdMessage.create(nil);
         try
@@ -71,18 +74,29 @@ uses
             msg.recipients.EmailAddresses := composeRecipient();
             msg.subject := subject;
             msg.body.text := body;
+
+            attach := nil;
             if (attachment <> nil) and (attachment.Size >0) then
             begin
-                msg.attachment := TIdAttachment.create(msg.messageParts, attachment);
+                attach := TIdAttachmentMemory.create(msg.messageParts, attachment);
             end;
-            fSmtp.connect(fConfig.timeout);
-            fSmtp.send(msg);
+
+            try
+                fSmtp.connect(fConfig.timeout);
+                try
+                    fSmtp.send(msg);
+                finally
+                    if fSmtp.connected then
+                    begin
+                        fSmtp.disconnect();
+                    end;
+                end;
+            finally
+                attach.free();
+            end;
+
         finally
             msg.free();
-            if fSmtp.connected then
-            begin
-                fSmtp.disconnect();
-            end;
         end;
     end;
 end.
