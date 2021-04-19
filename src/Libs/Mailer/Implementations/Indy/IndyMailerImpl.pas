@@ -56,7 +56,7 @@ uses
         fSmtp.port := cfg.port;
         fSmtp.username := cfg.username;
         fSmtp.password := cfg.password;
-        fSmtp.ConnectTimout := cfg.timeout;
+        fSmtp.ConnectTimeout := cfg.timeout;
     end;
 
     destructor TIndyMailer.destroy();
