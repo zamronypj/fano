@@ -15,7 +15,7 @@ uses
 
     DependencyIntf,
     DependencyContainerIntf,
-    FactoryImpl;
+    DecoratorFactoryImpl;
 
 type
 
