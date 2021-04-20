@@ -15,6 +15,7 @@ interface
 
 uses
 
+    Classes,
     synautil,
     smtpsend,
     ssl_openssl,
@@ -50,7 +51,6 @@ implementation
 
 uses
 
-    Classes,
     SysUtils;
 
     constructor TSynapseMailer.create(const cfg : TMailerConfig);
