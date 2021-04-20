@@ -39,7 +39,7 @@ uses
 
     function TIndyMailerFactory.build(const container : IDependencyContainer) : IDependency;
     begin
-        result := TIndyMailer.create(fConfig);
+        result := TIndyMailer.create(fMailerConfig);
     end;
 
 end.
