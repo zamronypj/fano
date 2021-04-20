@@ -34,6 +34,7 @@ type
     private
         fMailerConfig : TMailerConfig;
 
+        procedure raiseError(const fmt :string; const reason: string);
         function sendRaw(
             const cfg : TMailerConfig;
             const mailFrom :string;
@@ -50,11 +51,17 @@ implementation
 
 uses
 
-    SysUtils;
+    SysUtils,
+    EMailerImpl;
 
     constructor TSynapseMailer.create(const cfg : TMailerConfig);
     begin
         fMailerConfig := cfg;
+    end;
+
+    procedure TSynapseMailer.raiseError(const fmt :string; const reason: string);
+    begin
+        raise EMailer.createFmt(fmt, [reason]);
     end;
 
     function TSynapseMailer.sendRaw(
@@ -101,9 +108,23 @@ uses
                     if result then
                     begin
                         result := SMTP.MailData(mailData);
+                        if not result then
+                        begin
+                            raiseError('SMTP Error MailData: %s', smtp.EnhCodeString);
+                        end;
+                    end else
+                    begin
+                        raiseError('SMTP Error MailTo: %s', smtp.EnhCodeString);
                     end;
+                end else
+                begin
+                    raiseError('SMTP Error MailFrom: %s', smtp.EnhCodeString);
                 end;
+
                 SMTP.Logout();
+            end else
+            begin
+                raiseError('SMTP Error Login: %s', smtp.EnhCodeString);
             end;
         finally
             SMTP.free();
