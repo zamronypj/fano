@@ -16,3 +16,8 @@ AbstractMailerImpl,
 
 SendmailMailerImpl,
 SendmailMailerFactoryImpl,
+
+{$IFDEF USE_INDY}
+IndyMailerImpl,
+IndyMailerFactoryImpl,
+{$ENDIF}
