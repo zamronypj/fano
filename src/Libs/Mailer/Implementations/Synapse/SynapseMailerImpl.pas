@@ -73,7 +73,7 @@ uses
         SMTP := TSMTPSend.create();
         try
             SMTP.AutoTLS := cfg.useTLS;
-            SMTP.useSSL := cfg.useSSL;
+            SMTP.FullSSL := cfg.useSSL;
             SMTP.TargetHost := cfg.host;
             SMTP.TargetPort := IntToStr(cfg.port);
             SMTP.Username := cfg.username;
