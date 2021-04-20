@@ -48,6 +48,7 @@ implementation
         fMailerConfig := default(TMailerConfig);
         fMailerConfig.host := 'localhost';
         fMailerConfig.port := 25;
+        fMailerConfig.timeout := 5000;
     end;
 
     function TAbstractMailerFactory.host(const smtpHost : string) : TAbstractMailerFactory;

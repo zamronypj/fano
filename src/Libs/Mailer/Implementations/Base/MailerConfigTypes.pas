@@ -27,6 +27,7 @@ type
         password : string;
         useTLS : boolean;
         useSSL : boolean;
+        timeout : word;
     end;
 
 implementation

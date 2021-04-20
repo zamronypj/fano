@@ -21,3 +21,8 @@ TSendmailMailerFactory = SendmailMailerFactoryImpl.TSendmailMailerFactory;
 TSynapseMailer = SynapseMailerImpl.TSynapseMailer;
 TSynapseMailerFactory = SynapseMailerFactoryImpl.TSynapseMailerFactory;
 {$ENDIF}
+
+{$IFDEF USE_INDY}
+TIndyMailer = IndyMailerImpl.TIndyMailer;
+TIndyMailerFactory = IndyMailerFactoryImpl.TIndyMailerFactory;
+{$ENDIF}

@@ -21,3 +21,8 @@ SendmailMailerFactoryImpl,
 SynapseMailerImpl,
 SynapseMailerFactoryImpl,
 {$ENDIF}
+
+{$IFDEF USE_INDY}
+IndyMailerImpl,
+IndyMailerFactoryImpl,
+{$ENDIF}
