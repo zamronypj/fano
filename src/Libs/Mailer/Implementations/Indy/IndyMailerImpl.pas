@@ -16,7 +16,7 @@ interface
 uses
 
     IdSMTP,
-    IndyTypes,
+    MailerConfigTypes,
     AbstractMailerImpl;
 
 type
@@ -30,9 +30,8 @@ type
     TIndyMailer = class(TAbstractMailer)
     private
         fSmtp : TIdSMTP;
-        fConfig : TSmtpConfig;
     public
-        constructor create(const cfg : TSmtpConfig);
+        constructor create(const cfg : TMailerConfig);
         destructor destroy(); override;
         function send() : boolean; override;
     end;
@@ -48,10 +47,9 @@ uses
     IdAttachmentMemory,
     IdExplicitTLSClientServerBase;
 
-    constructor TIndyMailer.create(const cfg : TSmtpConfig);
+    constructor TIndyMailer.create(const cfg : TMailerConfig);
     begin
         fSmtp := TIdSMTP.create();
-        fConfig := cfg;
         fSmtp.host := cfg.host;
         fSmtp.port := cfg.port;
         fSmtp.username := cfg.username;
