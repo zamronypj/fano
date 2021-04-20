@@ -128,7 +128,7 @@ uses
             mailData.text := mailData.text + body;
             result := sendRaw(fMailerConfig, mailFrom, mailTo, mailData);
         finally
-            headers.free();
+            mailData.free();
         end;
     end;
 end.
