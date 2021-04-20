@@ -16,10 +16,9 @@ interface
 uses
 
     Classes,
+    ssl_openssl,
     synautil,
     smtpsend,
-    ssl_openssl,
-    ssl_openssl_lib,
     AbstractMailerImpl,
     MailerConfigTypes;
 
