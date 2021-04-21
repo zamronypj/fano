@@ -50,7 +50,7 @@ uses
     ProtocolProcessorIntf,
     RunnableIntf,
     MhdConnectionAwareIntf,
-    TMhdProcessorImpl,
+    MhdProcessorImpl,
     MhdStdOutWriterImpl,
     ThreadSafeMhdConnectionAwareImpl,
     ThreadSafeProtocolProcessorImpl;
@@ -74,12 +74,12 @@ uses
             aStdOut,
             aConnAware
         );
-        fProtocol := TThreadSafeMhdProcessor.create(
+        fProtocol := TMhdProcessor.create(
             fLock,
             fStdOut as IMhdConnectionAware,
             svrConfig
         );
-        //TThreadSafeMhdProcessor also act as server
+        //TMhdProcessor also act as server
         fServer := fProtocol as IRunnableWithDataNotif;
     end;
 
