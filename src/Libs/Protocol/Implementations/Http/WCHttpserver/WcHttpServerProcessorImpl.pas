@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit MhdProcessorImpl;
+unit WcHttpServerProcessorImpl;
 
 interface
 
@@ -16,6 +16,7 @@ interface
 uses
 
     abstracthttpserver,
+    wchttp2server,
     StreamAdapterIntf,
     CloseableIntf,
     RunnableIntf,
