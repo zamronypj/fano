@@ -461,7 +461,7 @@ uses
             tlsKey := readFile(fSvrConfig.tlsKey);
             tlsCert := readFile(fSvrConfig.tlsCert);
 
-            if fSvrConfig.threaded and (fSvrConfig.threadPoolSize = 0) then
+            if fSvrConfig.threadPoolSize = 0 then
             begin
                 svrDaemon := MHD_start_daemon(
                     //TODO: MHD_USE_SSL is now deprecated and replaced with MHD_USE_TLS
@@ -504,7 +504,7 @@ uses
             end;
         end else
         begin
-            if fSvrConfig.threaded and (fSvrConfig.threadPoolSize = 0) then
+            if fSvrConfig.threadPoolSize = 0 then
             begin
                 svrDaemon := MHD_start_daemon(
                     flags,
