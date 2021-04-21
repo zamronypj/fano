@@ -439,9 +439,15 @@ uses
         flags := MHD_NO_FLAG;
         if fSvrConfig.threaded and (fSvrConfig.threadPoolSize = 0) then
         begin
-            flags := flags or MHD_USE_THREAD_PER_CONNECTION;
+            flags := flags or
+                //MHD_USE_SELECT_INTERNALLY is deprecated and should be
+                //replace with MHD_USE_INTERNAL_POLLING_THREAD
+                MHD_USE_SELECT_INTERNALLY or
+                MHD_USE_THREAD_PER_CONNECTION;
         end else
         begin
+            //MHD_USE_EPOLL_INTERNALLY_LINUX_ONLY is deprecated,
+            //should use MHD_USE_EPOLL_INTERNAL_THREAD
             flags := flags or MHD_USE_EPOLL_INTERNALLY_LINUX_ONLY;
         end;
 
