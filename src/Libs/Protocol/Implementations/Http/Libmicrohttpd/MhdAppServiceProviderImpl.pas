@@ -51,38 +51,17 @@ uses
     RunnableIntf,
     MhdConnectionAwareIntf,
     MhdProcessorImpl,
-    MhdStdOutWriterImpl,
-    ThreadSafeMhdConnectionAwareImpl,
-    ThreadSafeProtocolProcessorImpl;
+    MhdStdOutWriterImpl;
 
     constructor TMhdAppServiceProvider.create(
         const actualSvc : IDaemonAppServiceProvider;
         const svrConfig : TMhdSvrConfig
     );
-    var astdout : IStdOut;
-        aConnAware : IMhdConnectionAware;
-        aProtocol : IProtocolProcessor;
-        aServer : IRunnableWithDataNotif;
     begin
-        //create lock before anything
-        fLock := TCriticalSection.create();
         inherited create(actualSvc);
-        aStdOut := TMhdStdOutWriter.create();
-        aConnAware := aStdOut as IMhdConnectionAware;
-        fStdOut := TThreadSafeMhdConnectionAware.create(
-            fLock,
-            aStdOut,
-            aConnAware
-        );
-        aProtocol := TMhdProcessor.create(fStdOut as IMhdConnectionAware, svrConfig);
+        fStdOut := TMhdStdOutWriter.create();
+        fProtocol := TMhdProcessor.create(fStdOut as IMhdConnectionAware, svrConfig);
         //TMhdProcessor also act as server
-        aServer := aProtocol as IRunnableWithDataNotif;
-        fProtocol := TThreadSafeProtocolProcessor.create(
-            fLock,
-            aProtocol,
-            aServer,
-            aServer
-        );
         fServer := fProtocol as IRunnableWithDataNotif;
     end;
 
