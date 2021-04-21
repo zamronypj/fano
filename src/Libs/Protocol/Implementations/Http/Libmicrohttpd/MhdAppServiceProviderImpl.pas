@@ -47,10 +47,14 @@ implementation
 uses
 
     StdOutIntf,
+    ProtocolProcessorIntf,
+    RunnableWithDataNotifIntf,
+    RunnableIntf,
     MhdConnectionAwareIntf,
     MhdProcessorImpl,
     MhdStdOutWriterImpl,
-    ThreadSafeMhdConnectionAwareImpl;
+    ThreadSafeMhdConnectionAwareImpl,
+    ThreadSafeProtocolProcessorImpl;
 
     constructor TMhdAppServiceProvider.create(
         const actualSvc : IDaemonAppServiceProvider;
@@ -58,6 +62,8 @@ uses
     );
     var astdout : IStdOut;
         aConnAware : IMhdConnectionAware;
+        aProtocol : IProtocolProcessor;
+        aServer : IRunnableWithDataNotif;
     begin
         //create lock before anything
         fLock := TCriticalSection.create();
@@ -69,8 +75,15 @@ uses
             aStdOut,
             aConnAware
         );
-        fProtocol := TMhdProcessor.create(fStdOut as IMhdConnectionAware, svrConfig);
+        aProtocol := TMhdProcessor.create(fStdOut as IMhdConnectionAware, svrConfig);
         //TMhdProcessor also act as server
+        aServer := aProtocol as IRunnableWithDataNotif;
+        fProtocol := TThreadSafeProtocolProcessor.create(
+            fLock,
+            aProtocol,
+            aServer,
+            aServer
+        );
         fServer := fProtocol as IRunnableWithDataNotif;
     end;
 
