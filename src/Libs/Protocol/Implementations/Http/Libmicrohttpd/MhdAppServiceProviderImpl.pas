@@ -48,7 +48,6 @@ uses
 
     StdOutIntf,
     ProtocolProcessorIntf,
-    RunnableWithDataNotifIntf,
     RunnableIntf,
     MhdConnectionAwareIntf,
     MhdProcessorImpl,
