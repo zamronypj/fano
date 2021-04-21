@@ -50,7 +50,7 @@ uses
     ProtocolProcessorIntf,
     RunnableIntf,
     MhdConnectionAwareIntf,
-    ThreadSafeMhdProcessorImpl,
+    TMhdProcessorImpl,
     MhdStdOutWriterImpl,
     ThreadSafeMhdConnectionAwareImpl,
     ThreadSafeProtocolProcessorImpl;
