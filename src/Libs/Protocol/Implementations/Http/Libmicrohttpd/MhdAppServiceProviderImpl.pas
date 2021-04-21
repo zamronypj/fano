@@ -46,6 +46,7 @@ implementation
 
 uses
 
+    StdOutIntf,
     MhdConnectionAwareIntf,
     MhdProcessorImpl,
     MhdStdOutWriterImpl,
