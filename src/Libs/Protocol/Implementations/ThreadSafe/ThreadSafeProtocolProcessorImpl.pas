@@ -178,13 +178,11 @@ implementation
      *-------------------------------------------------*)
     function TThreadSafeProtocolProcessor.run() : IRunnable;
     begin
-        fLock.acquire();
-        try
-            fActualRunnnable.run();
-            result := self;
-        finally
-            fLock.release();
-        end;
+        //intentionally not wrap inside critical section otherwise
+        //critical section never release because
+        //it will never terminate until application is shutdown
+        fActualRunnnable.run();
+        result := self;
     end;
 
     (*!------------------------------------------------
