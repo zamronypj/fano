@@ -5,7 +5,7 @@
  * @copyright Copyright (c) 2018 - 2021 Zamrony P. Juhara
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
-unit ThreadSafeMhdAppServiceProviderImpl;
+unit MhdAppServiceProviderImpl;
 
 interface
 
@@ -29,7 +29,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------}
-    TThreadSafeMhdAppServiceProvider = class (TProtocolAppServiceProvider)
+    TMhdAppServiceProvider = class (TProtocolAppServiceProvider)
     private
         fServer : IRunnableWithDataNotif;
         fLock : TCriticalSection;
@@ -55,7 +55,7 @@ uses
     ThreadSafeMhdConnectionAwareImpl,
     ThreadSafeProtocolProcessorImpl;
 
-    constructor TThreadSafeMhdAppServiceProvider.create(
+    constructor TMhdAppServiceProvider.create(
         const actualSvc : IDaemonAppServiceProvider;
         const svrConfig : TMhdSvrConfig
     );
@@ -83,7 +83,7 @@ uses
         fServer := fProtocol as IRunnableWithDataNotif;
     end;
 
-    destructor TThreadSafeMhdAppServiceProvider.destroy();
+    destructor TMhdAppServiceProvider.destroy();
     begin
         fServer := nil;
         inherited destroy();
@@ -91,7 +91,7 @@ uses
         fLock.free();
     end;
 
-    function TThreadSafeMhdAppServiceProvider.getServer() : IRunnableWithDataNotif;
+    function TMhdAppServiceProvider.getServer() : IRunnableWithDataNotif;
     begin
         result := fServer;
     end;

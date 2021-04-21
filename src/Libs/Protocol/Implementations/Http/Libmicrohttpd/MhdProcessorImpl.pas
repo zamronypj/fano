@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit ThreadSafeMhdProcessorImpl;
+unit MhdProcessorImpl;
 
 interface
 
@@ -36,7 +36,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TThreadSafeMhdProcessor = class(TInterfacedObject, IProtocolProcessor, IRunnable, IRunnableWithDataNotif)
+    TMhdProcessor = class(TInterfacedObject, IProtocolProcessor, IRunnable, IRunnableWithDataNotif)
     private
         fLock :TCriticalSection;
         fSvrConfig : TMhdSvrConfig;
@@ -153,7 +153,7 @@ uses
     NullStreamAdapterImpl,
     FileUtils;
 
-    constructor TThreadSafeMhdProcessor.create(
+    constructor TMhdProcessor.create(
         const lock : TCriticalSection;
         const aConnectionAware : IMhdConnectionAware;
         const svrConfig : TMhdSvrConfig
@@ -168,13 +168,13 @@ uses
         fStdIn := nil;
     end;
 
-    destructor TThreadSafeMhdProcessor.destroy();
+    destructor TMhdProcessor.destroy();
     begin
         resetInternalVars();
         inherited destroy();
     end;
 
-    procedure TThreadSafeMhdProcessor.resetInternalVars();
+    procedure TMhdProcessor.resetInternalVars();
     begin
         fRequestReadyListener := nil;
         fDataListener := nil;
@@ -186,7 +186,7 @@ uses
     (*!------------------------------------------------
      * process request stream
      *-----------------------------------------------*)
-    function TThreadSafeMhdProcessor.process(
+    function TMhdProcessor.process(
         const stream : IStreamAdapter;
         const streamCloser : ICloseable;
         const streamId : IStreamId
@@ -200,7 +200,7 @@ uses
     (*!------------------------------------------------
      * get StdIn stream for complete request
      *-----------------------------------------------*)
-    function TThreadSafeMhdProcessor.getStdIn() : IStreamAdapter;
+    function TMhdProcessor.getStdIn() : IStreamAdapter;
     begin
         result := fStdIn;
     end;
@@ -210,7 +210,7 @@ uses
      *-----------------------------------------------
      * @return current instance
      *-----------------------------------------------*)
-    function TThreadSafeMhdProcessor.setReadyListener(const listener : IReadyListener) : IProtocolProcessor;
+    function TMhdProcessor.setReadyListener(const listener : IReadyListener) : IProtocolProcessor;
     begin
         fRequestReadyListener := listener;
         result := self;
@@ -222,12 +222,12 @@ uses
      *-----------------------------------------------
      * @return number of bytes of complete request
      *-----------------------------------------------*)
-    function TThreadSafeMhdProcessor.expectedSize(const buff : IStreamAdapter) : int64;
+    function TMhdProcessor.expectedSize(const buff : IStreamAdapter) : int64;
     begin
         result := 0;
     end;
 
-    procedure TThreadSafeMhdProcessor.waitUntilTerminate();
+    procedure TMhdProcessor.waitUntilTerminate();
     var fds : TFDSet;
     begin
         fds := default(TFDSet);
@@ -253,7 +253,7 @@ uses
         aptr : ppointer
     ): cint; cdecl;
     begin
-        result := TThreadSafeMhdProcessor(acontext).handleReq(
+        result := TMhdProcessor(acontext).handleReq(
             aconnection,
             aurl,
             amethod,
@@ -264,7 +264,7 @@ uses
         );
     end;
 
-    function TThreadSafeMhdProcessor.buildEnv(
+    function TMhdProcessor.buildEnv(
         aconnection : PMHD_Connection;
         aurl : libmicrohttpd.pcchar;
         amethod : libmicrohttpd.pcchar;
@@ -283,7 +283,7 @@ uses
         );
     end;
 
-    function TThreadSafeMhdProcessor.handleReq(
+    function TMhdProcessor.handleReq(
         aconnection : PMHD_Connection;
         aurl : libmicrohttpd.pcchar;
         amethod : libmicrohttpd.pcchar;
@@ -331,7 +331,7 @@ uses
         end;
     end;
 
-    function TThreadSafeMhdProcessor.handleFileNotFoundReq(
+    function TMhdProcessor.handleFileNotFoundReq(
         aconnection : PMHD_Connection;
         aurl : libmicrohttpd.pcchar;
         amethod : libmicrohttpd.pcchar;
@@ -394,7 +394,7 @@ uses
         end;
     end;
 
-    function TThreadSafeMhdProcessor.handleStaticFileReq(
+    function TMhdProcessor.handleStaticFileReq(
         aconnection : PMHD_Connection;
         aurl : libmicrohttpd.pcchar;
         amethod : libmicrohttpd.pcchar;
@@ -430,7 +430,7 @@ uses
      *-------------------------------------------------
      * @return current instance
      *-------------------------------------------------*)
-    function TThreadSafeMhdProcessor.tryRun() : IRunnable;
+    function TMhdProcessor.tryRun() : IRunnable;
     var
         svrDaemon : PMHD_Daemon;
         tlsKey, tlsCert : string;
@@ -557,7 +557,7 @@ uses
      *-------------------------------------------------
      * @return current instance
      *-------------------------------------------------*)
-    function TThreadSafeMhdProcessor.run() : IRunnable;
+    function TMhdProcessor.run() : IRunnable;
     begin
         try
             result := tryRun();
@@ -577,7 +577,7 @@ uses
      * @param dataListener, class that wish to be notified
      * @return true current instance
      *-----------------------------------------------*)
-    function TThreadSafeMhdProcessor.setDataAvailListener(const dataListener : IDataAvailListener) : IRunnableWithDataNotif;
+    function TMhdProcessor.setDataAvailListener(const dataListener : IDataAvailListener) : IRunnableWithDataNotif;
     begin
         fDataListener := dataListener;
         result := self;
