@@ -80,6 +80,7 @@ type
     end;
 
 implementation
+
     constructor TThreadSafeMhdConnectionAware.create(
         const lock : TCriticalSection;
         const actualStdOut : IStdOut;
@@ -102,6 +103,7 @@ implementation
         fLock.acquire();
         try
             fActualStdOut.setStream(astream);
+            result := self;
         finally
             fLock.release();
         end;
@@ -118,6 +120,7 @@ implementation
         fLock.acquire();
         try
             fActualStdOut.write(str);
+            result := self;
         finally
             fLock.release();
         end;
@@ -134,6 +137,7 @@ implementation
         fLock.acquire();
         try
             fActualStdOut.writeln(str);
+            result := self;
         finally
             fLock.release();
         end;
@@ -161,11 +165,10 @@ implementation
     begin
         fLock.acquire();
         try
-            result := fActualConnectionAware.setConnection(aconnection);
+            fActualConnectionAware.setConnection(aconnection);
         finally
             fLock.release();
         end;
     end;
-
 
 end.
