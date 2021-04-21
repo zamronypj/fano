@@ -5,7 +5,7 @@
  * @copyright Copyright (c) 2018 - 2021 Zamrony P. Juhara
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
-unit MhdAppServiceProviderImpl;
+unit ThreadSafeMhdAppServiceProviderImpl;
 
 interface
 
@@ -29,7 +29,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------}
-    TMhdAppServiceProvider = class (TProtocolAppServiceProvider)
+    TThreadSafeMhdAppServiceProvider = class (TProtocolAppServiceProvider)
     private
         fServer : IRunnableWithDataNotif;
         fLock : TCriticalSection;
@@ -50,22 +50,40 @@ uses
     ProtocolProcessorIntf,
     RunnableIntf,
     MhdConnectionAwareIntf,
-    MhdProcessorImpl,
-    MhdStdOutWriterImpl;
+    ThreadSafeMhdProcessorImpl,
+    MhdStdOutWriterImpl,
+    ThreadSafeMhdConnectionAwareImpl,
+    ThreadSafeProtocolProcessorImpl;
 
-    constructor TMhdAppServiceProvider.create(
+    constructor TThreadSafeMhdAppServiceProvider.create(
         const actualSvc : IDaemonAppServiceProvider;
         const svrConfig : TMhdSvrConfig
     );
+    var astdout : IStdOut;
+        aConnAware : IMhdConnectionAware;
+        aProtocol : IProtocolProcessor;
+        aServer : IRunnableWithDataNotif;
     begin
+        //create lock before anything
+        fLock := TCriticalSection.create();
         inherited create(actualSvc);
-        fStdOut := TMhdStdOutWriter.create();
-        fProtocol := TMhdProcessor.create(fStdOut as IMhdConnectionAware, svrConfig);
-        //TMhdProcessor also act as server
+        aStdOut := TMhdStdOutWriter.create();
+        aConnAware := aStdOut as IMhdConnectionAware;
+        fStdOut := TThreadSafeMhdConnectionAware.create(
+            fLock,
+            aStdOut,
+            aConnAware
+        );
+        fProtocol := TThreadSafeMhdProcessor.create(
+            fLock,
+            fStdOut as IMhdConnectionAware,
+            svrConfig
+        );
+        //TThreadSafeMhdProcessor also act as server
         fServer := fProtocol as IRunnableWithDataNotif;
     end;
 
-    destructor TMhdAppServiceProvider.destroy();
+    destructor TThreadSafeMhdAppServiceProvider.destroy();
     begin
         fServer := nil;
         inherited destroy();
@@ -73,7 +91,7 @@ uses
         fLock.free();
     end;
 
-    function TMhdAppServiceProvider.getServer() : IRunnableWithDataNotif;
+    function TThreadSafeMhdAppServiceProvider.getServer() : IRunnableWithDataNotif;
     begin
         result := fServer;
     end;

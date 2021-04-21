@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit MhdProcessorImpl;
+unit ThreadSafeMhdProcessorImpl;
 
 interface
 
@@ -26,7 +26,8 @@ uses
     DataAvailListenerIntf,
     EnvironmentIntf,
     MhdConnectionAwareIntf,
-    MhdSvrConfigTypes;
+    MhdSvrConfigTypes,
+    SyncObjs;
 
 type
 
@@ -35,14 +36,14 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TMhdProcessor = class(TInterfacedObject, IProtocolProcessor, IRunnable, IRunnableWithDataNotif)
+    TThreadSafeMhdProcessor = class(TInterfacedObject, IProtocolProcessor, IRunnable, IRunnableWithDataNotif)
     private
+        fLock :TCriticalSection;
         fSvrConfig : TMhdSvrConfig;
         fRequestReadyListener : IReadyListener;
         fDataListener : IDataAvailListener;
         fStdIn : IStreamAdapter;
         fConnectionAware : IMhdConnectionAware;
-
         procedure resetInternalVars();
         procedure waitUntilTerminate();
 
@@ -86,6 +87,7 @@ type
         function tryRun() : IRunnable;
     public
         constructor create(
+            const lock : TCriticalSection;
             const aConnectionAware : IMhdConnectionAware;
             const svrConfig : TMhdSvrConfig
         );
@@ -151,12 +153,14 @@ uses
     NullStreamAdapterImpl,
     FileUtils;
 
-    constructor TMhdProcessor.create(
+    constructor TThreadSafeMhdProcessor.create(
+        const lock : TCriticalSection;
         const aConnectionAware : IMhdConnectionAware;
         const svrConfig : TMhdSvrConfig
     );
     begin
         inherited create();
+        fLock := lock;
         fConnectionAware := aConnectionAware;
         fSvrConfig := svrConfig;
         fRequestReadyListener := nil;
@@ -164,24 +168,25 @@ uses
         fStdIn := nil;
     end;
 
-    destructor TMhdProcessor.destroy();
+    destructor TThreadSafeMhdProcessor.destroy();
     begin
         resetInternalVars();
         inherited destroy();
     end;
 
-    procedure TMhdProcessor.resetInternalVars();
+    procedure TThreadSafeMhdProcessor.resetInternalVars();
     begin
         fRequestReadyListener := nil;
         fDataListener := nil;
         fStdIn := nil;
         fConnectionAware := nil;
+        fLock := nil;
     end;
 
     (*!------------------------------------------------
      * process request stream
      *-----------------------------------------------*)
-    function TMhdProcessor.process(
+    function TThreadSafeMhdProcessor.process(
         const stream : IStreamAdapter;
         const streamCloser : ICloseable;
         const streamId : IStreamId
@@ -195,7 +200,7 @@ uses
     (*!------------------------------------------------
      * get StdIn stream for complete request
      *-----------------------------------------------*)
-    function TMhdProcessor.getStdIn() : IStreamAdapter;
+    function TThreadSafeMhdProcessor.getStdIn() : IStreamAdapter;
     begin
         result := fStdIn;
     end;
@@ -205,7 +210,7 @@ uses
      *-----------------------------------------------
      * @return current instance
      *-----------------------------------------------*)
-    function TMhdProcessor.setReadyListener(const listener : IReadyListener) : IProtocolProcessor;
+    function TThreadSafeMhdProcessor.setReadyListener(const listener : IReadyListener) : IProtocolProcessor;
     begin
         fRequestReadyListener := listener;
         result := self;
@@ -217,12 +222,12 @@ uses
      *-----------------------------------------------
      * @return number of bytes of complete request
      *-----------------------------------------------*)
-    function TMhdProcessor.expectedSize(const buff : IStreamAdapter) : int64;
+    function TThreadSafeMhdProcessor.expectedSize(const buff : IStreamAdapter) : int64;
     begin
         result := 0;
     end;
 
-    procedure TMhdProcessor.waitUntilTerminate();
+    procedure TThreadSafeMhdProcessor.waitUntilTerminate();
     var fds : TFDSet;
     begin
         fds := default(TFDSet);
@@ -248,7 +253,7 @@ uses
         aptr : ppointer
     ): cint; cdecl;
     begin
-        result := TMhdProcessor(acontext).handleReq(
+        result := TThreadSafeMhdProcessor(acontext).handleReq(
             aconnection,
             aurl,
             amethod,
@@ -259,7 +264,7 @@ uses
         );
     end;
 
-    function TMhdProcessor.buildEnv(
+    function TThreadSafeMhdProcessor.buildEnv(
         aconnection : PMHD_Connection;
         aurl : libmicrohttpd.pcchar;
         amethod : libmicrohttpd.pcchar;
@@ -278,7 +283,7 @@ uses
         );
     end;
 
-    function TMhdProcessor.handleReq(
+    function TThreadSafeMhdProcessor.handleReq(
         aconnection : PMHD_Connection;
         aurl : libmicrohttpd.pcchar;
         amethod : libmicrohttpd.pcchar;
@@ -326,7 +331,7 @@ uses
         end;
     end;
 
-    function TMhdProcessor.handleFileNotFoundReq(
+    function TThreadSafeMhdProcessor.handleFileNotFoundReq(
         aconnection : PMHD_Connection;
         aurl : libmicrohttpd.pcchar;
         amethod : libmicrohttpd.pcchar;
@@ -358,23 +363,28 @@ uses
 
             if (aupload_data_size^ = 0) then
             begin
-                //request is complete
-                //set seek position to beginning to avoid EReadError
-                mem.position := 0;
-                fConnectionAware.connection := aconnection;
-                mhdEnv := buildEnv(aconnection, aurl, amethod, aversion);
+                fLock.acquire();
+                try
+                    fConnectionAware.connection := aconnection;
+                    mhdEnv := buildEnv(aconnection, aurl, amethod, aversion);
 
-                //wrap memory stream as IStreamAdapter and let
-                //them free memory when finished
-                mhdStream := TStreamAdapter.create(mem);
+                    //request is complete
+                    //set seek position to beginning to avoid EReadError
+                    mem.position := 0;
+                    //wrap memory stream as IStreamAdapter and let
+                    //them free memory when finished
+                    mhdStream := TStreamAdapter.create(mem);
 
-                fRequestReadyListener.ready(
-                    //we will not use socket stream as we will have our own IStdOut
-                    //that write output with libmicrohttpd
-                    TNullStreamAdapter.create(),
-                    mhdEnv,
-                    mhdStream
-                );
+                    fRequestReadyListener.ready(
+                        //we will not use socket stream as we will have our own IStdOut
+                        //that write output with libmicrohttpd
+                        TNullStreamAdapter.create(),
+                        mhdEnv,
+                        mhdStream
+                    );
+                finally
+                    fLock.release();
+                end;
             end else
             begin
                 mem.writeBuffer(aupload_data^, aupload_data_size^);
@@ -384,7 +394,7 @@ uses
         end;
     end;
 
-    function TMhdProcessor.handleStaticFileReq(
+    function TThreadSafeMhdProcessor.handleStaticFileReq(
         aconnection : PMHD_Connection;
         aurl : libmicrohttpd.pcchar;
         amethod : libmicrohttpd.pcchar;
@@ -420,13 +430,26 @@ uses
      *-------------------------------------------------
      * @return current instance
      *-------------------------------------------------*)
-    function TMhdProcessor.tryRun() : IRunnable;
+    function TThreadSafeMhdProcessor.tryRun() : IRunnable;
     var
         svrDaemon : PMHD_Daemon;
         tlsKey, tlsCert : string;
         flags : cuint;
     begin
-        flags := MHD_USE_EPOLL_INTERNALLY_LINUX_ONLY;
+        flags := MHD_NO_FLAG;
+        if fSvrConfig.threaded and (fSvrConfig.threadPoolSize = 0) then
+        begin
+            flags := flags or
+                //MHD_USE_SELECT_INTERNALLY is deprecated and should be
+                //replace with MHD_USE_INTERNAL_POLLING_THREAD
+                MHD_USE_SELECT_INTERNALLY or
+                MHD_USE_THREAD_PER_CONNECTION;
+        end else
+        begin
+            //MHD_USE_EPOLL_INTERNALLY_LINUX_ONLY is deprecated,
+            //should use MHD_USE_EPOLL_INTERNAL_THREAD
+            flags := flags or MHD_USE_EPOLL_INTERNALLY_LINUX_ONLY;
+        end;
 
         if fSvrConfig.useIPv6 then
         begin
@@ -443,36 +466,79 @@ uses
         begin
             tlsKey := readFile(fSvrConfig.tlsKey);
             tlsCert := readFile(fSvrConfig.tlsCert);
-            svrDaemon := MHD_start_daemon(
-                //TODO: MHD_USE_SSL is now deprecated and replaced with MHD_USE_TLS
-                //but FreePascal header translation not yet support MHD_USE_TLS
-                flags or MHD_USE_SSL,
-                fSvrConfig.port,
-                nil,
-                nil,
-                @handleRequestCallback,
-                self,
-                MHD_OPTION_CONNECTION_TIMEOUT,
-                cuint(fSvrConfig.Timeout),
-                MHD_OPTION_HTTPS_MEM_KEY,
-                libmicrohttpd.pcchar(tlsKey),
-                MHD_OPTION_HTTPS_MEM_CERT,
-                libmicrohttpd.pcchar(tlsCert),
-                MHD_OPTION_END
-            );
+
+            if fSvrConfig.threadPoolSize = 0 then
+            begin
+                svrDaemon := MHD_start_daemon(
+                    //TODO: MHD_USE_SSL is now deprecated and replaced with MHD_USE_TLS
+                    //but FreePascal header translation not yet support MHD_USE_TLS
+                    flags or MHD_USE_SSL,
+                    fSvrConfig.port,
+                    nil,
+                    nil,
+                    @handleRequestCallback,
+                    self,
+                    MHD_OPTION_CONNECTION_TIMEOUT,
+                    cuint(fSvrConfig.Timeout),
+                    MHD_OPTION_HTTPS_MEM_KEY,
+                    libmicrohttpd.pcchar(tlsKey),
+                    MHD_OPTION_HTTPS_MEM_CERT,
+                    libmicrohttpd.pcchar(tlsCert),
+                    MHD_OPTION_END
+                );
+            end else
+            begin
+                svrDaemon := MHD_start_daemon(
+                    //TODO: MHD_USE_SSL is now deprecated and replaced with MHD_USE_TLS
+                    //but FreePascal header translation not yet support MHD_USE_TLS
+                    flags or MHD_USE_SSL,
+                    fSvrConfig.port,
+                    nil,
+                    nil,
+                    @handleRequestCallback,
+                    self,
+                    MHD_OPTION_THREAD_POOL_SIZE,
+                    cuint(fSvrConfig.threadPoolSize),
+                    MHD_OPTION_CONNECTION_TIMEOUT,
+                    cuint(fSvrConfig.Timeout),
+                    MHD_OPTION_HTTPS_MEM_KEY,
+                    libmicrohttpd.pcchar(tlsKey),
+                    MHD_OPTION_HTTPS_MEM_CERT,
+                    libmicrohttpd.pcchar(tlsCert),
+                    MHD_OPTION_END
+                );
+            end;
         end else
         begin
-            svrDaemon := MHD_start_daemon(
-                flags,
-                fSvrConfig.port,
-                nil,
-                nil,
-                @handleRequestCallback,
-                self,
-                MHD_OPTION_CONNECTION_TIMEOUT,
-                cuint(fSvrConfig.Timeout),
-                MHD_OPTION_END
-            );
+            if fSvrConfig.threadPoolSize = 0 then
+            begin
+                svrDaemon := MHD_start_daemon(
+                    flags,
+                    fSvrConfig.port,
+                    nil,
+                    nil,
+                    @handleRequestCallback,
+                    self,
+                    MHD_OPTION_CONNECTION_TIMEOUT,
+                    cuint(fSvrConfig.Timeout),
+                    MHD_OPTION_END
+                );
+            end else
+            begin
+                svrDaemon := MHD_start_daemon(
+                    flags,
+                    fSvrConfig.port,
+                    nil,
+                    nil,
+                    @handleRequestCallback,
+                    self,
+                    MHD_OPTION_THREAD_POOL_SIZE,
+                    cuint(fSvrConfig.threadPoolSize),
+                    MHD_OPTION_CONNECTION_TIMEOUT,
+                    cuint(fSvrConfig.Timeout),
+                    MHD_OPTION_END
+                );
+            end;
         end;
 
         if svrDaemon <> nil then
@@ -491,7 +557,7 @@ uses
      *-------------------------------------------------
      * @return current instance
      *-------------------------------------------------*)
-    function TMhdProcessor.run() : IRunnable;
+    function TThreadSafeMhdProcessor.run() : IRunnable;
     begin
         try
             result := tryRun();
@@ -511,7 +577,7 @@ uses
      * @param dataListener, class that wish to be notified
      * @return true current instance
      *-----------------------------------------------*)
-    function TMhdProcessor.setDataAvailListener(const dataListener : IDataAvailListener) : IRunnableWithDataNotif;
+    function TThreadSafeMhdProcessor.setDataAvailListener(const dataListener : IDataAvailListener) : IRunnableWithDataNotif;
     begin
         fDataListener := dataListener;
         result := self;

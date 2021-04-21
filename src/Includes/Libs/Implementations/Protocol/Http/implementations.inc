@@ -12,6 +12,5 @@ MhdSvrConfigTypes,
 MhdAppServiceProviderImpl,
 MhdStdOutWriterImpl,
 MhdProcessorImpl,
-ThreadSafeMhdAppServiceProviderImpl,
 {$ENDIF}
 {------------ End libmicrohttpd-related------------------}
