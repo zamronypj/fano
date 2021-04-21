@@ -363,11 +363,11 @@ uses
 
             if (aupload_data_size^ = 0) then
             begin
-                fConnectionAware.connection := aconnection;
-                mhdEnv := buildEnv(aconnection, aurl, amethod, aversion);
-
                 fLock.acquire();
                 try
+                    fConnectionAware.connection := aconnection;
+                    mhdEnv := buildEnv(aconnection, aurl, amethod, aversion);
+
                     //request is complete
                     //set seek position to beginning to avoid EReadError
                     mem.position := 0;
