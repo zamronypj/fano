@@ -436,8 +436,15 @@ uses
         tlsKey, tlsCert : string;
         flags : cuint;
     begin
-        flags := //MHD_USE_SELECT_INTERNALLY or //MHD_USE_EPOLL_INTERNALLY_LINUX_ONLY or
-            MHD_USE_THREAD_PER_CONNECTION;
+        flags := MHD_NO_FLAG;
+        if fSvrConfig.threaded and (fSvrConfig.threadPoolSize = 0) then
+        begin
+            flags := flags or MHD_USE_THREAD_PER_CONNECTION;
+        end else
+        begin
+            flags := flags or MHD_USE_EPOLL_INTERNALLY_LINUX_ONLY;
+        end;
+
         if fSvrConfig.useIPv6 then
         begin
             if fSvrConfig.dualStack then
@@ -453,36 +460,79 @@ uses
         begin
             tlsKey := readFile(fSvrConfig.tlsKey);
             tlsCert := readFile(fSvrConfig.tlsCert);
-            svrDaemon := MHD_start_daemon(
-                //TODO: MHD_USE_SSL is now deprecated and replaced with MHD_USE_TLS
-                //but FreePascal header translation not yet support MHD_USE_TLS
-                flags or MHD_USE_SSL,
-                fSvrConfig.port,
-                nil,
-                nil,
-                @handleRequestCallback,
-                self,
-                MHD_OPTION_CONNECTION_TIMEOUT,
-                cuint(fSvrConfig.Timeout),
-                MHD_OPTION_HTTPS_MEM_KEY,
-                libmicrohttpd.pcchar(tlsKey),
-                MHD_OPTION_HTTPS_MEM_CERT,
-                libmicrohttpd.pcchar(tlsCert),
-                MHD_OPTION_END
-            );
+
+            if fSvrConfig.threaded and (fSvrConfig.threadPoolSize = 0) then
+            begin
+                svrDaemon := MHD_start_daemon(
+                    //TODO: MHD_USE_SSL is now deprecated and replaced with MHD_USE_TLS
+                    //but FreePascal header translation not yet support MHD_USE_TLS
+                    flags or MHD_USE_SSL,
+                    fSvrConfig.port,
+                    nil,
+                    nil,
+                    @handleRequestCallback,
+                    self,
+                    MHD_OPTION_CONNECTION_TIMEOUT,
+                    cuint(fSvrConfig.Timeout),
+                    MHD_OPTION_HTTPS_MEM_KEY,
+                    libmicrohttpd.pcchar(tlsKey),
+                    MHD_OPTION_HTTPS_MEM_CERT,
+                    libmicrohttpd.pcchar(tlsCert),
+                    MHD_OPTION_END
+                );
+            end else
+            begin
+                svrDaemon := MHD_start_daemon(
+                    //TODO: MHD_USE_SSL is now deprecated and replaced with MHD_USE_TLS
+                    //but FreePascal header translation not yet support MHD_USE_TLS
+                    flags or MHD_USE_SSL,
+                    fSvrConfig.port,
+                    nil,
+                    nil,
+                    @handleRequestCallback,
+                    self,
+                    MHD_OPTION_THREAD_POOL_SIZE,
+                    cuint(fSvrConfig.threadPoolSize),
+                    MHD_OPTION_CONNECTION_TIMEOUT,
+                    cuint(fSvrConfig.Timeout),
+                    MHD_OPTION_HTTPS_MEM_KEY,
+                    libmicrohttpd.pcchar(tlsKey),
+                    MHD_OPTION_HTTPS_MEM_CERT,
+                    libmicrohttpd.pcchar(tlsCert),
+                    MHD_OPTION_END
+                );
+            end;
         end else
         begin
-            svrDaemon := MHD_start_daemon(
-                flags,
-                fSvrConfig.port,
-                nil,
-                nil,
-                @handleRequestCallback,
-                self,
-                MHD_OPTION_CONNECTION_TIMEOUT,
-                cuint(fSvrConfig.Timeout),
-                MHD_OPTION_END
-            );
+            if fSvrConfig.threaded and (fSvrConfig.threadPoolSize = 0) then
+            begin
+                svrDaemon := MHD_start_daemon(
+                    flags,
+                    fSvrConfig.port,
+                    nil,
+                    nil,
+                    @handleRequestCallback,
+                    self,
+                    MHD_OPTION_CONNECTION_TIMEOUT,
+                    cuint(fSvrConfig.Timeout),
+                    MHD_OPTION_END
+                );
+            end else
+            begin
+                svrDaemon := MHD_start_daemon(
+                    flags,
+                    fSvrConfig.port,
+                    nil,
+                    nil,
+                    @handleRequestCallback,
+                    self,
+                    MHD_OPTION_THREAD_POOL_SIZE,
+                    cuint(fSvrConfig.threadPoolSize),
+                    MHD_OPTION_CONNECTION_TIMEOUT,
+                    cuint(fSvrConfig.Timeout),
+                    MHD_OPTION_END
+                );
+            end;
         end;
 
         if svrDaemon <> nil then
