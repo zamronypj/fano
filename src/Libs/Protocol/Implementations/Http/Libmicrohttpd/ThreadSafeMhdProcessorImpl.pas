@@ -26,7 +26,8 @@ uses
     DataAvailListenerIntf,
     EnvironmentIntf,
     MhdConnectionAwareIntf,
-    MhdSvrConfigTypes;
+    MhdSvrConfigTypes,
+    SyncObjs;
 
 type
 
@@ -37,12 +38,12 @@ type
      *-----------------------------------------------*)
     TThreadSafeMhdProcessor = class(TInterfacedObject, IProtocolProcessor, IRunnable, IRunnableWithDataNotif)
     private
+        fLock :TCriticalSection;
         fSvrConfig : TMhdSvrConfig;
         fRequestReadyListener : IReadyListener;
         fDataListener : IDataAvailListener;
         fStdIn : IStreamAdapter;
         fConnectionAware : IMhdConnectionAware;
-
         procedure resetInternalVars();
         procedure waitUntilTerminate();
 
@@ -86,6 +87,7 @@ type
         function tryRun() : IRunnable;
     public
         constructor create(
+            const lock : TCriticalSection;
             const aConnectionAware : IMhdConnectionAware;
             const svrConfig : TMhdSvrConfig
         );
@@ -152,11 +154,13 @@ uses
     FileUtils;
 
     constructor TThreadSafeMhdProcessor.create(
+        const lock : TCriticalSection;
         const aConnectionAware : IMhdConnectionAware;
         const svrConfig : TMhdSvrConfig
     );
     begin
         inherited create();
+        fLock := lock;
         fConnectionAware := aConnectionAware;
         fSvrConfig := svrConfig;
         fRequestReadyListener := nil;
@@ -176,6 +180,7 @@ uses
         fDataListener := nil;
         fStdIn := nil;
         fConnectionAware := nil;
+        fLock := nil;
     end;
 
     (*!------------------------------------------------
@@ -358,23 +363,28 @@ uses
 
             if (aupload_data_size^ = 0) then
             begin
-                //request is complete
-                //set seek position to beginning to avoid EReadError
-                mem.position := 0;
-                fConnectionAware.connection := aconnection;
-                mhdEnv := buildEnv(aconnection, aurl, amethod, aversion);
+                fLock.acquire();
+                try
+                    //request is complete
+                    //set seek position to beginning to avoid EReadError
+                    mem.position := 0;
+                    fConnectionAware.connection := aconnection;
+                    mhdEnv := buildEnv(aconnection, aurl, amethod, aversion);
 
-                //wrap memory stream as IStreamAdapter and let
-                //them free memory when finished
-                mhdStream := TStreamAdapter.create(mem);
+                    //wrap memory stream as IStreamAdapter and let
+                    //them free memory when finished
+                    mhdStream := TStreamAdapter.create(mem);
 
-                fRequestReadyListener.ready(
-                    //we will not use socket stream as we will have our own IStdOut
-                    //that write output with libmicrohttpd
-                    TNullStreamAdapter.create(),
-                    mhdEnv,
-                    mhdStream
-                );
+                    fRequestReadyListener.ready(
+                        //we will not use socket stream as we will have our own IStdOut
+                        //that write output with libmicrohttpd
+                        TNullStreamAdapter.create(),
+                        mhdEnv,
+                        mhdStream
+                    );
+                finally
+                    fLock.release();
+                end;
             end else
             begin
                 mem.writeBuffer(aupload_data^, aupload_data_size^);

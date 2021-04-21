@@ -29,7 +29,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------}
-    TMhdAppServiceProvider = class (TProtocolAppServiceProvider)
+    TThreadSafeMhdAppServiceProvider = class (TProtocolAppServiceProvider)
     private
         fServer : IRunnableWithDataNotif;
         fLock : TCriticalSection;
@@ -55,7 +55,7 @@ uses
     ThreadSafeMhdConnectionAwareImpl,
     ThreadSafeProtocolProcessorImpl;
 
-    constructor TMhdAppServiceProvider.create(
+    constructor TThreadSafeMhdAppServiceProvider.create(
         const actualSvc : IDaemonAppServiceProvider;
         const svrConfig : TMhdSvrConfig
     );
@@ -86,7 +86,7 @@ uses
         fServer := fProtocol as IRunnableWithDataNotif;
     end;
 
-    destructor TMhdAppServiceProvider.destroy();
+    destructor TThreadSafeMhdAppServiceProvider.destroy();
     begin
         fServer := nil;
         inherited destroy();
@@ -94,7 +94,7 @@ uses
         fLock.free();
     end;
 
-    function TMhdAppServiceProvider.getServer() : IRunnableWithDataNotif;
+    function TThreadSafeMhdAppServiceProvider.getServer() : IRunnableWithDataNotif;
     begin
         result := fServer;
     end;
