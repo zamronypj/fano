@@ -12,5 +12,6 @@ TMhdSvrConfig = MhdSvrConfigTypes.TMhdSvrConfig;
 TMhdAppServiceProvider = MhdAppServiceProviderImpl.TMhdAppServiceProvider;
 TMhdStdOutWriter = MhdStdOutWriterImpl.TMhdStdOutWriter;
 TMhdProcessor = MhdProcessorImpl.TMhdProcessor;
+TThreadSafeMhdAppServiceProvider = ThreadSafeMhdAppServiceProviderImpl.TThreadSafeMhdAppServiceProvider;
 {$ENDIF}
 {------------ End libmicrohttpd-related------------------}
