@@ -479,6 +479,9 @@ uses
         begin
             waitUntilTerminate();
             MHD_stop_daemon(svrDaemon);
+        end else
+        begin
+            writeln('Cannot start libmicrohttpd daemon');
         end;
         result := self;
     end;
