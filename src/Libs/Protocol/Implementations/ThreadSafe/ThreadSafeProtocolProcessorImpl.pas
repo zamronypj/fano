@@ -22,6 +22,7 @@ uses
     ProtocolProcessorIntf,
     RunnableIntf,
     RunnableWithDataNotifIntf,
+    DataAvailListenerIntf,
     SyncObjs;
 
 
