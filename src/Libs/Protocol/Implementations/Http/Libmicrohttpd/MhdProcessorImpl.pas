@@ -426,7 +426,7 @@ uses
         tlsKey, tlsCert : string;
         flags : cuint;
     begin
-        flags := MHD_USE_AUTO or //MHD_USE_EPOLL_INTERNALLY_LINUX_ONLY or
+        flags := MHD_USE_SELECT_INTERNALLY or //MHD_USE_EPOLL_INTERNALLY_LINUX_ONLY or
             MHD_USE_THREAD_PER_CONNECTION;
         if fSvrConfig.useIPv6 then
         begin
