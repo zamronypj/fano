@@ -25,7 +25,8 @@ uses
     StreamIdIntf,
     ReadyListenerIntf,
     DataAvailListenerIntf,
-    EnvironmentIntf;
+    EnvironmentIntf,
+    StdInIntf;
 
 type
     (*!-----------------------------------------------
