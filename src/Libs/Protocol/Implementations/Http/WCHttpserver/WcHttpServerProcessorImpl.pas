@@ -37,7 +37,7 @@ type
      *-----------------------------------------------*)
     TWcHttpServerProcessor = class(TInterfacedObject, IProtocolProcessor, IRunnable, IRunnableWithDataNotif)
     private
-        fStdIn : IStdIn;
+        fStdIn : IStreamAdapter;
         fReadyListener : IReadyListener;
         fDataListener : IDataAvailListener;
     public
