@@ -61,8 +61,6 @@ uses
     );
     var astdout : IStdOut;
         aConnAware : IMhdConnectionAware;
-        aProtocol : IProtocolProcessor;
-        aServer : IRunnableWithDataNotif;
     begin
         //create lock before anything
         fLock := TCriticalSection.create();
