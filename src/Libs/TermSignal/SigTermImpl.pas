@@ -29,7 +29,7 @@ type
         class procedure install(); static;
         class procedure uninstall(); static;
     public
-        //pipe handle that we use to monitor if we get SIGTERM/SIGINT signal
+        //global pipe handle that we use to monitor if we get SIGTERM/SIGINT signal
         class var terminatePipeIn : longint;
         class var terminatePipeOut : longint;
     end;
