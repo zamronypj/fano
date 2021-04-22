@@ -15,8 +15,6 @@ interface
 
 uses
 
-    abstracthttpserver,
-    wchttp2server,
     StreamAdapterIntf,
     CloseableIntf,
     RunnableIntf,
@@ -91,6 +89,12 @@ type
 
 implementation
 
+uses
+
+    abstracthttpserver,
+    wchttp2server,
+    wcapplication;
+
     constructor TWcHttpServerProcessor.create();
     begin
         fStdIn := nil;
@@ -144,10 +148,11 @@ implementation
      * @return current instance
      *-------------------------------------------------*)
     function TWcHttpServerProcessor.run() : IRunnable;
-    var server : TAbsHTTPServer;
+    var server : TWCHTTPServer;
     begin
-        server := TAbsHTTPServer.create(nil);
+        server := TWCHTTPServer.create(nil);
         try
+            server.active := true;
             result := self;
         finally
             server.free();
