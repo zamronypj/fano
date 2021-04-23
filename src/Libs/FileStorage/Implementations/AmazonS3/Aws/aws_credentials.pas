@@ -110,7 +110,11 @@ uses
     HlpIHashInfo,
     HlpConverters,
     HlpIHashResult,
-    HlpHashFactory;
+    HlpHashFactory,
+    HlpIHash,
+    httpprotocol,
+    base64,
+    hmac;
 
     { TAWSSignatureHMAC256 }
 
@@ -238,7 +242,10 @@ uses
         Assinatura: TBytes;
         hmacInst : IHMAC;
 
+        hashSHA256Inst : IHash;
     begin
+        hashSHA256Inst := THashFactory.TCrypto.CreateSHA2_256();
+
         DateFmt:= FormatDateTime('yyyymmdd', IncHour(Now, 3));
         AwsDateTime:= FormatDateTime('yyyymmdd', IncHour(Now, 3))+'T'+FormatDateTime('hhnnss', IncHour(Now, 3))+'Z';
         Metodo:= Request.Method;
@@ -249,18 +256,21 @@ uses
         CanonicalHeaders:= 'X-Amz-Date:' + AwsDateTime + #10 + Request.CanonicalizedAmzHeaders + #10;
         SignedHeaders(Header+CanonicalHeaders, SignedHeader, Canonical);
 
-        PayLoadHash:= SHA256(Request.SubResource);
+        //compute SHA2-256
+        PayLoadHash := hashSHA256Inst.ComputeString(Request.SubResource, TEncoding.UTF8).toString();
 
         CanonicalRequest := Metodo + #10 + CanonicalURI + #10 + CanonicalQuery + #10
                           + Canonical + #10 + SignedHeader + #10 + PayLoadHash;
 
         Credencial:= DateFmt + '/' + Request.ContentMD5 + '/' + Request.CanonicalizedResource + '/' + TipoReq;
         Escopo:= Credentials.AccessKeyId + '/' + Credencial;
-        StringToSign := Algoritimo + #10 +  AwsDateTime + #10 + Credencial + #10 + SHA256( UTF8Encode(CanonicalRequest));
+        StringToSign := Algoritimo + #10 +  AwsDateTime + #10 + Credencial + #10 +
+            //compute SHA256
+            hashSHA256Inst.ComputeString(CanonicalRequest, TEncoding.UTF8).toString();
 
         Assinatura:=TAWSSignatureHMAC256.New(Credentials.SecretKey, DateFmt, Request.ContentMD5, Request.CanonicalizedResource).Signature;
 
-        hmacInst := THashFactory.THMAC.CreateHMAC(THashFactory.TCrypto.CreateSHA2_256);
+        hmacInst := THashFactory.THMAC.CreateHMAC(THashFactory.TCrypto.CreateSHA2_256());
 
         hmacInst.Key := Assinatura;
         signature := hmacInst.ComputeString(StringToSign, TEncoding.UTF8).toString();
@@ -323,12 +333,34 @@ uses
 
     { TAWSSignatureVersion1 }
 
+    function DateFormatRFC822(dt: TDateTime; const timezone : string) : string;
+    var
+        aYear, aMonth, aDay: word;
+        aHour, aMinute, aSec, aMSec : word;
+    begin
+        DecodeDate(dt, aYear, aMonth, aDay);
+        DecodeTime(dt, aHour, aMinute, aSec, aMsec);
+        result := Format(
+            '%s, %d %s %d %0d:%0d:%0d %s',
+            [
+                HTTPDays[DayOfWeek(dt)],
+                aDay,
+                HTTPMonths[aMonth],
+                aYear,
+                aHour,
+                aMinute,
+                aSec,
+                timezone
+            ]
+        );
+    end;
+
     function TAWSSignatureVersion1.Calculate(Request: IHTTPRequest): string;
     var
       H: string;
       DateFmt: string;
     begin
-      DateFmt := RFC822DateTime(Now);
+      DateFmt := DateFormatRFC822(Now, 'GMT');
       H := Request.Method + #10
         + Request.ContentMD5 + #10
         + Request.ContentType + #10
@@ -346,7 +378,7 @@ uses
 
       Result := Result + 'Authorization: AWS '
               + Credentials.AccessKeyId + ':'
-              + EncodeBase64(HMAC_SHA1(H, Credentials.SecretKey))
+              + EncodeStringBase64(HMACSHA1(Credentials.SecretKey, H))
     end;
 
     { TAWSSignatureVersion3 }
@@ -355,12 +387,12 @@ uses
     var
       DateFmt: string;
     begin
-      DateFmt := RFC822DateTime(Now);
+      DateFmt := DateFormatRFC822(Now, 'GMT');
       Result := 'Date: ' + DateFmt + #10
               + 'Host: ' + Request.Domain + #10
               + 'X-Amzn-Authorization: '
               + 'AWS3-HTTPS AWSAccessKeyId=' + Credentials.AccessKeyId + ','
-              + 'Algorithm=HMACSHA1,Signature='+EncodeBase64(HMAC_SHA1(DateFmt, Credentials.SecretKey));
+              + 'Algorithm=HMACSHA1,Signature='+EncodeStringBase64(HMACSHA1(Credentials.SecretKey, DateFmt));
     end;
 
 end.

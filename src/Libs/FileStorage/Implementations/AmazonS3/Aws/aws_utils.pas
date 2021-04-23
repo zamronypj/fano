@@ -31,6 +31,10 @@ type
 
 implementation
 
+uses
+
+    SysUtils;
+
     (*!------------------------------------------------
      * encode chars as url encoded char
      *-------------------------------------------------
@@ -45,7 +49,7 @@ implementation
         i, outputLen, actualLen : integer;
         encodedChar : string;
     begin
-        actualLen = length(input);
+        actualLen := length(input);
 
         //allocate enough string with assumption
         //worst case is that all chars in input is in charsToEncode so output string

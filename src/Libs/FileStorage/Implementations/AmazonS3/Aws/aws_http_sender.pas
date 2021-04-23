@@ -57,6 +57,9 @@ type
 
 implementation
 
+uses
+
+    aws_http;
 
 { THTTPSender }
 
@@ -85,24 +88,36 @@ begin
 end;
 
 function THTTPSender.Send() : IHTTPResponse;
-var responseBody : TStream;
+var reqBody, respBody : TStream;
 begin
-    FSender.RequestHeaders.Clear;
-    FSender.RequestHeaders.Text := FHeader;
+    respBody := TMemoryStream.create();
+    try
+        reqBody := TMemoryStream.create();
+        try
+            FSender.RequestHeaders.Clear;
+            FSender.RequestHeaders.Text := FHeader;
 
-    if FContentType <> '' then
-    begin
-        FSender.addHeader('Content-Type', FContentType);
+            if FContentType <> '' then
+            begin
+                FSender.addHeader('Content-Type', FContentType);
+            end;
+
+            fStream.saveToStream(reqBody);
+            FSender.RequestBody := reqBody;
+            FSender.HTTPMethod(FMethod, FURL, respBody, []);
+
+            result := THTTPResponse.New(
+                FSender.ResponseStatusCode,
+                FSender.ResponseHeaders.Text,
+                FSender.ResponseStatusText,
+                TAWSStream.New(respBody)
+            );
+        finally
+            reqBody.free();
+        end;
+    finally
+        respBody.free();
     end;
-
-    FSender.RequestBody := FStream;
-    FSender.HTTPMethod(FMethod, FURL, responseBody);
-    result := THTTPResponse.New(
-        FSender.ResponseStatusCode,
-        FSender.ResponseHeaders.Text,
-        FSender.ResultString,
-        TAWSStream.New(responseBody)
-    );
 end;
 
 end.

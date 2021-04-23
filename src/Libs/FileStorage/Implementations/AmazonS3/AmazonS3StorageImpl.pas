@@ -84,7 +84,7 @@ type
          * @param srcPath source path
          * @param dstPath destination path
          *-----------------------------------------------*)
-        procedure move(const dstPath : string);
+        procedure move(const srcPath : string; const dstPath : string);
 
         (*!------------------------------------------------
          * delete file or directory
@@ -101,7 +101,8 @@ uses
     sysutils,
     aws_client,
     aws_credentials,
-    LocalDiskFileImpl;
+    AmazonS3FileImpl,
+    AmazonS3DirectoryImpl;
 
     constructor TAmazonS3Storage.create(
         const accessKey : string;
@@ -150,6 +151,11 @@ uses
         result := TAmazonS3File.create(fS3Service, path);
     end;
 
+    function GetAbsolutePath(const path: string) : string;
+    begin
+        result := ExpandFileName(path);
+    end;
+
     (*!------------------------------------------------
      * test if path is file
      *-----------------------------------------------
@@ -158,7 +164,7 @@ uses
      *-----------------------------------------------*)
     function TAmazonS3Storage.isFile(const path : string) : boolean;
     begin
-        result := ((FileGetAttr(getAbsolutePath(path)) and faDirectory) = 0);
+        result := ((FileGetAttr(GetAbsolutePath(path)) and faDirectory) = 0);
     end;
 
     (*!------------------------------------------------
@@ -169,7 +175,7 @@ uses
      *-----------------------------------------------*)
     function TAmazonS3Storage.getDir(const path : string) : IDirectory;
     begin
-        result := TLocalDiskDirectory.create(getAbsolutePath(path));
+        result := TAmazonS3Directory.create(path);
     end;
 
     (*!------------------------------------------------
@@ -180,7 +186,8 @@ uses
      *-----------------------------------------------*)
     function TAmazonS3Storage.isDir(const path : string) : boolean;
     begin
-        result := ((FileGetAttr(getAbsolutePath(path)) and faDirectory) <> 0);
+        //TODO: implement test if path is Dir in S3
+        result := ((FileGetAttr(GetAbsolutePath(path)) and faDirectory) <> 0);
     end;
 
     (*!------------------------------------------------
@@ -201,10 +208,10 @@ uses
     begin
         if isDir(path) then
         begin
-            RemoveDir(getAbsolutePath(path));
+            RemoveDir(GetAbsolutePath(path));
         end else
         begin
-            DeleteFile(getAbsolutePath(path));
+            DeleteFile(GetAbsolutePath(path));
         end;
     end;
 end.

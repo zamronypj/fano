@@ -33,6 +33,8 @@ uses
     classes,
     sysutils,
     aws_base,
+    aws_http_contracts,
+    aws_client_contracts,
     aws_client;
 
 const

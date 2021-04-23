@@ -48,6 +48,7 @@ implementation
 
 uses
 
+    SysUtils,
     LocalDiskFileImpl;
 
     constructor TAmazonS3Directory.create(const dirPath : string);
@@ -73,7 +74,7 @@ uses
         result := nil;
         if FindFirst(filterCriteria, faArchive, resSearch) = 0 then
         begin
-            totFile = 0;
+            totFile := 0;
             SetLength(result, 50);
             repeat
                 //only process file and not . or ..

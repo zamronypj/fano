@@ -34,8 +34,6 @@ type
     public
         constructor create(const s3Svc : IS3Service; const filePath : string);
 
-        destructor destroy(); override;
-
         (*!------------------------------------------------
          * retrieve content of a file as string
          *-----------------------------------------------
@@ -47,9 +45,9 @@ type
         (*!------------------------------------------------
          * write content to file
          *-----------------------------------------------
-         * @param content content to write
+         * @param strContent content to write
          *-----------------------------------------------*)
-        procedure put(const content : string);
+        procedure put(const strContent : string);
 
         property content : string read get write put;
 
@@ -64,25 +62,25 @@ type
          * write content to file
          *-----------------------------------------------
          * @param filePath file path to write
-         * @param content content to write
+         * @param strContent content to write
          *-----------------------------------------------*)
-        procedure putStream(const content : IStreamAdapter);
+        procedure putStream(const strContent : IStreamAdapter);
 
         property stream : IStreamAdapter read getStream write putStream;
 
         (*!------------------------------------------------
          * prepend content at begining of file
          *-----------------------------------------------
-         * @param content content to write
+         * @param strContent content to write
          *-----------------------------------------------*)
-        procedure prepend(const content : string);
+        procedure prepend(const strContent : string);
 
         (*!------------------------------------------------
          * append content at end of file
          *-----------------------------------------------
-         * @param content content to write
+         * @param strContent content to write
          *-----------------------------------------------*)
-        procedure append(const content : string);
+        procedure append(const strContent : string);
 
         (*!------------------------------------------------
          * copy file
@@ -116,16 +114,13 @@ uses
 
     classes,
     sysutils,
+    FileUtils,
     StreamAdapterImpl;
 
-    constructor TAmazonS3File.create(const filePath : string);
+    constructor TAmazonS3File.create(const s3Svc : IS3Service; const filePath : string);
     begin
+        fS3Service := s3Svc;
         fFilePath := filePath;
-    end;
-
-    destructor TAmazonS3File.destroy();
-    begin
-        inherited destroy();
     end;
 
     (*!------------------------------------------------
@@ -135,21 +130,8 @@ uses
      * @return content of file
      *-----------------------------------------------*)
     function TAmazonS3File.get() : string;
-    var fStream : TFileStream;
-        strStream : TStringStream;
     begin
-        fStream := TFileStream.create(fFilePath, fmOpenWrite);
-        try
-            strStream := TStringStream.create('');
-            try
-                strStream.CopyFrom(fStream);
-                result := strStream.DataString;
-            finally
-                strStream.free();
-            end;
-        finally
-            fStream.free();
-        end;
+        result := readFile(fFilePath);
     end;
 
     (*!------------------------------------------------
@@ -157,12 +139,12 @@ uses
      *-----------------------------------------------
      * @param content content to write
      *-----------------------------------------------*)
-    procedure TAmazonS3File.put(const content : string);
+    procedure TAmazonS3File.put(const strContent : string);
     var fStream : TFileStream;
     begin
         fStream := TFileStream.create(fFilePath, fmCreate);
         try
-            fStream.WriteBuffer(content[1], length(content));
+            fStream.WriteBuffer(strContent[1], length(strContent));
         finally
             fStream.free();
         end;
@@ -185,7 +167,7 @@ uses
      * @param filePath file path to write
      * @param content content to write
      *-----------------------------------------------*)
-    procedure TAmazonS3File.putStream(const content : IStreamAdapter);
+    procedure TAmazonS3File.putStream(const strContent : IStreamAdapter);
     var fStream : TFileStream;
         buff : pointer;
         byteRead, totRead : int64;
@@ -196,10 +178,10 @@ uses
             try
                 totRead := 0;
                 repeat
-                    byteRead := content.read(buff^, 4096);
+                    byteRead := strContent.read(buff^, 4096);
                     fStream.WriteBuffer(buff^, byteRead);
                     totRead := totRead + byteRead;
-                until (byteRead < 4096) and (totRead < content.size);
+                until (byteRead < 4096) and (totRead < strContent.size);
             finally
                 freeMem(buff);
             end;
@@ -212,15 +194,15 @@ uses
     (*!------------------------------------------------
      * prepend content at begining of file
      *-----------------------------------------------
-     * @param content content to write
+     * @param strContent content to write
      *-----------------------------------------------*)
-    procedure TAmazonS3File.prepend(const content : string);
+    procedure TAmazonS3File.prepend(const strContent : string);
     var fStream : TFileStream;
     begin
         fStream := TFileStream.create(fFilePath, fmOpenReadWrite);
         try
             fStream.Seek(0, soFromBeginning);
-            fStream.WriteBuffer(content[1], length(content));
+            fStream.WriteBuffer(strContent[1], length(strContent));
         finally
             fStream.free();
         end;
@@ -231,13 +213,13 @@ uses
      *-----------------------------------------------
      * @param content content to write
      *-----------------------------------------------*)
-    procedure TAmazonS3File.append(const content : string);
+    procedure TAmazonS3File.append(const strContent : string);
     var fStream : TFileStream;
     begin
         fStream := TFileStream.create(fFilePath, fmOpenReadWrite);
         try
             fStream.Seek(0, soEnd);
-            fStream.WriteBuffer(content[1], length(content));
+            fStream.WriteBuffer(strContent[1], length(strContent));
         finally
             fStream.free();
         end;
@@ -249,12 +231,18 @@ uses
      * @param dstPath destination file path
      *-----------------------------------------------*)
     procedure TAmazonS3File.copy(const dstPath : string);
-    var fStream : TFileStream;
+    const WHOLE_STREAM = 0;
+    var fStream, dstStream : TFileStream;
     begin
-        fStream := TFileStream.create(fFilePath, fmOpenReadWrite);
+        fStream := TFileStream.create(fFilePath, fmOpenRead);
         try
-            fStream.Seek(0, soEnd);
-            fStream.WriteBuffer(content[1], length(content));
+            dstStream := TFileStream.create(dstPath, fmCreate);
+            try
+                fStream.Seek(0, soEnd);
+                dstStream.copyFrom(fStream, WHOLE_STREAM);
+            finally
+                dstStream.free();
+            end;
         finally
             fStream.free();
         end;
