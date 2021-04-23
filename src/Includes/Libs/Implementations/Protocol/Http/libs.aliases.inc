@@ -14,3 +14,9 @@ TMhdStdOutWriter = MhdStdOutWriterImpl.TMhdStdOutWriter;
 TMhdProcessor = MhdProcessorImpl.TMhdProcessor;
 {$ENDIF}
 {------------ End libmicrohttpd-related------------------}
+
+{------------ Begin wchttpserver-related------------------}
+{$IFDEF USE_WCHTTPSERVER}
+TWcHttpServerProcessor = WcHttpServerProcessorImpl.TWcHttpServerProcessor;
+{$ENDIF}
+{------------ End wchttpserver-related------------------}

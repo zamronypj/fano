@@ -14,3 +14,9 @@ MhdStdOutWriterImpl,
 MhdProcessorImpl,
 {$ENDIF}
 {------------ End libmicrohttpd-related------------------}
+
+{------------ Begin wchttpserver-related------------------}
+{$IFDEF USE_WCHTTPSERVER}
+WcHttpServerProcessorImpl,
+{$ENDIF}
+{------------ End wchttpserver-related------------------}
