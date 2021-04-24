@@ -32,58 +32,15 @@ uses
     //rtl
     classes,
     sysutils,
-    aws_base,
+    aws_stream,
     aws_http_contracts,
     aws_client_contracts,
-    aws_client;
-
-const
-    AWS_S3_URL = 's3-accelerate.amazonaws.com';
+    aws_client,
+    aws_s3_contracts;
 
 type
+
     ES3Error = class(Exception);
-
-    IS3Service = interface;
-    IS3Bucket = interface;
-
-    IS3Object = interface(IInterface)
-        ['{FF865D65-97EE-46BC-A1A6-9D9FFE6310A4}']
-        function Bucket: IS3Bucket;
-        function Name: string;
-        function Stream: IAWSStream;
-    end;
-
-    IS3Objects = interface(IInterface)
-        ['{0CDE7D8E-BA30-4FD4-8FC0-F8291131652E}']
-        function Get(const ObjectName: string; const SubResources: string): IS3Object;
-        procedure Delete(const ObjectName: string);
-        function Put(const ObjectName, ContentType: string; Stream: IAWSStream; const SubResources: string): IS3Object;
-        function Put(const ObjectName, ContentType, AFileName, SubResources: string): IS3Object;
-        function Put(const ObjectName, SubResources: string): IS3Object;
-        function Options(const ObjectName: string): IS3Object;
-    end;
-
-    IS3Bucket = interface(IInterface)
-        ['{7E7FA31D-7F54-4BE0-8587-3A72E7D24164}']
-        function Name: string;
-        function Objects: IS3Objects;
-    end;
-
-    IS3Buckets = interface(IInterface)
-        ['{8F994521-57A1-4FA6-9F9F-3931E834EFE2}']
-        function Check(const BucketName: string): Boolean;
-        function Get(const BucketName, SubResources: string): IS3Bucket;
-        procedure Delete(const BucketName, SubResources: string);
-        function Put(const BucketName, SubResources: string): IS3Bucket;
-        { TODO : Return a Bucket list }
-        function All: IAWSResponse;
-    end;
-
-    IS3Service = interface(IInterface)
-        ['{B192DB11-4080-477A-80D4-41698832F492}']
-        function Online: Boolean;
-        function Buckets: IS3Buckets;
-    end;
 
     TS3Object = class sealed(TInterfacedObject, IS3Object)
     private

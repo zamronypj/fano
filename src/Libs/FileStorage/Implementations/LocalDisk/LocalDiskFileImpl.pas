@@ -32,8 +32,6 @@ type
     public
         constructor create(const filePath : string);
 
-        destructor destroy(); override;
-
         (*!------------------------------------------------
          * retrieve content of a file as string
          *-----------------------------------------------
@@ -114,16 +112,12 @@ uses
 
     classes,
     sysutils,
+    FileUtils,
     StreamAdapterImpl;
 
     constructor TLocalDiskFile.create(const filePath : string);
     begin
         fFilePath := filePath;
-    end;
-
-    destructor TLocalDiskFile.destroy();
-    begin
-        inherited destroy();
     end;
 
     (*!------------------------------------------------
@@ -133,22 +127,8 @@ uses
      * @return content of file
      *-----------------------------------------------*)
     function TLocalDiskFile.get() : string;
-    const COPY_WHOLE_STREAM = 0;
-    var fStream : TFileStream;
-        strStream : TStringStream;
     begin
-        fStream := TFileStream.create(fFilePath, fmOpenWrite);
-        try
-            strStream := TStringStream.create('');
-            try
-                strStream.CopyFrom(fStream, COPY_WHOLE_STREAM);
-                result := strStream.DataString;
-            finally
-                strStream.free();
-            end;
-        finally
-            fStream.free();
-        end;
+        result:= readFile(fFilePath);
     end;
 
     (*!------------------------------------------------

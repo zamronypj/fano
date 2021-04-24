@@ -151,11 +151,6 @@ uses
         result := TAmazonS3File.create(fS3Service, path);
     end;
 
-    function GetAbsolutePath(const path: string) : string;
-    begin
-        result := ExpandFileName(path);
-    end;
-
     (*!------------------------------------------------
      * test if path is file
      *-----------------------------------------------
@@ -164,7 +159,7 @@ uses
      *-----------------------------------------------*)
     function TAmazonS3Storage.isFile(const path : string) : boolean;
     begin
-        result := ((FileGetAttr(GetAbsolutePath(path)) and faDirectory) = 0);
+        result := fS3Service.Buckets.Check(path);
     end;
 
     (*!------------------------------------------------
@@ -186,8 +181,7 @@ uses
      *-----------------------------------------------*)
     function TAmazonS3Storage.isDir(const path : string) : boolean;
     begin
-        //TODO: implement test if path is Dir in S3
-        result := ((FileGetAttr(GetAbsolutePath(path)) and faDirectory) <> 0);
+        result := fS3Service.Buckets.Check(path);
     end;
 
     (*!------------------------------------------------
@@ -198,7 +192,15 @@ uses
      *-----------------------------------------------*)
     procedure TAmazonS3Storage.move(const srcPath : string; const dstPath : string);
     begin
-        RenameFile(srcPath, dstPath);
+        if FileExists(srcPath) then
+        begin
+            //move local file to Amazon S3
+        end;
+
+        if FileExists(dstPath) then
+        begin
+            //move Amazon S3 to local
+        end;
     end;
 
     (*!------------------------------------------------
@@ -208,10 +210,10 @@ uses
     begin
         if isDir(path) then
         begin
-            RemoveDir(GetAbsolutePath(path));
+            fS3Service.Buckets.Delete(ExtractFilePath(path));
         end else
         begin
-            DeleteFile(GetAbsolutePath(path));
+            fS3Service.Buckets.Delete(ExtractFilePath(path), ExtractFilename(path));
         end;
     end;
 end.

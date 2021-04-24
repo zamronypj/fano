@@ -45,11 +45,12 @@ type
 
     TAWSClient = class sealed(TInterfacedObject, IAWSClient)
     private
+        fRegion : string;
         FSignature: IAWSSignature;
         function MakeURL(const SubDomain, Domain, Query: string): string;
     public
-        constructor Create(Signature: IAWSSignature);
-        class function new(Signature: IAWSSignature): IAWSClient;
+        constructor Create(const region: string; Signature: IAWSSignature);
+        class function new(const region: string; Signature: IAWSSignature): IAWSClient;
         function send(Request: IAWSRequest): IAWSResponse;
     end;
 
@@ -70,20 +71,29 @@ implementation
 
         if SubDomain <> '' then
         begin
-            result += SubDomain + '.';
+            result += SubDomain;
         end;
+
+        result += '.s3.';
+
+        if fRegion <> '' then
+        begin
+            result += fRegion . '.';
+        end;
+
         result += Domain + Query;
     end;
 
-    constructor TAWSClient.create(Signature: IAWSSignature);
+    constructor TAWSClient.create(const region : string; Signature: IAWSSignature);
     begin
         inherited Create;
         FSignature := Signature;
+        fRegion := region;
     end;
 
-    class function TAWSClient.new(Signature: IAWSSignature): IAWSClient;
+    class function TAWSClient.new(const region : string; Signature: IAWSSignature): IAWSClient;
     begin
-        result := Create(Signature);
+        result := Create(region, Signature);
     end;
 
     function TAWSClient.send(Request: IAWSRequest): IAWSResponse;

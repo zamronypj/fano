@@ -31,7 +31,7 @@ interface
 uses
     sysutils,
     classes,
-    aws_base;
+    aws_stream;
 
 type
 

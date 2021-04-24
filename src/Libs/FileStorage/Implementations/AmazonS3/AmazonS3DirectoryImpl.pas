@@ -16,7 +16,8 @@ interface
 uses
 
     FileIntf,
-    DirectoryIntf;
+    DirectoryIntf,
+    aws_s3;
 
 type
 
@@ -29,10 +30,9 @@ type
     TAmazonS3Directory = class (TInterfacedObject, IDirectory)
     private
         fDirPath : string;
+        fS3Service : IS3Service;
     public
-
-        constructor create(const dirPath : string);
-        destructor destroy(); override;
+        constructor create(const s3Svc: IS3Service; const dirPath : string);
 
         (*!------------------------------------------------
          * list content of directory
@@ -49,16 +49,12 @@ implementation
 uses
 
     SysUtils,
-    LocalDiskFileImpl;
+    AmazonS3FileImpl;
 
-    constructor TAmazonS3Directory.create(const dirPath : string);
+    constructor TAmazonS3Directory.create(const s3Svc: IS3Service; const dirPath : string);
     begin
+        fS3Service := s3Svc;
         fDirPath := dirPath;
-    end;
-
-    destructor TAmazonS3Directory.destroy();
-    begin
-        inherited destroy();
     end;
 
     (*!------------------------------------------------
@@ -68,29 +64,16 @@ uses
      * @return content of file
      *-----------------------------------------------*)
     function TAmazonS3Directory.list(const filterCriteria : string) : IFileArray;
-    var resSearch : TSearchRec;
-        totFile : integer;
+    var totFile : integer;
+        objs : IS3Objects;
     begin
+        //TODO: retriev bucket list
         result := nil;
-        if FindFirst(filterCriteria, faArchive, resSearch) = 0 then
-        begin
-            totFile := 0;
-            SetLength(result, 50);
-            repeat
-                //only process file and not . or ..
-                if ((resSearch.attr and faArchive) = faArchive) and
-                    ((resSearch.name <> '.') or (resSearch.name <> '..')) then
-                begin
-                    result[totFile - 1] := TLocalDiskFile.create(resSearch.name);
-                    inc(totFile);
-                    if (totFile > length(result)) then
-                    begin
-                        setLength(result, totFile + 50);
-                    end;
-                end;
-            until FindNext(resSearch) <> 0;
-            FindClose(resSearch);
-            SetLength(result, totFile);
-        end;
+        // objs := fS3Service.Buckets.listObjects(filterCriteria);
+        // SetLength(result, objs.count);
+        // for totFile := 0 to objs.count-1 do
+        // begin
+        //     result[totFile] := TAmazonS3File.create(fS3Service, objs[i].name);
+        // end;
     end;
 end.

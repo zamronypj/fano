@@ -32,7 +32,7 @@ uses
 
     sysutils,
     classes,
-    aws_base,
+    aws_stream,
     aws_http_contracts,
     fphttpclient,
     fpopenssl,

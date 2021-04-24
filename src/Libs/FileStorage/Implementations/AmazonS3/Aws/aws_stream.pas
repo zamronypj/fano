@@ -21,7 +21,7 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   SOFTWARE.
 }
-unit aws_net;
+unit aws_stream;
 
 {$i aws.inc}
 
@@ -29,63 +29,69 @@ interface
 
 uses
   //rtl
-  sysutils,
-  classes;
+  classes,
+  sysutils;
 
 type
-  IAWSURL = interface
-    function WithSubDomain(const SubDomain: string): IAWSURL;
-    function WithResource(const Resource: string): IAWSURL;
-    function AsString: string;
+  IAWSStream = interface(IInterface)
+    procedure SaveToStream(Stream: TStream);
+    procedure SaveToFile(const FileName: string);
+    function Size: Int64;
   end;
 
-  TAWSURL = class(TInterfacedObject, IAWSURL)
+  TAWSStream = class sealed(TInterfacedObject, IAWSStream)
   private
-    FProtocol: string;
-    FDomain: string;
+    FStream: TMemoryStream;
   public
-    constructor Create(const Protocol, Domain: string); reintroduce;
-    class function New(const Protocol, Domain: string): IAWSURL;
-    class function New(const Domain: string): IAWSURL;
-    function WithSubDomain(const SubDomain: string): IAWSURL;
-    function WithResource(const Resource: string): IAWSURL;
-    function AsString: string;
+    constructor Create(Stream: TStream);
+    class function New(Stream: TStream): IAWSStream;
+    class function New: IAWSStream;
+    destructor Destroy; override;
+    procedure SaveToStream(Stream: TStream);
+    procedure SaveToFile(const FileName: string);
+    function Size: Int64;
   end;
 
 implementation
 
-{ TAWSURL }
+{ TAWSStream }
 
-constructor TAWSURL.Create(const Protocol, Domain: string);
+constructor TAWSStream.Create(Stream: TStream);
 begin
-  inherited Create;
-  FProtocol := Protocol;
-  FDomain := Domain;
+  FStream := TMemoryStream.Create;
+  if Assigned(Stream) then
+    FStream.LoadFromStream(Stream);
 end;
 
-class function TAWSURL.New(const Protocol, Domain: string): IAWSURL;
+class function TAWSStream.New(Stream: TStream): IAWSStream;
 begin
-  Result := Create(Protocol, Domain);
+  Result := Create(Stream);
 end;
 
-class function TAWSURL.New(const Domain: string): IAWSURL;
+class function TAWSStream.New: IAWSStream;
 begin
-  Result := New('http', Domain);
+  Result := Create(nil);
 end;
 
-function TAWSURL.WithSubDomain(const SubDomain: string): IAWSURL;
+destructor TAWSStream.Destroy;
 begin
-  Result := New(FProtocol, SubDomain + '.' + FDomain);
+  FStream.Free;
+  inherited Destroy;
 end;
 
-function TAWSURL.WithResource(const Resource: string): IAWSURL;
+procedure TAWSStream.SaveToFile(const FileName: string);
 begin
-  Result := New(FProtocol, FDomain + Resource);
+  FStream.SaveToFile(FileName);
 end;
 
-function TAWSURL.AsString: string;
+function TAWSStream.Size: Int64;
 begin
-  Result := FProtocol + '://' + FDomain;
+  Result := FStream.Size;
+end;
+
+procedure TAWSStream.SaveToStream(Stream: TStream);
+begin
+  FStream.SaveToStream(Stream);
 end;
 
 end.
