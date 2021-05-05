@@ -30,8 +30,15 @@ StdErrLoggerFactoryImpl,
 SysLogLoggerImpl,
 SysLogLoggerFactoryImpl,
 
+DecoratorLoggerImpl,
 ThreadSafeLoggerImpl,
+
+BackgroundThreadLoggerImpl,
+BackgroundThreadLoggerFactoryImpl,
 
 DbLoggerImpl,
 DbLoggerFactoryImpl,
+
+MailLoggerImpl,
+MailLoggerFactoryImpl,
 {------------ End logger-related------------------}
