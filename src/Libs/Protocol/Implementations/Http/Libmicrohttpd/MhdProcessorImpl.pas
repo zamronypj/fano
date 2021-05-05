@@ -426,7 +426,12 @@ uses
         tlsKey, tlsCert : string;
         flags : cuint;
     begin
-        flags := MHD_USE_EPOLL_INTERNALLY_LINUX_ONLY;
+        {$IFDEF LINUX}
+            flags := MHD_USE_EPOLL_INTERNALLY_LINUX_ONLY;
+        {$ELSE}
+            flags := MHD_USE_SELECT_INTERNALLY;
+        {$ENDIF}
+
         if fSvrConfig.useIPv6 then
         begin
             if fSvrConfig.dualStack then
