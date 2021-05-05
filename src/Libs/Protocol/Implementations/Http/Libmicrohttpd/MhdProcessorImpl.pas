@@ -146,7 +146,7 @@ uses
     Classes,
     BaseUnix,
     SysUtils,
-    TermSignalImpl,
+    SigTermImpl,
     KeyValueEnvironmentImpl,
     MhdParamKeyValuePairImpl,
     StreamAdapterImpl,
@@ -233,10 +233,10 @@ uses
         fds := default(TFDSet);
         fpfd_zero(fds);
         //terminatePipeIn will be ready for IO when application is terminated
-        //see TermSignalImpl unit
-        fpfd_set(terminatePipeIn, FDS);
+        //see SigTermImpl unit
+        fpfd_set(TSigTerm.terminatePipeIn, FDS);
         //wait forever until terminatePipeIn changes
-        fpSelect(terminatePipeIn + 1, @fds, nil, nil, nil);
+        fpSelect(TSigTerm.terminatePipeIn + 1, @fds, nil, nil, nil);
     end;
 
     //BaseUnix and libmicrohttpd both declared pcchar type
@@ -448,7 +448,11 @@ uses
         begin
             //MHD_USE_EPOLL_INTERNALLY_LINUX_ONLY is deprecated,
             //should use MHD_USE_EPOLL_INTERNAL_THREAD
-            flags := flags or MHD_USE_EPOLL_INTERNALLY_LINUX_ONLY;
+            {$IFDEF LINUX}
+                flags := flags or MHD_USE_EPOLL_INTERNALLY_LINUX_ONLY;
+            {$ELSE}
+                flags := flags or MHD_USE_SELECT_INTERNALLY;
+            {$ENDIF}
         end;
 
         if fSvrConfig.useIPv6 then
