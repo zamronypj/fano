@@ -76,6 +76,7 @@ uses
     );
     begin
         fRateLimiter := rateLimiter;
+        fIdentifier := identifier;
         fRate := rate;
     end;
 
