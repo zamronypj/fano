@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit AbstractRateLimiterImpl;
+unit ThrottleMiddlewareImpl;
 
 interface
 
@@ -15,6 +15,10 @@ interface
 
 uses
 
+    RequestIntf,
+    ResponseIntf,
+    RouteArgsReaderIntf,
+    RequestHandlerIntf,
     AbstractMiddlewareImpl,
     RateLimiterIntf,
     RequestIdentifierIntf,
@@ -62,7 +66,8 @@ implementation
 uses
 
     SysUtils,
-    HeadersIntf;
+    HeadersIntf,
+    HttpCodeResponseImpl;
 
     constructor TThrottleMiddleware.create(
         const rateLimiter : IRateLimiter;

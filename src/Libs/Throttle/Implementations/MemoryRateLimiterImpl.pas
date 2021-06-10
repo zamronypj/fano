@@ -50,7 +50,7 @@ type
          * @return total number of operation and reset timestamp
          *-----------------------------------------------*)
         function countHit(
-            const key : shortstring;
+            const identifier : shortstring;
             const rate : TRate
         ) : TRateLimitRec;
 
@@ -77,6 +77,7 @@ implementation
 
 uses
 
+    SysUtils,
     DateUtils;
 
     constructor TMemoryRateLimiter.create();

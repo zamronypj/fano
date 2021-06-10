@@ -100,7 +100,7 @@ const
     ) : TThrottleMiddlewareFactory;
     begin
         fRate.operations := numOperations;
-        fRate.interval := interval;
+        fRate.interval := intervalSecs;
         result := self;
     end;
 
