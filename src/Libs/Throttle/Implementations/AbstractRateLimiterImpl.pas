@@ -15,6 +15,7 @@ interface
 
 uses
 
+    RateLimiterIntf,
     RateTypes;
 
 type
