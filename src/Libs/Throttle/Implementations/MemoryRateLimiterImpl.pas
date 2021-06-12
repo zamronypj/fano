@@ -131,10 +131,7 @@ uses
         begin
             if currTimestamp < rateLimitRec^.resetTimestamp then
             begin
-                if (rateLimitRec^.currentOperations < rate.operations) then
-                begin
-                    inc(rateLimitRec^.currentOperations);
-                end;
+                inc(rateLimitRec^.currentOperations);
             end else
             begin
                 //expired, reset its value
@@ -161,7 +158,7 @@ uses
     var statusHit : TRateLimitRec;
     begin
         statusHit := countHit(identifier, rate);
-        result.limitReached := (statusHit.currentOperations >= rate.operations);
+        result.limitReached := (statusHit.currentOperations > rate.operations);
         result.limit := rate.operations;
         result.remainingAttempts := rate.operations - statusHit.currentOperations;
         if result.remainingAttempts < 0 then
@@ -169,6 +166,11 @@ uses
             result.remainingAttempts := 0;
         end;
         result.resetTimestamp := statusHit.resetTimestamp;
+        result.retryAfter := statusHit.resetTimestamp - DateTimeToUnix(Now);
+        if (result.retryAfter < 0) then
+        begin
+            result.retryAfter := 0;
+        end;
     end;
 
 end.

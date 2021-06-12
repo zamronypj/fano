@@ -113,6 +113,7 @@ uses
             hdrs.setHeader('X-RateLimit-Limit', inttostr(status.limit));
             hdrs.setHeader('X-RateLimit-Remaining',inttostr(status.remainingAttempts));
             hdrs.setHeader('X-RateLimit-Reset', inttostr(status.resetTimestamp));
+            hdrs.setHeader('Retry-After', inttostr(status.retryAfter));
         end else
         begin
             result := next.handleRequest(request, response, args);

@@ -27,7 +27,12 @@ type
         limitReached : boolean;
         limit : integer;
         remainingAttempts : integer;
+
+        //timestamp when counter will be reset
         resetTimestamp : integer;
+
+        //number of seconds after counter will be reset
+        retryAfter : integer;
     end;
 
 implementation
