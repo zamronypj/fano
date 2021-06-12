@@ -105,7 +105,7 @@ uses
             result := THttpCodeResponse.create(
                 //rfc 6585
                 TOO_MANY_REQUESTS,
-                'Too many requests',
+                'Too Many Requests',
                 response.headers(),
                 response.body()
             );
