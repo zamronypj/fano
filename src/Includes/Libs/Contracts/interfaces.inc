@@ -59,3 +59,4 @@ DecrypterIntf,
 {$INCLUDE Mailer/interfaces.inc}
 {$INCLUDE UserAgent/interfaces.inc}
 {$INCLUDE FileStorage/interfaces.inc}
+{$INCLUDE Throttle/interfaces.inc}

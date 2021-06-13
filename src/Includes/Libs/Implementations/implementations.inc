@@ -46,3 +46,4 @@ KeyValuePairFactoryImpl,
 {$INCLUDE Mailer/implementations.inc}
 {$INCLUDE UserAgent/implementations.inc}
 {$INCLUDE FileStorage/implementations.inc}
+{$INCLUDE Throttle/implementations.inc}

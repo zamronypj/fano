@@ -36,3 +36,6 @@ RequestResponseFactoryImpl,
 FcgiRequestResponseFactoryImpl,
 VerbTunnellingRequestResponseFactoryImpl,
 FileStorageRequestResponseFactoryImpl,
+
+FuncRequestHandlerImpl,
+MethodRequestHandlerImpl,

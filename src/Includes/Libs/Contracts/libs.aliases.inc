@@ -52,3 +52,4 @@ IDecrypter = DecrypterIntf.IDecrypter;
 {$INCLUDE Mailer/libs.aliases.inc}
 {$INCLUDE UserAgent/libs.aliases.inc}
 {$INCLUDE FileStorage/libs.aliases.inc}
+{$INCLUDE Throttle/libs.aliases.inc}
