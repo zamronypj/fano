@@ -32,9 +32,12 @@ type
         //http satus string
         fHttpMessage : string;
 
-        //http headers
+        //http header lines separated by CRLF, for example:
+        //Retry-After: 10#13#10
+        //X-RateLimit-Limit: 1#13#10
         fHeaders : string;
     public
+
         constructor create(
             const ahttpCode :word;
             const ahttpMessage : string;
