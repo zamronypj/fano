@@ -57,7 +57,7 @@ uses
 
     constructor TMethodRequestHandler.create(const handlerMethod : THandlerMethod);
     begin
-        fHandlerMethod := @handlerMethod;
+        fHandlerMethod := handlerMethod;
         if not assigned(fHandlerMethod) then
         begin
             raise Exception.create('Invalid handler method');

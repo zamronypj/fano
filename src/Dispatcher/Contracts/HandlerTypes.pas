@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit HandlerIntf;
+unit HandlerTypes;
 
 interface
 
@@ -28,7 +28,7 @@ type
      * @param args object represent current route arguments
      * @return new response
      *--------------------------------------------*)
-    THandlerMethod = function handleRequest(
+    THandlerMethod = function (
         const request : IRequest;
         const response : IResponse;
         const args : IRouteArgsReader
@@ -42,7 +42,7 @@ type
      * @param args object represent current route arguments
      * @return new response
      *--------------------------------------------*)
-    THandlerFunc = function handleRequest(
+    THandlerFunc = function (
         const request : IRequest;
         const response : IResponse;
         const args : IRouteArgsReader

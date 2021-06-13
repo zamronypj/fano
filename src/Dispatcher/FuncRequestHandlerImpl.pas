@@ -57,7 +57,7 @@ uses
 
     constructor TFuncRequestHandler.create(const handlerFunc : THandlerFunc);
     begin
-        fHandlerFunc := @handlerFunc;
+        fHandlerFunc := handlerFunc;
         if not assigned(fHandlerFunc) then
         begin
             raise Exception.create('Invalid handler function');
