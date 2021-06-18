@@ -4,6 +4,7 @@ THtmlAjaxErrorHandler = HtmlAjaxErrorHandlerImpl.THtmlAjaxErrorHandler;
 TNullErrorHandler = NullErrorHandlerImpl.TNullErrorHandler;
 TTemplateErrorHandler = TemplateErrorHandlerImpl.TTemplateErrorHandler;
 TLogErrorHandler = LogErrorHandlerImpl.TLogErrorHandler;
+TLoggerErrorHandler = LoggerErrorHandlerImpl.TLoggerErrorHandler;
 TCompositeErrorHandler = CompositeErrorHandlerImpl.TCompositeErrorHandler;
 TGroupErrorHandler = GroupErrorHandlerImpl.TGroupErrorHandler;
 TConditionalErrorHandler = ConditionalErrorHandlerImpl.TConditionalErrorHandler;

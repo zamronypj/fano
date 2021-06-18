@@ -29,6 +29,7 @@ HtmlAjaxErrorHandlerImpl,
 HtmlAjaxErrorHandlerFactoryImpl,
 
 LogErrorHandlerImpl,
+LoggerErrorHandlerImpl,
 CompositeErrorHandlerImpl,
 GroupErrorHandlerImpl,
 ConditionalErrorHandlerImpl,
