@@ -5,6 +5,7 @@ TNullErrorHandler = NullErrorHandlerImpl.TNullErrorHandler;
 TTemplateErrorHandler = TemplateErrorHandlerImpl.TTemplateErrorHandler;
 TLogErrorHandler = LogErrorHandlerImpl.TLogErrorHandler;
 TCompositeErrorHandler = CompositeErrorHandlerImpl.TCompositeErrorHandler;
+TGroupErrorHandler = GroupErrorHandlerImpl.TGroupErrorHandler;
 TConditionalErrorHandler = ConditionalErrorHandlerImpl.TConditionalErrorHandler;
 TDecoratorErrorHandler = DecoratorErrorHandlerImpl.TDecoratorErrorHandler;
 TBoolErrorHandler = BoolErrorHandlerImpl.TBoolErrorHandler;
