@@ -30,14 +30,6 @@ uses
 type
 
     (*!------------------------------------------------
-     * we use bigger textfile file buffer to speed up
-     *
-     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
-     *-----------------------------------------------*)
-    TFileBuffer = array[0..255] of char;
-
-
-    (*!------------------------------------------------
      * logger class that write log to text file
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
@@ -47,7 +39,6 @@ type
         fAutoFlush : boolean;
         outputFile : TextFile;
         isOpen : boolean;
-        fileBuffer : TFileBuffer;
 
         (*!--------------------------------------
          * try opening file
@@ -144,7 +135,6 @@ implementation
         fAutoFlush := autoFlush;
         isOpen := false;
         assignFile(outputFile, filename);
-        setTextBuf(outputFile, fileBuffer[0], sizeof(fileBuffer));
         tryOpenFileOrExcept(filename);
 
         //tryOpenFileOrExcept() will throw EInOutError when
