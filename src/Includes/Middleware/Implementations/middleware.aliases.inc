@@ -1,4 +1,4 @@
-TMiddlewareExecutor = MiddlewareExecutorImpl.TMiddlewareExecutorList;
+TMiddlewareExecutor = MiddlewareExecutorImpl.TMiddlewareExecutor;
 
 TMiddlewareList = MiddlewareListImpl.TMiddlewareList;
 TNullMiddlewareList = NullMiddlewareListImpl.TNullMiddlewareList;
