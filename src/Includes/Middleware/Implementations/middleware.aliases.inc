@@ -1,3 +1,5 @@
+TMiddlewareExecutor = MiddlewareExecutorImpl.TMiddlewareExecutorList;
+
 TMiddlewareList = MiddlewareListImpl.TMiddlewareList;
 TNullMiddlewareList = NullMiddlewareListImpl.TNullMiddlewareList;
 TMiddlewareListFactory = MiddlewareListFactoryImpl.TMiddlewareListFactory;
