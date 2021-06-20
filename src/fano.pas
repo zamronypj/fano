@@ -33,6 +33,10 @@ type
     {$INCLUDE Includes/interfaces.aliases.inc}
     {$INCLUDE Includes/implementations.aliases.inc}
 
+const
+
+    {$INCLUDE Includes/consts.inc}
+
 implementation
 
 end.
