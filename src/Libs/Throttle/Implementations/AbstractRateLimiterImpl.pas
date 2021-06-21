@@ -94,6 +94,11 @@ type
 
 implementation
 
+uses
+
+    SysUtils,
+    DateUtils;
+
     (*!------------------------------------------------
      * count number of operations identified by identifier
      *-----------------------------------------------

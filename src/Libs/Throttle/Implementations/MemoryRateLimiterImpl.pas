@@ -108,7 +108,7 @@ implementation
         rateLimit: PRateLimitRec
     );
     begin
-        fStorage.add(identifier, rateLimitRec);
+        fStorage.add(identifier, rateLimit);
     end;
 
     (*!------------------------------------------------
