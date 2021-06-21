@@ -15,6 +15,7 @@
 AbstractRateLimiterImpl,
 DecoratorRateLimiterImpl,
 MemoryRateLimiterImpl,
+DbRateLimiterImpl,
 
 AbstractRequestIdentifierImpl,
 IpAddrRequestIdentifierImpl,

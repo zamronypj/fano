@@ -41,7 +41,7 @@ type
          * name of column to store id
          * it is assumed varchar
          *-----------------------------*)
-        fIdColumn : string;
+        fIdColumnName : string;
 
         (*!---------------------------
          * name of column to store maximum
@@ -58,7 +58,7 @@ type
         fResetTimestampColumnName : string;
 
         fRateLimitRec : TRateLimitRec;
-    protecte
+    protected
         (*!------------------------------------------------
          * read rate limit info from storage
          *
@@ -92,23 +92,31 @@ type
         constructor create(
             const db : IRdbms;
             const tableName : string;
+            const idColumnName : string;
             const operationColumnName : string;
-            const intervaColumnName : string
+            const resetTimestampColumnName : string
         );
 
     end;
 
 implementation
 
+uses
+
+    RdbmsResultSetIntf,
+    RdbmsFieldsIntf;
+
     constructor TDbRateLimiter.create(
         const db : IRdbms;
         const tableName : string;
+        const idColumnName : string;
         const operationColumnName : string;
         const resetTimestampColumnName : string
     );
     begin
         fRdbms := db;
         fTableName := tableName;
+        fIdColumnName := idColumnName;
         fOperationColumnName := operationColumnName;
         fResetTimestampColumnName := resetTimestampColumnName;
         fRateLimitRec := default(TRateLimitRec);
@@ -118,14 +126,14 @@ implementation
         const identifier : shortstring
     ) : PRateLimitRec;
     var res : IRdbmsResultSet;
-        afield : IRdbmsFields;
+        afields : IRdbmsFields;
     begin
         res := fRdbms.prepare(
             'SELECT ' +
                 fOperationColumnName + ', ' +
                 fResetTimestampColumnName +
             ' FROM ' + fTableName +
-            ' WHERE ' + fIdColumnName + ' = :' + fIdColumnName;
+            ' WHERE ' + fIdColumnName + ' = :' + fIdColumnName
         ).paramStr(fIdColumnName, identifier)
         .execute();
 
@@ -134,13 +142,13 @@ implementation
             result := nil;
         end else
         begin
-            afield := res.field();
+            afields := res.fields();
 
-            fRateLimitRec.currentOperations := afield.fieldByName(
+            fRateLimitRec.currentOperations := afields.fieldByName(
                 fOperationColumnName
             ).asInteger;
 
-            fRateLimitRec.resetTimestamp := afield.fieldByName(
+            fRateLimitRec.resetTimestamp := afields.fieldByName(
                 fResetTimestampColumnName
             ).asInteger;
 
@@ -169,7 +177,7 @@ implementation
                 ':' + fIdColumnName + ', ' +
                 ':' + fOperationColumnName + ', ' +
                 ':' + fResetTimestampColumnName +
-            ')';
+            ')'
         ).paramStr(fIdColumnName, identifier)
         .paramInt(fOperationColumnName, rateLimit^.currentOperations)
         .paramInt(fResetTimestampColumnName, rateLimit^.resetTimestamp)
@@ -194,7 +202,7 @@ implementation
                 ' SET ' +
                     fOperationColumnName + ' = :' + fOperationColumnName + ', ' +
                     fResetTimestampColumnName + ' = :' + fResetTimestampColumnName +
-            ' WHERE ' + fIdColumnName + ' = :' + fIdColumnName;
+            ' WHERE ' + fIdColumnName + ' = :' + fIdColumnName
         ).paramStr(fIdColumnName, identifier)
         .paramInt(fOperationColumnName, rateLimit^.currentOperations)
         .paramInt(fResetTimestampColumnName, rateLimit^.resetTimestamp)
