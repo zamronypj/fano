@@ -25,12 +25,65 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TOdbcDb = class(TRdbms);
+    TOdbcDb = class(TRdbms)
+    private
+        fDriver : string;
+    public
+        constructor create(const aDriver : string);
+
+        (*!------------------------------------------------
+         * create connection to database server
+         *-------------------------------------------------
+         * @param host hostname/ip where MySQl server run
+         * @param dbname database name to use
+         * @param username user name credential to login
+         * @param password password credential to login
+         * @param port TCP port where MySQL listen
+         * @return current instance
+         *-------------------------------------------------*)
+        function connect(
+            const host : string;
+            const dbname : string;
+            const username : string;
+            const password : string;
+            const port : word
+        ) : IRdbms; override;
+    end;
 
 implementation
 
 uses
 
     OdbcConn;
+
+    constructor TOdbcDb.create(const aDriver : string);
+    begin
+        inherited create('ODBC');
+        fDriver := aDriver;
+    end;
+
+    (*!------------------------------------------------
+     * create connection to database server
+     *-------------------------------------------------
+     * @param host hostname/ip where MySQl server run
+     * @param dbname database name to use
+     * @param username user name credential to login
+     * @param password password credential to login
+     * @param port TCP port where MySQL listen
+     * @return current instance
+     *-------------------------------------------------*)
+    function TOdbcDb.connect(
+        const host : string;
+        const dbname : string;
+        const username : string;
+        const password : string;
+        const port : word
+    ) : IRdbms;
+    begin
+        inherited connect(host, dbname, username. password, port);
+        //we can assume safely proxy object will be TODBCConnection
+        TODBCConnection(fDbInstance.Proxy).Driver := fDriver;
+    end;
+
 
 end.

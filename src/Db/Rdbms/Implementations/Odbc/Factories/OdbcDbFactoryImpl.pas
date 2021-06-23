@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit MySqlDbFactoryImpl;
+unit OdbcDbFactoryImpl;
 
 interface
 
@@ -27,38 +27,37 @@ type
 
     (*!------------------------------------------------
      * basic class having capability to
-     * handle mysql relational database operation
+     * handle relational database operation via ODBC
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TMySqlDbFactory = class(TAbstractDbFactory)
+    TOdbcDbFactory = class(TAbstractDbFactory)
     private
-        mysqlVersion : string;
-        databaseHostname : string;
-        databaseName : string;
-        databaseUsername : string;
-        databasePassword : string;
-        databasePort : word;
+        fDriver : string;
+        fDatabaseHostname : string;
+        fDatabaseName : string;
+        fDatabaseUsername : string;
+        fDatabasePassword : string;
+        fDatabasePort : word;
     public
 
         (*!------------------------------------------------
          * create connection to RDBMS server
          *-------------------------------------------------
-         * @param version MySQL version
+         * @param driver ODBC driver
          * @param host hostname/ip where RDBMS server run
          * @param dbname database name to use
          * @param username user name credential to login
          * @param password password credential to login
          * @param port TCP port where RDBMS listen
          *-------------------------------------------------*)
-        constructor create(
-            const version : string;
-            const host : string;
-            const dbname : string;
-            const username : string;
-            const password : string;
-            const port : word = MYSQL_DEFAULT_PORT
-        );
+        constructor create(const driver : string);
+
+        function host(const aHost : string) : TOdbcDbFactory;
+        function port(const aPort : word) : TOdbcDbFactory;
+        function database(const aDbname : string) : TOdbcDbFactory;
+        function username(const aUsrname : string) : TOdbcDbFactory;
+        function password(const aPasw : string) : TOdbcDbFactory;
 
         (*!------------------------------------------------
          * create rdbms instance
@@ -72,33 +71,51 @@ implementation
 
 uses
 
-    MySqlDbImpl;
+    OdbcDbImpl;
 
     (*!------------------------------------------------
      * create connection to RDBMS server
      *-------------------------------------------------
-     * @param version MySQL version
+     * @param driver ODBC driver
      * @param host hostname/ip where RDBMS server run
      * @param dbname database name to use
      * @param username user name credential to login
      * @param password password credential to login
      * @param port TCP port where RDBMS listen
      *-------------------------------------------------*)
-    constructor TMySqlDbFactory.create(
-        const version : string;
-        const host : string;
-        const dbname : string;
-        const username : string;
-        const password : string;
-        const port : word = MYSQL_DEFAULT_PORT
-    );
+    constructor TOdbcDbFactory.create(const driver : string);
     begin
-        mysqlVersion := version;
-        databaseHostname := host;
-        databaseName := dbname;
-        databaseUsername := username;
-        databasePassword := password;
-        databasePort := port;
+        fDriver := driver;
+        fDatabaseHostname := '';
+        fDatabaseName := '';
+        fDatabaseUsername := '';
+        fDatabasePassword := '';
+        fDatabasePort := 0;
+    end;
+
+    function TOdbcDbFactory.host(const aHost : string) : TOdbcDbFactory;
+    begin
+
+    end;
+
+    function TOdbcDbFactory.port(const aPort : word) : TOdbcDbFactory;
+    begin
+
+    end;
+
+    function TOdbcDbFactory.database(const aDbname : string) : TOdbcDbFactory;
+    begin
+
+    end;
+
+    function TOdbcDbFactory.username(const aUsrname : string) : TOdbcDbFactory;
+    begin
+
+    end;
+
+    function TOdbcDbFactory.password(const aPasw : string) : TOdbcDbFactory;
+    begin
+
     end;
 
     (*!------------------------------------------------
@@ -106,15 +123,17 @@ uses
      *-------------------------------------------------
      * @return database connection instance
      *-------------------------------------------------*)
-    function TMySqlDbFactory.build() : IRdbms;
+    function TOdbcDbFactory.build() : IRdbms;
+    var db : TOdbcDb;
     begin
-        result := TMySqlDb.create(mysqlVersion);
+        db := TOdbcDb.create();
+        result := db;
         result.connect(
-            databaseHostname,
-            databaseName,
-            databaseUsername,
-            databasePassword,
-            databasePort
+            fDatabaseHostname,
+            fDatabaseName,
+            fDatabaseUsername,
+            fDatabasePassword,
+            fDatabasePort
         );
     end;
 
