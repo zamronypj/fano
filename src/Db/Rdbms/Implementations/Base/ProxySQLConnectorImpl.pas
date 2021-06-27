@@ -17,6 +17,8 @@ uses
 
     sqldb;
 
+type
+
     (*!------------------------------------------------
      * internal class which expose proxy TSqlconnection
      * as public

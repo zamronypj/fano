@@ -51,7 +51,7 @@ type
          * @param password password credential to login
          * @param port TCP port where RDBMS listen
          *-------------------------------------------------*)
-        constructor create(const driver : string);
+        constructor create(const driver : string = '');
 
         function host(const aHost : string) : TOdbcDbFactory;
         function port(const aPort : word) : TOdbcDbFactory;
@@ -83,7 +83,7 @@ uses
      * @param password password credential to login
      * @param port TCP port where RDBMS listen
      *-------------------------------------------------*)
-    constructor TOdbcDbFactory.create(const driver : string);
+    constructor TOdbcDbFactory.create(const driver : string = '');
     begin
         fDriver := driver;
         fDatabaseHostname := '';
@@ -95,27 +95,32 @@ uses
 
     function TOdbcDbFactory.host(const aHost : string) : TOdbcDbFactory;
     begin
-
+        fDatabaseHostname := aHost;
+        result := self;
     end;
 
     function TOdbcDbFactory.port(const aPort : word) : TOdbcDbFactory;
     begin
-
+        fDatabasePort := aPort;
+        result := self;
     end;
 
     function TOdbcDbFactory.database(const aDbname : string) : TOdbcDbFactory;
     begin
-
+        fDatabaseName := aDbName;
+        result := self;
     end;
 
     function TOdbcDbFactory.username(const aUsrname : string) : TOdbcDbFactory;
     begin
-
+        fDatabaseUserName := aUsrName;
+        result := self;
     end;
 
     function TOdbcDbFactory.password(const aPasw : string) : TOdbcDbFactory;
     begin
-
+        fDatabasePassword := aPasw;
+        result := self;
     end;
 
     (*!------------------------------------------------
@@ -126,7 +131,7 @@ uses
     function TOdbcDbFactory.build() : IRdbms;
     var db : TOdbcDb;
     begin
-        db := TOdbcDb.create();
+        db := TOdbcDb.create(fDriver);
         result := db;
         result.connect(
             fDatabaseHostname,

@@ -15,6 +15,7 @@ interface
 
 uses
 
+    RdbmsIntf,
     RdbmsImpl;
 
 type
@@ -80,9 +81,10 @@ uses
         const port : word
     ) : IRdbms;
     begin
-        inherited connect(host, dbname, username. password, port);
+        inherited connect(host, dbname, username, password, port);
         //we can assume safely proxy object will be TODBCConnection
         TODBCConnection(fDbInstance.Proxy).Driver := fDriver;
+        result := self;
     end;
 
 
