@@ -47,6 +47,14 @@ EqualIntValidatorImpl,
 LessThanValidatorImpl,
 GreaterThanValidatorImpl,
 
+CompareFloatValidatorImpl,
+FloatLessThanValidatorImpl,
+FloatGreaterThanValidatorImpl,
+
+CompareCurrencyValidatorImpl,
+CurrLessThanValidatorImpl,
+CurrGreaterThanValidatorImpl,
+
 RegexValidatorImpl,
 RequiredValidatorImpl,
 RequiredIfValidatorImpl,
@@ -104,3 +112,6 @@ CaseInsensitiveEqualStrValidatorImpl,
 
 StartWithValidatorImpl,
 EndWithValidatorImpl,
+
+LatitudeValidatorImpl,
+LongitudeValidatorImpl,
