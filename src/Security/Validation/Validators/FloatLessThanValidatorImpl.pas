@@ -28,11 +28,11 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TLessThanValidator = class(TCompareFloatValidator)
+    TFloatLessThanValidator = class(TCompareFloatValidator)
     protected
         function compareFloatWithRef(
-            const aInt: double;
-            const refInt : double
+            const aFloat: double;
+            const refFloat : double
         ) : boolean; override;
     public
         (*!------------------------------------------------

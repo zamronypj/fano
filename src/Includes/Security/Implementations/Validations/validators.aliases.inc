@@ -50,6 +50,14 @@ TEqualIntValidator = EqualIntValidatorImpl.TEqualIntValidator;
 TLessThanValidator = LessThanValidatorImpl.TLessThanValidator;
 TGreaterThanValidator = GreaterThanValidatorImpl.TGreaterThanValidator;
 
+TCompareFloatValidator = CompareFloatValidatorImpl.TCompareFloatValidator;
+TFloatLessThanValidator = FloatLessThanValidatorImpl.TFloatLessThanValidator;
+TFloatGreaterThanValidator = FloatGreaterThanValidatorImpl.TFloatGreaterThanValidator;
+
+TCompareCurrencyValidator = CompareCurrencyValidatorImpl.TCompareCurrencyValidator;
+TCurrLessThanValidator = CurrLessThanValidatorImpl.TCurrLessThanValidator;
+TCurrGreaterThanValidator = CurrGreaterThanValidatorImpl.TCurrGreaterThanValidator;
+
 TFloatValidator = FloatValidatorImpl.TFloatValidator;
 TNumericValidator = NumericValidatorImpl.TNumericValidator;
 TCurrencyValidator = CurrencyValidatorImpl.TCurrencyValidator;
@@ -112,3 +120,6 @@ TCaseInsensitiveEqualStrValidator = CaseInsensitiveEqualStrValidatorImpl.TCaseIn
 
 TStartWithValidator = StartWithValidatorImpl.TStartWithValidator;
 TEndWithValidator = EndWithValidatorImpl.TEndWithValidator;
+
+TLatitudeValidator = LatitudeValidatorImpl.TLatitudeValidator;
+TLongitudeValidator = LongitudeValidatorImpl.TLongitudeValidator;
