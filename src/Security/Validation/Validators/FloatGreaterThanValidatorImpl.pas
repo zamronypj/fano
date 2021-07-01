@@ -52,7 +52,7 @@ uses
 
 resourcestring
 
-    sErrFieldMustBeFloatGreaterThan = 'Field %%s must be float value greater than %d';
+    sErrFieldMustBeFloatGreaterThan = 'Field %%s must be float value greater than %f';
 
     (*!------------------------------------------------
      * constructor

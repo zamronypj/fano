@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit FloatLessThanValidatorImpl;
+unit CurrLessOrEqualThanValidatorImpl;
 
 interface
 
@@ -18,21 +18,22 @@ uses
     ReadOnlyListIntf,
     ValidatorIntf,
     RequestIntf,
-    CompareFloatValidatorImpl;
+    CompareCurrencyValidatorImpl;
 
 type
 
     (*!------------------------------------------------
      * basic class having capability to
-     * validate if data less than a reference float value
+     * validate if data less or equal than a reference
+     * currency value
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TFloatLessThanValidator = class(TCompareFloatValidator)
+    TCurrLessOrEqualThanValidator = class(TCompareCurrencyValidator)
     protected
-        function compareFloatWithRef(
-            const aFloat: double;
-            const refFloat : double
+        function compareCurrencyWithRef(
+            const aCurrency: currency;
+            const refCurrency : currency
         ) : boolean; override;
     public
         (*!------------------------------------------------
@@ -40,7 +41,7 @@ type
          *-------------------------------------------------
          * @param refValue reference value
          *-------------------------------------------------*)
-        constructor create(const refValue : double);
+        constructor create(const refValue : currency);
     end;
 
 implementation
@@ -51,25 +52,25 @@ uses
 
 resourcestring
 
-    sErrFieldMustBeFloatLessThan = 'Field %%s must be float value less than %f';
+    sErrFieldMustBeCurrencyLessOrEqualThan = 'Field %%s must be currency value less or equal than %f';
 
     (*!------------------------------------------------
      * constructor
      *-------------------------------------------------*)
-    constructor TFloatLessThanValidator.create(const refValue : double);
+    constructor TCurrLessOrEqualThanValidator.create(const refValue : currency);
     begin
         inherited create(
-            format(sErrFieldMustBeFloatLessThan, [ refValue ]),
+            format(sErrFieldMustBeCurrencyLessOrEqualThan, [ refValue ]),
             refValue
         );
     end;
 
-    function TFloatLessThanValidator.compareFloatWithRef(
-        const aFloat: double;
-        const refFloat : double
+    function TCurrLessOrEqualThanValidator.compareCurrencyWithRef(
+        const aCurrency: currency;
+        const refCurrency : currency
     ) : boolean;
     begin
-        result := (aFloat < refFloat);
+        result := (aCurrency <= refCurrency);
     end;
 
 end.

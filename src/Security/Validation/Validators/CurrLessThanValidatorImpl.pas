@@ -51,7 +51,7 @@ uses
 
 resourcestring
 
-    sErrFieldMustBeCurrencyLessThan = 'Field %%s must be currency value less than %d';
+    sErrFieldMustBeCurrencyLessThan = 'Field %%s must be currency value less than %f';
 
     (*!------------------------------------------------
      * constructor

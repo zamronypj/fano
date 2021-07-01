@@ -52,7 +52,7 @@ uses
 
 resourcestring
 
-    sErrFieldMustBeCurrencyGreaterThan = 'Field %%s must be currency value greater than %d';
+    sErrFieldMustBeCurrencyGreaterThan = 'Field %%s must be currency value greater than %f';
 
     (*!------------------------------------------------
      * constructor

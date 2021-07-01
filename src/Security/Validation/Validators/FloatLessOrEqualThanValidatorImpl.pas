@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit FloatLessThanValidatorImpl;
+unit FloatLessOrEqualThanValidatorImpl;
 
 interface
 
@@ -28,7 +28,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TFloatLessThanValidator = class(TCompareFloatValidator)
+    TFloatLessOrEqualThanValidator = class(TCompareFloatValidator)
     protected
         function compareFloatWithRef(
             const aFloat: double;
@@ -51,25 +51,25 @@ uses
 
 resourcestring
 
-    sErrFieldMustBeFloatLessThan = 'Field %%s must be float value less than %f';
+    sErrFieldMustBeFloatLessOrEqualThan = 'Field %%s must be float value less or equal than %f';
 
     (*!------------------------------------------------
      * constructor
      *-------------------------------------------------*)
-    constructor TFloatLessThanValidator.create(const refValue : double);
+    constructor TFloatLessOrEqualThanValidator.create(const refValue : double);
     begin
         inherited create(
-            format(sErrFieldMustBeFloatLessThan, [ refValue ]),
+            format(sErrFieldMustBeFloatLessOrEqualThan, [ refValue ]),
             refValue
         );
     end;
 
-    function TFloatLessThanValidator.compareFloatWithRef(
+    function TFloatLessOrEqualThanValidator.compareFloatWithRef(
         const aFloat: double;
         const refFloat : double
     ) : boolean;
     begin
-        result := (aFloat < refFloat);
+        result := (aFloat <= refFloat);
     end;
 
 end.

@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit FloatLessThanValidatorImpl;
+unit LessOrEqualThanValidatorImpl;
 
 interface
 
@@ -18,21 +18,21 @@ uses
     ReadOnlyListIntf,
     ValidatorIntf,
     RequestIntf,
-    CompareFloatValidatorImpl;
+    CompareIntValidatorImpl;
 
 type
 
     (*!------------------------------------------------
      * basic class having capability to
-     * validate if data less than a reference float value
+     * validate if data less or equal than a reference value
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TFloatLessThanValidator = class(TCompareFloatValidator)
+    TLessOrEqualThanValidator = class(TCompareIntValidator)
     protected
-        function compareFloatWithRef(
-            const aFloat: double;
-            const refFloat : double
+        function compareIntWithRef(
+            const aInt: integer;
+            const refInt : integer
         ) : boolean; override;
     public
         (*!------------------------------------------------
@@ -40,7 +40,7 @@ type
          *-------------------------------------------------
          * @param refValue reference value
          *-------------------------------------------------*)
-        constructor create(const refValue : double);
+        constructor create(const refValue : integer);
     end;
 
 implementation
@@ -51,25 +51,25 @@ uses
 
 resourcestring
 
-    sErrFieldMustBeFloatLessThan = 'Field %%s must be float value less than %f';
+    sErrFieldMustBeIntegerLessOrEqualThan = 'Field %%s must be integer less or equal than %d';
 
     (*!------------------------------------------------
      * constructor
      *-------------------------------------------------*)
-    constructor TFloatLessThanValidator.create(const refValue : double);
+    constructor TLessOrEqualThanValidator.create(const refValue : integer);
     begin
         inherited create(
-            format(sErrFieldMustBeFloatLessThan, [ refValue ]),
+            format(sErrFieldMustBeIntegerLessOrEqualThan, [ refValue ]),
             refValue
         );
     end;
 
-    function TFloatLessThanValidator.compareFloatWithRef(
-        const aFloat: double;
-        const refFloat : double
+    function TLessOrEqualThanValidator.compareIntWithRef(
+        const aInt: integer;
+        const refInt : integer
     ) : boolean;
     begin
-        result := (aFloat < refFloat);
+        result := (aInt <= refInt);
     end;
 
 end.
