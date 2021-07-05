@@ -13,5 +13,5 @@
  *
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
  *-----------------------------------------------*)
-FileUtils,
-StringUtils; //note: this is last unit so semicolon is intentional
+
+{$INCLUDE Helpers/funcs.inc}
