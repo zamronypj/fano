@@ -11,6 +11,7 @@ unit MaintenanceModeDispatcherFactoryImpl;
 interface
 
 {$MODE OBJFPC}
+{$H+}
 
 uses
     DependencyIntf,
@@ -30,7 +31,8 @@ type
     private
         fMaintenanceFilePath : string;
     public
-        function path(const maintenanceFilePath) : TMaintenanceModeDispatcherFactory;
+        constructor create(const factory : IDependencyFactory);
+        function path(const maintenanceFilePath : string) : TMaintenanceModeDispatcherFactory;
         function build(const container : IDependencyContainer) : IDependency; override;
     end;
 
@@ -40,6 +42,12 @@ uses
 
     DispatcherIntf,
     MaintenanceModeDispatcherImpl;
+
+    constructor TMaintenanceModeDispatcherFactory.create(const factory : IDependencyFactory);
+    begin
+        inherited create(factory);
+        fMaintenanceFilePath := '__maintenance__';
+    end;
 
     function TMaintenanceModeDispatcherFactory.path(
         const maintenanceFilePath : string
@@ -54,7 +62,8 @@ uses
     ) : IDependency;
     begin
         result := TMaintenanceModeDispatcher.create(
-            fActualFactory.build(container) as IDispatcher
+            fActualFactory.build(container) as IDispatcher,
+            fMaintenanceFilePath
         );
     end;
 

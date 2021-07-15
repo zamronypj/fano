@@ -10,6 +10,7 @@ unit MaintenanceModeDispatcherImpl;
 interface
 
 {$MODE OBJFPC}
+{$H+}
 
 uses
 
@@ -17,9 +18,11 @@ uses
     ResponseIntf,
     StdInIntf,
     RouteHandlerIntf,
-    DispatcherIntf;
+    DispatcherIntf,
+    InjectableObjectImpl;
 
 type
+
     (*!------------------------------------------------
      * dispatcher implementation that support for maintenance
      * mode. It checks existence of special file. If it does
@@ -46,7 +49,7 @@ type
 
         constructor create(
             const actualDispatcher : IDispatcher;
-            const maintenanceFilePath : string
+            const maintenanceFilePath : string = '__maintenance__'
         );
 
         function dispatchRequest(
@@ -64,10 +67,10 @@ uses
 
     constructor TMaintenanceModeDispatcher.create(
         const actualDispatcher : IDispatcher;
-        const maintenanceFilePath : string
+        const maintenanceFilePath : string = '__maintenance__'
     );
     begin
-        fActualDispatcher := dispatcher;
+        fActualDispatcher := actualDispatcher;
         fMaintenanceFilePath := maintenanceFilePath;
     end;
 
