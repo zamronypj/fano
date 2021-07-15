@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit VerbTunnellingDispatcherFactoryImpl;
+unit MaintenanceModeDispatcherFactoryImpl;
 
 interface
 
@@ -20,14 +20,17 @@ uses
 type
 
     (*!--------------------------------------------------
-     * factory class for TVerbTunnellingDispatcher,
+     * factory class for TMaintenanceModeDispatcher,
      * dispatcher implementation which support
-     * http verb tunneling
+     * maintenance mode
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *---------------------------------------------------*)
-    TVerbTunnellingDispatcherFactory = class(TDecoratorFactory)
+    TMaintenanceModeDispatcherFactory = class(TDecoratorFactory)
+    private
+        fMaintenanceFilePath : string;
     public
+        function path(const maintenanceFilePath) : TMaintenanceModeDispatcherFactory;
         function build(const container : IDependencyContainer) : IDependency; override;
     end;
 
@@ -36,13 +39,21 @@ implementation
 uses
 
     DispatcherIntf,
-    VerbTunnellingDispatcherImpl;
+    MaintenanceModeDispatcherImpl;
 
-    function TVerbTunnellingDispatcherFactory.build(
+    function TMaintenanceModeDispatcherFactory.path(
+        const maintenanceFilePath : string
+    ) : TMaintenanceModeDispatcherFactory;
+    begin
+        fMaintenanceFilePath := maintenanceFilePath;
+        result := self;
+    end;
+
+    function TMaintenanceModeDispatcherFactory.build(
         const container : IDependencyContainer
     ) : IDependency;
     begin
-        result := TVerbTunnellingDispatcher.create(
+        result := TMaintenanceModeDispatcher.create(
             fActualFactory.build(container) as IDispatcher
         );
     end;

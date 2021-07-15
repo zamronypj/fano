@@ -28,6 +28,7 @@ VerbTunnellingDispatcherFactoryImpl,
 XDispatcherFactoryImpl,
 XSimpleDispatcherFactoryImpl,
 MwExecDispatcherFactoryImpl,
+MaintenanceModeDispatcherFactoryImpl,
 
 EInvalidDispatcherImpl,
 ERouteHandlerNotFoundImpl,
