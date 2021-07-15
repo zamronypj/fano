@@ -7,6 +7,7 @@ TVerbTunnellingDispatcher = VerbTunnellingDispatcherImpl.TVerbTunnellingDispatch
 TXDispatcher = XDispatcherImpl.TXDispatcher;
 TXSimpleDispatcher = XSimpleDispatcherImpl.TXSimpleDispatcher;
 TMwExecDispatcher = MwExecDispatcherImpl.TMwExecDispatcher;
+TMaintenanceModeDispatcher = MaintenanceModeDispatcherImpl.TMaintenanceModeDispatcher;
 
 TDispatcherFactory = DispatcherFactoryImpl.TDispatcherFactory;
 TSimpleDispatcherFactory = SimpleDispatcherFactoryImpl.TSimpleDispatcherFactory;

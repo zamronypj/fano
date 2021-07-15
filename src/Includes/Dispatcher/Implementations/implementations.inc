@@ -19,6 +19,7 @@ VerbTunnellingDispatcherImpl,
 XDispatcherImpl,
 XSimpleDispatcherImpl,
 MwExecDispatcherImpl,
+MaintenanceModeDispatcherImpl,
 
 DispatcherFactoryImpl,
 SimpleDispatcherFactoryImpl,
