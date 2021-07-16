@@ -22,6 +22,8 @@ IpAddrRequestIdentifierImpl,
 SessionRequestIdentifierImpl,
 
 ThrottleMiddlewareImpl,
+NonBlockingThrottleMiddlewareImpl,
 ThrottleMiddlewareFactoryImpl,
+NonBlockingThrottleMiddlewareFactoryImpl,
 
 RateTypes,

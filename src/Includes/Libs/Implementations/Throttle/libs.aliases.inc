@@ -23,6 +23,8 @@ TSessionRequestIdentifier = SessionRequestIdentifierImpl.TSessionRequestIdentifi
 
 TThrottleMiddleware = ThrottleMiddlewareImpl.TThrottleMiddleware;
 TThrottleMiddlewareFactory = ThrottleMiddlewareFactoryImpl.TThrottleMiddlewareFactory;
+TNonBlockingThrottleMiddleware = NonBlockingThrottleMiddlewareImpl.TNonBlockingThrottleMiddleware;
+TNonBlockingThrottleMiddlewareFactory = NonBlockingThrottleMiddlewareFactoryImpl.TNonBlockingThrottleMiddlewareFactory;
 
 TRate = RateTypes.TRate;
 TLimitStatus = RateTypes.TLimitStatus;
