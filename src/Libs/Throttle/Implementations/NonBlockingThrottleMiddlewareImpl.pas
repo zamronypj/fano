@@ -56,6 +56,7 @@ implementation
 
 uses
 
+    ThrottleRequestIntf,
     ThrottleRequestImpl;
 
     (*!---------------------------------------
@@ -75,13 +76,11 @@ uses
     ) : IResponse;
     var
         status : TLimitStatus;
+        throttledRequest : IThrottleRequest;
     begin
         status := fRateLimiter.limit(fIdentifier[request], fRate);
-        result := next.handleRequest(
-            TThrottleRequest.create(request, status),
-            response,
-            args
-        );
+        throttledRequest := TThrottleRequest.create(request, status);
+        result := next.handleRequest(throttledRequest, response, args);
     end;
 
 end.
