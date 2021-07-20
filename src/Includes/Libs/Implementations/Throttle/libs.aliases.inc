@@ -20,6 +20,7 @@ TDbRateLimiter = DbRateLimiterImpl.TDbRateLimiter;
 TAbstractRequestIdentifier = AbstractRequestIdentifierImpl.TAbstractRequestIdentifier;
 TIpAddrRequestIdentifier = IpAddrRequestIdentifierImpl.TIpAddrRequestIdentifier;
 TSessionRequestIdentifier = SessionRequestIdentifierImpl.TSessionRequestIdentifier;
+TQueryParamRequestIdentifier = QueryParamRequestIdentifierImpl.TQueryParamRequestIdentifier;
 
 TThrottleMiddleware = ThrottleMiddlewareImpl.TThrottleMiddleware;
 TThrottleMiddlewareFactory = ThrottleMiddlewareFactoryImpl.TThrottleMiddlewareFactory;
