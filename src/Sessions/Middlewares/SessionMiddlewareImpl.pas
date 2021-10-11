@@ -21,6 +21,7 @@ uses
     RouteArgsReaderIntf,
     RequestHandlerIntf,
     SessionManagerIntf,
+    CookieIntf,
     CookieFactoryIntf,
     SessionIntf;
 

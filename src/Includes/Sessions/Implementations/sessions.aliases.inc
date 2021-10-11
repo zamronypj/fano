@@ -61,3 +61,5 @@ TIniDbSessionManagerFactory= IniDbSessionManagerFactoryImpl.TIniDbSessionManager
 TSessionMiddlewareExecutor = SessionMiddlewareExecutorImpl.TSessionMiddlewareExecutor;
 
 TSessionResponse = SessionResponseImpl.TSessionResponse;
+
+TSessionMiddleware = SessionMiddlewareImpl.TSessionMiddleware;
