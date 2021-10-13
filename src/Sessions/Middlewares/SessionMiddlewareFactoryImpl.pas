@@ -34,10 +34,9 @@ type
         fCookieFactory : ICookieFactory;
         fExpiresInSec : integer;
     public
-        constructor create();
+        constructor create(const aSessionMgr : ISessionManager);
 
         function expiresInSec(const aExpiresInSec : integer) : TSessionMiddlewareFactory;
-        function sessionManager(const aSessionMgr : ISessionManager) : TSessionMiddlewareFactory;
         function cookieFactory(const aCookieFactory : ICookieFactory) : TSessionMiddlewareFactory;
 
         (*!---------------------------------------
@@ -53,6 +52,7 @@ implementation
 
 uses
 
+    SysUtils,
     JsonFileSessionManagerFactoryImpl,
     CookieFactoryImpl,
     SessionMiddlewareImpl;
@@ -61,9 +61,15 @@ const
 
     EXPIRES_30_MIN = 30 * 60;
 
-    constructor TSessionMiddlewareFactory.create();
+    constructor TSessionMiddlewareFactory.create(const aSessionMgr : ISessionManager);
     begin
-        fSessionMgr := nil;
+        fSessionMgr := aSessionMgr;
+
+        if fSessionMgr = nil then
+        begin
+            raise EArgumentNilException.create('Session manager can not be nil');
+        end;
+
         fCookieFactory := nil;
         fExpiresInSec := EXPIRES_30_MIN;
     end;
@@ -73,14 +79,6 @@ const
     ) : TSessionMiddlewareFactory;
     begin
         fExpiresInSec := aExpiresInSec;
-        result := self;
-    end;
-
-    function TSessionMiddlewareFactory.sessionManager(
-        const aSessionMgr : ISessionManager
-    ) : TSessionMiddlewareFactory;
-    begin
-        fSessionMgr := aSessionMgr;
         result := self;
     end;
 
@@ -94,14 +92,7 @@ const
 
 
     function TSessionMiddlewareFactory.build(const container : IDependencyContainer) : IDependency;
-    var sessionManagerFactory : IDependencyFactory;
     begin
-        if fSessionMgr = nil then
-        begin
-            sessionManagerFactory := TJsonFileSessionManagerFactory.create();
-            fSessionMgr := sessionManagerFactory.build(container) as ISessionManager;
-        end;
-
         if fCookieFactory = nil then
         begin
             fCookieFactory := TCookieFactory.create();
