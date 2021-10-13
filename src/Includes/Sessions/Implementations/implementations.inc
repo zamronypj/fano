@@ -61,3 +61,4 @@ SessionMiddlewareExecutorImpl,
 SessionResponseImpl,
 
 SessionMiddlewareImpl,
+SessionMiddlewareFactoryImpl,

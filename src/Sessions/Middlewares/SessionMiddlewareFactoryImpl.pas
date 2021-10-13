@@ -99,7 +99,7 @@ const
         if fSessionMgr = nil then
         begin
             sessionManagerFactory := TJsonFileSessionManagerFactory.create();
-            fSessionMgr := sessionManagerFactory.build(container);
+            fSessionMgr := sessionManagerFactory.build(container) as ISessionManager;
         end;
 
         if fCookieFactory = nil then

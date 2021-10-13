@@ -23,7 +23,8 @@ uses
     SessionManagerIntf,
     CookieIntf,
     CookieFactoryIntf,
-    SessionIntf;
+    SessionIntf,
+    InjectableObjectImpl;
 
 type
 
@@ -34,7 +35,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *------------------------------------------------------*)
-    TSessionMiddleware = class(TInterfacedObject, IMiddleware)
+    TSessionMiddleware = class(TInjectableObject, IMiddleware)
     private
         fSessionMgr : ISessionManager;
         fCookieFactory : ICookieFactory;

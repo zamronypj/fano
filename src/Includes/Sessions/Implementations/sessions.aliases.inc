@@ -63,3 +63,4 @@ TSessionMiddlewareExecutor = SessionMiddlewareExecutorImpl.TSessionMiddlewareExe
 TSessionResponse = SessionResponseImpl.TSessionResponse;
 
 TSessionMiddleware = SessionMiddlewareImpl.TSessionMiddleware;
+TSessionMiddlewareFactory = SessionMiddlewareFactoryImpl.TSessionMiddlewareFactory;
