@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit FpwebConnectionAwareIntf;
+unit FpwebRequestAwareIntf;
 
 interface
 
@@ -21,26 +21,26 @@ type
 
     (*!------------------------------------------------
      * interface for any class having maintain TFpHttpServer
-     * connection instance
+     * request instance
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    IFpwebConnectionAware = interface
-        ['{77982C22-3661-472C-ABEC-3905DEDF67FB}']
+    IFpwebRequestAware = interface
+        ['{63AED354-05C1-4C5B-B938-C54668E4445F}']
 
         (*!------------------------------------------------
-         * get TFpHttpServer response connection
+         * get TFpHttpServer request
          *-----------------------------------------------
-         * @return connection
+         * @return request
          *-----------------------------------------------*)
-        function getResponse() : TFPHTTPConnectionResponse;
+        function getRequest() : TFPHTTPConnectionRequest;
 
         (*!------------------------------------------------
-         * set TFpHttpServer response connection
+         * set TFpHttpServer request
          *-----------------------------------------------*)
-        procedure setResponse(aresponse : TFPHTTPConnectionResponse);
+        procedure setRequest(arequest : TFPHTTPConnectionRequest);
 
-        property response : TFPHTTPConnectionResponse read getResponse write setResponse;
+        property request : TFPHTTPConnectionRequest read getRequest write setRequest;
     end;
 
 implementation

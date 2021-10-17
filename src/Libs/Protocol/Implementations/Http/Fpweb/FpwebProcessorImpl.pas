@@ -42,7 +42,7 @@ type
         fDataListener : IDataAvailListener;
         fSvrConfig : TFpwebSvrConfig;
         fMimeLoaded : boolean;
-        fConnectionAware : IFpwebConnectionAware;
+        fConnection : IFpwebResponseAware;
 
         fHttpSvr  TFpHttpServer;
 
@@ -131,9 +131,10 @@ uses
     SysUtils,
     fpmimetypes,
     FpwebParamKeyValuePairImpl,
+    NullStdInImpl;
 
     constructor TFpwebProcessor.create(
-        const conn : IFpwebConnectionAware;
+        const conn : IFpwebResponseAware;
         const svrConfig : TFpwebSvrConfig
     );
     begin
@@ -148,6 +149,10 @@ uses
     destructor TFpwebProcessor.destroy();
     begin
         fHttpSvr.free();
+        fDataListener := nil;
+        fRequestReadyListener := nil;
+        fStdIn := nil;
+        fConnection := nil;
         inherited destroy();
     end;
 
@@ -222,7 +227,9 @@ uses
             //that write output with TFpHttpServer
             TNullStreamAdapter.create(),
             fpwebEnv,
-            mhdStream
+            //use null IStdIn because we woudl not need as POST data will be parsed
+            //by TFpHttpServer
+            TNullStdIn.create(),
         );
     end;
 
