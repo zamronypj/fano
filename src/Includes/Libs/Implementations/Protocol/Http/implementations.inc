@@ -19,5 +19,7 @@ MhdProcessorImpl,
 FpwebSvrConfigTypes,
 FpwebAppServiceProviderImpl,
 FpwebStdOutWriterImpl,
+FpwebRequestImpl,
+FpwebRequestFactoryImpl,
 FpwebProcessorImpl,
 {------------ End TFpHttpServer-related------------------}

@@ -35,6 +35,39 @@ type
     TFpwebRequest = class(TInterfacedObject, IRequest)
     private
         fRequest : TFPHttpConnectionRequest;
+        fHeaders : IReadOnlyHeaders;
+        fQueryParams : IList;
+        fCookieParams : IList;
+        fBodyParams : IList;
+        fQueryAndBodyParams : IList;
+        fUri : IUri;
+
+        function initQueryParams(
+            const request : TFPHttpConnectionRequest;
+            const aqueryParams : IList
+        ) : IList;
+
+        function initCookieParams(
+            const request : TFPHttpConnectionRequest;
+            const acookieParams : IList
+        ) : IList;
+
+        function initBodyParams(
+            const request : TFPHttpConnectionRequest;
+            const abodyParams : IList
+        ) : IList;
+
+        function initHeaders(
+            const request : TFPHttpConnectionRequest;
+            const aheaders : IReadOnlyHeaders
+        ) : IReadOnlyHeaders;
+
+        function getSingleParam(
+            const src : IReadOnlyList;
+            const key: string;
+            const defValue : string = ''
+        ) : string;
+
     public
         constructor create(const request : TFPHttpConnectionRequest);
         destructor destroy(); override;
@@ -175,15 +208,74 @@ type
 
 implementation
 
+uses
+
+    HeadersImpl,
+    HashListImpl,
+    UriImpl,
+    KeyValueTypes,
+    CompositeListImpl;
+
     constructor TFpwebRequest.create(const request : TFPHttpConnectionRequest);
     begin
         fRequest := request;
+        fHeaders := initHeaders(fRequest, THeaders.create(THashList.create()));
+        fQueryParams := initQueryParams(fRequest, THashList.create());
+        fCookieParams := initCookieParams(fRequest, THashList.create());
+        fBodyParams := initBodyParams(fRequest, THashList.create());
+
+        //make parameters in body take more precedence over query string
+        //to reduce risk of HTTP parameters pollution with cross-channel pollution
+        //see http://www.madlab.it/slides/BHEU2011/whitepaper-bhEU2011.pdf
+        fQueryAndBodyParams := TCompositeList.create(fBodyParams, fQueryParams);
+
+        fUri := TUri.create(request.url);
     end;
 
     destructor TFpwebRequest.destroy();
     begin
         fRequest := nil;
+        fHeaders := nil;
+        fQueryParams := nil;
+        fCookieParams := nil;
+        fUri := nil;
         inherited destroy();
+    end;
+
+    function TFpwebRequest.initHeaders(
+        const request : TFPHttpConnectionRequest;
+        const aheaders : IReadOnlyHeaders
+    );
+    begin
+        result := aheaders;
+        //TODO: build header key/value pair
+    end;
+
+    function TFpwebRequest.initQueryParams(
+        const request : TFPHttpConnectionRequest;
+        const aqueryParams : IList
+    ) : IList;
+    begin
+
+        result := aqueryParams;
+    end;
+
+    function TFpwebRequest.initCookieParams(
+        const request : TFPHttpConnectionRequest;
+        const acookieParams : IList
+    ) : IList;
+    begin
+
+        result := acookieParams;
+    end;
+
+    function TFpwebRequest.initBodyParams(
+        const request : TFPHttpConnectionRequest;
+        const abodyParams : IList
+    ) : IList;
+    begin
+
+        result := abodyParams;
     end;
 
     (*!------------------------------------
@@ -193,7 +285,7 @@ implementation
      *-------------------------------------*)
     function TFpwebRequest.headers() : IReadOnlyHeaders;
     begin
-        result := fRequest.headers();
+        result := fheaders;
     end;
 
     (*!------------------------------------------------
@@ -203,7 +295,33 @@ implementation
      *------------------------------------------------*)
     function TFpwebRequest.uri() : IUri;
     begin
-        result := fRequest.uri();
+        result := fUri;
+    end;
+
+    (*!------------------------------------------------
+     * get single param value by its name
+     *-------------------------------------------------
+     * @param IList src hash list instance
+     * @param string key name of key
+     * @param string defValue default value to use if key
+     *               does not exist
+     * @return string value
+     *------------------------------------------------*)
+    function TFpwebRequest.getSingleParam(
+        const src : IReadOnlyList;
+        const key: string;
+        const defValue : string = ''
+    ) : string;
+    var qry : PKeyValue;
+    begin
+        qry := src.find(key);
+        if (qry = nil) then
+        begin
+            result := defValue;
+        end else
+        begin
+            result := qry^.value;
+        end;
     end;
 
     (*!------------------------------------------------
@@ -216,7 +334,7 @@ implementation
      *------------------------------------------------*)
     function TFpwebRequest.getQueryParam(const key: string; const defValue : string = '') : string;
     begin
-        result := fRequest.queryFields[key];
+        result := getSingleParam(fQueryParams, key, defValue);
     end;
 
     (*!------------------------------------------------
@@ -226,7 +344,7 @@ implementation
      *------------------------------------------------*)
     function TFpwebRequest.getQueryParams() : IReadOnlyList;
     begin
-        result := fRequest.QueryFields;
+        result := fQueryParams;
     end;
 
     (*!------------------------------------------------
@@ -239,7 +357,7 @@ implementation
      *------------------------------------------------*)
     function TFpwebRequest.getCookieParam(const key: string; const defValue : string = '') : string;
     begin
-        result := fRequest.Cookies(key, defValue);
+        result := getSingleParam(fCookieParams, key, defValue);
     end;
 
     (*!------------------------------------------------
@@ -249,7 +367,7 @@ implementation
      *------------------------------------------------*)
     function TFpwebRequest.getCookieParams() : IReadOnlyList;
     begin
-        result := fActualRequest.getCookieParams();
+        result := fCookieParams;
     end;
 
     (*!------------------------------------------------
@@ -262,7 +380,7 @@ implementation
      *------------------------------------------------*)
     function TFpwebRequest.getParsedBodyParam(const key: string; const defValue : string = '') : string;
     begin
-        result := fActualRequest.getParsedBodyParam(key, defValue);
+        result := getSingleParam(fBodyParams, key, defValue);
     end;
 
     (*!------------------------------------------------
@@ -272,7 +390,7 @@ implementation
      *------------------------------------------------*)
     function TFpwebRequest.getParsedBodyParams() : IReadOnlyList;
     begin
-        result := fActualRequest.getParsedBodyParams();
+        result := fBodyParams;
     end;
 
     (*!------------------------------------------------
@@ -283,7 +401,9 @@ implementation
      *         exists
      *------------------------------------------------*)
     function TFpwebRequest.getUploadedFile(const key: string) : IUploadedFileArray;
+    var uploadedFile : TUploadedFile;
     begin
+        uploadedFile = fRequest.findFile(key);
         result := fActualRequest.getUploadedFile(key);
     end;
 
@@ -304,7 +424,7 @@ implementation
      *------------------------------------------------*)
     function TFpwebRequest.isXhr() : boolean;
     begin
-        result := fRequest.isXhr();
+        result := (fRequest.HTTPXRequestedWith = 'XMLHttpRequest');
     end;
 
     (*!------------------------------------------------
@@ -314,7 +434,7 @@ implementation
      *------------------------------------------------*)
     function TFpwebRequest.getMethod() : string;
     begin
-        result := fActualRequest.getMethod();
+        result := fRequest.method;
     end;
 
     (*!------------------------------------------------
@@ -337,7 +457,7 @@ implementation
      *------------------------------------------------*)
     function TFpwebRequest.getParam(const key: string; const defValue : string = '') : string;
     begin
-        result := fActualRequest.getParam(key, defValue);
+        result := getSingleParam(fQueryAndBodyParams, key, defValue);
     end;
 
     (*!------------------------------------------------
@@ -347,7 +467,7 @@ implementation
      *------------------------------------------------*)
     function TFpwebRequest.getParams() : IReadOnlyList;
     begin
-        result := fActualRequest.getParams();
+        result := fQueryAndBodyParams;
     end;
 
 end.
