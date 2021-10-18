@@ -14,3 +14,10 @@ TMhdStdOutWriter = MhdStdOutWriterImpl.TMhdStdOutWriter;
 TMhdProcessor = MhdProcessorImpl.TMhdProcessor;
 {$ENDIF}
 {------------ End libmicrohttpd-related------------------}
+
+{------------ Begin TFpHttpServer-related------------------}
+TFpwebSvrConfig = FpwebSvrConfigTypes.TFpwebSvrConfig;
+TFpwebAppServiceProvider = FpwebAppServiceProviderImpl.TFpwebAppServiceProvider;
+TFpwebStdOutWriter = FpwebStdOutWriterImpl.TFpwebStdOutWriter;
+TFpwebProcessor = FpwebProcessorImpl.TFpwebProcessor;
+{------------ End TFpHttpServer-related------------------}

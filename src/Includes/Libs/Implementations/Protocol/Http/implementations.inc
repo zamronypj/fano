@@ -14,3 +14,10 @@ MhdStdOutWriterImpl,
 MhdProcessorImpl,
 {$ENDIF}
 {------------ End libmicrohttpd-related------------------}
+
+{------------ Begin TFpHttpServer-related------------------}
+FpwebSvrConfigTypes,
+FpwebAppServiceProviderImpl,
+FpwebStdOutWriterImpl,
+FpwebProcessorImpl,
+{------------ End TFpHttpServer-related------------------}

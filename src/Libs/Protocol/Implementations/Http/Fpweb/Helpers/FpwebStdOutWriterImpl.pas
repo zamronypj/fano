@@ -15,10 +15,11 @@ interface
 uses
 
     SysUtils,
+    fphttpserver,
     StreamAdapterIntf,
     StdOutIntf,
     StreamStdOutImpl,
-    FpwebConnectionAwareIntf;
+    FpwebResponseAwareIntf;
 
 type
 
@@ -28,7 +29,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TFpwebStdOutWriter = class(TStreamStdOut, IFpwebConnectionAware)
+    TFpwebStdOutWriter = class(TStreamStdOut, IFpwebResponseAware)
     private
         fResponse : TFPHTTPConnectionResponse;
 
@@ -67,6 +68,7 @@ implementation
 uses
 
     MappedMemoryStreamImpl,
+    NullMemoryDeallocatorImpl,
     EInvalidRequestImpl;
 
 const
@@ -75,7 +77,7 @@ const
     HEADER_SEPARATOR_LEN = length(HEADER_SEPARATOR_STR);
 
     procedure TFpwebStdOutWriter.writeHeaders(
-        const response : PMHD_Response;
+        const response : TFPHTTPConnectionResponse;
         const headers : TStringArray
     );
     var
@@ -100,7 +102,7 @@ const
 
             if (headerItem[0] <> 'Status') then
             begin
-                response.setFieldByName(headerItem[0]), trim(headerItem[1]));
+                response.setFieldByName(headerItem[0], trim(headerItem[1]));
             end else
             begin
                 //read status

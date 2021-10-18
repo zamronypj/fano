@@ -52,7 +52,7 @@ uses
     constructor TFpwebParamKeyValuePair.create(const fpwebData : TFpwebData);
     begin
         inherited create();
-        initEnvVars(data);
+        initEnvVars(fpwebData);
     end;
 
     procedure TFpwebParamKeyValuePair.initEnvVars(const fpwebData : TFpwebData);
@@ -64,7 +64,7 @@ uses
         setValue('SERVER_PORT', intToStr(fpwebData.serverConfig.port));
         setValue('SERVER_SOFTWARE', fpwebData.serverConfig.serverSoftware);
         setValue('DOCUMENT_ROOT', fpwebData.serverConfig.documentRoot);
-        setValue('SERVER_PROTOCOL', fpwebData.request.protocolVersion));
+        setValue('SERVER_PROTOCOL', fpwebData.request.protocolVersion);
 
         setValue('REQUEST_METHOD', fpwebData.request.method);
         setValue('PATH_INFO', fpwebData.request.pathInfo);

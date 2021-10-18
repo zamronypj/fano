@@ -47,17 +47,21 @@ uses
     StdOutIntf,
     ProtocolProcessorIntf,
     RunnableIntf,
-    FpwebProcessorImpl;
+    FpwebProcessorImpl,
+    FpwebStdOutWriterImpl,
+    FpwebResponseAwareIntf;
 
     constructor TFpwebAppServiceProvider.create(
         const actualSvc : IDaemonAppServiceProvider;
-        const svrConfig : TMhdSvrConfig
+        const svrConfig : TFpwebSvrConfig
     );
     begin
         inherited create(actualSvc);
-        fProtocol := TFpwebProcessor.create(svrConfig);
-        //TFpwebProcessor also act as stdout writer
-        fStdOut := fProtocol as IStdOut;
+        fStdOut := TFpwebStdOutWriter.create();
+        fProtocol := TFpwebProcessor.create(
+            fStdOut as IFpwebResponseAware,
+            svrConfig
+        );
         //TFpwebProcessor also act as server
         fServer := fProtocol as IRunnableWithDataNotif;
     end;

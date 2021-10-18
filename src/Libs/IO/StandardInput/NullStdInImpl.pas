@@ -15,6 +15,7 @@ interface
 
 uses
 
+    StdInIntf,
     StreamAdapterIntf;
 
 type

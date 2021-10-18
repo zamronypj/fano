@@ -23,8 +23,9 @@ uses
     EnvironmentIntf,
     CloseableIntf,
     StreamIdIntf,
+    StreamAdapterIntf,
     fphttpserver,
-    FpwebConnectionAwareIntf,
+    FpwebResponseAwareIntf,
     FpwebSvrConfigTypes;
 
 type
@@ -44,7 +45,7 @@ type
         fMimeLoaded : boolean;
         fConnection : IFpwebResponseAware;
 
-        fHttpSvr  TFpHttpServer;
+        fHttpSvr : TFpHttpServer;
 
         function initHttpServer(const svrConfig : TFpwebSvrConfig) : TFpHttpServer;
 
@@ -72,8 +73,8 @@ type
 
     public
         constructor create(
-            const conn : IFpwebConnectionAware;
-            const svrConfig : TFpwebSvrConfig;
+            const conn : IFpwebResponseAware;
+            const svrConfig : TFpwebSvrConfig
         );
         destructor destroy(); override;
 
@@ -131,7 +132,9 @@ uses
     SysUtils,
     fpmimetypes,
     FpwebParamKeyValuePairImpl,
-    NullStdInImpl;
+    KeyValueEnvironmentImpl,
+    NullStdInImpl,
+    NullStreamAdapterImpl;
 
     constructor TFpwebProcessor.create(
         const conn : IFpwebResponseAware;
@@ -162,7 +165,7 @@ uses
         aSvr := TFpHttpServer.create(nil);
         aSvr.threaded := fSvrConfig.threaded;
         aSvr.Port := fSvrConfig.port;
-        aSvr.address := fSvrConfig.host;
+        //aSvr.address := fSvrConfig.host;
         aSvr.onRequest := @handleRequest;
         fMimeLoaded := false;
         if fileExists(fSvrConfig.MimeTypesFile) then
@@ -190,9 +193,9 @@ uses
                 response.ContentType := 'application/octet-stream';
             end;
             response.ContentLength := fstream.size;
-            AResponse.ContentStream := fStream;
-            AResponse.SendContent;
-            AResponse.ContentStream := nil;
+            response.ContentStream := fStream;
+            response.SendContent;
+            response.ContentStream := nil;
         finally
             fStream.Free;
         end;
@@ -227,9 +230,9 @@ uses
             //that write output with TFpHttpServer
             TNullStreamAdapter.create(),
             fpwebEnv,
-            //use null IStdIn because we woudl not need as POST data will be parsed
+            //use null stream. POST data will be parsed
             //by TFpHttpServer
-            TNullStdIn.create(),
+            TNullStreamAdapter.create()
         );
     end;
 
@@ -259,10 +262,10 @@ uses
 
         if isStaticFileRequest then
         begin
-            handleStaticFileRequest(fname, request. response);
+            handleStaticFileRequest(fname, request, response);
         end else
         begin
-            handleNotFoundRequest(sender, request. response);
+            handleNotFoundRequest(sender, request, response);
         end;
     end;
 
