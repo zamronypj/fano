@@ -15,6 +15,7 @@ interface
 
 uses
 
+    Classes,
     RequestIntf,
     ListIntf,
     ReadOnlyListIntf,
@@ -45,19 +46,11 @@ type
         fUploadedFiles : IUploadedFileCollection;
         fUri : IUri;
 
-        function initQueryParams(
-            const request : TFPHttpConnectionRequest;
-            const aqueryParams : IList
-        ) : IList;
+        function freeParams(const aParams : IList) : IList;
 
-        function initCookieParams(
-            const request : TFPHttpConnectionRequest;
-            const acookieParams : IList
-        ) : IList;
-
-        function initBodyParams(
-            const request : TFPHttpConnectionRequest;
-            const abodyParams : IList
+        function initParams(
+            const aFields : TStrings;
+            const aParams : IList
         ) : IList;
 
         function initHeaders(
@@ -231,9 +224,9 @@ uses
         fEnv := aEnv;
         fRequest := request;
         fHeaders := initHeaders(fRequest, THeaders.create(THashList.create()));
-        fQueryParams := initQueryParams(fRequest, THashList.create());
-        fCookieParams := initCookieParams(fRequest, THashList.create());
-        fBodyParams := initBodyParams(fRequest, THashList.create());
+        fQueryParams := initParams(fRequest.QueryFields, THashList.create());
+        fCookieParams := initParams(fRequest.CookieFields, THashList.create());
+        fBodyParams := initParams(fRequest.ContentFields, THashList.create());
 
         //make parameters in body take more precedence over query string
         //to reduce risk of HTTP parameters pollution with cross-channel pollution
@@ -246,12 +239,49 @@ uses
 
     destructor TFpwebRequest.destroy();
     begin
+        freeParams(fQueryParams);
+        freeParams(fCookieParams);
+        freeParams(fBodyParams);
         fRequest := nil;
         fHeaders := nil;
         fQueryParams := nil;
         fCookieParams := nil;
+        fBodyParams := nil;
         fUri := nil;
         inherited destroy();
+    end;
+
+    function TFpwebRequest.freeParams(const aParams : IList) : IList;
+    var i : integer;
+        keyval : PKeyValue;
+    begin
+        for i:= aParams.count() -1 downto 0 do
+        begin
+            keyval := aParams.get(i);
+            dispose(keyval);
+        end;
+        result := aParams;
+    end;
+
+    function TFpwebRequest.initParams(
+        const aFields : TStrings;
+        const aParams : IList
+    ) : IList;
+    var i : integer;
+        aname : string;
+        avalue : string;
+        keyval : PKeyValue;
+    begin
+        for i:= 0 to aFields.count -1 do
+        begin
+            aname := aFields.names[i];
+            avalue := aFields.values[aname];
+            new(keyval);
+            keyval^.key := aname;
+            keyval^.value := avalue;
+            aParams.add(aname, keyval);
+        end;
+        result := aParams;
     end;
 
     function TFpwebRequest.initHeaders(
@@ -261,33 +291,6 @@ uses
     begin
         result := aheaders;
         //TODO: build header key/value pair
-    end;
-
-    function TFpwebRequest.initQueryParams(
-        const request : TFPHttpConnectionRequest;
-        const aqueryParams : IList
-    ) : IList;
-    begin
-
-        result := aqueryParams;
-    end;
-
-    function TFpwebRequest.initCookieParams(
-        const request : TFPHttpConnectionRequest;
-        const acookieParams : IList
-    ) : IList;
-    begin
-
-        result := acookieParams;
-    end;
-
-    function TFpwebRequest.initBodyParams(
-        const request : TFPHttpConnectionRequest;
-        const abodyParams : IList
-    ) : IList;
-    begin
-
-        result := abodyParams;
     end;
 
     (*!------------------------------------
