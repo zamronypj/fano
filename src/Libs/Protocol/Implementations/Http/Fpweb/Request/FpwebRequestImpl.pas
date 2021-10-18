@@ -16,13 +16,14 @@ interface
 uses
 
     RequestIntf,
-    AjaxAwareIntf,
+    ListIntf,
     ReadOnlyListIntf,
     UploadedFileIntf,
     UploadedFileCollectionIntf,
     ReadonlyHeadersIntf,
     EnvironmentIntf,
     UriIntf,
+    httpdefs,
     fphttpserver;
 
 type
@@ -34,12 +35,14 @@ type
      *-----------------------------------------------*)
     TFpwebRequest = class(TInterfacedObject, IRequest)
     private
+        fEnv : ICGIEnvironment;
         fRequest : TFPHttpConnectionRequest;
         fHeaders : IReadOnlyHeaders;
         fQueryParams : IList;
         fCookieParams : IList;
         fBodyParams : IList;
         fQueryAndBodyParams : IList;
+        fUploadedFiles : IUploadedFileCollection;
         fUri : IUri;
 
         function initQueryParams(
@@ -69,7 +72,10 @@ type
         ) : string;
 
     public
-        constructor create(const request : TFPHttpConnectionRequest);
+        constructor create(
+            const request : TFPHttpConnectionRequest;
+            const aEnv : ICGIEnvironment
+        );
         destructor destroy(); override;
 
         (*!------------------------------------------------
@@ -214,10 +220,15 @@ uses
     HashListImpl,
     UriImpl,
     KeyValueTypes,
-    CompositeListImpl;
+    CompositeListImpl,
+    UploadedFileCollectionAdapterImpl;
 
-    constructor TFpwebRequest.create(const request : TFPHttpConnectionRequest);
+    constructor TFpwebRequest.create(
+        const request : TFPHttpConnectionRequest;
+        const aEnv : ICGIEnvironment
+    );
     begin
+        fEnv := aEnv;
         fRequest := request;
         fHeaders := initHeaders(fRequest, THeaders.create(THashList.create()));
         fQueryParams := initQueryParams(fRequest, THashList.create());
@@ -230,6 +241,7 @@ uses
         fQueryAndBodyParams := TCompositeList.create(fBodyParams, fQueryParams);
 
         fUri := TUri.create(request.url);
+        fUploadedFiles := TUploadedFileCollectionAdapter.create(request.files);
     end;
 
     destructor TFpwebRequest.destroy();
@@ -245,7 +257,7 @@ uses
     function TFpwebRequest.initHeaders(
         const request : TFPHttpConnectionRequest;
         const aheaders : IReadOnlyHeaders
-    );
+    ) : IReadOnlyHeaders;
     begin
         result := aheaders;
         //TODO: build header key/value pair
@@ -401,10 +413,8 @@ uses
      *         exists
      *------------------------------------------------*)
     function TFpwebRequest.getUploadedFile(const key: string) : IUploadedFileArray;
-    var uploadedFile : TUploadedFile;
     begin
-        uploadedFile = fRequest.findFile(key);
-        result := fActualRequest.getUploadedFile(key);
+        result := fUploadedFiles.getUploadedFile(key);
     end;
 
     (*!------------------------------------------------
@@ -414,7 +424,7 @@ uses
      *------------------------------------------------*)
     function TFpwebRequest.getUploadedFiles() : IUploadedFileCollection;
     begin
-        result := fActualRequest.getUploadedFiles();
+        result := fUploadedFiles;
     end;
 
     (*!------------------------------------------------
@@ -444,7 +454,7 @@ uses
      *------------------------------------------------*)
     function TFpwebRequest.getEnvironment() : ICGIEnvironment;
     begin
-        result := fActualRequest.getEnvironment();
+        result := fEnv;
     end;
 
     (*!------------------------------------------------
