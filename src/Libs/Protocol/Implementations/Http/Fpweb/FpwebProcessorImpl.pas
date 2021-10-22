@@ -134,7 +134,8 @@ uses
     FpwebParamKeyValuePairImpl,
     KeyValueEnvironmentImpl,
     NullStdInImpl,
-    NullStreamAdapterImpl;
+    NullStreamAdapterImpl,
+    StreamAdapterImpl;
 
     constructor TFpwebProcessor.create(
         const conn : IFpwebResponseAware;
@@ -222,7 +223,6 @@ uses
     var fpwebEnv : ICGIEnvironment;
     begin
         fConnection.response := response;
-
         fpwebEnv := buildEnv(request);
 
         fRequestReadyListener.ready(
@@ -230,9 +230,7 @@ uses
             //that write output with TFpHttpServer
             TNullStreamAdapter.create(),
             fpwebEnv,
-            //use null stream. POST data will be parsed
-            //by TFpHttpServer
-            TNullStreamAdapter.create()
+            TStreamAdapter.create(TStringStream.create(request.content))
         );
     end;
 
@@ -256,8 +254,7 @@ uses
 
         DoDirSeparators(url);
         fname := fSvrConfig.documentRoot + url;
-        isStaticFileRequest := ((method = 'GET') or
-            (method = 'HEAD')) and
+        isStaticFileRequest := ((method = 'GET') or (method = 'HEAD')) and
             fileExists(fname);
 
         if isStaticFileRequest then

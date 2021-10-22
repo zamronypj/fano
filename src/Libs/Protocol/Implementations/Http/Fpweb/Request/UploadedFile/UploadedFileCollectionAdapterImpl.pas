@@ -104,8 +104,9 @@ uses
     function TUploadedFileCollectionAdapter.getUploadedFile(const key : shortstring) : IUploadedFileArray;
     var uploadedFile : httpdefs.TUploadedFile;
     begin
-        uploadedFile := fUploadedFiles.fileByName(key);
+        result := nil;
         setLength(result, 1);
+        uploadedFile := fUploadedFiles.fileByName(key);
         result[0] := TUploadedFileAdapter.create(uploadedFile);
     end;
 
@@ -117,8 +118,9 @@ uses
     function TUploadedFileCollectionAdapter.getUploadedFile(const indx : integer) : IUploadedFileArray;
     var uploadedFile : httpdefs.TUploadedFile;
     begin
-        uploadedFile := fUploadedFiles.files[indx];
+        result := nil;
         setLength(result, 1);
+        uploadedFile := fUploadedFiles.files[indx];
         result[0] := TUploadedFileAdapter.create(uploadedFile);
     end;
 

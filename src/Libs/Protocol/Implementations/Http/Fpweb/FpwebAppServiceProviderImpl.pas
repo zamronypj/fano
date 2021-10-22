@@ -16,6 +16,7 @@ uses
 
     RunnableWithDataNotifIntf,
     DaemonAppServiceProviderIntf,
+    RequestResponseFactoryIntf,
     ProtocolAppServiceProviderImpl,
     FpwebSvrConfigTypes;
 
