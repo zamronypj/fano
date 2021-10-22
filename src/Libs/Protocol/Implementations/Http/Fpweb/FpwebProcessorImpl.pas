@@ -130,6 +130,7 @@ uses
 
     Classes,
     SysUtils,
+    ssockets,
     fpmimetypes,
     FpwebParamKeyValuePairImpl,
     KeyValueEnvironmentImpl,
@@ -322,8 +323,9 @@ uses
             fHttpSvr.active := true;
             result := self;
         except
-            on e: Exception do
+            on e: ESocketError do
             begin
+                fHttpSvr.active := false;
                 writeln('Exception: ', e.ClassName);
                 writeln('Message: ', e.Message);
             end;
