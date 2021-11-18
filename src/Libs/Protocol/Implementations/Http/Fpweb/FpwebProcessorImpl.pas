@@ -48,6 +48,7 @@ type
         fHttpSvr : TFpHttpServer;
 
         function initHttpServer(const svrConfig : TFpwebSvrConfig) : TFpHttpServer;
+        procedure waitUntilTerminate();
 
         function buildEnv(
             const request : TFPHttpConnectionRequest
@@ -131,12 +132,50 @@ uses
     Classes,
     SysUtils,
     ssockets,
+    BaseUnix,
+    SigTermImpl,
     fpmimetypes,
     FpwebParamKeyValuePairImpl,
     KeyValueEnvironmentImpl,
     NullStdInImpl,
     NullStreamAdapterImpl,
     StreamAdapterImpl;
+
+type
+
+
+    (*!-----------------------------------------------
+     * internal thread to run http server
+     *
+     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
+     *-----------------------------------------------*)
+    THttpServerThread = class(TThread)
+    private
+        fHttpSvr : TFPHttpServer;
+    public
+        constructor create(const httpSvr : TFPHttpServer);
+        procedure execute(); override;
+    end;
+
+    constructor THttpServerThread.create(const httpSvr : TFPHttpServer);
+    begin
+        inherited create(false);
+        fHttpSvr := httpSvr;
+    end;
+
+    procedure THttpServerThread.execute();
+    begin
+        try
+            fHttpSvr.active := true;
+        except
+            on e: Exception do
+            begin
+                fHttpSvr.active := false;
+                writeln('Exception: ', e.ClassName);
+                writeln('Message: ', e.Message);
+            end;
+        end;
+    end;
 
     constructor TFpwebProcessor.create(
         const conn : IFpwebResponseAware;
@@ -312,23 +351,43 @@ uses
         result := 0;
     end;
 
+    procedure TFpwebProcessor.waitUntilTerminate();
+    var fds : TFDSet;
+    begin
+        fds := default(TFDSet);
+        fpfd_zero(fds);
+        //terminatePipeIn will be ready for IO when application is terminated
+        //see SigTermImpl unit
+        fpfd_set(TSigTerm.terminatePipeIn, FDS);
+        //wait forever until terminatePipeIn changes
+        fpSelect(TSigTerm.terminatePipeIn + 1, @fds, nil, nil, nil);
+    end;
+
     (*!------------------------------------------------
      * run it
      *-------------------------------------------------
      * @return current instance
      *-------------------------------------------------*)
     function TFpwebProcessor.run() : IRunnable;
+    var svrThread : THttpServerThread;
     begin
+        result := self;
+        svrThread := THttpServerThread.create(fHttpSvr);
         try
-            fHttpSvr.active := true;
-            result := self;
-        except
-            on e: ESocketError do
-            begin
-                fHttpSvr.active := false;
-                writeln('Exception: ', e.ClassName);
-                writeln('Message: ', e.Message);
-            end;
+            //wait until we receive termination signal
+            waitUntilTerminate();
+            fHttpSvr.active := false;
+
+            //due to current behavior (bug?) of TFpHttpServer
+            //which does not immediately exit server loop when
+            //Active:=false until new request comes
+            //waitFor() may wait forever
+            //workaround is just to load a page so that new request comes
+            //thus THttpServerThread can terminate
+            svrThread.waitFor();
+
+        finally
+           svrThread.free();
         end;
     end;
 
