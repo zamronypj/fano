@@ -49,6 +49,7 @@ type
 
         function initHttpServer(const svrConfig : TFpwebSvrConfig) : TFpHttpServer;
         procedure waitUntilTerminate();
+        procedure fakeConnect();
 
         function buildEnv(
             const request : TFPHttpConnectionRequest
@@ -364,6 +365,24 @@ type
     end;
 
     (*!------------------------------------------------
+     * send fake connection to our own server
+     *-------------------------------------------------
+     * Note this is workaround
+     * due to current behavior (bug?) of TInetServer
+     * which does not immediately exit accept loop when
+     * Active:=false until new request comes
+     * workaround send fake connection just to break accept loop
+     *-------------------------------------------------*)
+    procedure TFpwebProcessor.fakeConnect();
+    begin
+        try
+            TInetSocket.create(fSvrConfig.host, fSvrConfig.port).free();
+        except
+            //intentionally surpress all exception it may raise
+        end;
+    end;
+
+    (*!------------------------------------------------
      * run it
      *-------------------------------------------------
      * @return current instance
@@ -378,12 +397,9 @@ type
             waitUntilTerminate();
             fHttpSvr.active := false;
 
-            //due to current behavior (bug?) of TFpHttpServer
-            //which does not immediately exit server loop when
-            //Active:=false until new request comes
-            //waitFor() may wait forever
-            //workaround is just to load a page so that new request comes
+            //create fake a new connection to allow breaking accept loop
             //thus THttpServerThread can terminate
+            fakeConnect();
             svrThread.waitFor();
 
         finally
