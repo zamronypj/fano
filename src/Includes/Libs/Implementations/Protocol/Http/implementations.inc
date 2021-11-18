@@ -20,3 +20,11 @@ MhdProcessorImpl,
 WcHttpServerProcessorImpl,
 {$ENDIF}
 {------------ End wchttpserver-related------------------}
+{------------ Begin TFpHttpServer-related------------------}
+FpwebSvrConfigTypes,
+FpwebAppServiceProviderImpl,
+FpwebStdOutWriterImpl,
+FpwebRequestImpl,
+FpwebRequestFactoryImpl,
+FpwebProcessorImpl,
+{------------ End TFpHttpServer-related------------------}
