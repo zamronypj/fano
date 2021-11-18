@@ -376,6 +376,8 @@ type
     procedure TFpwebProcessor.fakeConnect();
     begin
         try
+            //TFpHttpServer always use TInetServer not unix domain socket
+            //so use of TInetSocket is ok here
             TInetSocket.create(fSvrConfig.host, fSvrConfig.port).free();
         except
             //intentionally surpress all exception it may raise
