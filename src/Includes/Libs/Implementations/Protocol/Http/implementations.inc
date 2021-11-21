@@ -6,20 +6,8 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-{------------ Begin libmicrohttpd-related------------------}
-{$IFDEF LIBMICROHTTPD}
-MhdSvrConfigTypes,
-MhdAppServiceProviderImpl,
-MhdStdOutWriterImpl,
-MhdProcessorImpl,
-{$ENDIF}
-{------------ End libmicrohttpd-related------------------}
+HttpSvrConfigTypes,
 
-{------------ Begin TFpHttpServer-related------------------}
-FpwebSvrConfigTypes,
-FpwebAppServiceProviderImpl,
-FpwebStdOutWriterImpl,
-FpwebRequestImpl,
-FpwebRequestFactoryImpl,
-FpwebProcessorImpl,
-{------------ End TFpHttpServer-related------------------}
+{$INCLUDE Libmicrohttpd/implementations.inc}
+{$INCLUDE Fpweb/implementations.inc}
+{$INCLUDE Indy/implementations.inc}
