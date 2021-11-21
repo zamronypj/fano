@@ -15,6 +15,7 @@ interface
 
 uses
 
+    SyncObjs,
     RunnableIntf,
     RunnableWithDataNotifIntf,
     ProtocolProcessorIntf,
@@ -38,6 +39,7 @@ type
      *-----------------------------------------------*)
     TFpwebProcessor = class(TInterfacedObject, IProtocolProcessor, IRunnable, IRunnableWithDataNotif)
     private
+        fLock : TCriticalSection;
         fStdIn : IStreamAdapter;
         fRequestReadyListener : IReadyListener;
         fDataListener : IDataAvailListener;
@@ -75,6 +77,7 @@ type
 
     public
         constructor create(
+            const lock : TCriticalSection;
             const conn : IFpwebResponseAware;
             const svrConfig : TFpwebSvrConfig
         );
@@ -179,10 +182,12 @@ type
     end;
 
     constructor TFpwebProcessor.create(
+        const lock : TCriticalSection;
         const conn : IFpwebResponseAware;
         const svrConfig : TFpwebSvrConfig
     );
     begin
+        fLock := lock;
         fConnection := conn;
         fStdIn := nil;
         fRequestReadyListener := nil;
@@ -198,6 +203,7 @@ type
         fRequestReadyListener := nil;
         fStdIn := nil;
         fConnection := nil;
+        fLock := nil;
         inherited destroy();
     end;
 
@@ -264,15 +270,32 @@ type
     var fpwebEnv : ICGIEnvironment;
     begin
         fConnection.response := response;
-        fpwebEnv := buildEnv(request);
-
-        fRequestReadyListener.ready(
-            //we will not use socket stream as we will have our own IStdOut
-            //that write output with TFpHttpServer
-            TNullStreamAdapter.create(),
-            fpwebEnv,
-            TStreamAdapter.create(TStringStream.create(request.content))
-        );
+        if (fSvrConfig.threaded) then
+        begin
+            fLock.acquire();
+            try
+                fpwebEnv := buildEnv(request);
+                fRequestReadyListener.ready(
+                    //we will not use socket stream as we will have our own IStdOut
+                    //that write output with TFpHttpServer
+                    TNullStreamAdapter.create(),
+                    fpwebEnv,
+                    TStreamAdapter.create(TStringStream.create(request.content))
+                );
+            finally
+                fLock.release();
+            end;
+        end else
+        begin
+            fpwebEnv := buildEnv(request);
+            fRequestReadyListener.ready(
+                //we will not use socket stream as we will have our own IStdOut
+                //that write output with TFpHttpServer
+                TNullStreamAdapter.create(),
+                fpwebEnv,
+                TStreamAdapter.create(TStringStream.create(request.content))
+            );
+        end;
     end;
 
     procedure TFpwebProcessor.handleRequest(

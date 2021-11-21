@@ -50,7 +50,6 @@ uses
     StdOutIntf,
     ProtocolProcessorIntf,
     RunnableIntf,
-    ThreadSafeProtocolProcessorImpl,
     FpwebProcessorImpl,
     FpwebStdOutWriterImpl,
     ThreadSafeFpwebResponseAwareImpl,
@@ -75,22 +74,13 @@ uses
         end;
 
         fProtocol := TFpwebProcessor.create(
+            fLock,
             fStdOut as IFpwebResponseAware,
             svrConfig
         );
 
         //TFpwebProcessor also act as server
         fServer := fProtocol as IRunnableWithDataNotif;
-
-        if svrConfig.threaded then
-        begin
-            fProtocol := TThreadSafeProtocolProcessor.create(
-                fLock,
-                fProtocol,
-                fServer,
-                fServer
-            );
-        end;
     end;
 
     destructor TFpwebAppServiceProvider.destroy();
