@@ -145,42 +145,6 @@ uses
     NullStreamAdapterImpl,
     StreamAdapterImpl;
 
-type
-
-
-    (*!-----------------------------------------------
-     * internal thread to run http server
-     *
-     * @author Zamrony P. Juhara <zamronypj@yahoo.com>
-     *-----------------------------------------------*)
-    THttpServerThread = class(TThread)
-    private
-        fHttpSvr : TIdHTTPServer;
-    public
-        constructor create(const httpSvr : TIdHTTPServer);
-        procedure execute(); override;
-    end;
-
-    constructor THttpServerThread.create(const httpSvr : TIdHTTPServer);
-    begin
-        inherited create(false);
-        fHttpSvr := httpSvr;
-    end;
-
-    procedure THttpServerThread.execute();
-    begin
-        try
-            fHttpSvr.active := true;
-        except
-            on e: Exception do
-            begin
-                fHttpSvr.active := false;
-                writeln('Exception: ', e.ClassName);
-                writeln('Message: ', e.Message);
-            end;
-        end;
-    end;
-
     constructor TIndyProcessor.create(
         const lock : TCriticalSection;
         const conn : IIndyResponseAware;
@@ -214,10 +178,10 @@ type
     var
         aThreadPoolScheduler: TIdSchedulerOfThreadPool;
     begin
-        aThreadPoolScheduler := TIdSchedulerOfThreadPool.Create(FHttpSvr);
+        aThreadPoolScheduler := TIdSchedulerOfThreadPool.Create(aHttpSvr);
         aThreadPoolScheduler.poolSize := numThread;
-        FHttpSvr.scheduler := aThreadPoolScheduler;
-        FHttpSvr.maxConnections := numThread;
+        aHttpSvr.scheduler := aThreadPoolScheduler;
+        //aHttpSvr.maxConnections := numThread;
     end;
 
     function TIndyProcessor.initHttpServer(const svrConfig : THttpSvrConfig) : TIdHTTPServer;
@@ -278,45 +242,28 @@ type
         aStdInStream : IStreamAdapter;
     begin
         fConnection.response := response;
-        if (fSvrConfig.threaded) then
+
+        aEnv := buildEnv(request);
+
+        if (request.postStream = nil) then
         begin
-            fLock.acquire();
-            try
-                aEnv := buildEnv(request);
-                if (request.postStream = nil) then
-                begin
-                    aStdInStream := TNullStreamAdapter.create();
-                end else
-                begin
-                    aStdInStream := TStreamAdapter.create(request.postStream);
-                end;
-                fRequestReadyListener.ready(
-                    //we will not use socket stream as we will have our own IStdOut
-                    //that write output with TFpHttpServer
-                    TNullStreamAdapter.create(),
-                    aEnv,
-                    aStdInStream
-                );
-            finally
-                fLock.release();
-            end;
+            aStdInStream := TNullStreamAdapter.create();
         end else
         begin
-            aEnv := buildEnv(request);
-            if (request.postStream = nil) then
-            begin
-                aStdInStream := TNullStreamAdapter.create();
-            end else
-            begin
-                aStdInStream := TStreamAdapter.create(request.postStream);
-            end;
+            aStdInStream := TStreamAdapter.create(request.postStream);
+        end;
+
+        fLock.acquire();
+        try
             fRequestReadyListener.ready(
                 //we will not use socket stream as we will have our own IStdOut
-                //that write output with TFpHttpServer
+                //that write output with TIdHTTPServer
                 TNullStreamAdapter.create(),
                 aEnv,
                 aStdInStream
             );
+        finally
+            fLock.release();
         end;
     end;
 
@@ -415,18 +362,12 @@ type
      * @return current instance
      *-------------------------------------------------*)
     function TIndyProcessor.run() : IRunnable;
-    var svrThread : THttpServerThread;
     begin
         result := self;
-        svrThread := THttpServerThread.create(fHttpSvr);
-        try
-            //wait until we receive termination signal
-            waitUntilTerminate();
-            fHttpSvr.active := false;
-            svrThread.waitFor();
-        finally
-           svrThread.free();
-        end;
+        fHttpSvr.active := true;
+        //wait until we receive termination signal
+        waitUntilTerminate();
+        fHttpSvr.active := false;
     end;
 
     (*!------------------------------------------------
