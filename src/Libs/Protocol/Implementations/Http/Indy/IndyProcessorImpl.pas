@@ -275,6 +275,7 @@ type
         response: TIdHTTPResponseInfo
     );
     var aEnv : ICGIEnvironment;
+        aStdInStream : IStreamAdapter;
     begin
         fConnection.response := response;
         if (fSvrConfig.threaded) then
@@ -282,12 +283,19 @@ type
             fLock.acquire();
             try
                 aEnv := buildEnv(request);
+                if (request.postStream = nil) then
+                begin
+                    aStdInStream := TNullStreamAdapter.create();
+                end else
+                begin
+                    aStdInStream := TStreamAdapter.create(request.postStream);
+                end;
                 fRequestReadyListener.ready(
                     //we will not use socket stream as we will have our own IStdOut
                     //that write output with TFpHttpServer
                     TNullStreamAdapter.create(),
                     aEnv,
-                    TStreamAdapter.create(request.postStream)
+                    aStdInStream
                 );
             finally
                 fLock.release();
@@ -295,12 +303,19 @@ type
         end else
         begin
             aEnv := buildEnv(request);
+            if (request.postStream = nil) then
+            begin
+                aStdInStream := TNullStreamAdapter.create();
+            end else
+            begin
+                aStdInStream := TStreamAdapter.create(request.postStream);
+            end;
             fRequestReadyListener.ready(
                 //we will not use socket stream as we will have our own IStdOut
                 //that write output with TFpHttpServer
                 TNullStreamAdapter.create(),
                 aEnv,
-                TStreamAdapter.create(request.postStream)
+                aStdInStream
             );
         end;
     end;
