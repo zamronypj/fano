@@ -25,10 +25,9 @@ uses
     CloseableIntf,
     StreamIdIntf,
     StreamAdapterIntf,
-    //indy related units
-    IdBaseComponent,
-    IdComponent,
-    IdTCPServer,
+    HttpSvrConfigTypes,
+    IndyResponseAwareIntf,
+
     IdCustomHTTPServer,
     IdContext,
     IdSchedulerOfThreadPool,
@@ -50,7 +49,7 @@ type
         fDataListener : IDataAvailListener;
         fSvrConfig : THttpSvrConfig;
         fMimeLoaded : boolean;
-        fConnection : IFpwebResponseAware;
+        fConnection : IIndyResponseAware;
 
         fHttpSvr : TIdHTTPServer;
 
@@ -62,13 +61,8 @@ type
         procedure waitUntilTerminate();
 
         function buildEnv(
-            const request: TIdHTTPRequestInfo;
+            const request: TIdHTTPRequestInfo
         ): ICGIEnvironment;
-
-        procedure handleStaticFileRequest(
-            const aFileName : string;
-            response: TIdHTTPResponseInfo
-        );
 
         procedure handleNotFoundRequest(
             ctx: TIdContext;
@@ -145,8 +139,7 @@ uses
     ssockets,
     BaseUnix,
     SigTermImpl,
-    fpmimetypes,
-    IndyaramKeyValuePairImpl,
+    IndyParamKeyValuePairImpl,
     KeyValueEnvironmentImpl,
     NullStdInImpl,
     NullStreamAdapterImpl,
@@ -227,12 +220,13 @@ type
         FHttpSvr.maxConnections := numThread;
     end;
 
-    function TIndyProcessor.initHttpServer(const svrConfig : TFpwebSvrConfig) : TFpHttpServer;
+    function TIndyProcessor.initHttpServer(const svrConfig : THttpSvrConfig) : TIdHTTPServer;
     var aSvr : TIdHTTPServer;
         numThread : integer;
+        amimeTypes : TStrings;
     begin
         aSvr := TIdHTTPServer.create(nil);
-        aSvr.Port := fSvrConfig.port;
+        aSvr.DefaultPort := fSvrConfig.port;
         //aSvr.address := fSvrConfig.host;
         aSvr.onCommandGet := @handleRequest;
         aSvr.onCommandOther := @handleRequest;
@@ -250,38 +244,20 @@ type
         fMimeLoaded := false;
         if fileExists(fSvrConfig.MimeTypesFile) then
         begin
-            MimeTypes.LoadFromFile(fSvrConfig.MimeTypesFile);
-            fMimeLoaded := true;
+            amimeTypes := TStringList.create();
+            try
+                amimeTypes.LoadFromFile(fSvrConfig.MimeTypesFile);
+                aSvr.MimeTable.LoadFromStrings(amimeTypes);
+                fMimeLoaded := true;
+            finally
+                amimeTypes.free();
+            end;
         end;
         result := aSvr;
     end;
 
-    procedure TIndyProcessor.handleStaticFileRequest(
-        const aFileName : string;
-        AResponseInfo: TIdHTTPResponseInfo
-    );
-    var fStream : TStream;
-    begin
-        fStream := TFileStream.Create(aFileName, fmOpenRead or fmShareDenyWrite);
-        try
-            if fMimeLoaded then
-            begin
-                response.ContentType := MimeTypes.GetMimeType(extractFileExt(aFileName));
-            end else
-            begin
-                response.ContentType := 'application/octet-stream';
-            end;
-            response.ContentLength := fstream.size;
-            response.ContentStream := fStream;
-            response.SendContent;
-            response.ContentStream := nil;
-        finally
-            fStream.Free;
-        end;
-    end;
-
     function TIndyProcessor.buildEnv(
-        const request: TIdHTTPRequestInfo;
+        const request: TIdHTTPRequestInfo
     ): ICGIEnvironment;
     var
         indyData : TIndyData;
@@ -289,7 +265,7 @@ type
         indyData.request := request;
         indyData.serverConfig := fSvrConfig;
         result := TKeyValueEnvironment.create(
-            TFpwebParamKeyValuePair.create(indyData)
+            TIndyParamKeyValuePair.create(indyData)
         );
     end;
 
@@ -311,7 +287,7 @@ type
                     //that write output with TFpHttpServer
                     TNullStreamAdapter.create(),
                     aEnv,
-                    TStreamAdapter.create(TStringStream.create(request.content))
+                    TStreamAdapter.create(request.postStream)
                 );
             finally
                 fLock.release();
@@ -324,7 +300,7 @@ type
                 //that write output with TFpHttpServer
                 TNullStreamAdapter.create(),
                 aEnv,
-                TStreamAdapter.create(TStringStream.create(request.content))
+                TStreamAdapter.create(request.postStream)
             );
         end;
     end;
@@ -339,8 +315,8 @@ type
         method : string;
         url : string;
     begin
-        url := request.url;
-        method := request.method;
+        url := request.document;
+        method := request.command;
 
         if (length(url) > 0) and (url[1] = '/') then
         begin
@@ -354,7 +330,7 @@ type
 
         if isStaticFileRequest then
         begin
-            handleStaticFileRequest(fname, response);
+            response.serveFile(ctx, fname);
         end else
         begin
             handleNotFoundRequest(ctx, request, response);
@@ -419,26 +395,6 @@ type
     end;
 
     (*!------------------------------------------------
-     * send fake connection to our own server
-     *-------------------------------------------------
-     * Note this is workaround
-     * due to current behavior (bug?) of TInetServer
-     * which does not immediately exit accept loop when
-     * Active:=false until new request comes
-     * workaround send fake connection just to break accept loop
-     *-------------------------------------------------*)
-    procedure TIndyProcessor.fakeConnect();
-    begin
-        try
-            //TFpHttpServer always use TInetServer not unix domain socket
-            //so use of TInetSocket is ok here
-            TInetSocket.create(fSvrConfig.host, fSvrConfig.port).free();
-        except
-            //intentionally surpress all exception it may raise
-        end;
-    end;
-
-    (*!------------------------------------------------
      * run it
      *-------------------------------------------------
      * @return current instance
@@ -452,12 +408,7 @@ type
             //wait until we receive termination signal
             waitUntilTerminate();
             fHttpSvr.active := false;
-
-            //create fake a new connection to allow breaking accept loop
-            //thus THttpServerThread can terminate
-            fakeConnect();
             svrThread.waitFor();
-
         finally
            svrThread.free();
         end;

@@ -71,21 +71,36 @@ uses
         setValue('SERVER_PORT', intToStr(indyData.serverConfig.port));
         setValue('SERVER_SOFTWARE', indyData.serverConfig.serverSoftware);
         setValue('DOCUMENT_ROOT', indyData.serverConfig.documentRoot);
-        setValue('SERVER_PROTOCOL', indyData.request.protocolVersion);
+        setValue('SERVER_PROTOCOL', indyData.request.version);
 
-        setValue('REQUEST_METHOD', indyData.request.method);
-        setValue('PATH_INFO', indyData.request.pathInfo);
-        setValue('PATH_TRANSLATED', indyData.request.pathTranslated);
+        setValue('REQUEST_METHOD', indyData.request.command);
+
+        if (indyData.request.rawHeaders.indexOfName('PATH_INFO') <> -1) then
+        begin
+            setValue('PATH_INFO', indyData.request.rawHeaders.values['PATH_INFO']);
+        end else
+        begin
+            setValue('PATH_INFO', '');
+        end;
+
+        if (indyData.request.rawHeaders.indexOfName('PATH_TRANSLATED') <> -1) then
+        begin
+            setValue('PATH_TRANSLATED', indyData.request.rawHeaders.values['PATH_TRANSLATED']);
+        end else
+        begin
+            setValue('PATH_TRANSLATED', '');
+        end;
+
         setValue('PATH', GetEnvironmentVariable('PATH'));
 
-        setValue('REMOTE_ADDR', indyData.request.remoteAddress);
+        setValue('REMOTE_ADDR', indyData.request.remoteIP);
         setValue('REMOTE_PORT', '');
-        setValue('REMOTE_HOST', indyData.request.remoteAddress);
+        setValue('REMOTE_HOST', indyData.request.remoteIP);
         setValue('REMOTE_USER', '');
         setValue('AUTH_TYPE', '');
         setValue('REMOTE_IDENT', '');
-        setValue('QUERY_STRING', indyData.request.querystring);
-        setValue('REQUEST_URI', indyData.request.uri);
+        setValue('QUERY_STRING', indyData.request.queryParams);
+        setValue('REQUEST_URI', indyData.request.document);
     end;
 
 end.

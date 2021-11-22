@@ -26,11 +26,11 @@ type
     {*------------------------------------------------
      * class having capability to
      * register one or more service factories that use
-     * TFPHttpServer
+     * TIdHTTPServer
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------}
-    TFpwebAppServiceProvider = class (TProtocolAppServiceProvider)
+    TIndyAppServiceProvider = class (TProtocolAppServiceProvider)
     private
         fLock : TCriticalSection;
         fServer : IRunnableWithDataNotif;
@@ -50,12 +50,12 @@ uses
     StdOutIntf,
     ProtocolProcessorIntf,
     RunnableIntf,
-    FpwebProcessorImpl,
-    FpwebStdOutWriterImpl,
-    ThreadSafeFpwebResponseAwareImpl,
-    FpwebResponseAwareIntf;
+    IndyProcessorImpl,
+    IndyStdOutWriterImpl,
+    ThreadSafeIndyResponseAwareImpl,
+    IndyResponseAwareIntf;
 
-    constructor TFpwebAppServiceProvider.create(
+    constructor TIndyAppServiceProvider.create(
         const actualSvc : IDaemonAppServiceProvider;
         const svrConfig : TFpwebSvrConfig
     );
@@ -63,27 +63,27 @@ uses
         inherited create(actualSvc);
         fLock := TCriticalSection.create();
 
-        fStdOut := TFpwebStdOutWriter.create();
+        fStdOut := TIndyStdOutWriter.create();
         if svrConfig.threaded then
         begin
-            fStdOut := TThreadSafeFpWebResponseAware.create(
+            fStdOut := TThreadSafeIndyResponseAware.create(
                 fLock,
                 fStdOut,
-                fStdOut as IFpwebResponseAware
+                fStdOut as IIndyResponseAware
             );
         end;
 
-        fProtocol := TFpwebProcessor.create(
+        fProtocol := TIndyProcessor.create(
             fLock,
-            fStdOut as IFpwebResponseAware,
+            fStdOut as IIndyResponseAware,
             svrConfig
         );
 
-        //TFpwebProcessor also act as server
+        //TIndyProcessor also act as server
         fServer := fProtocol as IRunnableWithDataNotif;
     end;
 
-    destructor TFpwebAppServiceProvider.destroy();
+    destructor TIndyAppServiceProvider.destroy();
     begin
         fServer := nil;
         fStdOut := nil;
@@ -92,7 +92,7 @@ uses
         inherited destroy();
     end;
 
-    function TFpwebAppServiceProvider.getServer() : IRunnableWithDataNotif;
+    function TIndyAppServiceProvider.getServer() : IRunnableWithDataNotif;
     begin
         result := fServer;
     end;

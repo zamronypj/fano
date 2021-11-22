@@ -8,7 +8,7 @@
 
 {------------ Begin TIdHTTPServer-related------------------}
 {$IFDEF USE_INDY}
-TIndyAppServiceProvider = IndyAppServiceProviderImpl.TINdyAppServiceProvider;
+TIndyAppServiceProvider = IndyAppServiceProviderImpl.TIndyAppServiceProvider;
 TIndyStdOutWriter = IndyStdOutWriterImpl.TIndyStdOutWriter;
 TIndyProcessor = IndyProcessorImpl.TIndyProcessor;
 {$ENDIF}
