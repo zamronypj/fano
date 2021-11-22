@@ -200,7 +200,7 @@ uses
             numThread := fSvrConfig.threadPoolSize;
             if (numThread = 0) then
             begin
-                numThread := getCpuCount();
+                numThread := getCpuCount() * 16;
             end;
             initThreadPool(aSvr, numThread);
         end;
@@ -241,20 +241,18 @@ uses
     var aEnv : ICGIEnvironment;
         aStdInStream : IStreamAdapter;
     begin
-        fConnection.response := response;
-
-        aEnv := buildEnv(request);
-
-        if (request.postStream = nil) then
-        begin
-            aStdInStream := TNullStreamAdapter.create();
-        end else
-        begin
-            aStdInStream := TStreamAdapter.create(request.postStream);
-        end;
-
         fLock.acquire();
         try
+            fConnection.response := response;
+            aEnv := buildEnv(request);
+            if (request.postStream = nil) then
+            begin
+                aStdInStream := TNullStreamAdapter.create();
+            end else
+            begin
+                aStdInStream := TStreamAdapter.create(request.postStream);
+            end;
+
             fRequestReadyListener.ready(
                 //we will not use socket stream as we will have our own IStdOut
                 //that write output with TIdHTTPServer
