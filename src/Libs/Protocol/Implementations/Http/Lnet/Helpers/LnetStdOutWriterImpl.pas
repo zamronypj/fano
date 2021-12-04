@@ -15,7 +15,6 @@ interface
 uses
 
     SysUtils,
-    fphttpserver,
     StreamAdapterIntf,
     StdOutIntf,
     StreamStdOutImpl,
@@ -32,7 +31,7 @@ type
      *-----------------------------------------------*)
     TLnetStdOutWriter = class(TStreamStdOut, ILnetResponseAware)
     private
-        fResponse : TOuputItem;
+        fResponse : TOutputItem;
     protected
 
         (*!------------------------------------------------
@@ -45,14 +44,14 @@ type
         function writeStream(const stream : IStreamAdapter; const str : string) : IStdOut; override;
     public
         (*!------------------------------------------------
-         * get TFpHttpServer response connection
+         * get TLHttpServer response connection
          *-----------------------------------------------
          * @return connection
          *-----------------------------------------------*)
         function getResponse() : TOutputItem;
 
         (*!------------------------------------------------
-         * set TFpHttpServer response connection
+         * set TLHttpServer response connection
          *-----------------------------------------------*)
         procedure setResponse(aresponse : TOutputItem);
 
@@ -71,6 +70,24 @@ const
 
     HEADER_SEPARATOR_STR = LineEnding + LineEnding;
     HEADER_SEPARATOR_LEN = length(HEADER_SEPARATOR_STR);
+
+    (*!------------------------------------------------
+     * get TLHttpServer response connection
+     *-----------------------------------------------
+     * @return connection
+     *-----------------------------------------------*)
+    function TLnetStdOutWriter.getResponse() : TOutputItem;
+    begin
+        result := fResponse;
+    end;
+
+    (*!------------------------------------------------
+     * set TLHttpServer response connection
+     *-----------------------------------------------*)
+    procedure TLnetStdOutWriter.setResponse(aresponse : TOutputItem);
+    begin
+        fResponse := aresponse;
+    end;
 
     (*!------------------------------------------------
      * write string to STDOUT stream

@@ -5,7 +5,7 @@
  * @copyright Copyright (c) 2018 - 2021 Zamrony P. Juhara
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
-unit LnetServiceProviderImpl;
+unit LnetAppServiceProviderImpl;
 
 interface
 
@@ -54,11 +54,11 @@ uses
     LnetProcessorImpl,
     LnetStdOutWriterImpl,
     ThreadSafeFpwebResponseAwareImpl,
-    FpwebResponseAwareIntf;
+    LnetResponseAwareIntf;
 
     constructor TLnetAppServiceProvider.create(
         const actualSvc : IDaemonAppServiceProvider;
-        const svrConfig : TFpwebSvrConfig
+        const svrConfig : THttpSvrConfig
     );
     begin
         inherited create(actualSvc);
@@ -68,7 +68,6 @@ uses
 
         fProtocol := TLnetProcessor.create(
             fLock,
-            fStdOut as ILnetResponseAware,
             svrConfig
         );
 

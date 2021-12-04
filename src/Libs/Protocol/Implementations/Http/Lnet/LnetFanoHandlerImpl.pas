@@ -51,7 +51,6 @@ uses
     function TLnetFanoHandler.HandleURI(ASocket: TLHTTPServerSocket): TOutputItem;
     var
         lOutput: TLnetBufferedCGIOutput;
-        aEnvVars : IKeyValuePair;
     begin
         lOutput := TLnetBufferedCGIOutput.create(ASocket);
         lOutput.requestReady := fRequestReadyListener;

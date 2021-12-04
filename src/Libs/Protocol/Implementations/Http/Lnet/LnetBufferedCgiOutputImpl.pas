@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit LnetBufferredCgiOutputImpl;
+unit LnetBufferedCgiOutputImpl;
 
 interface
 
@@ -15,17 +15,20 @@ interface
 
 uses
 
+    StreamAdapterIntf,
+    KeyValuePairIntf,
+    ReadyListenerIntf,
     lhttp,
     lwebserver;
 
 type
 
-    TLnetBufferredCgiOutput = class(TCGIOutput)
+    TLnetBufferedCgiOutput = class(TCGIOutput)
     private
         fStreamAdapter : IStreamAdapter;
         fEnvVars : IKeyValuePair;
+        fRequestReadyListener : IReadyListener;
 
-        procedure setStream(astreamAdapter: IStreamAdapter);
     protected
 
         procedure AddEnvironment(const AName, AValue: string); override;
@@ -33,39 +36,42 @@ type
         function  WriteCGIData(): TWriteBlockStatus; override;
     public
         constructor Create(ASocket: TLHTTPSocket);
-        procedure startRequest();
-        property stream : IStreamAdapter read fStreamAdapter write setStream;
+        procedure startRequest(); override;
+        property stream : IStreamAdapter read fStreamAdapter write fStreamAdapter;
+        property requestReady : IReadyListener read fRequestReadyListener write fRequestReadyListener;
     end;
 
 implementation
+
+uses
+
+    EnvironmentIntf,
+    NullStreamAdapterImpl,
+    KeyValueEnvironmentImpl,
+    KeyValuePairImpl;
 
 const
 
     InputBufferEmptyToWriteStatus: array[boolean] of TWriteBlockStatus =
         (wsPendingData, wsWaitingData);
 
-    constructor TLnetBufferredCgiOutput.create(ASocket: TLHTTPSocket);
+    constructor TLnetBufferedCgiOutput.create(ASocket: TLHTTPSocket);
     begin
         inherited create(ASocket);
         fEnvVars := TKeyValuePair.create();
     end;
 
-    procedure TLnetBufferredCgiOutput.setStream(astreamAdapter: IStreamAdapter);
-    begin
-        fStreamAdapter := astreamAdapter;
-    end;
-
-    procedure TLnetBufferredCgiOutput.AddEnvironment(const AName, AValue: string);
+    procedure TLnetBufferedCgiOutput.AddEnvironment(const AName, AValue: string);
     begin
         fEnvVars.setValue(AName, AValue);
     end;
 
-    procedure TLnetBufferredCgiOutput.CGIOutputError();
+    procedure TLnetBufferedCgiOutput.CGIOutputError();
     begin
         TLHTTPServerSocket(FSocket).FResponseInfo.Status := hsInternalError;
     end;
 
-    function TLnetBufferredCgiOutput.WriteCGIData(): TWriteBlockStatus;
+    function TLnetBufferedCgiOutput.WriteCGIData(): TWriteBlockStatus;
     var
         lRead: integer;
     begin
@@ -80,22 +86,22 @@ const
         result := InputBufferEmptyToWriteStatus[lRead = 0];
     end;
 
-    procedure TLnetBufferredCgiOutput.startRequest();
+    procedure TLnetBufferedCgiOutput.startRequest();
     var
         aSockStream : IStreamAdapter;
         aCgiEnv : ICGIEnvironment;
     begin
+        inherited startRequest();
+
         //we will not use socket stream as we will have our own IStdOut
         //that write output with TLHttpServer
         aSockStream := TNullStreamAdapter.create();
         aCgiEnv := TKeyValueEnvironment.create(fEnvVars);
         //let our application handle route dispatching
         fRequestReadyListener.ready(
-            //we will not use socket stream as we will have our own IStdOut
-            //that write output with TLHttpServer
             aSockStream,
             aCgiEnv,
-            TStreamAdapter.create(TStringStream.create(request.content))
+            aSockStream //TODO implement STDIN stream
         );
     end;
 

@@ -26,10 +26,12 @@ uses
     StreamIdIntf,
     StreamAdapterIntf,
     lnet,
+    levents,
     lhttp,
     lwebserver,
     LnetResponseAwareIntf,
-    HttpSvrConfigTypes;
+    HttpSvrConfigTypes,
+    LnetFanoHandlerImpl;
 
 type
 
@@ -47,8 +49,6 @@ type
         fRequestReadyListener : IReadyListener;
         fDataListener : IDataAvailListener;
         fSvrConfig : THttpSvrConfig;
-        fMimeLoaded : boolean;
-        fConnection : IFpwebResponseAware;
 
         fHttpSvr : TLHTTPServer;
         fFileHandler : TFileHandler;
@@ -62,7 +62,6 @@ type
     public
         constructor create(
             const lock : TCriticalSection;
-            const conn : ILnetResponseAware;
             const svrConfig : THttpSvrConfig
         );
         destructor destroy(); override;
@@ -122,9 +121,8 @@ uses
     ssockets,
     BaseUnix,
     SigTermImpl,
-    fpmimetypes,
-    FpwebParamKeyValuePairImpl,
     KeyValueEnvironmentImpl,
+    KeyValuePairImpl,
     NullStdInImpl,
     NullStreamAdapterImpl,
     StreamAdapterImpl;
@@ -136,7 +134,6 @@ uses
     begin
         fQuit := false;
         fLock := lock;
-        fConnection := conn;
         fStdIn := nil;
         fRequestReadyListener := nil;
         fDataListener := nil;
@@ -163,7 +160,6 @@ uses
         fDataListener := nil;
         fRequestReadyListener := nil;
         fStdIn := nil;
-        fConnection := nil;
         fLock := nil;
         inherited destroy();
     end;
@@ -173,12 +169,10 @@ uses
         fQuit := true;
     end;
 
-    function TLnetProcessor.initHttpServer(const svrConfig : TFpwebSvrConfig) : TLHTTPServer;
+    function TLnetProcessor.initHttpServer(const svrConfig : THttpSvrConfig) : TLHTTPServer;
     var aSvr : TLHttpServer;
     begin
         aSvr := TLHttpServer.create(nil);
-
-        aSvr.registerHandler := @handleRequest;
 
         //create handler for static file
         fFileHandler := TFileHandler.create();
