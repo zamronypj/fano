@@ -6,21 +6,11 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit MhdSvrConfigTypes;
-
-interface
-
-{$MODE OBJFPC}
-{$H+}
-
-uses
-
-    HttpSvrConfigTypes;
-
-type
-
-    TMhdSvrConfig = THttpSvrConfig;
-
-implementation
-
-end.
+{------------ Begin TFpHttpServer-related------------------}
+FpwebSvrConfigTypes,
+FpwebAppServiceProviderImpl,
+FpwebStdOutWriterImpl,
+FpwebRequestImpl,
+FpwebRequestFactoryImpl,
+FpwebProcessorImpl,
+{------------ End TFpHttpServer-related------------------}
