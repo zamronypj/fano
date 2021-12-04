@@ -1,0 +1,3 @@
+[submodule "vendor/lnet"]
+	path = vendor/lnet
+	url = https://github.com/almindor/lnet.git
