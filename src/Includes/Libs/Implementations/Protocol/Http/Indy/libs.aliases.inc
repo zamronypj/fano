@@ -12,4 +12,4 @@ TIndyAppServiceProvider = IndyAppServiceProviderImpl.TIndyAppServiceProvider;
 TIndyStdOutWriter = IndyStdOutWriterImpl.TIndyStdOutWriter;
 TIndyProcessor = IndyProcessorImpl.TIndyProcessor;
 {$ENDIF}
-{------------ End TFpHttpServer-related------------------}
+{------------ End TIdHttpServer-related------------------}

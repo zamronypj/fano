@@ -6,9 +6,10 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-HttpSvrConfigTypes,
-
-{$INCLUDE Libmicrohttpd/implementations.inc}
-{$INCLUDE Fpweb/implementations.inc}
-{$INCLUDE Indy/implementations.inc}
-{$INCLUDE Lnet/implementations.inc}
+{------------ Begin TLHTTPServer-related------------------}
+{$IFDEF USE_LNET}
+LnetAppServiceProviderImpl,
+LnetStdOutWriterImpl,
+LnetProcessorImpl,
+{$ENDIF}
+{------------ End TLHTTPServer-related------------------}

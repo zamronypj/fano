@@ -11,4 +11,5 @@ THttpSvrConfig = HttpSvrConfigTypes.THttpSvrConfig;
 {$INCLUDE Libmicrohttpd/libs.aliases.inc}
 {$INCLUDE Fpweb/libs.aliases.inc}
 {$INCLUDE Indy/libs.aliases.inc}
+{$INCLUDE Lnet/libs.aliases.inc}
 
