@@ -53,7 +53,6 @@ uses
     RunnableIntf,
     LnetProcessorImpl,
     LnetStdOutWriterImpl,
-    ThreadSafeFpwebResponseAwareImpl,
     LnetResponseAwareIntf;
 
     constructor TLnetAppServiceProvider.create(

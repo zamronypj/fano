@@ -98,7 +98,7 @@ const
      *-----------------------------------------------*)
     function TLnetStdOutWriter.writeStream(const stream : IStreamAdapter; const str : string) : IStdOut;
     begin
-
+        result := self;
     end;
 
 end.
