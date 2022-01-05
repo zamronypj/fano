@@ -67,7 +67,8 @@ uses
 
         fProtocol := TLnetProcessor.create(
             fLock,
-            svrConfig
+            svrConfig,
+            fStdOut as ILnetResponseAware
         );
 
         //TLnetProcessor also act as server

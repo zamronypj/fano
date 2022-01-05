@@ -35,10 +35,12 @@ type
     TLnetFanoHandler = class(TUriHandler)
     private
         fRequestReadyListener : IReadyListener;
+        fResponseAware : ILnetResponseAware;
     protected
         function HandleURI(ASocket: TLHTTPServerSocket): TOutputItem; override;
     public
         property readyListener : IReadyListener read fRequestReadyListener write fRequestReadyListener;
+        property responseAware : ILnetResponseAware read fResponseAware write fResponseAware;
     end;
 
 implementation
@@ -54,6 +56,7 @@ uses
     begin
         lOutput := TLnetBufferedCGIOutput.create(ASocket);
         lOutput.requestReady := fRequestReadyListener;
+        lOutput.responseAware := fResponseAware;
         lOutput.startRequest();
         result := lOutput;
     end;

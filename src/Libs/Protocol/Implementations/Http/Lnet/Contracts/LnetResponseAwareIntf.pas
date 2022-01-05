@@ -15,7 +15,7 @@ interface
 
 uses
 
-    lhttp;
+    LnetCgiOutputImpl;
 
 type
 
@@ -33,14 +33,14 @@ type
          *-----------------------------------------------
          * @return connection
          *-----------------------------------------------*)
-        function getResponse() : TOutputItem;
+        function getResponse() : TLnetCGIOutput;
 
         (*!------------------------------------------------
          * set TLHTTPServer output
          *-----------------------------------------------*)
-        procedure setResponse(aoutput : TOutputItem);
+        procedure setResponse(aoutput : TLnetCGIOutput);
 
-        property response : TOutputItem read getResponse write setResponse;
+        property response : TLnetCGIOutput read getResponse write setResponse;
     end;
 
 implementation

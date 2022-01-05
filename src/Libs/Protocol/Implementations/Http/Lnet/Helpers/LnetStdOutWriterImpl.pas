@@ -14,11 +14,10 @@ interface
 
 uses
 
-    SysUtils,
     StreamAdapterIntf,
     StdOutIntf,
     StreamStdOutImpl,
-    lhttp,
+    LnetCgiOutputImpl,
     LnetResponseAwareIntf;
 
 type
@@ -31,7 +30,7 @@ type
      *-----------------------------------------------*)
     TLnetStdOutWriter = class(TStreamStdOut, ILnetResponseAware)
     private
-        fResponse : TOutputItem;
+        fResponse : TLnetCGIOutput;
     protected
 
         (*!------------------------------------------------
@@ -48,35 +47,29 @@ type
          *-----------------------------------------------
          * @return connection
          *-----------------------------------------------*)
-        function getResponse() : TOutputItem;
+        function getResponse() : TLnetCGIOutput;
 
         (*!------------------------------------------------
          * set TLHttpServer response connection
          *-----------------------------------------------*)
-        procedure setResponse(aresponse : TOutputItem);
+        procedure setResponse(aresponse : TLnetCGIOutput);
 
-        property response : TOutputItem read getResponse write setResponse;
+        property response : TLnetCGIOutput read getResponse write setResponse;
     end;
 
 implementation
 
 uses
 
-    MappedMemoryStreamImpl,
-    NullMemoryDeallocatorImpl,
-    EInvalidRequestImpl;
-
-const
-
-    HEADER_SEPARATOR_STR = LineEnding + LineEnding;
-    HEADER_SEPARATOR_LEN = length(HEADER_SEPARATOR_STR);
+    Classes,
+    StreamAdapterImpl;
 
     (*!------------------------------------------------
      * get TLHttpServer response connection
      *-----------------------------------------------
      * @return connection
      *-----------------------------------------------*)
-    function TLnetStdOutWriter.getResponse() : TOutputItem;
+    function TLnetStdOutWriter.getResponse() : TLnetCGIOutput;
     begin
         result := fResponse;
     end;
@@ -84,7 +77,7 @@ const
     (*!------------------------------------------------
      * set TLHttpServer response connection
      *-----------------------------------------------*)
-    procedure TLnetStdOutWriter.setResponse(aresponse : TOutputItem);
+    procedure TLnetStdOutWriter.setResponse(aresponse : TLnetCGIOutput);
     begin
         fResponse := aresponse;
     end;
@@ -98,6 +91,9 @@ const
      *-----------------------------------------------*)
     function TLnetStdOutWriter.writeStream(const stream : IStreamAdapter; const str : string) : IStdOut;
     begin
+        //we are not using stream parameter as this basically null implementation
+        //when we set it in TLnetBufferedCgiOutput
+        fResponse.writeResponse(TStreamAdapter.create(TStringStream.create(str)));
         result := self;
     end;
 

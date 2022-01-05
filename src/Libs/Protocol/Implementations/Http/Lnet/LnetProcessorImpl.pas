@@ -41,7 +41,7 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TLnetProcessor = class(TInterfacedObject, IProtocolProcessor, IRunnable, IRunnableWithDataNotif)
+    TLnetProcessor = class(TInterfacedObject, IProtocolProcessor, IRunnable, IRunnableWithDataNotif, IReadyListener)
     private
         fQuit : boolean;
         fLock : TCriticalSection;
@@ -49,22 +49,38 @@ type
         fRequestReadyListener : IReadyListener;
         fDataListener : IDataAvailListener;
         fSvrConfig : THttpSvrConfig;
-
+        fListening : boolean;
         fHttpSvr : TLHTTPServer;
         fFileHandler : TFileHandler;
         fFanoHandler : TLnetFanoHandler;
         fFormHandler : TFormHandler;
 
         fTerminateHandle : TLHandle;
+        fResponseAware : ILnetResponseAware;
 
         function initHttpServer(const svrConfig : THttpSvrConfig) : TLHTTPServer;
         procedure onReadTermination(aHandle: TLHandle);
     public
         constructor create(
             const lock : TCriticalSection;
-            const svrConfig : THttpSvrConfig
+            const svrConfig : THttpSvrConfig;
+            const aResponseAware : ILnetResponseAware
         );
         destructor destroy(); override;
+
+        (*!------------------------------------------------
+         * request is ready
+         *-----------------------------------------------
+         * @param socketStream, original socket stream
+         * @param env, CGI environment
+         * @param stdInStream, stream contains parsed POST-ed data
+         * @return true request is handled
+         *-----------------------------------------------*)
+        function ready(
+            const socketStream : IStreamAdapter;
+            const env : ICGIEnvironment;
+            const stdInStream : IStreamAdapter
+        ) : boolean;
 
         (*!------------------------------------------------
          * process request stream
@@ -129,25 +145,38 @@ uses
 
     constructor TLnetProcessor.create(
         const lock : TCriticalSection;
-        const svrConfig : THttpSvrConfig
+        const svrConfig : THttpSvrConfig;
+        const aResponseAware : ILnetResponseAware
     );
     begin
         fQuit := false;
         fLock := lock;
-        fStdIn := nil;
+        fResponseAware := aResponseAware;
+
+        //we will setup STDIN stream in TLnetBufferedCgiOutput so,
+        //not really used here, so we just use null class
+        fStdIn := TNullStreamAdapter.create();
+
         fRequestReadyListener := nil;
         fDataListener := nil;
         fSvrConfig := svrConfig;
 
         fHttpSvr := initHttpServer(fSvrConfig);
 
-        //get notified when SIGTERM is received so we can
-        //quit gracefully
-        fTerminateHandle := TLHandle.create();
-        fTerminateHandle.handle := TSigTerm.terminatePipeIn;
-        fTerminateHandle.ignoreWrite := true;
-        fTerminateHandle.onRead := @onReadTermination;
-        fHttpSvr.Eventer.addHandle(fTerminateHandle);
+        //need to call listen() before read Eventer property
+        //otherwise Eventer will be nil
+        fListening := fHttpSvr.listen(fSvrConfig.port);
+
+        if (fListening) then
+        begin
+            //get notified when SIGTERM is received so we can
+            //quit gracefully
+            fTerminateHandle := TLHandle.create();
+            fTerminateHandle.handle := TSigTerm.terminatePipeIn;
+            fTerminateHandle.ignoreWrite := true;
+            fTerminateHandle.onRead := @onReadTermination;
+            fHttpSvr.Eventer.addHandle(fTerminateHandle);
+        end;
     end;
 
     destructor TLnetProcessor.destroy();
@@ -161,6 +190,7 @@ uses
         fRequestReadyListener := nil;
         fStdIn := nil;
         fLock := nil;
+        fResponseAware := nil;
         inherited destroy();
     end;
 
@@ -187,7 +217,12 @@ uses
 
         //create handler for our app
         fFanoHandler := TLnetFanoHandler.create();
-        fFanoHandler.readyListener := fRequestReadyListener;
+
+        //when we initialize server, actual request ready listener is yet
+        //to be determined, so we promote ourself for the role
+        fFanoHandler.readyListener := self;
+
+        fFanoHandler.responseAware := fResponseAware;
 
         aSvr.registerHandler(fFileHandler);
         aSvr.registerHandler(fFormHandler);
@@ -230,6 +265,24 @@ uses
     end;
 
     (*!------------------------------------------------
+     * request is ready
+     *-----------------------------------------------
+     * @param socketStream, original socket stream
+     * @param env, CGI environment
+     * @param stdInStream, stream contains parsed POST-ed data
+     * @return true request is handled
+     *-----------------------------------------------*)
+    function TLnetProcessor.ready(
+        const socketStream : IStreamAdapter;
+        const env : ICGIEnvironment;
+        const stdInStream : IStreamAdapter
+    ) : boolean;
+    begin
+        result := assigned(fRequestReadyListener) and
+            fRequestReadyListener.ready(socketStream, env, stdInStream);
+    end;
+
+    (*!------------------------------------------------
      * get number of bytes of complete request based
      * on information buffer
      *-----------------------------------------------
@@ -249,7 +302,7 @@ uses
     function TLnetProcessor.run() : IRunnable;
     begin
         result := self;
-        if fHttpSvr.listen(fSvrConfig.port) then
+        if fListening then
         begin
             while not fQuit do
             begin
