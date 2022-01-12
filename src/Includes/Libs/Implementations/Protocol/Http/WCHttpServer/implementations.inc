@@ -6,21 +6,8 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit MhdSvrConfigTypes;
 
-interface
-
-{$MODE OBJFPC}
-{$H+}
-
-uses
-
-    HttpSvrConfigTypes;
-
-type
-
-    TMhdSvrConfig = THttpSvrConfig;
-
-implementation
-
-end.
+{------------ Begin wchttpserver-related------------------}
+{$IFDEF USE_WCHTTPSERVER}
+WcHttpServerProcessorImpl,
+{$ENDIF}

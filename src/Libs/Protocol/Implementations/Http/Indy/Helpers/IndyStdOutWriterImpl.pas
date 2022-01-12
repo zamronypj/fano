@@ -5,7 +5,7 @@
  * @copyright Copyright (c) 2018 - 2021 Zamrony P. Juhara
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
-unit FpwebStdOutWriterImpl;
+unit IndyStdOutWriterImpl;
 
 interface
 
@@ -15,26 +15,27 @@ interface
 uses
 
     SysUtils,
-    fphttpserver,
     StreamAdapterIntf,
     StdOutIntf,
     StreamStdOutImpl,
-    FpwebResponseAwareIntf;
+    IndyResponseAwareIntf,
+    HttpSvrConfigTypes,
+    IdCustomHTTPServer;
 
 type
 
     (*!-----------------------------------------------
      * IStdOut implementation having capability to write
-     * response to TFpHttpServer
+     * response to TIdHTTPServer
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TFpwebStdOutWriter = class(TStreamStdOut, IFpwebResponseAware)
+    TIndyStdOutWriter = class(TStreamStdOut, IIndyResponseAware)
     private
-        fResponse : TFPHTTPConnectionResponse;
+        fResponse : TIdHTTPResponseInfo;
 
         procedure writeHeaders(
-            const aresponse : TFPHTTPConnectionResponse;
+            const aresponse : TIdHTTPResponseInfo;
             const headers : TStringArray
         );
     protected
@@ -53,14 +54,14 @@ type
          *-----------------------------------------------
          * @return connection
          *-----------------------------------------------*)
-        function getResponse() : TFPHTTPConnectionResponse;
+        function getResponse() : TIdHTTPResponseInfo;
 
         (*!------------------------------------------------
          * set TFpHttpServer response connection
          *-----------------------------------------------*)
-        procedure setResponse(aresponse : TFPHTTPConnectionResponse);
+        procedure setResponse(aresponse : TIdHTTPResponseInfo);
 
-        property response : TFPHTTPConnectionResponse read getResponse write setResponse;
+        property response : TIdHTTPResponseInfo read getResponse write setResponse;
     end;
 
 implementation
@@ -76,8 +77,8 @@ const
     HEADER_SEPARATOR_STR = LineEnding + LineEnding;
     HEADER_SEPARATOR_LEN = length(HEADER_SEPARATOR_STR);
 
-    procedure TFpwebStdOutWriter.writeHeaders(
-        const aresponse : TFPHTTPConnectionResponse;
+    procedure TIndyStdOutWriter.writeHeaders(
+        const aresponse : TIdHTTPResponseInfo;
         const headers : TStringArray
     );
     var
@@ -102,12 +103,12 @@ const
 
             if (headerItem[0] <> 'Status') then
             begin
-                aresponse.setFieldByName(headerItem[0], trim(headerItem[1]));
+                aresponse.CustomHeaders.Values[headerItem[0]] := trim(headerItem[1]);
             end else
             begin
                 //read status
                 try
-                    aresponse.code := strToInt(trim(headerItem[1]).split(' ')[0]);
+                    aresponse.ResponseNo := strToInt(trim(headerItem[1]).split(' ')[0]);
                 except
                     on e : EConvertError do
                     begin
@@ -126,7 +127,7 @@ const
      * @param str, string to write
      * @return current instance
      *-----------------------------------------------*)
-    function TFpwebStdOutWriter.writeStream(const stream : IStreamAdapter; const str : string) : IStdOut;
+    function TIndyStdOutWriter.writeStream(const stream : IStreamAdapter; const str : string) : IStdOut;
     var
         headers : TStringArray;
         separatorPos : integer;
@@ -150,8 +151,11 @@ const
             TNullMemoryDeallocator.create()
         );
         try
+            fResponse.contentLength := content.size;
             fResponse.contentStream := content;
-            fResponse.SendContent();
+            //tell Indy to not free ContentStream as we will do it
+            fResponse.freeContentStream := false;
+            fResponse.WriteContent();
             result:= self;
         finally
             content.free();
@@ -160,19 +164,19 @@ const
 
 
     (*!------------------------------------------------
-     * get TFpHttpServer response connection
+     * get TIdHTTPServer response connection
      *-----------------------------------------------
      * @return connection
      *-----------------------------------------------*)
-    function TFpwebStdOutWriter.getResponse() : TFPHTTPConnectionResponse;
+    function TIndyStdOutWriter.getResponse() : TIdHTTPResponseInfo;
     begin
         result := fResponse;
     end;
 
     (*!------------------------------------------------
-     * set TFpHttpServer response connection
+     * set TIdHTTPServer response connection
      *-----------------------------------------------*)
-    procedure TFpwebStdOutWriter.setResponse(aresponse : TFPHTTPConnectionResponse);
+    procedure TIndyStdOutWriter.setResponse(aresponse : TIdHTTPResponseInfo);
     begin
         fResponse := aresponse;
     end;

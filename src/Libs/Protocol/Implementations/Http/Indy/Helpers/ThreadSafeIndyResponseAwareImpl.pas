@@ -6,7 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-unit ThreadSafeFpwebResponseAwareImpl;
+unit ThreadSafeIndyResponseAwareImpl;
 
 interface
 
@@ -18,9 +18,11 @@ uses
     fphttpserver,
     SyncObjs,
     StdOutIntf,
-    FpwebResponseAwareIntf,
+    IndyResponseAwareIntf,
     ThreadSafeStdOutImpl,
-    StreamAdapterIntf;
+    StreamAdapterIntf,
+
+    IdCustomHTTPServer;
 
 type
 
@@ -30,14 +32,14 @@ type
      *
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-----------------------------------------------*)
-    TThreadSafeFpwebResponseAware = class(TThreadSafeStdOut, IFpwebResponseAware)
+    TThreadSafeIndyResponseAware = class(TThreadSafeStdOut, IIndyResponseAware)
     private
-        fActualResponseAware : IFpwebResponseAware;
+        fActualResponseAware : IIndyResponseAware;
     public
         constructor create(
             const lock : TCriticalSection;
             const actualStdOut : IStdOut;
-            const actualResponseAware : IFpwebResponseAware
+            const actualResponseAware : IIndyResponseAware
         );
 
         (*!------------------------------------------------
@@ -45,21 +47,22 @@ type
          *-----------------------------------------------
          * @return connection
          *-----------------------------------------------*)
-        function getResponse() : TFPHTTPConnectionResponse;
+        function getResponse() : TIdHTTPResponseInfo;
 
         (*!------------------------------------------------
          * set TFpHttpServer response connection
          *-----------------------------------------------*)
-        procedure setResponse(aresponse : TFPHTTPConnectionResponse);
+        procedure setResponse(aresponse : TIdHTTPResponseInfo);
 
+        property response : TIdHTTPResponseInfo read getResponse write setResponse;
     end;
 
 implementation
 
-    constructor TThreadSafeFpwebResponseAware.create(
+    constructor TThreadSafeIndyResponseAware.create(
         const lock : TCriticalSection;
         const actualStdOut : IStdOut;
-        const actualResponseAware : IFpwebResponseAware
+        const actualResponseAware : IIndyResponseAware
     );
     begin
         inherited create(lock, actualStdOut);
@@ -67,11 +70,11 @@ implementation
     end;
 
     (*!------------------------------------------------
-     * get TFpHttpServer response connection
+     * get TIdHTTPServer response connection
      *-----------------------------------------------
      * @return connection
      *-----------------------------------------------*)
-    function TThreadSafeFpwebResponseAware.getResponse() : TFPHTTPConnectionResponse;
+    function TThreadSafeIndyResponseAware.getResponse() : TIdHTTPResponseInfo;
     begin
         fLock.acquire();
         try
@@ -82,9 +85,9 @@ implementation
     end;
 
     (*!------------------------------------------------
-     * set TFpHttpServer response connection
+     * set TIdHTTPServer response connection
      *-----------------------------------------------*)
-    procedure TThreadSafeFpwebResponseAware.setResponse(aresponse : TFPHTTPConnectionResponse);
+    procedure TThreadSafeIndyResponseAware.setResponse(aresponse : TIdHTTPResponseInfo);
     begin
         fLock.acquire();
         try
