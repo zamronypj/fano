@@ -51,7 +51,8 @@ uses
 
     DispatcherImpl,
     RequestResponseFactoryImpl,
-    MiddlewareExecutorImpl;
+    MiddlewareExecutorImpl,
+    WithExceptMiddlewareExecutorImpl;
 
     constructor TDispatcherFactory.create(
         const appMiddlewaresInst : IMiddlewareLinkList;
@@ -71,7 +72,9 @@ uses
 
     function TDispatcherFactory.createMiddlewareExecutor() : IMiddlewareExecutor;
     begin
-        result := TMiddlewareExecutor.create(appMiddlewares);
+        result := TWithExceptMiddlewareExecutor.create(
+            TMiddlewareExecutor.create(appMiddlewares)
+        );
     end;
 
     function TDispatcherFactory.build(const container : IDependencyContainer) : IDependency;

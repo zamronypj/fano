@@ -82,11 +82,11 @@ uses
     end;
 
     function TSessionDispatcherFactory.createMiddlewareExecutor() : IMiddlewareExecutor;
-    var actualFactory : IMiddlewareExecutor;
+    var actualExecutor : IMiddlewareExecutor;
     begin
-        actualFactory := inherited createMiddlewareExecutor();
+        actualExecutor := inherited createMiddlewareExecutor();
         result := TSessionMiddlewareExecutor.create(
-            actualFactory,
+            actualExecutor,
             fSessionMgr,
             fCookieFactory,
             fExpiresInSec
