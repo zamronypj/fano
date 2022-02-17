@@ -111,6 +111,19 @@ type
          *-------------------------------------*)
         function writeHeaders() : IHeaders;
 
+        (*!------------------------------------
+         * returns all headers as CRLF separated
+         * string
+         *-------------------------------------
+         * @return string headers as string
+         *-------------------------------------
+         * For example
+         * 'Accept: application/json' + CRLF +
+         * 'Content-Type: application/json' + CRLF +
+         * etc
+         *-------------------------------------*)
+        function asString() : string;
+
         function clone() : ICloneable;
     end;
 
@@ -335,6 +348,30 @@ type
         //CGI protocol requires that header and body are separated by blank line
         writeln();
         result := self;
+    end;
+
+    (*!------------------------------------
+     * returns all headers as CRLF separated
+     * string
+     *-------------------------------------
+     * @return string headers as string
+     *-------------------------------------
+     * For example
+     * 'Accept: application/json' + CRLF +
+     * 'Content-Type: application/json' + CRLF +
+     * etc
+     *-------------------------------------*)
+    function THeaders.asString() : string;
+    var i, len : integer;
+        hdr : PHeaderRec;
+    begin
+        result := '';
+        len := headerList.count();
+        for i :=0 to len-1 do
+        begin
+            hdr := headerList.get(i);
+            result := hdr^.key + ': ' + hdr^.value + LineEnding;
+        end;
     end;
 
     function THeaders.clone() : ICloneable;

@@ -54,6 +54,19 @@ type
          *-------------------------------------*)
         function has(const key : shortstring) : boolean;
 
+        (*!------------------------------------
+         * returns all headers as CRLF separated
+         * string
+         *-------------------------------------
+         * @return string headers as string
+         *-------------------------------------
+         * For example
+         * 'Accept: application/json' + CRLF +
+         * 'Content-Type: application/json' + CRLF +
+         * etc
+         *-------------------------------------*)
+        function asString() : string;
+
         function clone() : ICloneable;
     end;
 
@@ -135,6 +148,30 @@ uses
                 exit;
             end;
         end
+    end;
+
+    (*!------------------------------------
+     * returns all headers as CRLF separated
+     * string
+     *-------------------------------------
+     * @return string headers as string
+     *-------------------------------------
+     * For example
+     * 'Accept: application/json' + CRLF +
+     * 'Content-Type: application/json' + CRLF +
+     * etc
+     *-------------------------------------*)
+    function TRequestHeaders.asString() : string;
+    var i, len : integer;
+        hdr : PHeaderRec;
+    begin
+        result := '';
+        len := headerList.count();
+        for i :=0 to len-1 do
+        begin
+            hdr := headerList.get(i);
+            result := hdr^.key + ': ' + hdr^.value + LineEnding;
+        end;
     end;
 
     function TRequestHeaders.clone() : ICloneable;

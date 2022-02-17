@@ -45,6 +45,19 @@ type
          * @return boolean true if header is set
          *-------------------------------------*)
         function has(const key : shortstring) : boolean;
+
+        (*!------------------------------------
+         * returns all headers as CRLF separated
+         * string
+         *-------------------------------------
+         * @return string headers as string
+         *-------------------------------------
+         * For example
+         * 'Accept: application/json' + CRLF +
+         * 'Content-Type: application/json' + CRLF +
+         * etc
+         *-------------------------------------*)
+        function asString() : string;
     end;
 
 implementation
