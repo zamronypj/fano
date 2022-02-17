@@ -77,7 +77,12 @@ implementation
      *--------------------------------------------*)
     function TNullRouteArgs.getArgs() : TArrayOfPlaceholders;
     begin
-        result := [];
+        //bugfix for FPC 3.0.4
+        {$IF FPC_FULLVERSION > 30004}
+            result := [];
+        {$ELSE}
+            result := nil;
+        {$ENDIF}
     end;
 
     (*!-------------------------------------------
