@@ -60,6 +60,7 @@ type
 
         function initHttpServer(const svrConfig : THttpSvrConfig) : TLHTTPServer;
         procedure onReadTermination(aHandle: TLHandle);
+        procedure onErr(const msg: string; aSocket: TLSocket);
     public
         constructor create(
             const lock : TCriticalSection;
@@ -199,10 +200,17 @@ uses
         fQuit := true;
     end;
 
+    procedure TLnetProcessor.OnErr(const msg: string; aSocket: TLSocket);
+    begin
+        writeln(msg);
+    end;
+
     function TLnetProcessor.initHttpServer(const svrConfig : THttpSvrConfig) : TLHTTPServer;
     var aSvr : TLHttpServer;
     begin
         aSvr := TLHttpServer.create(nil);
+        aSvr.ServerSoftware := fSvrConfig.serverSoftware;
+        aSvr.onError := @onErr;
 
         //create handler for static file
         fFileHandler := TFileHandler.create();
