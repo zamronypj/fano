@@ -11,6 +11,12 @@ interface
 
 {$MODE OBJFPC}
 
+uses
+
+    RunnableIntf,
+    AppIntf,
+    EventLoopIntf;
+
 type
 
     TWebApplication = class (TInterfacedObject, IWebApplication)
@@ -27,12 +33,12 @@ type
 
 implementation
 
-    constructor create(const eventLoop : IEventLoop);
+    constructor TWebApplication.create(const eventLoop : IEventLoop);
     begin
         fEventLoop := eventLoop;
     end;
 
-    procedure TFanoApplication.runEventLoop();
+    procedure TWebApplication.runEventLoop();
     begin
         repeat
             aEv := fEventLoop.waitForEvent();
@@ -40,17 +46,17 @@ implementation
         until fEventLoop.isTerminated();
     end;
 
-    procedure TFanoApplication.initialize();
+    procedure TWebApplication.initialize();
     begin
         fEventLoop.initialize();
     end;
 
-    procedure TFanoApplication.shutdown();
+    procedure TWebApplication.shutdown();
     begin
         fEventLoop.shutdown();
     end;
 
-    function TFanoApplication.run() : IRunnable;
+    function TWebApplication.run() : IRunnable;
     begin
         initialize();
         try
