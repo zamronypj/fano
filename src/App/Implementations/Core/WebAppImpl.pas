@@ -5,7 +5,7 @@
  * @copyright Copyright (c) 2018 - 2022 Zamrony P. Juhara
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
-unit FanoAppImpl;
+unit WebAppImpl;
 
 interface
 
@@ -13,7 +13,7 @@ interface
 
 type
 
-    TFanoApplication = class (TInterfacedObject, IWebApplication)
+    TWebApplication = class (TInterfacedObject, IWebApplication)
     private
         fEventLoop : IEventLoop;
 
