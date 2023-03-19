@@ -7,12 +7,11 @@
  *}
 
 (*! ---------------------------------------------
- * data types declaration unit that is included in fano.pas unit
- * This file is provided so we can use fano framework
- * by using only one uses to simplify things.
+ * alias for implementation in Content Security Policy Middleware
+ * that is included in implementations.aliases.inc
  *
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
  *-----------------------------------------------*)
 
-{$INCLUDE Libs/Consts/consts.inc}
-{$INCLUDE Security/Consts/consts.inc}
+TCspMiddleware = CspMiddlewareImpl.TCspMiddleware;
+TCspMiddlewareFactory = CspMiddlewareFactoryImpl.TCspMiddlewareFactory;

@@ -7,12 +7,14 @@
  *}
 
 (*! ---------------------------------------------
- * data types declaration unit that is included in fano.pas unit
+ * consts declaration that is included in fano.pas unit
  * This file is provided so we can use fano framework
  * by using only one uses to simplify things.
  *
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
  *-----------------------------------------------*)
 
-{$INCLUDE Libs/Consts/consts.inc}
-{$INCLUDE Security/Consts/consts.inc}
+CSP_NONE = CspConstant.CSP_NONE;
+CSP_SELF = CspConstant.CSP_SELF;
+CSP_UNSAFE_INLINE = CspConstant.CSP_UNSAFE_INLINE;
+CSP_UNSAFE_EVAL = CspConstant.CSP_UNSAFE_EVAL;
