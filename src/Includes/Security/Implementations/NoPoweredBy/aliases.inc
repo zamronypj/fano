@@ -13,14 +13,5 @@
  * @author Zamrony P. Juhara <zamronypj@yahoo.com>
  *-----------------------------------------------*)
 
-{$INCLUDE Validations/aliases.inc}
-{$INCLUDE Sanitations/aliases.inc}
-{$INCLUDE Cors/aliases.inc}
-{$INCLUDE Csrf/aliases.inc}
-{$INCLUDE Auth/aliases.inc}
-{$INCLUDE Xss/aliases.inc}
-{$INCLUDE FrameGuard/aliases.inc}
-{$INCLUDE PasswordHash/aliases.inc}
-{$INCLUDE Jwt/aliases.inc}
-{$INCLUDE Csp/aliases.inc}
-{$INCLUDE NoPoweredBy/aliases.inc}
+TNoPoweredByMiddleware = NoPoweredByMiddlewareImpl.TNoPoweredByMiddleware;
+TNoPoweredByMiddlewareFactory = NoPoweredByMiddlewareFactoryImpl.TNoPoweredByMiddlewareFactory;

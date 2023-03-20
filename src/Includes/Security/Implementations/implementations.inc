@@ -23,3 +23,4 @@
 {$INCLUDE PasswordHash/implementations.inc}
 {$INCLUDE Jwt/implementations.inc}
 {$INCLUDE Csp/implementations.inc}
+{$INCLUDE NoPoweredBy/implementations.inc}
