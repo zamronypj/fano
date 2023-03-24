@@ -15,13 +15,7 @@ interface
 
 uses
 
-    RequestIntf,
-    ResponseIntf,
-    MiddlewareIntf,
-    RouteArgsReaderIntf,
-    RequestHandlerIntf,
-    ReadOnlyKeyValuePairIntf,
-    InjectableObjectImpl;
+    BaseStaticFilesMiddlewareImpl;
 
 type
 
@@ -35,80 +29,38 @@ type
      *-------------------------------------------------
      * @author Zamrony P. Juhara <zamronypj@yahoo.com>
      *-------------------------------------------------*)
-    TStaticFilesMiddleware = class(TInjectableObject, IMiddleware)
+    TStaticFilesMiddleware = class(TBaseStaticFilesMiddleware)
     protected
-        fBaseDirectory : string;
-        fMimeTypes : IReadOnlyKeyValuePair;
-        function getContentTypeFromFilename(const filename : string) : string;
+        (*!-------------------------------------------
+         * clean filepath avoid serve hidden dot files in unix
+         *--------------------------------------------
+         * @param filePath original file path
+         * @return new cleaned file path
+         *--------------------------------------------*)
+        function clean(const filePath: string) : string; override;
     public
-        constructor create(
-            const baseDir : string;
-            const mimeTypes : IReadOnlyKeyValuePair
-        );
-
-        function handleRequest(
-            const request : IRequest;
-            const response : IResponse;
-            const args : IRouteArgsReader;
-            const nextMdlwr : IRequestHandler
-        ) : IResponse; virtual;
     end;
 
 implementation
 
 uses
 
-    SysUtils,
-    FileResponseImpl;
+    SysUtils;
 
-    constructor TStaticFilesMiddleware.create(
-        const baseDir : string;
-        const mimeTypes : IReadOnlyKeyValuePair
-    );
+
+    (*!-------------------------------------------
+     * clean filepath avoid serve hidden dot files in unix
+     *--------------------------------------------
+     * @param filePath original file path
+     * @return new cleaned file path
+     *--------------------------------------------*)
+    function TStaticFilesMiddleware.clean(const filePath: string) : string;
     begin
-        fBaseDirectory := baseDir;
-        fMimeTypes := mimeTypes;
+        // for example if filePath contain '/.htaccess' we replace it so
+        // filePath become '/htaccess'
+        result := stringReplace(filePath, '/.', '/', [rfReplaceAll]);
+        // just paranoia handle .. too
+        result := stringReplace(result, '..', '', [rfReplaceAll]);
     end;
 
-    function TStaticFilesMiddleware.getContentTypeFromFilename(
-        const filename : string
-    ) : string;
-    var ext : string;
-    begin
-        ext := ExtractFileExt(filename);
-        //remove dot from ext
-        ext := copy(ext, 2, length(ext)-1);
-        if (fMimeTypes.has(ext)) then
-        begin
-            result := fMimeTypes.getValue(ext);
-        end else
-        begin
-            //set default
-            result := 'application/octet-stream';
-        end;
-    end;
-
-    function TStaticFilesMiddleware.handleRequest(
-        const request : IRequest;
-        const response : IResponse;
-        const args : IRouteArgsReader;
-        const nextMdlwr : IRequestHandler
-    ) : IResponse;
-    var filename : string;
-    begin
-        filename := fBaseDirectory + request.uri().getPath();
-        if fileExists(filename) then
-        begin
-            //serve file
-            result := TFileResponse.create(
-                response.headers(),
-                getContentTypeFromFilename(filename),
-                filename
-            );
-        end else
-        begin
-            //file not found, just pass to next middleware
-            result := nextMdlwr.handleRequest(request, response, args);
-        end;
-    end;
 end.
