@@ -11,3 +11,4 @@ HttpSvrConfigTypes,
 {$INCLUDE Libmicrohttpd/implementations.inc}
 {$INCLUDE Fpweb/implementations.inc}
 {$INCLUDE Indy/implementations.inc}
+{$INCLUDE Moremore/implementations.inc}

@@ -6,9 +6,7 @@
  * @license   https://github.com/fanoframework/fano/blob/master/LICENSE (MIT)
  *}
 
-THttpSvrConfig = HttpSvrConfigTypes.THttpSvrConfig;
-
-{$INCLUDE Libmicrohttpd/libs.aliases.inc}
-{$INCLUDE Fpweb/libs.aliases.inc}
-{$INCLUDE Indy/libs.aliases.inc}
-{$INCLUDE Moremore/libs.aliases.inc}
+{------------ Begin Moremore HTTP server related------------------}
+MoremoreAppServiceProviderImpl,
+MoremoreProcessorImpl,
+{------------ End Moremore HTTP server related------------------}
