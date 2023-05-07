@@ -7,6 +7,8 @@
  *}
 
 {------------ Begin Moremore HTTP server related------------------}
+{$IFDEF USE_MOREMORE}
 MoremoreAppServiceProviderImpl,
 MoremoreProcessorImpl,
+{$ENDIF}
 {------------ End Moremore HTTP server related------------------}

@@ -7,6 +7,8 @@
  *}
 
 {------------ Begin Moremore HTTP server related------------------}
+{$IFDEF USE_MOREMORE}
 TMoremoreAppServiceProvider = MoremoreAppServiceProviderImpl.TMoremoreAppServiceProvider;
 TMoremoreProcessor = MoremoreProcessorImpl.TMoremoreProcessor;
+{$ENDIF}
 {------------ End moremore HTTP server related------------------}
