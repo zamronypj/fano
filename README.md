@@ -8,11 +8,8 @@ Web application framework for modern Pascal programming language.
 
 ## Requirement
 
-- Linux or FreeBSD
 - [Free Pascal](https://www.freepascal.org/) >= 3.0
-- Web Server (Apache, nginx)
-- [libcurl development](https://curl.haxx.se/libcurl/) (optional)
-- [libmicrohttpd development](https://www.gnu.org/software/libmicrohttpd/) (optional)
+- Web Server (Apache, nginx) (if compile as CGI, FastCGI, SCGI or UWSGI)
 
 ## Installation
 
@@ -57,9 +54,6 @@ all your applications that depends on Fano will be affected. If newer version of
 
 Fano Framework follows [Semantic Versioning 2.0.0](https://semver.org/#semantic-versioning-200).
 
-## Windows User
-
-Fano Framework is not yet supported on Windows.
 
 ## Roadmap
 
