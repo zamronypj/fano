@@ -1,3 +1,0 @@
-ICGIEnvironment = EnvironmentIntf.ICGIEnvironment;
-ICGIEnvironmentEnumerator = EnvironmentEnumeratorIntf.ICGIEnvironmentEnumerator;
-ICGIEnvironmentFactory = EnvironmentFactoryIntf.ICGIEnvironmentFactory;
