@@ -47,17 +47,14 @@ begin
     );
 
     {$IF DEFINED(FASTCGI)}
-    thrd.onAccepted := @FastCgiProcessor.OnAccepted;
-    thrd.OnDataAvail := @FastCgiProcessor.OnDataAvail;
-    thrd.OnBeforeClose := @FastCgiProcessor.OnBeforeClose;
+    selthrd.onAccepted := @FastCgiProcessor.OnAccepted;
+    selthrd.OnBeforeClose := @FastCgiProcessor.OnBeforeClose;
     {$ELSEIF DEFINED(SCGI)}
-    thrd.onAccepted := @ScgiProcessor.OnAccepted;
-    thrd.OnDataAvail := @ScgiProcessor.OnDataAvail;
-    thrd.OnBeforeClose := @ScgiProcessor.OnBeforeClose;
+    selthrd.onAccepted := @ScgiProcessor.OnAccepted;
+    selthrd.OnBeforeClose := @ScgiProcessor.OnBeforeClose;
     {$ELSEIF DEFINED(UWSGI)}
-    thrd.onAccepted := @UwsgiProcessor.OnAccepted;
-    thrd.OnDataAvail := @UwsgiProcessor.OnDataAvail;
-    thrd.OnBeforeClose := @UwsgiProcessor.OnBeforeClose;
+    selthrd.onAccepted := @UwsgiProcessor.OnAccepted;
+    selthrd.OnBeforeClose := @UwsgiProcessor.OnBeforeClose;
     {$ELSEIF DEFINED(HTTP2)}
     selthrd.onAccepted := @Http2Processor.OnAccepted;
     selthrd.OnBeforeClose := @Http2Processor.OnBeforeClose;

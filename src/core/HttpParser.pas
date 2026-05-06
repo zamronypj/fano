@@ -23,6 +23,9 @@ SOFTWARE.
 -------------------------------------------------------------------------------}
 unit HttpParser;
 
+{$MODE OBJFPC}
+{$H+}
+
 interface
 
 uses
@@ -30,7 +33,7 @@ uses
 
    classes,
    sysutils,
-   contnrs;
+   HttpHeaders;
 
 type
     THttpProcessingState = (
@@ -57,7 +60,7 @@ type
        httpVerb : string;
        requestPath: string;
        httpVersion : string;
-       headers: TFPHashList;
+       headers: THttpHeaders;
        body: TStream;
        isMultipart: boolean;
        files: TUploadedFiles;
@@ -252,7 +255,7 @@ end;
 
 procedure parseHttpBody(tmp: string; len, expecteBodyLen: integer; var httpData: THttpData; var idx: integer; var needMoreData: boolean);
 begin
-    if httpData.headers.Find('Content-Type') = 'Multipart/Form-Data' then
+    if httpData.headers['Content-Type'] = 'Multipart/Form-Data' then
     begin
 
     end;

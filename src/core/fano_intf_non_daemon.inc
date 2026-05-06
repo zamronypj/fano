@@ -25,10 +25,14 @@ SOFTWARE.
 uses
 
    Classes,
-   SysUtils,
-   Contnrs;
+   SysUtils;
 
 type
 
     TFanoConfig = record
+        // Allowed maximum HTTP request Header size in bytes
+        maxHeaderSize: integer;
+
+        // Allowed maximum HTTP request body size in bytes
+        maxBodySize: integer;
     end;

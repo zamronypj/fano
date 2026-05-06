@@ -38,6 +38,7 @@ uses
    SigTermUtil,
    KqueueWorkerThread,
    {$ELSEIF DEFINED(WINDOWS)}
+   iocpterm,
    IocpWorkerThread,
    {$ELSE}
    SigTermUtil,

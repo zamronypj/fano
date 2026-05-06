@@ -69,7 +69,16 @@ type
 
 implementation
 
-uses sockets, baseunix, unix, contnrs;
+uses
+    sockets,
+    {$IFDEF WINDOWS}
+    Windows,
+    Winsock2,
+    {$ELSE}
+    baseunix,
+    unix,
+    {$ENDIF}
+    HttpHeaders;
 
 procedure OnAccepted(const connfd: longint; var userData: pointer);
 var buf: PBuff;
@@ -80,8 +89,8 @@ begin
    buf^.totalSent := 0;
    buf^.totalRead := 0;
    buf^.httpData:= default(THttpData);
-   buf^.httpData.state := hpsStart;
-   buf^.httpData.headers := TFPHashList.Create();
+   buf^.httpData.state := hpsProcessingVerb;
+   buf^.httpData.headers := THttpHeaders.Create();
    userData := buf;
 end;
 

@@ -29,6 +29,7 @@ uses
    BaseUnix,
    Unix,
    {$ENDIF}
+   HttpHeaders,
    HttpParser;
 
 var
@@ -74,7 +75,7 @@ begin
    //   we have request body in STDIN (POST/PUT body)
    // --- read STDIN as much as CONTENT_LENGTH
    httpData := default(THttpData);
-   httpData.headers := TFPHashList.create();
+   httpData.headers := THttpHeaders.create();
 
    httpData.httpVerb := GetEnvironmentVariable('REQUEST_METHOD');
    httpData.headers['Content-Type'] := GetEnvironmentVariable('CONTENT_TYPE');

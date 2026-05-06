@@ -47,8 +47,22 @@ type
 
     TFanoConfig = record
       port: word;
+
+      // Allowed maximum concurrent connections
       maxConn: integer;
+
+      // Internal in milisecond to run cleaning idle connections
       cleanIdleConnInterval: integer;
+
+      // Number of worker thread to serve client request
       threadPoolSize: integer;
+
+      // Timeout in milisecond for idle connection
       timeout: longint;
+
+      // Allowed maximum HTTP request Header size in bytes
+      maxHeaderSize: integer;
+
+      // Allowed maximum HTTP request body size in bytes
+      maxBodySize: integer;
     end;
