@@ -61,9 +61,13 @@ type
             aTimerFd: longint;
             aClosePipeInFd: longint;
             aTimeout: longint;
-            aCleanIdleConnInterval: integer);
+            aCleanIdleConnInterval,
+            aMaxRequestSize,
+            aMaxBodySize: integer);
 
         property workerThreads : TArrThread read fWorkerThreads write fWorkerThreads;
+        property MaxRequestSize: integer read fMaxRequestSize;
+        property MaxBodySize: integer read fMaxBodySize;
    end;
 
 implementation
@@ -76,8 +80,10 @@ uses
 { TSelectWorkerThread }
 
 procedure acceptCallback(connfd: longint; var userData: pointer; callbackData: pointer);
+var worker: TSelectWorkerThread;
 begin
-    TSelectWorkerThread(callbackData).OnAccepted(connfd, userData);
+    worker := TSelectWorkerThread(callbackData);
+    worker.OnAccepted(connfd, worker.maxRequestSize, worker.MaxBodySize, userData);
 end;
 
 function TSelectWorkerThread.handleAcceptConn(alistenFd: longint; var maxFd : longint): TOpStatus;
@@ -449,9 +455,15 @@ end;
 
 constructor TSelectWorkerThread.Create(aSuspended: boolean;
   aListenFd: longint; aExitFd: longint; aTimerFd: longint;
-  aClosePipeInFd: longint; aTimeout: longint; aCleanIdleConnInterval: integer);
+  aClosePipeInFd: longint; aTimeout: longint;
+  aCleanIdleConnInterval,
+  aMaxRequestSize,
+  aMaxBodySize: integer);
 begin
-    inherited Create(aSuspended, 0, aListenFd, aExitFd, aTimerFd, aTImeout, aCleanIdleConnInterval);
+    inherited Create(aSuspended, 0, aListenFd, aExitFd, aTimerFd, aTImeout,
+       aCleanIdleConnInterval,
+       aMaxRequestSize,
+       aMaxBodySize);
     fClosePipeInFd := aClosePipeInFd;
 end;
 

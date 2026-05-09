@@ -37,18 +37,23 @@ type
     TBuff = record
        // data read from client connection
        inputData: TMemoryStream;
-       // total data read from client
-       totalRead: longint;
+       // max data in bytes we want to read from client
+       maxRequestSize: longint;
 
        // data need write to client connection
        outputData: TMemoryStream;
 
        // total data sent to client
        totalSent: longint;
+
+       // contain parsed HTTP request
+       httpData: THttpData;
     end;
     PBuff = ^TBuff;
 
-    procedure OnAccepted(const connfd: longint; var userData: pointer);
+    procedure OnAccepted(const connfd: longint;
+        maxRequestSize, maxBodySize: integer;
+        var userData: pointer);
 
     procedure OnDataAvail(
             const connfd: longint;
@@ -66,13 +71,20 @@ implementation
 
 uses sockets, baseunix, unix, nghttp2;
 
-procedure OnAccepted(const connfd: longint; var userData: pointer);
+procedure OnAccepted(const connfd: longint;
+        maxRequestSize, maxBodySize: integer;
+        var userData: pointer);
 var buf: PBuff;
 begin
    new(buf);
    buf^.inputData := TMemoryStream.Create();
    buf^.outputData := TMemoryStream.Create();
+   buf^.maxRequestSize := maxRequestSize;
    buf^.totalSent := 0;
+   buf^.httpData:= default(THttpData);
+   buf^.httpData.state := hpsWaitingHeader;
+   buf^.httpData.headers := THttpHeaders.Create();
+   buf^.httpData.maxBodySize := maxBodySize;
    userData := buf;
 end;
 

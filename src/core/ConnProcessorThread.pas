@@ -56,7 +56,9 @@ type
            aTimerFd: longint;
            aClosePipeOutFd: longint;
            aTimeout: longint;
-           aCleanIdleConnInterval: integer);
+           aCleanIdleConnInterval,
+           aMaxRequestSize,
+           aMaxBodySize: integer);
 
    end;
 
@@ -128,9 +130,13 @@ end;
 
 constructor TConnProcessorThread.Create(aSuspended: boolean;
   aListenFd: longint; aExitFd: longint; aTimerFd: longint;
-  aClosePipeOutFd: longint; aTimeout: longint; aCleanIdleConnInterval: integer);
+  aClosePipeOutFd: longint; aTimeout: longint;
+  aCleanIdleConnInterval,
+  aMaxRequestSize,
+  aMaxBodySize: integer);
 begin
-    inherited Create(aSuspended, 0, aListenFd, aExitFd, aTimerFd, aTimeout, aCleanIdleConnInterval);
+    inherited Create(aSuspended, 0, aListenFd, aExitFd, aTimerFd, aTimeout,
+        aCleanIdleConnInterval, aMaxRequestSize, aMaxBodySize);
     fClosePipeOutFd:= aClosePipeOutFd;
 end;
 

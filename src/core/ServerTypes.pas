@@ -45,8 +45,11 @@ type
 
     // event called when client connection is accepted.
     // connfd contains file descriptor of socket connection
+    // maxRequestSize number of bytes allowed to read from client
     // userData is custom data to associate with connfd
-    TOnAccepted = procedure (const connfd: longint; var userData: pointer);
+    TOnAccepted = procedure (const connfd: longint;
+         maxRequestSize, maxBodySize: integer;
+         var userData: pointer);
 
     // event called when client connection is ready for I/O.
     // connfd contains file descriptor of socket connection

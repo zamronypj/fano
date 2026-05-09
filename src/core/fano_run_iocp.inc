@@ -24,14 +24,48 @@ SOFTWARE.
 
 procedure createThreads(aWorkerThreads:TArrThread;
    aepollFd, aListenFd, aExitFd, aTimerFd, atimeout: longint;
-   aCleanIdleConnInterval: integer);
+   aCleanIdleConnInterval,
+   aMaxRequestSize,
+   aMaxBodySize: integer);
 const SUSPENDED = true;
 var i: integer;
+    accthrd: TIocpAcceptThread;
     thrd: TIocpWorkerThread;
     poolSize: integer;
 begin
     poolSize := length(aWorkerThreads);
-    for i:= 0 to poolSize - 1 do
+    // create one dedicated thread for accept() and rest are conn worker threads
+    accthrd := TIocpAcceptThread.create(
+       SUSPENDED,
+       aListenFd,
+       aExitFd,
+       aTimerFd,
+       aClosePipeInFd,
+       atimeout,
+       aCleanIdleConnInterval,
+       aMaxRequestSize,
+       aMaxBodySize
+    );
+    {$IF DEFINED(FASTCGI)}
+    accthrd.onAccepted := @FastCgiProcessor.OnAccepted;
+    accthrd.OnBeforeClose := @FastCgiProcessor.OnBeforeClose;
+    {$ELSEIF DEFINED(SCGI)}
+    accthrd.onAccepted := @ScgiProcessor.OnAccepted;
+    accthrd.OnBeforeClose := @ScgiProcessor.OnBeforeClose;
+    {$ELSEIF DEFINED(UWSGI)}
+    accthrd.onAccepted := @UwsgiProcessor.OnAccepted;
+    accthrd.OnBeforeClose := @UwsgiProcessor.OnBeforeClose;
+    {$ELSEIF DEFINED(HTTP2)}
+    accthrd.onAccepted := @Http2Processor.OnAccepted;
+    accthrd.OnBeforeClose := @Http2Processor.OnBeforeClose;
+    {$ELSE}
+    accthrd.onAccepted := @HttpProcessor.OnAccepted;
+    accthrd.OnBeforeClose := @HttpProcessor.OnBeforeClose;
+    {$ENDIF}
+
+    aWorkerThreads[0] := accthrd;
+
+    for i:= 1 to poolSize - 1 do
     begin
         thrd := TIocpWorkerThread.create(
            SUSPENDED,
@@ -40,36 +74,28 @@ begin
            aExitFd,
            aTimerFd,
            atimeout,
-           aCleanIdleConnInterval
+           aCleanIdleConnInterval,
+           aMaxRequestSize,
+           aMaxBodySize
         );
 
         {$IF DEFINED(FASTCGI)}
-        thrd.onAccepted := @FastCgiProcessor.OnAccepted;
         thrd.OnDataAvail := @FastCgiProcessor.OnDataAvail;
-        thrd.OnBeforeClose := @FastCgiProcessor.OnBeforeClose;
         {$ELSEIF DEFINED(SCGI)}
-        thrd.onAccepted := @ScgiProcessor.OnAccepted;
         thrd.OnDataAvail := @ScgiProcessor.OnDataAvail;
-        thrd.OnBeforeClose := @ScgiProcessor.OnBeforeClose;
         {$ELSEIF DEFINED(UWSGI)}
-        thrd.onAccepted := @UwsgiProcessor.OnAccepted;
         thrd.OnDataAvail := @UwsgiProcessor.OnDataAvail;
-        thrd.OnBeforeClose := @UwsgiProcessor.OnBeforeClose;
         {$ELSEIF DEFINED(HTTP2)}
-        thrd.onAccepted := @Http2Processor.OnAccepted;
         thrd.OnDataAvail := @Http2Processor.OnDataAvail;
-        thrd.OnBeforeClose := @Http2Processor.OnBeforeClose;
         {$ELSE}
-        thrd.onAccepted := @HttpProcessor.OnAccepted;
         thrd.OnDataAvail := @HttpProcessor.OnDataAvail;
-        thrd.OnBeforeClose := @HttpProcessor.OnBeforeClose;
         {$ENDIF}
 
         aWorkerThreads[i] := thrd;
    end;
 end;
 
-function initListenFd(epoll_fd: longint; aport:word) : longint;
+function initListenFd(eventfd: THandle; aport:word) : longint;
 var
     addr: sockaddr_in;
     fd: longint;
@@ -108,68 +134,7 @@ begin
       exit(ERR_LISTEN);
    end;
 
-   listenEv := default(epoll_event);
-   // need to use edge-triggered so that only one thread get notified
-   // when listen socket has something to read
-   listenEv.events := EPOLLIN OR EPOLLET;
-   listenEv.data.fd := fd;
-   if epoll_ctl(epoll_fd, EPOLL_CTL_ADD, fd, @listenEv) < 0 then
-   begin
-      exit(ERR_EV_ADD);
-   end;
-
-end;
-
-function initExitFd(epoll_fd : longint) : longint;
-var fd: longint;
-    exitEv : epoll_event;
-begin
-    fd := getExitFd();
-    result := fd;
-
-    if fd < 0 then
-    begin
-        // todo: error handling
-        writeln('exit fd failed');
-        exit;
-    end;
-
-    // need to use level-triggered so that all threads get notified
-    // when program termination is called
-    exitEv := default(epoll_event);
-    exitEv.events := EPOLLIN;
-    exitEv.data.fd := fd;
-    epoll_ctl(epoll_fd, EPOLL_CTL_ADD, fd, @exitEv);
-end;
-
-
-function initTimerFd(epoll_fd:longint; ainterval: integer): longint;
-var
-  ret, fd : longint;
-  timeout : itimerspec;
-begin
-    fd := timerfd_create(CLOCK_MONOTONIC, 0);
-    result := fd;
-    if fd < 0 then
-    begin
-        // todo: error handling
-        exit(fd);
-    end;
-    SetNonBlocking(fd);
-
-    // Set the timer to expire initially in ainterval second,
-    // and then every ainterval second
-    timeout.it_value.tv_sec := ainterval;
-    timeout.it_value.tv_nsec := 0;
-    timeout.it_interval.tv_sec := ainterval;
-    timeout.it_interval.tv_nsec := 0;
-    ret := timerfd_settime(fd, 0, @timeout, nil);
-    if ret < 0 then
-    begin
-        exit(ret);
-    end;
-
-    addTimerEv(epoll_fd, fd);
+   result := CreateIoCompletionPort(aEventFd, 0, 0, 0);
 end;
 
 
@@ -197,27 +162,14 @@ begin
        exit;
     end;
 
-    aTimerFd := initTimerFd(aEventFd, mainCfg.CleanIdleConnInterval);
-    if aTimerFd < 0 then
-    begin
-       // todo: error handling
-       writeln('error set timer Err: ', errno);
-       exit;
-    end;
-
-    aExitFd := initExitFd(aEventFd);
-    if aExitFd < 0 then
-    begin
-       // todo: error handling
-       exit;
-    end;
 
     createThreads(workerThreads,
         aEventFd,
         aListenFd,
         aExitFd,
         aTimerFd,
-        mainCfg.Timeout);
+        mainCfg.Timeout,
+        mainCfg.);
 
     runThreads(workerThreads);
     waitThreads(workerThreads);

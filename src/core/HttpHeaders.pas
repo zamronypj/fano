@@ -150,7 +150,7 @@ procedure THttpHeaders.cleanup();
 var i:integer;
     kv: PKeyVal;
 begin
-    for i:= fHashList.Count-1 to 0 do
+    for i:= fHashList.Count-1 downto 0 do
     begin
         kv := fHashList.Items[i];
         dispose(kv);

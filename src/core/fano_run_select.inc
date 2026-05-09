@@ -27,7 +27,9 @@ procedure createThreads(aWorkerThreads:TArrThread;
    aTimerFd,
    aClosePipeInFd, aClosePipeOutFd,
    atimeout: longint;
-   aCleanIdleConnInterval: integer);
+   aCleanIdleConnInterval,
+   aMaxRequestSize,
+   aMaxBodySize: integer);
 const SUSPENDED = true;
 var i: integer;
     selthrd : TSelectWorkerThread;
@@ -43,7 +45,9 @@ begin
        aTimerFd,
        aClosePipeInFd,
        atimeout,
-       aCleanIdleConnInterval
+       aCleanIdleConnInterval,
+       aMaxRequestSize,
+       aMaxBodySize
     );
 
     {$IF DEFINED(FASTCGI)}
@@ -74,7 +78,9 @@ begin
            aTimerFd,
            aClosePipeOutFd,
            atimeout,
-           aCleanIdleConnInterval
+           aCleanIdleConnInterval,
+           aMaxRequestSize,
+           aMaxBodySize
         );
 
         {$IF DEFINED(FASTCGI)}
@@ -241,7 +247,9 @@ begin
         aClosePipeInFd,
         aClosePipeOutFd,
         mainCfg.Timeout,
-        mainCfg.cleanIdleConnInterval);
+        mainCfg.cleanIdleConnInterval,
+        mainCfg.maxHeaderSize + mainCfg.maxBodySize,
+        mainCfg.maxBodySize);
 
     runThreads(workerThreads);
     waitThreads(workerThreads);

@@ -24,7 +24,9 @@ SOFTWARE.
 
 procedure createThreads(aWorkerThreads:TArrThread;
    aepollFd, aListenFd, aExitFd, aTimerFd, atimeout: longint;
-   aCleanIdleConnInterval: integer);
+   aCleanIdleConnInterval,
+   aMaxRequestSize,
+   aMaxBodySize: integer);
 const SUSPENDED = true;
 var i: integer;
     thrd: TEpollWorkerThread;
@@ -40,7 +42,9 @@ begin
            aExitFd,
            aTimerFd,
            atimeout,
-           aCleanIdleConnInterval
+           aCleanIdleConnInterval,
+           aMaxRequestSize,
+           aMaxBodySize
         );
 
         {$IF DEFINED(FASTCGI)}
@@ -215,13 +219,16 @@ begin
         aExitFd,
         aTimerFd,
         mainCfg.Timeout,
-        mainCfg.cleanIdleConnInterval);
+        mainCfg.cleanIdleConnInterval,
+        mainCfg.maxHeaderSize + mainCfg.maxBodySize,
+        mainCfg.maxBodySize);
 
     runThreads(workerThreads);
     waitThreads(workerThreads);
     freeThreads(workerThreads);
 
     epoll_ctl(aEventFd, EPOLL_CTL_DEL, aListenFd, nil);
+    epoll_ctl(aEventFd, EPOLL_CTL_DEL, aTimerFd, nil);
     epoll_ctl(aEventFd, EPOLL_CTL_DEL, aExitFd, nil);
 
     // no need to close fExitFd as this will be done automatically

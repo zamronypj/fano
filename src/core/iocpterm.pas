@@ -25,6 +25,20 @@ unit iocpterm;
 
 interface
 
+uses
+   Windows;
+
+const
+
+    SHUTDOWN_KEY = 0;
+
+procedure term(hCompletionPort: THandle);
+
 implementation
+
+procedure term(hCompletionPort: THandle);
+begin
+    PostQueuedCompletionStatus(hCompletionPort, 0, SHUTDOWN_KEY, nil);
+end;
 
 end.

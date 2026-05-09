@@ -52,19 +52,20 @@ implementation
 
 uses
    DateUtils,
+   SyncObjs,
+   IocpTerm,
    NetUtil,
-   TimerEpollEvUtil,
    Logger;
 
 procedure TIocpWorkerThread.RunLoop();
 var Overlapped: POverlapped;
     BytesTransferred: DWORD;
     CompletionKey: ULONG_PTR;
-    buf: PBuff;
+    //buf: PBuff;
 begin
     while true do
     begin
-        if not GetQueuedCompletionStatus(fEventFd, BytesTransferred, CompletionKey, Overlapped, WAIT_FOREVER_UNTIL_EV) then
+        if not GetQueuedCompletionStatus(fEventFd, BytesTransferred, CompletionKey, Overlapped, INFINITE) then
         begin
             // failed
             if overlapped <> nil then
@@ -74,17 +75,18 @@ begin
             continue;
         end;
 
+        if (completionKey = SHUTDOWN_KEY) and (overlapped = nil) then
+        begin
+            break;
+        end;
+
         if overlapped = nil then
         begin
             continue;
         end;
 
-        if completionKey = SHUTDOWN_KEY then
-        begin
-            break;
-        end;
 
-        buf := PBuff(overlapped);
+        //buf := PBuff(overlapped);
 
     end;
 end;

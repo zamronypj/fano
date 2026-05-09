@@ -47,6 +47,8 @@ type
         fTimerFd: longint;
         fTimeout: longint;
         fCleanIdleConnInterval: integer;
+        fMaxRequestSize: integer;
+        fMaxBodySize: integer;
 
         // per thread user data assosiate with this thread
         // which can be used to stored per thread global data
@@ -76,7 +78,9 @@ type
             aExitFd: longint;
             aTimerFd: longint;
             aTimeout: longint;
-            aCleanIdleConnInterval: integer);
+            aCleanIdleConnInterval,
+            aMaxRequestSize,
+            aMaxBodySize: integer);
 
         // all events triggered inside thread so
         // caller must ensure that is thread safe
@@ -105,7 +109,9 @@ constructor TDaemonWorkerThread.Create(
     aExitFd: longint;
     aTimerFd: longint;
     aTimeout: longint;
-    aCleanIdleConnInterval: integer);
+    aCleanIdleConnInterval,
+    aMaxRequestSize,
+    aMaxBodySize: integer);
 begin
    inherited Create(asuspended);
    fThreadUserData := nil;
@@ -115,6 +121,8 @@ begin
    fTimerFd := aTimerFd;
    fTimeout := aTimeout;
    fCleanIdleConnInterval := aCleanIdleConnInterval;
+   fMaxRequestSize := aMaxRequestSize;
+   fMaxBodySize := aMaxBodySize;
 
    {$IFDEF VERBOSE}
    log('create worker thread '+ className);
@@ -125,7 +133,7 @@ procedure TDaemonWorkerThread.fireAcceptEv(conn : PConnData);
 begin
     if assigned(fOnAccepted) then
     begin
-       fOnAccepted(conn^.connfd, conn^.userData);
+       fOnAccepted(conn^.connfd, fMaxRequestSize, fMaxBodySize, conn^.userData);
     end;
 end;
 

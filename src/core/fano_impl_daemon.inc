@@ -60,6 +60,8 @@ const
     DEFAULT_TIMEOUT_10S = 10 * 1000;
     DEFAULT_MAX_CONN_1024 = 1024;
     DEFAULT_TIMER_INTERVAL_1MIN = 60;
+    DEFAULT_MAX_HEADER_SIZE = 4 * 1024;  // 4KB
+    DEFAULT_MAX_BODY_SIZE = 1024 * 1024; // 1MB
 
 var
     mainCfg: TFanoConfig;
@@ -90,6 +92,8 @@ begin
    mainCfg.Timeout := DEFAULT_TIMEOUT_10S;
    mainCfg.MaxConn := DEFAULT_MAX_CONN_1024;
    mainCfg.CleanIdleConnInterval := DEFAULT_TIMER_INTERVAL_1MIN;
+   mainCfg.maxHeaderSize:= DEFAULT_MAX_HEADER_SIZE;
+   mainCfg.maxBodySize:= DEFAULT_MAX_BODY_SIZE;
    setLength(workerThreads, mainCfg.ThreadPoolSize);
    result := fanoConfig();
 end;

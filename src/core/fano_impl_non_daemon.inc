@@ -77,7 +77,7 @@ begin
    httpData := default(THttpData);
    httpData.headers := THttpHeaders.create();
 
-   httpData.httpVerb := GetEnvironmentVariable('REQUEST_METHOD');
+   httpData.httpMethod := httpMethodFromStr(GetEnvironmentVariable('REQUEST_METHOD'));
    httpData.headers['Content-Type'] := GetEnvironmentVariable('CONTENT_TYPE');
    httpData.headers['Content-Length'] := GetEnvironmentVariable('CONTENT_LENGTH');
 
@@ -101,7 +101,7 @@ begin
               break;
            end;
            oldState := httpData.state;
-           HttpParser.parseHttp(buffer, BytesRead, httpData);
+           HttpParser.parseHttp(inStream, httpData);
            if oldState = httpData.State then
            begin
                // we havent found what we are looking so keep reading at prev pos

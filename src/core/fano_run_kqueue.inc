@@ -24,7 +24,9 @@ SOFTWARE.
 
 procedure createThreads(aWorkerThreads:TArrThread;
    aKqFd, aListenFd, aExitFd, aTimerFd, atimeout: longint;
-   aCleanIdleConnInterval: integer);
+   aCleanIdleConnInterval,
+   aMaxRequestSize,
+   aMaxBodySize: integer);
 const SUSPENDED = true;
 var i: integer;
     thrd: TKqueueWorkerThread;
@@ -41,7 +43,9 @@ begin
            aExitFd,
            aTimerFd,
            atimeout,
-           aCleanIdleConnInterval
+           aCleanIdleConnInterval,
+           aMaxRequestSize,
+           aMaxBodySize
         );
 
         {$IF DEFINED(FASTCGI)}
@@ -210,15 +214,18 @@ begin
         aExitFd,
         aTimerFd,
         mainCfg.Timeout,
-        mainCfg.cleanIdleConnInterval);
+        mainCfg.cleanIdleConnInterval,
+        mainCfg.maxHeaderSize + mainCfg.maxBodySize,
+        mainCfg.maxBodySize);
 
     runThreads(workerThreads);
     waitThreads(workerThreads);
     freeThreads(workerThreads);
 
-    EV_SET(@ev[0], atimerFd, EVFILT_TIMER, EV_DELETE, 0, 0, nil);
-    EV_SET(@ev[1], aExitFd, EVFILT_READ, EV_DELETE, 0, 0, nil);
-    kevent(aEventFd, @ev, 2, nil, 0, nil);
+    EV_SET(@ev[0], aListenFd, EVFILT_READ, EV_DELETE, 0, 0, nil);
+    EV_SET(@ev[1], atimerFd, EVFILT_TIMER, EV_DELETE, 0, 0, nil);
+    EV_SET(@ev[2], aExitFd, EVFILT_READ, EV_DELETE, 0, 0, nil);
+    kevent(aEventFd, @ev, 3, nil, 0, nil);
 
     // no need to close aExitFd as this will be done automatically
     // in SigTermUtil unit finalization
