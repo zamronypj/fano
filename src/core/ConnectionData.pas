@@ -36,7 +36,12 @@ type
     // and remove and close idle connection
     PConnData = ^TConnData;
     TConnData = record
+       {$IFDEF WINDOWS}
+       overlapData: OVERLAPPED;
+       connfd: TSocket;
+       {$ELSE}
        connfd: longint;
+       {$ENDIF}
 
        // keep track connfd last io activity
        lastActivity: int64;
@@ -54,7 +59,15 @@ type
        next: PConnData;
     end;
 
-    TConnCallback = procedure(connfd: longint; var userData: pointer; callbackData: pointer);
+    TConnCallback = procedure(
+      {$IFDEF WINDOWS}
+      connfd: TSocket;
+      {$ELSE}
+      connfd: longint;
+      {$ENDIF}
+      var userData: pointer;
+      callbackData: pointer);
+
     TTraverseConnCallback = procedure(conn: PConnData; callbackData: pointer);
 
 // this is to provide a way to resize max connection lookup
@@ -63,7 +76,14 @@ function getMaxConn() : integer;
 procedure initConnData();
 procedure destroyConnData();
 
-function addFdToConnData(connfd: longint; callbackData:pointer; callback: TConnCallback): PConnData;
+function addFdToConnData(
+  {$IFDEF WINDOWS}
+  connfd: TSocket;
+  {$ELSE}
+  connfd: longint;
+  {$ENDIF}
+  callbackData:pointer;
+  callback: TConnCallback): PConnData;
 
 // remove conn data from global connection linked list without
 // deallocate its resources
@@ -207,7 +227,14 @@ begin
     result := conn;
 end;
 
-function addFdToConnData(connfd: longint; callbackData:pointer; callback: TConnCallback): PConnData;
+function addFdToConnData(
+  {$IFDEF WINDOWS}
+  connfd: TSocket;
+  {$ELSE}
+  connfd: longint;
+  {$ENDIF}
+  callbackData:pointer;
+  callback: TConnCallback): PConnData;
 var conn : PConnData;
 begin
     if connfd >= length(connLookup) then
@@ -217,6 +244,13 @@ begin
     end;
 
     new(conn);
+    {$IDFEF WINDOWS}
+    conn^.overlapData.Internal := 0;
+    conn^.overlapData.InternalHigh := 0;
+    conn^.overlapData.Overlapped.Offset := 0;
+    conn^.overlapData.OffsetHigh := 0;
+    conn^.overlapData.hEvent = NULL;
+    {$ENDIF}
     conn^.connfd := connfd;
     conn^.lastActivity := DateTimeToUnix(now);
 

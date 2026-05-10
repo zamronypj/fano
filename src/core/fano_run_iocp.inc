@@ -95,59 +95,99 @@ begin
    end;
 end;
 
-function initListenFd(eventfd: THandle; aport:word) : longint;
+function initListenFd(aport:word) : longint;
 var
     addr: sockaddr_in;
-    fd: longint;
-    listenEv : epoll_event;
+    fd: TSocket;
+    hints : addrinfo;
+    addrlocal: paddrinfo;
     reuseAddr: longint;
+
+    nRet, nZero: integer;
 begin
-   fd := fpsocket(AF_INET, SOCK_STREAM, 0);
-   result := fd;
 
-   if fd < 0 then
+    nRet := 0;
+    nZero := 0;
+    hints := default(addrinfo);
+    addrlocal := nil;
+    hints.ai_flags  = AI_PASSIVE;
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_protocol = IPPROTO_IP;
+
+    if getaddrinfo(nil, aPort, @hints, addrlocal) <> 0  then
+    begin
+        // log error WSAGetLastError()
+        exit(-1);
+    end
+
+    if addrlocal = nil then
+    begin
+        // log error WSAGetLastError()
+        exit(-2);
+    end;
+
+   fd := WSASocket(addrlocal^.ai_family,
+       addrlocal^.ai_socktype,
+       addrlocal^.ai_protocol,
+       nil,
+       0,
+       WSA_FLAG_OVERLAPPED);
+
+   if fd = INVALID_SOCKET then
    begin
-      // todo: error handling
-      exit(ERR_SOCK);
+       // log error WSAGetLastError()
+       exit(-3);
    end;
 
-   setNonBlocking(fd);
-
-   addr := default(sockaddr_in);
-   addr.sin_family := AF_INET;
-   addr.sin_port := htons(aport);
-   addr.sin_addr.s_addr := INADDR_ANY;
-
-   // reuse address so that when daemon restart will use same address:port
-   reuseAddr := 1;
-   fpSetSockOpt(fd, SOL_SOCKET, SO_REUSEADDR, @reuseAddr, sizeof(reuseAddr));
-
-   if fpbind(fd, @addr, sizeof(addr)) < 0 then
+   nRet := bind(fd, addrlocal^.ai_addr, integer(addrlocal^.ai_addrlen));
+   if nRet = SOCKET_ERROR then
    begin
-      // todo: error handling
-      exit(ERR_BIND);
+       // log error WSAGetLastError()
+       exit(-4);
    end;
 
-   if fplisten(fd, SOMAXCONN) < 0 then
+   nRet := listen(fd, 5);
+   if nRet = SOCKET_ERROR  then
    begin
-      // todo: error handling
-      exit(ERR_LISTEN);
-   end;
+       // log error WSAGetLastError()
+       exit(-5);
+   end
 
-   result := CreateIoCompletionPort(aEventFd, 0, 0, 0);
+   result := 0;
 end;
 
 
+// The handler function must use stdcall or winapi
+function ExitConsoleHandler(dwCtrlType: DWORD): BOOL; stdcall;
+begin
+
+    // Return True to indicate the signal was handled.
+    Result := True;
+end;
+
 function fanoRun(): longint;
 var
-    aEventFd: HANDLE;
-    aListenFd: longint;
-    aTimerFd: longint;
+    hIOCP: HANDLE;
+    aListenFd: Socket;
     aExitFd: longint;
+    err: longint;
 begin
     result := 0;
+    if not SetConsoleCtrlHandler(@ExitConsoleHandler, true) then
+    begin
+       exit(-1);
+    end;
 
-    aEventFd := CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 0);
+    // Initialize Winsock
+    err:= WSAStartup(MAKEWORD(2, 2), wsaData);
+    if err <> 0 then
+    begin
+        SetConsoleCtrlHandler(@ExitConsoleHandler, false);
+        exit(err);
+    end
+
+    hIOCP := CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 0);
 
     if aEventFd = 0 then
     begin
@@ -155,7 +195,7 @@ begin
        exit;
     end;
 
-    aListenFd := initListenFd(aEventFd, mainCfg.Port);
+    aListenFd := initListenFd(hIOCP, mainCfg.Port);
     if aListenFd < 0 then
     begin
        // todo: error handling
@@ -175,12 +215,19 @@ begin
     waitThreads(workerThreads);
     freeThreads(workerThreads);
 
-    epoll_ctl(aEventFd, EPOLL_CTL_DEL, aListenFd, nil);
-    epoll_ctl(aEventFd, EPOLL_CTL_DEL, aExitFd, nil);
 
-    // no need to close fExitFd as this will be done automatically
-    // in SigTermUtil unit finalization
-    fpClose(aTimerFd);
-    fpClose(aListenFd);
-    fpClose(aEventFd);
+    if hIOCP <> 0 then
+    begin
+    	CloseHandle(hIOCP);
+    	hIOCP = 0;
+    end;
+
+   if aListenFd <> INVALID_SOCKET then
+   begin
+       CloseSocket(aListenFd);
+       aListenFd := INVALID_SOCKET;
+   end;
+
+   WSACleanup();
+   SetConsoleCtrlHandler(@ExitConsoleHandler, false);
 end;

@@ -47,7 +47,12 @@ type
     // connfd contains file descriptor of socket connection
     // maxRequestSize number of bytes allowed to read from client
     // userData is custom data to associate with connfd
-    TOnAccepted = procedure (const connfd: longint;
+    TOnAccepted = procedure (
+         {$IFDEF WINDOWS}
+         const connfd: TSocket;
+         {$ELSE}
+         const connfd: longint;
+         {$ENDIF}
          maxRequestSize, maxBodySize: integer;
          var userData: pointer);
 
@@ -59,7 +64,11 @@ type
     // isEnded tells that connfd is should be closed due peer closed connection
     // isError tells that connfd is should be closed due to error
     TOnDataAvail = procedure (
+         {$IFDEF WINDOWS}
+         const connfd: TSocket;
+         {$ELSE}
          const connfd: longint;
+         {$ENDIF}
          var userData: pointer;
          var isRead: boolean;
          var isWrite : boolean;
@@ -70,7 +79,14 @@ type
     // connfd contains file descriptor of socket connection
     // userData is custom data to associate with connfd
     // this is provided so that caller has time to clean up userData
-    TOnBeforeClose = procedure (const connfd: longint; var userData: pointer; var canClose: boolean);
+    TOnBeforeClose = procedure (
+         {$IFDEF WINDOWS}
+         const connfd: TSocket;
+         {$ELSE}
+         const connfd: longint;
+         {$ENDIF}
+         var userData: pointer;
+         var canClose: boolean);
 
     TArrThread = array of TThread;
 

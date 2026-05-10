@@ -37,15 +37,23 @@ uses
    unix
    {$ENDIF};
 
-{$IFDEF WINDOWS}
-function setNonBlocking(fd: TSocket) : longint;
-function readDiscardAll(fd: TSocket) : longint;
-{$ELSE}
-function setNonBlocking(fd: longint) : longint;
-// read all data and discard it just to empty buffer
-function readDiscardAll(fd: longint) : longint;
+function setNonBlocking(
+  {$IFDEF WINDOWS}
+  fd: TSocket
+  {$ELSE}
+  fd: longint
+  {$ENDIF}
+) : longint;
 
-{$ENDIF}
+// read all data and discard it just to empty buffer
+function readDiscardAll(
+  {$IFDEF WINDOWS}
+  fd: TSocket
+  {$ELSE}
+  fd: longint
+  {$ENDIF}
+) : longint;
+
 
 implementation
 
@@ -59,32 +67,7 @@ begin
 end;
 
 function readDiscardAll(fd: TSocket) : longint;
-var
-//  IOCtx: PBuff;
-  Flags: DWORD;
-  BytesRecv: DWORD;
-  //WSABuf: TWSABUF;
 begin
-  //New(IOCtx);
-  //FillChar(IOCtx^.Overlapped, SizeOf(TOverlapped), 0);
-  //IOCtx^.Operation := ioRead;
-  //IOCtx^.Connection := Conn;
-  //Conn^.IOContext := IOCtx;
-  //
-  //WSABuf.len := SizeOf(IOCtx^.Buffer);
-  //WSABuf.buf := @IOCtx^.Buffer[0];
-  //Flags := 0;
-  //
-  //if WSARecv(Conn^.Sock, @WSABuf, 1, BytesRecv, Flags, @IOCtx^.Overlapped, nil) = SOCKET_ERROR then
-  //begin
-  //  if WSAGetLastError <> WSA_IO_PENDING then
-  //  begin
-  //    if Conn^.IOContext = IOCtx then
-  //      Conn^.IOContext := nil;
-  //    Dispose(IOCtx);
-  //    CloseConnection(Conn);
-  //  end;
-  //end;
 end;
 
 {$ELSE}
