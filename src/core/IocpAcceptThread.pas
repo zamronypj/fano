@@ -98,6 +98,11 @@ begin
     if (connfd = INVALID_SOCKET) then
     begin
         err := WSAGetLastError();
+        if err = WSAEWOULDBLOCK then
+        begin
+            continue;
+        end;
+
         result.error := true;
         result.errCode := err;
         result.errMsg := 'WSAAccept() failed. Err: ' + intToStr(err) ;
