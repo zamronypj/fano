@@ -31,6 +31,11 @@ interface
 uses
     Classes,
     SysUtils,
+    {$IFDEF WINDOWS}
+    Windows,
+    Winsock,
+    Winsock2,
+    {$ENDIF}
     httpprotocol,
     HttpParser;
 
@@ -53,39 +58,54 @@ type
     end;
     PBuff = ^TBuff;
 
-    procedure OnAccepted(const connfd: longint;
+    procedure OnAccepted(
+        {$IFDEF WINDOWS}
+        const connfd: TSocket;
+        {$ELSE}
+        const connfd: longint;
+        {$ENDIF}
         maxRequestSize, maxBodySize: integer;
         var userData: pointer);
 
     procedure OnDataAvail(
-            const connfd: longint;
-            var userData: pointer;
-            var isRead: boolean;
-            var isWrite : boolean;
-            var isEnded :boolean;
-            var isError: boolean);
+        {$IFDEF WINDOWS}
+        const connfd: TSocket;
+        {$ELSE}
+        const connfd: longint;
+        {$ENDIF}
+        var userData: pointer;
+        var isRead: boolean;
+        var isWrite : boolean;
+        var isEnded :boolean;
+        var isError: boolean);
 
-    procedure OnBeforeClose(const connfd: longint;
-            var userData: pointer;
-            var canClose: boolean);
+    procedure OnBeforeClose(
+        {$IFDEF WINDOWS}
+        const connfd: TSocket;
+        {$ELSE}
+        const connfd: longint;
+        {$ENDIF}
+        var userData: pointer;
+        var canClose: boolean);
 
 implementation
 
 uses
     sockets,
-    {$IFDEF WINDOWS}
-    Windows,
-    Winsock,
-    Winsock2,
-    {$ELSE}
+    {$IFNDEF WINDOWS}
     baseunix,
     unix,
     {$ENDIF}
     HttpHeaders;
 
-procedure OnAccepted(const connfd: longint;
-        maxRequestSize, maxBodySize: integer;
-        var userData: pointer);
+procedure OnAccepted(
+    {$IFDEF WINDOWS}
+    const connfd: TSocket;
+    {$ELSE}
+    const connfd: longint;
+    {$ENDIF}
+    maxRequestSize, maxBodySize: integer;
+    var userData: pointer);
 var buf: PBuff;
 begin
    new(buf);
@@ -109,13 +129,13 @@ var
     oldState: THttpProcessingState;
     aWSABuf: WSABUF;
     bytesRecv, aflags: Dword;
-    ovrlapped: TOverlapped;
+    ovrlapped: POverlapped;
 begin
     buf := PBuff(userData);
     setlength(tmp, 1024);
     while true do
     begin
-        if WSARecv(fd, @aWSABuf, 1, BytesRecv, aFlags, @Ovrlapped, nil) = SOCKET_ERROR then
+        if WSARecv(fd, @aWSABuf, 1, BytesRecv, aFlags, Ovrlapped, nil) = SOCKET_ERROR then
         begin
            if WSAGetLastError <> WSA_IO_PENDING then
            begin

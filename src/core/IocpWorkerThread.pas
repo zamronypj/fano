@@ -33,6 +33,7 @@ uses
    sysutils,
    sockets,
    windows,
+   Winsock2,
    ServerTypes,
    ConnectionData,
    DaemonWorkerThread;
@@ -58,11 +59,6 @@ uses
    NetUtil,
    Logger;
 
-procedure removeCallback(connfd: TSocket; var userData: pointer; callbackData: pointer);
-begin
-    TIocpWorkerThread(callbackData).OnBeforClose(connfd, userData);
-end;
-
 function TIocpWorkerThread.handleClientConn(var conn: PConnData): TOpStatus;
 var isEnded, isError: boolean;
 begin
@@ -82,8 +78,8 @@ begin
            logErr('conn processor failed');
         end;
 
-        // sent connfd to close back to SelectWorkerThread
-        fpWrite(fClosePipeOutFd, conn^.connfd, sizeof(longint));
+        // TODO: notify IocpAcceptThread to close conn^.connfd
+
         {$IFDEF VERBOSE}
         log('request closing conn ' + intToStr(conn^.connfd));
         {$ENDIF}
@@ -97,16 +93,25 @@ begin
     touchConnData(conn);
 end;
 
+procedure _removeCallback(connfd: TSocket; var userData: pointer; callbackData: pointer);
+var canClose: boolean;
+begin
+    canClose := true;
+    TIocpWorkerThread(callbackData).OnBeforeClose(connfd, userData, canClose);
+end;
+
 procedure TIocpWorkerThread.RunLoop();
 var Overlapped: POverlapped;
     lpNumberOfBytesTransferred, lpCompletionKey : NativeUInt;
     conn: PConnData;
+    hIOCP: THandle;
 begin
+    hIOCP := fEventFd;
     while true do
     begin
         if GetQueuedCompletionStatus(hIOCP, lpNumberOfBytesTransferred, lpCompletionKey, Overlapped, INFINITE) then
         begin
-            if (completionKey = SHUTDOWN_KEY) and (overlapped = nil) then
+            if (lpCompletionKey = SHUTDOWN_KEY) and (overlapped = nil) then
             begin
                 // IocpAcceptThread wants us to gracefully terminate
                 break;
@@ -124,8 +129,11 @@ begin
             // failed
             if overlapped <> nil then
             begin
+                // TODO: is it safe to do it here and not in IocpAcceptThread?
+                // maybe should PostQueuedCompletionStatus to IocpAcceptThread
+                // PostQueuedCompletionStatus(hIOCP, 0, CLOSE_CONN_KEY, overlapped);
                 conn := PConnData(overlapped);
-                removeFromConnData(conn, self, @removeCallback);
+                removeFromConnData(conn, self, @_removeCallback);
             end;
         end;
     end;

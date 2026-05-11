@@ -26,7 +26,10 @@ unit ServerTypes;
 interface
 
 uses
-   Classes;
+   Classes
+   {$IFDEF WINDOWS}
+   , Winsock, Winsock2
+   {$ENDIF};
 
 type
 

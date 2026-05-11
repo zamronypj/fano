@@ -135,16 +135,15 @@ end;
 procedure TIocpAcceptThread.RunLoop();
 var
     i: integer;
-    conn : PConnData;
 begin
     while (true) do
     begin
         handleAcceptConn(fListenFd);
     end;
 
-    // send SHUTDOWN_KEY to wake up and stop all IocpWorkerThread
-    // start from 1 as ourself also counted as thread pool
-    for i:= 1 to fThreadPoolSize-1 do
+    // send SHUTDOWN_KEY to wake up and stop all IocpWorkerThread.
+    // ourselves also counted as thread pool so -2 to exclude
+    for i:= 0 to fThreadPoolSize-2 do
     begin
         iocpterm.term(hIOCP);
     end;

@@ -28,7 +28,12 @@ unit ConnectionData;
 
 interface
 
-uses sysutils, syncobjs;
+uses
+   sysutils,
+   syncobjs
+   {$IFDEF WINDOWS}
+   , Windows, Winsock, Winsock2
+   {$ENDIF};
 
 type
 
@@ -119,12 +124,12 @@ var
     headConn, tailConn : PConnData;
     connLookup: TArrConnData;
     pluckedConnLookup: TArrConnData;
-    globalLock: TCriticalSection;
+    globalLock: SyncObjs.TCriticalSection;
     maxConn: integer;
 
     connQueue: TQueue;
     queueAvail: TEvent;
-    queueLock: TCriticalSection;
+    queueLock: SyncObjs.TCriticalSection;
 
 procedure setMaxConn(amaxConn: integer);
 begin
@@ -171,7 +176,14 @@ begin
    end;
 end;
 
-procedure _getMaxFd(connfd: longint; var userData:pointer; callbackData: pointer);
+procedure _getMaxFd(
+  {$IFDEF WINDOWS}
+  connfd: TSocket;
+  {$ELSE}
+  connfd: longint;
+  {$ENDIF}
+  var userData: pointer;
+  callbackData: pointer);
 var pmaxFd: PLongint;
 begin
     pmaxFd := PLongint(callbackData);
@@ -244,12 +256,12 @@ begin
     end;
 
     new(conn);
-    {$IDFEF WINDOWS}
+    {$IFDEF WINDOWS}
     conn^.overlapData.Internal := 0;
     conn^.overlapData.InternalHigh := 0;
-    conn^.overlapData.Overlapped.Offset := 0;
+    conn^.overlapData.Offset := 0;
     conn^.overlapData.OffsetHigh := 0;
-    conn^.overlapData.hEvent = NULL;
+    conn^.overlapData.hEvent := THandle(connfd);
     {$ENDIF}
     conn^.connfd := connfd;
     conn^.lastActivity := DateTimeToUnix(now);
@@ -537,8 +549,8 @@ end;
 
 initialization
 
-   globalLock := TCriticalSection.create();
-   queueLock := TCriticalSection.create();
+   globalLock := SyncObjs.TCriticalSection.create();
+   queueLock := SyncObjs.TCriticalSection.create();
    queueAvail := TEvent.Create(nil, true, false, 'connqueue');
    connQueue := TQueue.Create;
    maxConn := DEF_MAX_CONN;
