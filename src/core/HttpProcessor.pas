@@ -309,15 +309,38 @@ begin
         if (abuf^.httpData.state = hpsBadRequest) then
         begin
             astr:= 'HTTP/1.1 400 Bad Request';
+            abuf^.outputData.Write(astr[1], length(astr));
         end else
+        if (abuf^.httpData.state = hpsLengthRequired) then
         begin
+            astr:= 'HTTP/1.1 411 Length Required';
+            abuf^.outputData.Write(astr[1], length(astr));
+        end else
+        if (abuf^.httpData.state = hpsRequestTooLarge) then
+        begin
+            astr:= 'HTTP/1.1 413 Content Too Large';
+            abuf^.outputData.Write(astr[1], length(astr));
+        end else
+        if (abuf^.httpData.state = hpsComplete) then
+        begin
+            // TODO: build request object (query string, form parameters, uploaded files, cookies session)
+            // TODO: build response object (pass outputData stream to response)
+            // TODO: match route based on request target url
+            // TODO: build middleware stacks and response handler of selected route
+            // TODO: execute middleware stacks and response handler and passing request and response object
+            // TODO: collect response in outputData stream
+            // TODO: need a way to allow long lived connection such as to handle
+            //       Server-Sent Event response or websockets response by making response handler
+            //       able to decide when to end connection (see Node.js request.end())
+            //       also still having default behavior to end connection after response handler quit
             astr:= 'HTTP/1.1 200 OK' + #13#10 +
                'Content-type: text/html' + #13#10#13#10 +
                '<html><head><title>Hello fano</title></head><body><h1>'+abuf^.httpData.requestPath+'</h1></body></html>';
+            abuf^.outputData.Write(astr[1], length(astr));
         end;
-        abuf^.outputData.Write(astr[1], length(astr));
     end;
 
+    // write outputData as response to client if any
     handleWrite(connfd, userData, isWrite, isEnded, isError);
 end;
 
@@ -336,6 +359,7 @@ begin
     buf^.inputData.Free();
     buf^.outputData.Free();
     buf^.httpData.headers.Free();
+    buf^.httpData.body.Free();
     dispose(buf);
     userData := nil;
 end;

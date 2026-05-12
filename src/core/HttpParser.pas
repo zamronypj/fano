@@ -58,7 +58,10 @@ type
        hpsBadRequest,
 
        // when request contain body but not header Content-Length
-       hpsLengthRequired
+       hpsLengthRequired,
+
+       // when request too big such as POST body size etc
+       hpsRequestTooLarge
     );
 
     TUploadedFile = record
@@ -77,6 +80,8 @@ type
        requestPath: string;
        httpVersion : string;
        headers: THttpHeaders;
+       expectBody: boolean;
+       expectedBodySize: integer;
        body: TStream;
        isMultipart: boolean;
        files: TUploadedFiles;
@@ -395,8 +400,83 @@ begin
     result := (ret = COMPLETE)
 end;
 
+// handle body data sent with
+// Transfer-Encoding: chunked
+function parseChunkedBody(inStream: TStream; var httpData: THttpData): THttpProcessingState;
+begin
+
+end;
+
+function GetRandomFileName(const Extension: string): string;
+var
+  Guid: TGUID;
+begin
+  if CreateGUID(Guid) = 0 then
+    // Convert GUID to string and remove the curly braces {}
+    Result := GUIDToString(Guid).Substring(1, 36) + Extension
+  else
+    Result := ''; // Error handling
+end;
+
+// handle body data sent with
+// Content-Length: [num bytes]
+function  parseFixedLengthBody(inStream: TStream; var httpData: THttpData): THttpProcessingState;
+var buf: array[0..1024-1] of byte;
+    totRead: int64;
+begin
+    result := hpsReadingBody;
+    if httpData.expectedBodySize > 0 then
+    begin
+        if httpData.body = nil then
+        begin
+            if httpData.isMultipart then
+            begin
+                httpData.body := TFileStream.create(GetRandomFileName('.tmp'), fmCreate);
+            end else
+            begin
+                httpData.body := TMemoryStream.create();
+                // TODO: do we need to preallocate to avoid frequent memory
+                // reallocation for example half of max body? need to profile first
+                // TMemoryStream(httpData.body).Capacity := httpData.maxBodySize div 2;
+            end;
+        end;
+
+        repeat
+            totRead := inStream.Read(buf[0], 1024);
+            if totRead > 0 then
+            begin
+                httpData.body.Write(buf[0], totRead);
+            end;
+
+            // TODO: parse any POST/PUT/PATCH data and also parse uploaded file
+        until (httpData.body.size = httpData.expectedBodySize) or
+            // if totRead less than 1024, inStream has no more data to read
+            // at the moment so we should retry later
+           (totRead < 1024);
+
+        if httpData.body.size = httpData.expectedBodySize then
+        begin
+            result := hpsComplete;
+        end;
+    end else
+    begin
+        result := hpsComplete;
+    end;
+end;
+
+function parseBody(inStream: TStream; var httpData: THttpData): THttpProcessingState;
+begin
+    if httpData.isChunked then
+    begin
+        result := parseChunkedBody(inStream, httpData);
+    end else
+    begin
+        result := parseFixedLengthBody(inStream, httpData);
+    end;
+end;
+
 procedure parseHttp(inStream: TStream; var httpData: THttpData);
-var savedPos, expectedBodySize: integer;
+var savedPos: integer;
 begin
     if httpData.state = hpsWaitingHeader then
     begin
@@ -407,7 +487,9 @@ begin
             inStream.position := 0;
         end else
         begin
-            // retry later until we have more data
+            // TODO: not very efficient as it just wait and
+            // retry later until we have more data. Should just parse any incomplete
+            // headers as much as possible in one read
             exit;
         end;
     end;
@@ -486,39 +568,60 @@ begin
         exit;
     end;
 
-    if not parseHeaders(inStream, httpData.headers) then
+    if parseHeaders(inStream, httpData.headers) then
+    begin
+        // reading header complete, next do reading body
+        httpData.state:= hpsReadingBody;
+    end else
     begin
         httpData.state:= hpsBadRequest;
         exit;
     end;
 
-    expectedBodySize := 0;
-    if (httpData.httpMethod = hmPOST) or
+    httpData.expectBody:= (httpData.httpMethod = hmPOST) or
        (httpData.httpMethod = hmPUT) or
-       (httpData.httpMethod = hmPATCH) then
-    begin
-        if httpData.headers.exist['Content-Length'] and httpData.headers.exist['Transfer-Encoding'] then
-        begin
-            // only one allowed not both, according to RFC 9112
-            httpData.state:= hpsBadRequest;
-            exit;
-        end;
+       (httpData.httpMethod = hmPATCH);
 
+    httpData.expectedBodySize := 0;
+    httpData.isChunked := false;
+    if httpData.expectBody then
+    begin
         if httpData.headers.exist['Content-Length'] then
         begin
-            if not tryStrToInt(httpData.headers['Content-Length'], expectedBodySize) then
+            if not tryStrToInt(httpData.headers['Content-Length'], httpData.expectedBodySize) then
             begin
                 httpData.state:= hpsBadRequest;
                 exit;
             end;
         end;
 
+        if httpData.headers.exist['Transfer-Encoding'] then
+        begin
+            // reset any expectedBodySize value read from Content-Length header as
+            // only one allowed not both,
+            // according to RFC 9112 Transfer-Encoding must take precedence
+            httpData.expectedBodySize := 0;
+            httpData.isChunked := true;
+        end;
+
+        if not httpData.isChunked then
+        begin
+            if httpData.expectedBodySize = 0 then
+            begin
+               httpData.state:= hpsLengthRequired;
+               exit;
+            end;
+
+            if (httpData.expectedBodySize > httpData.maxBodySize) then
+            begin
+               httpData.state:= hpsRequestTooLarge;
+               exit;
+            end;
+        end;
+
+        httpData.state := parseBody(inStream, httpData);
     end;
 
-    if inStream.Size - inStream.position < expectedBodySize then
-    begin
-
-    end;
 end;
 
 //procedure parseHttpVerb(tmp: string; len:integer; var httpData: THttpData; var idx: integer; var needMoreData: boolean);
