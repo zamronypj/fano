@@ -21,25 +21,38 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 -------------------------------------------------------------------------------}
-unit HttpHeaders;
+unit uhttp;
 
 {$MODE OBJFPC}
 {$H+}
 
 interface
 
-uses
-
-   classes,
-   sysutils,
-   KeyValue;
-
 type
+    THttpMethod = (
+        hmUnknown,
+        hmGET,
+        hmPOST,
+        hmPUT,
+        hmPATCH,
+        hmDELETE,
+        hmHEAD,
+        hmOPTIONS,
+        hmCONNECT,
+        hmTRACE
+    );
 
-   { THttpHeaders }
-   THttpHeaders = TKeyValue;
-
+    TUploadedFile = record
+       // actual file path where binary stream stored in server
+       filename: string;
+       // original file name as sent by client
+       originalFilename: string;
+       // content type of file
+       contentType: string;
+    end;
+    TUploadedFiles = array of TUploadedFile;
 
 implementation
 
 end.
+
