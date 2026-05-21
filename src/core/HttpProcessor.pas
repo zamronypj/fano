@@ -37,7 +37,12 @@ uses
     Winsock2,
     {$ENDIF}
     httpprotocol,
-    HttpParser;
+
+    {$IFDEF USE_LLHTTP}
+    llhttpParser
+    {$ELSE}
+    HttpParser
+    {$ENDIF};
 
 type
 
@@ -117,6 +122,13 @@ begin
    buf^.httpData.state := hpsWaitingHeader;
    buf^.httpData.headers := THttpHeaders.Create();
    buf^.httpData.maxBodySize := maxBodySize;
+
+
+   {$IFDEF USE_LLHTTP}
+   buf^.httpData.parser.data := @(buf^.httpData);
+   llhttpParser.initParser(buf^.httpData);
+   {$ENDIF}
+
    userData := buf;
 end;
 
@@ -140,7 +152,7 @@ begin
            if WSAGetLastError <> WSA_IO_PENDING then
            begin
                dispose(ovrlapped);
-               closeConnData(conn);;
+               isError := true;
            end;
         end;
     end;
@@ -161,7 +173,7 @@ begin
             bytesToWrite := MAX_BYTE_TO_SEND;
         end;
 
-        n := fpSend(fd, PByte(buf^.outputData.Memory + buf^.totalSent), bytesToWrite, 0);
+        n := WSASend(fd, PByte(buf^.outputData.Memory + buf^.totalSent), bytesToWrite, 0);
 
         if (n >= 0) then
         begin
@@ -192,7 +204,6 @@ var
     n: longint;
     buf: PBuff;
     tmp : string;
-    oldState: THttpProcessingState;
 begin
     buf := PBuff(userData);
     if buf = nil then
@@ -302,7 +313,11 @@ begin
 
     abuf := PBuff(userData);
 
+    {$IFDEF USE_LLHTTP}
+    llhttpParser.parseHttp(abuf^.inputData, abuf^.httpData);
+    {$ELSE}
     HttpParser.parseHttp(abuf^.inputData, abuf^.httpData);
+    {$ENDIF}
 
     if (abuf^.totalSent = 0) and (abuf^.outputData.size = 0) then
     begin

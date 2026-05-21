@@ -90,7 +90,7 @@ begin
     for i:= 0 to count - 1 do
     begin
         kv := items[i];
-        result[kv.key] := kv.val;
+        result[kv.key] := kv.value;
     end;
 end;
 

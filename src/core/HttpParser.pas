@@ -70,6 +70,7 @@ type
        pos: integer;
        maxBodySize: integer;
     end;
+    PHttpData = ^THttpData;
 
 function httpMethodFromStr(const method: string): THttpMethod;
 procedure parseHttp(inStream: TStream; var httpData: THttpData);
