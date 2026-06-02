@@ -8,8 +8,11 @@ interface
 uses
 
    classes,
+   ctypes,
+   {$IFDEF UNIX}
+   unixtype,
+   {$ENDIF}
    sysutils,
-   unix,
    uhttp,
    HttpHeaders,
    llhttp;
@@ -46,7 +49,10 @@ type
        isMultipart: boolean;
        files: TUploadedFiles;
        isChunked: boolean;
+
+       // this will store last offset of processed buffer
        pos: integer;
+
        maxBodySize: integer;
     end;
     PHttpData = ^THttpData;
@@ -66,27 +72,27 @@ begin
     result := 0;
 end;
 
-function on_url(parser: pllhttp_t; const at: pansichar; length: size_t): integer; cdecl;
-var url: string;
+function on_url(parser: pllhttp_t; const at: PAnsiChar; length: size_t): integer; cdecl;
+var url: ansistring;
 begin
-    url := copy(at, length);
+    url := copy(at, 1, length);
     writeln('on_url: ', url);
     result:= 0;
 end;
 
 
-function on_header_field(parser: pllhttp_t; const at:pansichar; length: size_t): integer; cdecl;
-var header_field: string;
+function on_header_field(parser: pllhttp_t; const at : PAnsiChar; length: size_t): integer; cdecl;
+var header_field: ansistring;
 begin
-    header_field := copy(at, length);
+    header_field := copy(at, 1, length);
     writeln('head field: ', header_field);
     result := 0;
 end;
 
-function on_header_value(parser: pllhttp_t; const at:pansichar; length: size_t): integer; cdecl;
-var header_value: string;
+function on_header_value(parser: pllhttp_t; const at : PAnsiChar; length: size_t): integer; cdecl;
+var header_value: ansistring;
 begin
-    header_value := copy(at, length);
+    header_value := copy(at, 1, length);
     writeln('head value: ', header_value);
     result := 0;
 end;
@@ -103,7 +109,7 @@ end;
 function on_body(parser: pllhttp_t; const at: PAnsichar; length: size_t): integer; cdecl;
 var body: string;
 begin
-    body := copy(at, length);
+    body := copy(at, 1, length);
     writeln('on body: ', body);
     result := 0;
 end;
@@ -111,6 +117,12 @@ end;
 function on_message_complete(parser: pllhttp_t): integer; cdecl;
 begin
     writeln('on_message_complete');
+    result := 0;
+end;
+
+function on_reset(parser: pllhttp_t): integer; cdecl;
+begin
+    writeln('on_reset');
     result := 0;
 end;
 
@@ -124,6 +136,7 @@ begin
     settings.on_header_value := @on_header_value;
     settings.on_headers_complete := @on_headers_complete;
     settings.on_body := @on_body;
+    settings.on_reset := @on_reset;
     settings.on_message_complete := @on_message_complete;
 end;
 
@@ -135,14 +148,25 @@ end;
 
 procedure parseHttp(inStream: TStream; var httpData: THttpData);
 var err: llhttp_errno;
-   memInStream: TMemoryStream;
+    memInStream: TMemoryStream;
+    nRead: integer;
+    data : PChar;
 begin
     memInStream := TMemoryStream(inStream);
-    err := llhttp_execute(@httpData.parser, PAnsiChar(PByte(memInStream.Memory + memInStream.position)), memInStream.size - memInStream.position);
+    nRead := memInStream.size - httpData.pos;
+    data := PChar(PByte(memInStream.Memory + httpData.pos));
+    err := llhttp_execute(@httpData.parser, data, nRead);
     if err <> HPE_OK then
     begin
+       nRead := llhttp_get_error_pos(@httpData.parser) - data;
        writeln(stderr, 'Parse error: ', llhttp_errno_name(err),' ', httpData.parser.reason);
+       // todo handle error
+       if (err <> HPE_PAUSED) or (err <> HPE_PAUSED_UPGRADE) or (err <> HPE_PAUSED_H2_UPGRADE) then
+       begin
+           httpData.state:= hpsBadRequest;
+       end;
     end;
+    httpData.pos := nRead;
 end;
 
 initialization
