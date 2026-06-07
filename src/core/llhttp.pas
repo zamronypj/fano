@@ -2,7 +2,7 @@
 {---------------------------------------------------------------------------
 MIT License
 
-Copyright (c) 2021 - Present Zamrony P. Juhara
+Copyright (c) 2021 - Present Zamrony P. Juhara https://github.com/zamronypj/llhttp-pas
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -340,24 +340,6 @@ type
     llhttp_status_t = llhttp_status;
     pllhttp_status_t = ^llhttp_status_t;
 
-
-(* error
-  XX(1, INTERNAL, INTERNAL) \
-in define line 332 *)
-(* error
-  XX(1, GET, GET) \
-in define line 370 *)
-(* error
-  XX(3, POST, POST) \
-in define line 387 *)
-(* error
-  XX(1, GET, GET) \
-in define line 437 *)
-(* error
-  XX(101, SWITCHING_PROTOCOLS, SWITCHING_PROTOCOLS) \
-in define line 539 *)
-
-  type
 
     llhttp_t = llhttp__internal_t;
     pllhttp_t = ^llhttp_t;
