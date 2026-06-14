@@ -125,8 +125,8 @@ begin
 
 
    {$IFDEF USE_LLHTTP}
-   buf^.httpData.parser.data := @(buf^.httpData);
    llhttpParser.initParser(buf^.httpData);
+   buf^.httpData.parser.data := @(buf^.httpData);
    {$ENDIF}
 
    userData := buf;

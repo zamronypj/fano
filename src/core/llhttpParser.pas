@@ -54,6 +54,7 @@ type
        pos: integer;
 
        maxBodySize: integer;
+       currentHeader: shortstring;
     end;
     PHttpData = ^THttpData;
 
@@ -67,62 +68,114 @@ const MAX_LEN = 2048;
 var settings: llhttp_settings_t;
 
 function on_message_begin(parser: pllhttp_t): integer; cdecl;
+var ahttpData: PHttpData;
 begin
+    ahttpData := PHttpData(parser^.data);
+    ahttpData^.state := hpsWaitingHeader;
+    {$IFDEF VERBOSE}
     writeln('parse start');
+    {$ENDIF}
     result := 0;
 end;
 
 function on_url(parser: pllhttp_t; const at: PAnsiChar; length: size_t): integer; cdecl;
-var url: ansistring;
+var ahttpData: PHttpData;
 begin
-    url := copy(at, 1, length);
-    writeln('on_url: ', url);
+    ahttpData := PHttpData(parser^.data);
+    ahttpData^.requestPath:= copy(at, 1, length);
+
+    {$IFDEF VERBOSE}
+    writeln('on_url: ', ahttpData^.requestPath);
+    {$ENDIF}
+
     result:= 0;
 end;
 
 
 function on_header_field(parser: pllhttp_t; const at : PAnsiChar; length: size_t): integer; cdecl;
-var header_field: ansistring;
+var ahttpData: PHttpData;
 begin
-    header_field := copy(at, 1, length);
-    writeln('head field: ', header_field);
+    ahttpData := PHttpData(parser^.data);
+    ahttpData^.currentHeader := copy(at, 1, length);
+    ahttpData^.headers[ahttpData^.currentHeader] := '';
+    ahttpData^.state := hpsReadingHeader;
+
+    {$IFDEF VERBOSE}
+    writeln('head field: ', ahttpData^.currentHeader);
+    {$ENDIF}
+
     result := 0;
 end;
 
 function on_header_value(parser: pllhttp_t; const at : PAnsiChar; length: size_t): integer; cdecl;
-var header_value: ansistring;
+var ahttpData: PHttpData;
+    header_value: ansistring;
 begin
+    ahttpData := PHttpData(parser^.data);
     header_value := copy(at, 1, length);
+    ahttpData^.headers[ahttpData^.currentHeader] := header_value;
+
+    {$IFDEF VERBOSE}
     writeln('head value: ', header_value);
+    {$ENDIF}
+
     result := 0;
 end;
 
 function on_headers_complete(parser: pllhttp_t): integer; cdecl;
 begin
+    {$IFDEF VERBOSE}
     writeln('on_headers_complete, major: ', parser^.http_major,
       ' minor: ', parser^.http_minor,
       'keep-alive: ', llhttp_should_keep_alive(parser),
       'upgrade: ', parser^.upgrade);
+    {$ENDIF}
+
+    if (parser^.method = byte(HTTP_GET)) or
+       (parser^.method = byte(HTTP_HEAD)) then
+    begin
+       // this tell parser that no body expected , so dont bother to parse body
+       // and can continue to next request
+       exit(1);
+    end;
+
     result := 0;
 end;
 
 function on_body(parser: pllhttp_t; const at: PAnsichar; length: size_t): integer; cdecl;
-var body: string;
+var ahttpData: PHttpData;
+    body: string;
 begin
-    body := copy(at, 1, length);
-    writeln('on body: ', body);
+    ahttpData := PHttpData(parser^.data);
+    ahttpData^.state := hpsReadingBody;
+    if ahttpData^.body = nil then
+    begin
+       ahttpData^.body := TMemoryStream.create();
+    end;
+    if ahttpData^.body.size + length > ahttpData^.maxBodySize then
+    begin
+       exit(-1);
+    end;
+    ahttpData^.body.Read(at^, length);
     result := 0;
 end;
 
 function on_message_complete(parser: pllhttp_t): integer; cdecl;
+var ahttpData: PHttpData;
 begin
+    ahttpData := PHttpData(parser^.data);
+    ahttpData^.state := hpsComplete;
+    {$IFDEF VERBOSE}
     writeln('on_message_complete');
+    {$ENDIF}
     result := 0;
 end;
 
 function on_reset(parser: pllhttp_t): integer; cdecl;
 begin
+    {$IFDEF VERBOSE}
     writeln('on_reset');
+    {$ENDIF}
     result := 0;
 end;
 
