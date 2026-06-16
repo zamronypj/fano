@@ -67,7 +67,24 @@ type
        isMultipart: boolean;
        files: TUploadedFiles;
        isChunked: boolean;
+
+       // this will store last offset of processed buffer
        pos: integer;
+
+       // number of octets header read from parser, if it exceeds
+       // maxHeaderSize we will stop parsing and return HTTP error 413
+       // Content Too Large
+       headerLenRead: integer;
+
+       // number of octets header we allowed to process
+       maxHeaderSize: integer;
+
+       // number of octets body read from parser, if it exceeds
+       // maxBodySize we will stop parsing and return HTTP error 413
+       // Content Too Large
+       bodyLenRead: integer;
+
+       // number of octets body we allowed to process
        maxBodySize: integer;
     end;
     PHttpData = ^THttpData;

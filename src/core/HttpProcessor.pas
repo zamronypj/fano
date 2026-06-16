@@ -122,6 +122,7 @@ begin
    buf^.httpData.state := hpsWaitingHeader;
    buf^.httpData.headers := THttpHeaders.Create();
    buf^.httpData.maxBodySize := maxBodySize;
+   buf^.httpData.maxHeaderSize:= maxRequestSize - maxBodySize;
 
 
    {$IFDEF USE_LLHTTP}
