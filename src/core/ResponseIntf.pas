@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 -------------------------------------------------------------------------------}
-unit uhttp;
+unit ResponseIntf;
 
 {$MODE OBJFPC}
 {$H+}
@@ -30,33 +30,22 @@ interface
 
 uses
 
-   KeyValue;
+    Classes,
+    KeyValue,
+    HttpHeaders;
 
 type
-    THttpMethod = (
-        hmUnknown,
-        hmGET,
-        hmPOST,
-        hmPUT,
-        hmPATCH,
-        hmDELETE,
-        hmHEAD,
-        hmOPTIONS,
-        hmCONNECT,
-        hmTRACE
-    );
 
-    THttpHeaders = TKeyValue;
+    IResponse = interface
+        ['{F64B74F2-1775-4891-8803-6259B5EB99CE}']
 
-    TUploadedFile = record
-       // actual file path where binary stream stored in server
-       filename: string;
-       // original file name as sent by client
-       originalFilename: string;
-       // content type of file
-       contentType: string;
+        function getHeaders(): THeaders;
+        procedure write(const astr: string);
+        procedure send();
+        procedure sendEnd();
+
+        property headers:THeaders read getHeaders;
     end;
-    TUploadedFiles = array of TUploadedFile;
 
 implementation
 

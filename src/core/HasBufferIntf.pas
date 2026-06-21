@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 -------------------------------------------------------------------------------}
-unit uhttp;
+unit HasBufferIntf;
 
 {$MODE OBJFPC}
 {$H+}
@@ -30,34 +30,16 @@ interface
 
 uses
 
-   KeyValue;
+    Classes;
 
 type
-    THttpMethod = (
-        hmUnknown,
-        hmGET,
-        hmPOST,
-        hmPUT,
-        hmPATCH,
-        hmDELETE,
-        hmHEAD,
-        hmOPTIONS,
-        hmCONNECT,
-        hmTRACE
-    );
 
-    THttpHeaders = TKeyValue;
+    IHasBuffer = interface
+        ['{95375C74-1EAF-459B-8200-8DD71199A43E}']
+        function getBuffer(): TStream;
 
-    TUploadedFile = record
-       // actual file path where binary stream stored in server
-       filename: string;
-       // original file name as sent by client
-       originalFilename: string;
-       // content type of file
-       contentType: string;
+        property buffer: TStream read getBuffer;
     end;
-    TUploadedFiles = array of TUploadedFile;
 
 implementation
-
 end.

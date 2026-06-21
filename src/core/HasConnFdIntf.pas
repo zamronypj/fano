@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 -------------------------------------------------------------------------------}
-unit uhttp;
+unit HasConnFdIntf;
 
 {$MODE OBJFPC}
 {$H+}
@@ -30,34 +30,25 @@ interface
 
 uses
 
-   KeyValue;
+    {$IFDEF WINDOWS}
+    WIndows,
+    Winsock,
+    Winsock2,
+    {$ENDIF}
+    Classes;
 
 type
-    THttpMethod = (
-        hmUnknown,
-        hmGET,
-        hmPOST,
-        hmPUT,
-        hmPATCH,
-        hmDELETE,
-        hmHEAD,
-        hmOPTIONS,
-        hmCONNECT,
-        hmTRACE
-    );
 
-    THttpHeaders = TKeyValue;
-
-    TUploadedFile = record
-       // actual file path where binary stream stored in server
-       filename: string;
-       // original file name as sent by client
-       originalFilename: string;
-       // content type of file
-       contentType: string;
+    IHasConnFd = interface
+        ['{EC396F3F-2DC5-4C92-A739-7B8EC6815DC3}']
+        {$IFDEF WINDOWS}
+        function getConnFd(): TSocket;
+        property fd: TSocket read getConnFd;
+        {$ELSE}
+        function getConnFd(): longint;
+        property fd: longint read getConnFd;
+        {$ENDIF}
     end;
-    TUploadedFiles = array of TUploadedFile;
 
 implementation
-
 end.

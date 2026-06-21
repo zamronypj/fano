@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 -------------------------------------------------------------------------------}
-unit uhttp;
+uses RequestIntf;
 
 {$MODE OBJFPC}
 {$H+}
@@ -30,33 +30,30 @@ interface
 
 uses
 
-   KeyValue;
+    uhttp,
+    KeyValue,
+    HttpHeaders;
 
 type
-    THttpMethod = (
-        hmUnknown,
-        hmGET,
-        hmPOST,
-        hmPUT,
-        hmPATCH,
-        hmDELETE,
-        hmHEAD,
-        hmOPTIONS,
-        hmCONNECT,
-        hmTRACE
-    );
 
-    THttpHeaders = TKeyValue;
+    IRequest = interface
+        ['{8A66641D-CA81-4F3C-8194-D861EC683BB9}']
+        function getMethod: THttpMethod;
+        function getHeaders(): THeaders;
+        function getRouteParams(): TKeyValue;
 
-    TUploadedFile = record
-       // actual file path where binary stream stored in server
-       filename: string;
-       // original file name as sent by client
-       originalFilename: string;
-       // content type of file
-       contentType: string;
+        // retrieve query strings parameters or body parameters if any
+        function getParams(): TKeyValue;
+
+        // retrieve uploaded files if any
+        function getUploadedFiles(): TUploadedFiles;
+
+        property method: THttpMethod read getMethod;
+        property headers:THeaders read getHeaders;
+        property routeParams:TKeyValue read getRouteParams;
+        property params:TKeyValue read getParams;
+        property uploadedFiles: TUploadedFiles read getUploadedFiles;
     end;
-    TUploadedFiles = array of TUploadedFile;
 
 implementation
 
